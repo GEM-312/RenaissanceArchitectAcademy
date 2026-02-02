@@ -1,18 +1,31 @@
 import SwiftUI
-import Subsonic
+import AVFoundation
 
 /// Manages all sound effects and music for the Renaissance Architect Academy
+/// Uses AVFoundation for audio playback
 @MainActor
 class SoundManager: ObservableObject {
     static let shared = SoundManager()
 
     @Published var isMuted: Bool = false
-    @Published var volume: Double = 0.8
+    @Published var volume: Float = 0.8
 
-    private init() {}
+    private var audioPlayers: [String: AVAudioPlayer] = [:]
+
+    private init() {
+        // Configure audio session for mixing with other apps
+        #if os(iOS)
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default)
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("Failed to configure audio session: \(error)")
+        }
+        #endif
+    }
 
     // MARK: - Sound Effect Names
-    enum Sound: String {
+    enum Sound: String, CaseIterable {
         // UI Sounds
         case buttonTap = "button_tap"
         case menuOpen = "menu_open"
@@ -38,19 +51,55 @@ class SoundManager: ObservableObject {
         }
     }
 
+    // MARK: - Preload Sounds
+    /// Preload a sound for faster playback
+    func preload(_ sound: Sound) {
+        guard let url = Bundle.main.url(forResource: sound.rawValue, withExtension: "mp3") else {
+            return
+        }
+
+        do {
+            let player = try AVAudioPlayer(contentsOf: url)
+            player.prepareToPlay()
+            player.volume = volume
+            audioPlayers[sound.rawValue] = player
+        } catch {
+            print("Failed to preload sound \(sound.rawValue): \(error)")
+        }
+    }
+
+    /// Preload all sounds
+    func preloadAll() {
+        Sound.allCases.forEach { preload($0) }
+    }
+
     // MARK: - Play Sound
     /// Play a sound effect
     func play(_ sound: Sound) {
         guard !isMuted else { return }
-        // Subsonic will look for the file in the bundle
-        // For now, this is a placeholder - add actual sound files to Resources
-        // play(sound: sound.filename)
-    }
 
-    /// Play a sound with a specific volume
-    func play(_ sound: Sound, volume: Double) {
-        guard !isMuted else { return }
-        // play(sound: sound.filename, volume: volume)
+        // Check if already preloaded
+        if let player = audioPlayers[sound.rawValue] {
+            player.currentTime = 0
+            player.volume = volume
+            player.play()
+            return
+        }
+
+        // Load and play on demand
+        guard let url = Bundle.main.url(forResource: sound.rawValue, withExtension: "mp3") else {
+            print("Sound file not found: \(sound.filename)")
+            return
+        }
+
+        do {
+            let player = try AVAudioPlayer(contentsOf: url)
+            player.volume = volume
+            player.play()
+            audioPlayers[sound.rawValue] = player
+        } catch {
+            print("Failed to play sound \(sound.rawValue): \(error)")
+        }
     }
 
     // MARK: - Controls
@@ -58,8 +107,14 @@ class SoundManager: ObservableObject {
         isMuted.toggle()
     }
 
-    func setVolume(_ newVolume: Double) {
+    func setVolume(_ newVolume: Float) {
         volume = max(0, min(1, newVolume))
+        // Update all existing players
+        audioPlayers.values.forEach { $0.volume = volume }
+    }
+
+    func stopAll() {
+        audioPlayers.values.forEach { $0.stop() }
     }
 }
 
@@ -76,7 +131,7 @@ extension View {
         }
     }
 
-    /// Play a sound on tap
+    /// Play a sound on tap (use with buttons)
     func withTapSound(_ sound: SoundManager.Sound = .buttonTap) -> some View {
         self.simultaneousGesture(
             TapGesture().onEnded {

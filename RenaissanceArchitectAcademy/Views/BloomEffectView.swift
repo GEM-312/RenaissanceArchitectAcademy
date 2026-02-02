@@ -1,27 +1,43 @@
 import SwiftUI
-import Vortex
-import Pow
 
 /// The "bloom" effect when a building transforms from gray sketch to full watercolor
+/// Uses native SwiftUI animations - can be enhanced with Vortex/Pow packages later
 struct BloomEffectView: View {
     let isActive: Bool
     var onComplete: (() -> Void)?
 
     @State private var showParticles = false
     @State private var bloomProgress: CGFloat = 0
+    @State private var particleOpacity: Double = 0
 
     var body: some View {
         ZStack {
+            // Sparkle particles (native SwiftUI version)
             if showParticles {
-                // Magic sparkle particles during bloom
-                VortexView(.magic) {
-                    Circle()
-                        .fill(RenaissanceColors.ochre)
-                        .frame(width: 8, height: 8)
-                        .blur(radius: 1)
-                        .tag("sparkle")
+                ForEach(0..<12, id: \.self) { index in
+                    SparkleParticle(
+                        index: index,
+                        progress: bloomProgress
+                    )
                 }
-                .allowsHitTesting(false)
+            }
+
+            // Central glow
+            if showParticles {
+                Circle()
+                    .fill(
+                        RadialGradient(
+                            colors: [
+                                RenaissanceColors.ochre.opacity(0.6),
+                                RenaissanceColors.ochre.opacity(0)
+                            ],
+                            center: .center,
+                            startRadius: 0,
+                            endRadius: 100 * bloomProgress
+                        )
+                    )
+                    .frame(width: 200, height: 200)
+                    .opacity(particleOpacity)
             }
         }
         .onChange(of: isActive) { _, newValue in
@@ -33,8 +49,9 @@ struct BloomEffectView: View {
 
     private func triggerBloom() {
         // Start particles
-        withAnimation(.easeIn(duration: 0.3)) {
+        withAnimation(.easeIn(duration: 0.2)) {
             showParticles = true
+            particleOpacity = 1.0
         }
 
         // Animate bloom progress
@@ -47,67 +64,72 @@ struct BloomEffectView: View {
             SoundManager.shared.play(.buildingComplete)
         }
 
+        // Fade out particles
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+            withAnimation(.easeOut(duration: 0.5)) {
+                particleOpacity = 0
+            }
+        }
+
         // Clean up after animation
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             showParticles = false
+            bloomProgress = 0
             onComplete?()
         }
     }
 }
 
-// MARK: - Custom Vortex Presets for Renaissance Theme
-extension VortexSystem {
-    /// Magic sparkles for building completion - Renaissance gold and blue
-    static let renaissanceMagic: VortexSystem = {
-        var system = VortexSystem(tags: ["sparkle"])
-        system.position = [0.5, 0.5]
-        system.speed = 0.5
-        system.speedVariation = 0.25
-        system.lifespan = 1.5
-        system.shape = .ellipse(radius: 0.4)
-        system.angle = .degrees(0)
-        system.angleRange = .degrees(360)
-        system.size = 0.1
-        system.sizeVariation = 0.05
-        system.birthRate = 50
-        return system
-    }()
+/// Individual sparkle particle for the bloom effect
+struct SparkleParticle: View {
+    let index: Int
+    let progress: CGFloat
 
-    /// Ink drops effect for sketch-to-color transition
-    static let inkDrop: VortexSystem = {
-        var system = VortexSystem(tags: ["ink"])
-        system.position = [0.5, 0.5]
-        system.speed = 0.1
-        system.lifespan = 2.0
-        system.shape = .ellipse(radius: 0.3)
-        system.size = 0.15
-        system.sizeVariation = 0.1
-        system.birthRate = 20
-        return system
-    }()
+    private var angle: Angle {
+        .degrees(Double(index) * 30)
+    }
+
+    private var distance: CGFloat {
+        progress * 80
+    }
+
+    var body: some View {
+        Circle()
+            .fill(index % 2 == 0 ? RenaissanceColors.ochre : RenaissanceColors.renaissanceBlue)
+            .frame(width: 8 - progress * 4, height: 8 - progress * 4)
+            .offset(
+                x: cos(angle.radians) * distance,
+                y: sin(angle.radians) * distance
+            )
+            .opacity(1 - progress * 0.8)
+            .blur(radius: progress * 2)
+    }
 }
 
-// MARK: - Pow Transition Extensions
+// MARK: - Native SwiftUI Transitions (no external dependencies)
 extension AnyTransition {
-    /// Page curl transition for menu screens
-    static var pageCurl: AnyTransition {
+    /// Fade with scale transition
+    static var bloom: AnyTransition {
         .asymmetric(
-            insertion: .movingParts.flip,
-            removal: .movingParts.vanish
+            insertion: .scale(scale: 0.8).combined(with: .opacity),
+            removal: .scale(scale: 1.1).combined(with: .opacity)
         )
     }
 
-    /// Sketch to watercolor bloom transition
-    static var bloom: AnyTransition {
+    /// Slide up with fade
+    static var buildReveal: AnyTransition {
         .asymmetric(
-            insertion: .movingParts.glare,
+            insertion: .move(edge: .bottom).combined(with: .opacity),
             removal: .opacity
         )
     }
 
-    /// Building construction reveal
-    static var buildReveal: AnyTransition {
-        .movingParts.iris(blurRadius: 20)
+    /// Page flip simulation
+    static var pageCurl: AnyTransition {
+        .asymmetric(
+            insertion: .move(edge: .trailing).combined(with: .opacity),
+            removal: .move(edge: .leading).combined(with: .opacity)
+        )
     }
 }
 
@@ -115,15 +137,22 @@ extension AnyTransition {
 struct BuildingBloomModifier: ViewModifier {
     let isCompleted: Bool
     @State private var hasAnimated = false
+    @State private var showBloom = false
 
     func body(content: Content) -> some View {
         content
             .saturation(isCompleted || hasAnimated ? 1.0 : 0.0)
             .overlay {
-                if isCompleted && !hasAnimated {
+                if showBloom {
                     BloomEffectView(isActive: true) {
                         hasAnimated = true
+                        showBloom = false
                     }
+                }
+            }
+            .onChange(of: isCompleted) { _, newValue in
+                if newValue && !hasAnimated {
+                    showBloom = true
                 }
             }
             .animation(.easeInOut(duration: 1.0), value: isCompleted)
