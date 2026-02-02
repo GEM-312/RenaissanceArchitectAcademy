@@ -20,9 +20,6 @@ struct BuildingDetailOverlay: View {
             Color.black.opacity(0.4)
                 .ignoresSafeArea()
                 .onTapGesture {
-                    Task { @MainActor in
-                        SoundManager.shared.play(.menuClose)
-                    }
                     onDismiss()
                 }
 
@@ -60,12 +57,7 @@ struct BuildingDetailOverlay: View {
                         }
                     }
 
-                    Button(action: {
-                        Task { @MainActor in
-                            SoundManager.shared.play(.menuClose)
-                        }
-                        onDismiss()
-                    }) {
+                    Button(action: onDismiss) {
                         Image(systemName: "xmark.circle.fill")
                             .font(isLargeScreen ? .title : .title2)
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
@@ -127,12 +119,7 @@ struct BuildingDetailOverlay: View {
                 // Action buttons
                 HStack(spacing: 16) {
                     if isLargeScreen {
-                        RenaissanceSecondaryButton(title: "Cancel", icon: "arrow.left") {
-                            Task { @MainActor in
-                                SoundManager.shared.play(.menuClose)
-                            }
-                            onDismiss()
-                        }
+                        RenaissanceSecondaryButton(title: "Cancel", icon: "arrow.left", action: onDismiss)
                         #if os(macOS)
                         .keyboardShortcut(.cancelAction)
                         #endif
@@ -168,9 +155,6 @@ struct BuildingDetailOverlay: View {
             .opacity(showContent ? 1 : 0)
         }
         .onAppear {
-            Task { @MainActor in
-                SoundManager.shared.play(.menuOpen)
-            }
             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                 showContent = true
             }

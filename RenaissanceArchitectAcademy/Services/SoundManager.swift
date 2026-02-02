@@ -25,26 +25,18 @@ class SoundManager: ObservableObject {
     }
 
     // MARK: - Sound Effect Names
+    /// Only meaningful moments - no button taps
     enum Sound: String, CaseIterable {
-        // UI Sounds
-        case buttonTap = "button_tap"
-        case menuOpen = "menu_open"
-        case menuClose = "menu_close"
+        // Building & Progress
+        case buildingComplete = "building_complete"  // Celebratory fanfare
+        case sealStamp = "seal_stamp"                // Achievement earned
 
-        // Building Sounds
-        case buildingSelect = "building_select"
-        case buildingComplete = "building_complete"
-        case constructionStart = "construction_start"
+        // Challenge Feedback
+        case challengeSuccess = "challenge_success"  // Correct answer
+        case challengeFail = "challenge_fail"        // Wrong answer (gentle)
 
-        // Challenge Sounds
-        case challengeStart = "challenge_start"
-        case challengeSuccess = "challenge_success"
-        case challengeFail = "challenge_fail"
-
-        // Ambient
-        case quillWriting = "quill_writing"
-        case pageFlip = "page_flip"
-        case sealStamp = "seal_stamp"
+        // Optional ambient (for future)
+        case pageFlip = "page_flip"                  // Navigation transitions
 
         var filename: String {
             "\(rawValue).mp3"
@@ -129,16 +121,5 @@ extension View {
                 }
             }
         }
-    }
-
-    /// Play a sound on tap (use with buttons)
-    func withTapSound(_ sound: SoundManager.Sound = .buttonTap) -> some View {
-        self.simultaneousGesture(
-            TapGesture().onEnded {
-                Task { @MainActor in
-                    SoundManager.shared.play(sound)
-                }
-            }
-        )
     }
 }

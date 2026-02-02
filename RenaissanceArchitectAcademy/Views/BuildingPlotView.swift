@@ -16,12 +16,7 @@ struct BuildingPlotView: View {
     private var cornerRadius: CGFloat { isLargeScreen ? 16 : 12 }
 
     var body: some View {
-        Button(action: {
-            Task { @MainActor in
-                SoundManager.shared.play(.buildingSelect)
-            }
-            onTap()
-        }) {
+        Button(action: onTap) {
             ZStack {
                 // Plot background with notebook paper effect
                 RoundedRectangle(cornerRadius: cornerRadius)

@@ -15,12 +15,7 @@ struct RenaissanceButton: View {
     }
 
     var body: some View {
-        Button(action: {
-            Task { @MainActor in
-                SoundManager.shared.play(.buttonTap)
-            }
-            action()
-        }) {
+        Button(action: action) {
             HStack(spacing: 12) {
                 // Optional wax seal icon
                 if let icon = icon {
@@ -79,12 +74,7 @@ struct RenaissanceSecondaryButton: View {
     @State private var isHovered = false
 
     var body: some View {
-        Button(action: {
-            Task { @MainActor in
-                SoundManager.shared.play(.buttonTap)
-            }
-            action()
-        }) {
+        Button(action: action) {
             HStack(spacing: 8) {
                 if let icon = icon {
                     Image(systemName: icon)
