@@ -9,89 +9,103 @@ Educational city-building game where students solve architectural challenges acr
 
 ## Tech Stack
 - SwiftUI (iOS 17+ / macOS 14+)
-- Swift 5.9+
-- Swift Playgrounds App format (.swiftpm)
+- Swift 5.0+
+- Xcode project (multiplatform)
 - Midjourney AI art (style ref: `--sref 3186415970`)
 - GitHub: https://github.com/GEM-312/RenaissanceArchitectAcademy
 
 ## Project Structure
 ```
 RenaissanceArchitectAcademy/
-├── RenaissanceArchitectAcademy.swiftpm/
-│   ├── Package.swift
-│   └── Sources/RenaissanceArchitectAcademy/
-│       ├── RenaissanceArchitectAcademyApp.swift  # App entry point
-│       ├── Views/
-│       │   ├── ContentView.swift          # Root view with navigation
-│       │   ├── MainMenuView.swift         # Title screen
-│       │   ├── CityView.swift             # City with building plots
-│       │   ├── BuildingPlotView.swift     # Individual plot display
-│       │   └── BuildingDetailOverlay.swift # Building info modal
-│       ├── ViewModels/
-│       │   └── CityViewModel.swift        # City state management
-│       ├── Models/
-│       │   └── Building.swift             # Building, BuildingPlot, Era, Science
-│       ├── Styles/
-│       │   ├── RenaissanceColors.swift    # Color palette
-│       │   └── RenaissanceButton.swift    # Custom button style
-│       └── Resources/                     # Assets, fonts, images
+├── RenaissanceArchitectAcademy.xcodeproj/
+├── RenaissanceArchitectAcademy/
+│   ├── RenaissanceArchitectAcademyApp.swift  # @main entry point
+│   ├── Views/
+│   │   ├── ContentView.swift          # Root view, navigation state
+│   │   ├── MainMenuView.swift         # Title screen with buttons
+│   │   ├── CityView.swift             # 6 building plots grid
+│   │   ├── BuildingPlotView.swift     # Individual plot card
+│   │   └── BuildingDetailOverlay.swift # Modal with sciences
+│   ├── ViewModels/
+│   │   └── CityViewModel.swift        # @MainActor, @Published state
+│   ├── Models/
+│   │   └── Building.swift             # Era, Science, Building, BuildingPlot
+│   └── Styles/
+│       ├── RenaissanceColors.swift    # Color palette enum
+│       └── RenaissanceButton.swift    # Custom button component
 ├── CLAUDE.md
 ├── LICENSE
 └── .gitignore
 ```
 
 ## Color Palette (RenaissanceColors.swift)
-- Parchment: #F5E6D3
-- Sepia Ink: #4A4035
-- Renaissance Blue: #5B8FA3
-- Terracotta: #D4876B
-- Ochre: #C9A86A
-- Sage Green: #7A9B76
+```swift
+RenaissanceColors.parchment       // #F5E6D3 - Background
+RenaissanceColors.sepiaInk        // #4A4035 - Text
+RenaissanceColors.renaissanceBlue // #5B8FA3 - Accent
+RenaissanceColors.terracotta      // #D4876B - Buildings
+RenaissanceColors.ochre           // #C9A86A - Highlights
+RenaissanceColors.sageGreen       // #7A9B76 - Completion
+```
+
+## Models
+
+### Era
+- `.ancientRome` - "Ancient Rome"
+- `.renaissance` - "Renaissance"
+
+### Science (13 types)
+Mathematics, Physics, Chemistry, Geometry, Engineering, Astronomy, Biology, Geology, Optics, Hydraulics, Acoustics, Materials Science, Architecture
+
+Each has an `iconName` property for SF Symbols.
+
+## 6 Buildings
+| # | Name | Era | Sciences |
+|---|------|-----|----------|
+| 1 | Aqueduct | Ancient Rome | Engineering, Hydraulics, Mathematics |
+| 2 | Colosseum | Ancient Rome | Architecture, Engineering, Acoustics |
+| 3 | Roman Baths | Ancient Rome | Hydraulics, Chemistry, Materials |
+| 4 | Duomo | Renaissance | Geometry, Architecture, Physics |
+| 5 | Observatory | Renaissance | Astronomy, Optics, Mathematics |
+| 6 | Workshop | Renaissance | Engineering, Physics, Materials |
 
 ## Current Status (Feb 2, 2025)
 
 ### Completed
-- [x] SwiftUI project setup (migrated from Unity)
-- [x] Color palette defined
-- [x] Main menu view with title and buttons
+- [x] SwiftUI Xcode project (migrated from Unity)
+- [x] MVVM architecture
+- [x] Main menu with navigation
 - [x] City view with 6 building plots
-- [x] Building models (Era, Science, Building, BuildingPlot)
-- [x] CityViewModel for state management
-- [x] Building detail overlay
+- [x] Building detail overlay with science badges
+- [x] Color palette and custom button style
 
 ### Next Steps
-- [ ] Add custom Renaissance fonts (Cinzel, EBGaramond, PetitFormalScript)
-- [ ] Implement challenge system
+- [ ] Add custom fonts (Cinzel, EBGaramond, PetitFormalScript)
+- [ ] Create challenge system/UI
 - [ ] Generate Midjourney art assets
-- [ ] Add "bloom" animation (gray sketch → watercolor)
-- [ ] Implement seal reward system
-- [ ] Build challenge UI for each science type
-
-## Key Design Decisions
-1. **SwiftUI Multiplatform** - Works on iOS and macOS
-2. **Swift Playgrounds format** - Easy to open and edit
-3. **6 building plots** - Focused scope (3 Ancient Rome + 3 Renaissance)
-4. **MVVM Architecture** - ViewModels manage state
-5. **Science challenges** - Math, Physics, Chemistry, etc. integrated into gameplay
-6. **Bloom animation** - Buildings transform when challenge is solved
-
-## 6 Buildings
-### Ancient Rome
-1. **Aqueduct** - Engineering, Hydraulics, Mathematics
-2. **Colosseum** - Architecture, Engineering, Acoustics
-3. **Roman Baths** - Hydraulics, Chemistry, Materials Science
-
-### Renaissance
-4. **Duomo** - Geometry, Architecture, Physics
-5. **Observatory** - Astronomy, Optics, Mathematics
-6. **Workshop** - Engineering, Physics, Materials Science
+- [ ] Implement "bloom" animation (gray sketch → watercolor)
+- [ ] Add seal reward system
+- [ ] Persist game progress
 
 ## How to Run
-1. Open `RenaissanceArchitectAcademy.swiftpm` in Xcode or Swift Playgrounds
-2. Select target device (iOS Simulator, Mac, or physical device)
-3. Build and run
+1. Open `RenaissanceArchitectAcademy.xcodeproj` in Xcode
+2. Select "My Mac" or iOS Simulator
+3. Press Cmd+R to build and run
 
-## Notes for Future Sessions
+## Key Architecture Patterns
+- **MVVM**: Views observe ViewModels via `@StateObject`
+- **@MainActor**: CityViewModel runs on main thread
+- **Identifiable**: All models conform for ForEach
+- **SF Symbols**: Used for icons (no custom assets yet)
+
+## Git Commands
+```bash
+cd /Users/pollakmarina/RenaissanceArchitectAcademy
+git add . && git commit -m "message" && git push origin main
+```
+
+## Notes
 - Marina prefers direct fixes over long explanations
 - Always push to GitHub after significant changes
-- Custom fonts need to be added to Resources folder and registered
+- Custom fonts: add .ttf to project, register in Info.plist
+- Target: iOS 17+, macOS 14+
