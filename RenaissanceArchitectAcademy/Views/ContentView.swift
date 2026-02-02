@@ -40,6 +40,7 @@ struct ContentView: View {
                     NavigationStack {
                         CityView(filterEra: nil)
                             .toolbar {
+                                #if os(iOS)
                                 ToolbarItem(placement: .navigationBarLeading) {
                                     Button {
                                         withAnimation {
@@ -50,6 +51,18 @@ struct ContentView: View {
                                     }
                                     .tint(RenaissanceColors.sepiaInk)
                                 }
+                                #else
+                                ToolbarItem(placement: .automatic) {
+                                    Button {
+                                        withAnimation {
+                                            showingMainMenu = true
+                                        }
+                                    } label: {
+                                        Label("Menu", systemImage: "line.3.horizontal")
+                                    }
+                                    .tint(RenaissanceColors.sepiaInk)
+                                }
+                                #endif
                             }
                     }
                 }
