@@ -1,4 +1,5 @@
 import SwiftUI
+import Vortex
 
 /// Main Menu - Leonardo's Notebook aesthetic
 /// Features aged parchment, decorative borders, and Renaissance typography
@@ -17,6 +18,24 @@ struct MainMenuView: View {
             // Parchment background with subtle texture effect
             RenaissanceColors.parchmentGradient
                 .ignoresSafeArea()
+
+            // Floating dust motes particle effect
+            VortexView(dustMotesSystem) {
+                Circle()
+                    .fill(RenaissanceColors.ochre.opacity(0.6))
+                    .frame(width: 4, height: 4)
+                    .tag("dust")
+            }
+            .ignoresSafeArea()
+
+            // Ink splatters particle effect
+            VortexView(inkSplatterSystem) {
+                Circle()
+                    .fill(RenaissanceColors.sepiaInk.opacity(0.3))
+                    .frame(width: 6, height: 6)
+                    .tag("ink")
+            }
+            .ignoresSafeArea()
 
             // Decorative corner flourishes
             DecorativeCorners()
@@ -96,6 +115,41 @@ struct MainMenuView: View {
                 showContent = true
             }
         }
+    }
+
+    // MARK: - Particle Systems
+
+    /// Floating golden dust motes - like sunlight through a window
+    private var dustMotesSystem: VortexSystem {
+        VortexSystem(
+            tags: ["dust"],
+            shape: .box(width: 1, height: 0),
+            birthRate: 15,
+            lifespan: 8,
+            speed: 0.1,
+            speedVariation: 0.05,
+            angle: .degrees(270),
+            angleRange: .degrees(30),
+            size: 0.5,
+            sizeVariation: 0.3
+        )
+    }
+
+    /// Ink splatters drifting slowly
+    private var inkSplatterSystem: VortexSystem {
+        VortexSystem(
+            tags: ["ink"],
+            shape: .box(width: 1, height: 0),
+            birthRate: 3,
+            lifespan: 12,
+            speed: 0.03,
+            speedVariation: 0.02,
+            angle: .degrees(270),
+            angleRange: .degrees(45),
+            size: 0.4,
+            sizeVariation: 0.3,
+            sizeMultiplierAtDeath: 0.5
+        )
     }
 }
 
