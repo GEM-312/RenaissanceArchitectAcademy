@@ -1,13 +1,13 @@
 import Foundation
 
 /// Historical era for buildings
-enum Era: String, CaseIterable {
+enum Era: String, CaseIterable, Codable {
     case ancientRome = "Ancient Rome"
     case renaissance = "Renaissance"
 }
 
 /// Sciences that can be associated with building challenges
-enum Science: String, CaseIterable {
+enum Science: String, CaseIterable, Codable {
     case mathematics = "Mathematics"
     case physics = "Physics"
     case chemistry = "Chemistry"

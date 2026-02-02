@@ -1,8 +1,11 @@
 import SwiftUI
 
+/// Main Menu - Leonardo's Notebook aesthetic
+/// Features aged parchment, decorative borders, and Renaissance typography
 struct MainMenuView: View {
     var onStartGame: () -> Void
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @State private var showContent = false
 
     // Adaptive sizing
     private var titleSize: CGFloat { horizontalSizeClass == .regular ? 72 : 56 }
@@ -10,49 +13,157 @@ struct MainMenuView: View {
     private var taglineSize: CGFloat { horizontalSizeClass == .regular ? 24 : 20 }
 
     var body: some View {
-        VStack(spacing: horizontalSizeClass == .regular ? 32 : 24) {
-            Spacer()
+        ZStack {
+            // Parchment background with subtle texture effect
+            RenaissanceColors.parchmentGradient
+                .ignoresSafeArea()
 
-            // Title
-            Text("Renaissance")
-                .font(.custom("Cinzel-Bold", size: titleSize, relativeTo: .largeTitle))
-                .foregroundStyle(RenaissanceColors.sepiaInk)
+            // Decorative corner flourishes
+            DecorativeCorners()
 
-            Text("Architect Academy")
-                .font(.custom("EBGaramond-Italic", size: subtitleSize, relativeTo: .title))
-                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+            VStack(spacing: horizontalSizeClass == .regular ? 32 : 24) {
+                Spacer()
 
-            // Tagline
-            Text("Where Science Builds Civilization")
-                .font(.custom("PetitFormalScript-Regular", size: taglineSize, relativeTo: .headline))
-                .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                // Decorative top border
+                DividerOrnament()
+                    .frame(width: 200)
+                    .opacity(showContent ? 1 : 0)
+
+                // Title section with book-like framing
+                VStack(spacing: 8) {
+                    Text("Renaissance")
+                        .font(.custom("Cinzel-Bold", size: titleSize, relativeTo: .largeTitle))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+
+                    Text("Architect Academy")
+                        .font(.custom("EBGaramond-Italic", size: subtitleSize, relativeTo: .title))
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                }
+                .opacity(showContent ? 1 : 0)
+                .offset(y: showContent ? 0 : 20)
+
+                // Tagline with quill-written style
+                HStack(spacing: 12) {
+                    Image(systemName: "leaf.fill")
+                        .font(.caption)
+                        .foregroundStyle(RenaissanceColors.sageGreen)
+
+                    Text("Where Science Builds Civilization")
+                        .font(.custom("PetitFormalScript-Regular", size: taglineSize, relativeTo: .headline))
+                        .foregroundStyle(RenaissanceColors.renaissanceBlue)
+
+                    Image(systemName: "leaf.fill")
+                        .font(.caption)
+                        .foregroundStyle(RenaissanceColors.sageGreen)
+                        .scaleEffect(x: -1, y: 1)
+                }
                 .padding(.top, 8)
+                .opacity(showContent ? 1 : 0)
 
-            Spacer()
+                // Decorative bottom border
+                DividerOrnament()
+                    .frame(width: 200)
+                    .opacity(showContent ? 1 : 0)
 
-            // Menu Buttons
-            VStack(spacing: horizontalSizeClass == .regular ? 20 : 16) {
-                RenaissanceButton(title: "Begin Journey", action: onStartGame)
-                    #if os(macOS)
-                    .keyboardShortcut(.return, modifiers: [])
-                    #endif
+                Spacer()
 
-                RenaissanceButton(title: "Continue", action: {})
-                    #if os(macOS)
-                    .keyboardShortcut("c", modifiers: [.command])
-                    #endif
+                // Menu Buttons with wax seal accents
+                VStack(spacing: horizontalSizeClass == .regular ? 20 : 16) {
+                    RenaissanceButton(title: "Begin Journey", icon: "map.fill", action: onStartGame)
+                        #if os(macOS)
+                        .keyboardShortcut(.return, modifiers: [])
+                        #endif
 
-                RenaissanceButton(title: "Codex", action: {})
-                    #if os(macOS)
-                    .keyboardShortcut("k", modifiers: [.command])
-                    #endif
+                    RenaissanceButton(title: "Continue", icon: "book.fill", action: {})
+                        #if os(macOS)
+                        .keyboardShortcut("c", modifiers: [.command])
+                        #endif
+
+                    RenaissanceButton(title: "Codex", icon: "scroll.fill", action: {})
+                        #if os(macOS)
+                        .keyboardShortcut("k", modifiers: [.command])
+                        #endif
+                }
+                .padding(.bottom, horizontalSizeClass == .regular ? 80 : 60)
+                .opacity(showContent ? 1 : 0)
+                .offset(y: showContent ? 0 : 30)
             }
-            .padding(.bottom, horizontalSizeClass == .regular ? 80 : 60)
+            .padding(horizontalSizeClass == .regular ? 40 : 20)
         }
-        .padding(horizontalSizeClass == .regular ? 40 : 20)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(RenaissanceColors.parchment)
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.8)) {
+                showContent = true
+            }
+        }
     }
+}
+
+/// Decorative divider with Renaissance ornament style
+struct DividerOrnament: View {
+    var body: some View {
+        HStack(spacing: 8) {
+            Rectangle()
+                .fill(RenaissanceColors.ochre.opacity(0.5))
+                .frame(height: 1)
+
+            Image(systemName: "fleuron")
+                .font(.caption)
+                .foregroundStyle(RenaissanceColors.ochre)
+
+            Rectangle()
+                .fill(RenaissanceColors.ochre.opacity(0.5))
+                .frame(height: 1)
+        }
+    }
+}
+
+/// Decorative corner flourishes for parchment frame
+struct DecorativeCorners: View {
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack {
+                // Top-left
+                CornerFlourish()
+                    .position(x: 40, y: 40)
+
+                // Top-right
+                CornerFlourish()
+                    .rotationEffect(.degrees(90))
+                    .position(x: geometry.size.width - 40, y: 40)
+
+                // Bottom-left
+                CornerFlourish()
+                    .rotationEffect(.degrees(-90))
+                    .position(x: 40, y: geometry.size.height - 40)
+
+                // Bottom-right
+                CornerFlourish()
+                    .rotationEffect(.degrees(180))
+                    .position(x: geometry.size.width - 40, y: geometry.size.height - 40)
+            }
+        }
+    }
+}
+
+struct CornerFlourish: View {
+    var body: some View {
+        Path { path in
+            path.move(to: CGPoint(x: 0, y: 30))
+            path.addLine(to: CGPoint(x: 0, y: 0))
+            path.addLine(to: CGPoint(x: 30, y: 0))
+        }
+        .stroke(RenaissanceColors.ochre.opacity(0.4), lineWidth: 2)
+    }
+}
+
+#Preview("iPhone") {
+    MainMenuView(onStartGame: {})
+}
+
+#Preview("iPad") {
+    MainMenuView(onStartGame: {})
+        .previewInterfaceOrientation(.landscapeLeft)
 }
 
 #Preview("iPhone") {

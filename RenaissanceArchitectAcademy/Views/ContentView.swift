@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var showingMainMenu = true
-    @State private var selectedEra: Era? = nil
+    @State private var selectedDestination: SidebarDestination? = .allBuildings
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     var body: some View {
@@ -22,7 +22,7 @@ struct ContentView: View {
                 if horizontalSizeClass == .regular {
                     NavigationSplitView {
                         SidebarView(
-                            selectedEra: $selectedEra,
+                            selectedDestination: $selectedDestination,
                             onBackToMenu: {
                                 withAnimation {
                                     showingMainMenu = true
@@ -30,15 +30,15 @@ struct ContentView: View {
                             }
                         )
                     } detail: {
-                        CityView(filterEra: selectedEra)
+                        detailView
                     }
                     #if os(macOS)
                     .navigationSplitViewStyle(.balanced)
                     #endif
                 } else {
-                    // Compact view for iPhone / iPad portrait
+                    // Compact view for iPad portrait
                     NavigationStack {
-                        CityView(filterEra: nil)
+                        detailView
                             .toolbar {
                                 #if os(iOS)
                                 ToolbarItem(placement: .navigationBarLeading) {
@@ -71,6 +71,21 @@ struct ContentView: View {
         #if os(macOS)
         .frame(minWidth: 800, minHeight: 600)
         #endif
+    }
+
+    /// Detail view based on sidebar selection
+    @ViewBuilder
+    private var detailView: some View {
+        switch selectedDestination {
+        case .allBuildings:
+            CityView(filterEra: nil)
+        case .era(let era):
+            CityView(filterEra: era)
+        case .profile:
+            ProfileView()
+        case .none:
+            CityView(filterEra: nil)
+        }
     }
 }
 
