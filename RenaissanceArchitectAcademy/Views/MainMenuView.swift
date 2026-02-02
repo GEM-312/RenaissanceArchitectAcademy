@@ -39,18 +39,25 @@ struct MainMenuView: View {
                     .frame(width: 200)
                     .opacity(showContent ? 1 : 0)
 
-                // Title section with book-like framing
+                // Title section with quill-writing animation
                 VStack(spacing: 8) {
-                    Text("Renaissance")
-                        .font(.custom("Cinzel-Bold", size: titleSize, relativeTo: .largeTitle))
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                    AnimatedText(
+                        text: "Renaissance",
+                        font: .custom("Cinzel-Bold", size: titleSize, relativeTo: .largeTitle),
+                        color: RenaissanceColors.sepiaInk,
+                        isAnimating: showContent,
+                        delayPerLetter: 0.06
+                    )
 
-                    Text("Architect Academy")
-                        .font(.custom("EBGaramond-Italic", size: subtitleSize, relativeTo: .title))
-                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                    AnimatedText(
+                        text: "Architect Academy",
+                        font: .custom("EBGaramond-Italic", size: subtitleSize, relativeTo: .title),
+                        color: RenaissanceColors.sepiaInk.opacity(0.8),
+                        isAnimating: showContent,
+                        initialDelay: 0.6,
+                        delayPerLetter: 0.04
+                    )
                 }
-                .opacity(showContent ? 1 : 0)
-                .offset(y: showContent ? 0 : 20)
 
                 // Tagline with quill-written style
                 HStack(spacing: 12) {
@@ -182,6 +189,34 @@ struct CornerFlourish: View {
             path.addLine(to: CGPoint(x: 30, y: 0))
         }
         .stroke(RenaissanceColors.ochre.opacity(0.4), lineWidth: 2)
+    }
+}
+
+/// Animated text that reveals letter by letter - like a quill writing
+struct AnimatedText: View {
+    let text: String
+    let font: Font
+    let color: Color
+    let isAnimating: Bool
+    var initialDelay: Double = 0
+    var delayPerLetter: Double = 0.05
+
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(Array(text.enumerated()), id: \.offset) { index, letter in
+                Text(String(letter))
+                    .font(font)
+                    .foregroundStyle(color)
+                    .opacity(isAnimating ? 1 : 0)
+                    .offset(y: isAnimating ? 0 : 15)
+                    .scaleEffect(isAnimating ? 1 : 0.8)
+                    .animation(
+                        .spring(response: 0.4, dampingFraction: 0.7)
+                        .delay(initialDelay + Double(index) * delayPerLetter),
+                        value: isAnimating
+                    )
+            }
+        }
     }
 }
 
