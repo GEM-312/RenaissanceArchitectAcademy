@@ -18,6 +18,11 @@
 		009 /* RenaissanceColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 109; };
 		010 /* RenaissanceButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110; };
 		011 /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 111; };
+		015 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 115; };
+		016 /* BloomEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 116; };
+		012 /* Vortex in Frameworks */ = {isa = PBXBuildFile; productRef = 812; };
+		013 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = 813; };
+		014 /* Subsonic in Frameworks */ = {isa = PBXBuildFile; productRef = 814; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +38,8 @@
 		109 /* RenaissanceColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenaissanceColors.swift; sourceTree = "<group>"; };
 		110 /* RenaissanceButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenaissanceButton.swift; sourceTree = "<group>"; };
 		111 /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
+		115 /* SoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
+		116 /* BloomEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BloomEffectView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -40,6 +47,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				012 /* Vortex in Frameworks */,
+				013 /* Pow in Frameworks */,
+				014 /* Subsonic in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -62,6 +72,7 @@
 				304 /* ViewModels */,
 				305 /* Models */,
 				306 /* Styles */,
+				307 /* Services */,
 			);
 			path = RenaissanceArchitectAcademy;
 			sourceTree = "<group>";
@@ -83,6 +94,7 @@
 				105 /* BuildingPlotView.swift */,
 				106 /* BuildingDetailOverlay.swift */,
 				111 /* SidebarView.swift */,
+				116 /* BloomEffectView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -112,6 +124,14 @@
 			path = Styles;
 			sourceTree = "<group>";
 		};
+		307 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				115 /* SoundManager.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -127,6 +147,11 @@
 			dependencies = (
 			);
 			name = RenaissanceArchitectAcademy;
+			packageProductDependencies = (
+				812 /* Vortex */,
+				813 /* Pow */,
+				814 /* Subsonic */,
+			);
 			productName = RenaissanceArchitectAcademy;
 			productReference = 100 /* RenaissanceArchitectAcademy.app */;
 			productType = "com.apple.product-type.application";
@@ -155,6 +180,11 @@
 				Base,
 			);
 			mainGroup = 300;
+			packageReferences = (
+				800 /* XCRemoteSwiftPackageReference "Vortex" */,
+				801 /* XCRemoteSwiftPackageReference "Pow" */,
+				802 /* XCRemoteSwiftPackageReference "Subsonic" */,
+			);
 			productRefGroup = 302 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -180,6 +210,8 @@
 				009 /* RenaissanceColors.swift in Sources */,
 				010 /* RenaissanceButton.swift in Sources */,
 				011 /* SidebarView.swift in Sources */,
+				015 /* SoundManager.swift in Sources */,
+				016 /* BloomEffectView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -386,6 +418,51 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		800 /* XCRemoteSwiftPackageReference "Vortex" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/twostraws/Vortex.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		801 /* XCRemoteSwiftPackageReference "Pow" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/EmergeTools/Pow.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		802 /* XCRemoteSwiftPackageReference "Subsonic" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/twostraws/Subsonic.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		812 /* Vortex */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 800 /* XCRemoteSwiftPackageReference "Vortex" */;
+			productName = Vortex;
+		};
+		813 /* Pow */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 801 /* XCRemoteSwiftPackageReference "Pow" */;
+			productName = Pow;
+		};
+		814 /* Subsonic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 802 /* XCRemoteSwiftPackageReference "Subsonic" */;
+			productName = Subsonic;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 600 /* Project object */;
 }
