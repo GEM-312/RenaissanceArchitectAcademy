@@ -25,6 +25,26 @@
 		546EE9612F3113EC0075C0E1 /* Vortex in Frameworks */ = {isa = PBXBuildFile; productRef = 546EE9602F3113EC0075C0E1 /* Vortex */; };
 		546EE9642F3114010075C0E1 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = 546EE9632F3114010075C0E1 /* Pow */; };
 		546EE9672F31141D0075C0E1 /* Subsonic in Frameworks */ = {isa = PBXBuildFile; productRef = 546EE9662F31141D0075C0E1 /* Subsonic */; };
+		F001 /* Cinzel-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B022F313B22007D8C64 /* Cinzel-Black.ttf */; };
+		F002 /* Cinzel-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B032F313B22007D8C64 /* Cinzel-Bold.ttf */; };
+		F003 /* Cinzel-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B042F313B22007D8C64 /* Cinzel-ExtraBold.ttf */; };
+		F004 /* Cinzel-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B052F313B22007D8C64 /* Cinzel-Medium.ttf */; };
+		F005 /* Cinzel-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B062F313B22007D8C64 /* Cinzel-Regular.ttf */; };
+		F006 /* Cinzel-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B072F313B22007D8C64 /* Cinzel-SemiBold.ttf */; };
+		F007 /* Cinzel-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B082F313B22007D8C64 /* Cinzel-VariableFont_wght.ttf */; };
+		F008 /* EBGaramond-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B092F313B22007D8C64 /* EBGaramond-Bold.ttf */; };
+		F009 /* EBGaramond-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B0A2F313B22007D8C64 /* EBGaramond-BoldItalic.ttf */; };
+		F010 /* EBGaramond-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B0B2F313B22007D8C64 /* EBGaramond-ExtraBold.ttf */; };
+		F011 /* EBGaramond-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B0C2F313B22007D8C64 /* EBGaramond-ExtraBoldItalic.ttf */; };
+		F012 /* EBGaramond-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B0D2F313B22007D8C64 /* EBGaramond-Italic.ttf */; };
+		F013 /* EBGaramond-Italic-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B0E2F313B22007D8C64 /* EBGaramond-Italic-VariableFont_wght.ttf */; };
+		F014 /* EBGaramond-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B0F2F313B22007D8C64 /* EBGaramond-Medium.ttf */; };
+		F015 /* EBGaramond-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B102F313B22007D8C64 /* EBGaramond-MediumItalic.ttf */; };
+		F016 /* EBGaramond-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B112F313B22007D8C64 /* EBGaramond-Regular.ttf */; };
+		F017 /* EBGaramond-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B122F313B22007D8C64 /* EBGaramond-SemiBold.ttf */; };
+		F018 /* EBGaramond-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B132F313B22007D8C64 /* EBGaramond-SemiBoldItalic.ttf */; };
+		F019 /* EBGaramond-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B142F313B22007D8C64 /* EBGaramond-VariableFont_wght.ttf */; };
+		F020 /* PetitFormalScript-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B152F313B22007D8C64 /* PetitFormalScript-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -64,6 +84,7 @@
 		54477B132F313B22007D8C64 /* EBGaramond-SemiBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "EBGaramond-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
 		54477B142F313B22007D8C64 /* EBGaramond-VariableFont_wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "EBGaramond-VariableFont_wght.ttf"; sourceTree = "<group>"; };
 		54477B152F313B22007D8C64 /* PetitFormalScript-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PetitFormalScript-Regular.ttf"; sourceTree = "<group>"; };
+		54477B172F313D06007D8C64 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +112,7 @@
 		301 /* RenaissanceArchitectAcademy */ = {
 			isa = PBXGroup;
 			children = (
+				54477B172F313D06007D8C64 /* Info.plist */,
 				54477B162F313B22007D8C64 /* Fonts */,
 				101 /* RenaissanceArchitectAcademyApp.swift */,
 				303 /* Views */,
@@ -188,6 +210,36 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXResourcesBuildPhase section */
+		402 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F001 /* Cinzel-Black.ttf in Resources */,
+				F002 /* Cinzel-Bold.ttf in Resources */,
+				F003 /* Cinzel-ExtraBold.ttf in Resources */,
+				F004 /* Cinzel-Medium.ttf in Resources */,
+				F005 /* Cinzel-Regular.ttf in Resources */,
+				F006 /* Cinzel-SemiBold.ttf in Resources */,
+				F007 /* Cinzel-VariableFont_wght.ttf in Resources */,
+				F008 /* EBGaramond-Bold.ttf in Resources */,
+				F009 /* EBGaramond-BoldItalic.ttf in Resources */,
+				F010 /* EBGaramond-ExtraBold.ttf in Resources */,
+				F011 /* EBGaramond-ExtraBoldItalic.ttf in Resources */,
+				F012 /* EBGaramond-Italic.ttf in Resources */,
+				F013 /* EBGaramond-Italic-VariableFont_wght.ttf in Resources */,
+				F014 /* EBGaramond-Medium.ttf in Resources */,
+				F015 /* EBGaramond-MediumItalic.ttf in Resources */,
+				F016 /* EBGaramond-Regular.ttf in Resources */,
+				F017 /* EBGaramond-SemiBold.ttf in Resources */,
+				F018 /* EBGaramond-SemiBoldItalic.ttf in Resources */,
+				F019 /* EBGaramond-VariableFont_wght.ttf in Resources */,
+				F020 /* PetitFormalScript-Regular.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXNativeTarget section */
 		400 /* RenaissanceArchitectAcademy */ = {
 			isa = PBXNativeTarget;
@@ -195,6 +247,7 @@
 			buildPhases = (
 				401 /* Sources */,
 				200 /* Frameworks */,
+				402 /* Resources */,
 			);
 			buildRules = (
 			);
