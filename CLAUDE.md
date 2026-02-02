@@ -20,10 +20,15 @@ Educational city-building game where students solve architectural challenges acr
 RenaissanceArchitectAcademy/
 ├── RenaissanceArchitectAcademy.xcodeproj/
 ├── RenaissanceArchitectAcademy/
-│   ├── RenaissanceArchitectAcademyApp.swift  # @main entry point
+│   ├── RenaissanceArchitectAcademyApp.swift  # @main + font registration
+│   ├── Info.plist                            # Font declarations
+│   ├── Fonts/                                # Custom Renaissance fonts
+│   │   ├── Cinzel-*.ttf                      # Titles, buttons
+│   │   ├── EBGaramond-*.ttf                  # Body text
+│   │   └── PetitFormalScript-Regular.ttf     # Tagline
 │   ├── Views/
 │   │   ├── ContentView.swift          # Root view, navigation state
-│   │   ├── MainMenuView.swift         # Title screen with decorative corners
+│   │   ├── MainMenuView.swift         # Title + Vortex particles + letter animation
 │   │   ├── CityView.swift             # 6 building plots grid + progress
 │   │   ├── BuildingPlotView.swift     # Individual plot card
 │   │   ├── BuildingDetailOverlay.swift # Modal with sciences
@@ -38,12 +43,42 @@ RenaissanceArchitectAcademy/
 │   ├── Styles/
 │   │   ├── RenaissanceColors.swift    # Full color palette + gradients
 │   │   └── RenaissanceButton.swift    # Custom button components
-│   └── Services/
-│       └── SoundManager.swift         # Audio playback with AVFoundation
+│   ├── Services/
+│   │   └── SoundManager.swift         # Audio playback with AVFoundation
+│   └── building_complete.mp3          # Victory sound effect
 ├── CLAUDE.md
 ├── LICENSE
 └── .gitignore
 ```
+
+## Custom Fonts
+Fonts are registered programmatically in `RenaissanceArchitectAcademyApp.swift` using CoreText:
+```swift
+CTFontManagerRegisterFontsForURL(fontURL as CFURL, .process, nil)
+```
+
+| Font | Usage |
+|------|-------|
+| Cinzel-Bold | Main titles |
+| Cinzel-Regular | Buttons, labels |
+| EBGaramond-Regular | Body text |
+| EBGaramond-Italic | Subtitles, hints |
+| PetitFormalScript-Regular | Tagline |
+
+**Note:** Info.plist `UIAppFonts` didn't work with auto-generated plist, so we use CoreText manual registration.
+
+## Main Menu Effects
+- **Vortex dust particles** - Golden dust motes floating upward (sunlight effect)
+- **Letter-by-letter animation** - "Renaissance" then "Architect Academy" appear like quill writing
+- **AnimatedText component** - Reusable, configurable delay per letter
+
+## Sound Effects (Simplified)
+Only meaningful moments - no button sounds:
+- `building_complete.mp3` ✅ Added
+- `challenge_success.mp3` - TODO
+- `challenge_fail.mp3` - TODO
+- `seal_stamp.mp3` - TODO
+- `page_flip.mp3` - TODO (optional)
 
 ## Color Palette (RenaissanceColors.swift)
 ```swift
@@ -65,11 +100,6 @@ RenaissanceColors.goldSuccess     // #DAA520 - Success glow
 RenaissanceColors.errorRed        // #CD5C5C - Errors
 RenaissanceColors.blueprintBlue   // #4169E1 - Technical overlays
 RenaissanceColors.highlightAmber  // #FFBF00 - Highlights
-
-// Gradients
-RenaissanceColors.parchmentGradient  // Background
-RenaissanceColors.goldenGlow         // Success radial
-RenaissanceColors.blueprintOverlay   // Technical overlay
 ```
 
 ## Models
@@ -109,25 +139,23 @@ Each has `iconName` (SF Symbols) and corresponding color via `RenaissanceColors.
 - [x] SwiftUI Xcode project (migrated from Unity)
 - [x] MVVM architecture with @MainActor
 - [x] Leonardo's Notebook aesthetic throughout
-- [x] Main menu with decorative corners and animations
-- [x] City view with 6 building plots + progress bar
-- [x] Building detail overlay with science badges
+- [x] Custom fonts (Cinzel, EBGaramond, PetitFormalScript) via CoreText
+- [x] Main menu with Vortex dust particle effects
+- [x] Letter-by-letter quill writing animation for title
+- [x] City view with 6 building plots + blueprint grid overlay
+- [x] Building detail overlay with color-coded science badges
 - [x] iPad sidebar navigation with profile section
 - [x] ProfileView with achievements, resources, science mastery
 - [x] BloomEffectView for completion animations
-- [x] SoundManager with AVFoundation
-- [x] Complete color palette with 13+ science colors
-- [x] Blueprint grid overlay effect
-- [x] Wax seal achievement badges
+- [x] SoundManager (simplified - meaningful moments only)
+- [x] building_complete.mp3 sound effect
 
 ### Next Steps
-- [ ] Add custom fonts (Cinzel, EBGaramond, PetitFormalScript)
-- [ ] Create challenge system/UI
 - [ ] Generate Midjourney art assets
+- [ ] Create challenge system/UI
+- [ ] Add remaining sound effects
 - [ ] Implement full bloom animation (gray sketch → watercolor)
-- [ ] Add seal reward system
 - [ ] Persist game progress with UserDefaults/SwiftData
-- [ ] Integrate Vortex particle effects
 
 ## How to Run
 1. Open `RenaissanceArchitectAcademy.xcodeproj` in Xcode
@@ -141,6 +169,8 @@ Each has `iconName` (SF Symbols) and corresponding color via `RenaissanceColors.
 - **SF Symbols**: Used for icons (no custom assets yet)
 - **NavigationSplitView**: iPad/Mac sidebar navigation
 - **horizontalSizeClass**: Adaptive layouts for different screens
+- **CoreText**: Manual font registration at app launch
+- **Vortex**: Particle effects (dust motes on main menu)
 
 ## Git Commands
 ```bash
@@ -150,7 +180,8 @@ git add . && git commit -m "message" && git push origin main
 
 ## Notes
 - Marina prefers direct fixes over long explanations
+- Teach concepts as you go when making changes
 - Always push to GitHub after significant changes
 - iPad only (TARGETED_DEVICE_FAMILY = 2)
-- Custom fonts: add .ttf to project, register in Info.plist
+- Fonts: Must use CoreText registration (Info.plist UIAppFonts doesn't work with auto-generated plist)
 - Target: iOS 17+, macOS 14+
