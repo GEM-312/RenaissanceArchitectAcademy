@@ -95,5 +95,4 @@ struct ContentView: View {
 
 #Preview("iPad") {
     ContentView()
-        .previewDevice("iPad Pro (12.9-inch) (6th generation)")
 }

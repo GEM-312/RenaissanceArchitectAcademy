@@ -161,16 +161,7 @@ struct CornerFlourish: View {
     MainMenuView(onStartGame: {})
 }
 
-#Preview("iPad") {
-    MainMenuView(onStartGame: {})
-        .previewInterfaceOrientation(.landscapeLeft)
-}
-
-#Preview("iPhone") {
+#Preview("iPad", traits: .landscapeLeft) {
     MainMenuView(onStartGame: {})
 }
 
-#Preview("iPad") {
-    MainMenuView(onStartGame: {})
-        .previewInterfaceOrientation(.landscapeLeft)
-}
