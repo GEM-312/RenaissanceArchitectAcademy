@@ -31,8 +31,9 @@ struct MainMenuView: View {
             // Ink splatters particle effect
             VortexView(inkSplatterSystem) {
                 Circle()
-                    .fill(RenaissanceColors.sepiaInk.opacity(0.3))
-                    .frame(width: 6, height: 6)
+                    .fill(RenaissanceColors.sepiaInk.opacity(0.15))
+                    .frame(width: 24, height: 24)
+                    .blur(radius: 2)
                     .tag("ink")
             }
             .ignoresSafeArea()
@@ -135,20 +136,20 @@ struct MainMenuView: View {
         )
     }
 
-    /// Ink splatters drifting slowly
+    /// Ink splatters drifting slowly - larger, softer blobs
     private var inkSplatterSystem: VortexSystem {
         VortexSystem(
             tags: ["ink"],
             shape: .box(width: 1, height: 0),
-            birthRate: 3,
-            lifespan: 12,
-            speed: 0.03,
-            speedVariation: 0.02,
+            birthRate: 2,
+            lifespan: 15,
+            speed: 0.02,
+            speedVariation: 0.01,
             angle: .degrees(270),
-            angleRange: .degrees(45),
-            size: 0.4,
-            sizeVariation: 0.3,
-            sizeMultiplierAtDeath: 0.5
+            angleRange: .degrees(60),
+            size: 1.0,
+            sizeVariation: 0.5,
+            sizeMultiplierAtDeath: 0.3
         )
     }
 }
