@@ -44,6 +44,26 @@
 		116 /* BloomEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BloomEffectView.swift; sourceTree = "<group>"; };
 		117 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		118 /* StudentProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentProfile.swift; sourceTree = "<group>"; };
+		54477B022F313B22007D8C64 /* Cinzel-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-Black.ttf"; sourceTree = "<group>"; };
+		54477B032F313B22007D8C64 /* Cinzel-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-Bold.ttf"; sourceTree = "<group>"; };
+		54477B042F313B22007D8C64 /* Cinzel-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-ExtraBold.ttf"; sourceTree = "<group>"; };
+		54477B052F313B22007D8C64 /* Cinzel-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-Medium.ttf"; sourceTree = "<group>"; };
+		54477B062F313B22007D8C64 /* Cinzel-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-Regular.ttf"; sourceTree = "<group>"; };
+		54477B072F313B22007D8C64 /* Cinzel-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-SemiBold.ttf"; sourceTree = "<group>"; };
+		54477B082F313B22007D8C64 /* Cinzel-VariableFont_wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-VariableFont_wght.ttf"; sourceTree = "<group>"; };
+		54477B092F313B22007D8C64 /* EBGaramond-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "EBGaramond-Bold.ttf"; sourceTree = "<group>"; };
+		54477B0A2F313B22007D8C64 /* EBGaramond-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "EBGaramond-BoldItalic.ttf"; sourceTree = "<group>"; };
+		54477B0B2F313B22007D8C64 /* EBGaramond-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "EBGaramond-ExtraBold.ttf"; sourceTree = "<group>"; };
+		54477B0C2F313B22007D8C64 /* EBGaramond-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "EBGaramond-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
+		54477B0D2F313B22007D8C64 /* EBGaramond-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "EBGaramond-Italic.ttf"; sourceTree = "<group>"; };
+		54477B0E2F313B22007D8C64 /* EBGaramond-Italic-VariableFont_wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "EBGaramond-Italic-VariableFont_wght.ttf"; sourceTree = "<group>"; };
+		54477B0F2F313B22007D8C64 /* EBGaramond-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "EBGaramond-Medium.ttf"; sourceTree = "<group>"; };
+		54477B102F313B22007D8C64 /* EBGaramond-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "EBGaramond-MediumItalic.ttf"; sourceTree = "<group>"; };
+		54477B112F313B22007D8C64 /* EBGaramond-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "EBGaramond-Regular.ttf"; sourceTree = "<group>"; };
+		54477B122F313B22007D8C64 /* EBGaramond-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "EBGaramond-SemiBold.ttf"; sourceTree = "<group>"; };
+		54477B132F313B22007D8C64 /* EBGaramond-SemiBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "EBGaramond-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
+		54477B142F313B22007D8C64 /* EBGaramond-VariableFont_wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "EBGaramond-VariableFont_wght.ttf"; sourceTree = "<group>"; };
+		54477B152F313B22007D8C64 /* PetitFormalScript-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PetitFormalScript-Regular.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +91,7 @@
 		301 /* RenaissanceArchitectAcademy */ = {
 			isa = PBXGroup;
 			children = (
+				54477B162F313B22007D8C64 /* Fonts */,
 				101 /* RenaissanceArchitectAcademyApp.swift */,
 				303 /* Views */,
 				304 /* ViewModels */,
@@ -136,6 +157,33 @@
 				115 /* SoundManager.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		54477B162F313B22007D8C64 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				54477B022F313B22007D8C64 /* Cinzel-Black.ttf */,
+				54477B032F313B22007D8C64 /* Cinzel-Bold.ttf */,
+				54477B042F313B22007D8C64 /* Cinzel-ExtraBold.ttf */,
+				54477B052F313B22007D8C64 /* Cinzel-Medium.ttf */,
+				54477B062F313B22007D8C64 /* Cinzel-Regular.ttf */,
+				54477B072F313B22007D8C64 /* Cinzel-SemiBold.ttf */,
+				54477B082F313B22007D8C64 /* Cinzel-VariableFont_wght.ttf */,
+				54477B092F313B22007D8C64 /* EBGaramond-Bold.ttf */,
+				54477B0A2F313B22007D8C64 /* EBGaramond-BoldItalic.ttf */,
+				54477B0B2F313B22007D8C64 /* EBGaramond-ExtraBold.ttf */,
+				54477B0C2F313B22007D8C64 /* EBGaramond-ExtraBoldItalic.ttf */,
+				54477B0D2F313B22007D8C64 /* EBGaramond-Italic.ttf */,
+				54477B0E2F313B22007D8C64 /* EBGaramond-Italic-VariableFont_wght.ttf */,
+				54477B0F2F313B22007D8C64 /* EBGaramond-Medium.ttf */,
+				54477B102F313B22007D8C64 /* EBGaramond-MediumItalic.ttf */,
+				54477B112F313B22007D8C64 /* EBGaramond-Regular.ttf */,
+				54477B122F313B22007D8C64 /* EBGaramond-SemiBold.ttf */,
+				54477B132F313B22007D8C64 /* EBGaramond-SemiBoldItalic.ttf */,
+				54477B142F313B22007D8C64 /* EBGaramond-VariableFont_wght.ttf */,
+				54477B152F313B22007D8C64 /* PetitFormalScript-Regular.ttf */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -345,6 +393,7 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RenaissanceArchitectAcademy/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -376,6 +425,7 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RenaissanceArchitectAcademy/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

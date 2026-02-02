@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Cinzel-Regular.ttf</string>
+		<string>Cinzel-Medium.ttf</string>
+		<string>Cinzel-SemiBold.ttf</string>
+		<string>Cinzel-Bold.ttf</string>
+		<string>Cinzel-ExtraBold.ttf</string>
+		<string>Cinzel-Black.ttf</string>
+		<string>EBGaramond-Regular.ttf</string>
+		<string>EBGaramond-Italic.ttf</string>
+		<string>EBGaramond-Medium.ttf</string>
+		<string>EBGaramond-MediumItalic.ttf</string>
+		<string>EBGaramond-SemiBold.ttf</string>
+		<string>EBGaramond-SemiBoldItalic.ttf</string>
+		<string>EBGaramond-Bold.ttf</string>
+		<string>EBGaramond-BoldItalic.ttf</string>
+		<string>EBGaramond-ExtraBold.ttf</string>
+		<string>EBGaramond-ExtraBoldItalic.ttf</string>
+		<string>PetitFormalScript-Regular.ttf</string>
+	</array>
+</dict>
+</plist>
