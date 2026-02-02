@@ -1,4 +1,5 @@
 import SwiftUI
+import CoreText
 #if canImport(UIKit)
 import UIKit
 #elseif canImport(AppKit)
@@ -9,10 +10,38 @@ import AppKit
 struct RenaissanceArchitectAcademyApp: App {
 
     init() {
+        // Register custom fonts manually
+        registerCustomFonts()
+
         // Debug: Print available fonts to check if custom fonts loaded
         #if DEBUG
         printAvailableFonts()
         #endif
+    }
+
+    /// Manually register all custom fonts from the bundle
+    private func registerCustomFonts() {
+        let fontFiles = [
+            "Cinzel-Regular", "Cinzel-Medium", "Cinzel-SemiBold", "Cinzel-Bold",
+            "Cinzel-ExtraBold", "Cinzel-Black", "Cinzel-VariableFont_wght",
+            "EBGaramond-Regular", "EBGaramond-Italic", "EBGaramond-Medium",
+            "EBGaramond-MediumItalic", "EBGaramond-SemiBold", "EBGaramond-SemiBoldItalic",
+            "EBGaramond-Bold", "EBGaramond-BoldItalic", "EBGaramond-ExtraBold",
+            "EBGaramond-ExtraBoldItalic", "EBGaramond-VariableFont_wght",
+            "EBGaramond-Italic-VariableFont_wght", "PetitFormalScript-Regular"
+        ]
+
+        for fontFile in fontFiles {
+            if let fontURL = Bundle.main.url(forResource: fontFile, withExtension: "ttf") {
+                var error: Unmanaged<CFError>?
+                if !CTFontManagerRegisterFontsForURL(fontURL as CFURL, .process, &error) {
+                    if let error = error?.takeRetainedValue() {
+                        print("⚠️ Failed to register font \(fontFile): \(error)")
+                    }
+                }
+            }
+        }
+        print("✅ Custom fonts registered")
     }
 
     var body: some Scene {
