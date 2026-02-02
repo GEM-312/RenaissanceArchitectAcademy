@@ -7,19 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		001 /* RenaissanceArchitectAcademyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 101; };
-		002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 102; };
-		003 /* MainMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 103; };
-		004 /* CityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104; };
-		005 /* BuildingPlotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 105; };
-		006 /* BuildingDetailOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 106; };
-		007 /* CityViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 107; };
-		008 /* Building.swift in Sources */ = {isa = PBXBuildFile; fileRef = 108; };
-		009 /* RenaissanceColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 109; };
-		010 /* RenaissanceButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110; };
-		011 /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 111; };
-		015 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 115; };
-		016 /* BloomEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 116; };
+		001 /* RenaissanceArchitectAcademyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 101 /* RenaissanceArchitectAcademyApp.swift */; };
+		002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 102 /* ContentView.swift */; };
+		003 /* MainMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 103 /* MainMenuView.swift */; };
+		004 /* CityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104 /* CityView.swift */; };
+		005 /* BuildingPlotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 105 /* BuildingPlotView.swift */; };
+		006 /* BuildingDetailOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 106 /* BuildingDetailOverlay.swift */; };
+		007 /* CityViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 107 /* CityViewModel.swift */; };
+		008 /* Building.swift in Sources */ = {isa = PBXBuildFile; fileRef = 108 /* Building.swift */; };
+		009 /* RenaissanceColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 109 /* RenaissanceColors.swift */; };
+		010 /* RenaissanceButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110 /* RenaissanceButton.swift */; };
+		011 /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 111 /* SidebarView.swift */; };
+		015 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 115 /* SoundManager.swift */; };
+		016 /* BloomEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 116 /* BloomEffectView.swift */; };
+		546EE9612F3113EC0075C0E1 /* Vortex in Frameworks */ = {isa = PBXBuildFile; productRef = 546EE9602F3113EC0075C0E1 /* Vortex */; };
+		546EE9642F3114010075C0E1 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = 546EE9632F3114010075C0E1 /* Pow */; };
+		546EE9672F31141D0075C0E1 /* Subsonic in Frameworks */ = {isa = PBXBuildFile; productRef = 546EE9662F31141D0075C0E1 /* Subsonic */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,10 +43,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		200 = {
+		200 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				546EE9672F31141D0075C0E1 /* Subsonic in Frameworks */,
+				546EE9612F3113EC0075C0E1 /* Vortex in Frameworks */,
+				546EE9642F3114010075C0E1 /* Pow in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -131,7 +137,7 @@
 /* Begin PBXNativeTarget section */
 		400 /* RenaissanceArchitectAcademy */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 500;
+			buildConfigurationList = 500 /* Build configuration list for PBXNativeTarget "RenaissanceArchitectAcademy" */;
 			buildPhases = (
 				401 /* Sources */,
 				200 /* Frameworks */,
@@ -148,7 +154,7 @@
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		600 = {
+		600 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
@@ -160,7 +166,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 601;
+			buildConfigurationList = 601 /* Build configuration list for PBXProject "RenaissanceArchitectAcademy" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -169,6 +175,11 @@
 				Base,
 			);
 			mainGroup = 300;
+			packageReferences = (
+				546EE95F2F3113EC0075C0E1 /* XCRemoteSwiftPackageReference "Vortex" */,
+				546EE9622F3114010075C0E1 /* XCRemoteSwiftPackageReference "Pow" */,
+				546EE9652F31141D0075C0E1 /* XCRemoteSwiftPackageReference "Subsonic" */,
+			);
 			productRefGroup = 302 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -383,7 +394,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		500 = {
+		500 /* Build configuration list for PBXNativeTarget "RenaissanceArchitectAcademy" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				702 /* Debug */,
@@ -392,7 +403,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		601 = {
+		601 /* Build configuration list for PBXProject "RenaissanceArchitectAcademy" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				700 /* Debug */,
@@ -402,6 +413,51 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		546EE95F2F3113EC0075C0E1 /* XCRemoteSwiftPackageReference "Vortex" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/twostraws/Vortex.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.4;
+			};
+		};
+		546EE9622F3114010075C0E1 /* XCRemoteSwiftPackageReference "Pow" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/EmergeTools/Pow.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.5;
+			};
+		};
+		546EE9652F31141D0075C0E1 /* XCRemoteSwiftPackageReference "Subsonic" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/twostraws/Subsonic.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		546EE9602F3113EC0075C0E1 /* Vortex */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 546EE95F2F3113EC0075C0E1 /* XCRemoteSwiftPackageReference "Vortex" */;
+			productName = Vortex;
+		};
+		546EE9632F3114010075C0E1 /* Pow */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 546EE9622F3114010075C0E1 /* XCRemoteSwiftPackageReference "Pow" */;
+			productName = Pow;
+		};
+		546EE9662F31141D0075C0E1 /* Subsonic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 546EE9652F31141D0075C0E1 /* XCRemoteSwiftPackageReference "Subsonic" */;
+			productName = Subsonic;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 600 /* Project object */;
 }

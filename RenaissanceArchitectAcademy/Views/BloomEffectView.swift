@@ -101,7 +101,7 @@ struct SparkleParticle: View {
                 x: cos(angle.radians) * distance,
                 y: sin(angle.radians) * distance
             )
-            .opacity(1 - progress * 0.8)
+            .opacity(Double(1.0 - progress * 0.8))
             .blur(radius: progress * 2)
     }
 }
