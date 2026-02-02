@@ -20,6 +20,8 @@
 		011 /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 111 /* SidebarView.swift */; };
 		015 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 115 /* SoundManager.swift */; };
 		016 /* BloomEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 116 /* BloomEffectView.swift */; };
+		017 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 117 /* ProfileView.swift */; };
+		018 /* StudentProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 118 /* StudentProfile.swift */; };
 		546EE9612F3113EC0075C0E1 /* Vortex in Frameworks */ = {isa = PBXBuildFile; productRef = 546EE9602F3113EC0075C0E1 /* Vortex */; };
 		546EE9642F3114010075C0E1 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = 546EE9632F3114010075C0E1 /* Pow */; };
 		546EE9672F31141D0075C0E1 /* Subsonic in Frameworks */ = {isa = PBXBuildFile; productRef = 546EE9662F31141D0075C0E1 /* Subsonic */; };
@@ -40,6 +42,8 @@
 		111 /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
 		115 /* SoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
 		116 /* BloomEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BloomEffectView.swift; sourceTree = "<group>"; };
+		117 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		118 /* StudentProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentProfile.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +99,7 @@
 				106 /* BuildingDetailOverlay.swift */,
 				111 /* SidebarView.swift */,
 				116 /* BloomEffectView.swift */,
+				117 /* ProfileView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -111,6 +116,7 @@
 			isa = PBXGroup;
 			children = (
 				108 /* Building.swift */,
+				118 /* StudentProfile.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -207,6 +213,8 @@
 				011 /* SidebarView.swift in Sources */,
 				015 /* SoundManager.swift in Sources */,
 				016 /* BloomEffectView.swift in Sources */,
+				017 /* ProfileView.swift in Sources */,
+				018 /* StudentProfile.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
