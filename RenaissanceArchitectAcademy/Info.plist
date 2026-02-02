@@ -4,26 +4,26 @@
 <dict>
 	<key>UIAppFonts</key>
 	<array>
-		<string>Fonts/Cinzel-Regular.ttf</string>
-		<string>Fonts/Cinzel-Medium.ttf</string>
-		<string>Fonts/Cinzel-SemiBold.ttf</string>
-		<string>Fonts/Cinzel-Bold.ttf</string>
-		<string>Fonts/Cinzel-ExtraBold.ttf</string>
-		<string>Fonts/Cinzel-Black.ttf</string>
-		<string>Fonts/Cinzel-VariableFont_wght.ttf</string>
-		<string>Fonts/EBGaramond-Regular.ttf</string>
-		<string>Fonts/EBGaramond-Italic.ttf</string>
-		<string>Fonts/EBGaramond-Medium.ttf</string>
-		<string>Fonts/EBGaramond-MediumItalic.ttf</string>
-		<string>Fonts/EBGaramond-SemiBold.ttf</string>
-		<string>Fonts/EBGaramond-SemiBoldItalic.ttf</string>
-		<string>Fonts/EBGaramond-Bold.ttf</string>
-		<string>Fonts/EBGaramond-BoldItalic.ttf</string>
-		<string>Fonts/EBGaramond-ExtraBold.ttf</string>
-		<string>Fonts/EBGaramond-ExtraBoldItalic.ttf</string>
-		<string>Fonts/EBGaramond-VariableFont_wght.ttf</string>
-		<string>Fonts/EBGaramond-Italic-VariableFont_wght.ttf</string>
-		<string>Fonts/PetitFormalScript-Regular.ttf</string>
+		<string>Cinzel-Regular.ttf</string>
+		<string>Cinzel-Medium.ttf</string>
+		<string>Cinzel-SemiBold.ttf</string>
+		<string>Cinzel-Bold.ttf</string>
+		<string>Cinzel-ExtraBold.ttf</string>
+		<string>Cinzel-Black.ttf</string>
+		<string>Cinzel-VariableFont_wght.ttf</string>
+		<string>EBGaramond-Regular.ttf</string>
+		<string>EBGaramond-Italic.ttf</string>
+		<string>EBGaramond-Medium.ttf</string>
+		<string>EBGaramond-MediumItalic.ttf</string>
+		<string>EBGaramond-SemiBold.ttf</string>
+		<string>EBGaramond-SemiBoldItalic.ttf</string>
+		<string>EBGaramond-Bold.ttf</string>
+		<string>EBGaramond-BoldItalic.ttf</string>
+		<string>EBGaramond-ExtraBold.ttf</string>
+		<string>EBGaramond-ExtraBoldItalic.ttf</string>
+		<string>EBGaramond-VariableFont_wght.ttf</string>
+		<string>EBGaramond-Italic-VariableFont_wght.ttf</string>
+		<string>PetitFormalScript-Regular.ttf</string>
 	</array>
 </dict>
 </plist>
