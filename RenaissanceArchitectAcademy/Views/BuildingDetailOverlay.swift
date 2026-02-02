@@ -3,6 +3,12 @@ import SwiftUI
 struct BuildingDetailOverlay: View {
     let plot: BuildingPlot
     let onDismiss: () -> Void
+    var isLargeScreen: Bool = false
+
+    // Adaptive sizing
+    private var titleSize: CGFloat { isLargeScreen ? 36 : 28 }
+    private var cardMaxWidth: CGFloat { isLargeScreen ? 600 : 500 }
+    private var cardMaxHeight: CGFloat { isLargeScreen ? 500 : 400 }
 
     var body: some View {
         ZStack {
@@ -12,16 +18,16 @@ struct BuildingDetailOverlay: View {
                 .onTapGesture(perform: onDismiss)
 
             // Detail card
-            VStack(spacing: 20) {
+            VStack(spacing: isLargeScreen ? 24 : 20) {
                 // Header
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(plot.building.name)
-                            .font(.custom("Cinzel-Bold", size: 28, relativeTo: .title))
+                            .font(.custom("Cinzel-Bold", size: titleSize, relativeTo: .title))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         Text(plot.building.era.rawValue)
-                            .font(.custom("EBGaramond-Italic", size: 16, relativeTo: .subheadline))
+                            .font(.custom("EBGaramond-Italic", size: isLargeScreen ? 20 : 16, relativeTo: .subheadline))
                             .foregroundStyle(RenaissanceColors.renaissanceBlue)
                     }
 
@@ -29,9 +35,13 @@ struct BuildingDetailOverlay: View {
 
                     Button(action: onDismiss) {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.title2)
+                            .font(isLargeScreen ? .title : .title2)
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                     }
+                    .buttonStyle(.plain)
+                    #if os(macOS)
+                    .keyboardShortcut(.escape, modifiers: [])
+                    #endif
                 }
 
                 Divider()
@@ -39,49 +49,74 @@ struct BuildingDetailOverlay: View {
                 // Sciences involved
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Sciences Required")
-                        .font(.custom("Cinzel-Regular", size: 14, relativeTo: .caption))
+                        .font(.custom("Cinzel-Regular", size: isLargeScreen ? 16 : 14, relativeTo: .caption))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
 
-                    FlowLayout(spacing: 8) {
+                    FlowLayout(spacing: isLargeScreen ? 12 : 8) {
                         ForEach(plot.building.sciences, id: \.self) { science in
-                            ScienceBadge(science: science)
+                            ScienceBadge(science: science, isLargeScreen: isLargeScreen)
                         }
                     }
                 }
 
+                // Building description for large screens
+                if isLargeScreen {
+                    Text(plot.building.description)
+                        .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .body))
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
                 Spacer()
 
-                // Action button
-                RenaissanceButton(
-                    title: plot.isCompleted ? "Review Challenge" : "Begin Challenge",
-                    action: {}
-                )
+                // Action buttons
+                HStack(spacing: 16) {
+                    if isLargeScreen {
+                        Button("Cancel") {
+                            onDismiss()
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(RenaissanceColors.sepiaInk)
+                        #if os(macOS)
+                        .keyboardShortcut(.cancelAction)
+                        #endif
+                    }
+
+                    RenaissanceButton(
+                        title: plot.isCompleted ? "Review Challenge" : "Begin Challenge",
+                        action: {}
+                    )
+                    #if os(macOS)
+                    .keyboardShortcut(.defaultAction)
+                    #endif
+                }
             }
-            .padding(24)
-            .frame(maxWidth: 500, maxHeight: 400)
+            .padding(isLargeScreen ? 32 : 24)
+            .frame(maxWidth: cardMaxWidth, maxHeight: cardMaxHeight)
             .background(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: isLargeScreen ? 20 : 16)
                     .fill(RenaissanceColors.parchment)
-                    .shadow(color: .black.opacity(0.2), radius: 20, x: 0, y: 10)
+                    .shadow(color: .black.opacity(0.2), radius: isLargeScreen ? 30 : 20, x: 0, y: 10)
             )
-            .padding(40)
+            .padding(isLargeScreen ? 60 : 40)
         }
     }
 }
 
 struct ScienceBadge: View {
     let science: Science
+    var isLargeScreen: Bool = false
 
     var body: some View {
         HStack(spacing: 4) {
             Image(systemName: science.iconName)
-                .font(.caption)
+                .font(isLargeScreen ? .body : .caption)
             Text(science.rawValue)
-                .font(.custom("EBGaramond-Regular", size: 13, relativeTo: .caption))
+                .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 15 : 13, relativeTo: .caption))
         }
         .foregroundStyle(RenaissanceColors.sepiaInk)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
+        .padding(.horizontal, isLargeScreen ? 14 : 10)
+        .padding(.vertical, isLargeScreen ? 8 : 6)
         .background(
             Capsule()
                 .fill(RenaissanceColors.ochre.opacity(0.2))
@@ -130,7 +165,7 @@ struct FlowLayout: Layout {
     }
 }
 
-#Preview {
+#Preview("iPhone") {
     BuildingDetailOverlay(
         plot: BuildingPlot(
             id: 1,
@@ -142,6 +177,24 @@ struct FlowLayout: Layout {
             ),
             isCompleted: false
         ),
-        onDismiss: {}
+        onDismiss: {},
+        isLargeScreen: false
+    )
+}
+
+#Preview("iPad / Mac") {
+    BuildingDetailOverlay(
+        plot: BuildingPlot(
+            id: 1,
+            building: Building(
+                name: "Aqueduct",
+                era: .ancientRome,
+                sciences: [.engineering, .mathematics, .physics],
+                iconName: "water.waves"
+            ),
+            isCompleted: false
+        ),
+        onDismiss: {},
+        isLargeScreen: true
     )
 }

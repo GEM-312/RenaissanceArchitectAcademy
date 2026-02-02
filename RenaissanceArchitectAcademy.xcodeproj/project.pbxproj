@@ -17,6 +17,7 @@
 		008 /* Building.swift in Sources */ = {isa = PBXBuildFile; fileRef = 108; };
 		009 /* RenaissanceColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 109; };
 		010 /* RenaissanceButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110; };
+		011 /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 111; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,7 @@
 		108 /* Building.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Building.swift; sourceTree = "<group>"; };
 		109 /* RenaissanceColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenaissanceColors.swift; sourceTree = "<group>"; };
 		110 /* RenaissanceButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenaissanceButton.swift; sourceTree = "<group>"; };
+		111 /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +82,7 @@
 				104 /* CityView.swift */,
 				105 /* BuildingPlotView.swift */,
 				106 /* BuildingDetailOverlay.swift */,
+				111 /* SidebarView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -176,6 +179,7 @@
 				008 /* Building.swift in Sources */,
 				009 /* RenaissanceColors.swift in Sources */,
 				010 /* RenaissanceButton.swift in Sources */,
+				011 /* SidebarView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
