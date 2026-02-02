@@ -46,7 +46,7 @@ struct MainMenuView: View {
                         font: .custom("Cinzel-Bold", size: titleSize, relativeTo: .largeTitle),
                         color: RenaissanceColors.sepiaInk,
                         isAnimating: showContent,
-                        delayPerLetter: 0.06
+                        delayPerLetter: 0.1
                     )
 
                     AnimatedText(
@@ -54,8 +54,8 @@ struct MainMenuView: View {
                         font: .custom("EBGaramond-Italic", size: subtitleSize, relativeTo: .title),
                         color: RenaissanceColors.sepiaInk.opacity(0.8),
                         isAnimating: showContent,
-                        initialDelay: 0.6,
-                        delayPerLetter: 0.04
+                        initialDelay: 1.2,
+                        delayPerLetter: 0.07
                     )
                 }
 
