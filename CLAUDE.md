@@ -7,11 +7,21 @@ Educational city-building game where students solve architectural challenges acr
 **School:** Columbia College Chicago - Final Semester
 **Timeline:** Jan 30 - May 15, 2025
 
+## Team
+- **Developer:** Marina Pollak
+- **Level Designer:** [Name]
+- **Game Designer:** [Name]
+- **Game Designer:** [Name]
+
 ## Tech Stack
 - SwiftUI (iOS 17+ / macOS 14+)
 - Swift 5.0+
 - Xcode project (multiplatform - iPad + macOS only)
-- SPM packages: Vortex 1.0.4, Pow 1.0.5, Subsonic 0.2.0
+- SPM packages:
+  - Vortex 1.0.4 (particle effects)
+  - Pow 1.0.5 (animations)
+  - Subsonic 0.2.0 (audio)
+  - Inferno 1.0.0 (Metal shader effects - watercolor, emboss, ripples)
 - Midjourney AI art (style ref: `--sref 3186415970`)
 - GitHub: https://github.com/GEM-312/RenaissanceArchitectAcademy
 
@@ -22,15 +32,18 @@ RenaissanceArchitectAcademy/
 ├── RenaissanceArchitectAcademy/
 │   ├── RenaissanceArchitectAcademyApp.swift  # @main + font registration
 │   ├── Info.plist                            # Font declarations
+│   ├── Assets.xcassets/                      # Image assets
+│   │   ├── BackgroundMain.imageset/          # Renaissance dome background
+│   │   └── ButtonFrame.imageset/             # Button frame (unused now)
 │   ├── Fonts/                                # Custom Renaissance fonts
-│   │   ├── Cinzel-*.ttf                      # Titles, buttons
-│   │   ├── EBGaramond-*.ttf                  # Body text
+│   │   ├── Cinzel-*.ttf                      # Titles
+│   │   ├── EBGaramond-*.ttf                  # Body text, buttons
 │   │   └── PetitFormalScript-Regular.ttf     # Tagline
 │   ├── Views/
 │   │   ├── ContentView.swift          # Root view, navigation state
-│   │   ├── MainMenuView.swift         # Title + Vortex particles + letter animation
+│   │   ├── MainMenuView.swift         # Title + particles + background image
 │   │   ├── CityView.swift             # 6 building plots grid + progress
-│   │   ├── BuildingPlotView.swift     # Individual plot card
+│   │   ├── BuildingPlotView.swift     # Individual plot card (engineering style)
 │   │   ├── BuildingDetailOverlay.swift # Modal with sciences
 │   │   ├── SidebarView.swift          # iPad sidebar navigation
 │   │   ├── ProfileView.swift          # Student profile, achievements
@@ -42,11 +55,12 @@ RenaissanceArchitectAcademy/
 │   │   └── StudentProfile.swift       # MasteryLevel, Achievement, Resources
 │   ├── Styles/
 │   │   ├── RenaissanceColors.swift    # Full color palette + gradients
-│   │   └── RenaissanceButton.swift    # Custom button components
+│   │   └── RenaissanceButton.swift    # Engineering blueprint style buttons
 │   ├── Services/
 │   │   └── SoundManager.swift         # Audio playback with AVFoundation
 │   └── building_complete.mp3          # Victory sound effect
 ├── CLAUDE.md
+├── README.md
 ├── LICENSE
 └── .gitignore
 ```
@@ -60,17 +74,33 @@ CTFontManagerRegisterFontsForURL(fontURL as CFURL, .process, nil)
 | Font | Usage |
 |------|-------|
 | Cinzel-Bold | Main titles |
-| Cinzel-Regular | Buttons, labels |
+| Cinzel-Regular | Labels |
 | EBGaramond-Regular | Body text |
-| EBGaramond-Italic | Subtitles, hints |
+| EBGaramond-Italic | Buttons, subtitles, hints |
 | PetitFormalScript-Regular | Tagline |
 
 **Note:** Info.plist `UIAppFonts` didn't work with auto-generated plist, so we use CoreText manual registration.
 
+## UI Style - Engineering Blueprint
+
+### Buttons (RenaissanceButton.swift)
+- Double-line border (outer + inner rectangle)
+- EBGaramond-Italic font with `.tracking(2)` letter spacing
+- No icons (clean look)
+- Parchment background with sepia ink text
+- Staggered appearance animation on menu
+
+### Building Cards (BuildingPlotView.swift)
+- Ochre tinted background (10% opacity)
+- Engineering grid pattern (minor lines every 15pt, major every 60pt)
+- Double-line blueprint border
+- UltraLight placeholder icons for incomplete buildings
+
 ## Main Menu Effects
-- **Vortex dust particles** - Golden dust motes floating upward (sunlight effect)
+- **Renaissance dome background** - Flipped horizontally, positioned left
+- **Vortex dust particles** - Golden dust motes floating upward
 - **Letter-by-letter animation** - "Renaissance" then "Architect Academy" appear like quill writing
-- **AnimatedText component** - Reusable, configurable delay per letter
+- **Staggered button animation** - Buttons appear one by one with delay
 
 ## Sound Effects (Simplified)
 Only meaningful moments - no button sounds:
@@ -87,12 +117,12 @@ RenaissanceColors.parchment       // #F5E6D3 - Aged paper
 RenaissanceColors.sepiaInk        // #4A4035 - Text
 RenaissanceColors.renaissanceBlue // #5B8FA3 - Accents
 RenaissanceColors.terracotta      // #D4876B - Roofs/buildings
-RenaissanceColors.ochre           // #C9A86A - Stone/highlights
+RenaissanceColors.ochre           // #C9A86A - Stone/highlights, card backgrounds
 RenaissanceColors.sageGreen       // #7A9B76 - Completion/nature
 
 // Accent
 RenaissanceColors.deepTeal        // #2B7A8C - Astronomy/water
-RenaissanceColors.warmBrown       // #8B6F47 - Wood accents
+RenaissanceColors.warmBrown       // #8B6F47 - Engineering, wood accents
 RenaissanceColors.stoneGray       // #A39D93 - Materials
 
 // Special Effects
@@ -100,6 +130,16 @@ RenaissanceColors.goldSuccess     // #DAA520 - Success glow
 RenaissanceColors.errorRed        // #CD5C5C - Errors
 RenaissanceColors.blueprintBlue   // #4169E1 - Technical overlays
 RenaissanceColors.highlightAmber  // #FFBF00 - Highlights
+```
+
+## Inferno Shader Effects (Available)
+```swift
+import Inferno
+
+// Examples for Renaissance effects:
+.colorEffect(ShaderLibrary.emboss())     // Sketch/engraving look
+.distortionEffect(ShaderLibrary.water()) // Water ripple transitions
+.colorEffect(ShaderLibrary.noise())      // Aged paper texture
 ```
 
 ## Models
@@ -142,16 +182,24 @@ Each has `iconName` (SF Symbols) and corresponding color via `RenaissanceColors.
 - [x] Custom fonts (Cinzel, EBGaramond, PetitFormalScript) via CoreText
 - [x] Main menu with Vortex dust particle effects
 - [x] Letter-by-letter quill writing animation for title
+- [x] Renaissance dome background image (flipped, positioned left)
+- [x] Engineering blueprint style buttons (double-line border)
+- [x] Staggered button appearance animation
 - [x] City view with 6 building plots + blueprint grid overlay
+- [x] Building cards with engineering style (ochre tint, grid pattern)
 - [x] Building detail overlay with color-coded science badges
 - [x] iPad sidebar navigation with profile section
 - [x] ProfileView with achievements, resources, science mastery
 - [x] BloomEffectView for completion animations
 - [x] SoundManager (simplified - meaningful moments only)
 - [x] building_complete.mp3 sound effect
+- [x] Assets.xcassets setup
+- [x] Inferno package added (Metal shader effects)
+- [x] README.md
 
 ### Next Steps
-- [ ] Generate Midjourney art assets
+- [ ] Use Inferno shaders for watercolor/artistic effects
+- [ ] Generate more Midjourney art assets
 - [ ] Create challenge system/UI
 - [ ] Add remaining sound effects
 - [ ] Implement full bloom animation (gray sketch → watercolor)
@@ -166,11 +214,12 @@ Each has `iconName` (SF Symbols) and corresponding color via `RenaissanceColors.
 - **MVVM**: Views observe ViewModels via `@StateObject`
 - **@MainActor**: ViewModels run on main thread
 - **Identifiable/Codable**: All models conform for persistence
-- **SF Symbols**: Used for icons (no custom assets yet)
+- **SF Symbols**: Used for icons
 - **NavigationSplitView**: iPad/Mac sidebar navigation
 - **horizontalSizeClass**: Adaptive layouts for different screens
 - **CoreText**: Manual font registration at app launch
 - **Vortex**: Particle effects (dust motes on main menu)
+- **Inferno**: Metal shader effects (watercolor, emboss, ripples)
 
 ## Git Commands
 ```bash
