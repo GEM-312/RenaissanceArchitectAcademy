@@ -119,7 +119,7 @@ struct BuildingDetailOverlay: View {
                 // Action buttons
                 HStack(spacing: 16) {
                     if isLargeScreen {
-                        RenaissanceSecondaryButton(title: "Cancel", icon: "arrow.left", action: onDismiss)
+                        RenaissanceSecondaryButton(title: "Cancel", action: onDismiss)
                         #if os(macOS)
                         .keyboardShortcut(.cancelAction)
                         #endif
@@ -127,7 +127,6 @@ struct BuildingDetailOverlay: View {
 
                     RenaissanceButton(
                         title: plot.isCompleted ? "Review Challenge" : "Begin Challenge",
-                        icon: plot.isCompleted ? "eye.fill" : "hammer.fill",
                         action: {}
                     )
                     #if os(macOS)

@@ -174,9 +174,20 @@ struct CityProgressBar: View {
         }
         .padding()
         .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(RenaissanceColors.parchment)
-                .shadow(color: RenaissanceColors.sepiaInk.opacity(0.08), radius: 4, y: 2)
+            ZStack {
+                RenaissanceColors.parchment.opacity(0.95)
+
+                // Engineering border
+                ZStack {
+                    RoundedRectangle(cornerRadius: 2)
+                        .stroke(RenaissanceColors.sepiaInk.opacity(0.5), lineWidth: 1)
+                        .padding(2)
+
+                    RoundedRectangle(cornerRadius: 1)
+                        .stroke(RenaissanceColors.sepiaInk.opacity(0.3), lineWidth: 0.5)
+                        .padding(5)
+                }
+            }
         )
     }
 }

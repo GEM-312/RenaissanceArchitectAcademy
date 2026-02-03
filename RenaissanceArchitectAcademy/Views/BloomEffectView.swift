@@ -141,7 +141,6 @@ struct BuildingBloomModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .saturation(isCompleted || hasAnimated ? 1.0 : 0.0)
             .overlay {
                 if showBloom {
                     BloomEffectView(isActive: true) {

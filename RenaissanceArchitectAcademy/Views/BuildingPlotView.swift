@@ -18,34 +18,22 @@ struct BuildingPlotView: View {
     var body: some View {
         Button(action: onTap) {
             ZStack {
-                // Plot background with notebook paper effect
-                RoundedRectangle(cornerRadius: cornerRadius)
+                // Solid ochre background for cards
+                Rectangle()
                     .fill(RenaissanceColors.parchment)
-                    .overlay(
-                        // Sketch lines for incomplete buildings
-                        Group {
-                            if !plot.isCompleted {
-                                SketchLinesOverlay(cornerRadius: cornerRadius)
-                            }
-                        }
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: cornerRadius)
-                            .stroke(
-                                plot.isCompleted
-                                    ? RenaissanceColors.sageGreen
-                                    : (isHovered ? RenaissanceColors.ochre : RenaissanceColors.sepiaInk.opacity(0.3)),
-                                lineWidth: isLargeScreen ? 3 : 2
-                            )
-                    )
-                    .shadow(
-                        color: isHovered
-                            ? RenaissanceColors.ochre.opacity(0.2)
-                            : RenaissanceColors.sepiaInk.opacity(0.1),
-                        radius: isLargeScreen ? 8 : 4,
-                        x: 2,
-                        y: 2
-                    )
+                Rectangle()
+                    .fill(RenaissanceColors.ochre.opacity(0.1))
+
+                // Engineering grid for incomplete buildings
+                if !plot.isCompleted {
+                    SketchLinesOverlay(cornerRadius: 2)
+                }
+
+                // Engineering blueprint border
+                EngineeringCardBorder(
+                    isCompleted: plot.isCompleted,
+                    isHovered: isHovered
+                )
 
                 VStack(spacing: isLargeScreen ? 12 : 8) {
                     // Building icon container
@@ -63,15 +51,22 @@ struct BuildingPlotView: View {
                                 .font(.system(size: iconSize))
                                 .foregroundStyle(RenaissanceColors.terracotta)
                         } else {
-                            Image(systemName: "plus.square.dashed")
-                                .font(.system(size: iconSize))
-                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
+                            // Engineering-style placeholder
+                            Image(systemName: "square.dashed")
+                                .font(.system(size: iconSize, weight: .ultraLight))
+                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.25))
+                                .overlay(
+                                    Image(systemName: "plus")
+                                        .font(.system(size: iconSize * 0.4, weight: .ultraLight))
+                                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.2))
+                                )
                         }
                     }
 
                     // Building name
                     Text(plot.building.name)
-                        .font(.custom("Cinzel-Regular", size: titleSize, relativeTo: .caption))
+                        .font(.custom("EBGaramond-Italic", size: titleSize, relativeTo: .caption))
+                        .tracking(1)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
@@ -148,25 +143,92 @@ struct BuildingPlotView: View {
     }
 }
 
-/// Sketch lines overlay for incomplete buildings
+/// Engineering grid overlay for cards
 struct SketchLinesOverlay: View {
     let cornerRadius: CGFloat
 
     var body: some View {
         GeometryReader { geometry in
-            Path { path in
-                // Diagonal sketch lines
-                let spacing: CGFloat = 12
-                var offset: CGFloat = -geometry.size.height
+            ZStack {
+                // Main grid lines
+                Path { path in
+                    let spacing: CGFloat = 15
 
-                while offset < geometry.size.width + geometry.size.height {
-                    path.move(to: CGPoint(x: offset, y: 0))
-                    path.addLine(to: CGPoint(x: offset + geometry.size.height, y: geometry.size.height))
-                    offset += spacing
+                    // Vertical lines
+                    var x: CGFloat = spacing
+                    while x < geometry.size.width {
+                        path.move(to: CGPoint(x: x, y: 0))
+                        path.addLine(to: CGPoint(x: x, y: geometry.size.height))
+                        x += spacing
+                    }
+
+                    // Horizontal lines
+                    var y: CGFloat = spacing
+                    while y < geometry.size.height {
+                        path.move(to: CGPoint(x: 0, y: y))
+                        path.addLine(to: CGPoint(x: geometry.size.width, y: y))
+                        y += spacing
+                    }
                 }
+                .stroke(RenaissanceColors.sepiaInk.opacity(0.06), lineWidth: 0.5)
+
+                // Major grid lines (every 4th line)
+                Path { path in
+                    let spacing: CGFloat = 60
+
+                    // Vertical major lines
+                    var x: CGFloat = spacing
+                    while x < geometry.size.width {
+                        path.move(to: CGPoint(x: x, y: 0))
+                        path.addLine(to: CGPoint(x: x, y: geometry.size.height))
+                        x += spacing
+                    }
+
+                    // Horizontal major lines
+                    var y: CGFloat = spacing
+                    while y < geometry.size.height {
+                        path.move(to: CGPoint(x: 0, y: y))
+                        path.addLine(to: CGPoint(x: geometry.size.width, y: y))
+                        y += spacing
+                    }
+                }
+                .stroke(RenaissanceColors.sepiaInk.opacity(0.1), lineWidth: 0.5)
             }
-            .stroke(RenaissanceColors.blueprintBlue.opacity(0.08), lineWidth: 0.5)
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+        }
+    }
+}
+
+/// Engineering/architectural blueprint style border for cards
+struct EngineeringCardBorder: View {
+    var isCompleted: Bool = false
+    var isHovered: Bool = false
+
+    private var borderColor: Color {
+        if isCompleted {
+            return RenaissanceColors.sageGreen
+        } else if isHovered {
+            return RenaissanceColors.ochre
+        } else {
+            return RenaissanceColors.sepiaInk
+        }
+    }
+
+    private var borderOpacity: Double {
+        isCompleted || isHovered ? 0.7 : 0.5
+    }
+
+    var body: some View {
+        ZStack {
+            // Outer rectangle - main border
+            RoundedRectangle(cornerRadius: 2)
+                .stroke(borderColor.opacity(borderOpacity), lineWidth: 1)
+                .padding(2)
+
+            // Inner rectangle - double line effect
+            RoundedRectangle(cornerRadius: 1)
+                .stroke(borderColor.opacity(borderOpacity * 0.6), lineWidth: 0.5)
+                .padding(5)
         }
     }
 }

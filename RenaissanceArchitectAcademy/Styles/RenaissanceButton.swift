@@ -1,10 +1,9 @@
 import SwiftUI
 
-/// Renaissance-styled button with wax seal accent
-/// Leonardo's Notebook aesthetic - aged parchment and sepia ink
+/// Renaissance-styled button with engineering blueprint sketch border
+/// Leonardo's Notebook aesthetic - architectural drawing style
 struct RenaissanceButton: View {
     let title: String
-    var icon: String? = nil
     let action: () -> Void
 
     @State private var isPressed = false
@@ -16,43 +15,18 @@ struct RenaissanceButton: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 12) {
-                // Optional wax seal icon
-                if let icon = icon {
-                    ZStack {
-                        Circle()
-                            .fill(RenaissanceColors.terracotta)
-                            .frame(width: 28, height: 28)
-
-                        Image(systemName: icon)
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundStyle(RenaissanceColors.parchment)
-                    }
-                }
-
-                Text(title)
-                    .font(.custom("Cinzel-Regular", size: 18, relativeTo: .body))
-                    .foregroundStyle(RenaissanceColors.parchment)
-            }
+            Text(title)
+                .font(.custom("EBGaramond-Italic", size: 20, relativeTo: .body))
+                .tracking(2)
+                .foregroundStyle(RenaissanceColors.sepiaInk)
             .frame(width: buttonWidth)
             .padding(.horizontal, 24)
             .padding(.vertical, 14)
             .background(
-                ZStack {
-                    // Main button background
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(RenaissanceColors.sepiaInk)
-
-                    // Subtle border for depth
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1)
-                }
-                .shadow(
-                    color: RenaissanceColors.sepiaInk.opacity(0.3),
-                    radius: isPressed ? 2 : 4,
-                    x: 0,
-                    y: isPressed ? 1 : 3
-                )
+                RenaissanceColors.parchment.opacity(0.9)
+            )
+            .overlay(
+                EngineeringBorder()
             )
             .scaleEffect(isPressed ? 0.98 : 1.0)
         }
@@ -65,34 +39,106 @@ struct RenaissanceButton: View {
     }
 }
 
+/// Engineering/architectural blueprint style border
+struct EngineeringBorder: View {
+    var body: some View {
+        ZStack {
+            // Outer rectangle - main border
+            RoundedRectangle(cornerRadius: 2)
+                .stroke(RenaissanceColors.sepiaInk.opacity(0.6), lineWidth: 1)
+                .padding(2)
+
+            // Inner rectangle - double line effect
+            RoundedRectangle(cornerRadius: 1)
+                .stroke(RenaissanceColors.sepiaInk.opacity(0.35), lineWidth: 0.5)
+                .padding(5)
+        }
+    }
+}
+
+/// Dimension/measurement lines outside the button - engineering style
+struct DimensionLines: View {
+    var body: some View {
+        GeometryReader { geo in
+            let offset: CGFloat = 10
+            let arrowSize: CGFloat = 4
+
+            // Top dimension line with arrows
+            Path { path in
+                let y = -offset
+                // Left arrow
+                path.move(to: CGPoint(x: 0, y: y))
+                path.addLine(to: CGPoint(x: arrowSize, y: y - arrowSize/2))
+                path.move(to: CGPoint(x: 0, y: y))
+                path.addLine(to: CGPoint(x: arrowSize, y: y + arrowSize/2))
+                // Line
+                path.move(to: CGPoint(x: 0, y: y))
+                path.addLine(to: CGPoint(x: geo.size.width * 0.35, y: y))
+                path.move(to: CGPoint(x: geo.size.width * 0.65, y: y))
+                path.addLine(to: CGPoint(x: geo.size.width, y: y))
+                // Right arrow
+                path.move(to: CGPoint(x: geo.size.width, y: y))
+                path.addLine(to: CGPoint(x: geo.size.width - arrowSize, y: y - arrowSize/2))
+                path.move(to: CGPoint(x: geo.size.width, y: y))
+                path.addLine(to: CGPoint(x: geo.size.width - arrowSize, y: y + arrowSize/2))
+                // Vertical ticks at ends
+                path.move(to: CGPoint(x: 0, y: y - 3))
+                path.addLine(to: CGPoint(x: 0, y: y + 3))
+                path.move(to: CGPoint(x: geo.size.width, y: y - 3))
+                path.addLine(to: CGPoint(x: geo.size.width, y: y + 3))
+            }
+            .stroke(RenaissanceColors.sepiaInk.opacity(0.4), lineWidth: 0.8)
+
+            // Right dimension line with arrows
+            Path { path in
+                let x = geo.size.width + offset
+                // Top arrow
+                path.move(to: CGPoint(x: x, y: 0))
+                path.addLine(to: CGPoint(x: x - arrowSize/2, y: arrowSize))
+                path.move(to: CGPoint(x: x, y: 0))
+                path.addLine(to: CGPoint(x: x + arrowSize/2, y: arrowSize))
+                // Line
+                path.move(to: CGPoint(x: x, y: 0))
+                path.addLine(to: CGPoint(x: x, y: geo.size.height * 0.3))
+                path.move(to: CGPoint(x: x, y: geo.size.height * 0.7))
+                path.addLine(to: CGPoint(x: x, y: geo.size.height))
+                // Bottom arrow
+                path.move(to: CGPoint(x: x, y: geo.size.height))
+                path.addLine(to: CGPoint(x: x - arrowSize/2, y: geo.size.height - arrowSize))
+                path.move(to: CGPoint(x: x, y: geo.size.height))
+                path.addLine(to: CGPoint(x: x + arrowSize/2, y: geo.size.height - arrowSize))
+                // Horizontal ticks at ends
+                path.move(to: CGPoint(x: x - 3, y: 0))
+                path.addLine(to: CGPoint(x: x + 3, y: 0))
+                path.move(to: CGPoint(x: x - 3, y: geo.size.height))
+                path.addLine(to: CGPoint(x: x + 3, y: geo.size.height))
+            }
+            .stroke(RenaissanceColors.sepiaInk.opacity(0.4), lineWidth: 0.8)
+        }
+    }
+}
+
 /// Secondary button style for less prominent actions
 struct RenaissanceSecondaryButton: View {
     let title: String
-    var icon: String? = nil
     let action: () -> Void
 
     @State private var isHovered = false
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 8) {
-                if let icon = icon {
-                    Image(systemName: icon)
-                        .font(.body)
-                }
-                Text(title)
-                    .font(.custom("Cinzel-Regular", size: 16, relativeTo: .body))
-            }
+            Text(title)
+                .font(.custom("EBGaramond-Italic", size: 18, relativeTo: .body))
+                .tracking(2)
             .foregroundStyle(RenaissanceColors.sepiaInk)
             .padding(.horizontal, 20)
             .padding(.vertical, 10)
             .background(
-                RoundedRectangle(cornerRadius: 6)
-                    .stroke(RenaissanceColors.sepiaInk.opacity(0.5), lineWidth: 1.5)
-                    .background(
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(isHovered ? RenaissanceColors.ochre.opacity(0.1) : Color.clear)
-                    )
+                ZStack {
+                    RoundedRectangle(cornerRadius: 2)
+                        .stroke(RenaissanceColors.sepiaInk.opacity(0.5), lineWidth: 0.8)
+                        .padding(2)
+                }
             )
         }
         .buttonStyle(.plain)
@@ -105,14 +151,14 @@ struct RenaissanceSecondaryButton: View {
 }
 
 #Preview {
-    VStack(spacing: 20) {
-        RenaissanceButton(title: "Begin Journey", icon: "map.fill", action: {})
-        RenaissanceButton(title: "Continue", icon: "book.fill", action: {})
+    VStack(spacing: 30) {
+        RenaissanceButton(title: "Begin Journey", action: {})
+        RenaissanceButton(title: "Continue", action: {})
         RenaissanceButton(title: "Codex", action: {})
 
         Divider()
 
-        RenaissanceSecondaryButton(title: "Settings", icon: "gearshape", action: {})
+        RenaissanceSecondaryButton(title: "Settings", action: {})
         RenaissanceSecondaryButton(title: "Back", action: {})
     }
     .padding(40)

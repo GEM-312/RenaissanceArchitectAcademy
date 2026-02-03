@@ -26,6 +26,7 @@
 		546EE9642F3114010075C0E1 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = 546EE9632F3114010075C0E1 /* Pow */; };
 		546EE9672F31141D0075C0E1 /* Subsonic in Frameworks */ = {isa = PBXBuildFile; productRef = 546EE9662F31141D0075C0E1 /* Subsonic */; };
 		5475D2EF2F3146CC003AA131 /* building_complete.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2EE2F3146CB003AA131 /* building_complete.mp3 */; };
+		5475D2F82F319000003AA131 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2F92F319000003AA131 /* Assets.xcassets */; };
 		F001 /* Cinzel-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B022F313B22007D8C64 /* Cinzel-Black.ttf */; };
 		F002 /* Cinzel-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B032F313B22007D8C64 /* Cinzel-Bold.ttf */; };
 		F003 /* Cinzel-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B042F313B22007D8C64 /* Cinzel-ExtraBold.ttf */; };
@@ -87,6 +88,7 @@
 		54477B152F313B22007D8C64 /* PetitFormalScript-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PetitFormalScript-Regular.ttf"; sourceTree = "<group>"; };
 		54477B172F313D06007D8C64 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5475D2EE2F3146CB003AA131 /* building_complete.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = building_complete.mp3; sourceTree = "<group>"; };
+		5475D2F92F319000003AA131 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +116,7 @@
 		301 /* RenaissanceArchitectAcademy */ = {
 			isa = PBXGroup;
 			children = (
+				5475D2F92F319000003AA131 /* Assets.xcassets */,
 				54477B172F313D06007D8C64 /* Info.plist */,
 				54477B162F313B22007D8C64 /* Fonts */,
 				101 /* RenaissanceArchitectAcademyApp.swift */,
@@ -274,6 +277,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5475D2F82F319000003AA131 /* Assets.xcassets in Resources */,
 				F001 /* Cinzel-Black.ttf in Resources */,
 				F002 /* Cinzel-Bold.ttf in Resources */,
 				F003 /* Cinzel-ExtraBold.ttf in Resources */,

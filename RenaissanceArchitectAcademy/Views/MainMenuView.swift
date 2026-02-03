@@ -7,6 +7,9 @@ struct MainMenuView: View {
     var onStartGame: () -> Void
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var showContent = false
+    @State private var showButton1 = false
+    @State private var showButton2 = false
+    @State private var showButton3 = false
 
     // Adaptive sizing
     private var titleSize: CGFloat { horizontalSizeClass == .regular ? 72 : 56 }
@@ -15,9 +18,23 @@ struct MainMenuView: View {
 
     var body: some View {
         ZStack {
-            // Parchment background with subtle texture effect
-            RenaissanceColors.parchmentGradient
+            // Parchment background
+            RenaissanceColors.parchment
                 .ignoresSafeArea()
+
+            // Renaissance dome background image
+            GeometryReader { geo in
+                Image("BackgroundMain")
+                    .resizable()
+                    .interpolation(.high)
+                    .antialiased(true)
+                    .scaledToFit()
+                    .frame(height: min(geo.size.height, 900))
+                    .scaleEffect(x: -1, y: 1)
+                    .position(x: geo.size.height * 0.1, y: geo.size.height / 1.5)
+                    .opacity(0.9)
+            }
+            .ignoresSafeArea()
 
             // Floating dust motes particle effect
             VortexView(dustMotesSystem) {
@@ -84,26 +101,30 @@ struct MainMenuView: View {
 
                 Spacer()
 
-                // Menu Buttons with wax seal accents
+                // Menu Buttons - appear one by one
                 VStack(spacing: horizontalSizeClass == .regular ? 20 : 16) {
-                    RenaissanceButton(title: "Begin Journey", icon: "map.fill", action: onStartGame)
+                    RenaissanceButton(title: "Begin Journey", action: onStartGame)
+                        .opacity(showButton1 ? 1 : 0)
+                        .offset(y: showButton1 ? 0 : 20)
                         #if os(macOS)
                         .keyboardShortcut(.return, modifiers: [])
                         #endif
 
-                    RenaissanceButton(title: "Continue", icon: "book.fill", action: {})
+                    RenaissanceButton(title: "Continue", action: {})
+                        .opacity(showButton2 ? 1 : 0)
+                        .offset(y: showButton2 ? 0 : 20)
                         #if os(macOS)
                         .keyboardShortcut("c", modifiers: [.command])
                         #endif
 
-                    RenaissanceButton(title: "Codex", icon: "scroll.fill", action: {})
+                    RenaissanceButton(title: "Codex", action: {})
+                        .opacity(showButton3 ? 1 : 0)
+                        .offset(y: showButton3 ? 0 : 20)
                         #if os(macOS)
                         .keyboardShortcut("k", modifiers: [.command])
                         #endif
                 }
                 .padding(.bottom, horizontalSizeClass == .regular ? 80 : 60)
-                .opacity(showContent ? 1 : 0)
-                .offset(y: showContent ? 0 : 30)
             }
             .padding(horizontalSizeClass == .regular ? 40 : 20)
         }
@@ -111,6 +132,16 @@ struct MainMenuView: View {
         .onAppear {
             withAnimation(.easeOut(duration: 0.8)) {
                 showContent = true
+            }
+            // Buttons appear one by one after title animation
+            withAnimation(.easeOut(duration: 0.5).delay(2.5)) {
+                showButton1 = true
+            }
+            withAnimation(.easeOut(duration: 0.5).delay(2.8)) {
+                showButton2 = true
+            }
+            withAnimation(.easeOut(duration: 0.5).delay(3.1)) {
+                showButton3 = true
             }
         }
     }
