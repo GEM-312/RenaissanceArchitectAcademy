@@ -25,6 +25,7 @@
 		546EE9612F3113EC0075C0E1 /* Vortex in Frameworks */ = {isa = PBXBuildFile; productRef = 546EE9602F3113EC0075C0E1 /* Vortex */; };
 		546EE9642F3114010075C0E1 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = 546EE9632F3114010075C0E1 /* Pow */; };
 		546EE9672F31141D0075C0E1 /* Subsonic in Frameworks */ = {isa = PBXBuildFile; productRef = 546EE9662F31141D0075C0E1 /* Subsonic */; };
+		546EE96B2F31A0000075C0E1 /* Inferno in Frameworks */ = {isa = PBXBuildFile; productRef = 546EE96C2F31A0000075C0E1 /* Inferno */; };
 		5475D2EF2F3146CC003AA131 /* building_complete.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2EE2F3146CB003AA131 /* building_complete.mp3 */; };
 		5475D2F82F319000003AA131 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2F92F319000003AA131 /* Assets.xcassets */; };
 		F001 /* Cinzel-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B022F313B22007D8C64 /* Cinzel-Black.ttf */; };
@@ -99,6 +100,7 @@
 				546EE9672F31141D0075C0E1 /* Subsonic in Frameworks */,
 				546EE9612F3113EC0075C0E1 /* Vortex in Frameworks */,
 				546EE9642F3114010075C0E1 /* Pow in Frameworks */,
+				546EE96B2F31A0000075C0E1 /* Inferno in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,6 +264,7 @@
 				546EE95F2F3113EC0075C0E1 /* XCRemoteSwiftPackageReference "Vortex" */,
 				546EE9622F3114010075C0E1 /* XCRemoteSwiftPackageReference "Pow" */,
 				546EE9652F31141D0075C0E1 /* XCRemoteSwiftPackageReference "Subsonic" */,
+				546EE96D2F31A0000075C0E1 /* XCRemoteSwiftPackageReference "Inferno" */,
 			);
 			productRefGroup = 302 /* Products */;
 			projectDirPath = "";
@@ -562,6 +565,14 @@
 				minimumVersion = 0.2.0;
 			};
 		};
+		546EE96D2F31A0000075C0E1 /* XCRemoteSwiftPackageReference "Inferno" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/twostraws/Inferno.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -579,6 +590,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 546EE9652F31141D0075C0E1 /* XCRemoteSwiftPackageReference "Subsonic" */;
 			productName = Subsonic;
+		};
+		546EE96C2F31A0000075C0E1 /* Inferno */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 546EE96D2F31A0000075C0E1 /* XCRemoteSwiftPackageReference "Inferno" */;
+			productName = Inferno;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
