@@ -4,6 +4,32 @@ import Foundation
 enum Era: String, CaseIterable, Codable {
     case ancientRome = "Ancient Rome"
     case renaissance = "Renaissance"
+
+    /// Custom city image name from Assets.xcassets
+    var cityImageName: String {
+        switch self {
+        case .ancientRome: return "CityRome"
+        case .renaissance: return "CityFlorence"
+        }
+    }
+}
+
+/// Building/plot state for visual representation
+enum BuildingState: String, CaseIterable {
+    case locked       // Not yet available
+    case available    // Ready to start
+    case construction // In progress
+    case complete     // Finished
+
+    /// Custom state image name from Assets.xcassets
+    var imageName: String {
+        switch self {
+        case .locked: return "StateLocked"
+        case .available: return "StateAvailable"
+        case .construction: return "StateConstruction"
+        case .complete: return "StateComplete"
+        }
+    }
 }
 
 /// Sciences that can be associated with building challenges
@@ -22,7 +48,8 @@ enum Science: String, CaseIterable, Codable {
     case materials = "Materials Science"
     case architecture = "Architecture"
 
-    var iconName: String {
+    /// SF Symbol fallback icon name
+    var sfSymbolName: String {
         switch self {
         case .mathematics: return "function"
         case .physics: return "atom"
@@ -38,6 +65,30 @@ enum Science: String, CaseIterable, Codable {
         case .materials: return "cube"
         case .architecture: return "building.columns"
         }
+    }
+
+    /// Custom image name from Assets.xcassets (nil if no custom image)
+    var customImageName: String? {
+        switch self {
+        case .mathematics: return "ScienceMath"
+        case .physics: return "SciencePhysics"
+        case .chemistry: return "ScienceChemistry"
+        case .geometry: return "ScienceGeometry"
+        case .engineering: return "ScienceEngineering"
+        case .optics: return "ScienceOptics"
+        case .biology: return "ScienceBiology"
+        case .materials: return "ScienceMaterials"
+        case .astronomy: return "ScienceAstronomy"
+        case .geology: return "ScienceGeology"
+        case .hydraulics: return "ScienceHydraulics"
+        case .acoustics: return "ScienceAcoustics"
+        case .architecture: return "ScienceArchitecture"
+        }
+    }
+
+    /// Whether this science has a custom image
+    var hasCustomImage: Bool {
+        customImageName != nil
     }
 }
 

@@ -33,7 +33,7 @@ struct BuildingDetailOverlay: View {
                             .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         HStack(spacing: 8) {
-                            Image(systemName: plot.building.era.iconName)
+                            Image(systemName: plot.building.era == .ancientRome ? "building.columns" : "paintpalette")
                                 .font(.subheadline)
                             Text(plot.building.era.rawValue)
                                 .font(.custom("EBGaramond-Italic", size: isLargeScreen ? 20 : 16, relativeTo: .subheadline))
@@ -161,14 +161,14 @@ struct BuildingDetailOverlay: View {
     }
 }
 
-/// Science badge with color-coded background
+/// Science badge with color-coded background - uses SF Symbols for small badges
 struct ScienceBadge: View {
     let science: Science
     var isLargeScreen: Bool = false
 
     var body: some View {
         HStack(spacing: 6) {
-            Image(systemName: science.iconName)
+            Image(systemName: science.sfSymbolName)
                 .font(isLargeScreen ? .body : .caption)
                 .foregroundStyle(RenaissanceColors.color(for: science))
 

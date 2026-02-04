@@ -60,13 +60,17 @@ struct SidebarView: View {
                     .foregroundStyle(RenaissanceColors.warmBrown)
             }
 
-            // Main Menu
+            // Home
             Section {
                 Button(action: onBackToMenu) {
                     HStack {
-                        Image(systemName: "house.fill")
-                            .foregroundStyle(RenaissanceColors.terracotta)
-                        Text("Main Menu")
+                        Image("NavHome")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 48, height: 48)
+                            .contrast(1.5)
+                            .saturation(1)
+                        Text("Home")
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                 }

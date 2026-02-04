@@ -22,10 +22,10 @@
 		016 /* BloomEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 116 /* BloomEffectView.swift */; };
 		017 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 117 /* ProfileView.swift */; };
 		018 /* StudentProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 118 /* StudentProfile.swift */; };
-		546EE9612F3113EC0075C0E1 /* Vortex in Frameworks */ = {isa = PBXBuildFile; productRef = 546EE9602F3113EC0075C0E1 /* Vortex */; };
-		546EE9642F3114010075C0E1 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = 546EE9632F3114010075C0E1 /* Pow */; };
-		546EE9672F31141D0075C0E1 /* Subsonic in Frameworks */ = {isa = PBXBuildFile; productRef = 546EE9662F31141D0075C0E1 /* Subsonic */; };
-		546EE96B2F31A0000075C0E1 /* Inferno in Frameworks */ = {isa = PBXBuildFile; productRef = 546EE96C2F31A0000075C0E1 /* Inferno */; };
+		019 /* ScienceIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 119 /* ScienceIconView.swift */; };
+		544299832F32E0F700F92073 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = 544299822F32E0F700F92073 /* Pow */; };
+		544299862F32E11600F92073 /* Subsonic in Frameworks */ = {isa = PBXBuildFile; productRef = 544299852F32E11600F92073 /* Subsonic */; };
+		544299892F32E14D00F92073 /* Vortex in Frameworks */ = {isa = PBXBuildFile; productRef = 544299882F32E14D00F92073 /* Vortex */; };
 		5475D2EF2F3146CC003AA131 /* building_complete.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2EE2F3146CB003AA131 /* building_complete.mp3 */; };
 		5475D2F82F319000003AA131 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2F92F319000003AA131 /* Assets.xcassets */; };
 		F001 /* Cinzel-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B022F313B22007D8C64 /* Cinzel-Black.ttf */; };
@@ -67,6 +67,7 @@
 		116 /* BloomEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BloomEffectView.swift; sourceTree = "<group>"; };
 		117 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		118 /* StudentProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentProfile.swift; sourceTree = "<group>"; };
+		119 /* ScienceIconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScienceIconView.swift; sourceTree = "<group>"; };
 		54477B022F313B22007D8C64 /* Cinzel-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-Black.ttf"; sourceTree = "<group>"; };
 		54477B032F313B22007D8C64 /* Cinzel-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-Bold.ttf"; sourceTree = "<group>"; };
 		54477B042F313B22007D8C64 /* Cinzel-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-ExtraBold.ttf"; sourceTree = "<group>"; };
@@ -97,10 +98,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				546EE9672F31141D0075C0E1 /* Subsonic in Frameworks */,
-				546EE9612F3113EC0075C0E1 /* Vortex in Frameworks */,
-				546EE9642F3114010075C0E1 /* Pow in Frameworks */,
-				546EE96B2F31A0000075C0E1 /* Inferno in Frameworks */,
+				544299862F32E11600F92073 /* Subsonic in Frameworks */,
+				544299832F32E0F700F92073 /* Pow in Frameworks */,
+				544299892F32E14D00F92073 /* Vortex in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -151,6 +151,7 @@
 				111 /* SidebarView.swift */,
 				116 /* BloomEffectView.swift */,
 				117 /* ProfileView.swift */,
+				119 /* ScienceIconView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -261,10 +262,9 @@
 			);
 			mainGroup = 300;
 			packageReferences = (
-				546EE95F2F3113EC0075C0E1 /* XCRemoteSwiftPackageReference "Vortex" */,
-				546EE9622F3114010075C0E1 /* XCRemoteSwiftPackageReference "Pow" */,
-				546EE9652F31141D0075C0E1 /* XCRemoteSwiftPackageReference "Subsonic" */,
-				546EE96D2F31A0000075C0E1 /* XCRemoteSwiftPackageReference "Inferno" */,
+				544299812F32E0F700F92073 /* XCRemoteSwiftPackageReference "Pow" */,
+				544299842F32E11600F92073 /* XCRemoteSwiftPackageReference "Subsonic" */,
+				544299872F32E14D00F92073 /* XCRemoteSwiftPackageReference "Vortex" */,
 			);
 			productRefGroup = 302 /* Products */;
 			projectDirPath = "";
@@ -327,6 +327,7 @@
 				016 /* BloomEffectView.swift in Sources */,
 				017 /* ProfileView.swift in Sources */,
 				018 /* StudentProfile.swift in Sources */,
+				019 /* ScienceIconView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -541,15 +542,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		546EE95F2F3113EC0075C0E1 /* XCRemoteSwiftPackageReference "Vortex" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/twostraws/Vortex.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.4;
-			};
-		};
-		546EE9622F3114010075C0E1 /* XCRemoteSwiftPackageReference "Pow" */ = {
+		544299812F32E0F700F92073 /* XCRemoteSwiftPackageReference "Pow" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/EmergeTools/Pow.git";
 			requirement = {
@@ -557,7 +550,7 @@
 				minimumVersion = 1.0.5;
 			};
 		};
-		546EE9652F31141D0075C0E1 /* XCRemoteSwiftPackageReference "Subsonic" */ = {
+		544299842F32E11600F92073 /* XCRemoteSwiftPackageReference "Subsonic" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/twostraws/Subsonic.git";
 			requirement = {
@@ -565,36 +558,31 @@
 				minimumVersion = 0.2.0;
 			};
 		};
-		546EE96D2F31A0000075C0E1 /* XCRemoteSwiftPackageReference "Inferno" */ = {
+		544299872F32E14D00F92073 /* XCRemoteSwiftPackageReference "Vortex" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/twostraws/Inferno.git";
+			repositoryURL = "https://github.com/twostraws/Vortex.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				minimumVersion = 1.0.4;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		546EE9602F3113EC0075C0E1 /* Vortex */ = {
+		544299822F32E0F700F92073 /* Pow */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 546EE95F2F3113EC0075C0E1 /* XCRemoteSwiftPackageReference "Vortex" */;
-			productName = Vortex;
-		};
-		546EE9632F3114010075C0E1 /* Pow */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 546EE9622F3114010075C0E1 /* XCRemoteSwiftPackageReference "Pow" */;
+			package = 544299812F32E0F700F92073 /* XCRemoteSwiftPackageReference "Pow" */;
 			productName = Pow;
 		};
-		546EE9662F31141D0075C0E1 /* Subsonic */ = {
+		544299852F32E11600F92073 /* Subsonic */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 546EE9652F31141D0075C0E1 /* XCRemoteSwiftPackageReference "Subsonic" */;
+			package = 544299842F32E11600F92073 /* XCRemoteSwiftPackageReference "Subsonic" */;
 			productName = Subsonic;
 		};
-		546EE96C2F31A0000075C0E1 /* Inferno */ = {
+		544299882F32E14D00F92073 /* Vortex */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 546EE96D2F31A0000075C0E1 /* XCRemoteSwiftPackageReference "Inferno" */;
-			productName = Inferno;
+			package = 544299872F32E14D00F92073 /* XCRemoteSwiftPackageReference "Vortex" */;
+			productName = Vortex;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

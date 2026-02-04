@@ -73,7 +73,7 @@ struct BuildingPlotView: View {
 
                     // Era badge with wax seal style
                     HStack(spacing: 4) {
-                        Image(systemName: plot.building.era.iconName)
+                        Image(systemName: plot.building.era == .ancientRome ? "building.columns" : "paintpalette")
                             .font(.system(size: badgeSize - 2))
 
                         Text(plot.building.era.rawValue)
@@ -87,11 +87,11 @@ struct BuildingPlotView: View {
                             .fill(RenaissanceColors.renaissanceBlue.opacity(0.1))
                     )
 
-                    // Sciences preview (small icons)
+                    // Sciences preview (small SF Symbol icons)
                     if isLargeScreen {
                         HStack(spacing: 6) {
-                            ForEach(plot.building.sciences.prefix(3), id: \.self) { science in
-                                Image(systemName: science.iconName)
+                            ForEach(Array(plot.building.sciences.prefix(3)), id: \.self) { science in
+                                Image(systemName: science.sfSymbolName)
                                     .font(.system(size: 12))
                                     .foregroundStyle(RenaissanceColors.color(for: science))
                             }

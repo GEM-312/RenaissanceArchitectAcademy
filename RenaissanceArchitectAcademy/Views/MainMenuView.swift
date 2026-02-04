@@ -1,5 +1,4 @@
 import SwiftUI
-import Vortex
 
 /// Main Menu - Leonardo's Notebook aesthetic
 /// Features aged parchment, decorative borders, and Renaissance typography
@@ -36,14 +35,6 @@ struct MainMenuView: View {
             }
             .ignoresSafeArea()
 
-            // Floating dust motes particle effect
-            VortexView(dustMotesSystem) {
-                Circle()
-                    .fill(RenaissanceColors.ochre.opacity(0.6))
-                    .frame(width: 4, height: 4)
-                    .tag("dust")
-            }
-            .ignoresSafeArea()
 
             // Decorative corner flourishes
             DecorativeCorners()
@@ -146,23 +137,6 @@ struct MainMenuView: View {
         }
     }
 
-    // MARK: - Particle Systems
-
-    /// Floating golden dust motes - like sunlight through a window
-    private var dustMotesSystem: VortexSystem {
-        VortexSystem(
-            tags: ["dust"],
-            shape: .box(width: 1, height: 0),
-            birthRate: 15,
-            lifespan: 8,
-            speed: 0.1,
-            speedVariation: 0.05,
-            angle: .degrees(270),
-            angleRange: .degrees(30),
-            size: 0.5,
-            sizeVariation: 0.3
-        )
-    }
 }
 
 /// Decorative divider with Renaissance ornament style

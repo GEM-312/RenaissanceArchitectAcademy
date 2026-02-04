@@ -258,18 +258,51 @@ struct ScienceMasteryGrid: View {
 struct ScienceMasteryCard: View {
     let mastery: ScienceMastery
 
+    // Icons with squared backgrounds that need soft edge blending
+    private var needsBlending: Bool {
+        mastery.science == .chemistry || mastery.science == .engineering
+    }
+
     var body: some View {
         VStack(spacing: 8) {
-            // Science icon
+            // Science icon with border box
             ZStack {
-                Circle()
-                    .fill(RenaissanceColors.color(for: mastery.science).opacity(0.2))
-                    .frame(width: 44, height: 44)
+                // Soft blurred parchment background (rounded rect shape)
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(RenaissanceColors.parchment.opacity(0.9))
+                    .frame(width: 92, height: 92)
+                    .blur(radius: 6)
 
-                Image(systemName: mastery.science.iconName)
-                    .font(.title3)
-                    .foregroundStyle(RenaissanceColors.color(for: mastery.science))
+                // Science icon (behind the border)
+                if let imageName = mastery.science.customImageName {
+                    if needsBlending {
+                        // Chemistry & Engineering - clip to rounded rect to match border
+                        Image(imageName)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 85, height: 85)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .opacity(0.85)
+                    } else {
+                        // Other custom icons already blend nicely
+                        Image(imageName)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 85, height: 85)
+                    }
+                } else {
+                    // SF Symbol fallbacks
+                    Image(systemName: mastery.science.sfSymbolName)
+                        .font(.system(size: 45))
+                        .foregroundStyle(RenaissanceColors.color(for: mastery.science))
+                }
+
+                // Border box (on top of icon)
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(RenaissanceColors.ochre.opacity(0.4), lineWidth: 1.5)
+                    .frame(width: 92, height: 92)
             }
+            .frame(width: 100, height: 100)
 
             // Science name
             Text(mastery.science.rawValue)
@@ -300,10 +333,6 @@ struct ScienceMasteryCard: View {
             .frame(width: 32, height: 32)
         }
         .padding(8)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.white.opacity(0.5))
-        )
     }
 }
 
