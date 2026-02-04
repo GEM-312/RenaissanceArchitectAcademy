@@ -5,6 +5,7 @@ import SwiftUI
 struct BuildingDetailOverlay: View {
     let plot: BuildingPlot
     let onDismiss: () -> Void
+    let onBeginChallenge: () -> Void  // NEW: Callback to start challenge
     var isLargeScreen: Bool = false
 
     @State private var showContent = false
@@ -127,7 +128,7 @@ struct BuildingDetailOverlay: View {
 
                     RenaissanceButton(
                         title: plot.isCompleted ? "Review Challenge" : "Begin Challenge",
-                        action: {}
+                        action: onBeginChallenge
                     )
                     #if os(macOS)
                     .keyboardShortcut(.defaultAction)
@@ -243,6 +244,7 @@ struct FlowLayout: Layout {
             isCompleted: false
         ),
         onDismiss: {},
+        onBeginChallenge: {},
         isLargeScreen: false
     )
 }
@@ -260,6 +262,7 @@ struct FlowLayout: Layout {
             isCompleted: false
         ),
         onDismiss: {},
+        onBeginChallenge: {},
         isLargeScreen: true
     )
 }

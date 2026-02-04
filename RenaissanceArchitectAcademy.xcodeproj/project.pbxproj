@@ -23,6 +23,11 @@
 		017 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 117 /* ProfileView.swift */; };
 		018 /* StudentProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 118 /* StudentProfile.swift */; };
 		019 /* ScienceIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 119 /* ScienceIconView.swift */; };
+		020 /* Challenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 120 /* Challenge.swift */; };
+		021 /* ChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 121 /* ChallengeView.swift */; };
+		022 /* DragDropEquationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 122 /* DragDropEquationView.swift */; };
+		023 /* InteractiveChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 123 /* InteractiveChallengeView.swift */; };
+		024 /* HydraulicsFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 124 /* HydraulicsFlowView.swift */; };
 		544299832F32E0F700F92073 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = 544299822F32E0F700F92073 /* Pow */; };
 		544299862F32E11600F92073 /* Subsonic in Frameworks */ = {isa = PBXBuildFile; productRef = 544299852F32E11600F92073 /* Subsonic */; };
 		544299892F32E14D00F92073 /* Vortex in Frameworks */ = {isa = PBXBuildFile; productRef = 544299882F32E14D00F92073 /* Vortex */; };
@@ -68,6 +73,11 @@
 		117 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		118 /* StudentProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentProfile.swift; sourceTree = "<group>"; };
 		119 /* ScienceIconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScienceIconView.swift; sourceTree = "<group>"; };
+		120 /* Challenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Challenge.swift; sourceTree = "<group>"; };
+		121 /* ChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeView.swift; sourceTree = "<group>"; };
+		122 /* DragDropEquationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragDropEquationView.swift; sourceTree = "<group>"; };
+		123 /* InteractiveChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractiveChallengeView.swift; sourceTree = "<group>"; };
+		124 /* HydraulicsFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HydraulicsFlowView.swift; sourceTree = "<group>"; };
 		54477B022F313B22007D8C64 /* Cinzel-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-Black.ttf"; sourceTree = "<group>"; };
 		54477B032F313B22007D8C64 /* Cinzel-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-Bold.ttf"; sourceTree = "<group>"; };
 		54477B042F313B22007D8C64 /* Cinzel-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-ExtraBold.ttf"; sourceTree = "<group>"; };
@@ -152,6 +162,10 @@
 				116 /* BloomEffectView.swift */,
 				117 /* ProfileView.swift */,
 				119 /* ScienceIconView.swift */,
+				121 /* ChallengeView.swift */,
+				122 /* DragDropEquationView.swift */,
+				123 /* InteractiveChallengeView.swift */,
+				124 /* HydraulicsFlowView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -169,6 +183,7 @@
 			children = (
 				108 /* Building.swift */,
 				118 /* StudentProfile.swift */,
+				120 /* Challenge.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -328,6 +343,11 @@
 				017 /* ProfileView.swift in Sources */,
 				018 /* StudentProfile.swift in Sources */,
 				019 /* ScienceIconView.swift in Sources */,
+				020 /* Challenge.swift in Sources */,
+				021 /* ChallengeView.swift in Sources */,
+				022 /* DragDropEquationView.swift in Sources */,
+				023 /* InteractiveChallengeView.swift in Sources */,
+				024 /* HydraulicsFlowView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

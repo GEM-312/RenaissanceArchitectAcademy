@@ -18,7 +18,7 @@ Educational city-building game where students solve architectural challenges acr
 - Swift 5.0+
 - Xcode project (multiplatform - iPad + macOS only)
 - SPM packages:
-  - Pow 1.0.5 (animations)
+  - Pow 1.0.5 (animations) - used for celebration effects
   - Subsonic 0.2.0 (audio)
   - Vortex 1.0.4 (particle effects) - currently disabled
   - Inferno 1.0.0 - skipped for now (caused package issues)
@@ -45,18 +45,23 @@ RenaissanceArchitectAcademy/
 │   ├── Views/
 │   │   ├── ContentView.swift          # Root view, navigation state
 │   │   ├── MainMenuView.swift         # Title + background image
-│   │   ├── CityView.swift             # 6 building plots grid + progress
+│   │   ├── CityView.swift             # 6 building plots grid + challenge navigation
 │   │   ├── BuildingPlotView.swift     # Individual plot card (engineering style)
-│   │   ├── BuildingDetailOverlay.swift # Modal with sciences
+│   │   ├── BuildingDetailOverlay.swift # Modal with sciences + Begin Challenge
 │   │   ├── SidebarView.swift          # iPad sidebar navigation + Home icon
 │   │   ├── ProfileView.swift          # Student profile, science mastery cards
 │   │   ├── ScienceIconView.swift      # Helper views for custom icons
-│   │   └── BloomEffectView.swift      # Particle effects for completion
+│   │   ├── BloomEffectView.swift      # Particle effects for completion
+│   │   ├── ChallengeView.swift        # Legacy multiple choice challenge view
+│   │   ├── InteractiveChallengeView.swift  # Master challenge view (mixed question types)
+│   │   ├── DragDropEquationView.swift      # Chemistry drag-drop equations
+│   │   └── HydraulicsFlowView.swift        # Water flow path tracing
 │   ├── ViewModels/
 │   │   └── CityViewModel.swift        # @MainActor, @Published state
 │   ├── Models/
 │   │   ├── Building.swift             # Era, Science, Building, BuildingPlot, BuildingState
-│   │   └── StudentProfile.swift       # MasteryLevel, Achievement, Resources
+│   │   ├── StudentProfile.swift       # MasteryLevel, Achievement, Resources
+│   │   └── Challenge.swift            # Challenge system + all building challenges
 │   ├── Styles/
 │   │   ├── RenaissanceColors.swift    # Full color palette + gradients
 │   │   └── RenaissanceButton.swift    # Engineering blueprint style buttons
@@ -70,6 +75,112 @@ RenaissanceArchitectAcademy/
 ├── README.md
 ├── LICENSE
 └── .gitignore
+```
+
+## Challenge System (NEW - Feb 4, 2025)
+
+### Architecture
+The challenge system supports multiple question types:
+- **Multiple Choice** - Traditional 4-option questions
+- **Drag & Drop Equations** - Chemistry equations where students drag elements to blanks
+- **Flow Tracing** - Hydraulics questions where students draw water flow paths
+
+### Key Files
+| File | Purpose |
+|------|---------|
+| `Challenge.swift` | All data models + 37 questions for 6 buildings |
+| `InteractiveChallengeView.swift` | Master view that routes to correct question type |
+| `DragDropEquationView.swift` | Chemistry equation drag-drop interface |
+| `HydraulicsFlowView.swift` | Water flow path drawing canvas |
+| `ChallengeView.swift` | Legacy multiple choice only (kept for reference) |
+
+### Question Types
+```swift
+enum QuestionType {
+    case multipleChoice
+    case dragDropEquation(DragDropEquationData)
+    case hydraulicsFlow(HydraulicsFlowData)
+}
+```
+
+### Data Models
+```swift
+// For drag-drop chemistry
+struct DragDropEquationData {
+    let equationTemplate: String        // "CaO + H₂O → [BLANK]"
+    let availableElements: [ChemicalElement]
+    let correctAnswers: [String]
+    let hint: String?
+}
+
+// For flow tracing
+struct HydraulicsFlowData {
+    let backgroundImageName: String?    // Optional Midjourney diagram
+    let diagramDescription: String
+    let checkpoints: [FlowCheckpoint]   // Points path must pass through
+    let startPoint: CGPoint             // Normalized 0-1
+    let endPoint: CGPoint               // Normalized 0-1
+    let hint: String?
+}
+```
+
+### All Building Challenges (37 questions total)
+| Building | Era | Sciences | Questions | Interactive |
+|----------|-----|----------|-----------|-------------|
+| Aqueduct | Ancient Rome | Engineering, Hydraulics, Mathematics | 6 | - |
+| Colosseum | Ancient Rome | Architecture, Engineering, Acoustics | 6 | - |
+| Roman Baths | Ancient Rome | Hydraulics, Chemistry, Materials | 7 | 2 drag-drop + 1 flow |
+| Duomo | Renaissance | Geometry, Architecture, Physics | 6 | - |
+| Observatory | Renaissance | Astronomy, Optics, Mathematics | 6 | - |
+| Workshop | Renaissance | Engineering, Physics, Materials | 6 | - |
+
+### Adding Interactive Questions to Other Buildings
+To add drag-drop or flow tracing to any building, use these initializers:
+```swift
+// Drag-drop chemistry
+InteractiveQuestion(
+    questionText: "Complete the equation...",
+    equationData: DragDropEquationData(...),
+    science: .chemistry,
+    explanation: "...",
+    funFact: "..."
+)
+
+// Flow tracing
+InteractiveQuestion(
+    questionText: "Trace the flow...",
+    flowData: HydraulicsFlowData(...),
+    science: .hydraulics,
+    explanation: "...",
+    funFact: "..."
+)
+```
+
+### Pow Celebration Effects
+DragDropEquationView and HydraulicsFlowView use Pow for success animations:
+```swift
+import Pow
+
+.changeEffect(
+    .spray(origin: UnitPoint(x: 0.5, y: 0.5)) {
+        Image(systemName: "drop.fill")
+            .foregroundStyle(RenaissanceColors.renaissanceBlue)
+    },
+    value: showSuccessEffect
+)
+```
+
+### Flow Tracing with Background Images
+HydraulicsFlowView supports Midjourney diagrams as backgrounds:
+1. Generate image with prompt (see below)
+2. Resize: `sips -Z 600 "AqueductDiagram.png"`
+3. Add to Assets.xcassets
+4. Set `backgroundImageName: "AqueductDiagram"` in HydraulicsFlowData
+5. Adjust checkpoint positions to match diagram
+
+**Midjourney prompt for diagrams:**
+```
+Leonardo da Vinci notebook sketch, [SUBJECT] cross-section diagram, technical blueprint style, labeled components, sepia ink on parchment paper, hand-drawn engineering annotations, watercolor wash accents, educational illustration, horizontal landscape format --sref 3186415970 --ar 16:9
 ```
 
 ## Custom Fonts
@@ -137,6 +248,9 @@ sips -Z 120 "filename.png" --out "filename.png"
 
 # City icons: 512px
 sips -Z 512 "filename.png" --out "filename.png"
+
+# Challenge diagram backgrounds: 600px
+sips -Z 600 "filename.png" --out "filename.png"
 ```
 
 ## UI Style - Engineering Blueprint
@@ -183,10 +297,10 @@ Only meaningful moments - no button sounds:
 // Primary
 RenaissanceColors.parchment       // #F5E6D3 - Aged paper
 RenaissanceColors.sepiaInk        // #4A4035 - Text
-RenaissanceColors.renaissanceBlue // #5B8FA3 - Accents
+RenaissanceColors.renaissanceBlue // #5B8FA3 - Accents, water flow paths
 RenaissanceColors.terracotta      // #D4876B - Roofs/buildings
 RenaissanceColors.ochre           // #C9A86A - Stone/highlights, card backgrounds
-RenaissanceColors.sageGreen       // #7A9B76 - Completion/nature
+RenaissanceColors.sageGreen       // #7A9B76 - Completion/nature, correct answers
 
 // Accent
 RenaissanceColors.deepTeal        // #2B7A8C - Astronomy/water
@@ -195,9 +309,9 @@ RenaissanceColors.stoneGray       // #A39D93 - Materials
 
 // Special Effects
 RenaissanceColors.goldSuccess     // #DAA520 - Success glow
-RenaissanceColors.errorRed        // #CD5C5C - Errors
-RenaissanceColors.blueprintBlue   // #4169E1 - Technical overlays
-RenaissanceColors.highlightAmber  // #FFBF00 - Highlights
+RenaissanceColors.errorRed        // #CD5C5C - Errors, wrong answers
+RenaissanceColors.blueprintBlue   // #4169E1 - Technical overlays, grid lines
+RenaissanceColors.highlightAmber  // #FFBF00 - Highlights, hints
 ```
 
 ## Models
@@ -240,7 +354,7 @@ Each has:
 | 5 | Observatory | Renaissance | Astronomy, Optics, Mathematics |
 | 6 | Workshop | Renaissance | Engineering, Physics, Materials |
 
-## Current Status (Feb 3, 2025)
+## Current Status (Feb 4, 2025)
 
 ### Completed
 - [x] SwiftUI Xcode project (migrated from Unity)
@@ -264,14 +378,23 @@ Each has:
 - [x] City icons (Rome, Florence)
 - [x] Building state icons
 - [x] ScienceIconView helper
+- [x] **Challenge System with 37 questions for all 6 buildings**
+- [x] **InteractiveChallengeView for mixed question types**
+- [x] **DragDropEquationView for chemistry equations**
+- [x] **HydraulicsFlowView for water flow tracing**
+- [x] **Pow celebration effects on correct answers**
 
-### Next Steps
-- [ ] Create challenge system/UI
-- [ ] Add remaining sound effects
+### Next Steps - Make Challenges More Engaging
+- [ ] Add Midjourney background diagrams to flow tracing questions
+- [ ] Add more drag-drop interactive questions to other buildings
+- [ ] Create material matching games (Materials Science)
+- [ ] Add hot air flow tracing for Colosseum hypogeum
+- [ ] Add gear/pulley interactive questions for Workshop
+- [ ] Add star/constellation tracing for Observatory
+- [ ] Add dome construction sequence for Duomo
+- [ ] Add remaining sound effects (challenge_success, challenge_fail)
 - [ ] Implement full bloom animation (gray sketch → watercolor)
 - [ ] Persist game progress with UserDefaults/SwiftData
-- [ ] Re-add Inferno package for shader effects when stable
-- [ ] Re-enable Vortex particle effects on main menu
 
 ## How to Run
 1. Open `RenaissanceArchitectAcademy.xcodeproj` in Xcode
@@ -287,6 +410,7 @@ Each has:
 - **NavigationSplitView**: iPad/Mac sidebar navigation
 - **horizontalSizeClass**: Adaptive layouts for different screens
 - **CoreText**: Manual font registration at app launch
+- **Pow**: Celebration spray effects for correct answers
 
 ## Git Commands
 ```bash
@@ -303,3 +427,5 @@ git add . && git commit -m "message" && git push origin main
 - Target: iOS 17+, macOS 14+
 - Chemistry & Engineering icons have squared edges - need `.clipShape()` and `.opacity(0.85)` blending
 - New Midjourney assets are usually huge (7-15MB) - always resize before adding to Assets.xcassets
+- Challenge.swift contains all 37 questions - edit there to add/modify challenges
+- HydraulicsFlowView uses normalized coordinates (0-1) for positions

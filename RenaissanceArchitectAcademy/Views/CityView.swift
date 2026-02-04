@@ -6,6 +6,10 @@ struct CityView: View {
     @StateObject private var viewModel = CityViewModel()
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
+    // Challenge navigation state
+    @State private var showingChallenge = false
+    @State private var activeChallenge: InteractiveChallenge? = nil
+
     var filterEra: Era?
 
     // Adaptive grid columns based on screen size
@@ -82,11 +86,39 @@ struct CityView: View {
                     BuildingDetailOverlay(
                         plot: selected,
                         onDismiss: { viewModel.selectedPlot = nil },
+                        onBeginChallenge: {
+                            // Look up the interactive challenge for this building
+                            if let challenge = ChallengeContent.interactiveChallenge(for: selected.building.name) {
+                                activeChallenge = challenge
+                                viewModel.selectedPlot = nil  // Dismiss detail overlay
+                                showingChallenge = true
+                            }
+                        },
                         isLargeScreen: horizontalSizeClass == .regular
                     )
                     #if os(macOS)
                     .onExitCommand { viewModel.selectedPlot = nil }
                     #endif
+                }
+
+                // Interactive Challenge view (full screen)
+                if showingChallenge, let challenge = activeChallenge {
+                    InteractiveChallengeView(
+                        challenge: challenge,
+                        onComplete: { correct, total in
+                            // Find the plot and mark it complete
+                            if let plot = viewModel.buildingPlots.first(where: { $0.building.name == challenge.buildingName }) {
+                                viewModel.completeChallenge(for: plot.id)
+                            }
+                            showingChallenge = false
+                            activeChallenge = nil
+                        },
+                        onDismiss: {
+                            showingChallenge = false
+                            activeChallenge = nil
+                        }
+                    )
+                    .transition(.move(edge: .trailing))
                 }
             }
         }
