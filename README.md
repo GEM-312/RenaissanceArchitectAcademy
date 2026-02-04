@@ -78,9 +78,9 @@ Build iconic structures from Ancient Rome and the Renaissance period while maste
 | Role | Name |
 |------|------|
 | **Developer** | Marina Pollak |
-| **Level Designer** | [Name] |
-| **Game Designer** | [Name] |
-| **Game Designer** | [Name] |
+| **Level Designer** | Ray Garmon |
+| **Game Designer** | Brianna Walker |
+| **Game Designer** | Richard Calleja |
 
 ## Installation
 
