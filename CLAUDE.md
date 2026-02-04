@@ -18,10 +18,10 @@ Educational city-building game where students solve architectural challenges acr
 - Swift 5.0+
 - Xcode project (multiplatform - iPad + macOS only)
 - SPM packages:
-  - Vortex 1.0.4 (particle effects)
   - Pow 1.0.5 (animations)
   - Subsonic 0.2.0 (audio)
-  - Inferno 1.0.0 (Metal shader effects - watercolor, emboss, ripples)
+  - Vortex 1.0.4 (particle effects) - currently disabled
+  - Inferno 1.0.0 - skipped for now (caused package issues)
 - Midjourney AI art (style ref: `--sref 3186415970`)
 - GitHub: https://github.com/GEM-312/RenaissanceArchitectAcademy
 
@@ -34,30 +34,37 @@ RenaissanceArchitectAcademy/
 │   ├── Info.plist                            # Font declarations
 │   ├── Assets.xcassets/                      # Image assets
 │   │   ├── BackgroundMain.imageset/          # Renaissance dome background
-│   │   └── ButtonFrame.imageset/             # Button frame (unused now)
+│   │   ├── Science*.imageset/                # 13 custom science icons
+│   │   ├── City*.imageset/                   # Rome, Florence city images
+│   │   ├── Nav*.imageset/                    # Navigation icons (Home, Back, etc.)
+│   │   └── State*.imageset/                  # Building state icons
 │   ├── Fonts/                                # Custom Renaissance fonts
 │   │   ├── Cinzel-*.ttf                      # Titles
 │   │   ├── EBGaramond-*.ttf                  # Body text, buttons
 │   │   └── PetitFormalScript-Regular.ttf     # Tagline
 │   ├── Views/
 │   │   ├── ContentView.swift          # Root view, navigation state
-│   │   ├── MainMenuView.swift         # Title + particles + background image
+│   │   ├── MainMenuView.swift         # Title + background image
 │   │   ├── CityView.swift             # 6 building plots grid + progress
 │   │   ├── BuildingPlotView.swift     # Individual plot card (engineering style)
 │   │   ├── BuildingDetailOverlay.swift # Modal with sciences
-│   │   ├── SidebarView.swift          # iPad sidebar navigation
-│   │   ├── ProfileView.swift          # Student profile, achievements
+│   │   ├── SidebarView.swift          # iPad sidebar navigation + Home icon
+│   │   ├── ProfileView.swift          # Student profile, science mastery cards
+│   │   ├── ScienceIconView.swift      # Helper views for custom icons
 │   │   └── BloomEffectView.swift      # Particle effects for completion
 │   ├── ViewModels/
 │   │   └── CityViewModel.swift        # @MainActor, @Published state
 │   ├── Models/
-│   │   ├── Building.swift             # Era, Science, Building, BuildingPlot
+│   │   ├── Building.swift             # Era, Science, Building, BuildingPlot, BuildingState
 │   │   └── StudentProfile.swift       # MasteryLevel, Achievement, Resources
 │   ├── Styles/
 │   │   ├── RenaissanceColors.swift    # Full color palette + gradients
 │   │   └── RenaissanceButton.swift    # Engineering blueprint style buttons
 │   ├── Services/
 │   │   └── SoundManager.swift         # Audio playback with AVFoundation
+│   ├── Science Icons/                  # Original Midjourney source files
+│   ├── City Icons/                     # Original city source files
+│   ├── UINavigation/                   # Original nav icon source files
 │   └── building_complete.mp3          # Victory sound effect
 ├── CLAUDE.md
 ├── README.md
@@ -81,6 +88,57 @@ CTFontManagerRegisterFontsForURL(fontURL as CFURL, .process, nil)
 
 **Note:** Info.plist `UIAppFonts` didn't work with auto-generated plist, so we use CoreText manual registration.
 
+## Custom Art Assets (Midjourney)
+
+### Science Icons (13 total - all have custom images now)
+Located in `Assets.xcassets/Science*.imageset/`
+- ScienceMath (algebra/equations icon)
+- SciencePhysics
+- ScienceChemistry (needs blending - squared edges)
+- ScienceGeometry
+- ScienceEngineering (needs blending - squared edges)
+- ScienceAstronomy
+- ScienceBiology
+- ScienceGeology
+- ScienceOptics
+- ScienceHydraulics
+- ScienceAcoustics
+- ScienceMaterials
+- ScienceArchitecture (compass icon, was old Math)
+
+### Navigation Icons
+Located in `Assets.xcassets/Nav*.imageset/`
+- NavHome (transparent background, used in sidebar)
+- NavBack
+- NavClose
+- NavCorrect
+- NavInfo
+- NavSettings
+
+### City Icons
+- CityRome
+- CityFlorence
+
+### Building State Icons
+- StateAvailable
+- StateComplete
+- StateConstruction
+- StateLocked
+- StateRibbon
+
+### Resizing New Assets
+When adding new Midjourney assets (usually 2048x2048 or larger), resize with:
+```bash
+# Science icons: 180px
+sips -Z 180 "filename.png" --out "filename.png"
+
+# Navigation icons: 120px
+sips -Z 120 "filename.png" --out "filename.png"
+
+# City icons: 512px
+sips -Z 512 "filename.png" --out "filename.png"
+```
+
 ## UI Style - Engineering Blueprint
 
 ### Buttons (RenaissanceButton.swift)
@@ -94,11 +152,21 @@ CTFontManagerRegisterFontsForURL(fontURL as CFURL, .process, nil)
 - Ochre tinted background (10% opacity)
 - Engineering grid pattern (minor lines every 15pt, major every 60pt)
 - Double-line blueprint border
-- UltraLight placeholder icons for incomplete buildings
+- SF Symbols for science previews (small badges)
+
+### Science Mastery Cards (ProfileView.swift)
+- Custom Midjourney icons at 85x85
+- Soft blurred parchment background (rounded rect, 6pt blur)
+- Ochre border on top of icons
+- Chemistry & Engineering icons get `.clipShape()` + `.opacity(0.85)` for blending
+- Progress ring showing mastery level
+
+### Sidebar (SidebarView.swift)
+- Custom NavHome icon (48x48 with contrast 1.5)
+- "Home" text instead of "Main Menu"
 
 ## Main Menu Effects
 - **Renaissance dome background** - Flipped horizontally, positioned left
-- **Vortex dust particles** - Golden dust motes floating upward
 - **Letter-by-letter animation** - "Renaissance" then "Architect Academy" appear like quill writing
 - **Staggered button animation** - Buttons appear one by one with delay
 
@@ -132,26 +200,25 @@ RenaissanceColors.blueprintBlue   // #4169E1 - Technical overlays
 RenaissanceColors.highlightAmber  // #FFBF00 - Highlights
 ```
 
-## Inferno Shader Effects (Available)
-```swift
-import Inferno
-
-// Examples for Renaissance effects:
-.colorEffect(ShaderLibrary.emboss())     // Sketch/engraving look
-.distortionEffect(ShaderLibrary.water()) // Water ripple transitions
-.colorEffect(ShaderLibrary.noise())      // Aged paper texture
-```
-
 ## Models
 
 ### Era
-- `.ancientRome` - "Ancient Rome" (building.columns icon)
-- `.renaissance` - "Renaissance" (paintpalette icon)
+- `.ancientRome` - "Ancient Rome" (building.columns icon, CityRome image)
+- `.renaissance` - "Renaissance" (paintpalette icon, CityFlorence image)
 
 ### Science (13 types)
 Mathematics, Physics, Chemistry, Geometry, Engineering, Astronomy, Biology, Geology, Optics, Hydraulics, Acoustics, Materials Science, Architecture
 
-Each has `iconName` (SF Symbols) and corresponding color via `RenaissanceColors.color(for:)`
+Each has:
+- `sfSymbolName` - SF Symbol fallback
+- `customImageName` - Custom Midjourney asset name (all 13 have custom images now)
+- Corresponding color via `RenaissanceColors.color(for:)`
+
+### BuildingState
+- `.locked` - StateLocked image
+- `.available` - StateAvailable image
+- `.construction` - StateConstruction image
+- `.complete` - StateComplete image
 
 ### MasteryLevel
 - `.apprentice` - Learning with guided tutorials
@@ -173,37 +240,38 @@ Each has `iconName` (SF Symbols) and corresponding color via `RenaissanceColors.
 | 5 | Observatory | Renaissance | Astronomy, Optics, Mathematics |
 | 6 | Workshop | Renaissance | Engineering, Physics, Materials |
 
-## Current Status (Feb 2, 2025)
+## Current Status (Feb 3, 2025)
 
 ### Completed
 - [x] SwiftUI Xcode project (migrated from Unity)
 - [x] MVVM architecture with @MainActor
 - [x] Leonardo's Notebook aesthetic throughout
 - [x] Custom fonts (Cinzel, EBGaramond, PetitFormalScript) via CoreText
-- [x] Main menu with Vortex dust particle effects
-- [x] Letter-by-letter quill writing animation for title
+- [x] Main menu with letter-by-letter quill animation
 - [x] Renaissance dome background image (flipped, positioned left)
 - [x] Engineering blueprint style buttons (double-line border)
 - [x] Staggered button appearance animation
 - [x] City view with 6 building plots + blueprint grid overlay
 - [x] Building cards with engineering style (ochre tint, grid pattern)
 - [x] Building detail overlay with color-coded science badges
-- [x] iPad sidebar navigation with profile section
-- [x] ProfileView with achievements, resources, science mastery
+- [x] iPad sidebar navigation with custom Home icon
+- [x] ProfileView with science mastery cards (custom icons + soft borders)
 - [x] BloomEffectView for completion animations
 - [x] SoundManager (simplified - meaningful moments only)
 - [x] building_complete.mp3 sound effect
-- [x] Assets.xcassets setup
-- [x] Inferno package added (Metal shader effects)
-- [x] README.md
+- [x] All 13 custom Midjourney science icons integrated
+- [x] Navigation icons (Home, Back, Close, etc.)
+- [x] City icons (Rome, Florence)
+- [x] Building state icons
+- [x] ScienceIconView helper
 
 ### Next Steps
-- [ ] Use Inferno shaders for watercolor/artistic effects
-- [ ] Generate more Midjourney art assets
 - [ ] Create challenge system/UI
 - [ ] Add remaining sound effects
 - [ ] Implement full bloom animation (gray sketch → watercolor)
 - [ ] Persist game progress with UserDefaults/SwiftData
+- [ ] Re-add Inferno package for shader effects when stable
+- [ ] Re-enable Vortex particle effects on main menu
 
 ## How to Run
 1. Open `RenaissanceArchitectAcademy.xcodeproj` in Xcode
@@ -214,12 +282,11 @@ Each has `iconName` (SF Symbols) and corresponding color via `RenaissanceColors.
 - **MVVM**: Views observe ViewModels via `@StateObject`
 - **@MainActor**: ViewModels run on main thread
 - **Identifiable/Codable**: All models conform for persistence
-- **SF Symbols**: Used for icons
+- **Custom Midjourney icons**: Used in ProfileView science cards
+- **SF Symbols**: Used for small badges and fallbacks
 - **NavigationSplitView**: iPad/Mac sidebar navigation
 - **horizontalSizeClass**: Adaptive layouts for different screens
 - **CoreText**: Manual font registration at app launch
-- **Vortex**: Particle effects (dust motes on main menu)
-- **Inferno**: Metal shader effects (watercolor, emboss, ripples)
 
 ## Git Commands
 ```bash
@@ -234,3 +301,5 @@ git add . && git commit -m "message" && git push origin main
 - iPad only (TARGETED_DEVICE_FAMILY = 2)
 - Fonts: Must use CoreText registration (Info.plist UIAppFonts doesn't work with auto-generated plist)
 - Target: iOS 17+, macOS 14+
+- Chemistry & Engineering icons have squared edges - need `.clipShape()` and `.opacity(0.85)` blending
+- New Midjourney assets are usually huge (7-15MB) - always resize before adding to Assets.xcassets
