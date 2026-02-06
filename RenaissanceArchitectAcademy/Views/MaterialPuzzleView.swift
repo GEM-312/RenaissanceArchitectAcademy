@@ -1,4 +1,5 @@
 import SwiftUI
+import Pow
 
 /// Grid position helper
 struct GridPosition: Equatable, Hashable {
@@ -87,6 +88,10 @@ struct MaterialPuzzleView: View {
     // Drag state
     @State private var draggingPosition: GridPosition? = nil
     @State private var dragOffset: CGSize = .zero
+
+    // Pow effect trigger
+    @State private var matchEffectTrigger: Int = 0
+    @State private var matchedPositions: Set<GridPosition> = []
 
     private let gridSize = 5  // Bigger grid = harder
     private let tileSize: CGFloat = 58  // Slightly smaller tiles
@@ -301,6 +306,7 @@ struct MaterialPuzzleView: View {
                             let position = GridPosition(row: row, col: col)
                             let isDragging = draggingPosition == position
                             let isNeeded = formula.elements.contains(tile.symbol)
+                            let isMatching = matchedPositions.contains(position)
 
                             TileView(
                                 tile: tile,
@@ -311,6 +317,30 @@ struct MaterialPuzzleView: View {
                             )
                             .zIndex(isDragging ? 100 : 0)
                             .offset(isDragging ? dragOffset : .zero)
+                            // Pow explosion effect when matched!
+                            .changeEffect(
+                                .spray(origin: UnitPoint(x: 0.5, y: 0.5)) {
+                                    Group {
+                                        Image(systemName: "sparkle")
+                                            .foregroundStyle(tile.color)
+                                        Image(systemName: "star.fill")
+                                            .foregroundStyle(.yellow)
+                                        Text(tile.symbol)
+                                            .font(.caption.bold())
+                                            .foregroundStyle(tile.color)
+                                    }
+                                },
+                                value: isMatching ? matchEffectTrigger : 0
+                            )
+                            // Scale down and fade when matched
+                            .scaleEffect(tile.isMatched ? 0.01 : 1)
+                            .opacity(tile.isMatched ? 0 : 1)
+                            // Fall animation with transition
+                            .transition(.asymmetric(
+                                insertion: .move(edge: .top).combined(with: .opacity),
+                                removal: .scale.combined(with: .opacity)
+                            ))
+                            .animation(.spring(response: 0.4, dampingFraction: 0.6), value: tile.id)
                             .gesture(
                                 DragGesture()
                                     .onChanged { value in
@@ -568,19 +598,28 @@ struct MaterialPuzzleView: View {
             }
         }
 
-        // Mark as matched with animation
-        withAnimation(.spring(response: 0.3)) {
-            for pos in matches {
-                grid[pos.row][pos.col].isMatched = true
+        // Trigger Pow explosion effect!
+        matchedPositions = matches
+        matchEffectTrigger += 1
+
+        // Mark as matched with animation (after a tiny delay for Pow to show)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+            withAnimation(.spring(response: 0.3)) {
+                for pos in matches {
+                    self.grid[pos.row][pos.col].isMatched = true
+                }
             }
         }
 
-        // Replace matched tiles after delay
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+        // Replace matched tiles after delay (let explosion finish)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            // Clear matched positions
+            self.matchedPositions = []
+
             self.replaceMatchedTiles()
 
             // Check for chain reactions (new matches after tiles fall)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
                 let newMatches = self.findAllMatches()
                 if !newMatches.isEmpty {
                     self.collectMatches(newMatches)
