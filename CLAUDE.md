@@ -49,9 +49,12 @@ RenaissanceArchitectAcademy/
 │   │   ├── InteractiveChallengeView.swift  # Master challenge view (mixed question types)
 │   │   ├── DragDropEquationView.swift      # Chemistry drag-drop equations
 │   │   ├── HydraulicsFlowView.swift        # Water flow path tracing
-│   │   └── SpriteKit/                      # NEW: SpriteKit city map
-│   │       ├── CityScene.swift             # Main SKScene with buildings, rivers, zones
+│   │   ├── MascotDialogueView.swift        # Mascot dialogue + choice buttons
+│   │   ├── MaterialPuzzleView.swift        # Match-3 puzzle for collecting materials
+│   │   └── SpriteKit/                      # SpriteKit city map
+│   │       ├── CityScene.swift             # Main SKScene with buildings, rivers, mascot
 │   │       ├── BuildingNode.swift          # Tappable building sprites
+│   │       ├── MascotNode.swift            # Splash + Bird mascot characters
 │   │       └── CityMapView.swift           # SwiftUI wrapper for SpriteKit
 │   ├── ViewModels/
 │   │   └── CityViewModel.swift        # @MainActor, @Published state, 17 buildings
@@ -213,6 +216,126 @@ import Pow
 )
 ```
 
+## Mascot System (NEW - Feb 6, 2025)
+
+### Characters
+Two mascot characters appear throughout the game:
+
+**Splash** - Main watercolor ink blob mascot
+- Body: 120x140 organic blob shape (ochre/warmBrown gradient)
+- Eyes: 20x18 ellipses with 24pt spacing, blinking animation
+- Smile: 30x15 curved path
+- Ink drips: Heights [20, 35, 25] with 15pt spacing, dripping animation
+
+**Bird** - Companion character
+- Body: 40x35 ellipse (renaissanceBlue)
+- Wing: 25x15 ellipse (deepTeal) with flapping animation
+- Head: 25x25 circle
+- Beak: Ochre triangle
+- Bobbing animation
+
+### Game Flow
+1. **User taps building** → Mascot walks to building (bounce animation)
+2. **Mascot reaches building** → MascotDialogueView appears with 3 choices:
+   - "I need materials" → MaterialPuzzleView (match-3 game)
+   - "I don't know" → BuildingDetailOverlay (info)
+   - "I need to sketch it" → Challenge (future: sketching game)
+3. **User completes puzzle** → Challenge begins
+
+### Key Files
+| File | Purpose |
+|------|---------|
+| `MascotDialogueView.swift` | SwiftUI mascot + dialogue bubble + choice buttons |
+| `MascotNode.swift` | SpriteKit mascot (matches SwiftUI design exactly) |
+| `CityScene.swift` | Mascot follows cursor, walks to buildings |
+| `CityMapView.swift` | Handles mascot callbacks and view transitions |
+
+### SwiftUI Components (MascotDialogueView.swift)
+```swift
+SplashCharacter()      // Main ink blob
+BirdCharacter()        // Companion bird
+WatercolorSplash       // Shape for blob body
+Eye                    // Blinking eye component
+Smile                  // Curved smile shape
+InkDrip                // Animated drip capsule
+Triangle               // Beak shape
+DialogueBubble         // Parchment bubble with flourishes
+ChoiceButton           // Styled choice options
+```
+
+### SpriteKit MascotNode
+```swift
+// Mascot follows cursor on map
+func followPoint(_ point: CGPoint, smoothing: CGFloat = 0.1)
+
+// Walk to building with bounce animation
+func walkTo(_ destination: CGPoint, duration: TimeInterval = 1.5)
+
+// Exit to puzzle view
+func walkOffScreen(to edge: CGPoint, duration: TimeInterval = 0.8, completion: @escaping () -> Void)
+
+// Celebrate correct answer
+func celebrateMatch()
+```
+
+## Material Puzzle System (NEW - Feb 6, 2025)
+
+### Overview
+Match-3 puzzle game where players collect chemical elements to build structures. Drag tiles to swap adjacent elements - matching 3+ of the same element collects them.
+
+### Key File: MaterialPuzzleView.swift
+
+### Data Structures
+```swift
+struct GridPosition: Hashable {
+    let row: Int
+    let col: Int
+}
+
+struct ElementTile: Identifiable {
+    let id = UUID()
+    var element: ChemicalElement
+    var position: GridPosition
+}
+
+enum MaterialFormula {
+    case limeMortar   // CaO + H₂O → Ca(OH)₂ (Ca: 3, O: 6, H: 6)
+    case concrete     // Caiteiteite +ite...
+    case glass        // SiO₂ + Na₂O → Glass
+}
+```
+
+### Mechanics
+- **Grid:** 6x6 tiles
+- **Swap:** Drag to swap adjacent tiles (no diagonal)
+- **Match:** 3+ same elements in row/column
+- **Gravity:** Tiles fall down, new spawn from top
+- **Distractors:** Fe, C, Mg, S elements that don't count toward formula
+- **Win:** Collect required atoms (e.g., Ca=3, O=6, H=6 for lime mortar)
+
+### Features
+- Pow explosion effects on match
+- Auto-reshuffle when no valid moves
+- Mascot entrance animation (walks in from left)
+- Progress bars for each required element
+- Slide-in transition from right
+
+### Building-to-Formula Mapping
+```swift
+func formulaForBuilding(_ buildingName: String) -> MaterialFormula {
+    switch buildingName.lowercased() {
+    case "aqueduct", "roman baths", "pantheon":
+        return .limeMortar
+    case "colosseum", "roman roads", "harbor", "siege workshop", "insula":
+        return .concrete
+    case "duomo", "glassworks", "arsenal", "leonardo's workshop", "flying machine", "vatican observatory", "printing press":
+        return .glass
+    default:
+        return .limeMortar
+    }
+}
+```
+
 ## Models
 
 ### Era
@@ -342,16 +465,25 @@ RenaissanceColors.blueprintBlue   // #4169E1 - Grid lines
 - [x] Interactive drag-drop + flow tracing questions
 - [x] Pow celebration effects
 - [x] All 13 custom Midjourney science icons
+- [x] **Mascot characters (Splash + Bird) - SwiftUI & SpriteKit**
+- [x] **MascotDialogueView with 3 choice buttons**
+- [x] **MaterialPuzzleView - Match-3 puzzle game**
+- [x] **Gravity system (tiles fall, new spawn from top)**
+- [x] **Distractor elements (Fe, C, Mg, S)**
+- [x] **Auto-reshuffle when no valid moves**
+- [x] **Mascot follows cursor on map**
+- [x] **Mascot walks to buildings with bounce animation**
+- [x] **Mascot entrance animation in puzzle view**
 
 ### Next Steps
 - [ ] Create challenges for remaining 11 buildings
 - [ ] Add Midjourney building images to map
-- [ ] Mascot character (watercolor splash)
 - [ ] Rising answer mechanic (LinguaLeo-style)
-- [ ] Sound effects (challenge_success, challenge_fail)
+- [ ] Sound effects (challenge_success, challenge_fail, puzzle_match)
 - [ ] Persist progress with UserDefaults/SwiftData
 - [ ] Building construction animation
 - [ ] Full bloom animation (gray sketch → watercolor)
+- [ ] Sketching game (for "I need to sketch it" option)
 
 ## How to Run
 1. Open `RenaissanceArchitectAcademy.xcodeproj` in Xcode
@@ -362,9 +494,11 @@ RenaissanceColors.blueprintBlue   // #4169E1 - Grid lines
 - **MVVM**: Views observe ViewModels via `@ObservedObject` (shared) or `@StateObject`
 - **@MainActor**: ViewModels run on main thread
 - **SpriteKit + SwiftUI**: SpriteView bridges SKScene into SwiftUI hierarchy
-- **Platform conditionals**: `#if os(iOS)` / `#else` for UIKit vs AppKit types
+- **Platform conditionals**: `#if os(iOS)` / `#else` for UIKit vs AppKit (PlatformColor typealias)
 - **NavigationSplitView**: iPad/Mac sidebar navigation
 - **Shared ViewModel**: ContentView owns CityViewModel, passes to child views
+- **Callback-based communication**: SpriteKit → SwiftUI via closures (onBuildingSelected, onMascotReachedBuilding)
+- **Consistent character design**: MascotNode (SpriteKit) matches SplashCharacter/BirdCharacter (SwiftUI)
 
 ## Git Commands
 ```bash
