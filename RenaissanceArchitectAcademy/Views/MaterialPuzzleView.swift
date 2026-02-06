@@ -39,33 +39,33 @@ struct MaterialFormula {
         Array(requiredElements.keys)
     }
 
-    // CaO + H₂O → Ca(OH)₂
-    // Ca: 1, O: 1+1=2, H: 2
+    // CaO + H₂O → Ca(OH)₂ (x3 for building materials)
+    // Ca: 3, O: 6, H: 6
     static let limeMortar = MaterialFormula(
         name: "Lime Mortar",
-        reactants: "CaO + H₂O",
-        product: "Ca(OH)₂",
-        requiredElements: ["Ca": 1, "O": 2, "H": 2],
-        description: "Combine the elements to create mortar!"
+        reactants: "3(CaO + H₂O)",
+        product: "3Ca(OH)₂",
+        requiredElements: ["Ca": 3, "O": 6, "H": 6],
+        description: "Gather enough calcium hydroxide for mortar!"
     )
 
-    // Ca(OH)₂ + SiO₂ + Al₂O₃ → calcium alumino-silicate
-    // Simplified: Ca: 1, Si: 1, Al: 2, O: 7 (but let's simplify to 2 each for gameplay)
+    // Roman concrete needs lots of materials
+    // Ca: 3, Si: 3, Al: 3, O: 6
     static let concrete = MaterialFormula(
         name: "Roman Concrete",
         reactants: "Ca(OH)₂ + SiO₂ + Al₂O₃",
-        product: "ite Calcium Alumino-Silicate",
-        requiredElements: ["Ca": 1, "Si": 1, "Al": 2, "O": 2],
+        product: "Calcium Alumino-Silicate",
+        requiredElements: ["Ca": 3, "Si": 3, "Al": 3, "O": 6],
         description: "The secret of Roman engineering!"
     )
 
-    // SiO₂ + Na₂O → sodium silicate glass
-    // Si: 1, O: 3, Na: 2
+    // SiO₂ + Na₂O → sodium silicate glass (x2 for window)
+    // Si: 4, O: 6, Na: 4
     static let glass = MaterialFormula(
         name: "Venetian Glass",
-        reactants: "SiO₂ + Na₂O",
-        product: "Glass",
-        requiredElements: ["Si": 1, "O": 3, "Na": 2],
+        reactants: "2(SiO₂ + Na₂O)",
+        product: "Glass Pane",
+        requiredElements: ["Si": 4, "O": 6, "Na": 4],
         description: "Create beautiful Murano glass!"
     )
 }
@@ -88,21 +88,28 @@ struct MaterialPuzzleView: View {
     @State private var draggingPosition: GridPosition? = nil
     @State private var dragOffset: CGSize = .zero
 
-    private let gridSize = 4  // Smaller grid = more space
-    private let tileSize: CGFloat = 70  // Bigger tiles
-    private let tileSpacing: CGFloat = 12  // More spacing
+    private let gridSize = 5  // Bigger grid = harder
+    private let tileSize: CGFloat = 58  // Slightly smaller tiles
+    private let tileSpacing: CGFloat = 8  // Spacing for drag
+
+    // Distractor elements (make puzzle harder)
+    private let distractorElements = ["Fe", "C", "Mg", "S"]
 
     // Elements with their colors
     private var elementColors: [String: Color] {
         [
+            // Needed elements
             "Ca": RenaissanceColors.ochre,
             "O": RenaissanceColors.renaissanceBlue,
             "H": RenaissanceColors.sageGreen,
             "Si": RenaissanceColors.stoneGray,
             "Na": RenaissanceColors.terracotta,
             "Al": RenaissanceColors.warmBrown,
+            // Distractor elements
             "Fe": RenaissanceColors.errorRed,
-            "C": RenaissanceColors.sepiaInk
+            "C": RenaissanceColors.sepiaInk,
+            "Mg": RenaissanceColors.deepTeal,
+            "S": Color.yellow.opacity(0.8)
         ]
     }
 
@@ -387,22 +394,35 @@ struct MaterialPuzzleView: View {
             collectedElements[element] = 0
         }
 
-        // Create grid with elements weighted by how many we need
+        // Create grid with needed elements + distractors
         var tiles: [ElementTile] = []
 
-        // Add tiles based on required amounts (more of what's needed more)
+        // Add tiles for needed elements (enough for matches)
         for (element, required) in formula.requiredElements {
-            // Add extra tiles so matches are possible (need 3 to match, times required)
-            let tileCount = max(3, required * 2)
+            let tileCount = max(4, required * 3)  // Need enough for multiple matches
             for _ in 0..<tileCount {
                 let color = elementColors[element] ?? RenaissanceColors.stoneGray
                 tiles.append(ElementTile(symbol: element, color: color))
             }
         }
 
-        // Fill rest with random elements from needed list
+        // Add distractor elements (make it harder!)
+        let distractorCount = gridSize * gridSize / 3  // About 1/3 distractors
+        for _ in 0..<distractorCount {
+            let element = distractorElements.randomElement() ?? "Fe"
+            let color = elementColors[element] ?? RenaissanceColors.stoneGray
+            tiles.append(ElementTile(symbol: element, color: color))
+        }
+
+        // Fill rest with mix of needed and distractors
         while tiles.count < gridSize * gridSize {
-            let element = formula.elements.randomElement() ?? "Ca"
+            let useDistractor = Bool.random()
+            let element: String
+            if useDistractor {
+                element = distractorElements.randomElement() ?? "Fe"
+            } else {
+                element = formula.elements.randomElement() ?? "Ca"
+            }
             let color = elementColors[element] ?? RenaissanceColors.stoneGray
             tiles.append(ElementTile(symbol: element, color: color))
         }
@@ -572,25 +592,55 @@ struct MaterialPuzzleView: View {
         }
     }
 
+    /// Apply gravity - tiles fall down, new tiles spawn from top
     private func replaceMatchedTiles() {
-        let allElements = Array(elementColors.keys)
+        withAnimation(.spring(response: 0.4)) {
+            // Process each column separately
+            for col in 0..<gridSize {
+                // Collect non-matched tiles in this column (from bottom to top)
+                var remainingTiles: [ElementTile] = []
+                for row in (0..<gridSize).reversed() {
+                    if !grid[row][col].isMatched {
+                        remainingTiles.append(grid[row][col])
+                    }
+                }
 
-        withAnimation(.spring()) {
-            for row in 0..<gridSize {
-                for col in 0..<gridSize {
-                    if grid[row][col].isMatched {
-                        // Prefer spawning needed elements
-                        let element: String
-                        if Bool.random() && !formula.elements.isEmpty {
-                            element = formula.elements.randomElement()!
-                        } else {
-                            element = allElements.randomElement()!
+                // Calculate how many new tiles we need
+                let newTilesNeeded = gridSize - remainingTiles.count
+
+                // Create new tiles for the top
+                var newTiles: [ElementTile] = []
+                for _ in 0..<newTilesNeeded {
+                    let element = randomElement()
+                    let color = elementColors[element] ?? RenaissanceColors.stoneGray
+                    newTiles.append(ElementTile(symbol: element, color: color))
+                }
+
+                // Fill column: new tiles at top, remaining tiles fall to bottom
+                // Row 0 is top, row (gridSize-1) is bottom
+                for row in 0..<gridSize {
+                    if row < newTilesNeeded {
+                        // Top rows get new tiles
+                        grid[row][col] = newTiles[row]
+                    } else {
+                        // Bottom rows get remaining tiles (reversed back to correct order)
+                        let remainingIndex = remainingTiles.count - 1 - (row - newTilesNeeded)
+                        if remainingIndex >= 0 && remainingIndex < remainingTiles.count {
+                            grid[row][col] = remainingTiles[remainingIndex]
                         }
-                        let color = elementColors[element] ?? RenaissanceColors.stoneGray
-                        grid[row][col] = ElementTile(symbol: element, color: color)
                     }
                 }
             }
+        }
+    }
+
+    /// Get a random element (mix of needed and distractors)
+    private func randomElement() -> String {
+        // 60% chance of needed element, 40% distractor
+        if Double.random(in: 0...1) < 0.6 {
+            return formula.elements.randomElement() ?? "Ca"
+        } else {
+            return distractorElements.randomElement() ?? "Fe"
         }
     }
 
