@@ -3,11 +3,11 @@ import SwiftUI
 
 #if os(iOS)
 import UIKit
+typealias PlatformColor = UIColor
 #else
 import AppKit
+typealias PlatformColor = NSColor
 #endif
-
-// Note: PlatformColor is defined in CityScene.swift
 
 /// Mascot characters for the city map - Splash (watercolor blob) and Bird companion
 class MascotNode: SKNode {
