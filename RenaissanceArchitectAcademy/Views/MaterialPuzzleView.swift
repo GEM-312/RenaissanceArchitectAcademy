@@ -94,6 +94,10 @@ struct MaterialPuzzleView: View {
     @State private var matchedPositions: Set<GridPosition> = []
     @State private var showReshuffleMessage = false
 
+    // Mascot entrance animation
+    @State private var mascotOffset: CGFloat = -200  // Start off-screen left
+    @State private var mascotBounce: CGFloat = 0
+
     private let gridSize = 5  // Bigger grid = harder
     private let tileSize: CGFloat = 58  // Slightly smaller tiles
     private let tileSpacing: CGFloat = 8  // Spacing for drag
@@ -125,33 +129,45 @@ struct MaterialPuzzleView: View {
             RenaissanceColors.parchmentGradient
                 .ignoresSafeArea()
 
-            VStack(spacing: 16) {
-                // Header
-                header
-
-                // Formula card (answer hidden)
-                formulaCard
-
-                // Element collection progress
-                elementProgressView
-
-                // Puzzle grid
-                puzzleGrid
-
-                // Hint button
-                hintButton
-
-                Spacer()
-
-                // Cancel button
-                Button("Return to City") {
-                    onDismiss()
+            HStack(spacing: 0) {
+                // Mascot characters on the left
+                VStack {
+                    Spacer()
+                    puzzleMascotView
+                        .offset(x: mascotOffset, y: mascotBounce)
+                    Spacer()
                 }
-                .font(.custom("EBGaramond-Italic", size: 16))
-                .foregroundColor(RenaissanceColors.stoneGray)
-                .padding(.bottom, 20)
+                .frame(width: 120)
+
+                // Main puzzle content
+                VStack(spacing: 16) {
+                    // Header
+                    header
+
+                    // Formula card (answer hidden)
+                    formulaCard
+
+                    // Element collection progress
+                    elementProgressView
+
+                    // Puzzle grid
+                    puzzleGrid
+
+                    // Hint button
+                    hintButton
+
+                    Spacer()
+
+                    // Cancel button
+                    Button("Return to City") {
+                        onDismiss()
+                    }
+                    .font(.custom("EBGaramond-Italic", size: 16))
+                    .foregroundColor(RenaissanceColors.stoneGray)
+                    .padding(.bottom, 20)
+                }
+                .padding()
             }
-            .padding()
 
             // Success overlay
             if showSuccess {
@@ -182,6 +198,50 @@ struct MaterialPuzzleView: View {
         }
         .onAppear {
             setupGame()
+            // Mascot walks in with bouncy animation
+            withAnimation(.spring(response: 0.8, dampingFraction: 0.6)) {
+                mascotOffset = 0
+            }
+            // Start bounce animation
+            startMascotBounce()
+        }
+    }
+
+    // MARK: - Mascot in Puzzle View
+
+    private var puzzleMascotView: some View {
+        VStack(spacing: -15) {
+            // Bird flying above
+            BirdCharacter()
+                .frame(width: 50, height: 50)
+                .offset(x: 20, y: -10)
+
+            // Splash character
+            SplashCharacter()
+                .frame(width: 100, height: 120)
+        }
+        .scaleEffect(0.7)
+    }
+
+    private func startMascotBounce() {
+        // Gentle idle bounce
+        withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
+            mascotBounce = -8
+        }
+    }
+
+    /// Make mascot react to successful match
+    private func mascotCelebrate() {
+        // Quick jump
+        withAnimation(.spring(response: 0.2, dampingFraction: 0.4)) {
+            mascotBounce = -30
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
+                mascotBounce = 0
+            }
+            // Resume idle bounce
+            startMascotBounce()
         }
     }
 
@@ -631,6 +691,9 @@ struct MaterialPuzzleView: View {
         // Trigger Pow explosion effect!
         matchedPositions = matches
         matchEffectTrigger += 1
+
+        // Mascot celebrates!
+        mascotCelebrate()
 
         // Mark as matched with animation (after a tiny delay for Pow to show)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
