@@ -72,15 +72,19 @@ struct MaterialPuzzleView: View {
     let onDismiss: () -> Void
 
     @State private var grid: [[ElementTile]] = []
-    @State private var selectedPosition: GridPosition? = nil  // First tile selected for swap
     @State private var collectedElements: [String: Int] = [:]
     @State private var showSuccess = false
     @State private var showHint = false
     @State private var revealedProduct = false
     @State private var isAnimating = false  // Prevent interactions during animations
 
-    private let gridSize = 5
-    private let tileSize: CGFloat = 60
+    // Drag state
+    @State private var draggingPosition: GridPosition? = nil
+    @State private var dragOffset: CGSize = .zero
+
+    private let gridSize = 4  // Smaller grid = more space
+    private let tileSize: CGFloat = 70  // Bigger tiles
+    private let tileSpacing: CGFloat = 12  // More spacing
 
     // Elements with their colors
     private var elementColors: [String: Color] {
@@ -242,38 +246,45 @@ struct MaterialPuzzleView: View {
     }
 
     private var puzzleGrid: some View {
-        VStack(spacing: 6) {
+        VStack(spacing: tileSpacing) {
             ForEach(0..<gridSize, id: \.self) { row in
-                HStack(spacing: 6) {
+                HStack(spacing: tileSpacing) {
                     ForEach(0..<gridSize, id: \.self) { col in
                         if row < grid.count && col < grid[row].count {
                             let tile = grid[row][col]
                             let position = GridPosition(row: row, col: col)
-                            let isSelected = selectedPosition == position
+                            let isDragging = draggingPosition == position
                             let isNeeded = formula.elements.contains(tile.symbol)
-                            // Highlight adjacent tiles when one is selected
-                            let isValidSwap = selectedPosition != nil &&
-                                              selectedPosition != position &&
-                                              selectedPosition!.isAdjacent(to: position)
 
                             TileView(
                                 tile: tile,
                                 size: tileSize,
                                 isNeeded: isNeeded,
-                                isHighlighted: isSelected,
-                                isValidTarget: isValidSwap
+                                isHighlighted: isDragging,
+                                isValidTarget: false
                             )
-                            .onTapGesture {
-                                if !isAnimating {
-                                    tileTapped(row: row, col: col)
-                                }
-                            }
+                            .zIndex(isDragging ? 100 : 0)
+                            .offset(isDragging ? dragOffset : .zero)
+                            .gesture(
+                                DragGesture()
+                                    .onChanged { value in
+                                        if !isAnimating && !tile.isMatched {
+                                            draggingPosition = position
+                                            dragOffset = value.translation
+                                        }
+                                    }
+                                    .onEnded { value in
+                                        if !isAnimating {
+                                            handleDragEnd(from: position, translation: value.translation)
+                                        }
+                                    }
+                            )
                         }
                     }
                 }
             }
         }
-        .padding(16)
+        .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(RenaissanceColors.sepiaInk.opacity(0.08))
@@ -284,7 +295,7 @@ struct MaterialPuzzleView: View {
         Button(action: { showHint.toggle() }) {
             HStack {
                 Image(systemName: "lightbulb")
-                Text(showHint ? "Swap adjacent tiles to line up 3 of the same element!" : "Need a hint?")
+                Text(showHint ? "Drag tiles to swap them - line up 3 in a row!" : "Need a hint?")
             }
             .font(.custom("EBGaramond-Italic", size: 14))
             .foregroundColor(RenaissanceColors.warmBrown)
@@ -340,56 +351,62 @@ struct MaterialPuzzleView: View {
         // Create grid with guaranteed needed elements
         var tiles: [ElementTile] = []
 
-        // Add enough of each needed element (at least 6 of each to ensure playability)
+        // Add enough of each needed element (4 of each for 4x4 grid)
         for element in formula.elements {
-            for _ in 0..<6 {
+            for _ in 0..<4 {
                 let color = elementColors[element] ?? RenaissanceColors.stoneGray
                 tiles.append(ElementTile(symbol: element, color: color))
             }
         }
 
-        // Fill rest with random elements
-        let allElements = Array(elementColors.keys)
+        // Fill rest with random elements from needed list (to make matches possible)
         while tiles.count < gridSize * gridSize {
-            let element = allElements.randomElement()!
+            let element = formula.elements.randomElement() ?? "Ca"
             let color = elementColors[element] ?? RenaissanceColors.stoneGray
             tiles.append(ElementTile(symbol: element, color: color))
         }
 
-        // Shuffle
-        tiles.shuffle()
-
-        // Convert to 2D grid
-        grid = stride(from: 0, to: tiles.count, by: gridSize).map {
-            Array(tiles[$0..<min($0 + gridSize, tiles.count)])
-        }
+        // Shuffle until no initial matches (makes player work for it)
+        repeat {
+            tiles.shuffle()
+            grid = stride(from: 0, to: tiles.count, by: gridSize).map {
+                Array(tiles[$0..<min($0 + gridSize, tiles.count)])
+            }
+        } while !findAllMatches().isEmpty
     }
 
-    private func tileTapped(row: Int, col: Int) {
-        let position = GridPosition(row: row, col: col)
-        let tile = grid[row][col]
-
-        // If tile already matched, ignore
-        if tile.isMatched { return }
-
-        // If no tile selected yet, select this one
-        if selectedPosition == nil {
-            selectedPosition = position
-            return
+    /// Handle drag end - determine which direction user dragged and swap tiles
+    private func handleDragEnd(from: GridPosition, translation: CGSize) {
+        // Reset drag state
+        withAnimation(.spring(response: 0.2)) {
+            dragOffset = .zero
+            draggingPosition = nil
         }
 
-        // If tapping the same tile, deselect it
-        if selectedPosition == position {
-            selectedPosition = nil
-            return
-        }
+        // Determine drag direction (need to drag at least half a tile)
+        let threshold: CGFloat = tileSize / 2
 
-        // If tapping an adjacent tile, try to swap
-        if selectedPosition!.isAdjacent(to: position) {
-            swapTiles(from: selectedPosition!, to: position)
+        var targetPosition: GridPosition?
+
+        if abs(translation.width) > abs(translation.height) {
+            // Horizontal drag
+            if translation.width > threshold && from.col < gridSize - 1 {
+                targetPosition = GridPosition(row: from.row, col: from.col + 1)  // Right
+            } else if translation.width < -threshold && from.col > 0 {
+                targetPosition = GridPosition(row: from.row, col: from.col - 1)  // Left
+            }
         } else {
-            // Not adjacent - select the new tile instead
-            selectedPosition = position
+            // Vertical drag
+            if translation.height > threshold && from.row < gridSize - 1 {
+                targetPosition = GridPosition(row: from.row + 1, col: from.col)  // Down
+            } else if translation.height < -threshold && from.row > 0 {
+                targetPosition = GridPosition(row: from.row - 1, col: from.col)  // Up
+            }
+        }
+
+        // If we have a valid target, swap tiles
+        if let target = targetPosition {
+            swapTiles(from: from, to: target)
         }
     }
 
@@ -402,9 +419,6 @@ struct MaterialPuzzleView: View {
             grid[from.row][from.col] = grid[to.row][to.col]
             grid[to.row][to.col] = temp
         }
-
-        // Clear selection
-        selectedPosition = nil
 
         // Check for matches after swap
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
