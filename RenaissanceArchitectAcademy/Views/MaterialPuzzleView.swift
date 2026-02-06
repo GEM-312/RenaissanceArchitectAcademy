@@ -92,6 +92,7 @@ struct MaterialPuzzleView: View {
     // Pow effect trigger
     @State private var matchEffectTrigger: Int = 0
     @State private var matchedPositions: Set<GridPosition> = []
+    @State private var showReshuffleMessage = false
 
     private let gridSize = 5  // Bigger grid = harder
     private let tileSize: CGFloat = 58  // Slightly smaller tiles
@@ -155,6 +156,28 @@ struct MaterialPuzzleView: View {
             // Success overlay
             if showSuccess {
                 successOverlay
+            }
+
+            // Reshuffle message
+            if showReshuffleMessage {
+                VStack {
+                    Spacer()
+                    HStack {
+                        Image(systemName: "shuffle")
+                        Text("No moves! Reshuffling...")
+                    }
+                    .font(.custom("EBGaramond-Regular", size: 18))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 12)
+                    .background(
+                        Capsule()
+                            .fill(RenaissanceColors.warmBrown)
+                            .shadow(radius: 5)
+                    )
+                    .padding(.bottom, 100)
+                }
+                .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
         .onAppear {
@@ -462,13 +485,20 @@ struct MaterialPuzzleView: View {
             tiles = Array(tiles.shuffled().prefix(gridSize * gridSize))
         }
 
-        // Shuffle until no initial matches (makes player work for it)
+        // Shuffle until no initial matches BUT has valid moves
+        var attempts = 0
         repeat {
             tiles.shuffle()
             grid = stride(from: 0, to: tiles.count, by: gridSize).map {
                 Array(tiles[$0..<min($0 + gridSize, tiles.count)])
             }
-        } while !findAllMatches().isEmpty
+            attempts += 1
+        } while (!findAllMatches().isEmpty || !hasValidMoves()) && attempts < 100
+
+        // Safety: if we couldn't find a good configuration, force a valid move
+        if !hasValidMoves() {
+            forceValidMove()
+        }
     }
 
     /// Handle drag end - determine which direction user dragged and swap tiles
@@ -624,10 +654,149 @@ struct MaterialPuzzleView: View {
                 if !newMatches.isEmpty {
                     self.collectMatches(newMatches)
                 } else {
+                    // Check if there are valid moves, reshuffle if stuck
+                    if !self.hasValidMoves() {
+                        self.reshuffleGrid()
+                    }
                     self.isAnimating = false
                     self.checkWinCondition()
                 }
             }
+        }
+    }
+
+    /// Check if any valid move exists (swap that creates a match)
+    private func hasValidMoves() -> Bool {
+        // Try every possible swap and see if it creates a match
+        for row in 0..<gridSize {
+            for col in 0..<gridSize {
+                // Try swap right
+                if col < gridSize - 1 {
+                    if wouldCreateMatch(swapping: GridPosition(row: row, col: col),
+                                       with: GridPosition(row: row, col: col + 1)) {
+                        return true
+                    }
+                }
+                // Try swap down
+                if row < gridSize - 1 {
+                    if wouldCreateMatch(swapping: GridPosition(row: row, col: col),
+                                       with: GridPosition(row: row + 1, col: col)) {
+                        return true
+                    }
+                }
+            }
+        }
+        return false
+    }
+
+    /// Check if swapping two positions would create a match
+    private func wouldCreateMatch(swapping pos1: GridPosition, with pos2: GridPosition) -> Bool {
+        // Temporarily swap
+        var tempGrid = grid
+        let temp = tempGrid[pos1.row][pos1.col]
+        tempGrid[pos1.row][pos1.col] = tempGrid[pos2.row][pos2.col]
+        tempGrid[pos2.row][pos2.col] = temp
+
+        // Check for matches at both positions
+        return checkMatchAt(pos1, in: tempGrid) || checkMatchAt(pos2, in: tempGrid)
+    }
+
+    /// Check if there's a match at a specific position in a grid
+    private func checkMatchAt(_ pos: GridPosition, in checkGrid: [[ElementTile]]) -> Bool {
+        let symbol = checkGrid[pos.row][pos.col].symbol
+
+        // Check horizontal
+        var hCount = 1
+        // Left
+        var c = pos.col - 1
+        while c >= 0 && checkGrid[pos.row][c].symbol == symbol {
+            hCount += 1
+            c -= 1
+        }
+        // Right
+        c = pos.col + 1
+        while c < gridSize && checkGrid[pos.row][c].symbol == symbol {
+            hCount += 1
+            c += 1
+        }
+        if hCount >= 3 { return true }
+
+        // Check vertical
+        var vCount = 1
+        // Up
+        var r = pos.row - 1
+        while r >= 0 && checkGrid[r][pos.col].symbol == symbol {
+            vCount += 1
+            r -= 1
+        }
+        // Down
+        r = pos.row + 1
+        while r < gridSize && checkGrid[r][pos.col].symbol == symbol {
+            vCount += 1
+            r += 1
+        }
+        if vCount >= 3 { return true }
+
+        return false
+    }
+
+    /// Reshuffle the grid when no valid moves exist
+    private func reshuffleGrid() {
+        // Show reshuffle message
+        withAnimation {
+            showReshuffleMessage = true
+        }
+
+        // Collect all current tiles
+        var allTiles: [ElementTile] = []
+        for row in 0..<gridSize {
+            for col in 0..<gridSize {
+                // Create new tile with same symbol (reset matched state)
+                let tile = grid[row][col]
+                let color = elementColors[tile.symbol] ?? RenaissanceColors.stoneGray
+                allTiles.append(ElementTile(symbol: tile.symbol, color: color))
+            }
+        }
+
+        // Shuffle until we have valid moves but no immediate matches
+        var attempts = 0
+        repeat {
+            allTiles.shuffle()
+            grid = stride(from: 0, to: allTiles.count, by: gridSize).map {
+                Array(allTiles[$0..<min($0 + gridSize, allTiles.count)])
+            }
+            attempts += 1
+        } while (findAllMatches().isEmpty == false || !hasValidMoves()) && attempts < 100
+
+        // If still stuck after 100 attempts, add some matching tiles
+        if !hasValidMoves() {
+            forceValidMove()
+        }
+
+        // Hide message after a moment
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            withAnimation {
+                self.showReshuffleMessage = false
+            }
+        }
+    }
+
+    /// Force at least one valid move by placing matching tiles
+    private func forceValidMove() {
+        // Pick a random position and create a match opportunity
+        let row = Int.random(in: 0..<gridSize-2)
+        let col = Int.random(in: 0..<gridSize)
+        let element = formula.elements.randomElement() ?? "Ca"
+        let color = elementColors[element] ?? RenaissanceColors.stoneGray
+
+        // Place two of the same element vertically, with third nearby
+        grid[row][col] = ElementTile(symbol: element, color: color)
+        grid[row+1][col] = ElementTile(symbol: element, color: color)
+        // Put the third one adjacent so a swap creates a match
+        if col > 0 {
+            grid[row+2][col-1] = ElementTile(symbol: element, color: color)
+        } else {
+            grid[row+2][col+1] = ElementTile(symbol: element, color: color)
         }
     }
 
