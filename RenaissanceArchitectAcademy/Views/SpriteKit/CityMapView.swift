@@ -93,8 +93,14 @@ struct CityMapView: View {
                         }
                         switch choice {
                         case .needMaterials:
-                            // Mascot walks off to puzzle, then puzzle appears
+                            // Mascot walks off, puzzle appears after short delay
                             scene?.mascotWalkToPuzzle()
+                            // Show puzzle after mascot starts walking
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                withAnimation(.spring(response: 0.3)) {
+                                    showMaterialPuzzle = true
+                                }
+                            }
                         case .dontKnow:
                             // Show building detail for info
                             showBuildingDetail = true
