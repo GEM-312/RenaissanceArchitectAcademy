@@ -95,8 +95,9 @@ struct MaterialPuzzleView: View {
     @State private var showReshuffleMessage = false
 
     // Mascot entrance animation
-    @State private var mascotOffset: CGFloat = -200  // Start off-screen left
+    @State private var mascotOffset: CGFloat = -300  // Start far off-screen left
     @State private var mascotBounce: CGFloat = 0
+    @State private var mascotWalkCycle: CGFloat = 0  // For walking animation
 
     private let gridSize = 5  // Bigger grid = harder
     private let tileSize: CGFloat = 58  // Slightly smaller tiles
@@ -198,12 +199,8 @@ struct MaterialPuzzleView: View {
         }
         .onAppear {
             setupGame()
-            // Mascot walks in with bouncy animation
-            withAnimation(.spring(response: 0.8, dampingFraction: 0.6)) {
-                mascotOffset = 0
-            }
-            // Start bounce animation
-            startMascotBounce()
+            // Mascot walks in with stepping animation
+            animateMascotWalkIn()
         }
     }
 
@@ -220,7 +217,40 @@ struct MaterialPuzzleView: View {
             SplashCharacter()
                 .frame(width: 100, height: 120)
         }
-        .scaleEffect(0.7)
+        .scaleEffect(0.8)
+        .offset(y: mascotWalkCycle)  // Walking bounce
+    }
+
+    /// Animate mascot walking in from left with bouncy steps
+    private func animateMascotWalkIn() {
+        // Walking steps - bounce up and down while moving right
+        let stepDuration = 0.15
+        let totalSteps = 8
+
+        for step in 0..<totalSteps {
+            let delay = Double(step) * stepDuration
+
+            // Move right
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                withAnimation(.easeOut(duration: stepDuration)) {
+                    mascotOffset = -300 + (CGFloat(step + 1) * (300 / CGFloat(totalSteps)))
+                }
+            }
+
+            // Bounce up on odd steps, down on even
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                withAnimation(.easeInOut(duration: stepDuration)) {
+                    mascotWalkCycle = step % 2 == 0 ? -15 : 0
+                }
+            }
+        }
+
+        // Finish walking, start idle bounce
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(totalSteps) * stepDuration + 0.1) {
+            mascotOffset = 0
+            mascotWalkCycle = 0
+            startMascotBounce()
+        }
     }
 
     private func startMascotBounce() {

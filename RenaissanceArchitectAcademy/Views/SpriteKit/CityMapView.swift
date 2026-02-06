@@ -143,7 +143,7 @@ struct CityMapView: View {
                         scene?.resetMascot()
                     }
                 )
-                .transition(.move(edge: .bottom))
+                .transition(.move(edge: .trailing))  // Slide in from right
             }
 
             // Building detail overlay (shown for info/help)
