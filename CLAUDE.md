@@ -490,7 +490,7 @@ RenaissanceColors.blueprintBlue   // #4169E1 - Grid lines
 - [x] Interactive drag-drop + flow tracing questions
 - [x] Pow celebration effects
 - [x] All 13 custom Midjourney science icons
-- [x] **Mascot characters (Splash + Bird) - SwiftUI & SpriteKit**
+- [x] **Mascot characters (Splash + Bird)**
 - [x] **MascotDialogueView with 3 choice buttons**
 - [x] **MaterialPuzzleView - Match-3 puzzle game**
 - [x] **Gravity system (tiles fall, new spawn from top)**
@@ -499,6 +499,14 @@ RenaissanceColors.blueprintBlue   // #4169E1 - Grid lines
 - [x] **Mascot follows cursor on map**
 - [x] **Mascot walks to buildings with bounce animation**
 - [x] **Mascot entrance animation in puzzle view**
+- [x] **SwiftUI mascot overlay (consistent look everywhere!)**
+
+### Session Log - Feb 6, 2025
+- Fixed mascot consistency: Now using SwiftUI overlay instead of SpriteKit rendering
+- CityScene tracks position, CityMapView renders SwiftUI SplashCharacter + BirdCharacter
+- Mascot looks identical on map, in dialogue, and in puzzle views
+- Added resize_assets.sh utility script
+- Updated .gitignore for backup files and original Midjourney sources
 
 ### Next Steps
 - [ ] Create challenges for remaining 11 buildings
