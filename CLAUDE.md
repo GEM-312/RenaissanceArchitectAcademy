@@ -52,10 +52,10 @@ RenaissanceArchitectAcademy/
 │   │   ├── MascotDialogueView.swift        # Mascot dialogue + choice buttons
 │   │   ├── MaterialPuzzleView.swift        # Match-3 puzzle for collecting materials
 │   │   └── SpriteKit/                      # SpriteKit city map
-│   │       ├── CityScene.swift             # Main SKScene with buildings, rivers, mascot
+│   │       ├── CityScene.swift             # Main SKScene with buildings, rivers, mascot position
 │   │       ├── BuildingNode.swift          # Tappable building sprites
-│   │       ├── MascotNode.swift            # Splash + Bird mascot characters
-│   │       └── CityMapView.swift           # SwiftUI wrapper for SpriteKit
+│   │       ├── MascotNode.swift            # (Legacy - not used, SwiftUI renders mascot)
+│   │       └── CityMapView.swift           # SwiftUI wrapper + mascot overlay
 │   ├── ViewModels/
 │   │   └── CityViewModel.swift        # @MainActor, @Published state, 17 buildings
 │   ├── Models/
@@ -246,9 +246,24 @@ Two mascot characters appear throughout the game:
 | File | Purpose |
 |------|---------|
 | `MascotDialogueView.swift` | SwiftUI mascot + dialogue bubble + choice buttons |
-| `MascotNode.swift` | SpriteKit mascot (matches SwiftUI design exactly) |
-| `CityScene.swift` | Mascot follows cursor, walks to buildings |
-| `CityMapView.swift` | Handles mascot callbacks and view transitions |
+| `CityScene.swift` | Tracks mascot position, reports to SwiftUI via callback |
+| `CityMapView.swift` | Renders SwiftUI mascot overlay, handles view transitions |
+
+### Architecture: SwiftUI Overlay (Not SpriteKit)
+The mascot is rendered as a **SwiftUI overlay** on top of the SpriteKit map, not as a SpriteKit node. This ensures the mascot looks identical everywhere:
+
+```
+CityScene (SpriteKit)          CityMapView (SwiftUI)
+├── Tracks mascot position  →  ├── Receives position via callback
+├── Handles cursor following   ├── Positions SwiftUI mascot overlay
+├── Animates walk path         ├── SplashCharacter + BirdCharacter
+└── Converts to screen coords  └── Same look as dialogue/puzzle views
+```
+
+**Why SwiftUI overlay?**
+- SpriteKit and SwiftUI render shapes differently
+- Using SwiftUI everywhere = identical appearance
+- Easier to maintain one mascot design
 
 ### SwiftUI Components (MascotDialogueView.swift)
 ```swift
@@ -263,19 +278,29 @@ DialogueBubble         // Parchment bubble with flourishes
 ChoiceButton           // Styled choice options
 ```
 
-### SpriteKit MascotNode
+### CityScene Mascot Position Tracking
 ```swift
-// Mascot follows cursor on map
-func followPoint(_ point: CGPoint, smoothing: CGFloat = 0.1)
+// Callback to update SwiftUI mascot position
+var onMascotPositionChanged: ((CGPoint, Bool) -> Void)?  // (position, isWalking)
 
-// Walk to building with bounce animation
-func walkTo(_ destination: CGPoint, duration: TimeInterval = 1.5)
+// Convert world position to normalized screen position (0-1)
+private func updateMascotScreenPosition()
 
-// Exit to puzzle view
-func walkOffScreen(to edge: CGPoint, duration: TimeInterval = 0.8, completion: @escaping () -> Void)
+// Get mascot facing direction for SwiftUI
+func getMascotFacingRight() -> Bool
+```
 
-// Celebrate correct answer
-func celebrateMatch()
+### CityMapView Mascot Overlay
+```swift
+// SwiftUI mascot rendered on top of SpriteKit
+private func mascotOverlay(in size: CGSize) -> some View {
+    HStack(alignment: .bottom, spacing: -20) {
+        SplashCharacter()
+            .scaleEffect(x: mascotFacingRight ? 1 : -1, y: 1)
+        BirdCharacter()
+    }
+    .position(x: screenX, y: screenY)
+}
 ```
 
 ## Material Puzzle System (NEW - Feb 6, 2025)
