@@ -69,3 +69,14 @@ playground.xcworkspace
 
 # Testing
 *.xcresult
+
+# Backup files
+*.backup
+*_Backup/
+
+# Original Midjourney source files (large, not needed in repo)
+RenaissanceArchitectAcademy/City Icons/
+RenaissanceArchitectAcademy/Science Icons/
+RenaissanceArchitectAcademy/UINavigation/
+RenaissanceArchitectAcademy/GameStateIcons/
+RenaissanceArchitectAcademy/OriginalAssets_Backup/
