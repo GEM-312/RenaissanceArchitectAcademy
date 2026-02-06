@@ -99,7 +99,6 @@ struct MaterialPuzzleView: View {
     @State private var mascotBounce: CGFloat = 0
     @State private var mascotWalkCycle: CGFloat = 0  // For walking bounce
     @State private var mascotLean: Double = 0  // Lean left/right while walking
-    @State private var isWalking: Bool = true  // Show walking legs
 
     private let gridSize = 5  // Bigger grid = harder
     private let tileSize: CGFloat = 58  // Slightly smaller tiles
@@ -210,24 +209,21 @@ struct MaterialPuzzleView: View {
     // MARK: - Mascot in Puzzle View
 
     private var puzzleMascotView: some View {
-        VStack(spacing: -15) {
-            // Bird flying above
-            BirdCharacter()
-                .frame(width: 50, height: 50)
-                .offset(x: 20, y: -10)
+        HStack(alignment: .bottom, spacing: -20) {
+            // Splash - same as MascotDialogueView
+            SplashCharacter()
+                .frame(width: 150, height: 180)
 
-            // Splash character with walking legs
-            WalkingSplashCharacter(isWalking: isWalking, walkCycle: mascotWalkCycle)
-                .frame(width: 100, height: 140)
+            // Bird companion - same as MascotDialogueView
+            BirdCharacter()
+                .frame(width: 60, height: 60)
         }
-        .scaleEffect(0.85)
+        .scaleEffect(0.65)
         .offset(y: mascotWalkCycle)  // Walking bounce
     }
 
     /// Animate mascot walking in from left with bouncy steps
     private func animateMascotWalkIn() {
-        isWalking = true
-
         // Walking steps - bounce up and down while moving right
         let stepDuration = 0.12
         let totalSteps = 12  // More steps for longer walk
@@ -252,7 +248,7 @@ struct MaterialPuzzleView: View {
             // Lean left/right alternating (like shifting weight)
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                 withAnimation(.easeInOut(duration: stepDuration)) {
-                    mascotLean = step % 2 == 0 ? -8 : 8
+                    mascotLean = step % 2 == 0 ? -5 : 5
                 }
             }
         }
@@ -263,7 +259,6 @@ struct MaterialPuzzleView: View {
                 mascotOffset = 0
                 mascotWalkCycle = 0
                 mascotLean = 0
-                isWalking = false
             }
             startMascotBounce()
         }
@@ -1036,133 +1031,6 @@ struct TileView: View {
         .scaleEffect(tile.isMatched ? 0.8 : (isHighlighted ? 1.1 : 1))
         .animation(.spring(response: 0.25), value: tile.isMatched)
         .animation(.spring(response: 0.2), value: isHighlighted)
-    }
-}
-
-// MARK: - Walking Splash Character
-
-/// Splash character with animated walking legs
-struct WalkingSplashCharacter: View {
-    let isWalking: Bool
-    let walkCycle: CGFloat
-
-    @State private var leftLegOffset: CGFloat = 0
-    @State private var rightLegOffset: CGFloat = 0
-
-    var body: some View {
-        ZStack {
-            // Ink drip "legs" at bottom - animate when walking
-            HStack(spacing: 25) {
-                // Left leg
-                Capsule()
-                    .fill(RenaissanceColors.warmBrown.opacity(0.8))
-                    .frame(width: 12, height: 30)
-                    .offset(y: isWalking ? leftLegOffset : 0)
-
-                // Right leg
-                Capsule()
-                    .fill(RenaissanceColors.warmBrown.opacity(0.8))
-                    .frame(width: 12, height: 30)
-                    .offset(y: isWalking ? rightLegOffset : 0)
-            }
-            .offset(y: 50)
-
-            // Main body - watercolor splash shape
-            SplashBody()
-        }
-        .onChange(of: walkCycle) { _, newValue in
-            // Alternate legs based on walk cycle
-            withAnimation(.easeInOut(duration: 0.1)) {
-                if newValue < -5 {
-                    leftLegOffset = -15
-                    rightLegOffset = 10
-                } else {
-                    leftLegOffset = 10
-                    rightLegOffset = -15
-                }
-            }
-        }
-        .onAppear {
-            if !isWalking {
-                leftLegOffset = 0
-                rightLegOffset = 0
-            }
-        }
-    }
-}
-
-/// Just the Splash body without the drips (used by WalkingSplashCharacter)
-struct SplashBody: View {
-    @State private var wiggle = false
-
-    var body: some View {
-        ZStack {
-            // Body - watercolor splash shape
-            WatercolorSplash()
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            RenaissanceColors.ochre,
-                            RenaissanceColors.warmBrown,
-                            RenaissanceColors.terracotta.opacity(0.8)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .frame(width: 90, height: 100)
-                .rotationEffect(.degrees(wiggle ? 2 : -2))
-
-            // Face
-            VStack(spacing: 8) {
-                // Eyes
-                HStack(spacing: 20) {
-                    Circle()
-                        .fill(.white)
-                        .frame(width: 16, height: 16)
-                        .overlay(
-                            Circle()
-                                .fill(RenaissanceColors.sepiaInk)
-                                .frame(width: 8, height: 8)
-                                .offset(y: 2)
-                        )
-
-                    Circle()
-                        .fill(.white)
-                        .frame(width: 16, height: 16)
-                        .overlay(
-                            Circle()
-                                .fill(RenaissanceColors.sepiaInk)
-                                .frame(width: 8, height: 8)
-                                .offset(y: 2)
-                        )
-                }
-
-                // Smile
-                SplashSmile()
-                    .stroke(RenaissanceColors.sepiaInk, lineWidth: 3)
-                    .frame(width: 25, height: 12)
-            }
-            .offset(y: -10)
-        }
-        .onAppear {
-            withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                wiggle = true
-            }
-        }
-    }
-}
-
-/// Simple smile shape
-struct SplashSmile: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        path.move(to: CGPoint(x: 0, y: 0))
-        path.addQuadCurve(
-            to: CGPoint(x: rect.width, y: 0),
-            control: CGPoint(x: rect.width / 2, y: rect.height)
-        )
-        return path
     }
 }
 
