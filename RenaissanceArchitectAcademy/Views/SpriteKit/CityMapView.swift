@@ -30,6 +30,12 @@ struct CityMapView: View {
     /// Controls the challenge view
     @State private var showChallenge = false
 
+    /// Controls the mascot dialogue (new game flow)
+    @State private var showMascotDialogue = false
+
+    /// Controls the material puzzle game
+    @State private var showMaterialPuzzle = false
+
     /// Reference to the SpriteKit scene (so we can call methods on it)
     @State private var scene: CityScene?
 
@@ -77,7 +83,59 @@ struct CityMapView: View {
             }
             .padding()
 
-            // Building detail overlay (shown when building is tapped)
+            // Mascot dialogue (NEW: shown when building is tapped)
+            if showMascotDialogue, let plot = selectedPlot {
+                MascotDialogueView(
+                    buildingName: plot.building.name,
+                    onChoice: { choice in
+                        withAnimation {
+                            showMascotDialogue = false
+                        }
+                        switch choice {
+                        case .needMaterials:
+                            // Show material puzzle
+                            showMaterialPuzzle = true
+                        case .dontKnow:
+                            // Show building detail for info
+                            showBuildingDetail = true
+                        case .needToSketch:
+                            // Skip to challenge (future: sketching game)
+                            showChallenge = true
+                        }
+                    },
+                    onDismiss: {
+                        withAnimation {
+                            showMascotDialogue = false
+                            selectedPlot = nil
+                        }
+                    }
+                )
+                .transition(.opacity)
+            }
+
+            // Material puzzle game
+            if showMaterialPuzzle, let plot = selectedPlot {
+                MaterialPuzzleView(
+                    buildingName: plot.building.name,
+                    formula: formulaForBuilding(plot.building.name),
+                    onComplete: {
+                        withAnimation {
+                            showMaterialPuzzle = false
+                        }
+                        // After collecting materials, show the challenge
+                        showChallenge = true
+                    },
+                    onDismiss: {
+                        withAnimation {
+                            showMaterialPuzzle = false
+                            selectedPlot = nil
+                        }
+                    }
+                )
+                .transition(.move(edge: .bottom))
+            }
+
+            // Building detail overlay (shown for info/help)
             if showBuildingDetail, let plot = selectedPlot {
                 BuildingDetailOverlay(
                     plot: plot,
@@ -160,10 +218,10 @@ struct CityMapView: View {
                 return
             }
 
-            // Show the building detail overlay
+            // Show the mascot dialogue (new game flow)
             selectedPlot = plot
             withAnimation(.spring(response: 0.3)) {
-                showBuildingDetail = true
+                showMascotDialogue = true
             }
         }
 
@@ -253,6 +311,26 @@ struct CityMapView: View {
                     .fill(RenaissanceColors.parchment.opacity(0.9))
                     .shadow(color: .black.opacity(0.1), radius: 2, y: 1)
             )
+    }
+
+    // MARK: - Material Formulas
+
+    /// Get the appropriate formula for each building type
+    private func formulaForBuilding(_ buildingName: String) -> MaterialFormula {
+        switch buildingName.lowercased() {
+        case "aqueduct", "roman baths", "pantheon":
+            return .limeMortar  // CaO + H₂O → Ca(OH)₂
+        case "colosseum", "roman roads", "harbor", "siege workshop", "insula":
+            return .concrete    // Roman concrete
+        case "duomo", "glassworks", "arsenal":
+            return .glass       // SiO₂ + Na₂O → Glass
+        case "botanical garden", "anatomy theater":
+            return .limeMortar
+        case "leonardo's workshop", "flying machine", "vatican observatory", "printing press":
+            return .glass
+        default:
+            return .limeMortar  // Default fallback
+        }
     }
 }
 
