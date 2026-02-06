@@ -31,35 +31,41 @@ struct MaterialFormula {
     let name: String           // "Lime Mortar"
     let reactants: String      // "CaO + H₂O"
     let product: String        // "Ca(OH)₂" (hidden until solved)
-    let elements: [String]     // ["Ca", "O", "H"]
+    let requiredElements: [String: Int]  // ["Ca": 1, "O": 2, "H": 2] - actual atom counts!
     let description: String
 
-    // Show formula with hidden answer
-    var displayFormula: String {
-        "\(reactants) → ?"
+    // All element symbols needed (for grid generation)
+    var elements: [String] {
+        Array(requiredElements.keys)
     }
 
+    // CaO + H₂O → Ca(OH)₂
+    // Ca: 1, O: 1+1=2, H: 2
     static let limeMortar = MaterialFormula(
         name: "Lime Mortar",
         reactants: "CaO + H₂O",
         product: "Ca(OH)₂",
-        elements: ["Ca", "O", "H"],
+        requiredElements: ["Ca": 1, "O": 2, "H": 2],
         description: "Combine the elements to create mortar!"
     )
 
+    // Ca(OH)₂ + SiO₂ + Al₂O₃ → calcium alumino-silicate
+    // Simplified: Ca: 1, Si: 1, Al: 2, O: 7 (but let's simplify to 2 each for gameplay)
     static let concrete = MaterialFormula(
         name: "Roman Concrete",
         reactants: "Ca(OH)₂ + SiO₂ + Al₂O₃",
-        product: "Calcium Alumino-Silicate",
-        elements: ["Ca", "Si", "Al", "O"],
+        product: "ite Calcium Alumino-Silicate",
+        requiredElements: ["Ca": 1, "Si": 1, "Al": 2, "O": 2],
         description: "The secret of Roman engineering!"
     )
 
+    // SiO₂ + Na₂O → sodium silicate glass
+    // Si: 1, O: 3, Na: 2
     static let glass = MaterialFormula(
         name: "Venetian Glass",
         reactants: "SiO₂ + Na₂O",
         product: "Glass",
-        elements: ["Si", "O", "Na"],
+        requiredElements: ["Si": 1, "O": 3, "Na": 2],
         description: "Create beautiful Murano glass!"
     )
 }
@@ -205,35 +211,68 @@ struct MaterialPuzzleView: View {
 
     private var elementProgressView: some View {
         VStack(spacing: 8) {
-            Text("Collect 3 of each element:")
+            Text("Discovered Elements:")
                 .font(.custom("EBGaramond-Regular", size: 15))
                 .foregroundColor(RenaissanceColors.sepiaInk)
 
             HStack(spacing: 16) {
-                ForEach(formula.elements, id: \.self) { element in
-                    let collected = collectedElements[element] ?? 0
-                    let isComplete = collected >= 3
+                // Show discovered elements (ones that have been collected)
+                let discoveredElements = formula.elements.filter { (collectedElements[$0] ?? 0) > 0 }
 
-                    VStack(spacing: 4) {
+                if discoveredElements.isEmpty {
+                    // Nothing discovered yet - show mystery
+                    ForEach(0..<3, id: \.self) { _ in
                         ZStack {
                             Circle()
-                                .fill(elementColors[element]?.opacity(isComplete ? 1 : 0.3) ?? RenaissanceColors.stoneGray)
+                                .fill(RenaissanceColors.stoneGray.opacity(0.3))
                                 .frame(width: 45, height: 45)
+                            Text("?")
+                                .font(.custom("Cinzel-Bold", size: 20))
+                                .foregroundColor(RenaissanceColors.stoneGray)
+                        }
+                    }
+                } else {
+                    ForEach(discoveredElements, id: \.self) { element in
+                        let collected = collectedElements[element] ?? 0
+                        let required = formula.requiredElements[element] ?? 1
+                        let isComplete = collected >= required
 
-                            if isComplete {
-                                Image(systemName: "checkmark")
-                                    .font(.title3.bold())
-                                    .foregroundColor(.white)
-                            } else {
-                                Text(element)
-                                    .font(.custom("Cinzel-Bold", size: 16))
-                                    .foregroundColor(.white)
+                        VStack(spacing: 4) {
+                            ZStack {
+                                Circle()
+                                    .fill(elementColors[element]?.opacity(isComplete ? 1 : 0.6) ?? RenaissanceColors.stoneGray)
+                                    .frame(width: 45, height: 45)
+
+                                if isComplete {
+                                    Image(systemName: "checkmark")
+                                        .font(.title3.bold())
+                                        .foregroundColor(.white)
+                                } else {
+                                    Text(element)
+                                        .font(.custom("Cinzel-Bold", size: 16))
+                                        .foregroundColor(.white)
+                                }
+                            }
+
+                            Text("\(min(collected, required))/\(required)")
+                                .font(.custom("EBGaramond-Regular", size: 13))
+                                .foregroundColor(isComplete ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray)
+                        }
+                    }
+
+                    // Show remaining mystery slots
+                    let remaining = formula.elements.count - discoveredElements.count
+                    if remaining > 0 {
+                        ForEach(0..<remaining, id: \.self) { _ in
+                            ZStack {
+                                Circle()
+                                    .fill(RenaissanceColors.stoneGray.opacity(0.3))
+                                    .frame(width: 45, height: 45)
+                                Text("?")
+                                    .font(.custom("Cinzel-Bold", size: 20))
+                                    .foregroundColor(RenaissanceColors.stoneGray)
                             }
                         }
-
-                        Text("\(min(collected, 3))/3")
-                            .font(.custom("EBGaramond-Regular", size: 13))
-                            .foregroundColor(isComplete ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray)
                     }
                 }
             }
@@ -348,22 +387,29 @@ struct MaterialPuzzleView: View {
             collectedElements[element] = 0
         }
 
-        // Create grid with guaranteed needed elements
+        // Create grid with elements weighted by how many we need
         var tiles: [ElementTile] = []
 
-        // Add enough of each needed element (4 of each for 4x4 grid)
-        for element in formula.elements {
-            for _ in 0..<4 {
+        // Add tiles based on required amounts (more of what's needed more)
+        for (element, required) in formula.requiredElements {
+            // Add extra tiles so matches are possible (need 3 to match, times required)
+            let tileCount = max(3, required * 2)
+            for _ in 0..<tileCount {
                 let color = elementColors[element] ?? RenaissanceColors.stoneGray
                 tiles.append(ElementTile(symbol: element, color: color))
             }
         }
 
-        // Fill rest with random elements from needed list (to make matches possible)
+        // Fill rest with random elements from needed list
         while tiles.count < gridSize * gridSize {
             let element = formula.elements.randomElement() ?? "Ca"
             let color = elementColors[element] ?? RenaissanceColors.stoneGray
             tiles.append(ElementTile(symbol: element, color: color))
+        }
+
+        // Trim if we have too many
+        if tiles.count > gridSize * gridSize {
+            tiles = Array(tiles.shuffled().prefix(gridSize * gridSize))
         }
 
         // Shuffle until no initial matches (makes player work for it)
@@ -549,10 +595,10 @@ struct MaterialPuzzleView: View {
     }
 
     private func checkWinCondition() {
-        // Check if we have 3 of each needed element
+        // Check if we have enough of each needed element (based on formula)
         var allCollected = true
-        for element in formula.elements {
-            if (collectedElements[element] ?? 0) < 3 {
+        for (element, required) in formula.requiredElements {
+            if (collectedElements[element] ?? 0) < required {
                 allCollected = false
                 break
             }
