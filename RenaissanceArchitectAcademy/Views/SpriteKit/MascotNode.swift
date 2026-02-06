@@ -39,11 +39,11 @@ class MascotNode: SKNode {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Setup Splash Character
+    // MARK: - Setup Splash Character (matching SwiftUI SplashCharacter)
 
     private func setupSplash() {
-        // Main body - organic blob shape
-        let bodyPath = createBlobPath(width: 80, height: 100)
+        // Main body - organic blob shape (120x140 in SwiftUI)
+        let bodyPath = createBlobPath(width: 120, height: 140)
         splashBody = SKShapeNode(path: bodyPath)
         splashBody.fillColor = PlatformColor(RenaissanceColors.ochre)
         splashBody.strokeColor = PlatformColor(RenaissanceColors.warmBrown)
@@ -51,11 +51,11 @@ class MascotNode: SKNode {
         splashBody.zPosition = 10
         addChild(splashBody)
 
-        // Left eye
-        leftEye = SKShapeNode(ellipseOf: CGSize(width: 14, height: 16))
+        // Left eye (spacing 24 in SwiftUI, so -12 and +12)
+        leftEye = SKShapeNode(ellipseOf: CGSize(width: 20, height: 18))
         leftEye.fillColor = .white
         leftEye.strokeColor = .clear
-        leftEye.position = CGPoint(x: -15, y: 20)
+        leftEye.position = CGPoint(x: -12, y: 15)
         leftEye.zPosition = 11
         splashBody.addChild(leftEye)
 
@@ -68,10 +68,10 @@ class MascotNode: SKNode {
         leftEye.addChild(leftPupil)
 
         // Right eye
-        rightEye = SKShapeNode(ellipseOf: CGSize(width: 14, height: 16))
+        rightEye = SKShapeNode(ellipseOf: CGSize(width: 20, height: 18))
         rightEye.fillColor = .white
         rightEye.strokeColor = .clear
-        rightEye.position = CGPoint(x: 15, y: 20)
+        rightEye.position = CGPoint(x: 12, y: 15)
         rightEye.zPosition = 11
         splashBody.addChild(rightEye)
 
@@ -83,97 +83,102 @@ class MascotNode: SKNode {
         rightPupil.name = "rightPupil"
         rightEye.addChild(rightPupil)
 
-        // Smile
+        // Smile (30x15 in SwiftUI)
         let smilePath = CGMutablePath()
-        smilePath.move(to: CGPoint(x: -12, y: 0))
-        smilePath.addQuadCurve(to: CGPoint(x: 12, y: 0), control: CGPoint(x: 0, y: -10))
+        smilePath.move(to: CGPoint(x: -15, y: 0))
+        smilePath.addQuadCurve(to: CGPoint(x: 15, y: 0), control: CGPoint(x: 0, y: -12))
         smile = SKShapeNode(path: smilePath)
         smile.strokeColor = PlatformColor(RenaissanceColors.sepiaInk)
         smile.lineWidth = 3
         smile.lineCap = .round
-        smile.position = CGPoint(x: 0, y: -5)
+        smile.position = CGPoint(x: 0, y: -10)
         smile.zPosition = 11
         splashBody.addChild(smile)
 
-        // Ink drips at bottom
+        // Ink drips at bottom (heights: 20, 35, 25 in SwiftUI, spacing 15)
+        let dripHeights: [CGFloat] = [20, 35, 25]
         for i in 0..<3 {
-            let drip = SKShapeNode(ellipseOf: CGSize(width: 8, height: CGFloat.random(in: 15...30)))
+            let drip = SKShapeNode(ellipseOf: CGSize(width: 8, height: dripHeights[i]))
             drip.fillColor = PlatformColor(RenaissanceColors.warmBrown.opacity(0.7))
             drip.strokeColor = .clear
-            drip.position = CGPoint(x: CGFloat(i - 1) * 20, y: -55)
+            drip.position = CGPoint(x: CGFloat(i - 1) * 15, y: -70 - dripHeights[i]/2)
             drip.zPosition = 9
             splashBody.addChild(drip)
 
-            // Drip animation
+            // Drip animation with random delay
             let dripAction = SKAction.sequence([
-                SKAction.moveBy(x: 0, y: -5, duration: 1.0),
-                SKAction.moveBy(x: 0, y: 5, duration: 1.0)
+                SKAction.moveBy(x: 0, y: -5, duration: 1.5),
+                SKAction.moveBy(x: 0, y: 5, duration: 1.5)
             ])
-            drip.run(SKAction.repeatForever(dripAction))
+            let delayedDrip = SKAction.sequence([
+                SKAction.wait(forDuration: Double.random(in: 0...0.5)),
+                SKAction.repeatForever(dripAction)
+            ])
+            drip.run(delayedDrip)
         }
     }
 
-    // MARK: - Setup Bird Companion
+    // MARK: - Setup Bird Companion (matching SwiftUI BirdCharacter)
 
     private func setupBird() {
-        // Bird container
+        // Bird container - positioned like SwiftUI (to the right of Splash, slightly up)
         let birdContainer = SKNode()
-        birdContainer.position = CGPoint(x: 60, y: 40)
+        birdContainer.position = CGPoint(x: 80, y: 30)  // Right side of Splash
         birdContainer.zPosition = 12
         birdContainer.name = "bird"
         addChild(birdContainer)
 
-        // Bird body
-        birdBody = SKShapeNode(ellipseOf: CGSize(width: 30, height: 25))
+        // Bird body (40x35 in SwiftUI)
+        birdBody = SKShapeNode(ellipseOf: CGSize(width: 40, height: 35))
         birdBody.fillColor = PlatformColor(RenaissanceColors.renaissanceBlue)
         birdBody.strokeColor = .clear
         birdContainer.addChild(birdBody)
 
-        // Bird head
-        let head = SKShapeNode(circleOfRadius: 12)
+        // Bird wing (25x15 in SwiftUI, offset (-8, -5), rotation)
+        birdWing = SKShapeNode(ellipseOf: CGSize(width: 25, height: 15))
+        birdWing.fillColor = PlatformColor(RenaissanceColors.deepTeal)
+        birdWing.strokeColor = .clear
+        birdWing.position = CGPoint(x: -8, y: 5)
+        birdWing.zRotation = 0.35
+        birdContainer.addChild(birdWing)
+
+        // Bird head (25x25 circle in SwiftUI, offset (10, -15))
+        let head = SKShapeNode(circleOfRadius: 12.5)
         head.fillColor = PlatformColor(RenaissanceColors.renaissanceBlue)
         head.strokeColor = .clear
-        head.position = CGPoint(x: 12, y: 10)
+        head.position = CGPoint(x: 10, y: 15)  // Slightly above body
         birdContainer.addChild(head)
 
-        // Bird eye
-        let eye = SKShapeNode(circleOfRadius: 4)
+        // Bird eye (6x6 in SwiftUI, offset (15, -18))
+        let eye = SKShapeNode(circleOfRadius: 3)
         eye.fillColor = PlatformColor(RenaissanceColors.sepiaInk)
         eye.strokeColor = .clear
-        eye.position = CGPoint(x: 16, y: 12)
+        eye.position = CGPoint(x: 15, y: 18)
         birdContainer.addChild(eye)
 
-        // Bird beak
+        // Bird beak (12x8 triangle, rotated 90 degrees, offset (25, -15))
         let beakPath = CGMutablePath()
-        beakPath.move(to: CGPoint(x: 0, y: 0))
+        beakPath.move(to: CGPoint(x: 0, y: 4))
         beakPath.addLine(to: CGPoint(x: 12, y: 0))
-        beakPath.addLine(to: CGPoint(x: 0, y: -5))
+        beakPath.addLine(to: CGPoint(x: 0, y: -4))
         beakPath.closeSubpath()
         let beak = SKShapeNode(path: beakPath)
         beak.fillColor = PlatformColor(RenaissanceColors.ochre)
         beak.strokeColor = .clear
-        beak.position = CGPoint(x: 22, y: 10)
+        beak.position = CGPoint(x: 22, y: 15)
         birdContainer.addChild(beak)
 
-        // Bird wing
-        birdWing = SKShapeNode(ellipseOf: CGSize(width: 18, height: 10))
-        birdWing.fillColor = PlatformColor(RenaissanceColors.deepTeal)
-        birdWing.strokeColor = .clear
-        birdWing.position = CGPoint(x: -5, y: 5)
-        birdWing.zRotation = 0.3
-        birdContainer.addChild(birdWing)
-
-        // Bird bobbing animation
+        // Bird bobbing animation (matching SwiftUI)
         let bobAction = SKAction.sequence([
-            SKAction.moveBy(x: 0, y: 8, duration: 0.8),
-            SKAction.moveBy(x: 0, y: -8, duration: 0.8)
+            SKAction.moveBy(x: 0, y: 10, duration: 0.8),
+            SKAction.moveBy(x: 0, y: -10, duration: 0.8)
         ])
         birdContainer.run(SKAction.repeatForever(bobAction))
 
-        // Wing flap animation
+        // Wing flap animation (matching SwiftUI: -20 to 20 degrees)
         let flapAction = SKAction.sequence([
-            SKAction.rotate(toAngle: 0.5, duration: 0.15),
-            SKAction.rotate(toAngle: 0.1, duration: 0.15)
+            SKAction.rotate(toAngle: -0.35, duration: 0.15),
+            SKAction.rotate(toAngle: 0.35, duration: 0.15)
         ])
         birdWing.run(SKAction.repeatForever(flapAction))
     }

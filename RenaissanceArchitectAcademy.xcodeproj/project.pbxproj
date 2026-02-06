@@ -34,6 +34,9 @@
 		5442999A2F3646ED00F92073 /* BuildingNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299972F3646ED00F92073 /* BuildingNode.swift */; };
 		5442999B2F3646ED00F92073 /* CityMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299982F3646ED00F92073 /* CityMapView.swift */; };
 		5442999C2F3646ED00F92073 /* CityScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299992F3646ED00F92073 /* CityScene.swift */; };
+		544299A72F369AB700F92073 /* MascotDialogueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299A52F369AB700F92073 /* MascotDialogueView.swift */; };
+		544299A82F369AB700F92073 /* MaterialPuzzleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299A62F369AB700F92073 /* MaterialPuzzleView.swift */; };
+		544299AE2F36A8D000F92073 /* MascotNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299AD2F36A8D000F92073 /* MascotNode.swift */; };
 		5475D2EF2F3146CC003AA131 /* building_complete.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2EE2F3146CB003AA131 /* building_complete.mp3 */; };
 		5475D2F82F319000003AA131 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2F92F319000003AA131 /* Assets.xcassets */; };
 		F001 /* Cinzel-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B022F313B22007D8C64 /* Cinzel-Black.ttf */; };
@@ -84,6 +87,9 @@
 		544299972F3646ED00F92073 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BuildingNode.swift; path = Views/SpriteKit/BuildingNode.swift; sourceTree = "<group>"; };
 		544299982F3646ED00F92073 /* CityMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityMapView.swift; path = Views/SpriteKit/CityMapView.swift; sourceTree = "<group>"; };
 		544299992F3646ED00F92073 /* CityScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityScene.swift; path = Views/SpriteKit/CityScene.swift; sourceTree = "<group>"; };
+		544299A52F369AB700F92073 /* MascotDialogueView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MascotDialogueView.swift; path = Views/MascotDialogueView.swift; sourceTree = "<group>"; };
+		544299A62F369AB700F92073 /* MaterialPuzzleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MaterialPuzzleView.swift; path = Views/MaterialPuzzleView.swift; sourceTree = "<group>"; };
+		544299AD2F36A8D000F92073 /* MascotNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MascotNode.swift; path = Views/SpriteKit/MascotNode.swift; sourceTree = "<group>"; };
 		54477B022F313B22007D8C64 /* Cinzel-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-Black.ttf"; sourceTree = "<group>"; };
 		54477B032F313B22007D8C64 /* Cinzel-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-Bold.ttf"; sourceTree = "<group>"; };
 		54477B042F313B22007D8C64 /* Cinzel-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-ExtraBold.ttf"; sourceTree = "<group>"; };
@@ -134,6 +140,9 @@
 		301 /* RenaissanceArchitectAcademy */ = {
 			isa = PBXGroup;
 			children = (
+				544299AD2F36A8D000F92073 /* MascotNode.swift */,
+				544299A52F369AB700F92073 /* MascotDialogueView.swift */,
+				544299A62F369AB700F92073 /* MaterialPuzzleView.swift */,
 				544299972F3646ED00F92073 /* BuildingNode.swift */,
 				544299982F3646ED00F92073 /* CityMapView.swift */,
 				544299992F3646ED00F92073 /* CityScene.swift */,
@@ -345,10 +354,13 @@
 				007 /* CityViewModel.swift in Sources */,
 				008 /* Building.swift in Sources */,
 				009 /* RenaissanceColors.swift in Sources */,
+				544299AE2F36A8D000F92073 /* MascotNode.swift in Sources */,
 				010 /* RenaissanceButton.swift in Sources */,
 				011 /* SidebarView.swift in Sources */,
 				015 /* SoundManager.swift in Sources */,
 				016 /* BloomEffectView.swift in Sources */,
+				544299A72F369AB700F92073 /* MascotDialogueView.swift in Sources */,
+				544299A82F369AB700F92073 /* MaterialPuzzleView.swift in Sources */,
 				017 /* ProfileView.swift in Sources */,
 				018 /* StudentProfile.swift in Sources */,
 				019 /* ScienceIconView.swift in Sources */,
