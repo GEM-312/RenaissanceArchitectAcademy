@@ -4,6 +4,14 @@ import SwiftUI
 struct GridPosition: Equatable, Hashable {
     let row: Int
     let col: Int
+
+    /// Check if two positions are adjacent (up/down/left/right)
+    func isAdjacent(to other: GridPosition) -> Bool {
+        let rowDiff = abs(row - other.row)
+        let colDiff = abs(col - other.col)
+        // Adjacent means exactly 1 step in one direction, 0 in the other
+        return (rowDiff == 1 && colDiff == 0) || (rowDiff == 0 && colDiff == 1)
+    }
 }
 
 /// Element tile for the puzzle grid
@@ -12,7 +20,6 @@ struct ElementTile: Identifiable, Equatable {
     let symbol: String
     let color: Color
     var isMatched = false
-    var isSelected = false
 
     static func == (lhs: ElementTile, rhs: ElementTile) -> Bool {
         lhs.id == rhs.id
@@ -65,11 +72,12 @@ struct MaterialPuzzleView: View {
     let onDismiss: () -> Void
 
     @State private var grid: [[ElementTile]] = []
-    @State private var selectedTiles: [GridPosition] = []  // Track selected positions
+    @State private var selectedPosition: GridPosition? = nil  // First tile selected for swap
     @State private var collectedElements: [String: Int] = [:]
     @State private var showSuccess = false
     @State private var showHint = false
     @State private var revealedProduct = false
+    @State private var isAnimating = false  // Prevent interactions during animations
 
     private let gridSize = 5
     private let tileSize: CGFloat = 60
@@ -241,17 +249,24 @@ struct MaterialPuzzleView: View {
                         if row < grid.count && col < grid[row].count {
                             let tile = grid[row][col]
                             let position = GridPosition(row: row, col: col)
-                            let isSelected = selectedTiles.contains(position)
+                            let isSelected = selectedPosition == position
                             let isNeeded = formula.elements.contains(tile.symbol)
+                            // Highlight adjacent tiles when one is selected
+                            let isValidSwap = selectedPosition != nil &&
+                                              selectedPosition != position &&
+                                              selectedPosition!.isAdjacent(to: position)
 
                             TileView(
                                 tile: tile,
                                 size: tileSize,
                                 isNeeded: isNeeded,
-                                isHighlighted: isSelected
+                                isHighlighted: isSelected,
+                                isValidTarget: isValidSwap
                             )
                             .onTapGesture {
-                                tileTapped(row: row, col: col)
+                                if !isAnimating {
+                                    tileTapped(row: row, col: col)
+                                }
                             }
                         }
                     }
@@ -269,7 +284,7 @@ struct MaterialPuzzleView: View {
         Button(action: { showHint.toggle() }) {
             HStack {
                 Image(systemName: "lightbulb")
-                Text(showHint ? "Match 3 tiles of the same element (tap them in sequence)" : "Need a hint?")
+                Text(showHint ? "Swap adjacent tiles to line up 3 of the same element!" : "Need a hint?")
             }
             .font(.custom("EBGaramond-Italic", size: 14))
             .foregroundColor(RenaissanceColors.warmBrown)
@@ -357,64 +372,143 @@ struct MaterialPuzzleView: View {
         // If tile already matched, ignore
         if tile.isMatched { return }
 
-        // If already selected, deselect
-        if selectedTiles.contains(position) {
-            selectedTiles.removeAll { $0 == position }
-            grid[row][col].isSelected = false
+        // If no tile selected yet, select this one
+        if selectedPosition == nil {
+            selectedPosition = position
             return
         }
 
-        // If we have selections, check if same element
-        if let firstPos = selectedTiles.first {
-            let firstTile = grid[firstPos.row][firstPos.col]
-            if firstTile.symbol != tile.symbol {
-                // Different element - clear selection and start new
-                clearSelections()
+        // If tapping the same tile, deselect it
+        if selectedPosition == position {
+            selectedPosition = nil
+            return
+        }
+
+        // If tapping an adjacent tile, try to swap
+        if selectedPosition!.isAdjacent(to: position) {
+            swapTiles(from: selectedPosition!, to: position)
+        } else {
+            // Not adjacent - select the new tile instead
+            selectedPosition = position
+        }
+    }
+
+    private func swapTiles(from: GridPosition, to: GridPosition) {
+        isAnimating = true
+
+        // Perform the swap with animation
+        withAnimation(.spring(response: 0.3)) {
+            let temp = grid[from.row][from.col]
+            grid[from.row][from.col] = grid[to.row][to.col]
+            grid[to.row][to.col] = temp
+        }
+
+        // Clear selection
+        selectedPosition = nil
+
+        // Check for matches after swap
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+            let matches = self.findAllMatches()
+
+            if matches.isEmpty {
+                // No matches - swap back!
+                withAnimation(.spring(response: 0.3)) {
+                    let temp = self.grid[from.row][from.col]
+                    self.grid[from.row][from.col] = self.grid[to.row][to.col]
+                    self.grid[to.row][to.col] = temp
+                }
+                self.isAnimating = false
+            } else {
+                // Found matches - collect them!
+                self.collectMatches(matches)
+            }
+        }
+    }
+
+    /// Find all matching rows and columns (3+ in a line)
+    private func findAllMatches() -> Set<GridPosition> {
+        var matches = Set<GridPosition>()
+
+        // Check horizontal matches
+        for row in 0..<gridSize {
+            var col = 0
+            while col < gridSize - 2 {
+                let symbol = grid[row][col].symbol
+                var matchLength = 1
+
+                while col + matchLength < gridSize && grid[row][col + matchLength].symbol == symbol {
+                    matchLength += 1
+                }
+
+                if matchLength >= 3 {
+                    for i in 0..<matchLength {
+                        matches.insert(GridPosition(row: row, col: col + i))
+                    }
+                }
+                col += max(1, matchLength)
             }
         }
 
-        // Add to selection
-        selectedTiles.append(position)
-        grid[row][col].isSelected = true
+        // Check vertical matches
+        for col in 0..<gridSize {
+            var row = 0
+            while row < gridSize - 2 {
+                let symbol = grid[row][col].symbol
+                var matchLength = 1
 
-        // Check if we have 3 of the same
-        if selectedTiles.count >= 3 {
-            matchTiles()
+                while row + matchLength < gridSize && grid[row + matchLength][col].symbol == symbol {
+                    matchLength += 1
+                }
+
+                if matchLength >= 3 {
+                    for i in 0..<matchLength {
+                        matches.insert(GridPosition(row: row + i, col: col))
+                    }
+                }
+                row += max(1, matchLength)
+            }
         }
+
+        return matches
     }
 
-    private func clearSelections() {
-        for pos in selectedTiles {
-            grid[pos.row][pos.col].isSelected = false
+    /// Collect matched tiles and replace them
+    private func collectMatches(_ matches: Set<GridPosition>) {
+        // Count elements collected
+        var elementCounts: [String: Int] = [:]
+        for pos in matches {
+            let symbol = grid[pos.row][pos.col].symbol
+            elementCounts[symbol, default: 0] += 1
         }
-        selectedTiles.removeAll()
-    }
 
-    private func matchTiles() {
-        guard selectedTiles.count >= 3 else { return }
-
-        let firstTile = grid[selectedTiles[0].row][selectedTiles[0].col]
-        let element = firstTile.symbol
+        // Add to collected (only needed elements)
+        for (element, count) in elementCounts {
+            if formula.elements.contains(element) {
+                collectedElements[element, default: 0] += count
+            }
+        }
 
         // Mark as matched with animation
         withAnimation(.spring(response: 0.3)) {
-            for pos in selectedTiles {
+            for pos in matches {
                 grid[pos.row][pos.col].isMatched = true
             }
         }
 
-        // Add to collected (only if needed element)
-        if formula.elements.contains(element) {
-            collectedElements[element, default: 0] += selectedTiles.count
-        }
-
-        // Clear selection
-        selectedTiles.removeAll()
-
         // Replace matched tiles after delay
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-            replaceMatchedTiles()
-            checkWinCondition()
+            self.replaceMatchedTiles()
+
+            // Check for chain reactions (new matches after tiles fall)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                let newMatches = self.findAllMatches()
+                if !newMatches.isEmpty {
+                    self.collectMatches(newMatches)
+                } else {
+                    self.isAnimating = false
+                    self.checkWinCondition()
+                }
+            }
         }
     }
 
@@ -470,6 +564,7 @@ struct TileView: View {
     let size: CGFloat
     let isNeeded: Bool
     var isHighlighted: Bool = false
+    var isValidTarget: Bool = false  // Show as valid swap destination
 
     var body: some View {
         ZStack {
@@ -486,7 +581,7 @@ struct TileView: View {
                     .frame(width: size, height: size)
             }
 
-            // Selection highlight
+            // Selection highlight (selected tile)
             if isHighlighted {
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(.white, lineWidth: 3)
@@ -494,6 +589,13 @@ struct TileView: View {
 
                 RoundedRectangle(cornerRadius: 10)
                     .fill(.white.opacity(0.3))
+                    .frame(width: size, height: size)
+            }
+
+            // Valid swap target highlight (pulsing border)
+            if isValidTarget {
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(RenaissanceColors.highlightAmber, lineWidth: 2)
                     .frame(width: size, height: size)
             }
 
