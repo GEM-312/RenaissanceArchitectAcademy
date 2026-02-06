@@ -1,0 +1,263 @@
+import SwiftUI
+import SpriteKit
+
+/// SwiftUI wrapper for the SpriteKit city scene
+///
+/// HOW THIS WORKS:
+/// ---------------
+/// SwiftUI can't directly show SpriteKit content, so we use `SpriteView` as a bridge.
+/// Think of it like a window into the game world.
+///
+/// The data flow:
+/// 1. User taps building in SpriteKit → CityScene calls onBuildingSelected
+/// 2. We find the matching BuildingPlot from CityViewModel
+/// 3. We show BuildingDetailOverlay (pure SwiftUI) as a sheet
+/// 4. User taps "Begin Challenge" → we show InteractiveChallengeView
+///
+struct CityMapView: View {
+
+    // MARK: - Properties
+
+    /// ViewModel holds all building data (shared with CityView)
+    @ObservedObject var viewModel: CityViewModel
+
+    /// The currently selected plot (when user taps a building)
+    @State private var selectedPlot: BuildingPlot?
+
+    /// Controls the building detail sheet
+    @State private var showBuildingDetail = false
+
+    /// Controls the challenge view
+    @State private var showChallenge = false
+
+    /// Reference to the SpriteKit scene (so we can call methods on it)
+    @State private var scene: CityScene?
+
+    /// Environment for navigation
+    @Environment(\.dismiss) private var dismiss
+
+    // MARK: - Building ID Mapping
+    /// Maps SpriteKit building IDs to ViewModel plot IDs
+    private let buildingIdToPlotId: [String: Int] = [
+        // Ancient Rome (8)
+        "aqueduct": 1,
+        "colosseum": 2,
+        "romanBaths": 3,
+        "pantheon": 4,
+        "romanRoads": 5,
+        "harbor": 6,
+        "siegeWorkshop": 7,
+        "insula": 8,
+        // Renaissance Italy (9)
+        "duomo": 9,
+        "botanicalGarden": 10,
+        "glassworks": 11,
+        "arsenal": 12,
+        "anatomyTheater": 13,
+        "leonardoWorkshop": 14,
+        "flyingMachine": 15,
+        "vaticanObservatory": 16,
+        "printingPress": 17
+    ]
+
+    // MARK: - Body
+
+    var body: some View {
+        ZStack {
+            // The SpriteKit scene (the actual game map)
+            SpriteView(scene: makeScene(), options: [.allowsTransparency])
+                .ignoresSafeArea()
+                .gesture(pinchGesture)
+
+            // SwiftUI overlay for UI elements
+            VStack {
+                topBar
+                Spacer()
+                bottomHint
+            }
+            .padding()
+
+            // Building detail overlay (shown when building is tapped)
+            if showBuildingDetail, let plot = selectedPlot {
+                BuildingDetailOverlay(
+                    plot: plot,
+                    onDismiss: {
+                        withAnimation {
+                            showBuildingDetail = false
+                            selectedPlot = nil
+                        }
+                    },
+                    onBeginChallenge: {
+                        showBuildingDetail = false
+                        showChallenge = true
+                    },
+                    isLargeScreen: true
+                )
+                .transition(.opacity)
+            }
+        }
+        .onAppear {
+            // Sync completion states when view appears (e.g., after completing in Era view)
+            if let currentScene = scene {
+                syncCompletionStates(in: currentScene)
+            }
+        }
+        .sheet(isPresented: $showChallenge) {
+            if let plot = selectedPlot,
+               let challenge = ChallengeContent.interactiveChallenge(for: plot.building.name) {
+                InteractiveChallengeView(
+                    challenge: challenge,
+                    onComplete: { correctAnswers, totalQuestions in
+                        // Mark as complete if they got most questions right
+                        let passThreshold = totalQuestions / 2
+                        if correctAnswers > passThreshold {
+                            viewModel.completeChallenge(for: plot.id)
+                            // Update the SpriteKit building state
+                            if let buildingId = buildingIdToPlotId.first(where: { $0.value == plot.id })?.key {
+                                scene?.updateBuildingState(buildingId, state: .complete)
+                            }
+                        }
+                        // Close the sheet after completion
+                        showChallenge = false
+                        selectedPlot = nil
+                    },
+                    onDismiss: {
+                        showChallenge = false
+                        selectedPlot = nil
+                    }
+                )
+            } else {
+                // Fallback if no challenge exists yet
+                Text("Challenge coming soon!")
+                    .font(.custom("Cinzel-Bold", size: 24))
+                    .foregroundColor(RenaissanceColors.sepiaInk)
+            }
+        }
+    }
+
+    // MARK: - Scene Creation
+
+    /// Creates the SpriteKit scene (only once)
+    private func makeScene() -> CityScene {
+        // Return existing scene if we already have one
+        if let existingScene = scene {
+            // Sync completion states in case they changed
+            syncCompletionStates(in: existingScene)
+            return existingScene
+        }
+
+        // Create new scene
+        let newScene = CityScene()
+        newScene.size = CGSize(width: 1024, height: 768)
+        newScene.scaleMode = .aspectFill
+
+        // Connect building tap callback
+        // When user taps a building in SpriteKit, this gets called
+        newScene.onBuildingSelected = { [self] buildingId in
+            // Convert SpriteKit ID ("duomo") to ViewModel ID (4)
+            guard let plotId = buildingIdToPlotId[buildingId],
+                  let plot = viewModel.buildingPlots.first(where: { $0.id == plotId }) else {
+                return
+            }
+
+            // Show the building detail overlay
+            selectedPlot = plot
+            withAnimation(.spring(response: 0.3)) {
+                showBuildingDetail = true
+            }
+        }
+
+        // Store reference immediately
+        scene = newScene
+
+        // Sync initial completion states from ViewModel
+        // This runs after scene is set up, so we delay slightly
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.syncCompletionStates(in: newScene)
+        }
+
+        return newScene
+    }
+
+    /// Sync building completion states from ViewModel to SpriteKit scene
+    private func syncCompletionStates(in scene: CityScene) {
+        for (buildingId, plotId) in buildingIdToPlotId {
+            if let plot = viewModel.buildingPlots.first(where: { $0.id == plotId }) {
+                let state: BuildingState = plot.isCompleted ? .complete : .available
+                scene.updateBuildingState(buildingId, state: state)
+            }
+        }
+    }
+
+    // MARK: - Gestures
+
+    /// Pinch-to-zoom gesture
+    private var pinchGesture: some Gesture {
+        MagnificationGesture()
+            .onChanged { value in
+                scene?.handlePinch(scale: value)
+            }
+    }
+
+    // MARK: - UI Components
+
+    private var topBar: some View {
+        HStack {
+            // Title
+            Text("City of Learning")
+                .font(.custom("Cinzel-Bold", size: 24))
+                .foregroundColor(RenaissanceColors.sepiaInk)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
+                .background(
+                    Capsule()
+                        .fill(RenaissanceColors.parchment.opacity(0.95))
+                        .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
+                )
+
+            Spacer()
+
+            // Buildings completed counter
+            let completedCount = viewModel.buildingPlots.filter { $0.isCompleted }.count
+            let totalCount = viewModel.buildingPlots.count
+            HStack(spacing: 8) {
+                Image(systemName: "checkmark.seal.fill")
+                    .foregroundColor(RenaissanceColors.sageGreen)
+                Text("\(completedCount)/\(totalCount)")
+                    .font(.custom("EBGaramond-Regular", size: 18))
+                    .foregroundColor(RenaissanceColors.sepiaInk)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background(
+                Capsule()
+                    .fill(RenaissanceColors.parchment.opacity(0.95))
+            )
+        }
+    }
+
+    private var bottomHint: some View {
+        #if os(iOS)
+        let hintText = "Tap a building to begin  •  Pinch to zoom  •  Drag to explore"
+        #else
+        let hintText = "Click a building to begin  •  Scroll to pan  •  Pinch or ⌥+scroll to zoom"
+        #endif
+
+        return Text(hintText)
+            .font(.custom("EBGaramond-Italic", size: 16))
+            .foregroundColor(RenaissanceColors.sepiaInk.opacity(0.8))
+            .padding(.horizontal, 24)
+            .padding(.vertical, 12)
+            .background(
+                Capsule()
+                    .fill(RenaissanceColors.parchment.opacity(0.9))
+                    .shadow(color: .black.opacity(0.1), radius: 2, y: 1)
+            )
+    }
+}
+
+// MARK: - Preview
+
+#Preview {
+    CityMapView(viewModel: CityViewModel())
+}

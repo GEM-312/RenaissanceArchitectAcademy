@@ -2,7 +2,8 @@ import SwiftUI
 
 /// Navigation options in the sidebar
 enum SidebarDestination: Hashable {
-    case allBuildings
+    case cityMap        // NEW: SpriteKit isometric city view
+    case allBuildings   // Grid view of all buildings
     case era(Era)
     case profile
 }
@@ -13,8 +14,16 @@ struct SidebarView: View {
 
     var body: some View {
         List {
-            // Buildings Section
+            // City Map Section (NEW - SpriteKit view)
             Section {
+                SidebarRow(
+                    title: "City Map",
+                    icon: "map.fill",
+                    isSelected: selectedDestination == .cityMap
+                ) {
+                    selectedDestination = .cityMap
+                }
+
                 SidebarRow(
                     title: "All Buildings",
                     icon: "building.2",

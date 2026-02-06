@@ -3,7 +3,7 @@ import Foundation
 /// Historical era for buildings
 enum Era: String, CaseIterable, Codable {
     case ancientRome = "Ancient Rome"
-    case renaissance = "Renaissance"
+    case renaissance = "Renaissance Italy"
 
     /// Custom city image name from Assets.xcassets
     var cityImageName: String {
@@ -12,6 +12,15 @@ enum Era: String, CaseIterable, Codable {
         case .renaissance: return "CityFlorence"
         }
     }
+}
+
+/// City/location for Renaissance Italy buildings
+enum RenaissanceCity: String, CaseIterable, Codable {
+    case florence = "Florence"
+    case venice = "Venice"
+    case padua = "Padua"
+    case milan = "Milan"
+    case rome = "Rome"
 }
 
 /// Building/plot state for visual representation
@@ -97,11 +106,27 @@ struct Building: Identifiable {
     let id = UUID()
     let name: String
     let era: Era
+    let city: RenaissanceCity?  // Only for Renaissance buildings
     let sciences: [Science]
     let iconName: String
 
+    init(name: String, era: Era, city: RenaissanceCity? = nil, sciences: [Science], iconName: String) {
+        self.name = name
+        self.era = era
+        self.city = city
+        self.sciences = sciences
+        self.iconName = iconName
+    }
+
     var description: String {
-        "A \(era.rawValue) era building involving \(sciences.map(\.rawValue).joined(separator: ", "))"
+        if let city = city {
+            return "A \(era.rawValue) building in \(city.rawValue) involving \(sciences.map(\.rawValue).joined(separator: ", "))"
+        }
+        return "A \(era.rawValue) building involving \(sciences.map(\.rawValue).joined(separator: ", "))"
+    }
+
+    var locationName: String {
+        city?.rawValue ?? "Rome"
     }
 }
 

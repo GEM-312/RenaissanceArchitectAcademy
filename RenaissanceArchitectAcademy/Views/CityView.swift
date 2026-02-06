@@ -3,7 +3,7 @@ import SwiftUI
 /// City View - Leonardo's Notebook aesthetic
 /// Displays building plots in an isometric grid with blueprint overlays
 struct CityView: View {
-    @StateObject private var viewModel = CityViewModel()
+    @ObservedObject var viewModel: CityViewModel
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     // Challenge navigation state
@@ -71,9 +71,6 @@ struct CityView: View {
                                     viewModel.selectPlot(plot)
                                 }
                                 .bloomOnComplete(plot.isCompleted)
-                                #if os(macOS)
-                                .keyboardShortcut(KeyEquivalent(Character("\(plot.id)")), modifiers: [])
-                                #endif
                             }
                         }
                         .padding(.horizontal, horizontalSizeClass == .regular ? 40 : 20)
@@ -253,17 +250,9 @@ struct BlueprintGridOverlay: View {
 }
 
 #Preview {
-    CityView(filterEra: nil)
+    CityView(viewModel: CityViewModel(), filterEra: nil)
 }
 
 #Preview("Filtered - Ancient Rome") {
-    CityView(filterEra: .ancientRome)
-}
-
-#Preview {
-    CityView(filterEra: nil)
-}
-
-#Preview("Filtered - Ancient Rome") {
-    CityView(filterEra: .ancientRome)
+    CityView(viewModel: CityViewModel(), filterEra: .ancientRome)
 }

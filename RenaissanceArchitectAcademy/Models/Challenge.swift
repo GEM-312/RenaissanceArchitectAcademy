@@ -869,19 +869,22 @@ enum ChallengeContent {
     /// Get interactive challenge for a building
     static func interactiveChallenge(for buildingName: String) -> InteractiveChallenge? {
         switch buildingName {
+        // Ancient Rome
         case "Roman Baths":
             return romanBathsInteractive
         case "Aqueduct":
             return aqueductInteractive
         case "Colosseum":
             return colosseumInteractive
+        // Renaissance Italy (with aliases for renamed buildings)
         case "Duomo":
             return duomoInteractive
-        case "Observatory":
+        case "Observatory", "Vatican Observatory":
             return observatoryInteractive
-        case "Workshop":
+        case "Workshop", "Leonardo's Workshop":
             return workshopInteractive
         default:
+            // Buildings without challenges yet return nil
             return nil
         }
     }

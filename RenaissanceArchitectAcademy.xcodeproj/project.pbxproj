@@ -31,6 +31,9 @@
 		544299832F32E0F700F92073 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = 544299822F32E0F700F92073 /* Pow */; };
 		544299862F32E11600F92073 /* Subsonic in Frameworks */ = {isa = PBXBuildFile; productRef = 544299852F32E11600F92073 /* Subsonic */; };
 		544299892F32E14D00F92073 /* Vortex in Frameworks */ = {isa = PBXBuildFile; productRef = 544299882F32E14D00F92073 /* Vortex */; };
+		5442999A2F3646ED00F92073 /* BuildingNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299972F3646ED00F92073 /* BuildingNode.swift */; };
+		5442999B2F3646ED00F92073 /* CityMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299982F3646ED00F92073 /* CityMapView.swift */; };
+		5442999C2F3646ED00F92073 /* CityScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299992F3646ED00F92073 /* CityScene.swift */; };
 		5475D2EF2F3146CC003AA131 /* building_complete.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2EE2F3146CB003AA131 /* building_complete.mp3 */; };
 		5475D2F82F319000003AA131 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2F92F319000003AA131 /* Assets.xcassets */; };
 		F001 /* Cinzel-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B022F313B22007D8C64 /* Cinzel-Black.ttf */; };
@@ -78,6 +81,9 @@
 		122 /* DragDropEquationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragDropEquationView.swift; sourceTree = "<group>"; };
 		123 /* InteractiveChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractiveChallengeView.swift; sourceTree = "<group>"; };
 		124 /* HydraulicsFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HydraulicsFlowView.swift; sourceTree = "<group>"; };
+		544299972F3646ED00F92073 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BuildingNode.swift; path = Views/SpriteKit/BuildingNode.swift; sourceTree = "<group>"; };
+		544299982F3646ED00F92073 /* CityMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityMapView.swift; path = Views/SpriteKit/CityMapView.swift; sourceTree = "<group>"; };
+		544299992F3646ED00F92073 /* CityScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityScene.swift; path = Views/SpriteKit/CityScene.swift; sourceTree = "<group>"; };
 		54477B022F313B22007D8C64 /* Cinzel-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-Black.ttf"; sourceTree = "<group>"; };
 		54477B032F313B22007D8C64 /* Cinzel-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-Bold.ttf"; sourceTree = "<group>"; };
 		54477B042F313B22007D8C64 /* Cinzel-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-ExtraBold.ttf"; sourceTree = "<group>"; };
@@ -128,6 +134,9 @@
 		301 /* RenaissanceArchitectAcademy */ = {
 			isa = PBXGroup;
 			children = (
+				544299972F3646ED00F92073 /* BuildingNode.swift */,
+				544299982F3646ED00F92073 /* CityMapView.swift */,
+				544299992F3646ED00F92073 /* CityScene.swift */,
 				5475D2F92F319000003AA131 /* Assets.xcassets */,
 				54477B172F313D06007D8C64 /* Info.plist */,
 				54477B162F313B22007D8C64 /* Fonts */,
@@ -347,6 +356,9 @@
 				021 /* ChallengeView.swift in Sources */,
 				022 /* DragDropEquationView.swift in Sources */,
 				023 /* InteractiveChallengeView.swift in Sources */,
+				5442999A2F3646ED00F92073 /* BuildingNode.swift in Sources */,
+				5442999B2F3646ED00F92073 /* CityMapView.swift in Sources */,
+				5442999C2F3646ED00F92073 /* CityScene.swift in Sources */,
 				024 /* HydraulicsFlowView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

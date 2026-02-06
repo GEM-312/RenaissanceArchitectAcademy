@@ -2,8 +2,11 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var showingMainMenu = true
-    @State private var selectedDestination: SidebarDestination? = .allBuildings
+    @State private var selectedDestination: SidebarDestination? = .cityMap  // Start with SpriteKit map!
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    // Shared ViewModel - so map and era views share progress!
+    @StateObject private var cityViewModel = CityViewModel()
 
     var body: some View {
         ZStack {
@@ -77,14 +80,17 @@ struct ContentView: View {
     @ViewBuilder
     private var detailView: some View {
         switch selectedDestination {
+        case .cityMap:
+            // NEW: SpriteKit isometric city map (your sketch!)
+            CityMapView(viewModel: cityViewModel)
         case .allBuildings:
-            CityView(filterEra: nil)
+            CityView(viewModel: cityViewModel, filterEra: nil)
         case .era(let era):
-            CityView(filterEra: era)
+            CityView(viewModel: cityViewModel, filterEra: era)
         case .profile:
             ProfileView()
         case .none:
-            CityView(filterEra: nil)
+            CityMapView(viewModel: cityViewModel)  // Default to the new map
         }
     }
 }
