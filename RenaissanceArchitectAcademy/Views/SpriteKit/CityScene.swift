@@ -18,8 +18,10 @@ class CityScene: SKScene {
     private var cameraNode: SKCameraNode!
     private var buildingNodes: [String: BuildingNode] = [:]
 
-    // Mascot character
-    private var mascot: MascotNode!
+    // Mascot position tracking (rendered in SwiftUI overlay)
+    private var mascotWorldPosition: CGPoint = .zero
+    private var mascotTargetPosition: CGPoint?
+    private var isMascotWalking = false
     private var lastCursorPosition: CGPoint?
 
     // Callback when a building is tapped
@@ -30,6 +32,9 @@ class CityScene: SKScene {
 
     // Callback when mascot walks off to puzzle
     var onMascotExitToPuzzle: (() -> Void)?
+
+    // Callback to update SwiftUI mascot position (normalized screen coordinates 0-1)
+    var onMascotPositionChanged: ((CGPoint, Bool) -> Void)?  // (position, isWalking)
 
     // Camera control
     private var lastPanLocation: CGPoint?
@@ -48,7 +53,7 @@ class CityScene: SKScene {
         setupRiver()
         setupBuildings()
         setupDecorations()
-        setupMascot()
+        setupMascotPosition()
 
         // Enable touch and tracking
         isUserInteractionEnabled = true
@@ -59,23 +64,41 @@ class CityScene: SKScene {
         #endif
     }
 
-    // MARK: - Mascot Setup
+    // MARK: - Mascot Position Setup (SwiftUI renders the actual mascot)
 
-    private func setupMascot() {
-        mascot = MascotNode()
-        mascot.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
-        mascot.zPosition = 1000  // Always on top
-        mascot.setScale(0.8)
-        addChild(mascot)
+    private func setupMascotPosition() {
+        mascotWorldPosition = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
+        updateMascotScreenPosition()
     }
 
     // MARK: - Update Loop
 
     override func update(_ currentTime: TimeInterval) {
-        // Make mascot follow cursor smoothly
-        if let cursorPos = lastCursorPosition {
-            mascot.followPoint(cursorPos, smoothing: 0.08)
+        // Make mascot follow cursor smoothly (when not walking)
+        if !isMascotWalking, let cursorPos = lastCursorPosition {
+            // Smooth follow with lerp
+            let smoothing: CGFloat = 0.08
+            let dx = (cursorPos.x - mascotWorldPosition.x) * smoothing
+            let dy = (cursorPos.y - mascotWorldPosition.y) * smoothing
+            mascotWorldPosition.x += dx
+            mascotWorldPosition.y += dy
+            updateMascotScreenPosition()
         }
+    }
+
+    /// Convert world position to normalized screen position and notify SwiftUI
+    private func updateMascotScreenPosition() {
+        guard let view = self.view else { return }
+
+        // Convert from world coordinates to view coordinates
+        let viewPoint = convertPoint(toView: mascotWorldPosition)
+        let viewSize = view.bounds.size
+
+        // Normalize to 0-1 range
+        let normalizedX = viewPoint.x / viewSize.width
+        let normalizedY = viewPoint.y / viewSize.height
+
+        onMascotPositionChanged?(CGPoint(x: normalizedX, y: normalizedY), isMascotWalking)
     }
 
     private func setupCamera() {
@@ -499,29 +522,67 @@ class CityScene: SKScene {
         let buildingPos = buildingNode.position
         let targetPos = CGPoint(x: buildingPos.x - 80, y: buildingPos.y - 40)
 
-        // Walk mascot to building
-        mascot.walkTo(targetPos, duration: 1.0)
+        // Animate mascot walking to building
+        isMascotWalking = true
+        mascotTargetPosition = targetPos
 
-        // When mascot arrives, trigger the dialogue
-        mascot.onReachedDestination = { [weak self] in
-            self?.onMascotReachedBuilding?(buildingNode.buildingId)
+        // Animate the walk with SKAction timing (SwiftUI will animate based on position updates)
+        let duration: TimeInterval = 1.0
+        let steps = 30
+        let stepDuration = duration / Double(steps)
+
+        let startPos = mascotWorldPosition
+        let dx = (targetPos.x - startPos.x) / CGFloat(steps)
+        let dy = (targetPos.y - startPos.y) / CGFloat(steps)
+
+        // Create animation sequence
+        var actions: [SKAction] = []
+        for i in 1...steps {
+            let stepAction = SKAction.run { [weak self] in
+                guard let self = self else { return }
+                self.mascotWorldPosition = CGPoint(
+                    x: startPos.x + dx * CGFloat(i),
+                    y: startPos.y + dy * CGFloat(i)
+                )
+                self.updateMascotScreenPosition()
+            }
+            actions.append(stepAction)
+            actions.append(SKAction.wait(forDuration: stepDuration))
         }
+
+        // When done, trigger dialogue
+        actions.append(SKAction.run { [weak self] in
+            self?.isMascotWalking = false
+            self?.onMascotReachedBuilding?(buildingNode.buildingId)
+        })
+
+        run(SKAction.sequence(actions))
     }
 
     /// Animate mascot walking off to puzzle view
     func mascotWalkToPuzzle() {
-        // Walk off screen to the right (toward puzzle)
-        let exitPoint = CGPoint(x: mascot.position.x + 500, y: mascot.position.y)
-        mascot.walkOffScreen(to: exitPoint, duration: 0.6) { [weak self] in
-            self?.onMascotExitToPuzzle?()
-        }
+        isMascotWalking = true
+        // Signal SwiftUI to animate mascot off screen
+        // SwiftUI will handle the actual exit animation
+        onMascotExitToPuzzle?()
     }
 
     /// Reset mascot position after returning from puzzle
     func resetMascot() {
-        mascot.position = cameraNode.position
-        mascot.setScale(0.8)
-        mascot.alpha = 1
+        mascotWorldPosition = cameraNode.position
+        isMascotWalking = false
+        updateMascotScreenPosition()
+    }
+
+    /// Get current mascot facing direction based on movement
+    func getMascotFacingRight() -> Bool {
+        if let target = mascotTargetPosition {
+            return target.x > mascotWorldPosition.x
+        }
+        if let cursor = lastCursorPosition {
+            return cursor.x > mascotWorldPosition.x
+        }
+        return true
     }
 
     private func handleDragTo(_ location: CGPoint, from lastLocation: CGPoint) {

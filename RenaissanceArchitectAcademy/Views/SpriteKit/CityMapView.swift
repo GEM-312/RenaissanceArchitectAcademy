@@ -39,6 +39,18 @@ struct CityMapView: View {
     /// Reference to the SpriteKit scene (so we can call methods on it)
     @State private var scene: CityScene?
 
+    /// Mascot position in screen coordinates (0-1 normalized)
+    @State private var mascotPosition: CGPoint = CGPoint(x: 0.5, y: 0.5)
+
+    /// Whether mascot is currently walking
+    @State private var mascotIsWalking = false
+
+    /// Whether mascot is visible on the map
+    @State private var mascotVisible = true
+
+    /// Mascot facing direction (true = right)
+    @State private var mascotFacingRight = true
+
     /// Environment for navigation
     @Environment(\.dismiss) private var dismiss
 
@@ -69,19 +81,25 @@ struct CityMapView: View {
     // MARK: - Body
 
     var body: some View {
-        ZStack {
-            // The SpriteKit scene (the actual game map)
-            SpriteView(scene: makeScene(), options: [.allowsTransparency])
-                .ignoresSafeArea()
-                .gesture(pinchGesture)
+        GeometryReader { geometry in
+            ZStack {
+                // The SpriteKit scene (the actual game map)
+                SpriteView(scene: makeScene(), options: [.allowsTransparency])
+                    .ignoresSafeArea()
+                    .gesture(pinchGesture)
 
-            // SwiftUI overlay for UI elements
-            VStack {
-                topBar
-                Spacer()
-                bottomHint
-            }
-            .padding()
+                // SwiftUI Mascot overlay (same look everywhere!)
+                if mascotVisible && !showMascotDialogue && !showMaterialPuzzle {
+                    mascotOverlay(in: geometry.size)
+                }
+
+                // SwiftUI overlay for UI elements
+                VStack {
+                    topBar
+                    Spacer()
+                    bottomHint
+                }
+                .padding()
 
             // Mascot dialogue (NEW: shown when building is tapped)
             if showMascotDialogue, let plot = selectedPlot {
@@ -164,7 +182,8 @@ struct CityMapView: View {
                 )
                 .transition(.opacity)
             }
-        }
+            } // end ZStack
+        } // end GeometryReader
         .onAppear {
             // Sync completion states when view appears (e.g., after completing in Era view)
             if let currentScene = scene {
@@ -247,6 +266,18 @@ struct CityMapView: View {
             // Now handled by onMascotReachedBuilding
         }
 
+        // Mascot position updates from SpriteKit
+        newScene.onMascotPositionChanged = { [self] position, isWalking in
+            // Update SwiftUI mascot position
+            self.mascotPosition = position
+            self.mascotIsWalking = isWalking
+
+            // Update facing direction based on movement
+            if let scene = self.scene {
+                self.mascotFacingRight = scene.getMascotFacingRight()
+            }
+        }
+
         // Store reference immediately
         scene = newScene
 
@@ -267,6 +298,30 @@ struct CityMapView: View {
                 scene.updateBuildingState(buildingId, state: state)
             }
         }
+    }
+
+    // MARK: - Mascot Overlay
+
+    /// SwiftUI mascot that follows position from SpriteKit
+    private func mascotOverlay(in size: CGSize) -> some View {
+        let screenX = mascotPosition.x * size.width
+        let screenY = mascotPosition.y * size.height
+
+        return HStack(alignment: .bottom, spacing: -20) {
+            // Splash character
+            SplashCharacter()
+                .frame(width: 100, height: 120)
+                .scaleEffect(x: mascotFacingRight ? 1 : -1, y: 1)
+
+            // Bird companion
+            BirdCharacter()
+                .frame(width: 50, height: 50)
+                .offset(y: mascotIsWalking ? -5 : 0)
+        }
+        .scaleEffect(0.7)
+        .position(x: screenX, y: screenY)
+        .animation(.easeInOut(duration: 0.1), value: mascotPosition)
+        .animation(.easeInOut(duration: 0.15), value: mascotIsWalking)
     }
 
     // MARK: - Gestures
