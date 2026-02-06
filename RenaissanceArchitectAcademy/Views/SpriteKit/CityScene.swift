@@ -18,8 +18,18 @@ class CityScene: SKScene {
     private var cameraNode: SKCameraNode!
     private var buildingNodes: [String: BuildingNode] = [:]
 
+    // Mascot character
+    private var mascot: MascotNode!
+    private var lastCursorPosition: CGPoint?
+
     // Callback when a building is tapped
     var onBuildingSelected: ((String) -> Void)?
+
+    // Callback when mascot reaches building (for dialogue)
+    var onMascotReachedBuilding: ((String) -> Void)?
+
+    // Callback when mascot walks off to puzzle
+    var onMascotExitToPuzzle: (() -> Void)?
 
     // Camera control
     private var lastPanLocation: CGPoint?
@@ -38,9 +48,34 @@ class CityScene: SKScene {
         setupRiver()
         setupBuildings()
         setupDecorations()
+        setupMascot()
 
-        // Enable touch
+        // Enable touch and tracking
         isUserInteractionEnabled = true
+
+        #if os(macOS)
+        // Enable mouse moved events
+        view.window?.acceptsMouseMovedEvents = true
+        #endif
+    }
+
+    // MARK: - Mascot Setup
+
+    private func setupMascot() {
+        mascot = MascotNode()
+        mascot.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
+        mascot.zPosition = 1000  // Always on top
+        mascot.setScale(0.8)
+        addChild(mascot)
+    }
+
+    // MARK: - Update Loop
+
+    override func update(_ currentTime: TimeInterval) {
+        // Make mascot follow cursor smoothly
+        if let cursorPos = lastCursorPosition {
+            mascot.followPoint(cursorPos, smoothing: 0.08)
+        }
     }
 
     private func setupCamera() {
@@ -366,13 +401,18 @@ class CityScene: SKScene {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
+        lastCursorPosition = location
         handleTapAt(location)
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let touch = touches.first, let lastLocation = lastPanLocation else { return }
+        guard let touch = touches.first else { return }
         let location = touch.location(in: self)
-        handleDragTo(location, from: lastLocation)
+        lastCursorPosition = location
+
+        if let lastLocation = lastPanLocation {
+            handleDragTo(location, from: lastLocation)
+        }
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -392,6 +432,11 @@ class CityScene: SKScene {
 
     override func mouseUp(with event: NSEvent) {
         lastPanLocation = nil
+    }
+
+    override func mouseMoved(with event: NSEvent) {
+        let location = event.location(in: self)
+        lastCursorPosition = location
     }
 
     // Scroll wheel/trackpad on macOS
@@ -430,20 +475,53 @@ class CityScene: SKScene {
         let tappedNodes = nodes(at: location)
         for node in tappedNodes {
             if let buildingNode = node as? BuildingNode {
-                buildingNode.animateTap()
-                onBuildingSelected?(buildingNode.buildingId)
+                // Have mascot walk to building first
+                walkMascotToBuilding(buildingNode)
                 return
             }
             // Also check parent (in case we tapped a child node)
             if let buildingNode = node.parent as? BuildingNode {
-                buildingNode.animateTap()
-                onBuildingSelected?(buildingNode.buildingId)
+                walkMascotToBuilding(buildingNode)
                 return
             }
         }
 
         // Start pan
         lastPanLocation = location
+    }
+
+    /// Make mascot walk to building, then trigger dialogue
+    private func walkMascotToBuilding(_ buildingNode: BuildingNode) {
+        // Animate the building tap
+        buildingNode.animateTap()
+
+        // Calculate position near the building
+        let buildingPos = buildingNode.position
+        let targetPos = CGPoint(x: buildingPos.x - 80, y: buildingPos.y - 40)
+
+        // Walk mascot to building
+        mascot.walkTo(targetPos, duration: 1.0)
+
+        // When mascot arrives, trigger the dialogue
+        mascot.onReachedDestination = { [weak self] in
+            self?.onMascotReachedBuilding?(buildingNode.buildingId)
+        }
+    }
+
+    /// Animate mascot walking off to puzzle view
+    func mascotWalkToPuzzle() {
+        // Walk off screen to the right (toward puzzle)
+        let exitPoint = CGPoint(x: mascot.position.x + 500, y: mascot.position.y)
+        mascot.walkOffScreen(to: exitPoint, duration: 0.6) { [weak self] in
+            self?.onMascotExitToPuzzle?()
+        }
+    }
+
+    /// Reset mascot position after returning from puzzle
+    func resetMascot() {
+        mascot.position = cameraNode.position
+        mascot.setScale(0.8)
+        mascot.alpha = 1
     }
 
     private func handleDragTo(_ location: CGPoint, from lastLocation: CGPoint) {

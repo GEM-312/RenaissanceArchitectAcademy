@@ -93,8 +93,8 @@ struct CityMapView: View {
                         }
                         switch choice {
                         case .needMaterials:
-                            // Show material puzzle
-                            showMaterialPuzzle = true
+                            // Mascot walks off to puzzle, then puzzle appears
+                            scene?.mascotWalkToPuzzle()
                         case .dontKnow:
                             // Show building detail for info
                             showBuildingDetail = true
@@ -108,6 +108,8 @@ struct CityMapView: View {
                             showMascotDialogue = false
                             selectedPlot = nil
                         }
+                        // Reset mascot position
+                        scene?.resetMascot()
                     }
                 )
                 .transition(.opacity)
@@ -122,7 +124,8 @@ struct CityMapView: View {
                         withAnimation {
                             showMaterialPuzzle = false
                         }
-                        // After collecting materials, show the challenge
+                        // Reset mascot and show challenge
+                        scene?.resetMascot()
                         showChallenge = true
                     },
                     onDismiss: {
@@ -130,6 +133,8 @@ struct CityMapView: View {
                             showMaterialPuzzle = false
                             selectedPlot = nil
                         }
+                        // Reset mascot position
+                        scene?.resetMascot()
                     }
                 )
                 .transition(.move(edge: .bottom))
@@ -209,9 +214,8 @@ struct CityMapView: View {
         newScene.size = CGSize(width: 1024, height: 768)
         newScene.scaleMode = .aspectFill
 
-        // Connect building tap callback
-        // When user taps a building in SpriteKit, this gets called
-        newScene.onBuildingSelected = { [self] buildingId in
+        // When mascot reaches building, show dialogue
+        newScene.onMascotReachedBuilding = { [self] buildingId in
             // Convert SpriteKit ID ("duomo") to ViewModel ID (4)
             guard let plotId = buildingIdToPlotId[buildingId],
                   let plot = viewModel.buildingPlots.first(where: { $0.id == plotId }) else {
@@ -223,6 +227,18 @@ struct CityMapView: View {
             withAnimation(.spring(response: 0.3)) {
                 showMascotDialogue = true
             }
+        }
+
+        // When mascot exits to puzzle, show puzzle view
+        newScene.onMascotExitToPuzzle = { [self] in
+            withAnimation(.spring(response: 0.3)) {
+                showMaterialPuzzle = true
+            }
+        }
+
+        // Keep the old callback for direct access if needed
+        newScene.onBuildingSelected = { _ in
+            // Now handled by onMascotReachedBuilding
         }
 
         // Store reference immediately
