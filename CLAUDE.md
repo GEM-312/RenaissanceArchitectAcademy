@@ -14,14 +14,7 @@ Educational city-building game where students solve architectural challenges acr
 - **Game Designer:** [Name]
 
 ## Tech Stack
-- SwiftUI (iOS 17+ / macOS 14+)
-- Swift 5.0+
-- Xcode project (multiplatform - iPad + macOS only)
-- SPM packages:
-  - Pow 1.0.5 (animations) - used for celebration effects
-  - Subsonic 0.2.0 (audio)
-  - Vortex 1.0.4 (particle effects) - currently disabled
-  - Inferno 1.0.0 - skipped for now (caused package issues)
+- **SwiftUI + SpriteKit** (migrated from Unity Feb 2025)
 - Midjourney AI art (style ref: `--sref 3186415970`)
 - GitHub: https://github.com/GEM-312/RenaissanceArchitectAcademy
 
@@ -43,9 +36,9 @@ RenaissanceArchitectAcademy/
 │   │   ├── EBGaramond-*.ttf                  # Body text, buttons
 │   │   └── PetitFormalScript-Regular.ttf     # Tagline
 │   ├── Views/
-│   │   ├── ContentView.swift          # Root view, navigation state
+│   │   ├── ContentView.swift          # Root view, navigation state, shared ViewModel
 │   │   ├── MainMenuView.swift         # Title + background image
-│   │   ├── CityView.swift             # 6 building plots grid + challenge navigation
+│   │   ├── CityView.swift             # Building plots grid + challenge navigation
 │   │   ├── BuildingPlotView.swift     # Individual plot card (engineering style)
 │   │   ├── BuildingDetailOverlay.swift # Modal with sciences + Begin Challenge
 │   │   ├── SidebarView.swift          # iPad sidebar navigation + Home icon
@@ -55,11 +48,15 @@ RenaissanceArchitectAcademy/
 │   │   ├── ChallengeView.swift        # Legacy multiple choice challenge view
 │   │   ├── InteractiveChallengeView.swift  # Master challenge view (mixed question types)
 │   │   ├── DragDropEquationView.swift      # Chemistry drag-drop equations
-│   │   └── HydraulicsFlowView.swift        # Water flow path tracing
+│   │   ├── HydraulicsFlowView.swift        # Water flow path tracing
+│   │   └── SpriteKit/                      # NEW: SpriteKit city map
+│   │       ├── CityScene.swift             # Main SKScene with buildings, rivers, zones
+│   │       ├── BuildingNode.swift          # Tappable building sprites
+│   │       └── CityMapView.swift           # SwiftUI wrapper for SpriteKit
 │   ├── ViewModels/
-│   │   └── CityViewModel.swift        # @MainActor, @Published state
+│   │   └── CityViewModel.swift        # @MainActor, @Published state, 17 buildings
 │   ├── Models/
-│   │   ├── Building.swift             # Era, Science, Building, BuildingPlot, BuildingState
+│   │   ├── Building.swift             # Era, RenaissanceCity, Science, Building, BuildingPlot, BuildingState
 │   │   ├── StudentProfile.swift       # MasteryLevel, Achievement, Resources
 │   │   └── Challenge.swift            # Challenge system + all building challenges
 │   ├── Styles/
@@ -71,13 +68,96 @@ RenaissanceArchitectAcademy/
 │   ├── City Icons/                     # Original city source files
 │   ├── UINavigation/                   # Original nav icon source files
 │   └── building_complete.mp3          # Victory sound effect
+├── level_design_sketch.JPG             # Original hand-drawn map design
 ├── CLAUDE.md
 ├── README.md
 ├── LICENSE
 └── .gitignore
 ```
 
-## Challenge System (NEW - Feb 4, 2025)
+## SpriteKit City Map (NEW - Feb 6, 2025)
+
+### Overview
+Interactive isometric city map built with SpriteKit, based on `level_design_sketch.JPG`. Features pan, zoom, and tap-to-select buildings.
+
+### Key Files
+| File | Purpose |
+|------|---------|
+| `CityScene.swift` | Main SKScene - terrain, rivers, buildings, camera controls |
+| `BuildingNode.swift` | SKNode subclass for tappable buildings with state icons |
+| `CityMapView.swift` | SwiftUI wrapper using SpriteView, connects to shared ViewModel |
+
+### Map Features
+- **Size:** 3500 x 2500 points
+- **Rivers:** Tiber (Rome), Arno (Florence), Grand Canal (Venice)
+- **Zone Labels:** Roman numerals (I-VI) for each region
+- **Era Divider:** Dotted line separating Ancient Rome from Renaissance Italy
+
+### Controls
+| Platform | Pan | Zoom |
+|----------|-----|------|
+| **iPad** | Drag | Pinch |
+| **macOS** | Scroll / Drag | Pinch / Option+Scroll |
+
+### Building States
+Buildings display state icons from Assets.xcassets:
+- `.available` - Pulse animation, ready to tap
+- `.complete` - Green tint + StateComplete icon
+- `.locked` - Grayed out (future feature)
+- `.construction` - Shake animation (future feature)
+
+### Shared ViewModel
+CityViewModel is created in ContentView and passed to both CityMapView and CityView:
+```swift
+// ContentView.swift
+@StateObject private var cityViewModel = CityViewModel()
+
+// Pass to views
+CityMapView(viewModel: cityViewModel)
+CityView(viewModel: cityViewModel, filterEra: era)
+```
+This ensures progress syncs across map and era tabs.
+
+### Building ID Mapping
+SpriteKit uses string IDs, ViewModel uses integer IDs:
+```swift
+private let buildingIdToPlotId: [String: Int] = [
+    "aqueduct": 1, "colosseum": 2, "romanBaths": 3, "pantheon": 4,
+    "romanRoads": 5, "harbor": 6, "siegeWorkshop": 7, "insula": 8,
+    "duomo": 9, "botanicalGarden": 10, "glassworks": 11, "arsenal": 12,
+    "anatomyTheater": 13, "leonardoWorkshop": 14, "flyingMachine": 15,
+    "vaticanObservatory": 16, "printingPress": 17
+]
+```
+
+## 17 Buildings (Expanded Feb 6, 2025)
+
+### Ancient Rome (8 buildings)
+| # | Building | Sciences | Has Challenge |
+|---|----------|----------|---------------|
+| 1 | Aqueduct | Engineering, Hydraulics, Mathematics | ✅ |
+| 2 | Colosseum | Architecture, Engineering, Acoustics | ✅ |
+| 3 | Roman Baths | Hydraulics, Chemistry, Materials | ✅ |
+| 4 | Pantheon | Geometry, Architecture, Materials | ❌ |
+| 5 | Roman Roads | Engineering, Geology, Materials | ❌ |
+| 6 | Harbor | Engineering, Physics, Hydraulics | ❌ |
+| 7 | Siege Workshop | Physics, Engineering, Mathematics | ❌ |
+| 8 | Insula | Architecture, Materials, Mathematics | ❌ |
+
+### Renaissance Italy (9 buildings across 5 cities)
+| # | City | Building | Sciences | Has Challenge |
+|---|------|----------|----------|---------------|
+| 9 | Florence | Duomo | Geometry, Architecture, Physics | ✅ |
+| 10 | Florence | Botanical Garden | Biology, Chemistry, Geology | ❌ |
+| 11 | Venice | Glassworks | Chemistry, Optics, Materials | ❌ |
+| 12 | Venice | Arsenal | Engineering, Physics, Materials | ❌ |
+| 13 | Padua | Anatomy Theater | Biology, Optics, Chemistry | ❌ |
+| 14 | Milan | Leonardo's Workshop | Engineering, Physics, Materials | ✅ |
+| 15 | Milan | Flying Machine | Physics, Engineering, Mathematics | ❌ |
+| 16 | Rome | Vatican Observatory | Astronomy, Optics, Mathematics | ✅ |
+| 17 | Rome | Printing Press | Engineering, Chemistry, Physics | ❌ |
+
+## Challenge System
 
 ### Architecture
 The challenge system supports multiple question types:
@@ -88,11 +168,27 @@ The challenge system supports multiple question types:
 ### Key Files
 | File | Purpose |
 |------|---------|
-| `Challenge.swift` | All data models + 37 questions for 6 buildings |
+| `Challenge.swift` | All data models + questions for buildings with challenges |
 | `InteractiveChallengeView.swift` | Master view that routes to correct question type |
 | `DragDropEquationView.swift` | Chemistry equation drag-drop interface |
 | `HydraulicsFlowView.swift` | Water flow path drawing canvas |
 | `ChallengeView.swift` | Legacy multiple choice only (kept for reference) |
+
+### Challenge Lookup
+```swift
+// In ChallengeContent enum
+static func interactiveChallenge(for buildingName: String) -> InteractiveChallenge? {
+    switch buildingName {
+    case "Roman Baths": return romanBathsInteractive
+    case "Aqueduct": return aqueductInteractive
+    case "Colosseum": return colosseumInteractive
+    case "Duomo": return duomoInteractive
+    case "Observatory", "Vatican Observatory": return observatoryInteractive
+    case "Workshop", "Leonardo's Workshop": return workshopInteractive
+    default: return nil  // Shows "Challenge coming soon!"
+    }
+}
+```
 
 ### Question Types
 ```swift
@@ -101,59 +197,6 @@ enum QuestionType {
     case dragDropEquation(DragDropEquationData)
     case hydraulicsFlow(HydraulicsFlowData)
 }
-```
-
-### Data Models
-```swift
-// For drag-drop chemistry
-struct DragDropEquationData {
-    let equationTemplate: String        // "CaO + H₂O → [BLANK]"
-    let availableElements: [ChemicalElement]
-    let correctAnswers: [String]
-    let hint: String?
-}
-
-// For flow tracing
-struct HydraulicsFlowData {
-    let backgroundImageName: String?    // Optional Midjourney diagram
-    let diagramDescription: String
-    let checkpoints: [FlowCheckpoint]   // Points path must pass through
-    let startPoint: CGPoint             // Normalized 0-1
-    let endPoint: CGPoint               // Normalized 0-1
-    let hint: String?
-}
-```
-
-### All Building Challenges (37 questions total)
-| Building | Era | Sciences | Questions | Interactive |
-|----------|-----|----------|-----------|-------------|
-| Aqueduct | Ancient Rome | Engineering, Hydraulics, Mathematics | 6 | - |
-| Colosseum | Ancient Rome | Architecture, Engineering, Acoustics | 6 | - |
-| Roman Baths | Ancient Rome | Hydraulics, Chemistry, Materials | 7 | 2 drag-drop + 1 flow |
-| Duomo | Renaissance | Geometry, Architecture, Physics | 6 | - |
-| Observatory | Renaissance | Astronomy, Optics, Mathematics | 6 | - |
-| Workshop | Renaissance | Engineering, Physics, Materials | 6 | - |
-
-### Adding Interactive Questions to Other Buildings
-To add drag-drop or flow tracing to any building, use these initializers:
-```swift
-// Drag-drop chemistry
-InteractiveQuestion(
-    questionText: "Complete the equation...",
-    equationData: DragDropEquationData(...),
-    science: .chemistry,
-    explanation: "...",
-    funFact: "..."
-)
-
-// Flow tracing
-InteractiveQuestion(
-    questionText: "Trace the flow...",
-    flowData: HydraulicsFlowData(...),
-    science: .hydraulics,
-    explanation: "...",
-    funFact: "..."
-)
 ```
 
 ### Pow Celebration Effects
@@ -170,18 +213,52 @@ import Pow
 )
 ```
 
-### Flow Tracing with Background Images
-HydraulicsFlowView supports Midjourney diagrams as backgrounds:
-1. Generate image with prompt (see below)
-2. Resize: `sips -Z 600 "AqueductDiagram.png"`
-3. Add to Assets.xcassets
-4. Set `backgroundImageName: "AqueductDiagram"` in HydraulicsFlowData
-5. Adjust checkpoint positions to match diagram
+## Models
 
-**Midjourney prompt for diagrams:**
+### Era
+```swift
+enum Era: String, CaseIterable, Codable {
+    case ancientRome = "Ancient Rome"
+    case renaissance = "Renaissance Italy"
+}
 ```
-Leonardo da Vinci notebook sketch, [SUBJECT] cross-section diagram, technical blueprint style, labeled components, sepia ink on parchment paper, hand-drawn engineering annotations, watercolor wash accents, educational illustration, horizontal landscape format --sref 3186415970 --ar 16:9
+
+### RenaissanceCity (NEW)
+```swift
+enum RenaissanceCity: String, CaseIterable, Codable {
+    case florence = "Florence"
+    case venice = "Venice"
+    case padua = "Padua"
+    case milan = "Milan"
+    case rome = "Rome"
+}
 ```
+
+### Building
+```swift
+struct Building: Identifiable {
+    let id = UUID()
+    let name: String
+    let era: Era
+    let city: RenaissanceCity?  // Only for Renaissance buildings
+    let sciences: [Science]
+    let iconName: String
+}
+```
+
+### Science (13 types)
+Mathematics, Physics, Chemistry, Geometry, Engineering, Astronomy, Biology, Geology, Optics, Hydraulics, Acoustics, Materials Science, Architecture
+
+Each has:
+- `sfSymbolName` - SF Symbol fallback
+- `customImageName` - Custom Midjourney asset name (all 13 have custom images now)
+- Corresponding color via `RenaissanceColors.color(for:)`
+
+### BuildingState
+- `.locked` - StateLocked image
+- `.available` - StateAvailable image
+- `.construction` - StateConstruction image
+- `.complete` - StateComplete image
 
 ## Custom Fonts
 Fonts are registered programmatically in `RenaissanceArchitectAcademyApp.swift` using CoreText:
@@ -201,200 +278,80 @@ CTFontManagerRegisterFontsForURL(fontURL as CFURL, .process, nil)
 
 ## Custom Art Assets (Midjourney)
 
-### Science Icons (13 total - all have custom images now)
+### Science Icons (13 total)
 Located in `Assets.xcassets/Science*.imageset/`
-- ScienceMath (algebra/equations icon)
-- SciencePhysics
-- ScienceChemistry (needs blending - squared edges)
-- ScienceGeometry
-- ScienceEngineering (needs blending - squared edges)
-- ScienceAstronomy
-- ScienceBiology
-- ScienceGeology
-- ScienceOptics
-- ScienceHydraulics
-- ScienceAcoustics
-- ScienceMaterials
-- ScienceArchitecture (compass icon, was old Math)
+- ScienceMath, SciencePhysics, ScienceChemistry, ScienceGeometry, ScienceEngineering
+- ScienceAstronomy, ScienceBiology, ScienceGeology, ScienceOptics
+- ScienceHydraulics, ScienceAcoustics, ScienceMaterials, ScienceArchitecture
 
 ### Navigation Icons
 Located in `Assets.xcassets/Nav*.imageset/`
-- NavHome (transparent background, used in sidebar)
-- NavBack
-- NavClose
-- NavCorrect
-- NavInfo
-- NavSettings
+- NavHome, NavBack, NavClose, NavCorrect, NavInfo, NavSettings
 
-### City Icons
-- CityRome
-- CityFlorence
-
-### Building State Icons
-- StateAvailable
-- StateComplete
-- StateConstruction
-- StateLocked
-- StateRibbon
+### City & State Icons
+- CityRome, CityFlorence
+- StateAvailable, StateComplete, StateConstruction, StateLocked, StateRibbon
 
 ### Resizing New Assets
-When adding new Midjourney assets (usually 2048x2048 or larger), resize with:
 ```bash
-# Science icons: 180px
-sips -Z 180 "filename.png" --out "filename.png"
-
-# Navigation icons: 120px
-sips -Z 120 "filename.png" --out "filename.png"
-
-# City icons: 512px
-sips -Z 512 "filename.png" --out "filename.png"
-
-# Challenge diagram backgrounds: 600px
-sips -Z 600 "filename.png" --out "filename.png"
+sips -Z 180 "filename.png"   # Science icons
+sips -Z 120 "filename.png"   # Navigation icons
+sips -Z 512 "filename.png"   # City icons
+sips -Z 600 "filename.png"   # Challenge diagrams
 ```
-
-## UI Style - Engineering Blueprint
-
-### Buttons (RenaissanceButton.swift)
-- Double-line border (outer + inner rectangle)
-- EBGaramond-Italic font with `.tracking(2)` letter spacing
-- No icons (clean look)
-- Parchment background with sepia ink text
-- Staggered appearance animation on menu
-
-### Building Cards (BuildingPlotView.swift)
-- Ochre tinted background (10% opacity)
-- Engineering grid pattern (minor lines every 15pt, major every 60pt)
-- Double-line blueprint border
-- SF Symbols for science previews (small badges)
-
-### Science Mastery Cards (ProfileView.swift)
-- Custom Midjourney icons at 85x85
-- Soft blurred parchment background (rounded rect, 6pt blur)
-- Ochre border on top of icons
-- Chemistry & Engineering icons get `.clipShape()` + `.opacity(0.85)` for blending
-- Progress ring showing mastery level
-
-### Sidebar (SidebarView.swift)
-- Custom NavHome icon (48x48 with contrast 1.5)
-- "Home" text instead of "Main Menu"
-
-## Main Menu Effects
-- **Renaissance dome background** - Flipped horizontally, positioned left
-- **Letter-by-letter animation** - "Renaissance" then "Architect Academy" appear like quill writing
-- **Staggered button animation** - Buttons appear one by one with delay
-
-## Sound Effects (Simplified)
-Only meaningful moments - no button sounds:
-- `building_complete.mp3` ✅ Added
-- `challenge_success.mp3` - TODO
-- `challenge_fail.mp3` - TODO
-- `seal_stamp.mp3` - TODO
-- `page_flip.mp3` - TODO (optional)
 
 ## Color Palette (RenaissanceColors.swift)
 ```swift
 // Primary
 RenaissanceColors.parchment       // #F5E6D3 - Aged paper
 RenaissanceColors.sepiaInk        // #4A4035 - Text
-RenaissanceColors.renaissanceBlue // #5B8FA3 - Accents, water flow paths
-RenaissanceColors.terracotta      // #D4876B - Roofs/buildings
-RenaissanceColors.ochre           // #C9A86A - Stone/highlights, card backgrounds
-RenaissanceColors.sageGreen       // #7A9B76 - Completion/nature, correct answers
+RenaissanceColors.renaissanceBlue // #5B8FA3 - Accents, water
+RenaissanceColors.terracotta      // #D4876B - Rome buildings
+RenaissanceColors.ochre           // #C9A86A - Renaissance buildings
+RenaissanceColors.sageGreen       // #7A9B76 - Completion
 
 // Accent
-RenaissanceColors.deepTeal        // #2B7A8C - Astronomy/water
-RenaissanceColors.warmBrown       // #8B6F47 - Engineering, wood accents
+RenaissanceColors.deepTeal        // #2B7A8C - Venice water
+RenaissanceColors.warmBrown       // #8B6F47 - Engineering
 RenaissanceColors.stoneGray       // #A39D93 - Materials
 
-// Special Effects
+// Special
 RenaissanceColors.goldSuccess     // #DAA520 - Success glow
-RenaissanceColors.errorRed        // #CD5C5C - Errors, wrong answers
-RenaissanceColors.blueprintBlue   // #4169E1 - Technical overlays, grid lines
-RenaissanceColors.highlightAmber  // #FFBF00 - Highlights, hints
+RenaissanceColors.errorRed        // #CD5C5C - Errors
+RenaissanceColors.blueprintBlue   // #4169E1 - Grid lines
 ```
 
-## Models
-
-### Era
-- `.ancientRome` - "Ancient Rome" (building.columns icon, CityRome image)
-- `.renaissance` - "Renaissance" (paintpalette icon, CityFlorence image)
-
-### Science (13 types)
-Mathematics, Physics, Chemistry, Geometry, Engineering, Astronomy, Biology, Geology, Optics, Hydraulics, Acoustics, Materials Science, Architecture
-
-Each has:
-- `sfSymbolName` - SF Symbol fallback
-- `customImageName` - Custom Midjourney asset name (all 13 have custom images now)
-- Corresponding color via `RenaissanceColors.color(for:)`
-
-### BuildingState
-- `.locked` - StateLocked image
-- `.available` - StateAvailable image
-- `.construction` - StateConstruction image
-- `.complete` - StateComplete image
-
-### MasteryLevel
-- `.apprentice` - Learning with guided tutorials
-- `.architect` - Solving challenges with optional hints
-- `.master` - No hints, full accuracy required
-
-### StudentProfile
-- Achievements (wax seal badges)
-- ScienceMastery (per-science progress)
-- Resources (goldFlorins, stoneBlocks, woodPlanks, pigmentJars)
-
-## 6 Buildings
-| # | Name | Era | Sciences |
-|---|------|-----|----------|
-| 1 | Aqueduct | Ancient Rome | Engineering, Hydraulics, Mathematics |
-| 2 | Colosseum | Ancient Rome | Architecture, Engineering, Acoustics |
-| 3 | Roman Baths | Ancient Rome | Hydraulics, Chemistry, Materials |
-| 4 | Duomo | Renaissance | Geometry, Architecture, Physics |
-| 5 | Observatory | Renaissance | Astronomy, Optics, Mathematics |
-| 6 | Workshop | Renaissance | Engineering, Physics, Materials |
-
-## Current Status (Feb 4, 2025)
+## Current Status (Feb 6, 2025)
 
 ### Completed
-- [x] SwiftUI Xcode project (migrated from Unity)
-- [x] MVVM architecture with @MainActor
+- [x] SwiftUI + SpriteKit Xcode project
+- [x] MVVM architecture with shared ViewModel
 - [x] Leonardo's Notebook aesthetic throughout
-- [x] Custom fonts (Cinzel, EBGaramond, PetitFormalScript) via CoreText
-- [x] Main menu with letter-by-letter quill animation
-- [x] Renaissance dome background image (flipped, positioned left)
-- [x] Engineering blueprint style buttons (double-line border)
-- [x] Staggered button appearance animation
-- [x] City view with 6 building plots + blueprint grid overlay
-- [x] Building cards with engineering style (ochre tint, grid pattern)
-- [x] Building detail overlay with color-coded science badges
-- [x] iPad sidebar navigation with custom Home icon
-- [x] ProfileView with science mastery cards (custom icons + soft borders)
-- [x] BloomEffectView for completion animations
-- [x] SoundManager (simplified - meaningful moments only)
-- [x] building_complete.mp3 sound effect
-- [x] All 13 custom Midjourney science icons integrated
-- [x] Navigation icons (Home, Back, Close, etc.)
-- [x] City icons (Rome, Florence)
-- [x] Building state icons
-- [x] ScienceIconView helper
-- [x] **Challenge System with 37 questions for all 6 buildings**
-- [x] **InteractiveChallengeView for mixed question types**
-- [x] **DragDropEquationView for chemistry equations**
-- [x] **HydraulicsFlowView for water flow tracing**
-- [x] **Pow celebration effects on correct answers**
+- [x] Custom fonts via CoreText
+- [x] Main menu with quill animation
+- [x] **SpriteKit city map with 17 buildings**
+- [x] **Pan, zoom, tap controls (iOS + macOS)**
+- [x] **Rivers: Tiber, Arno, Grand Canal**
+- [x] **Zone labels for 6 regions**
+- [x] **Shared progress between map and era views**
+- [x] City grid view with era filtering
+- [x] Building detail overlay with science badges
+- [x] iPad sidebar navigation
+- [x] Profile view with science mastery
+- [x] Challenge system (6 buildings have content)
+- [x] Interactive drag-drop + flow tracing questions
+- [x] Pow celebration effects
+- [x] All 13 custom Midjourney science icons
 
-### Next Steps - Make Challenges More Engaging
-- [ ] Add Midjourney background diagrams to flow tracing questions
-- [ ] Add more drag-drop interactive questions to other buildings
-- [ ] Create material matching games (Materials Science)
-- [ ] Add hot air flow tracing for Colosseum hypogeum
-- [ ] Add gear/pulley interactive questions for Workshop
-- [ ] Add star/constellation tracing for Observatory
-- [ ] Add dome construction sequence for Duomo
-- [ ] Add remaining sound effects (challenge_success, challenge_fail)
-- [ ] Implement full bloom animation (gray sketch → watercolor)
-- [ ] Persist game progress with UserDefaults/SwiftData
+### Next Steps
+- [ ] Create challenges for remaining 11 buildings
+- [ ] Add Midjourney building images to map
+- [ ] Mascot character (watercolor splash)
+- [ ] Rising answer mechanic (LinguaLeo-style)
+- [ ] Sound effects (challenge_success, challenge_fail)
+- [ ] Persist progress with UserDefaults/SwiftData
+- [ ] Building construction animation
+- [ ] Full bloom animation (gray sketch → watercolor)
 
 ## How to Run
 1. Open `RenaissanceArchitectAcademy.xcodeproj` in Xcode
@@ -402,15 +359,12 @@ Each has:
 3. Press Cmd+R to build and run
 
 ## Key Architecture Patterns
-- **MVVM**: Views observe ViewModels via `@StateObject`
+- **MVVM**: Views observe ViewModels via `@ObservedObject` (shared) or `@StateObject`
 - **@MainActor**: ViewModels run on main thread
-- **Identifiable/Codable**: All models conform for persistence
-- **Custom Midjourney icons**: Used in ProfileView science cards
-- **SF Symbols**: Used for small badges and fallbacks
+- **SpriteKit + SwiftUI**: SpriteView bridges SKScene into SwiftUI hierarchy
+- **Platform conditionals**: `#if os(iOS)` / `#else` for UIKit vs AppKit types
 - **NavigationSplitView**: iPad/Mac sidebar navigation
-- **horizontalSizeClass**: Adaptive layouts for different screens
-- **CoreText**: Manual font registration at app launch
-- **Pow**: Celebration spray effects for correct answers
+- **Shared ViewModel**: ContentView owns CityViewModel, passes to child views
 
 ## Git Commands
 ```bash
@@ -422,10 +376,7 @@ git add . && git commit -m "message" && git push origin main
 - Marina prefers direct fixes over long explanations
 - Teach concepts as you go when making changes
 - Always push to GitHub after significant changes
-- iPad only (TARGETED_DEVICE_FAMILY = 2)
-- Fonts: Must use CoreText registration (Info.plist UIAppFonts doesn't work with auto-generated plist)
 - Target: iOS 17+, macOS 14+
-- Chemistry & Engineering icons have squared edges - need `.clipShape()` and `.opacity(0.85)` blending
-- New Midjourney assets are usually huge (7-15MB) - always resize before adding to Assets.xcassets
-- Challenge.swift contains all 37 questions - edit there to add/modify challenges
-- HydraulicsFlowView uses normalized coordinates (0-1) for positions
+- New Midjourney assets are usually huge - always resize before adding
+- Challenge.swift contains all questions - edit there to add/modify
+- SpriteKit uses string building IDs, ViewModel uses integer plot IDs
