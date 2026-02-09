@@ -28,6 +28,11 @@
 		022 /* DragDropEquationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 122 /* DragDropEquationView.swift */; };
 		023 /* InteractiveChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 123 /* InteractiveChallengeView.swift */; };
 		024 /* HydraulicsFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 124 /* HydraulicsFlowView.swift */; };
+		025 /* Material.swift in Sources */ = {isa = PBXBuildFile; fileRef = 125 /* Material.swift */; };
+		026 /* CraftedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 126 /* CraftedItem.swift */; };
+		027 /* Recipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 127 /* Recipe.swift */; };
+		028 /* WorkshopState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 128 /* WorkshopState.swift */; };
+		029 /* WorkshopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 129 /* WorkshopView.swift */; };
 		544299832F32E0F700F92073 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = 544299822F32E0F700F92073 /* Pow */; };
 		544299862F32E11600F92073 /* Subsonic in Frameworks */ = {isa = PBXBuildFile; productRef = 544299852F32E11600F92073 /* Subsonic */; };
 		544299892F32E14D00F92073 /* Vortex in Frameworks */ = {isa = PBXBuildFile; productRef = 544299882F32E14D00F92073 /* Vortex */; };
@@ -37,6 +42,10 @@
 		544299A72F369AB700F92073 /* MascotDialogueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299A52F369AB700F92073 /* MascotDialogueView.swift */; };
 		544299A82F369AB700F92073 /* MaterialPuzzleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299A62F369AB700F92073 /* MaterialPuzzleView.swift */; };
 		544299AE2F36A8D000F92073 /* MascotNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299AD2F36A8D000F92073 /* MascotNode.swift */; };
+		544299B12F38000100F92073 /* PlayerNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299B02F38000100F92073 /* PlayerNode.swift */; };
+		544299B32F38000100F92073 /* ResourceNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299B22F38000100F92073 /* ResourceNode.swift */; };
+		544299B52F38000100F92073 /* WorkshopScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299B42F38000100F92073 /* WorkshopScene.swift */; };
+		544299B72F38000100F92073 /* WorkshopMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299B62F38000100F92073 /* WorkshopMapView.swift */; };
 		5475D2EF2F3146CC003AA131 /* building_complete.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2EE2F3146CB003AA131 /* building_complete.mp3 */; };
 		5475D2F82F319000003AA131 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2F92F319000003AA131 /* Assets.xcassets */; };
 		F001 /* Cinzel-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B022F313B22007D8C64 /* Cinzel-Black.ttf */; };
@@ -84,12 +93,21 @@
 		122 /* DragDropEquationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragDropEquationView.swift; sourceTree = "<group>"; };
 		123 /* InteractiveChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractiveChallengeView.swift; sourceTree = "<group>"; };
 		124 /* HydraulicsFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HydraulicsFlowView.swift; sourceTree = "<group>"; };
+		125 /* Material.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Material.swift; sourceTree = "<group>"; };
+		126 /* CraftedItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CraftedItem.swift; sourceTree = "<group>"; };
+		127 /* Recipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recipe.swift; sourceTree = "<group>"; };
+		128 /* WorkshopState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopState.swift; sourceTree = "<group>"; };
+		129 /* WorkshopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopView.swift; sourceTree = "<group>"; };
 		544299972F3646ED00F92073 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BuildingNode.swift; path = Views/SpriteKit/BuildingNode.swift; sourceTree = "<group>"; };
 		544299982F3646ED00F92073 /* CityMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityMapView.swift; path = Views/SpriteKit/CityMapView.swift; sourceTree = "<group>"; };
 		544299992F3646ED00F92073 /* CityScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityScene.swift; path = Views/SpriteKit/CityScene.swift; sourceTree = "<group>"; };
 		544299A52F369AB700F92073 /* MascotDialogueView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MascotDialogueView.swift; path = Views/MascotDialogueView.swift; sourceTree = "<group>"; };
 		544299A62F369AB700F92073 /* MaterialPuzzleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MaterialPuzzleView.swift; path = Views/MaterialPuzzleView.swift; sourceTree = "<group>"; };
 		544299AD2F36A8D000F92073 /* MascotNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MascotNode.swift; path = Views/SpriteKit/MascotNode.swift; sourceTree = "<group>"; };
+		544299B02F38000100F92073 /* PlayerNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PlayerNode.swift; path = Views/SpriteKit/PlayerNode.swift; sourceTree = "<group>"; };
+		544299B22F38000100F92073 /* ResourceNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ResourceNode.swift; path = Views/SpriteKit/ResourceNode.swift; sourceTree = "<group>"; };
+		544299B42F38000100F92073 /* WorkshopScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkshopScene.swift; path = Views/SpriteKit/WorkshopScene.swift; sourceTree = "<group>"; };
+		544299B62F38000100F92073 /* WorkshopMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopMapView.swift; sourceTree = "<group>"; };
 		54477B022F313B22007D8C64 /* Cinzel-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-Black.ttf"; sourceTree = "<group>"; };
 		54477B032F313B22007D8C64 /* Cinzel-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-Bold.ttf"; sourceTree = "<group>"; };
 		54477B042F313B22007D8C64 /* Cinzel-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-ExtraBold.ttf"; sourceTree = "<group>"; };
@@ -141,6 +159,9 @@
 			isa = PBXGroup;
 			children = (
 				544299AD2F36A8D000F92073 /* MascotNode.swift */,
+				544299B02F38000100F92073 /* PlayerNode.swift */,
+				544299B22F38000100F92073 /* ResourceNode.swift */,
+				544299B42F38000100F92073 /* WorkshopScene.swift */,
 				544299A52F369AB700F92073 /* MascotDialogueView.swift */,
 				544299A62F369AB700F92073 /* MaterialPuzzleView.swift */,
 				544299972F3646ED00F92073 /* BuildingNode.swift */,
@@ -184,6 +205,8 @@
 				122 /* DragDropEquationView.swift */,
 				123 /* InteractiveChallengeView.swift */,
 				124 /* HydraulicsFlowView.swift */,
+				129 /* WorkshopView.swift */,
+				544299B62F38000100F92073 /* WorkshopMapView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -192,6 +215,7 @@
 			isa = PBXGroup;
 			children = (
 				107 /* CityViewModel.swift */,
+				128 /* WorkshopState.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -202,6 +226,9 @@
 				108 /* Building.swift */,
 				118 /* StudentProfile.swift */,
 				120 /* Challenge.swift */,
+				125 /* Material.swift */,
+				126 /* CraftedItem.swift */,
+				127 /* Recipe.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -372,6 +399,15 @@
 				5442999B2F3646ED00F92073 /* CityMapView.swift in Sources */,
 				5442999C2F3646ED00F92073 /* CityScene.swift in Sources */,
 				024 /* HydraulicsFlowView.swift in Sources */,
+				025 /* Material.swift in Sources */,
+				026 /* CraftedItem.swift in Sources */,
+				027 /* Recipe.swift in Sources */,
+				028 /* WorkshopState.swift in Sources */,
+				029 /* WorkshopView.swift in Sources */,
+				544299B12F38000100F92073 /* PlayerNode.swift in Sources */,
+				544299B32F38000100F92073 /* ResourceNode.swift in Sources */,
+				544299B52F38000100F92073 /* WorkshopScene.swift in Sources */,
+				544299B72F38000100F92073 /* WorkshopMapView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -15,11 +15,19 @@ struct ContentView: View {
                 .ignoresSafeArea()
 
             if showingMainMenu {
-                MainMenuView(onStartGame: {
-                    withAnimation(.easeInOut(duration: 0.5)) {
-                        showingMainMenu = false
+                MainMenuView(
+                    onStartGame: {
+                        withAnimation(.easeInOut(duration: 0.5)) {
+                            showingMainMenu = false
+                        }
+                    },
+                    onOpenWorkshop: {
+                        selectedDestination = .workshop
+                        withAnimation(.easeInOut(duration: 0.5)) {
+                            showingMainMenu = false
+                        }
                     }
-                })
+                )
             } else {
                 // Use sidebar navigation on iPad landscape / Mac
                 if horizontalSizeClass == .regular {
@@ -89,6 +97,8 @@ struct ContentView: View {
             CityView(viewModel: cityViewModel, filterEra: era)
         case .profile:
             ProfileView()
+        case .workshop:
+            WorkshopView()
         case .none:
             CityMapView(viewModel: cityViewModel)  // Default to the new map
         }

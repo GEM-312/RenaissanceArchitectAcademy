@@ -4,11 +4,13 @@ import SwiftUI
 /// Features aged parchment, decorative borders, and Renaissance typography
 struct MainMenuView: View {
     var onStartGame: () -> Void
+    var onOpenWorkshop: () -> Void = {}
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var showContent = false
     @State private var showButton1 = false
     @State private var showButton2 = false
     @State private var showButton3 = false
+    @State private var showButton4 = false
 
     // Adaptive sizing
     private var titleSize: CGFloat { horizontalSizeClass == .regular ? 72 : 56 }
@@ -114,6 +116,13 @@ struct MainMenuView: View {
                         #if os(macOS)
                         .keyboardShortcut("k", modifiers: [.command])
                         #endif
+
+                    RenaissanceButton(title: "Workshop", action: onOpenWorkshop)
+                        .opacity(showButton4 ? 1 : 0)
+                        .offset(y: showButton4 ? 0 : 20)
+                        #if os(macOS)
+                        .keyboardShortcut("w", modifiers: [.command])
+                        #endif
                 }
                 .padding(.bottom, horizontalSizeClass == .regular ? 80 : 60)
             }
@@ -133,6 +142,9 @@ struct MainMenuView: View {
             }
             withAnimation(.easeOut(duration: 0.5).delay(3.1)) {
                 showButton3 = true
+            }
+            withAnimation(.easeOut(duration: 0.5).delay(3.4)) {
+                showButton4 = true
             }
         }
     }

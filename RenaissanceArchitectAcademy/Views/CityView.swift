@@ -9,6 +9,7 @@ struct CityView: View {
     // Challenge navigation state
     @State private var showingChallenge = false
     @State private var activeChallenge: InteractiveChallenge? = nil
+    @State private var showWorkshop = false
 
     var filterEra: Era?
 
@@ -44,20 +45,28 @@ struct CityView: View {
                     VStack(alignment: .leading, spacing: 20) {
                         // Header for compact mode
                         if horizontalSizeClass != .regular {
-                            CityHeaderView(
-                                title: filterEra?.rawValue ?? "Florence",
-                                completedCount: completedCount,
-                                totalCount: filteredPlots.count
-                            )
+                            HStack(alignment: .top) {
+                                CityHeaderView(
+                                    title: filterEra?.rawValue ?? "Florence",
+                                    completedCount: completedCount,
+                                    totalCount: filteredPlots.count
+                                )
+                                Spacer()
+                                workshopButton
+                            }
                             .padding(.horizontal)
                         }
 
-                        // Progress summary for regular size
+                        // Progress summary + Workshop button for regular size
                         if horizontalSizeClass == .regular {
-                            CityProgressBar(
-                                completedCount: completedCount,
-                                totalCount: filteredPlots.count
-                            )
+                            HStack {
+                                CityProgressBar(
+                                    completedCount: completedCount,
+                                    totalCount: filteredPlots.count
+                                )
+
+                                workshopButton
+                            }
                             .padding(.horizontal, 40)
                         }
 
@@ -123,6 +132,36 @@ struct CityView: View {
         #if os(iOS)
         .navigationBarTitleDisplayMode(.large)
         #endif
+        #if os(iOS)
+        .fullScreenCover(isPresented: $showWorkshop) {
+            WorkshopView()
+        }
+        #else
+        .sheet(isPresented: $showWorkshop) {
+            WorkshopView()
+                .frame(minWidth: 900, minHeight: 600)
+        }
+        #endif
+    }
+
+    private var workshopButton: some View {
+        Button {
+            showWorkshop = true
+        } label: {
+            HStack(spacing: 4) {
+                Image(systemName: "hammer.fill")
+                    .font(.caption)
+                Text("Workshop")
+                    .font(.custom("EBGaramond-Italic", size: 14, relativeTo: .caption))
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(RenaissanceColors.terracotta)
+            )
+            .foregroundStyle(.white)
+        }
     }
 }
 

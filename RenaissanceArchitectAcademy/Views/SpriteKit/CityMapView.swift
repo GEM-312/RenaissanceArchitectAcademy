@@ -1,5 +1,8 @@
 import SwiftUI
 import SpriteKit
+#if os(iOS)
+import PencilKit
+#endif
 
 /// SwiftUI wrapper for the SpriteKit city scene
 ///
@@ -51,6 +54,17 @@ struct CityMapView: View {
     /// Mascot facing direction (true = right)
     @State private var mascotFacingRight = true
 
+    /// Paint mode: user can draw watercolor washes on the map
+    @State private var isPaintMode = false
+
+    #if os(iOS)
+    /// The saved watercolor drawing (PencilKit, persisted between sessions)
+    @State private var watercolorDrawing = PKDrawing()
+    #else
+    /// The saved watercolor drawing (stub for macOS — strokes stored in canvas view)
+    @State private var watercolorDrawing = MacDrawing()
+    #endif
+
     /// Environment for navigation
     @Environment(\.dismiss) private var dismiss
 
@@ -88,16 +102,32 @@ struct CityMapView: View {
                     .ignoresSafeArea()
                     .gesture(pinchGesture)
 
+                // Watercolor paint layer (PencilKit canvas)
+                WatercolorCanvasView(
+                    drawing: $watercolorDrawing,
+                    isActive: $isPaintMode
+                )
+                .allowsHitTesting(isPaintMode)
+                .ignoresSafeArea()
+
                 // SwiftUI Mascot overlay (same look everywhere!)
-                if mascotVisible && !showMascotDialogue && !showMaterialPuzzle {
+                if mascotVisible && !showMascotDialogue && !showMaterialPuzzle && !isPaintMode {
                     mascotOverlay(in: geometry.size)
                 }
 
                 // SwiftUI overlay for UI elements
                 VStack {
-                    topBar
+                    HStack {
+                        topBar
+                        Spacer()
+                        paintModeButton
+                    }
                     Spacer()
-                    bottomHint
+                    if isPaintMode {
+                        paintModeHint
+                    } else {
+                        bottomHint
+                    }
                 }
                 .padding()
 
@@ -185,6 +215,8 @@ struct CityMapView: View {
             } // end ZStack
         } // end GeometryReader
         .onAppear {
+            // Load saved watercolor painting
+            loadWatercolorDrawing()
             // Sync completion states when view appears (e.g., after completing in Era view)
             if let currentScene = scene {
                 syncCompletionStates(in: currentScene)
@@ -390,6 +422,85 @@ struct CityMapView: View {
             )
     }
 
+    // MARK: - Paint Mode UI
+
+    private var paintModeButton: some View {
+        Button {
+            withAnimation(.spring(response: 0.3)) {
+                isPaintMode.toggle()
+            }
+            // Save when exiting paint mode
+            if !isPaintMode {
+                saveWatercolorDrawing()
+            }
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: isPaintMode ? "checkmark" : "paintbrush.pointed.fill")
+                Text(isPaintMode ? "Done" : "Paint")
+                    .font(.custom("EBGaramond-Regular", size: 16))
+            }
+            .foregroundColor(isPaintMode ? .white : RenaissanceColors.sepiaInk)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .background(
+                Capsule()
+                    .fill(isPaintMode ? RenaissanceColors.renaissanceBlue : RenaissanceColors.parchment.opacity(0.95))
+                    .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
+            )
+        }
+    }
+
+    private var paintModeHint: some View {
+        HStack(spacing: 12) {
+            Text("Draw watercolor washes on the map")
+                .font(.custom("EBGaramond-Italic", size: 16))
+                .foregroundColor(RenaissanceColors.sepiaInk.opacity(0.8))
+
+            Button {
+                #if os(iOS)
+                watercolorDrawing = PKDrawing()
+                #else
+                watercolorDrawing = MacDrawing()
+                #endif
+                saveWatercolorDrawing()
+            } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: "trash")
+                    Text("Clear")
+                        .font(.custom("EBGaramond-Regular", size: 14))
+                }
+                .foregroundColor(RenaissanceColors.errorRed)
+            }
+        }
+        .padding(.horizontal, 24)
+        .padding(.vertical, 12)
+        .background(
+            Capsule()
+                .fill(RenaissanceColors.parchment.opacity(0.9))
+                .shadow(color: .black.opacity(0.1), radius: 2, y: 1)
+        )
+    }
+
+    // MARK: - Watercolor Drawing Persistence
+
+    private static let drawingKey = "cityMapWatercolorDrawing"
+
+    private func saveWatercolorDrawing() {
+        #if os(iOS)
+        let data = watercolorDrawing.dataRepresentation()
+        UserDefaults.standard.set(data, forKey: Self.drawingKey)
+        #endif
+        // macOS strokes are ephemeral for now (no PencilKit serialization)
+    }
+
+    private func loadWatercolorDrawing() {
+        #if os(iOS)
+        guard let data = UserDefaults.standard.data(forKey: Self.drawingKey),
+              let drawing = try? PKDrawing(data: data) else { return }
+        watercolorDrawing = drawing
+        #endif
+    }
+
     // MARK: - Material Formulas
 
     /// Get the appropriate formula for each building type
@@ -410,6 +521,129 @@ struct CityMapView: View {
         }
     }
 }
+
+// MARK: - WatercolorCanvasView (PencilKit wrapper)
+
+#if os(iOS)
+/// Wraps PKCanvasView for iPad — transparent overlay with Apple's watercolor brush
+struct WatercolorCanvasView: UIViewRepresentable {
+    @Binding var drawing: PKDrawing
+    @Binding var isActive: Bool
+
+    func makeCoordinator() -> Coordinator { Coordinator(self) }
+
+    func makeUIView(context: Context) -> PKCanvasView {
+        let canvas = PKCanvasView()
+        canvas.drawing = drawing
+        canvas.backgroundColor = .clear
+        canvas.isOpaque = false
+        canvas.drawingPolicy = .anyInput
+        canvas.delegate = context.coordinator
+
+        // Default tool: watercolor green, wide brush
+        canvas.tool = PKInkingTool(.watercolor, color: .systemGreen, width: 30)
+
+        context.coordinator.canvas = canvas
+        return canvas
+    }
+
+    func updateUIView(_ canvas: PKCanvasView, context: Context) {
+        if canvas.drawing.dataRepresentation() != drawing.dataRepresentation() {
+            canvas.drawing = drawing
+        }
+        canvas.isUserInteractionEnabled = isActive
+
+        let coordinator = context.coordinator
+        if isActive {
+            coordinator.showToolPicker(for: canvas)
+        } else {
+            coordinator.hideToolPicker()
+        }
+    }
+
+    class Coordinator: NSObject, PKCanvasViewDelegate {
+        var parent: WatercolorCanvasView
+        weak var canvas: PKCanvasView?
+        private var toolPicker: PKToolPicker?
+
+        init(_ parent: WatercolorCanvasView) { self.parent = parent }
+
+        func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) {
+            parent.drawing = canvasView.drawing
+        }
+
+        func showToolPicker(for canvas: PKCanvasView) {
+            if toolPicker == nil { toolPicker = PKToolPicker() }
+            toolPicker?.setVisible(true, forFirstResponder: canvas)
+            toolPicker?.addObserver(canvas)
+            canvas.becomeFirstResponder()
+        }
+
+        func hideToolPicker() {
+            guard let canvas = canvas else { return }
+            toolPicker?.setVisible(false, forFirstResponder: canvas)
+            canvas.resignFirstResponder()
+        }
+    }
+}
+
+#else
+
+/// Lightweight drawing stub for macOS (PencilKit is iOS-only)
+struct MacDrawing: Equatable {
+    var strokes: [[CGPoint]] = []
+}
+
+/// macOS fallback: simple SwiftUI drag-to-paint canvas
+struct WatercolorCanvasView: View {
+    @Binding var drawing: MacDrawing
+    @Binding var isActive: Bool
+
+    @State private var currentStroke: [CGPoint] = []
+
+    var body: some View {
+        Canvas { context, _ in
+            for stroke in drawing.strokes {
+                drawWatercolorStroke(stroke, in: &context)
+            }
+            if !currentStroke.isEmpty {
+                drawWatercolorStroke(currentStroke, in: &context)
+            }
+        }
+        .gesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { value in
+                    guard isActive else { return }
+                    currentStroke.append(value.location)
+                }
+                .onEnded { _ in
+                    guard isActive, !currentStroke.isEmpty else { return }
+                    drawing.strokes.append(currentStroke)
+                    currentStroke = []
+                }
+        )
+    }
+
+    private func drawWatercolorStroke(_ points: [CGPoint], in context: inout GraphicsContext) {
+        guard points.count >= 2 else { return }
+
+        var path = Path()
+        path.move(to: points[0])
+        for i in 1..<points.count {
+            let mid = CGPoint(
+                x: (points[i - 1].x + points[i].x) / 2,
+                y: (points[i - 1].y + points[i].y) / 2
+            )
+            path.addQuadCurve(to: mid, control: points[i - 1])
+        }
+        path.addLine(to: points.last!)
+
+        // Wide semi-transparent green-yellow strokes to simulate watercolor wash
+        context.stroke(path, with: .color(Color(RenaissanceColors.sageGreen).opacity(0.3)), lineWidth: 30)
+        context.stroke(path, with: .color(Color(RenaissanceColors.ochre).opacity(0.15)), lineWidth: 20)
+    }
+}
+#endif
 
 // MARK: - Preview
 

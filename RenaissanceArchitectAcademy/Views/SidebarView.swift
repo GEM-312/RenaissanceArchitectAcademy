@@ -6,6 +6,7 @@ enum SidebarDestination: Hashable {
     case allBuildings   // Grid view of all buildings
     case era(Era)
     case profile
+    case workshop       // Crafting mini-game
 }
 
 struct SidebarView: View {
@@ -50,6 +51,21 @@ struct SidebarView: View {
                 }
             } header: {
                 Label("Eras", systemImage: "clock.arrow.circlepath")
+                    .font(.caption)
+                    .foregroundStyle(RenaissanceColors.warmBrown)
+            }
+
+            // Workshop Section
+            Section {
+                SidebarRow(
+                    title: "Workshop",
+                    icon: "hammer.fill",
+                    isSelected: selectedDestination == .workshop
+                ) {
+                    selectedDestination = .workshop
+                }
+            } header: {
+                Label("Craft", systemImage: "flame")
                     .font(.caption)
                     .foregroundStyle(RenaissanceColors.warmBrown)
             }
