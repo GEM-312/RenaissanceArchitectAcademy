@@ -131,35 +131,35 @@ RenaissanceArchitectAcademy/
 
 ## Map Art Generation (Gemini Prompts)
 
-The city map background is generated as 6 zone tiles (1500x1200 px each), then stitched in Photoshop at 7000x5000 px (2x retina of 3500x2500 map).
+The city map background is generated as 6 zone tiles (1500x1200 px each), then stitched in Photoshop at 7000x5000 px (2x retina of 3500x2500 map). **Terrain ground only** — buildings, trees, rivers, and labels are SpriteKit nodes rendered on top. Style matches existing Midjourney science icons: fine sepia ink lines, soft transparent watercolor washes, cream parchment, faint geometric construction lines.
 
 ### Zone I — Ancient Rome (left side, 8 buildings)
-> Top-down bird's eye view of ancient Roman terrain, Leonardo da Vinci notebook style. Aged parchment paper background with faint grid lines. Warm terracotta and sandy ground with worn cobblestone paths connecting building plots. The Tiber River flows along the left edge, painted in soft watercolor blue-green washes. Scattered Mediterranean cypress trees drawn in sepia ink with sage green watercolor canopy. Dry golden-brown hills, Roman-era stone walls, dusty roads. Subtle ink-drawn topographic contour lines. Warm palette: terracotta, ochre, sandy beige, sepia brown. Hand-drawn map illustration style, watercolor on parchment. 1500x1200 pixels.
+> Top-down terrain map, fine sepia ink line drawing with soft transparent watercolor washes on aged cream parchment. Faint geometric construction lines and circles in the background. Warm sandy ground with subtle terracotta and ochre watercolor tints. Worn dirt paths, rocky patches, dry grass texture sketched in thin sepia lines. Delicate, airy, minimal. Pale warm tones — tan, sandy beige, light terracotta wash. No buildings, no trees, no bushes, no water, no rivers, no text, no words, no labels. Leonardo da Vinci notebook study style. 1500x1200 pixels.
 
 ### Zone II — Florence (top right, 2 buildings)
-> Top-down bird's eye view of Renaissance Florence terrain, Leonardo da Vinci notebook style. Aged parchment with faint grid lines. Rolling Tuscan hills with olive groves and vineyard rows drawn in fine sepia ink. The Arno River curves through the scene as a gentle watercolor blue wash. Lush green gardens with terracotta-tiled rooftop hints in the distance. Stone bridges, cypress-lined paths, and wildflower meadows. Soft watercolor washes of sage green, warm gold, and dusty rose. Elegant Italian countryside feel. Hand-drawn map illustration on aged paper. 1500x1200 pixels.
+> Top-down terrain map, fine sepia ink line drawing with soft transparent watercolor washes on aged cream parchment. Faint geometric construction lines and arcs in the background. Rolling gentle hill contours with sage green and warm gold watercolor tints. Vineyard row patterns etched in thin sepia ink. Dirt footpaths, meadow ground texture. Delicate, airy, minimal. Pale green and gold washes. No buildings, no trees, no bushes, no rivers, no water, no text, no words, no labels. Leonardo da Vinci notebook study style. 1500x1200 pixels.
 
 ### Zone III — Venice (right side, 2 buildings)
-> Top-down bird's eye view of Renaissance Venice terrain, Leonardo da Vinci notebook style. Aged parchment with faint grid lines. The Grand Canal flows in deep teal watercolor, with smaller canals branching off. Wooden dock pilings and gondola moorings sketched in sepia ink. Cobblestone squares (campi), small stone bridges arching over canals. Watercolor washes of deep teal, blue-green, warm stone gray, and ochre. Reflections shimmer in the water with soft white highlights. Maritime atmosphere with rope coils and fishing nets. Hand-drawn Venetian map on aged paper. 1500x1200 pixels.
+> Top-down terrain map, fine sepia ink line drawing with soft transparent watercolor washes on aged cream parchment. Faint geometric construction lines and circles in the background. Cobblestone paving patterns and worn stone ground textures sketched in thin sepia ink. Subtle pale blue-gray and teal watercolor tints near edges. Weathered stone squares. Delicate, airy, minimal. No buildings, no bridges, no canals, no water, no trees, no bushes, no text, no words, no labels. Leonardo da Vinci notebook study style. 1500x1200 pixels.
 
 ### Zone IV — Padua (center, 1 building)
-> Top-down bird's eye view of Renaissance Padua university town terrain, Leonardo da Vinci notebook style. Aged parchment with faint grid lines. Academic courtyard gardens with geometric herb beds and anatomical plant specimens. Cobblestone piazzas, arched colonnades drawn in fine sepia ink. Formal Italian garden paths with trimmed hedges in sage green watercolor. Stone walls, a small fountain, scattered books and scrolls as decorative elements. Scholarly atmosphere. Palette: warm stone, muted green, parchment gold, sepia. Hand-drawn map illustration. 1500x1200 pixels.
+> Top-down terrain map, fine sepia ink line drawing with soft transparent watercolor washes on aged cream parchment. Faint geometric construction lines and arcs in the background. Cobblestone courtyard patterns and gravel path textures in thin sepia ink. Subtle muted green and warm stone watercolor tints. Geometric paving details. Delicate, airy, minimal. No buildings, no trees, no bushes, no fountains, no water, no text, no words, no labels. Leonardo da Vinci notebook study style. 1500x1200 pixels.
 
 ### Zone V — Milan (upper center, 2 buildings)
-> Top-down bird's eye view of Renaissance Milan terrain, Leonardo da Vinci notebook style. Aged parchment with faint grid lines. An inventor's landscape: scattered engineering sketches fade into the ground like palimpsest. Workshop yards with timber stacks, gears, and pulleys sketched in sepia ink. Open fields for testing flying contraptions, with wind direction arrows. Lombardy poplar trees in soft green watercolor, irrigation canals, and brick paths. Industrial yet artistic atmosphere. Palette: warm brown, ochre, sage green, blueprint hints of blue ink. Hand-drawn map on aged paper. 1500x1200 pixels.
+> Top-down terrain map, fine sepia ink line drawing with soft transparent watercolor washes on aged cream parchment. Faint geometric construction lines, gear diagrams, and engineering sketches fading into the background. Packed dirt ground, brick-paved path patterns in thin sepia ink. Subtle ochre and pale blue watercolor tints. Delicate, airy, minimal. No buildings, no trees, no bushes, no canals, no water, no text, no words, no labels. Leonardo da Vinci notebook study style. 1500x1200 pixels.
 
 ### Zone VI — Renaissance Rome (lower right, 2 buildings)
-> Top-down bird's eye view of Renaissance papal Rome terrain, Leonardo da Vinci notebook style. Aged parchment with faint grid lines. Grand stone plazas with fountain sketches, obelisks, and ceremonial paths. Star charts and astronomical diagrams subtly watermarked into the ground. Printing press ink splatters as decorative texture. Marble columns, cypress trees, and formal gardens. Vatican-inspired grandeur with papal banners suggested in faded red and gold watercolor. Palette: marble white, gold, terracotta, deep sepia. Hand-drawn cartographic style on aged paper. 1500x1200 pixels.
+> Top-down terrain map, fine sepia ink line drawing with soft transparent watercolor washes on aged cream parchment. Faint geometric construction lines, star chart circles, and astronomical diagrams in the background. Grand stone plaza paving patterns and ceremonial pathway markings in thin sepia ink. Subtle pale gold and terracotta watercolor tints. Delicate, airy, minimal. No buildings, no trees, no bushes, no columns, no fountains, no water, no text, no words, no labels. Leonardo da Vinci notebook study style. 1500x1200 pixels.
 
 ### Stitching Guide
 | Zone | Canvas Position (7000x5000) | Description |
 |------|----------------------------|-------------|
-| I | Left third (x: 0-2000) | Ancient Rome + Tiber River |
-| V | Upper center (x: 2000-3600, y: 2500-5000) | Milan workshops |
-| IV | Center (x: 3000-5000, y: 2000-4000) | Padua university |
-| II | Top right (x: 4000-7000, y: 3000-5000) | Florence + Arno River |
-| III | Right (x: 5000-7000, y: 1500-3500) | Venice + Grand Canal |
-| VI | Bottom right (x: 3500-6000, y: 0-2500) | Renaissance Rome |
+| I | Left third (x: 0-2000) | Ancient Rome terrain |
+| V | Upper center (x: 2000-3600, y: 2500-5000) | Milan terrain |
+| IV | Center (x: 3000-5000, y: 2000-4000) | Padua terrain |
+| II | Top right (x: 4000-7000, y: 3000-5000) | Florence terrain |
+| III | Right (x: 5000-7000, y: 1500-3500) | Venice terrain |
+| VI | Bottom right (x: 3500-6000, y: 0-2500) | Renaissance Rome terrain |
 
 Era divider: vertical blend line around x: 2000-2400. Use soft-edge blending between tiles. Parchment background: #F5E6D3.
 
