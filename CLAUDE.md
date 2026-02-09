@@ -51,15 +51,24 @@ RenaissanceArchitectAcademy/
 │   │   ├── HydraulicsFlowView.swift        # Water flow path tracing
 │   │   ├── MascotDialogueView.swift        # Mascot dialogue + choice buttons
 │   │   ├── MaterialPuzzleView.swift        # Match-3 puzzle for collecting materials
-│   │   └── SpriteKit/                      # SpriteKit city map
+│   │   ├── WorkshopView.swift               # Workshop entry (wraps WorkshopMapView)
+│   │   ├── WorkshopMapView.swift            # SwiftUI wrapper for WorkshopScene + overlays
+│   │   └── SpriteKit/                      # SpriteKit scenes
 │   │       ├── CityScene.swift             # Main SKScene with buildings, rivers, mascot position
 │   │       ├── BuildingNode.swift          # Tappable building sprites
 │   │       ├── MascotNode.swift            # (Legacy - not used, SwiftUI renders mascot)
-│   │       └── CityMapView.swift           # SwiftUI wrapper + mascot overlay
+│   │       ├── CityMapView.swift           # SwiftUI wrapper + mascot overlay + PencilKit paint
+│   │       ├── PlayerNode.swift            # Da Vinci stick figure player (Workshop)
+│   │       ├── ResourceNode.swift          # Resource station nodes (Workshop)
+│   │       └── WorkshopScene.swift         # SpriteKit workshop mini-game scene
 │   ├── ViewModels/
-│   │   └── CityViewModel.swift        # @MainActor, @Published state, 17 buildings
+│   │   ├── CityViewModel.swift        # @MainActor, @Published state, 17 buildings
+│   │   └── WorkshopState.swift        # Workshop crafting state, station stocks, recipes
 │   ├── Models/
 │   │   ├── Building.swift             # Era, RenaissanceCity, Science, Building, BuildingPlot, BuildingState
+│   │   ├── Material.swift             # Raw materials enum (limestone, clay, iron ore, etc.)
+│   │   ├── CraftedItem.swift          # Crafted items enum (mortar, concrete, glass, etc.)
+│   │   ├── Recipe.swift               # Crafting recipes with temperature + educational text
 │   │   ├── StudentProfile.swift       # MasteryLevel, Achievement, Resources
 │   │   └── Challenge.swift            # Challenge system + all building challenges
 │   ├── Styles/
@@ -361,6 +370,69 @@ func formulaForBuilding(_ buildingName: String) -> MaterialFormula {
 }
 ```
 
+## Workshop Mini-Game (NEW - Feb 8, 2025)
+
+### Overview
+Township-style SpriteKit crafting experience. Player (da Vinci stick figure) walks between resource stations to collect materials, mix at workbench, and fire in furnace to create building supplies.
+
+### Key Files
+| File | Purpose |
+|------|---------|
+| `WorkshopScene.swift` | SpriteKit scene with stations, player movement, camera |
+| `PlayerNode.swift` | Da Vinci stick figure with walk/idle animations |
+| `ResourceNode.swift` | 10 station types (quarry, river, forest, furnace, etc.) |
+| `WorkshopMapView.swift` | SwiftUI wrapper with 7-layer overlay system |
+| `WorkshopState.swift` | Crafting state, station stocks, recipes, educational popups |
+| `WorkshopView.swift` | Entry point, wraps WorkshopMapView |
+| `Material.swift` | Raw materials (limestone, clay, iron ore, timber, etc.) |
+| `CraftedItem.swift` | Crafted outputs (mortar, concrete, glass, etc.) |
+| `Recipe.swift` | Recipes with ingredients, temperature, educational text |
+
+### Crafting Flow
+1. **Collect** - Walk to resource stations, tap materials to gather
+2. **Mix** - Walk to Workbench, add 4 materials to slots, recipe auto-detected
+3. **Fire** - Walk to Furnace, set temperature, press FIRE
+4. **Learn** - "Did You Know?" educational popup after crafting
+
+### Station Types
+Quarry, River, Volcano, Clay Pit, Mine, Pigment Table, Forest, Market, Workbench, Furnace
+
+### Overlay Layers (WorkshopMapView)
+1. SpriteKit scene
+2. Companion overlay (Splash + Bird follow player)
+3. Top bar + inventory bar
+4. Hint bubble (educational facts, positioned at top)
+5. Collection overlay (material buttons, positioned at bottom)
+6. Workbench overlay (mixing slots + recipe detection)
+7. Furnace overlay (temperature picker + fire button)
+8. Educational popup ("Did You Know?" after crafting)
+
+## PencilKit Watercolor Paint Mode (NEW - Feb 8, 2025)
+
+### Overview
+PencilKit canvas overlay on the city map lets users draw watercolor strokes directly on the map. iOS uses Apple's `PKInkingTool(.watercolor)`, macOS uses a SwiftUI Canvas fallback.
+
+### Key File: `CityMapView.swift`
+
+### Features
+- Toggle paint mode with brush button in top bar
+- iOS: Full PKToolPicker with watercolor brush pre-selected
+- macOS: SwiftUI Canvas with green+yellow stroke drawing
+- Drawings saved/loaded via `UserDefaults` key `"cityMapWatercolorDrawing"`
+- Clear button to reset canvas
+
+### Platform Handling
+```swift
+#if os(iOS)
+import PencilKit
+@State private var watercolorDrawing = PKDrawing()
+// WatercolorCanvasView wraps PKCanvasView + PKToolPicker
+#else
+@State private var watercolorDrawing = MacDrawing()
+// MacDrawing = simple [[CGPoint]] strokes rendered in SwiftUI Canvas
+#endif
+```
+
 ## Models
 
 ### Era
@@ -500,6 +572,13 @@ RenaissanceColors.blueprintBlue   // #4169E1 - Grid lines
 - [x] **Mascot walks to buildings with bounce animation**
 - [x] **Mascot entrance animation in puzzle view**
 - [x] **SwiftUI mascot overlay (consistent look everywhere!)**
+- [x] **Workshop mini-game (Township-style SpriteKit crafting)**
+- [x] **PlayerNode (da Vinci stick figure with walk/idle animations)**
+- [x] **10 resource stations with collection + respawn**
+- [x] **Workbench mixing + Furnace firing with temperature**
+- [x] **Educational "Did You Know?" popups after crafting**
+- [x] **PencilKit watercolor paint mode on city map (iOS)**
+- [x] **Drawing save/load via UserDefaults**
 
 ### Session Log - Feb 6, 2025
 - Fixed mascot consistency: Now using SwiftUI overlay instead of SpriteKit rendering
@@ -508,15 +587,59 @@ RenaissanceColors.blueprintBlue   // #4169E1 - Grid lines
 - Added resize_assets.sh utility script
 - Updated .gitignore for backup files and original Midjourney sources
 
+### Session Log - Feb 8, 2025
+- Workshop mini-game: Township-style SpriteKit crafting (PlayerNode, ResourceNode, WorkshopScene)
+- Material/Recipe/CraftedItem models with workbench mixing + furnace firing
+- WorkshopState with station stocks, collection, respawn timer, educational popups
+- PencilKit watercolor paint mode on CityMapView (iOS) with save/load via UserDefaults
+- macOS fallback: SwiftUI Canvas drawing with green+yellow strokes
+- Fixed hint bubble overlapping collection panel (moved hint to top of screen)
+- Explored GPU shaders (watercolorFill, waterFill) — removed in favor of PencilKit manual painting
+
 ### Next Steps
+- [ ] Generate map background art with Gemini (see prompts below)
 - [ ] Create challenges for remaining 11 buildings
-- [ ] Add Midjourney building images to map
+- [ ] Add building images to map
 - [ ] Rising answer mechanic (LinguaLeo-style)
 - [ ] Sound effects (challenge_success, challenge_fail, puzzle_match)
 - [ ] Persist progress with UserDefaults/SwiftData
 - [ ] Building construction animation
 - [ ] Full bloom animation (gray sketch → watercolor)
 - [ ] Sketching game (for "I need to sketch it" option)
+
+## Gemini Map Art Prompts
+
+The city map (3500x2500 points) is divided into 6 zones. Generate each tile at **1500x1200 px**, then stitch in Photoshop on a **7000x5000** canvas (2x retina).
+
+### Zone I — Ancient Rome (left side, 8 buildings)
+> Top-down bird's eye view of ancient Roman terrain, Leonardo da Vinci notebook style. Aged parchment paper background with faint grid lines. Warm terracotta and sandy ground with worn cobblestone paths connecting building plots. The Tiber River flows along the left edge, painted in soft watercolor blue-green washes. Scattered Mediterranean cypress trees drawn in sepia ink with sage green watercolor canopy. Dry golden-brown hills, Roman-era stone walls, dusty roads. Subtle ink-drawn topographic contour lines. Warm palette: terracotta, ochre, sandy beige, sepia brown. Hand-drawn map illustration style, watercolor on parchment. 1500x1200 pixels.
+
+### Zone II — Florence (top right, 2 buildings)
+> Top-down bird's eye view of Renaissance Florence terrain, Leonardo da Vinci notebook style. Aged parchment with faint grid lines. Rolling Tuscan hills with olive groves and vineyard rows drawn in fine sepia ink. The Arno River curves through the scene as a gentle watercolor blue wash. Lush green gardens with terracotta-tiled rooftop hints in the distance. Stone bridges, cypress-lined paths, and wildflower meadows. Soft watercolor washes of sage green, warm gold, and dusty rose. Elegant Italian countryside feel. Hand-drawn map illustration on aged paper. 1500x1200 pixels.
+
+### Zone III — Venice (right side, 2 buildings)
+> Top-down bird's eye view of Renaissance Venice terrain, Leonardo da Vinci notebook style. Aged parchment with faint grid lines. The Grand Canal flows in deep teal watercolor, with smaller canals branching off. Wooden dock pilings and gondola moorings sketched in sepia ink. Cobblestone squares (campi), small stone bridges arching over canals. Watercolor washes of deep teal, blue-green, warm stone gray, and ochre. Reflections shimmer in the water with soft white highlights. Maritime atmosphere with rope coils and fishing nets. Hand-drawn Venetian map on aged paper. 1500x1200 pixels.
+
+### Zone IV — Padua (center, 1 building)
+> Top-down bird's eye view of Renaissance Padua university town terrain, Leonardo da Vinci notebook style. Aged parchment with faint grid lines. Academic courtyard gardens with geometric herb beds and anatomical plant specimens. Cobblestone piazzas, arched colonnades drawn in fine sepia ink. Formal Italian garden paths with trimmed hedges in sage green watercolor. Stone walls, a small fountain, scattered books and scrolls as decorative elements. Scholarly atmosphere. Palette: warm stone, muted green, parchment gold, sepia. Hand-drawn map illustration. 1500x1200 pixels.
+
+### Zone V — Milan (upper center, 2 buildings)
+> Top-down bird's eye view of Renaissance Milan terrain, Leonardo da Vinci notebook style. Aged parchment with faint grid lines. An inventor's landscape: scattered engineering sketches fade into the ground like palimpsest. Workshop yards with timber stacks, gears, and pulleys sketched in sepia ink. Open fields for testing flying contraptions, with wind direction arrows. Lombardy poplar trees in soft green watercolor, irrigation canals, and brick paths. Industrial yet artistic atmosphere. Palette: warm brown, ochre, sage green, blueprint hints of blue ink. Hand-drawn map on aged paper. 1500x1200 pixels.
+
+### Zone VI — Renaissance Rome (lower right, 2 buildings)
+> Top-down bird's eye view of Renaissance papal Rome terrain, Leonardo da Vinci notebook style. Aged parchment with faint grid lines. Grand stone plazas with fountain sketches, obelisks, and ceremonial paths. Star charts and astronomical diagrams subtly watermarked into the ground. Printing press ink splatters as decorative texture. Marble columns, cypress trees, and formal gardens. Vatican-inspired grandeur with papal banners suggested in faded red and gold watercolor. Palette: marble white, gold, terracotta, deep sepia. Hand-drawn cartographic style on aged paper. 1500x1200 pixels.
+
+### Stitching Instructions
+- Canvas: 7000x5000 px (2x retina of 3500x2500 map)
+- Zone I: left third (x: 0-2000)
+- Zone V: upper center (x: 2000-3600, y: 2500-5000)
+- Zone IV: center (x: 3000-5000, y: 2000-4000)
+- Zone II: top right (x: 4000-7000, y: 3000-5000)
+- Zone III: right (x: 5000-7000, y: 1500-3500)
+- Zone VI: bottom right (x: 3500-6000, y: 0-2500)
+- Era divider: vertical blend line around x: 2000-2400
+- Use soft-edge blending between tiles for seamless transitions
+- All tiles share the same parchment background (#F5E6D3) for consistency
 
 ## How to Run
 1. Open `RenaissanceArchitectAcademy.xcodeproj` in Xcode
