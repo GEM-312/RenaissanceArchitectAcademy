@@ -47,6 +47,7 @@
 		544299B52F38000100F92073 /* WorkshopScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299B42F38000100F92073 /* WorkshopScene.swift */; };
 		544299B72F38000100F92073 /* WorkshopMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299B62F38000100F92073 /* WorkshopMapView.swift */; };
 		544299C02F3A000100F92073 /* SceneEditorMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299BF2F3A000100F92073 /* SceneEditorMode.swift */; };
+		030 /* MoleculeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130 /* MoleculeView.swift */; };
 		5475D2EF2F3146CC003AA131 /* building_complete.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2EE2F3146CB003AA131 /* building_complete.mp3 */; };
 		5475D2F82F319000003AA131 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2F92F319000003AA131 /* Assets.xcassets */; };
 		F001 /* Cinzel-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B022F313B22007D8C64 /* Cinzel-Black.ttf */; };
@@ -101,6 +102,7 @@
 		127 /* Recipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recipe.swift; sourceTree = "<group>"; };
 		128 /* WorkshopState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopState.swift; sourceTree = "<group>"; };
 		129 /* WorkshopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopView.swift; sourceTree = "<group>"; };
+		130 /* MoleculeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoleculeView.swift; sourceTree = "<group>"; };
 		544299972F3646ED00F92073 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BuildingNode.swift; path = Views/SpriteKit/BuildingNode.swift; sourceTree = "<group>"; };
 		544299982F3646ED00F92073 /* CityMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityMapView.swift; path = Views/SpriteKit/CityMapView.swift; sourceTree = "<group>"; };
 		544299992F3646ED00F92073 /* CityScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityScene.swift; path = Views/SpriteKit/CityScene.swift; sourceTree = "<group>"; };
@@ -213,6 +215,7 @@
 				123 /* InteractiveChallengeView.swift */,
 				124 /* HydraulicsFlowView.swift */,
 				129 /* WorkshopView.swift */,
+				130 /* MoleculeView.swift */,
 				544299B62F38000100F92073 /* WorkshopMapView.swift */,
 			);
 			path = Views;
@@ -420,6 +423,7 @@
 				544299B52F38000100F92073 /* WorkshopScene.swift in Sources */,
 				544299B72F38000100F92073 /* WorkshopMapView.swift in Sources */,
 				544299C02F3A000100F92073 /* SceneEditorMode.swift in Sources */,
+				030 /* MoleculeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

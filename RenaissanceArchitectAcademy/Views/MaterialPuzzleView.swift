@@ -94,11 +94,10 @@ struct MaterialPuzzleView: View {
     @State private var matchedPositions: Set<GridPosition> = []
     @State private var showReshuffleMessage = false
 
-    // Mascot entrance animation
-    @State private var mascotOffset: CGFloat = -300  // Start far off-screen left
-    @State private var mascotBounce: CGFloat = 0
-    @State private var mascotWalkCycle: CGFloat = 0  // For walking bounce
-    @State private var mascotLean: Double = 0  // Lean left/right while walking
+    // Bird entrance animation
+    @State private var birdOffset: CGFloat = -300  // Start far off-screen left
+    @State private var birdBounce: CGFloat = 0
+    @State private var birdHasLanded = false  // Switches from flying to sitting
 
     private let gridSize = 5  // Bigger grid = harder
     private let tileSize: CGFloat = 58  // Slightly smaller tiles
@@ -132,15 +131,14 @@ struct MaterialPuzzleView: View {
                 .ignoresSafeArea()
 
             HStack(spacing: 0) {
-                // Mascot characters on the left side
+                // Bird character on the left side
                 VStack {
                     Spacer()
                     puzzleMascotView
-                        .offset(x: mascotOffset + 60, y: mascotBounce)  // +60 to end more right
-                        .rotationEffect(.degrees(mascotLean))  // Lean while walking
+                        .offset(x: birdOffset + 60, y: birdBounce)
                     Spacer()
                 }
-                .frame(width: 160)  // Wider area for mascot
+                .frame(width: 200)  // Wider area for bigger bird
 
                 // Main puzzle content
                 VStack(spacing: 16) {
@@ -201,88 +199,52 @@ struct MaterialPuzzleView: View {
         }
         .onAppear {
             setupGame()
-            // Mascot walks in with stepping animation
-            animateMascotWalkIn()
+            // Bird flies in and lands
+            animateBirdFlyIn()
         }
     }
 
     // MARK: - Mascot in Puzzle View
 
     private var puzzleMascotView: some View {
-        HStack(alignment: .bottom, spacing: -20) {
-            // Splash - same as MascotDialogueView
-            SplashCharacter()
-                .frame(width: 150, height: 180)
-
-            // Bird companion - same as MascotDialogueView
-            BirdCharacter()
-                .frame(width: 60, height: 60)
-        }
-        .scaleEffect(0.65)
-        .offset(y: mascotWalkCycle)  // Walking bounce
+        BirdCharacter(isSitting: birdHasLanded)
+            .frame(width: 200, height: 200)
     }
 
-    /// Animate mascot walking in from left with bouncy steps
-    private func animateMascotWalkIn() {
-        // Walking steps - bounce up and down while moving right
-        let stepDuration = 0.12
-        let totalSteps = 12  // More steps for longer walk
-
-        for step in 0..<totalSteps {
-            let delay = Double(step) * stepDuration
-
-            // Move right
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                withAnimation(.easeOut(duration: stepDuration)) {
-                    mascotOffset = -300 + (CGFloat(step + 1) * (300 / CGFloat(totalSteps)))
-                }
-            }
-
-            // Bounce up on odd steps, down on even
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                withAnimation(.easeInOut(duration: stepDuration)) {
-                    mascotWalkCycle = step % 2 == 0 ? -12 : 0
-                }
-            }
-
-            // Lean left/right alternating (like shifting weight)
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                withAnimation(.easeInOut(duration: stepDuration)) {
-                    mascotLean = step % 2 == 0 ? -5 : 5
-                }
-            }
+    /// Animate bird flying in from left then landing to sitting pose
+    private func animateBirdFlyIn() {
+        // Fly in from left
+        withAnimation(.easeOut(duration: 0.8)) {
+            birdOffset = 0
         }
 
-        // Finish walking, start idle bounce
-        DispatchQueue.main.asyncAfter(deadline: .now() + Double(totalSteps) * stepDuration + 0.1) {
+        // Land: switch to sitting after arriving
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
             withAnimation(.spring(response: 0.3)) {
-                mascotOffset = 0
-                mascotWalkCycle = 0
-                mascotLean = 0
+                birdHasLanded = true
             }
-            startMascotBounce()
+            startBirdBounce()
         }
     }
 
-    private func startMascotBounce() {
+    private func startBirdBounce() {
         // Gentle idle bounce
         withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-            mascotBounce = -8
+            birdBounce = -8
         }
     }
 
-    /// Make mascot react to successful match
-    private func mascotCelebrate() {
+    /// Make bird react to successful match
+    private func birdCelebrate() {
         // Quick jump
         withAnimation(.spring(response: 0.2, dampingFraction: 0.4)) {
-            mascotBounce = -30
+            birdBounce = -30
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
-                mascotBounce = 0
+                birdBounce = 0
             }
-            // Resume idle bounce
-            startMascotBounce()
+            startBirdBounce()
         }
     }
 
@@ -372,21 +334,26 @@ struct MaterialPuzzleView: View {
                         let collected = collectedElements[element] ?? 0
                         let required = formula.requiredElements[element] ?? 1
                         let isComplete = collected >= required
+                        let elemColor = elementColors[element] ?? RenaissanceColors.stoneGray
 
                         VStack(spacing: 4) {
                             ZStack {
                                 Circle()
-                                    .fill(elementColors[element]?.opacity(isComplete ? 1 : 0.6) ?? RenaissanceColors.stoneGray)
+                                    .fill(elemColor.opacity(isComplete ? 0.25 : 0.12))
+                                    .frame(width: 45, height: 45)
+
+                                Circle()
+                                    .stroke(elemColor.opacity(isComplete ? 0.5 : 0.25), lineWidth: 1)
                                     .frame(width: 45, height: 45)
 
                                 if isComplete {
                                     Image(systemName: "checkmark")
-                                        .font(.title3.bold())
-                                        .foregroundColor(.white)
+                                        .font(.title3)
+                                        .foregroundColor(RenaissanceColors.sageGreen)
                                 } else {
                                     Text(element)
                                         .font(.custom("Cinzel-Bold", size: 16))
-                                        .foregroundColor(.white)
+                                        .foregroundColor(RenaissanceColors.sepiaInk)
                                 }
                             }
 
@@ -487,7 +454,11 @@ struct MaterialPuzzleView: View {
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(RenaissanceColors.sepiaInk.opacity(0.08))
+                .fill(RenaissanceColors.parchment.opacity(0.5))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(RenaissanceColors.ochre.opacity(0.2), lineWidth: 1)
+                )
         )
     }
 
@@ -510,25 +481,31 @@ struct MaterialPuzzleView: View {
 
     private var successOverlay: some View {
         ZStack {
-            Color.black.opacity(0.6)
+            // Solid parchment background — fully covers the puzzle
+            RenaissanceColors.parchment
                 .ignoresSafeArea()
 
             VStack(spacing: 20) {
                 Image(systemName: "checkmark.seal.fill")
-                    .font(.system(size: 70))
+                    .font(.system(size: 60))
                     .foregroundColor(RenaissanceColors.goldSuccess)
 
                 Text("Formula Complete!")
                     .font(.custom("Cinzel-Bold", size: 26))
-                    .foregroundColor(.white)
+                    .foregroundColor(RenaissanceColors.sepiaInk)
 
-                Text("\(formula.reactants) → \(formula.product)")
+                Text("\(formula.reactants) \u{2192} \(formula.product)")
                     .font(.custom("EBGaramond-Regular", size: 20))
-                    .foregroundColor(RenaissanceColors.sageGreen)
+                    .foregroundColor(RenaissanceColors.renaissanceBlue)
 
                 Text("You created \(formula.name)!")
                     .font(.custom("EBGaramond-Italic", size: 17))
-                    .foregroundColor(.white.opacity(0.9))
+                    .foregroundColor(RenaissanceColors.warmBrown)
+
+                if let moleculeData = MoleculeData.molecule(forFormula: formula.name) {
+                    MoleculeView(molecule: moleculeData, showLabel: false)
+                        .frame(width: 360, height: 260)
+                }
 
                 RenaissanceButton(title: "Continue Building") {
                     onComplete()
@@ -733,8 +710,8 @@ struct MaterialPuzzleView: View {
         matchedPositions = matches
         matchEffectTrigger += 1
 
-        // Mascot celebrates!
-        mascotCelebrate()
+        // Bird celebrates!
+        birdCelebrate()
 
         // Mark as matched with animation (after a tiny delay for Pow to show)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
@@ -986,49 +963,39 @@ struct TileView: View {
     let size: CGFloat
     let isNeeded: Bool
     var isHighlighted: Bool = false
-    var isValidTarget: Bool = false  // Show as valid swap destination
+    var isValidTarget: Bool = false
 
     var body: some View {
         ZStack {
-            // Background
+            // Soft parchment fill tinted with element color
             RoundedRectangle(cornerRadius: 10)
-                .fill(tile.color)
+                .fill(tile.color.opacity(0.18))
                 .frame(width: size, height: size)
-                .shadow(color: .black.opacity(0.15), radius: 2, y: 1)
 
-            // Golden border if needed element
-            if isNeeded && !tile.isMatched {
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(RenaissanceColors.goldSuccess, lineWidth: 2)
-                    .frame(width: size, height: size)
-            }
+            // Thin ochre border — needed elements get a gold tint
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(
+                    isNeeded && !tile.isMatched
+                        ? RenaissanceColors.ochre.opacity(0.6)
+                        : RenaissanceColors.ochre.opacity(0.25),
+                    lineWidth: 1
+                )
+                .frame(width: size, height: size)
 
-            // Selection highlight (selected tile)
+            // Selection highlight
             if isHighlighted {
                 RoundedRectangle(cornerRadius: 10)
-                    .stroke(.white, lineWidth: 3)
-                    .frame(width: size, height: size)
-
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(.white.opacity(0.3))
+                    .fill(RenaissanceColors.ochre.opacity(0.15))
                     .frame(width: size, height: size)
             }
 
-            // Valid swap target highlight (pulsing border)
-            if isValidTarget {
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(RenaissanceColors.highlightAmber, lineWidth: 2)
-                    .frame(width: size, height: size)
-            }
-
-            // Element symbol
+            // Element symbol in sepia
             Text(tile.symbol)
-                .font(.custom("Cinzel-Bold", size: size * 0.38))
-                .foregroundColor(.white)
-                .shadow(color: .black.opacity(0.3), radius: 1, y: 1)
+                .font(.custom("Cinzel-Bold", size: size * 0.35))
+                .foregroundColor(RenaissanceColors.sepiaInk)
         }
         .opacity(tile.isMatched ? 0.3 : 1)
-        .scaleEffect(tile.isMatched ? 0.8 : (isHighlighted ? 1.1 : 1))
+        .scaleEffect(tile.isMatched ? 0.8 : (isHighlighted ? 1.05 : 1))
         .animation(.spring(response: 0.25), value: tile.isMatched)
         .animation(.spring(response: 0.2), value: isHighlighted)
     }

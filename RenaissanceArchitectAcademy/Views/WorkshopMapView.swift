@@ -157,17 +157,12 @@ struct WorkshopMapView: View {
         // Companions trail slightly behind the player
         let offsetX: CGFloat = playerFacingRight ? -55 : 55
 
-        return HStack(alignment: .bottom, spacing: -15) {
-            SplashCharacter()
-                .frame(width: 80, height: 100)
-                .scaleEffect(x: playerFacingRight ? 1 : -1, y: 1)
-
-            BirdCharacter()
-                .frame(width: 40, height: 40)
-                .offset(y: playerIsWalking ? -4 : 0)
-        }
-        .scaleEffect(0.55)
-        .position(x: screenX + offsetX, y: screenY + 15)
+        return BirdCharacter()
+            .frame(width: 200, height: 200)
+            .offset(y: -20)
+            .scaleEffect(x: playerFacingRight ? 1 : -1, y: 1)
+            .offset(y: playerIsWalking ? -4 : 0)
+            .position(x: screenX + offsetX, y: screenY + 15)
         .animation(.easeInOut(duration: 0.15), value: playerPosition)
         .animation(.easeInOut(duration: 0.1), value: playerIsWalking)
         .allowsHitTesting(false)
@@ -298,8 +293,8 @@ struct WorkshopMapView: View {
         VStack {
             VStack(spacing: 8) {
                 HStack(spacing: 8) {
-                    SplashCharacter()
-                        .frame(width: 50, height: 60)
+                    BirdCharacter()
+                        .frame(width: 80, height: 80)
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text(station.label)

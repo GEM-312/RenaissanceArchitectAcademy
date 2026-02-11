@@ -30,7 +30,10 @@ RenaissanceArchitectAcademy/
 │   │   ├── Science*.imageset/                # 13 custom science icons
 │   │   ├── City*.imageset/                   # Rome, Florence city images
 │   │   ├── Nav*.imageset/                    # Navigation icons (Home, Back, etc.)
-│   │   └── State*.imageset/                  # Building state icons
+│   │   ├── State*.imageset/                  # Building state icons
+│   │   ├── BirdFrame00-12.imageset/         # 13-frame flying bird animation
+│   │   ├── SittingBird1-2.imageset/         # 2-frame sitting bird animation
+│   │   └── FlyingBird1-2.imageset/          # Legacy flying bird (unused)
 │   ├── Fonts/                                # Custom Renaissance fonts
 │   │   ├── Cinzel-*.ttf                      # Titles
 │   │   ├── EBGaramond-*.ttf                  # Body text, buttons
@@ -51,6 +54,7 @@ RenaissanceArchitectAcademy/
 │   │   ├── HydraulicsFlowView.swift        # Water flow path tracing
 │   │   ├── MascotDialogueView.swift        # Mascot dialogue + choice buttons
 │   │   ├── MaterialPuzzleView.swift        # Match-3 puzzle for collecting materials
+│   │   ├── MoleculeView.swift              # Chemical structure diagrams (7 molecules)
 │   │   ├── WorkshopView.swift               # Workshop entry (wraps WorkshopMapView)
 │   │   ├── WorkshopMapView.swift            # SwiftUI wrapper for WorkshopScene + overlays
 │   │   └── SpriteKit/                      # SpriteKit scenes
@@ -604,6 +608,22 @@ RenaissanceColors.blueprintBlue   // #4169E1 - Grid lines
 - Both scenes use `.aspectFill` scaleMode — camera scale 1.0 shows entire map
 - Removed redundant parchment color rectangles behind terrain
 - Scene backgroundColor matches terrain edge color for seamless look
+
+### Session Log - Feb 11, 2025
+- **MoleculeView.swift** — Chemical structure diagrams for 7 molecules (H₂O, Ca(OH)₂, SiO₂, CaCO₃, CO₂, Na₂O, C₆H₆)
+  - Custom SwiftUI Canvas rendering with atom circles + bond lines
+  - Animated sketch-in effect: bonds first, then atoms pop in
+  - Shown in MaterialPuzzleView success overlay after completing a formula
+  - Data models: BondType, MoleculeAtom, MoleculeBond, MoleculeData (in Challenge.swift)
+- **Bird 13-frame animation** — Extracted 125 frames from Midjourney/Pika GIF, selected 13 key frames
+  - Marina removed backgrounds in Photoshop, exported to `Styles/bird_frames/clean/`
+  - BirdFrame00-12 imagesets in Assets.xcassets, Timer-based animation at 15fps
+  - BirdCharacter supports `isSitting` mode (SittingBird1/SittingBird2 alternation)
+- **Bird behavior updates** — Bird sits on dialogue box, flies in then lands on puzzle screen
+  - MaterialPuzzleView: replaced walking animation with fly-in + land (birdHasLanded)
+  - All bird frames set to 200px across views (map, dialogue, puzzle, workshop)
+  - Workshop hint bubble bird: 80px
+- **Bond rendering fix** — Removed dashed ionic bonds, all bonds now solid with fixed 16pt inset
 
 ### Next Steps
 - [ ] Verify terrain background fills screen correctly on all screen sizes

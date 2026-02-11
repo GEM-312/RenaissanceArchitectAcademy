@@ -339,19 +339,11 @@ struct CityMapView: View {
         let screenX = mascotPosition.x * size.width
         let screenY = mascotPosition.y * size.height
 
-        return HStack(alignment: .bottom, spacing: -20) {
-            // Splash character
-            SplashCharacter()
-                .frame(width: 100, height: 120)
-                .scaleEffect(x: mascotFacingRight ? 1 : -1, y: 1)
-
-            // Bird companion
-            BirdCharacter()
-                .frame(width: 50, height: 50)
-                .offset(y: mascotIsWalking ? -5 : 0)
-        }
-        .scaleEffect(0.7)
-        .position(x: screenX, y: screenY)
+        return BirdCharacter()
+            .frame(width: 200, height: 200)
+            .scaleEffect(x: mascotFacingRight ? 1 : -1, y: 1)
+            .offset(y: mascotIsWalking ? -5 : 0)
+            .position(x: screenX, y: screenY)
         .animation(.easeInOut(duration: 0.1), value: mascotPosition)
         .animation(.easeInOut(duration: 0.15), value: mascotIsWalking)
     }

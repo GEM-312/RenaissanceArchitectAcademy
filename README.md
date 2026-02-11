@@ -52,6 +52,8 @@ Build iconic structures from Ancient Rome and the Renaissance period while maste
 - **PencilKit Watercolor Paint** - Draw watercolor strokes directly on the map (iPad)
 - **Two Historic Eras** - Ancient Rome and Renaissance Italy (Florence, Venice, Padua, Milan, Rome)
 - **Mascot Characters** - Splash (ink blob) + Bird companion follow you around the map
+- **Bird Animation** - 13-frame hand-drawn flying animation from Midjourney/Pika, background removed in Photoshop
+- **Molecule Diagrams** - Chemical structure visualizations (H₂O, Ca(OH)₂, SiO₂, CaCO₃, CO₂, Na₂O, C₆H₆) with animated sketch-in effect
 - **Match-3 Puzzle** - Collect chemical elements to build structures
 - **Progress Tracking** - Track mastery levels from Apprentice to Master
 - **Custom AI Art** - Midjourney icons and Gemini-generated map backgrounds

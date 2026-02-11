@@ -37,22 +37,13 @@ struct MascotDialogueView: View {
             VStack(spacing: 24) {
                 Spacer()
 
-                // Mascot characters
-                HStack(alignment: .bottom, spacing: -20) {
-                    // Splash - watercolor ink character
-                    SplashCharacter()
-                        .frame(width: 150, height: 180)
-                        .scaleEffect(showMascot ? 1 : 0.5)
-                        .opacity(showMascot ? 1 : 0)
-
-                    // Bird companion
-                    BirdCharacter()
-                        .frame(width: 60, height: 60)
-                        .offset(y: birdOffset)
-                        .scaleEffect(showMascot ? 1 : 0.3)
-                        .opacity(showMascot ? 1 : 0)
-                }
-                .padding(.bottom, -20)
+                // Bird sitting on top of dialogue box
+                BirdCharacter(isSitting: true)
+                    .frame(width: 200, height: 200)
+                    .offset(y: birdOffset)
+                    .scaleEffect(showMascot ? 1 : 0.3)
+                    .opacity(showMascot ? 1 : 0)
+                    .padding(.bottom, -40)
 
                 // Dialogue bubble
                 VStack(spacing: 20) {
@@ -173,47 +164,62 @@ struct SplashCharacter: View {
     }
 }
 
-/// Bird companion character
+/// Animated bird companion — 13-frame flying animation or sitting (perched)
 struct BirdCharacter: View {
-    @State private var wingFlap = false
+    /// When true, shows sitting/perched frames instead of flying
+    var isSitting: Bool = false
+
+    /// Total flying animation frames
+    private static let frameCount = 13
+    /// Seconds per frame (~15 fps for smooth flapping)
+    private static let frameDuration: TimeInterval = 1.0 / 15.0
+
+    @State private var currentFrame = 0
+    @State private var showFrame2 = false
+    @State private var timer: Timer?
 
     var body: some View {
-        ZStack {
-            // Body
-            Ellipse()
-                .fill(RenaissanceColors.renaissanceBlue)
-                .frame(width: 40, height: 35)
-
-            // Wing
-            Ellipse()
-                .fill(RenaissanceColors.deepTeal)
-                .frame(width: 25, height: 15)
-                .rotationEffect(.degrees(wingFlap ? -20 : 20))
-                .offset(x: -8, y: -5)
-
-            // Head
-            Circle()
-                .fill(RenaissanceColors.renaissanceBlue)
-                .frame(width: 25, height: 25)
-                .offset(x: 10, y: -15)
-
-            // Eye
-            Circle()
-                .fill(RenaissanceColors.sepiaInk)
-                .frame(width: 6, height: 6)
-                .offset(x: 15, y: -18)
-
-            // Beak
-            Triangle()
-                .fill(RenaissanceColors.ochre)
-                .frame(width: 12, height: 8)
-                .rotationEffect(.degrees(90))
-                .offset(x: 25, y: -15)
+        Group {
+            if isSitting {
+                Image(showFrame2 ? "SittingBird2" : "SittingBird1")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+            } else {
+                Image("BirdFrame\(String(format: "%02d", currentFrame))")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+            }
         }
         .onAppear {
-            withAnimation(.easeInOut(duration: 0.3).repeatForever(autoreverses: true)) {
-                wingFlap = true
+            if isSitting {
+                withAnimation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) {
+                    showFrame2 = true
+                }
+            } else {
+                startFlyingAnimation()
             }
+        }
+        .onDisappear {
+            timer?.invalidate()
+            timer = nil
+        }
+        .onChange(of: isSitting) { _, sitting in
+            if sitting {
+                timer?.invalidate()
+                timer = nil
+                withAnimation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) {
+                    showFrame2 = true
+                }
+            } else {
+                startFlyingAnimation()
+            }
+        }
+    }
+
+    private func startFlyingAnimation() {
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: Self.frameDuration, repeats: true) { _ in
+            currentFrame = (currentFrame + 1) % Self.frameCount
         }
     }
 }
