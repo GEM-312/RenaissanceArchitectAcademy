@@ -46,6 +46,7 @@
 		544299B32F38000100F92073 /* ResourceNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299B22F38000100F92073 /* ResourceNode.swift */; };
 		544299B52F38000100F92073 /* WorkshopScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299B42F38000100F92073 /* WorkshopScene.swift */; };
 		544299B72F38000100F92073 /* WorkshopMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299B62F38000100F92073 /* WorkshopMapView.swift */; };
+		544299C02F3A000100F92073 /* SceneEditorMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299BF2F3A000100F92073 /* SceneEditorMode.swift */; };
 		5475D2EF2F3146CC003AA131 /* building_complete.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2EE2F3146CB003AA131 /* building_complete.mp3 */; };
 		5475D2F82F319000003AA131 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2F92F319000003AA131 /* Assets.xcassets */; };
 		F001 /* Cinzel-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B022F313B22007D8C64 /* Cinzel-Black.ttf */; };
@@ -68,6 +69,8 @@
 		F018 /* EBGaramond-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B132F313B22007D8C64 /* EBGaramond-SemiBoldItalic.ttf */; };
 		F019 /* EBGaramond-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B142F313B22007D8C64 /* EBGaramond-VariableFont_wght.ttf */; };
 		F020 /* PetitFormalScript-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B152F313B22007D8C64 /* PetitFormalScript-Regular.ttf */; };
+		F021 /* GreatVibes-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B1A2F313B22007D8C64 /* GreatVibes-Regular.ttf */; };
+		F022 /* Amellina.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B1B2F313B22007D8C64 /* Amellina.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -108,6 +111,7 @@
 		544299B22F38000100F92073 /* ResourceNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ResourceNode.swift; path = Views/SpriteKit/ResourceNode.swift; sourceTree = "<group>"; };
 		544299B42F38000100F92073 /* WorkshopScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkshopScene.swift; path = Views/SpriteKit/WorkshopScene.swift; sourceTree = "<group>"; };
 		544299B62F38000100F92073 /* WorkshopMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopMapView.swift; sourceTree = "<group>"; };
+		544299BF2F3A000100F92073 /* SceneEditorMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SceneEditorMode.swift; path = Views/SpriteKit/SceneEditorMode.swift; sourceTree = "<group>"; };
 		54477B022F313B22007D8C64 /* Cinzel-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-Black.ttf"; sourceTree = "<group>"; };
 		54477B032F313B22007D8C64 /* Cinzel-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-Bold.ttf"; sourceTree = "<group>"; };
 		54477B042F313B22007D8C64 /* Cinzel-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-ExtraBold.ttf"; sourceTree = "<group>"; };
@@ -128,6 +132,8 @@
 		54477B132F313B22007D8C64 /* EBGaramond-SemiBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "EBGaramond-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
 		54477B142F313B22007D8C64 /* EBGaramond-VariableFont_wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "EBGaramond-VariableFont_wght.ttf"; sourceTree = "<group>"; };
 		54477B152F313B22007D8C64 /* PetitFormalScript-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PetitFormalScript-Regular.ttf"; sourceTree = "<group>"; };
+		54477B1A2F313B22007D8C64 /* GreatVibes-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GreatVibes-Regular.ttf"; sourceTree = "<group>"; };
+		54477B1B2F313B22007D8C64 /* Amellina.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Amellina.ttf; sourceTree = "<group>"; };
 		54477B172F313D06007D8C64 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5475D2EE2F3146CB003AA131 /* building_complete.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = building_complete.mp3; sourceTree = "<group>"; };
 		5475D2F92F319000003AA131 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -167,6 +173,7 @@
 				544299972F3646ED00F92073 /* BuildingNode.swift */,
 				544299982F3646ED00F92073 /* CityMapView.swift */,
 				544299992F3646ED00F92073 /* CityScene.swift */,
+				544299BF2F3A000100F92073 /* SceneEditorMode.swift */,
 				5475D2F92F319000003AA131 /* Assets.xcassets */,
 				54477B172F313D06007D8C64 /* Info.plist */,
 				54477B162F313B22007D8C64 /* Fonts */,
@@ -273,6 +280,8 @@
 				54477B132F313B22007D8C64 /* EBGaramond-SemiBoldItalic.ttf */,
 				54477B142F313B22007D8C64 /* EBGaramond-VariableFont_wght.ttf */,
 				54477B152F313B22007D8C64 /* PetitFormalScript-Regular.ttf */,
+				54477B1A2F313B22007D8C64 /* GreatVibes-Regular.ttf */,
+				54477B1B2F313B22007D8C64 /* Amellina.ttf */,
 			);
 			path = Fonts;
 			sourceTree = "<group>";
@@ -362,6 +371,8 @@
 				F018 /* EBGaramond-SemiBoldItalic.ttf in Resources */,
 				F019 /* EBGaramond-VariableFont_wght.ttf in Resources */,
 				F020 /* PetitFormalScript-Regular.ttf in Resources */,
+				F021 /* GreatVibes-Regular.ttf in Resources */,
+				F022 /* Amellina.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -408,6 +419,7 @@
 				544299B32F38000100F92073 /* ResourceNode.swift in Sources */,
 				544299B52F38000100F92073 /* WorkshopScene.swift in Sources */,
 				544299B72F38000100F92073 /* WorkshopMapView.swift in Sources */,
+				544299C02F3A000100F92073 /* SceneEditorMode.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

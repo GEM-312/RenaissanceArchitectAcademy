@@ -596,8 +596,17 @@ RenaissanceColors.blueprintBlue   // #4169E1 - Grid lines
 - Fixed hint bubble overlapping collection panel (moved hint to top of screen)
 - Explored GPU shaders (watercolorFill, waterFill) — removed in favor of PencilKit manual painting
 
+### Session Log - Feb 10, 2025
+- Added Terrain.png background to city map and workshop scenes
+- Added BackgroundMain.png asset, new fonts (Amellina, GreatVibes)
+- Added SceneEditorMode.swift (DEBUG-only drag-to-reposition nodes)
+- Fixed terrain sizing: terrain sprite = mapSize so full image visible at default zoom
+- Both scenes use `.aspectFill` scaleMode — camera scale 1.0 shows entire map
+- Removed redundant parchment color rectangles behind terrain
+- Scene backgroundColor matches terrain edge color for seamless look
+
 ### Next Steps
-- [ ] Generate map background art with Gemini (see prompts below)
+- [ ] Verify terrain background fills screen correctly on all screen sizes
 - [ ] Create challenges for remaining 11 buildings
 - [ ] Add building images to map
 - [ ] Rising answer mechanic (LinguaLeo-style)

@@ -83,7 +83,7 @@ struct WorkshopMapView: View {
         if let existing = scene { return existing }
 
         let newScene = WorkshopScene()
-        newScene.size = CGSize(width: 1024, height: 768)
+        newScene.size = CGSize(width: 1500, height: 1000)
         newScene.scaleMode = .aspectFill
 
         // Player position updates

@@ -17,6 +17,10 @@ class WorkshopScene: SKScene {
     // Map size (smaller than city's 3500×2500)
     private let mapSize = CGSize(width: 1500, height: 1000)
 
+    #if DEBUG
+    private lazy var editorMode = SceneEditorMode(scene: self)
+    #endif
+
     // Station positions — resources ring edges, crafting at center
     private let stationPositions: [ResourceStationType: CGPoint] = [
         .quarry:       CGPoint(x: 200,  y: 850),
@@ -51,6 +55,10 @@ class WorkshopScene: SKScene {
         setupPlayer()
 
         isUserInteractionEnabled = true
+
+        #if DEBUG
+        registerEditorNodes()
+        #endif
     }
 
     // MARK: - Camera
@@ -60,16 +68,32 @@ class WorkshopScene: SKScene {
         cameraNode.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
         addChild(cameraNode)
         camera = cameraNode
-        cameraNode.setScale(1.5)
+        fitCameraToMap()
+    }
+
+    override func didChangeSize(_ oldSize: CGSize) {
+        super.didChangeSize(oldSize)
+        fitCameraToMap()
+    }
+
+    private func fitCameraToMap() {
+        guard let cameraNode = cameraNode else { return }
+        let s = self.size
+        guard s.width > 0 && s.height > 0 else { return }
+        let fitScale = max(mapSize.width / s.width, mapSize.height / s.height)
+        cameraNode.setScale(fitScale)
     }
 
     // MARK: - Background
 
     private func setupBackground() {
-        let bg = SKSpriteNode(color: PlatformColor(RenaissanceColors.parchment), size: mapSize)
-        bg.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
-        bg.zPosition = -100
-        addChild(bg)
+        // Terrain texture matches the map exactly — full image visible
+        let terrainTexture = SKTexture(imageNamed: "Terrain")
+        let terrain = SKSpriteNode(texture: terrainTexture)
+        terrain.size = mapSize
+        terrain.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
+        terrain.zPosition = -100
+        addChild(terrain)
     }
 
     // MARK: - Grid Lines (notebook style)
@@ -195,33 +219,59 @@ class WorkshopScene: SKScene {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
+
+        #if DEBUG
+        if editorMode.handleTapDown(at: location) { return }
+        #endif
+
         handleTapAt(location)
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
+
+        #if DEBUG
+        if editorMode.handleDrag(to: location) { return }
+        #endif
+
         if let last = lastPanLocation {
             handleDragTo(location, from: last)
         }
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        #if DEBUG
+        if editorMode.handleRelease() { /* fall through */ }
+        #endif
         lastPanLocation = nil
     }
     #else
     override func mouseDown(with event: NSEvent) {
         let location = event.location(in: self)
+
+        #if DEBUG
+        if editorMode.handleTapDown(at: location) { return }
+        #endif
+
         handleTapAt(location)
     }
 
     override func mouseDragged(with event: NSEvent) {
-        guard let last = lastPanLocation else { return }
         let location = event.location(in: self)
+
+        #if DEBUG
+        if editorMode.handleDrag(to: location) { return }
+        #endif
+
+        guard let last = lastPanLocation else { return }
         handleDragTo(location, from: last)
     }
 
     override func mouseUp(with event: NSEvent) {
+        #if DEBUG
+        if editorMode.handleRelease() { /* fall through */ }
+        #endif
         lastPanLocation = nil
     }
 
@@ -245,6 +295,12 @@ class WorkshopScene: SKScene {
         let newScale = cameraNode.xScale / zoomFactor
         cameraNode.setScale(max(0.8, min(2.5, newScale)))
         clampCamera()
+    }
+
+    override func keyDown(with event: NSEvent) {
+        #if DEBUG
+        if editorMode.handleKeyDown(event.keyCode) { return }
+        #endif
     }
     #endif
 
@@ -348,4 +404,18 @@ class WorkshopScene: SKScene {
     func getPlayerPosition() -> CGPoint {
         return playerNode.position
     }
+
+    // MARK: - Editor Mode (DEBUG only)
+
+    #if DEBUG
+    private func registerEditorNodes() {
+        // Resource stations
+        for (stationType, node) in resourceNodes {
+            editorMode.registerNode(node, name: "station_\(stationType.rawValue)")
+        }
+
+        // Player
+        editorMode.registerNode(playerNode, name: "player")
+    }
+    #endif
 }

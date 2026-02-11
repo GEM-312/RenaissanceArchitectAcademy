@@ -28,7 +28,8 @@ struct RenaissanceArchitectAcademyApp: App {
             "EBGaramond-MediumItalic", "EBGaramond-SemiBold", "EBGaramond-SemiBoldItalic",
             "EBGaramond-Bold", "EBGaramond-BoldItalic", "EBGaramond-ExtraBold",
             "EBGaramond-ExtraBoldItalic", "EBGaramond-VariableFont_wght",
-            "EBGaramond-Italic-VariableFont_wght", "PetitFormalScript-Regular"
+            "EBGaramond-Italic-VariableFont_wght", "PetitFormalScript-Regular",
+            "GreatVibes-Regular", "Amellina"
         ]
 
         for fontFile in fontFiles {

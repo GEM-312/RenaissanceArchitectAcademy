@@ -40,17 +40,20 @@ class CityScene: SKScene {
     private var lastPanLocation: CGPoint?
     private var initialCameraScale: CGFloat = 1.0
 
+    #if DEBUG
+    private lazy var editorMode = SceneEditorMode(scene: self)
+    #endif
+
     // Map bounds for camera clamping - expanded for 17 buildings!
     private let mapSize = CGSize(width: 3500, height: 2500)
 
     // MARK: - Scene Setup
 
     override func didMove(to view: SKView) {
-        backgroundColor = PlatformColor(RenaissanceColors.parchment)
+        backgroundColor = PlatformColor(red: 0.94, green: 0.91, blue: 0.86, alpha: 1.0) // Match terrain edge color
 
         setupCamera()
         setupTerrain()
-        setupRiver()
         setupBuildings()
         setupDecorations()
         setupMascotPosition()
@@ -61,6 +64,10 @@ class CityScene: SKScene {
         #if os(macOS)
         // Enable mouse moved events
         view.window?.acceptsMouseMovedEvents = true
+        #endif
+
+        #if DEBUG
+        registerEditorNodes()
         #endif
     }
 
@@ -106,19 +113,37 @@ class CityScene: SKScene {
         cameraNode.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
         addChild(cameraNode)
         camera = cameraNode
+        fitCameraToMap()
+    }
 
-        // Start zoomed out to see most of the expanded city
-        cameraNode.setScale(2.5)
+    /// Recalculate camera scale when view resizes (.resizeFill updates scene.size)
+    override func didChangeSize(_ oldSize: CGSize) {
+        super.didChangeSize(oldSize)
+        fitCameraToMap()
+    }
+
+    /// Set camera scale so the full map is visible
+    private func fitCameraToMap() {
+        guard let cameraNode = cameraNode else { return }
+        // With .resizeFill, self.size = view size in points
+        // visible area = self.size * cameraScale
+        // To fit the whole map: scale = max(mapW/sizeW, mapH/sizeH)
+        let s = self.size
+        guard s.width > 0 && s.height > 0 else { return }
+        let fitScale = max(mapSize.width / s.width, mapSize.height / s.height)
+        cameraNode.setScale(fitScale)
     }
 
     // MARK: - Terrain
 
     private func setupTerrain() {
-        // Parchment background covering the map
-        let background = SKSpriteNode(color: PlatformColor(RenaissanceColors.parchment), size: mapSize)
-        background.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
-        background.zPosition = -100
-        addChild(background)
+        // Terrain texture matches the map exactly — full image visible at default zoom
+        let terrainTexture = SKTexture(imageNamed: "Terrain")
+        let terrain = SKSpriteNode(texture: terrainTexture)
+        terrain.size = mapSize
+        terrain.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
+        terrain.zPosition = -100
+        addChild(terrain)
 
         // Grid lines (Leonardo's notebook style)
         addGridOverlay()
@@ -318,23 +343,24 @@ class CityScene: SKScene {
             CGPoint(x: 1700, y: 1400),
         ]
 
-        for position in treePositions {
+        for (index, position) in treePositions.enumerated() {
             let tree = createTree()
             tree.position = position
             tree.zPosition = 5
+            tree.name = "tree_\(index)"
             addChild(tree)
         }
 
         // Zone labels for each region
         // Ancient Rome
-        addZoneLabel("I", at: CGPoint(x: 450, y: 1500), for: "Ancient Rome")
+        addZoneLabel("I", at: CGPoint(x: 450, y: 1500), for: "Ancient Rome", nodeName: "zone_ancientRome")
 
         // Renaissance Italy cities
-        addZoneLabel("II", at: CGPoint(x: 2550, y: 2100), for: "Florence")
-        addZoneLabel("III", at: CGPoint(x: 3000, y: 1500), for: "Venice")
-        addZoneLabel("IV", at: CGPoint(x: 2200, y: 1650), for: "Padua")
-        addZoneLabel("V", at: CGPoint(x: 1650, y: 1850), for: "Milan")
-        addZoneLabel("VI", at: CGPoint(x: 2300, y: 750), for: "Renaissance Rome")
+        addZoneLabel("II", at: CGPoint(x: 2550, y: 2100), for: "Florence", nodeName: "zone_florence")
+        addZoneLabel("III", at: CGPoint(x: 3000, y: 1500), for: "Venice", nodeName: "zone_venice")
+        addZoneLabel("IV", at: CGPoint(x: 2200, y: 1650), for: "Padua", nodeName: "zone_padua")
+        addZoneLabel("V", at: CGPoint(x: 1650, y: 1850), for: "Milan", nodeName: "zone_milan")
+        addZoneLabel("VI", at: CGPoint(x: 2300, y: 750), for: "Renaissance Rome", nodeName: "zone_renaissanceRome")
 
         // Add a dividing path/road between eras
         addEraDivider()
@@ -362,6 +388,7 @@ class CityScene: SKScene {
         romeLabel.fontColor = PlatformColor(RenaissanceColors.terracotta.opacity(0.5))
         romeLabel.position = CGPoint(x: 500, y: mapSize.height - 100)
         romeLabel.zPosition = -30
+        romeLabel.name = "label_ancientRome"
         addChild(romeLabel)
 
         let renaissanceLabel = SKLabelNode(text: "RENAISSANCE ITALY")
@@ -370,6 +397,7 @@ class CityScene: SKScene {
         renaissanceLabel.fontColor = PlatformColor(RenaissanceColors.renaissanceBlue.opacity(0.5))
         renaissanceLabel.position = CGPoint(x: 2400, y: mapSize.height - 100)
         renaissanceLabel.zPosition = -30
+        renaissanceLabel.name = "label_renaissanceItaly"
         addChild(renaissanceLabel)
     }
 
@@ -394,10 +422,11 @@ class CityScene: SKScene {
         return tree
     }
 
-    private func addZoneLabel(_ numeral: String, at position: CGPoint, for name: String) {
+    private func addZoneLabel(_ numeral: String, at position: CGPoint, for name: String, nodeName: String = "") {
         let container = SKNode()
         container.position = position
         container.zPosition = 1
+        if !nodeName.isEmpty { container.name = nodeName }
 
         // Roman numeral
         let numLabel = SKLabelNode(text: numeral)
@@ -425,6 +454,11 @@ class CityScene: SKScene {
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
         lastCursorPosition = location
+
+        #if DEBUG
+        if editorMode.handleTapDown(at: location) { return }
+        #endif
+
         handleTapAt(location)
     }
 
@@ -433,27 +467,47 @@ class CityScene: SKScene {
         let location = touch.location(in: self)
         lastCursorPosition = location
 
+        #if DEBUG
+        if editorMode.handleDrag(to: location) { return }
+        #endif
+
         if let lastLocation = lastPanLocation {
             handleDragTo(location, from: lastLocation)
         }
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        #if DEBUG
+        if editorMode.handleRelease() { /* fall through to also clear pan */ }
+        #endif
         lastPanLocation = nil
     }
     #else
     override func mouseDown(with event: NSEvent) {
         let location = event.location(in: self)
+
+        #if DEBUG
+        if editorMode.handleTapDown(at: location) { return }
+        #endif
+
         handleTapAt(location)
     }
 
     override func mouseDragged(with event: NSEvent) {
-        guard let lastLocation = lastPanLocation else { return }
         let location = event.location(in: self)
+
+        #if DEBUG
+        if editorMode.handleDrag(to: location) { return }
+        #endif
+
+        guard let lastLocation = lastPanLocation else { return }
         handleDragTo(location, from: lastLocation)
     }
 
     override func mouseUp(with event: NSEvent) {
+        #if DEBUG
+        if editorMode.handleRelease() { /* fall through to also clear pan */ }
+        #endif
         lastPanLocation = nil
     }
 
@@ -488,6 +542,12 @@ class CityScene: SKScene {
         let clampedScale = max(0.5, min(3.5, newScale))
         cameraNode.setScale(clampedScale)
         clampCamera()
+    }
+
+    override func keyDown(with event: NSEvent) {
+        #if DEBUG
+        if editorMode.handleKeyDown(event.keyCode) { return }
+        #endif
     }
     #endif
 
@@ -656,4 +716,30 @@ class CityScene: SKScene {
     func updateBuildingState(_ buildingId: String, state: BuildingState) {
         buildingNodes[buildingId]?.updateState(state)
     }
+
+    // MARK: - Editor Mode (DEBUG only)
+
+    #if DEBUG
+    private func registerEditorNodes() {
+        // Buildings
+        for (id, node) in buildingNodes {
+            editorMode.registerNode(node, name: "building_\(id)")
+        }
+
+        // Trees (named tree_0, tree_1, etc. in setupDecorations)
+        for child in children where child.name?.hasPrefix("tree_") == true {
+            editorMode.registerNode(child, name: child.name!)
+        }
+
+        // Zone labels
+        for child in children where child.name?.hasPrefix("zone_") == true {
+            editorMode.registerNode(child, name: child.name!)
+        }
+
+        // Era labels
+        for child in children where child.name?.hasPrefix("label_") == true {
+            editorMode.registerNode(child, name: child.name!)
+        }
+    }
+    #endif
 }

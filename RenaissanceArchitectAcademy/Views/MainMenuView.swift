@@ -1,16 +1,14 @@
 import SwiftUI
 
 /// Main Menu - Leonardo's Notebook aesthetic
-/// Features aged parchment, decorative borders, and Renaissance typography
+/// Title on top, dome image centered, buttons in a horizontal row at the bottom
 struct MainMenuView: View {
     var onStartGame: () -> Void
     var onOpenWorkshop: () -> Void = {}
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var showContent = false
-    @State private var showButton1 = false
-    @State private var showButton2 = false
-    @State private var showButton3 = false
-    @State private var showButton4 = false
+    @State private var showButtons = false
+    @State private var revealedZones: [Bool] = Array(repeating: false, count: 7)
 
     // Adaptive sizing
     private var titleSize: CGFloat { horizontalSizeClass == .regular ? 72 : 56 }
@@ -23,40 +21,23 @@ struct MainMenuView: View {
             RenaissanceColors.parchment
                 .ignoresSafeArea()
 
-            // Renaissance dome background image
-            GeometryReader { geo in
-                Image("BackgroundMain")
-                    .resizable()
-                    .interpolation(.high)
-                    .antialiased(true)
-                    .scaledToFit()
-                    .frame(height: min(geo.size.height, 900))
-                    .scaleEffect(x: -1, y: 1)
-                    .position(x: geo.size.height * 0.1, y: geo.size.height / 1.5)
-                    .opacity(0.9)
-            }
-            .ignoresSafeArea()
-
-
             // Decorative corner flourishes
             DecorativeCorners()
 
-            VStack(spacing: horizontalSizeClass == .regular ? 32 : 24) {
-                Spacer()
-
-                // Decorative top border
-                DividerOrnament()
-                    .frame(width: 200)
-                    .opacity(showContent ? 1 : 0)
-
-                // Title section with quill-writing animation
+            VStack(spacing: 0) {
+                // MARK: - Title section at top
                 VStack(spacing: 8) {
+                    DividerOrnament()
+                        .frame(width: 200)
+                        .opacity(showContent ? 1 : 0)
+
                     AnimatedText(
                         text: "Renaissance",
                         font: .custom("Cinzel-Bold", size: titleSize, relativeTo: .largeTitle),
                         color: RenaissanceColors.sepiaInk,
                         isAnimating: showContent,
-                        delayPerLetter: 0.1
+                        delayPerLetter: 0.1,
+                        letterSpacing: 4
                     )
 
                     AnimatedText(
@@ -65,86 +46,126 @@ struct MainMenuView: View {
                         color: RenaissanceColors.sepiaInk.opacity(0.8),
                         isAnimating: showContent,
                         initialDelay: 1.2,
-                        delayPerLetter: 0.07
+                        delayPerLetter: 0.07,
+                        letterSpacing: 2
                     )
-                }
 
-                // Tagline with quill-written style
-                HStack(spacing: 12) {
-                    Image(systemName: "leaf.fill")
-                        .font(.caption)
-                        .foregroundStyle(RenaissanceColors.sageGreen)
+                    HStack(spacing: 12) {
+                        Image(systemName: "leaf.fill")
+                            .font(.caption)
+                            .foregroundStyle(RenaissanceColors.sageGreen)
 
-                    Text("Where Science Builds Civilization")
-                        .font(.custom("PetitFormalScript-Regular", size: taglineSize, relativeTo: .headline))
-                        .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                        Text("Where Science Builds Civilization")
+                            .font(.custom("Amellina", size: taglineSize + 6, relativeTo: .headline))
+                            .foregroundStyle(RenaissanceColors.renaissanceBlue)
 
-                    Image(systemName: "leaf.fill")
-                        .font(.caption)
-                        .foregroundStyle(RenaissanceColors.sageGreen)
-                        .scaleEffect(x: -1, y: 1)
-                }
-                .padding(.top, 8)
-                .opacity(showContent ? 1 : 0)
-
-                // Decorative bottom border
-                DividerOrnament()
-                    .frame(width: 200)
+                        Image(systemName: "leaf.fill")
+                            .font(.caption)
+                            .foregroundStyle(RenaissanceColors.sageGreen)
+                            .scaleEffect(x: -1, y: 1)
+                    }
+                    .padding(.top, 8)
                     .opacity(showContent ? 1 : 0)
 
-                Spacer()
+                    DividerOrnament()
+                        .frame(width: 200)
+                        .opacity(showContent ? 1 : 0)
+                }
+                .padding(.top, horizontalSizeClass == .regular ? 40 : 24)
 
-                // Menu Buttons - appear one by one
-                VStack(spacing: horizontalSizeClass == .regular ? 20 : 16) {
+                // MARK: - Dome image with dust-reveal effect
+                Image("BackgroundMain")
+                    .resizable()
+                    .interpolation(.high)
+                    .antialiased(true)
+                    .scaledToFit()
+                    .padding(.horizontal, horizontalSizeClass == .regular ? 80 : 20)
+                    .frame(maxHeight: .infinity)
+                    .offset(y: -50)
+                    .mask {
+                        GeometryReader { imgGeo in
+                            // Dust-reveal zones positioned at dome elements
+                            let zones: [(x: CGFloat, y: CGFloat, r: CGFloat)] = [
+                                (0.50, 0.08, 0.20),  // Lantern/crown at top
+                                (0.50, 0.30, 0.30),  // Main dome body
+                                (0.25, 0.40, 0.25),  // Left side — blueprint lines
+                                (0.75, 0.40, 0.25),  // Right side — watercolor splashes
+                                (0.50, 0.70, 0.30),  // Arch entrance base
+                                (0.30, 0.85, 0.25),  // Bottom-left columns
+                                (0.50, 0.50, 0.65),  // Final sweep — fills everything
+                            ]
+                            ZStack {
+                                ForEach(Array(zones.enumerated()), id: \.offset) { index, zone in
+                                    RadialGradient(
+                                        gradient: Gradient(colors: [
+                                            .white,
+                                            .white.opacity(0.85),
+                                            .white.opacity(0.4),
+                                            .clear
+                                        ]),
+                                        center: .center,
+                                        startRadius: 0,
+                                        endRadius: imgGeo.size.width * zone.r
+                                    )
+                                    .frame(
+                                        width: imgGeo.size.width * zone.r * 2.5,
+                                        height: imgGeo.size.width * zone.r * 2.5
+                                    )
+                                    .position(
+                                        x: imgGeo.size.width * zone.x,
+                                        y: imgGeo.size.height * zone.y
+                                    )
+                                    .scaleEffect(revealedZones[index] ? 1 : 0.01)
+                                }
+                            }
+                            .frame(width: imgGeo.size.width, height: imgGeo.size.height)
+                        }
+                    }
+
+                // MARK: - Buttons in horizontal row at bottom
+                HStack(spacing: horizontalSizeClass == .regular ? 20 : 12) {
                     RenaissanceButton(title: "Begin Journey", action: onStartGame)
-                        .opacity(showButton1 ? 1 : 0)
-                        .offset(y: showButton1 ? 0 : 20)
                         #if os(macOS)
                         .keyboardShortcut(.return, modifiers: [])
                         #endif
 
                     RenaissanceButton(title: "Continue", action: {})
-                        .opacity(showButton2 ? 1 : 0)
-                        .offset(y: showButton2 ? 0 : 20)
                         #if os(macOS)
                         .keyboardShortcut("c", modifiers: [.command])
                         #endif
 
                     RenaissanceButton(title: "Codex", action: {})
-                        .opacity(showButton3 ? 1 : 0)
-                        .offset(y: showButton3 ? 0 : 20)
                         #if os(macOS)
                         .keyboardShortcut("k", modifiers: [.command])
                         #endif
 
                     RenaissanceButton(title: "Workshop", action: onOpenWorkshop)
-                        .opacity(showButton4 ? 1 : 0)
-                        .offset(y: showButton4 ? 0 : 20)
                         #if os(macOS)
                         .keyboardShortcut("w", modifiers: [.command])
                         #endif
                 }
-                .padding(.bottom, horizontalSizeClass == .regular ? 80 : 60)
+                .opacity(showButtons ? 1 : 0)
+                .offset(y: showButtons ? 0 : 20)
+                .padding(.bottom, horizontalSizeClass == .regular ? 40 : 24)
+                .padding(.horizontal, 20)
             }
-            .padding(horizontalSizeClass == .regular ? 40 : 20)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear {
             withAnimation(.easeOut(duration: 0.8)) {
                 showContent = true
             }
-            // Buttons appear one by one after title animation
-            withAnimation(.easeOut(duration: 0.5).delay(2.5)) {
-                showButton1 = true
+
+            // Dust-reveal: dome elements appear one by one
+            let revealDelays: [Double] = [0.5, 1.0, 1.5, 1.9, 2.3, 2.7, 3.2]
+            for (index, delay) in revealDelays.enumerated() {
+                withAnimation(.easeOut(duration: 1.4).delay(delay)) {
+                    revealedZones[index] = true
+                }
             }
-            withAnimation(.easeOut(duration: 0.5).delay(2.8)) {
-                showButton2 = true
-            }
-            withAnimation(.easeOut(duration: 0.5).delay(3.1)) {
-                showButton3 = true
-            }
-            withAnimation(.easeOut(duration: 0.5).delay(3.4)) {
-                showButton4 = true
+
+            withAnimation(.easeOut(duration: 0.6).delay(2.5)) {
+                showButtons = true
             }
         }
     }
@@ -217,9 +238,10 @@ struct AnimatedText: View {
     let isAnimating: Bool
     var initialDelay: Double = 0
     var delayPerLetter: Double = 0.05
+    var letterSpacing: CGFloat = 0
 
     var body: some View {
-        HStack(spacing: 0) {
+        HStack(spacing: letterSpacing) {
             ForEach(Array(text.enumerated()), id: \.offset) { index, letter in
                 Text(String(letter))
                     .font(font)
