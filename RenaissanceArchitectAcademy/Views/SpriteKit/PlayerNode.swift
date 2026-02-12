@@ -21,7 +21,7 @@ class PlayerNode: SKNode {
     private(set) var isWalking = false
 
     /// Sprite display size
-    private let spriteSize = CGSize(width: 80, height: 80)
+    private let spriteSize = CGSize(width: 170, height: 170)
 
     // MARK: - Initialization
 
@@ -38,6 +38,14 @@ class PlayerNode: SKNode {
     // MARK: - Sprite Setup
 
     private func setupSprite() {
+        // Shadow ellipse at feet — sits behind the sprite on the ground
+        let shadow = SKShapeNode(ellipseOf: CGSize(width: spriteSize.width * 0.6, height: spriteSize.width * 0.2))
+        shadow.fillColor = SKColor(red: 0, green: 0, blue: 0, alpha: 0.25)
+        shadow.strokeColor = .clear
+        shadow.position = CGPoint(x: 0, y: 4) // slightly above node origin (feet level)
+        shadow.zPosition = -1
+        addChild(shadow)
+
         sprite = SKSpriteNode(texture: idleTexture, size: spriteSize)
         sprite.anchorPoint = CGPoint(x: 0.5, y: 0.0) // bottom-center anchor so feet stay on ground
         addChild(sprite)
@@ -65,8 +73,8 @@ class PlayerNode: SKNode {
         sprite.removeAction(forKey: "idle")
         sprite.yScale = 1.0 // reset breathing scale
 
-        // Match original GIF pace: 5.21s across 15 frames ≈ 0.347s per frame
-        let walkAction = SKAction.animate(with: walkTextures, timePerFrame: 0.347, resize: false, restore: false)
+        // 1.3x faster than original GIF pace (0.347 / 1.3 ≈ 0.267s per frame)
+        let walkAction = SKAction.animate(with: walkTextures, timePerFrame: 0.18, resize: false, restore: false)
         sprite.run(SKAction.repeatForever(walkAction), withKey: "walk")
     }
 
