@@ -4,6 +4,7 @@ import SwiftUI
 /// Combines multiple choice, drag-drop equations, and future interactive types
 struct InteractiveChallengeView: View {
     let challenge: InteractiveChallenge
+    var workshopState: WorkshopState? = nil
     let onComplete: (Int, Int) -> Void  // (correctAnswers, totalQuestions)
     let onDismiss: () -> Void
 
@@ -15,6 +16,10 @@ struct InteractiveChallengeView: View {
 
     // Multiple choice state
     @State private var selectedAnswer: Int? = nil
+
+    // Hint system state
+    @State private var showHintOverlay = false
+    @State private var hintsUsed: Set<UUID> = []
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
@@ -46,6 +51,21 @@ struct InteractiveChallengeView: View {
                 completionView
             } else if let question = currentQuestion {
                 questionView(question)
+            }
+
+            // Hint overlay (shown on top of everything)
+            if showHintOverlay, let question = currentQuestion, let hintData = question.hint {
+                HintOverlayView(
+                    hintData: hintData,
+                    workshopState: workshopState,
+                    onDismiss: {
+                        hintsUsed.insert(question.id)
+                        withAnimation(.spring(response: 0.3)) {
+                            showHintOverlay = false
+                        }
+                    }
+                )
+                .transition(.opacity)
             }
         }
     }
@@ -391,6 +411,31 @@ struct InteractiveChallengeView: View {
 
                 Spacer()
 
+                // Hint button (visible when hint exists and question not yet answered)
+                if let question = currentQuestion, question.hint != nil, !hasAnsweredCurrent {
+                    let hintAlreadyUsed = hintsUsed.contains(question.id)
+                    Button {
+                        if hintAlreadyUsed {
+                            // Re-show just the scroll directly
+                            showHintOverlay = true
+                        } else {
+                            withAnimation(.spring(response: 0.3)) {
+                                showHintOverlay = true
+                            }
+                        }
+                    } label: {
+                        Image(systemName: hintAlreadyUsed ? "lightbulb.fill" : "lightbulb")
+                            .font(.system(size: 18))
+                            .foregroundStyle(hintAlreadyUsed ? RenaissanceColors.goldSuccess : RenaissanceColors.ochre)
+                            .frame(width: 32, height: 32)
+                            .background(
+                                Circle()
+                                    .fill(RenaissanceColors.ochre.opacity(0.15))
+                            )
+                    }
+                    .buttonStyle(.plain)
+                }
+
                 HStack(spacing: 4) {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundStyle(RenaissanceColors.sageGreen)
@@ -532,6 +577,7 @@ struct InteractiveChallengeView: View {
 #Preview("Interactive Roman Baths") {
     InteractiveChallengeView(
         challenge: ChallengeContent.romanBathsInteractive,
+        workshopState: WorkshopState(),
         onComplete: { correct, total in
             print("Completed: \(correct)/\(total)")
         },

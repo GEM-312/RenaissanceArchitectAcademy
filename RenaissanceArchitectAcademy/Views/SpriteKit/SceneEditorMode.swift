@@ -26,6 +26,10 @@ class SceneEditorMode {
     private var coordinateBg: SKShapeNode?
     private var badgeNode: SKNode?
 
+    /// Callbacks
+    var onToggle: ((Bool) -> Void)?
+    var onNodeSelected: ((String, SKNode) -> Void)?
+
     // MARK: - Init
 
     init(scene: SKScene) {
@@ -51,6 +55,7 @@ class SceneEditorMode {
             dumpAllPositions()
             print("🎨 EDITOR MODE OFF — positions printed above ↑")
         }
+        onToggle?(isActive)
     }
 
     // MARK: - Input Handlers (return true if consumed)
@@ -129,6 +134,7 @@ class SceneEditorMode {
         selectedNode = node
         showHighlight(around: node)
         showCoordinateLabel(above: node)
+        onNodeSelected?(name, node)
     }
 
     private func deselect() {

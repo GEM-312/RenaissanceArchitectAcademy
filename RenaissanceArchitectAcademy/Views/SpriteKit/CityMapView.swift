@@ -24,6 +24,9 @@ struct CityMapView: View {
     /// ViewModel holds all building data (shared with CityView)
     @ObservedObject var viewModel: CityViewModel
 
+    /// Shared workshop state for hint crafting cost
+    var workshopState: WorkshopState
+
     /// The currently selected plot (when user taps a building)
     @State private var selectedPlot: BuildingPlot?
 
@@ -38,6 +41,15 @@ struct CityMapView: View {
 
     /// Controls the material puzzle game
     @State private var showMaterialPuzzle = false
+
+    /// Tracks which dialogue path brought user to the challenge
+    @State private var challengeEntryPath: BuildingStartChoice?
+
+    /// Controls the "Go to Workshop" prompt after quiz completion
+    @State private var showWorkshopPrompt = false
+
+    /// Controls the Workshop sheet (opened from post-quiz prompt)
+    @State private var showWorkshopSheet = false
 
     /// Reference to the SpriteKit scene (so we can call methods on it)
     @State private var scene: CityScene?
@@ -139,6 +151,7 @@ struct CityMapView: View {
                         withAnimation {
                             showMascotDialogue = false
                         }
+                        challengeEntryPath = choice
                         switch choice {
                         case .needMaterials:
                             // Mascot walks off, puzzle appears after short delay
@@ -150,8 +163,8 @@ struct CityMapView: View {
                                 }
                             }
                         case .dontKnow:
-                            // Show building detail for info
-                            showBuildingDetail = true
+                            // Go straight to challenge — after completing, will offer Workshop
+                            showChallenge = true
                         case .needToSketch:
                             // Skip to challenge (future: sketching game)
                             showChallenge = true
@@ -194,6 +207,65 @@ struct CityMapView: View {
                 .transition(.move(edge: .trailing))  // Slide in from right
             }
 
+            // Workshop prompt (after quiz from "I don't know" path)
+            if showWorkshopPrompt {
+                ZStack {
+                    Color.black.opacity(0.5)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            withAnimation {
+                                showWorkshopPrompt = false
+                                selectedPlot = nil
+                            }
+                            scene?.resetMascot()
+                        }
+
+                    VStack(spacing: 20) {
+                        Spacer()
+
+                        BirdCharacter(isSitting: true)
+                            .frame(width: 160, height: 160)
+
+                        VStack(spacing: 16) {
+                            Text("Nice work on the quiz!")
+                                .font(.custom("Cinzel-Bold", size: 22))
+                                .foregroundStyle(RenaissanceColors.sepiaInk)
+
+                            Text("Now head to the Workshop to collect raw materials and craft what you need to build.")
+                                .font(.custom("EBGaramond-Regular", size: 17))
+                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                                .multilineTextAlignment(.center)
+                                .lineSpacing(4)
+
+                            VStack(spacing: 10) {
+                                RenaissanceButton(title: "Go to Workshop") {
+                                    withAnimation {
+                                        showWorkshopPrompt = false
+                                        selectedPlot = nil
+                                    }
+                                    scene?.resetMascot()
+                                    showWorkshopSheet = true
+                                }
+
+                                RenaissanceSecondaryButton(title: "Stay on Map") {
+                                    withAnimation {
+                                        showWorkshopPrompt = false
+                                        selectedPlot = nil
+                                    }
+                                    scene?.resetMascot()
+                                }
+                            }
+                        }
+                        .padding(28)
+                        .background(DialogueBubble())
+                        .padding(.horizontal, 40)
+
+                        Spacer()
+                    }
+                }
+                .transition(.opacity)
+            }
+
             // Building detail overlay (shown for info/help)
             if showBuildingDetail, let plot = selectedPlot {
                 BuildingDetailOverlay(
@@ -227,6 +299,7 @@ struct CityMapView: View {
                let challenge = ChallengeContent.interactiveChallenge(for: plot.building.name) {
                 InteractiveChallengeView(
                     challenge: challenge,
+                    workshopState: workshopState,
                     onComplete: { correctAnswers, totalQuestions in
                         // Mark as complete if they got most questions right
                         let passThreshold = totalQuestions / 2
@@ -237,9 +310,19 @@ struct CityMapView: View {
                                 scene?.updateBuildingState(buildingId, state: .complete)
                             }
                         }
-                        // Close the sheet after completion
+                        // Close the challenge sheet
                         showChallenge = false
-                        selectedPlot = nil
+
+                        // If user came from "I don't know", offer to go to Workshop
+                        if challengeEntryPath == .dontKnow {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                                withAnimation(.spring(response: 0.4)) {
+                                    showWorkshopPrompt = true
+                                }
+                            }
+                        } else {
+                            selectedPlot = nil
+                        }
                     },
                     onDismiss: {
                         showChallenge = false
@@ -252,6 +335,12 @@ struct CityMapView: View {
                     .font(.custom("Cinzel-Bold", size: 24))
                     .foregroundColor(RenaissanceColors.sepiaInk)
             }
+        }
+        .sheet(isPresented: $showWorkshopSheet) {
+            WorkshopView(workshop: workshopState)
+                #if os(macOS)
+                .frame(minWidth: 900, minHeight: 600)
+                #endif
         }
     }
 
@@ -640,5 +729,5 @@ struct WatercolorCanvasView: View {
 // MARK: - Preview
 
 #Preview {
-    CityMapView(viewModel: CityViewModel())
+    CityMapView(viewModel: CityViewModel(), workshopState: WorkshopState())
 }

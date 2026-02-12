@@ -583,6 +583,9 @@ RenaissanceColors.blueprintBlue   // #4169E1 - Grid lines
 - [x] **Educational "Did You Know?" popups after crafting**
 - [x] **PencilKit watercolor paint mode on city map (iOS)**
 - [x] **Drawing save/load via UserDefaults**
+- [x] **Waypoint pathfinding (64-node Dijkstra) for Workshop**
+- [x] **Apprentice 15-frame walk animation (ApprenticeFrame00-14)**
+- [x] **Editor mode: drag waypoints, toggle edges, dump positions**
 
 ### Session Log - Feb 6, 2025
 - Fixed mascot consistency: Now using SwiftUI overlay instead of SpriteKit rendering
@@ -625,8 +628,132 @@ RenaissanceColors.blueprintBlue   // #4169E1 - Grid lines
   - Workshop hint bubble bird: 80px
 - **Bond rendering fix** — Removed dashed ionic bonds, all bonds now solid with fixed 16pt inset
 
+## GIF Frame Extraction Workflow
+
+Standard process for turning Midjourney/Pika animated GIFs into sprite frame animations:
+
+### Step 1 — Extract all frames from GIF (Claude does this)
+```python
+python3 -c "
+from PIL import Image
+import os
+gif = Image.open('INPUT.gif')
+os.makedirs('OUTPUT_FOLDER', exist_ok=True)
+frame = 0
+while True:
+    gif.seek(frame)
+    img = gif.copy().convert('RGBA').resize((320, 320), Image.LANCZOS)
+    img.save(f'OUTPUT_FOLDER/frame_{frame:03d}.png')
+    frame += 1
+"
+```
+- Resize to **320x320** (good balance of quality vs file size)
+- Typically yields 100-125 frames
+
+### Step 2 — Select best 15 key frames (Claude does this)
+- Pick every Nth frame for even spacing (e.g., every 8th from 125 frames)
+- Copy to `OUTPUT_FOLDER/selected/` subfolder
+- Name them with original frame numbers (e.g., `frame_000.png`, `frame_008.png`, ...)
+
+### Step 3 — Remove backgrounds (Marina does this in Photoshop)
+- Open each selected frame in Photoshop
+- Remove background, export as PNG with transparency
+- Save clean PNGs to `OUTPUT_FOLDER/clean/` subfolder
+
+### Step 4 — Create imagesets (Claude does this)
+- Create `Assets.xcassets/[Name]Frame00-14.imageset/` from clean PNGs
+- Each imageset gets a `Contents.json` + the PNG
+- Update BirdCharacter-style animation code: Timer at 15fps, `frameCount` = number of frames
+
+### Folder Structure
+```
+Styles/[name]_frames/          # All extracted frames (gitignored)
+Styles/[name]_frames/selected/ # 15 key frames (originals with bg)
+Styles/[name]_frames/clean/    # Marina's Photoshop exports (no bg)
+Assets.xcassets/[Name]Frame00-14.imageset/  # Final imagesets for app
+```
+
+### Session Log - Feb 12, 2025
+- **Waypoint pathfinding** for Workshop scene — apprentice walks along roads instead of straight lines
+  - 64-waypoint graph with ~100 bidirectional edges, Dijkstra shortest-path
+  - PlayerNode.walkPath() chains waypoint segments with facing direction updates at corners
+  - Stations within 150pt walk directly (Workbench ↔ Furnace), longer routes go through road network
+  - Editor mode (press E): shows numbered orange dots + orange edge lines, drag to reposition
+  - Press C with waypoint selected → click another to toggle edge connection
+  - Press R to redraw edges after dragging
+  - Exit editor (E again) dumps full waypoints + edges arrays to console in copy-paste Swift format
+- **SceneEditorMode** — added `onToggle` and `onNodeSelected` callbacks
+- **Apprentice sprite animation** — 15-frame walk cycle from Midjourney GIF (ApprenticeFrame00-14)
+
+## Waypoint Pathfinding System (Feb 12, 2025)
+
+### Overview
+Workshop apprentice walks along a waypoint road network instead of straight lines. 64 road junctions connected by ~100 edges, with Dijkstra shortest-path routing.
+
+### Key Files
+| File | Change |
+|------|--------|
+| `PlayerNode.swift` | `walkPath(_:speed:completion:)` — chains waypoint segments with per-corner facing |
+| `WorkshopScene.swift` | 64 waypoints, adjacency edges, Dijkstra, station-to-waypoint mapping |
+| `SceneEditorMode.swift` | `onToggle` + `onNodeSelected` callbacks for workshop debug overlay |
+
+### Road Network Layout (6 rows)
+| Row | Y range | Contents |
+|-----|---------|----------|
+| A | ~830-870 | Top edge: quarry, river, volcano, clay pit approaches |
+| B | ~700-760 | Upper roads |
+| C | ~550-650 | Mid band |
+| D | ~420-500 | Center: forest, workbench, furnace, mine |
+| E | ~280-370 | South roads |
+| F | ~150-220 | Bottom: market, pigment table |
+
+### Editor Mode Workflow
+1. Open Workshop, press **E** → 64 orange numbered dots + edge lines appear
+2. **Drag** dots to match new terrain roads
+3. **C** + click another dot → toggle edge between them
+4. **R** → redraw edge lines after dragging
+5. **E** again → dumps `waypoints` array + `waypointEdges` array to Xcode console
+
+### How Pathfinding Works
+1. Player taps a station
+2. If distance < 150pt → walk directly (adjacent stations)
+3. Otherwise: find nearest 2-3 waypoints to player, look up station's waypoints
+4. Dijkstra with virtual start/end nodes finds shortest path
+5. `playerNode.walkPath(path, speed: 200)` walks segment-by-segment
+
+## Workshop Crafting Redesign (Planned)
+
+### Current State
+Workshop has 10 SpriteKit stations in one scene. Player walks between them, collects materials, mixes at workbench, fires in furnace — all via SwiftUI overlays on top of the SpriteKit map.
+
+### Planned Redesign
+Split into **outdoor gathering** (SpriteKit map) + **indoor crafting** (separate SwiftUI views):
+
+**Outdoor Map (WorkshopScene)** — Apprentice walks between resource stations to collect raw materials:
+- Quarry, River, Volcano, Clay Pit, Mine, Forest, Market, Pigment Table
+- Tap station → collection overlay → materials go to inventory
+- Walk to Workbench or Furnace door → transitions to indoor crafting view
+
+**Workbench View** (new SwiftUI view) — Mixing/combining materials:
+- Drag materials from inventory into mixing slots
+- Recipe auto-detection when correct combination placed
+- Educational text about the chemistry of each recipe
+
+**Furnace View** (new SwiftUI view) — Firing/heating crafted items:
+- Temperature picker (different recipes need different temps)
+- Fire button with animation
+- "Did You Know?" educational popup after successful firing
+
+**Pigment Table View** (new SwiftUI view) — Color mixing for paints/dyes:
+- Mix base pigments to create colors
+- Used for decorating/finishing buildings
+
 ### Next Steps
-- [ ] Verify terrain background fills screen correctly on all screen sizes
+- [ ] New workshop terrain (Gemini art)
+- [ ] Adjust 64 waypoints to match new terrain in editor mode
+- [ ] Workbench crafting view (SwiftUI)
+- [ ] Furnace firing view (SwiftUI)
+- [ ] Pigment Table mixing view (SwiftUI)
 - [ ] Create challenges for remaining 11 buildings
 - [ ] Add building images to map
 - [ ] Rising answer mechanic (LinguaLeo-style)

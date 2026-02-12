@@ -8,6 +8,9 @@ struct ContentView: View {
     // Shared ViewModel - so map and era views share progress!
     @StateObject private var cityViewModel = CityViewModel()
 
+    // Shared Workshop state - so materials persist between workshop and challenges
+    @State private var workshopState = WorkshopState()
+
     var body: some View {
         ZStack {
             // Parchment background
@@ -90,17 +93,17 @@ struct ContentView: View {
         switch selectedDestination {
         case .cityMap:
             // NEW: SpriteKit isometric city map (your sketch!)
-            CityMapView(viewModel: cityViewModel)
+            CityMapView(viewModel: cityViewModel, workshopState: workshopState)
         case .allBuildings:
-            CityView(viewModel: cityViewModel, filterEra: nil)
+            CityView(viewModel: cityViewModel, filterEra: nil, workshopState: workshopState)
         case .era(let era):
-            CityView(viewModel: cityViewModel, filterEra: era)
+            CityView(viewModel: cityViewModel, filterEra: era, workshopState: workshopState)
         case .profile:
             ProfileView()
         case .workshop:
-            WorkshopView()
+            WorkshopView(workshop: workshopState)
         case .none:
-            CityMapView(viewModel: cityViewModel)  // Default to the new map
+            CityMapView(viewModel: cityViewModel, workshopState: workshopState)  // Default to the new map
         }
     }
 }

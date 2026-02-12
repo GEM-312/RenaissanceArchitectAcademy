@@ -121,6 +121,20 @@ struct FlowCheckpoint: Identifiable {
     }
 }
 
+// MARK: - Hint System Models
+
+/// Data for the 3-tier hint system (riddle → craft/earn → detailed hint scroll)
+struct HintData {
+    let riddle: String           // Free vague clue (always available)
+    let detailedHint: String     // Full hint shown on scroll after craft/earn
+    let activityType: HintActivityType
+}
+
+/// Activity types for earning a hint
+enum HintActivityType {
+    case trueFalse(statement: String, isTrue: Bool, explanation: String)
+}
+
 // MARK: - Molecule Diagram Models
 
 /// Bond type between atoms in a molecule diagram
@@ -333,6 +347,7 @@ struct InteractiveQuestion: Identifiable {
     let explanation: String
     let funFact: String
     let questionType: QuestionType
+    let hint: HintData?
 
     // Multiple choice data (only if questionType == .multipleChoice)
     let options: [String]
@@ -346,7 +361,8 @@ struct InteractiveQuestion: Identifiable {
         correctAnswerIndex: Int,
         science: Science,
         explanation: String,
-        funFact: String
+        funFact: String,
+        hint: HintData? = nil
     ) {
         self.id = id
         self.questionText = questionText
@@ -356,6 +372,7 @@ struct InteractiveQuestion: Identifiable {
         self.explanation = explanation
         self.funFact = funFact
         self.questionType = .multipleChoice
+        self.hint = hint
     }
 
     /// Create a drag-drop equation question
@@ -365,7 +382,8 @@ struct InteractiveQuestion: Identifiable {
         equationData: DragDropEquationData,
         science: Science,
         explanation: String,
-        funFact: String
+        funFact: String,
+        hint: HintData? = nil
     ) {
         self.id = id
         self.questionText = questionText
@@ -375,6 +393,7 @@ struct InteractiveQuestion: Identifiable {
         self.explanation = explanation
         self.funFact = funFact
         self.questionType = .dragDropEquation(equationData)
+        self.hint = hint
     }
 
     /// Create a hydraulics flow tracing question
@@ -384,7 +403,8 @@ struct InteractiveQuestion: Identifiable {
         flowData: HydraulicsFlowData,
         science: Science,
         explanation: String,
-        funFact: String
+        funFact: String,
+        hint: HintData? = nil
     ) {
         self.id = id
         self.questionText = questionText
@@ -394,6 +414,7 @@ struct InteractiveQuestion: Identifiable {
         self.explanation = explanation
         self.funFact = funFact
         self.questionType = .hydraulicsFlow(flowData)
+        self.hint = hint
     }
 }
 
@@ -448,7 +469,16 @@ enum ChallengeContent {
                 ),
                 science: .chemistry,
                 explanation: "Calcium oxide (quicklime) reacts with water in an exothermic reaction to produce calcium hydroxide - also called slaked lime. This was the base for Roman mortar and concrete!",
-                funFact: "This reaction releases so much heat it can boil the water! Roman soldiers sometimes used quicklime to heat their food in the field."
+                funFact: "This reaction releases so much heat it can boil the water! Roman soldiers sometimes used quicklime to heat their food in the field.",
+                hint: HintData(
+                    riddle: "When fire-born powder meets the river's gift, a new stone rises from the mist...",
+                    detailedHint: "Metal oxides react with water to form hydroxides. Calcium is the metal here.",
+                    activityType: .trueFalse(
+                        statement: "Quicklime (CaO) is cold when mixed with water.",
+                        isTrue: false,
+                        explanation: "The reaction is exothermic — it releases enough heat to boil water!"
+                    )
+                )
             ),
 
             // HYDRAULICS - Multiple choice
@@ -463,7 +493,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 1,
                 science: .hydraulics,
                 explanation: "The hypocaust system raised the floor on pillars (pilae), allowing hot air from a furnace to circulate underneath. The heat rose through hollow spaces in the walls, warming the entire room evenly.",
-                funFact: "Some Roman baths got so hot that bathers wore wooden sandals to protect their feet from the heated floors!"
+                funFact: "Some Roman baths got so hot that bathers wore wooden sandals to protect their feet from the heated floors!",
+                hint: HintData(
+                    riddle: "Invisible breath of flame travels beneath your feet, warming stone from below...",
+                    detailedHint: "The hypocaust used a furnace to push hot air under raised floors supported by pillars, and through hollow walls.",
+                    activityType: .trueFalse(
+                        statement: "The hypocaust heated water directly in the bathing pools.",
+                        isTrue: false,
+                        explanation: "The hypocaust heated air, which circulated under floors and through walls — the heat was indirect, warming the room itself."
+                    )
+                )
             ),
 
             // CHEMISTRY - Another drag-drop!
@@ -482,7 +521,16 @@ enum ChallengeContent {
                 ),
                 science: .chemistry,
                 explanation: "Over time, calcium hydroxide absorbs CO₂ from the air and converts back to calcium carbonate - essentially turning back into limestone! This is why Roman concrete gets stronger with age.",
-                funFact: "Modern concrete lasts 50-100 years, but Roman concrete is stronger after 2,000 years! Scientists are still trying to recreate their formula."
+                funFact: "Modern concrete lasts 50-100 years, but Roman concrete is stronger after 2,000 years! Scientists are still trying to recreate their formula.",
+                hint: HintData(
+                    riddle: "The slaked earth drinks the sky's exhaled breath and becomes stone once more...",
+                    detailedHint: "Calcium hydroxide absorbs carbon dioxide from the air and reverts to a carbonate — essentially turning back into limestone.",
+                    activityType: .trueFalse(
+                        statement: "Roman concrete gets weaker over time, just like modern concrete.",
+                        isTrue: false,
+                        explanation: "Roman concrete actually gets stronger! The carbonation process converts Ca(OH)₂ back to CaCO₃ (limestone), reinforcing the material over centuries."
+                    )
+                )
             ),
 
             // MATERIALS - Multiple choice
@@ -497,7 +545,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 2,
                 science: .materials,
                 explanation: "Pozzolanic ash from the Pozzuoli region reacted with lime and seawater to form a mineral called tobermorite, making the concrete incredibly strong and waterproof.",
-                funFact: "Scientists are now trying to recreate Roman concrete for modern buildings - it could reduce construction's carbon footprint by 50%!"
+                funFact: "Scientists are now trying to recreate Roman concrete for modern buildings - it could reduce construction's carbon footprint by 50%!",
+                hint: HintData(
+                    riddle: "Born from the mountain's fury, this grey dust turns water to stone eternal...",
+                    detailedHint: "This material comes from volcanic eruptions near Pozzuoli. When mixed with lime and seawater, it creates an incredibly durable mineral called tobermorite.",
+                    activityType: .trueFalse(
+                        statement: "Volcanic ash (pozzolana) was named after the Italian region of Pozzuoli.",
+                        isTrue: true,
+                        explanation: "Correct! The region near Naples had abundant volcanic deposits that Romans discovered made their concrete waterproof and incredibly strong."
+                    )
+                )
             ),
 
             // HYDRAULICS - Interactive flow tracing!
@@ -517,7 +574,16 @@ enum ChallengeContent {
                 ),
                 science: .hydraulics,
                 explanation: "Roman aqueducts used gravity to move water along a gentle slope (about 1:200). Water collected at mountain sources, passed through settling tanks to remove sediment, then reached distribution points called castellum divisorium before flowing to baths, fountains, and homes.",
-                funFact: "The longest Roman aqueduct was the Aqua Marcia at 91 km! Engineers used groma surveying tools to maintain precise slopes over vast distances."
+                funFact: "The longest Roman aqueduct was the Aqua Marcia at 91 km! Engineers used groma surveying tools to maintain precise slopes over vast distances.",
+                hint: HintData(
+                    riddle: "From the mountain's crown, through patient channels, the silver thread descends to quench a city's thirst...",
+                    detailedHint: "Water flows downhill by gravity. Trace through the reservoir first, then the settling tank where sediment drops out, then to the distribution point.",
+                    activityType: .trueFalse(
+                        statement: "Roman aqueducts used pumps to push water uphill to the city.",
+                        isTrue: false,
+                        explanation: "Aqueducts relied entirely on gravity! Engineers designed a gentle downward slope (about 1:200) over many kilometers."
+                    )
+                )
             ),
 
             // MATERIALS - Multiple choice
@@ -532,7 +598,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 1,
                 science: .materials,
                 explanation: "Marble's crystalline structure makes it relatively non-porous. Water beads on the surface rather than soaking in, making it easier to clean.",
-                funFact: "The Baths of Caracalla used marble from across the empire - white from Greece, yellow from Tunisia, purple from Turkey, and green from Egypt!"
+                funFact: "The Baths of Caracalla used marble from across the empire - white from Greece, yellow from Tunisia, purple from Turkey, and green from Egypt!",
+                hint: HintData(
+                    riddle: "Crystal bones of the earth, polished smooth — water slides away as from a swan's feather...",
+                    detailedHint: "Think about the stone's crystal structure. A surface that does not absorb water resists mold and bacteria growth.",
+                    activityType: .trueFalse(
+                        statement: "Marble is porous and absorbs water like a sponge.",
+                        isTrue: false,
+                        explanation: "Marble's crystalline structure makes it relatively non-porous — water beads on the surface, making it hygienic for wet areas."
+                    )
+                )
             )
         ]
     )
@@ -562,7 +637,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 0,
                 science: .mathematics,
                 explanation: "The gradient (or slope) of 1:200 means for every 200 meters horizontally, the channel drops 1 meter vertically. This gentle slope allowed water to flow steadily without eroding the channel.",
-                funFact: "Roman surveyors used a tool called a 'groma' - essentially a cross with plumb lines - to measure these precise angles across many kilometers!"
+                funFact: "Roman surveyors used a tool called a 'groma' - essentially a cross with plumb lines - to measure these precise angles across many kilometers!",
+                hint: HintData(
+                    riddle: "For every two hundred steps forward, one step the water descends — name this gentle fall...",
+                    detailedHint: "This ratio describes how much height is lost over a horizontal distance. It is a measure of slope, not pressure, speed, or volume.",
+                    activityType: .trueFalse(
+                        statement: "A gradient of 1:200 means the channel drops 200 meters for every 1 meter of length.",
+                        isTrue: false,
+                        explanation: "It is the opposite — the channel drops 1 meter for every 200 meters of horizontal length. A very gentle slope!"
+                    )
+                )
             ),
 
             // ENGINEERING - Multiple choice
@@ -577,7 +661,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 1,
                 science: .engineering,
                 explanation: "Arches transfer the weight of the structure outward and downward to the foundations. This allows spanning large gaps with less material than a solid wall would require.",
-                funFact: "The Pont du Gard in France stands 49 meters tall with three tiers of arches - and was built without mortar! The stones are so precisely cut they hold together by friction alone."
+                funFact: "The Pont du Gard in France stands 49 meters tall with three tiers of arches - and was built without mortar! The stones are so precisely cut they hold together by friction alone.",
+                hint: HintData(
+                    riddle: "Curved like a bow, strong as a mountain — the empty space beneath is the secret of its strength...",
+                    detailedHint: "Consider how weight is transferred through curved vs flat structures. Arches push forces outward and downward to their foundations.",
+                    activityType: .trueFalse(
+                        statement: "Roman arches required more building material than solid walls of the same height.",
+                        isTrue: false,
+                        explanation: "Arches use less material because the curved shape efficiently distributes weight, allowing large spans with relatively thin structures."
+                    )
+                )
             ),
 
             // HYDRAULICS - Multiple choice
@@ -592,7 +685,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 1,
                 science: .hydraulics,
                 explanation: "The castellum divisorium was a distribution tank that divided the incoming water into multiple channels serving different areas: public fountains, baths, and wealthy private homes.",
-                funFact: "In times of drought, water was rationed! Public fountains got priority, then baths, and private users were cut off first. The emperor's supply was never interrupted!"
+                funFact: "In times of drought, water was rationed! Public fountains got priority, then baths, and private users were cut off first. The emperor's supply was never interrupted!",
+                hint: HintData(
+                    riddle: "Where the great channel ends, a stone chalice splits the silver stream into many veins for the city...",
+                    detailedHint: "This structure sat at the terminus of the aqueduct. Its Latin name literally means 'dividing castle' — think about what 'dividing' water means.",
+                    activityType: .trueFalse(
+                        statement: "The castellum divisorium stored water for emergencies like a reservoir.",
+                        isTrue: false,
+                        explanation: "It was a distribution tank, not a storage tank. Its purpose was to split the incoming water flow into separate channels for different parts of the city."
+                    )
+                )
             ),
 
             // MATHEMATICS - Multiple choice
@@ -607,7 +709,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 0,
                 science: .mathematics,
                 explanation: "Using the formula: Flow rate = Area × Velocity. With 500,000 L/day ≈ 5.8 L/s, and channel area of 0.5 m², velocity ≈ 0.012 m/s. A gentle flow prevents erosion!",
-                funFact: "Romans didn't have calculators, but they developed practical rules of thumb through centuries of experience. Their measurements were remarkably accurate!"
+                funFact: "Romans didn't have calculators, but they developed practical rules of thumb through centuries of experience. Their measurements were remarkably accurate!",
+                hint: HintData(
+                    riddle: "Half a million drops each day must pass through the narrow gate — how gently must they flow?",
+                    detailedHint: "Use Flow rate = Area x Velocity. Convert 500,000 liters/day to liters/second first (divide by 86,400). The channel area is 1m x 0.5m = 0.5 m².",
+                    activityType: .trueFalse(
+                        statement: "Water in a Roman aqueduct flowed very fast, like a rushing river.",
+                        isTrue: false,
+                        explanation: "Aqueduct water flowed very gently — about 0.01 m/s. Fast flow would erode the channel walls over time."
+                    )
+                )
             ),
 
             // ENGINEERING - Multiple choice
@@ -622,7 +733,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 1,
                 science: .engineering,
                 explanation: "An inverted siphon uses sealed pipes that descend into the valley and rise on the other side. Water pressure pushes the water up - the same principle as a U-shaped tube!",
-                funFact: "The inverted siphon at Lyon, France dropped 123 meters and used nine parallel lead pipes, each 25cm in diameter, to handle the enormous water pressure!"
+                funFact: "The inverted siphon at Lyon, France dropped 123 meters and used nine parallel lead pipes, each 25cm in diameter, to handle the enormous water pressure!",
+                hint: HintData(
+                    riddle: "When the valley yawns too deep for stone legs, the water must dive down and climb again like a serpent...",
+                    detailedHint: "Think of a U-shaped tube — water goes down one side and pressure pushes it up the other. This uses sealed pipes, not open channels.",
+                    activityType: .trueFalse(
+                        statement: "An inverted siphon uses water pressure to push water uphill through sealed pipes.",
+                        isTrue: true,
+                        explanation: "Correct! The weight of water on the descending side creates pressure that pushes water up the ascending side, like a U-tube."
+                    )
+                )
             ),
 
             // HYDRAULICS - Multiple choice
@@ -637,7 +757,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 1,
                 science: .hydraulics,
                 explanation: "Settling tanks (piscinae) allowed the water to slow down so heavy particles like sand and silt would sink to the bottom. Workers regularly cleaned these tanks to maintain water quality.",
-                funFact: "Some aqueducts had multiple settling tanks along their route. The Aqua Virgo in Rome had settling basins every few kilometers!"
+                funFact: "Some aqueducts had multiple settling tanks along their route. The Aqua Virgo in Rome had settling basins every few kilometers!",
+                hint: HintData(
+                    riddle: "Where the rushing stream rests in a quiet pool, the earth it carries sinks to slumber at the bottom...",
+                    detailedHint: "These tanks allowed water to slow down so that heavier particles like sand and silt could settle to the bottom and be cleaned out.",
+                    activityType: .trueFalse(
+                        statement: "Settling tanks added minerals to the water to improve its taste.",
+                        isTrue: false,
+                        explanation: "Settling tanks removed impurities — they let sediment sink to the bottom so cleaner water could flow onward."
+                    )
+                )
             )
         ]
     )
@@ -668,7 +797,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 1,
                 science: .architecture,
                 explanation: "An elliptical arena allows spectators on the long sides to be closer to the action, while the curved ends still provide good views. It also creates a longer performance space for processions and battles.",
-                funFact: "The Colosseum's ellipse measures 188 meters by 156 meters - about the size of a modern football field! The precise geometry was laid out using ropes and stakes."
+                funFact: "The Colosseum's ellipse measures 188 meters by 156 meters - about the size of a modern football field! The precise geometry was laid out using ropes and stakes.",
+                hint: HintData(
+                    riddle: "Not a perfect ring but a stretched one — every seat draws the eye closer to the spectacle within...",
+                    detailedHint: "Think about what shape lets spectators on the long sides sit closer to the action, while still curving at the ends for good sightlines.",
+                    activityType: .trueFalse(
+                        statement: "The Colosseum is a perfect circle when viewed from above.",
+                        isTrue: false,
+                        explanation: "The Colosseum is an ellipse (oval), measuring 188m by 156m. This shape gives better sight lines and a longer arena for processions."
+                    )
+                )
             ),
 
             // ENGINEERING - Multiple choice
@@ -683,7 +821,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 0,
                 science: .engineering,
                 explanation: "The wedge-shaped keystone at the top of an arch locks all the other stones (voussoirs) in place. Weight pushes down on the keystone, which transfers the force outward to the supporting columns.",
-                funFact: "The Colosseum has 80 arched entrances at ground level - called 'vomitoria' - which could empty the entire stadium in just 15 minutes!"
+                funFact: "The Colosseum has 80 arched entrances at ground level - called 'vomitoria' - which could empty the entire stadium in just 15 minutes!",
+                hint: HintData(
+                    riddle: "The final wedge placed at the crown holds all its brothers in an embrace of stone...",
+                    detailedHint: "Look at the top center of an arch. One special wedge-shaped stone locks all the others in place by transferring weight outward.",
+                    activityType: .trueFalse(
+                        statement: "The keystone is the stone at the base of a Roman arch.",
+                        isTrue: false,
+                        explanation: "The keystone sits at the very top (crown) of the arch. Its wedge shape locks the other stones (voussoirs) in place."
+                    )
+                )
             ),
 
             // ACOUSTICS - Multiple choice
@@ -698,7 +845,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 1,
                 science: .acoustics,
                 explanation: "The curved, tiered seating acted like a natural amplifier. Sound waves from the arena floor bounced off the hard stone surfaces and were directed upward toward the audience, enhancing audibility.",
-                funFact: "Modern acoustic engineers have studied the Colosseum and found it has remarkably even sound distribution - a whisper on the arena floor can be heard in the upper seats!"
+                funFact: "Modern acoustic engineers have studied the Colosseum and found it has remarkably even sound distribution - a whisper on the arena floor can be heard in the upper seats!",
+                hint: HintData(
+                    riddle: "Shaped like a bowl for giants, the stone tiers catch every whisper and send it soaring upward...",
+                    detailedHint: "Sound waves bounce off hard surfaces. The curved, tiered seating acts like a natural amplifier, directing sound from the arena floor up toward the audience.",
+                    activityType: .trueFalse(
+                        statement: "The Colosseum's tiered stone seating helped amplify sound naturally.",
+                        isTrue: true,
+                        explanation: "Correct! The hard stone surfaces reflected sound waves upward, and the curved bowl shape focused the sound toward the audience."
+                    )
+                )
             ),
 
             // ARCHITECTURE - Multiple choice
@@ -713,7 +869,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 1,
                 science: .architecture,
                 explanation: "240 wooden masts were inserted into sockets around the top of the outer wall. Ropes and pulleys controlled canvas panels that could be extended to shade spectators from the sun.",
-                funFact: "A special unit of 1,000 sailors from the Roman navy operated the velarium - their experience with sails made them experts at handling the enormous canvas sheets!"
+                funFact: "A special unit of 1,000 sailors from the Roman navy operated the velarium - their experience with sails made them experts at handling the enormous canvas sheets!",
+                hint: HintData(
+                    riddle: "Like a ship's sails crowning the stone vessel, canvas stretches on tall timber arms with ropes and wheels...",
+                    detailedHint: "Think of how sails are rigged on a ship — masts hold them up, and ropes and pulleys control their position. The velarium used the same principle.",
+                    activityType: .trueFalse(
+                        statement: "The velarium was a permanent stone roof over the Colosseum.",
+                        isTrue: false,
+                        explanation: "The velarium was a retractable canvas awning, controlled by ropes and pulleys on 240 wooden masts around the top edge."
+                    )
+                )
             ),
 
             // ENGINEERING - Multiple choice
@@ -728,7 +893,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 1,
                 science: .engineering,
                 explanation: "Workers turned capstans (large vertical drums) that wound ropes attached to platforms. Counterweights helped balance the load, making it possible to lift heavy cages of lions or elaborate stage sets.",
-                funFact: "The hypogeum had 80 vertical shafts and 30 trapdoors for surprise entrances! Animals could suddenly appear anywhere in the arena - terrifying for gladiators and thrilling for crowds."
+                funFact: "The hypogeum had 80 vertical shafts and 30 trapdoors for surprise entrances! Animals could suddenly appear anywhere in the arena - terrifying for gladiators and thrilling for crowds.",
+                hint: HintData(
+                    riddle: "Beneath the sand, strong arms turn great wooden drums while heavy stones balance the rising cage...",
+                    detailedHint: "Workers turned large vertical drums (capstans) that wound ropes. Counterweights helped balance the load so human muscle could lift heavy platforms.",
+                    activityType: .trueFalse(
+                        statement: "The Colosseum's underground elevators were powered by steam engines.",
+                        isTrue: false,
+                        explanation: "Steam engines were not invented until the 18th century! The elevators used human-powered capstans and counterweights."
+                    )
+                )
             ),
 
             // ACOUSTICS - Multiple choice
@@ -743,7 +917,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 3,
                 science: .acoustics,
                 explanation: "The Colosseum addressed multiple acoustic challenges: its bowl shape contained sound, tall walls reduced wind noise, and the hard surfaces provided clear reflections without excessive echo.",
-                funFact: "The Colosseum's acoustic design influenced theaters for centuries. Even today, amphitheater-style venues use similar principles for concerts and performances!"
+                funFact: "The Colosseum's acoustic design influenced theaters for centuries. Even today, amphitheater-style venues use similar principles for concerts and performances!",
+                hint: HintData(
+                    riddle: "Echo, wind, and the escaping voice — the great bowl of stone tames them all at once...",
+                    detailedHint: "Open-air venues face multiple acoustic challenges: echoes, wind noise, and sound escaping. The Colosseum's bowl shape, tall walls, and hard surfaces addressed all of these.",
+                    activityType: .trueFalse(
+                        statement: "The Colosseum only solved the problem of echo, not wind noise or sound loss.",
+                        isTrue: false,
+                        explanation: "The design addressed all three: the bowl shape contained sound energy, tall walls blocked wind, and smooth surfaces provided clean reflections."
+                    )
+                )
             )
         ]
     )
@@ -773,7 +956,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 3,
                 science: .geometry,
                 explanation: "The cathedral's drum (base) was already octagonal from earlier construction. Brunelleschi ingeniously used this by placing major structural ribs at each corner, distributing the dome's weight to 8 strong points.",
-                funFact: "The octagon was considered a sacred shape in medieval Christianity - representing the 8th day of creation (resurrection). Many baptisteries are octagonal!"
+                funFact: "The octagon was considered a sacred shape in medieval Christianity - representing the 8th day of creation (resurrection). Many baptisteries are octagonal!",
+                hint: HintData(
+                    riddle: "Eight corners like a compass rose, each one bearing the weight of heaven's crown...",
+                    detailedHint: "The cathedral's drum was already built in an octagonal shape. Brunelleschi placed structural ribs at each of the 8 corners to distribute the dome's weight evenly.",
+                    activityType: .trueFalse(
+                        statement: "Brunelleschi chose the octagonal shape because it was his personal preference.",
+                        isTrue: false,
+                        explanation: "The octagonal drum was already built by earlier architects. Brunelleschi ingeniously used this existing shape, placing ribs at each corner for structural support."
+                    )
+                )
             ),
 
             // PHYSICS - Multiple choice
@@ -788,7 +980,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 1,
                 science: .physics,
                 explanation: "The two shells are connected by horizontal stone rings and vertical ribs. This creates a rigid structure where each shell helps support the other, reducing the outward force that could crack the dome.",
-                funFact: "You can actually walk between the two shells! A staircase of 463 steps winds between them, giving visitors views of both the outer city and the inner frescoes."
+                funFact: "You can actually walk between the two shells! A staircase of 463 steps winds between them, giving visitors views of both the outer city and the inner frescoes.",
+                hint: HintData(
+                    riddle: "Twin skins of stone, one within the other, leaning together like two hands in prayer...",
+                    detailedHint: "Two shells connected by ribs and rings create a rigid structure. Each shell helps support the other, reducing the outward force (thrust) that could crack the dome.",
+                    activityType: .trueFalse(
+                        statement: "The air gap between the two dome shells was primarily for thermal insulation.",
+                        isTrue: false,
+                        explanation: "The main purpose was structural — the two shells brace each other through connecting ribs and rings, reducing the outward thrust that could collapse the dome."
+                    )
+                )
             ),
 
             // ARCHITECTURE - Multiple choice
@@ -803,7 +1004,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 1,
                 science: .architecture,
                 explanation: "Brunelleschi invented a herringbone brick pattern where bricks are laid at angles that interlock with each other. Each ring of bricks supports itself as it's built, eliminating the need for scaffolding from below.",
-                funFact: "The herringbone pattern was Brunelleschi's secret weapon - he may have learned it from studying Roman ruins. The technique was so effective it was kept secret for years!"
+                funFact: "The herringbone pattern was Brunelleschi's secret weapon - he may have learned it from studying Roman ruins. The technique was so effective it was kept secret for years!",
+                hint: HintData(
+                    riddle: "Like fish bones woven in clay, each brick leans upon its neighbor so none may fall...",
+                    detailedHint: "Brunelleschi laid bricks at alternating angles so they interlocked with each other. Each ring of bricks was self-supporting as it was built — no scaffolding from below needed.",
+                    activityType: .trueFalse(
+                        statement: "Brunelleschi used traditional wooden centering (scaffolding) to support the dome during construction.",
+                        isTrue: false,
+                        explanation: "He invented the self-supporting herringbone brick pattern, eliminating the need for wooden centering — which would have been impossible given the dome's enormous span."
+                    )
+                )
             ),
 
             // GEOMETRY - Multiple choice
@@ -818,7 +1028,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 1,
                 science: .geometry,
                 explanation: "A pointed arch pushes weight more directly downward compared to a round arch, which pushes outward. This reduced the horizontal forces trying to push the walls apart.",
-                funFact: "Brunelleschi used a catenary curve (the shape a hanging chain makes) as his guide - this is mathematically the optimal shape for distributing compressive forces!"
+                funFact: "Brunelleschi used a catenary curve (the shape a hanging chain makes) as his guide - this is mathematically the optimal shape for distributing compressive forces!",
+                hint: HintData(
+                    riddle: "The pointed crown sends its burden straight down to earth, while the round one pushes walls apart...",
+                    detailedHint: "Compare a pointed arch to a hemisphere. A pointed (ogival) shape directs forces more vertically downward, reducing the horizontal thrust that pushes walls outward.",
+                    activityType: .trueFalse(
+                        statement: "A hemispherical (round) dome creates less outward thrust than a pointed dome.",
+                        isTrue: false,
+                        explanation: "A hemispherical dome creates MORE outward thrust. A pointed arch directs forces more vertically, reducing the horizontal push on the walls."
+                    )
+                )
             ),
 
             // PHYSICS - Multiple choice
@@ -833,7 +1052,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 2,
                 science: .physics,
                 explanation: "A dome creates outward thrust (like pushing down on a ball - it wants to spread). The stone chains act like a belt, holding the walls together and resisting this outward force through tension.",
-                funFact: "There are four stone chains plus one iron chain hidden in the dome's structure. Together they contain over 700 tons of material just for reinforcement!"
+                funFact: "There are four stone chains plus one iron chain hidden in the dome's structure. Together they contain over 700 tons of material just for reinforcement!",
+                hint: HintData(
+                    riddle: "Like a belt of stone girdling the great dome, these hidden rings hold the walls from fleeing outward...",
+                    detailedHint: "A dome pushes outward (like pressing down on a ball). These horizontal chains act like belts, holding the walls together through tension to resist that outward spread.",
+                    activityType: .trueFalse(
+                        statement: "The stone chains in the dome prevent it from spinning in high winds.",
+                        isTrue: false,
+                        explanation: "The chains resist outward thrust — the force that tries to push the walls apart under the dome's weight. They act like a belt holding the structure together."
+                    )
+                )
             ),
 
             // ARCHITECTURE - Multiple choice
@@ -848,7 +1076,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 1,
                 science: .architecture,
                 explanation: "Counter-intuitively, the lantern's weight pushes down on the dome's crown, compressing the structure and preventing the top from opening up. It acts like a pin holding the dome's ribs together.",
-                funFact: "Brunelleschi died before the lantern was complete. He designed special machines to lift the massive marble pieces - some weighing 37 tons - over 100 meters into the air!"
+                funFact: "Brunelleschi died before the lantern was complete. He designed special machines to lift the massive marble pieces - some weighing 37 tons - over 100 meters into the air!",
+                hint: HintData(
+                    riddle: "A crown of heavy marble atop the dome — yet it does not crush, it holds all together like a pin...",
+                    detailedHint: "Counter-intuitively, adding weight on top compresses the dome's crown and prevents it from opening up. The lantern acts like a pin holding all the ribs together.",
+                    activityType: .trueFalse(
+                        statement: "The lantern was purely decorative and served no structural purpose.",
+                        isTrue: false,
+                        explanation: "The lantern's 750 tons of weight compresses the top of the dome, stabilizing the structure and preventing the crown from spreading open."
+                    )
+                )
             )
         ]
     )
@@ -878,7 +1115,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 1,
                 science: .astronomy,
                 explanation: "If Venus orbited Earth (as in the old model), we would only ever see crescent phases. The full range of phases - from crescent to full - proves Venus orbits the Sun, sometimes on the far side from us.",
-                funFact: "Galileo published his findings as an anagram to establish priority while he gathered more evidence. Decoded, it read 'The mother of love [Venus] imitates the phases of Cynthia [the Moon]'!"
+                funFact: "Galileo published his findings as an anagram to establish priority while he gathered more evidence. Decoded, it read 'The mother of love [Venus] imitates the phases of Cynthia [the Moon]'!",
+                hint: HintData(
+                    riddle: "The goddess of love wears many faces — crescent, half, and full — only if she dances around the Sun...",
+                    detailedHint: "If Venus orbited Earth, we would only see crescent phases. Seeing a full range of phases (crescent to full) means Venus must orbit the Sun, sometimes passing behind it.",
+                    activityType: .trueFalse(
+                        statement: "If Venus orbited Earth, we would see it go through a full range of phases like the Moon.",
+                        isTrue: false,
+                        explanation: "If Venus orbited Earth (geocentric model), it could never be on the far side of the Sun, so we would only ever see crescent phases, never a full Venus."
+                    )
+                )
             ),
 
             // OPTICS - Multiple choice
@@ -893,7 +1139,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 1,
                 science: .optics,
                 explanation: "The large objective lens at the front collects light and bends it to a focal point, creating a small real image. The smaller eyepiece lens then magnifies this image for your eye to see.",
-                funFact: "Galileo's best telescope had only 30x magnification - less than cheap binoculars today! Yet it was enough to discover moons around Jupiter and craters on our Moon."
+                funFact: "Galileo's best telescope had only 30x magnification - less than cheap binoculars today! Yet it was enough to discover moons around Jupiter and craters on our Moon.",
+                hint: HintData(
+                    riddle: "The great eye at the front drinks in starlight, while the small eye at the back makes the tiny picture large...",
+                    detailedHint: "A refracting telescope has two lenses with different jobs. The large one at the front collects and focuses light; the small one near your eye magnifies the resulting image.",
+                    activityType: .trueFalse(
+                        statement: "Both lenses in a refracting telescope perform the same function.",
+                        isTrue: false,
+                        explanation: "The objective lens gathers light and focuses it to create a small image; the eyepiece lens magnifies that image for your eye. They have distinct roles."
+                    )
+                )
             ),
 
             // MATHEMATICS - Multiple choice
@@ -908,7 +1163,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 1,
                 science: .mathematics,
                 explanation: "Eccentricity measures how much an ellipse deviates from a perfect circle. A circle has eccentricity 0, while more elongated ellipses have eccentricity closer to 1. Earth's orbit has eccentricity 0.017 (nearly circular).",
-                funFact: "Kepler calculated Mars's orbit from 20 years of observations by Tycho Brahe. The 8-arcminute difference from a circular orbit led him to discover elliptical orbits!"
+                funFact: "Kepler calculated Mars's orbit from 20 years of observations by Tycho Brahe. The 8-arcminute difference from a circular orbit led him to discover elliptical orbits!",
+                hint: HintData(
+                    riddle: "How much does the cosmic path stretch from a perfect ring? A number between naught and one reveals the truth...",
+                    detailedHint: "This property measures how much an ellipse deviates from a perfect circle. A circle has a value of 0, and more elongated ellipses approach 1.",
+                    activityType: .trueFalse(
+                        statement: "Earth's orbit around the Sun is a perfect circle.",
+                        isTrue: false,
+                        explanation: "Earth's orbit is a slightly elliptical shape with an eccentricity of 0.017 — nearly circular, but not quite!"
+                    )
+                )
             ),
 
             // OPTICS - Multiple choice
@@ -923,7 +1187,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 1,
                 science: .optics,
                 explanation: "White light contains all colors, and each color bends (refracts) slightly differently through glass. Blue bends more than red, so colors focus at different points, creating rainbow fringes.",
-                funFact: "Newton invented the reflecting telescope partly to avoid chromatic aberration - mirrors reflect all colors equally. His design is still used in major observatories today!"
+                funFact: "Newton invented the reflecting telescope partly to avoid chromatic aberration - mirrors reflect all colors equally. His design is still used in major observatories today!",
+                hint: HintData(
+                    riddle: "White light hides a rainbow within — when glass bends each color differently, fringes of color appear...",
+                    detailedHint: "White light is made of all colors. Each color refracts (bends) by a slightly different amount through glass, so blue focuses at a different point than red, creating colored fringes.",
+                    activityType: .trueFalse(
+                        statement: "All colors of light bend by the same amount when passing through glass.",
+                        isTrue: false,
+                        explanation: "Different colors refract at different angles — blue bends more than red. This is why prisms create rainbows and why early lenses had colored fringes."
+                    )
+                )
             ),
 
             // ASTRONOMY - Multiple choice
@@ -938,7 +1211,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 1,
                 science: .astronomy,
                 explanation: "Seeing moons orbit Jupiter proved that Earth was not the center of all motion in the universe. If moons could orbit Jupiter, perhaps Earth could orbit the Sun!",
-                funFact: "Galileo originally called them the 'Medician Stars' to honor his patrons. Today we call them the Galilean moons: Io, Europa, Ganymede, and Callisto!"
+                funFact: "Galileo originally called them the 'Medician Stars' to honor his patrons. Today we call them the Galilean moons: Io, Europa, Ganymede, and Callisto!",
+                hint: HintData(
+                    riddle: "Four tiny stars dance around the great king of planets — if they circle Jupiter, perhaps Earth circles the Sun...",
+                    detailedHint: "Seeing moons orbit Jupiter proved that not everything revolves around Earth. This was a direct challenge to the geocentric (Earth-centered) model of the universe.",
+                    activityType: .trueFalse(
+                        statement: "Before Galileo, everyone believed that all celestial bodies orbited the Earth.",
+                        isTrue: true,
+                        explanation: "Correct! The geocentric model placed Earth at the center. Galileo's discovery of moons orbiting Jupiter proved that other centers of motion exist in the cosmos."
+                    )
+                )
             ),
 
             // MATHEMATICS - Multiple choice
@@ -953,7 +1235,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 1,
                 science: .mathematics,
                 explanation: "Magnification = Objective focal length ÷ Eyepiece focal length = 1000mm ÷ 25mm = 40x. This means objects appear 40 times larger than with the naked eye.",
-                funFact: "Higher magnification isn't always better! Too much magnification makes images dim and shaky. The atmosphere limits useful magnification to about 250x for most telescopes."
+                funFact: "Higher magnification isn't always better! Too much magnification makes images dim and shaky. The atmosphere limits useful magnification to about 250x for most telescopes.",
+                hint: HintData(
+                    riddle: "Divide the long eye by the short eye, and the heavens grow closer by that measure...",
+                    detailedHint: "Magnification = Objective focal length / Eyepiece focal length. With 1000mm and 25mm, simply divide the larger number by the smaller.",
+                    activityType: .trueFalse(
+                        statement: "A telescope with higher magnification always produces a better image.",
+                        isTrue: false,
+                        explanation: "Too much magnification makes images dim and shaky. Earth's atmosphere limits useful magnification to about 250x for ground-based telescopes."
+                    )
+                )
             )
         ]
     )
@@ -983,7 +1274,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 1,
                 science: .physics,
                 explanation: "This is a Class 1 lever with mechanical advantage. Moving the fulcrum closer to the load multiplies your force - but you must push farther to move the load a short distance. It's a trade-off!",
-                funFact: "Leonardo filled notebooks with lever designs for cranes, catapults, and even perpetual motion machines (which he eventually proved impossible)!"
+                funFact: "Leonardo filled notebooks with lever designs for cranes, catapults, and even perpetual motion machines (which he eventually proved impossible)!",
+                hint: HintData(
+                    riddle: "Move the balance point closer to the boulder, and a child can lift what a giant cannot...",
+                    detailedHint: "When the fulcrum is closer to the load, you gain mechanical advantage — less force is needed, but you must push through a greater distance.",
+                    activityType: .trueFalse(
+                        statement: "A lever with mechanical advantage lets you use less force AND move the load a greater distance.",
+                        isTrue: false,
+                        explanation: "There is always a trade-off! Less force means you must push through a greater distance. You cannot get something for nothing with simple machines."
+                    )
+                )
             ),
 
             // ENGINEERING - Multiple choice
@@ -998,7 +1298,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 1,
                 science: .engineering,
                 explanation: "When a small gear (fewer teeth) drives a large gear (more teeth), the large gear turns slower but with more turning force (torque). This is called gear reduction - essential for lifting heavy loads!",
-                funFact: "Leonardo designed gearboxes for cranes that could lift multi-ton marble blocks. Some of his designs were so advanced they weren't built until centuries later!"
+                funFact: "Leonardo designed gearboxes for cranes that could lift multi-ton marble blocks. Some of his designs were so advanced they weren't built until centuries later!",
+                hint: HintData(
+                    riddle: "The small wheel spins fast but the large wheel turns slow — yet with greater force it grips the earth...",
+                    detailedHint: "When a small gear drives a large gear, the large gear turns more slowly but with increased torque (turning force). This is called gear reduction.",
+                    activityType: .trueFalse(
+                        statement: "A small gear driving a large gear increases both speed and torque.",
+                        isTrue: false,
+                        explanation: "Gear reduction trades speed for torque. The large gear turns slower but with more turning force — essential for lifting heavy loads."
+                    )
+                )
             ),
 
             // MATERIALS - Multiple choice
@@ -1013,7 +1322,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 1,
                 science: .materials,
                 explanation: "Adding tin to copper creates bronze, which is much harder and has a lower melting point for easier casting. It also resonates beautifully for bells and resists the explosive forces in cannons.",
-                funFact: "The exact bronze recipe was a closely guarded secret! Bell makers had specific ratios (usually 80% copper, 20% tin) that produced the best sound quality."
+                funFact: "The exact bronze recipe was a closely guarded secret! Bell makers had specific ratios (usually 80% copper, 20% tin) that produced the best sound quality.",
+                hint: HintData(
+                    riddle: "Copper alone is soft as gold, but wed it to tin and it becomes a warrior's metal...",
+                    detailedHint: "Alloying (mixing metals) changes their properties. Bronze is harder, stronger, has a lower melting point for casting, and resonates well for bells.",
+                    activityType: .trueFalse(
+                        statement: "Pure copper is harder and stronger than bronze.",
+                        isTrue: false,
+                        explanation: "Bronze (copper + tin) is significantly harder and stronger than pure copper. The tin atoms disrupt copper's crystal structure, preventing layers from sliding."
+                    )
+                )
             ),
 
             // PHYSICS - Multiple choice
@@ -1028,7 +1346,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 1,
                 science: .physics,
                 explanation: "Each pulley that the rope loops around divides the effort. With 4 pulleys sharing the load, you only need 1/4 the force - but you must pull 4 times as much rope!",
-                funFact: "Leonardo designed a self-supporting crane that could lift and place heavy stones without needing external anchoring - revolutionary for cathedral construction!"
+                funFact: "Leonardo designed a self-supporting crane that could lift and place heavy stones without needing external anchoring - revolutionary for cathedral construction!",
+                hint: HintData(
+                    riddle: "Four wheels share the burden equally — each one taking a quarter of the weight upon its shoulder...",
+                    detailedHint: "Each pulley the rope loops around divides the effort further. With 4 pulleys, the load is shared 4 ways, so you need only 1/4 the force — but must pull 4x as much rope.",
+                    activityType: .trueFalse(
+                        statement: "A 4-pulley block and tackle lets you use less force without any trade-off.",
+                        isTrue: false,
+                        explanation: "The trade-off is distance — you must pull 4 times as much rope to move the load the same distance. Energy is conserved!"
+                    )
+                )
             ),
 
             // MATERIALS - Multiple choice
@@ -1043,7 +1370,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 1,
                 science: .materials,
                 explanation: "Fresh wood contains moisture that evaporates over time, causing the wood to shrink unevenly and warp. Seasoning removes this moisture first, ensuring precision parts stay the right size and shape.",
-                funFact: "Oak was seasoned for 2-7 years before use! Leonardo's wooden gear teeth had to be incredibly precise - a warped gear would destroy the whole mechanism."
+                funFact: "Oak was seasoned for 2-7 years before use! Leonardo's wooden gear teeth had to be incredibly precise - a warped gear would destroy the whole mechanism.",
+                hint: HintData(
+                    riddle: "Green wood weeps and twists as it dries — only timber that has shed its tears holds true...",
+                    detailedHint: "Fresh wood contains moisture. As it dries, water evaporates unevenly, causing warping, shrinking, and cracking. Seasoning removes this moisture before the wood is used.",
+                    activityType: .trueFalse(
+                        statement: "Fresh-cut wood is stronger than seasoned wood because it still contains moisture.",
+                        isTrue: false,
+                        explanation: "Seasoned wood is actually stronger and more stable. The moisture in fresh wood causes unpredictable shrinking and warping as it dries."
+                    )
+                )
             ),
 
             // ENGINEERING - Multiple choice
@@ -1058,7 +1394,16 @@ enum ChallengeContent {
                 correctAnswerIndex: 3,
                 science: .engineering,
                 explanation: "Flight requires a specific power-to-weight ratio. Human muscles produce about 0.25 horsepower sustained, but the ornithopter needed several horsepower. Combined with the weight of the frame, flight was impossible.",
-                funFact: "Leonardo eventually realized this limitation and shifted to designing gliders! His hang glider designs actually could have worked - modern builders have successfully flown reconstructions."
+                funFact: "Leonardo eventually realized this limitation and shifted to designing gliders! His hang glider designs actually could have worked - modern builders have successfully flown reconstructions.",
+                hint: HintData(
+                    riddle: "Wings too small, body too heavy, arms too weak — the dream of Icarus meets the truth of numbers...",
+                    detailedHint: "Flight requires a specific power-to-weight ratio. Human muscles produce only about 0.25 horsepower sustained — far less than what flapping flight demands. Combined with frame weight, it was impossible.",
+                    activityType: .trueFalse(
+                        statement: "Leonardo's ornithopter could have flown if built with modern lightweight materials.",
+                        isTrue: false,
+                        explanation: "Even with modern materials, human muscles cannot generate enough sustained power for flapping flight. The fundamental power-to-weight ratio problem remains."
+                    )
+                )
             )
         ]
     )

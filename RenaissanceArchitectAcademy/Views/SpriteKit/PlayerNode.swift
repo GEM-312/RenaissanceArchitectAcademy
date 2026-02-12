@@ -1,31 +1,33 @@
 import SpriteKit
 import SwiftUI
 
-/// Da Vinci stick figure player for the Workshop scene
-/// Drawn with SKShapeNode paths — sepia ink stroke, faint warm brown fill
+/// Apprentice boy player for the Workshop scene
+/// Uses 15-frame sprite animation extracted from Midjourney walking GIF
 class PlayerNode: SKNode {
 
     // MARK: - Properties
 
-    private var head: SKShapeNode!
-    private var torso: SKShapeNode!
-    private var leftArm: SKShapeNode!
-    private var rightArm: SKShapeNode!
-    private var leftLeg: SKShapeNode!
-    private var rightLeg: SKShapeNode!
+    private var sprite: SKSpriteNode!
 
-    private let strokeColor = PlatformColor(RenaissanceColors.sepiaInk)
-    private let fillColor = PlatformColor(RenaissanceColors.warmBrown.opacity(0.25))
-    private let lineWidth: CGFloat = 2.5
+    /// All walk-cycle textures (ApprenticeFrame00–14)
+    private let walkTextures: [SKTexture] = {
+        (0..<15).map { SKTexture(imageNamed: String(format: "ApprenticeFrame%02d", $0)) }
+    }()
+
+    /// Idle texture (first frame)
+    private var idleTexture: SKTexture { walkTextures[0] }
 
     /// Whether the player is currently walking
     private(set) var isWalking = false
+
+    /// Sprite display size
+    private let spriteSize = CGSize(width: 80, height: 80)
 
     // MARK: - Initialization
 
     override init() {
         super.init()
-        setupBody()
+        setupSprite()
         startIdleAnimation()
     }
 
@@ -33,127 +35,43 @@ class PlayerNode: SKNode {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Body Setup
+    // MARK: - Sprite Setup
 
-    private func setupBody() {
-        // Head — circle
-        head = SKShapeNode(circleOfRadius: 12)
-        head.fillColor = fillColor
-        head.strokeColor = strokeColor
-        head.lineWidth = lineWidth
-        head.position = CGPoint(x: 0, y: 50)
-        addChild(head)
-
-        // Torso — vertical line
-        let torsoPath = CGMutablePath()
-        torsoPath.move(to: CGPoint(x: 0, y: 38))
-        torsoPath.addLine(to: CGPoint(x: 0, y: 8))
-        torso = SKShapeNode(path: torsoPath)
-        torso.strokeColor = strokeColor
-        torso.lineWidth = lineWidth
-        addChild(torso)
-
-        // Left arm — from shoulder out left
-        let leftArmPath = CGMutablePath()
-        leftArmPath.move(to: CGPoint(x: 0, y: 32))
-        leftArmPath.addLine(to: CGPoint(x: -14, y: 18))
-        leftArm = SKShapeNode(path: leftArmPath)
-        leftArm.strokeColor = strokeColor
-        leftArm.lineWidth = lineWidth
-        addChild(leftArm)
-
-        // Right arm — from shoulder out right
-        let rightArmPath = CGMutablePath()
-        rightArmPath.move(to: CGPoint(x: 0, y: 32))
-        rightArmPath.addLine(to: CGPoint(x: 14, y: 18))
-        rightArm = SKShapeNode(path: rightArmPath)
-        rightArm.strokeColor = strokeColor
-        rightArm.lineWidth = lineWidth
-        addChild(rightArm)
-
-        // Left leg — from hip out left
-        let leftLegPath = CGMutablePath()
-        leftLegPath.move(to: CGPoint(x: 0, y: 8))
-        leftLegPath.addLine(to: CGPoint(x: -10, y: -14))
-        leftLeg = SKShapeNode(path: leftLegPath)
-        leftLeg.strokeColor = strokeColor
-        leftLeg.lineWidth = lineWidth
-        addChild(leftLeg)
-
-        // Right leg — from hip out right
-        let rightLegPath = CGMutablePath()
-        rightLegPath.move(to: CGPoint(x: 0, y: 8))
-        rightLegPath.addLine(to: CGPoint(x: 10, y: -14))
-        rightLeg = SKShapeNode(path: rightLegPath)
-        rightLeg.strokeColor = strokeColor
-        rightLeg.lineWidth = lineWidth
-        addChild(rightLeg)
+    private func setupSprite() {
+        sprite = SKSpriteNode(texture: idleTexture, size: spriteSize)
+        sprite.anchorPoint = CGPoint(x: 0.5, y: 0.0) // bottom-center anchor so feet stay on ground
+        addChild(sprite)
     }
 
     // MARK: - Idle Animation (gentle breathing scale)
 
     private func startIdleAnimation() {
+        sprite.removeAction(forKey: "walk")
+
+        // Show idle frame
+        sprite.texture = idleTexture
+
         let breatheIn = SKAction.scaleY(to: 1.02, duration: 1.5)
         breatheIn.timingMode = .easeInEaseOut
         let breatheOut = SKAction.scaleY(to: 1.0, duration: 1.5)
         breatheOut.timingMode = .easeInEaseOut
         let breathe = SKAction.sequence([breatheIn, breatheOut])
-        run(SKAction.repeatForever(breathe), withKey: "idle")
+        sprite.run(SKAction.repeatForever(breathe), withKey: "idle")
     }
 
     // MARK: - Walking Animation
 
     private func startWalkAnimation() {
-        removeAction(forKey: "idle")
+        sprite.removeAction(forKey: "idle")
+        sprite.yScale = 1.0 // reset breathing scale
 
-        // Legs alternate ±15 degrees
-        let legAngle: CGFloat = .pi / 12  // 15 degrees
-        let legSwingDuration: TimeInterval = 0.2
-
-        let leftLegForward = SKAction.rotate(toAngle: legAngle, duration: legSwingDuration)
-        let leftLegBack = SKAction.rotate(toAngle: -legAngle, duration: legSwingDuration)
-        let leftLegCycle = SKAction.sequence([leftLegForward, leftLegBack])
-        leftLeg.run(SKAction.repeatForever(leftLegCycle), withKey: "walk")
-
-        let rightLegForward = SKAction.rotate(toAngle: -legAngle, duration: legSwingDuration)
-        let rightLegBack = SKAction.rotate(toAngle: legAngle, duration: legSwingDuration)
-        let rightLegCycle = SKAction.sequence([rightLegForward, rightLegBack])
-        rightLeg.run(SKAction.repeatForever(rightLegCycle), withKey: "walk")
-
-        // Arms swing ±10 degrees (opposite to legs)
-        let armAngle: CGFloat = .pi / 18  // 10 degrees
-        let leftArmForward = SKAction.rotate(toAngle: -armAngle, duration: legSwingDuration)
-        let leftArmBack = SKAction.rotate(toAngle: armAngle, duration: legSwingDuration)
-        let leftArmCycle = SKAction.sequence([leftArmForward, leftArmBack])
-        leftArm.run(SKAction.repeatForever(leftArmCycle), withKey: "walk")
-
-        let rightArmForward = SKAction.rotate(toAngle: armAngle, duration: legSwingDuration)
-        let rightArmBack = SKAction.rotate(toAngle: -armAngle, duration: legSwingDuration)
-        let rightArmCycle = SKAction.sequence([rightArmForward, rightArmBack])
-        rightArm.run(SKAction.repeatForever(rightArmCycle), withKey: "walk")
-
-        // Subtle vertical bounce on the whole node
-        let bounceUp = SKAction.moveBy(x: 0, y: 3, duration: legSwingDuration)
-        bounceUp.timingMode = .easeOut
-        let bounceDown = SKAction.moveBy(x: 0, y: -3, duration: legSwingDuration)
-        bounceDown.timingMode = .easeIn
-        let bounceCycle = SKAction.sequence([bounceUp, bounceDown])
-        run(SKAction.repeatForever(bounceCycle), withKey: "bounce")
+        // Match original GIF pace: 5.21s across 15 frames ≈ 0.347s per frame
+        let walkAction = SKAction.animate(with: walkTextures, timePerFrame: 0.347, resize: false, restore: false)
+        sprite.run(SKAction.repeatForever(walkAction), withKey: "walk")
     }
 
     private func stopWalkAnimation() {
-        leftLeg.removeAction(forKey: "walk")
-        rightLeg.removeAction(forKey: "walk")
-        leftArm.removeAction(forKey: "walk")
-        rightArm.removeAction(forKey: "walk")
-        removeAction(forKey: "bounce")
-
-        // Reset rotations
-        leftLeg.zRotation = 0
-        rightLeg.zRotation = 0
-        leftArm.zRotation = 0
-        rightArm.zRotation = 0
-
+        sprite.removeAction(forKey: "walk")
         startIdleAnimation()
     }
 
@@ -190,9 +108,69 @@ class PlayerNode: SKNode {
         run(SKAction.sequence(actions), withKey: "walkTo")
     }
 
+    // MARK: - Walk Along Waypoint Path
+
+    /// Walk through a sequence of waypoints, turning at each corner.
+    /// Uses the same 30-step lerp per segment as `walkTo`.
+    func walkPath(_ waypoints: [CGPoint], speed: CGFloat = 200, completion: (() -> Void)? = nil) {
+        guard !waypoints.isEmpty else {
+            completion?()
+            return
+        }
+
+        isWalking = true
+        startWalkAnimation()
+
+        var allActions: [SKAction] = []
+        var currentPos = position
+
+        for waypoint in waypoints {
+            let segStart = currentPos
+            let dx = waypoint.x - segStart.x
+            let dy = waypoint.y - segStart.y
+            let distance = hypot(dx, dy)
+            guard distance > 1 else { continue }
+
+            let duration = max(0.15, TimeInterval(distance / speed))
+            let steps = max(5, Int(duration / 0.033))  // ~30fps steps
+            let stepDuration = duration / Double(steps)
+            let stepDx = dx / CGFloat(steps)
+            let stepDy = dy / CGFloat(steps)
+
+            // Face new direction at the start of each segment
+            let facingRight = dx > 0
+            let turnAction = SKAction.run { [weak self] in
+                self?.setFacingDirection(facingRight)
+            }
+            allActions.append(turnAction)
+
+            for i in 1...steps {
+                let step = SKAction.run { [weak self] in
+                    self?.position = CGPoint(
+                        x: segStart.x + stepDx * CGFloat(i),
+                        y: segStart.y + stepDy * CGFloat(i)
+                    )
+                }
+                allActions.append(step)
+                allActions.append(SKAction.wait(forDuration: stepDuration))
+            }
+
+            currentPos = waypoint
+        }
+
+        allActions.append(SKAction.run { [weak self] in
+            self?.isWalking = false
+            self?.stopWalkAnimation()
+            completion?()
+        })
+
+        run(SKAction.sequence(allActions), withKey: "walkTo")
+    }
+
     // MARK: - Facing Direction
 
     func setFacingDirection(_ right: Bool) {
-        xScale = right ? abs(xScale) : -abs(xScale)
+        // Sprite naturally faces left, so flip when walking right
+        xScale = right ? -abs(xScale) : abs(xScale)
     }
 }

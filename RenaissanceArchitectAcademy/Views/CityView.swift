@@ -12,6 +12,7 @@ struct CityView: View {
     @State private var showWorkshop = false
 
     var filterEra: Era?
+    var workshopState: WorkshopState = WorkshopState()
 
     // Adaptive grid columns based on screen size
     private var columns: [GridItem] {
@@ -134,11 +135,11 @@ struct CityView: View {
         #endif
         #if os(iOS)
         .fullScreenCover(isPresented: $showWorkshop) {
-            WorkshopView()
+            WorkshopView(workshop: workshopState)
         }
         #else
         .sheet(isPresented: $showWorkshop) {
-            WorkshopView()
+            WorkshopView(workshop: workshopState)
                 .frame(minWidth: 900, minHeight: 600)
         }
         #endif
