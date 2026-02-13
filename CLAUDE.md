@@ -33,6 +33,12 @@ RenaissanceArchitectAcademy/
 │   │   ├── State*.imageset/                  # Building state icons
 │   │   ├── BirdFrame00-12.imageset/         # 13-frame flying bird animation
 │   │   ├── SittingBird1-2.imageset/         # 2-frame sitting bird animation
+│   │   ├── ApprenticeFrame00-14.imageset/   # 15-frame apprentice walk animation
+│   │   ├── WorkshopTerrain.imageset/        # Workshop outdoor terrain (2912x1632)
+│   │   ├── WorkshopBackground.imageset/     # Workshop interior room background
+│   │   ├── Station*.imageset/               # 6 station sprites (Quarry,River,Volcano,ClayPit,Mine,Forest)
+│   │   ├── VolcanoFrame00-14.imageset/      # 15-frame volcano animation
+│   │   ├── Interior*.imageset/              # 4 interior furniture (Furnace,Workbench,PigmentTable,Shelf)
 │   │   └── FlyingBird1-2.imageset/          # Legacy flying bird (unused)
 │   ├── Fonts/                                # Custom Renaissance fonts
 │   │   ├── Cinzel-*.ttf                      # Titles
@@ -55,8 +61,9 @@ RenaissanceArchitectAcademy/
 │   │   ├── MascotDialogueView.swift        # Mascot dialogue + choice buttons
 │   │   ├── MaterialPuzzleView.swift        # Match-3 puzzle for collecting materials
 │   │   ├── MoleculeView.swift              # Chemical structure diagrams (7 molecules)
-│   │   ├── WorkshopView.swift               # Workshop entry (wraps WorkshopMapView)
-│   │   ├── WorkshopMapView.swift            # SwiftUI wrapper for WorkshopScene + overlays
+│   │   ├── WorkshopView.swift               # Workshop entry (outdoor/indoor toggle)
+│   │   ├── WorkshopMapView.swift            # SwiftUI wrapper for outdoor WorkshopScene
+│   │   ├── WorkshopInteriorView.swift       # Interior crafting room (workbench, furnace, pigment, shelf)
 │   │   └── SpriteKit/                      # SpriteKit scenes
 │   │       ├── CityScene.swift             # Main SKScene with buildings, rivers, mascot position
 │   │       ├── BuildingNode.swift          # Tappable building sprites
@@ -586,6 +593,12 @@ RenaissanceColors.blueprintBlue   // #4169E1 - Grid lines
 - [x] **Waypoint pathfinding (64-node Dijkstra) for Workshop**
 - [x] **Apprentice 15-frame walk animation (ApprenticeFrame00-14)**
 - [x] **Editor mode: drag waypoints, toggle edges, dump positions**
+- [x] **Workshop terrain (separate from city terrain)**
+- [x] **6 station sprite images (quarry, river, volcano, clay pit, mine, forest)**
+- [x] **Volcano 15-frame animation (VolcanoFrame00-14 at 15fps)**
+- [x] **Interior crafting room (WorkshopInteriorView) with 4 tappable stations**
+- [x] **Outdoor → indoor transition (workbench/furnace enters crafting room)**
+- [x] **Interior furniture art (furnace, workbench, pigment table, storage shelf)**
 
 ### Session Log - Feb 6, 2025
 - Fixed mascot consistency: Now using SwiftUI overlay instead of SpriteKit rendering
@@ -721,39 +734,73 @@ Workshop apprentice walks along a waypoint road network instead of straight line
 4. Dijkstra with virtual start/end nodes finds shortest path
 5. `playerNode.walkPath(path, speed: 200)` walks segment-by-segment
 
-## Workshop Crafting Redesign (Planned)
+## Workshop Crafting System (Implemented Feb 13, 2025)
 
-### Current State
-Workshop has 10 SpriteKit stations in one scene. Player walks between them, collects materials, mixes at workbench, fires in furnace — all via SwiftUI overlays on top of the SpriteKit map.
+### Architecture: Outdoor + Indoor
+Split into **outdoor gathering** (SpriteKit map) + **indoor crafting** (SwiftUI view):
 
-### Planned Redesign
-Split into **outdoor gathering** (SpriteKit map) + **indoor crafting** (separate SwiftUI views):
+**Outdoor Map (WorkshopScene + WorkshopMapView):**
+- Apprentice walks between 8 resource stations collecting materials
+- 6 stations have Midjourney sprite images (quarry, river, volcano, clay pit, mine, forest)
+- Volcano has 15-frame looping animation (VolcanoFrame00-14 at 15fps)
+- Walking to Workbench or Furnace → transitions to interior crafting room
+- WorkshopTerrain.png (2912x1632) — dedicated terrain separate from city map
 
-**Outdoor Map (WorkshopScene)** — Apprentice walks between resource stations to collect raw materials:
-- Quarry, River, Volcano, Clay Pit, Mine, Forest, Market, Pigment Table
-- Tap station → collection overlay → materials go to inventory
-- Walk to Workbench or Furnace door → transitions to indoor crafting view
+**Interior Room (WorkshopInteriorView):**
+- WorkshopBackground.png fills screen — Leonardo's workshop room interior
+- 4 tappable furniture stations positioned in the room:
+  - **Workbench** (InteriorWorkbench) — 4 mixing slots, material picker, recipe detection, Mix button
+  - **Furnace** (InteriorFurnace) — temperature picker (Low/Medium/High), FIRE button, progress bar
+  - **Pigment Table** (InteriorPigmentTable) — shows pigment recipes with ingredient checklist
+  - **Storage Shelf** (InteriorShelf) — full inventory display of raw materials + crafted items
+- Educational "Did You Know?" popup after successful crafting
+- "Back to Workshop" button returns to outdoor map
 
-**Workbench View** (new SwiftUI view) — Mixing/combining materials:
-- Drag materials from inventory into mixing slots
-- Recipe auto-detection when correct combination placed
-- Educational text about the chemistry of each recipe
+### Navigation Flow
+```
+WorkshopView (manages outdoor/indoor state)
+├── WorkshopMapView (outdoor - SpriteKit)
+│   ├── Collect materials from resource stations
+│   └── Walk to Workbench/Furnace → showInterior = true
+└── WorkshopInteriorView (indoor - SwiftUI)
+    ├── Tap furniture → crafting overlay
+    └── "Back to Workshop" → showInterior = false
+```
 
-**Furnace View** (new SwiftUI view) — Firing/heating crafted items:
-- Temperature picker (different recipes need different temps)
-- Fire button with animation
-- "Did You Know?" educational popup after successful firing
+### Station Sprite Images
+| Station | Asset Name | Source Image |
+|---------|-----------|--------------|
+| Quarry | StationQuarry | LimestoneQuarry.png |
+| River | StationRiver | FreshWaterSpring.png |
+| Volcano | StationVolcano | Volcano.png (+ 15-frame animation) |
+| Clay Pit | StationClayPit | ClayPit.png |
+| Mine | StationMine | Mining.png |
+| Forest | StationForest | Forest.png |
+| Pigment Table | (shape fallback) | — |
+| Market | (shape fallback) | — |
+| Workbench | (shape fallback) | — |
+| Furnace | (shape fallback) | — |
 
-**Pigment Table View** (new SwiftUI view) — Color mixing for paints/dyes:
-- Mix base pigments to create colors
-- Used for decorating/finishing buildings
+ResourceNode uses `stationType.imageName` to load sprites (120pt SKSpriteNode). Falls back to hand-drawn SKShapeNode paths for stations without images.
+
+### Session Log - Feb 13, 2025
+- **Workshop terrain** — WorkshopTerrain.png replaces shared Terrain.png for workshop scene
+- **6 station sprite images** — Midjourney art resized to 512px, displayed as 120pt SKSpriteNode
+- **Volcano 15-frame animation** — extracted 125 GIF frames, selected 15 at 512x512, SKAction.animate at 15fps
+  - Pauses when depleted, resumes when restocked
+  - Frames need background removal in Photoshop (Styles/volcano_frames/selected/)
+- **Interior crafting room** — new WorkshopInteriorView.swift with room background + 4 tappable furniture
+  - Workbench: 4 mixing slots + material picker + recipe detection
+  - Furnace: temperature picker + fire button + progress animation
+  - Pigment Table: shows pigment recipes with ingredient availability
+  - Storage Shelf: full inventory grid of raw materials + crafted items
+- **Outdoor→indoor transition** — WorkshopView manages state, slide animation between views
+- **Updated .gitignore** — added volcano_frames/, apprentice_frames/, bird_turn_frames/ to exclusions
 
 ### Next Steps
-- [ ] New workshop terrain (Gemini art)
+- [ ] Remove backgrounds from volcano frames (Marina in Photoshop)
 - [ ] Adjust 64 waypoints to match new terrain in editor mode
-- [ ] Workbench crafting view (SwiftUI)
-- [ ] Furnace firing view (SwiftUI)
-- [ ] Pigment Table mixing view (SwiftUI)
+- [ ] Add station sprites for remaining 4 stations (pigment table, market, workbench, furnace)
 - [ ] Create challenges for remaining 11 buildings
 - [ ] Add building images to map
 - [ ] Rising answer mechanic (LinguaLeo-style)
