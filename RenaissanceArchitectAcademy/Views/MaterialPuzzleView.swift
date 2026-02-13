@@ -40,6 +40,42 @@ struct MaterialFormula {
         Array(requiredElements.keys)
     }
 
+    /// Chemistry-focused hint data for the HintOverlayView
+    var hintData: HintData {
+        switch name {
+        case "Lime Mortar":
+            return HintData(
+                riddle: "When fire-born powder meets the river's gift, a new stone rises from the mist...",
+                detailedHint: "Calcium oxide (quicklime) reacts with water in an exothermic reaction to form calcium hydroxide — the binding agent in Roman mortar. Collect Ca, O, and H atoms to recreate this ancient recipe.",
+                activityType: .trueFalse(
+                    statement: "Quicklime (CaO) is cold when mixed with water.",
+                    isTrue: false,
+                    explanation: "The reaction is exothermic — it releases enough heat to boil water!"
+                )
+            )
+        case "Roman Concrete":
+            return HintData(
+                riddle: "Three powders from earth, fire, and ash — the ancients mixed what time could never smash...",
+                detailedHint: "Roman concrete combines slaked lime with volcanic ash (pozzolana). The silica and alumina in the ash react with calcium hydroxide to form a cement that actually strengthens underwater. Collect Ca, Si, Al, and O atoms.",
+                activityType: .trueFalse(
+                    statement: "Roman concrete weakens when submerged in seawater.",
+                    isTrue: false,
+                    explanation: "It gets stronger — seawater helps mineral crystals grow inside the concrete!"
+                )
+            )
+        default: // Venetian Glass
+            return HintData(
+                riddle: "Sand kissed by salt and kissed by flame becomes a window none can name...",
+                detailedHint: "Silica (sand) has a very high melting point (~1,700°C). Adding soda ash (sodium oxide) lowers it dramatically to ~1,000°C, letting Murano glassmakers shape molten glass at workable temperatures. Collect Si, O, and Na atoms.",
+                activityType: .trueFalse(
+                    statement: "Pure sand melts easily at low temperatures to form glass.",
+                    isTrue: false,
+                    explanation: "Pure silica melts at ~1,700°C — soda ash lowers the melting point to ~1,000°C!"
+                )
+            )
+        }
+    }
+
     // CaO + H₂O → Ca(OH)₂ (x3 for building materials)
     // Ca: 3, O: 6, H: 6
     static let limeMortar = MaterialFormula(
@@ -75,13 +111,14 @@ struct MaterialFormula {
 struct MaterialPuzzleView: View {
     let buildingName: String
     let formula: MaterialFormula
+    let workshopState: WorkshopState?
     let onComplete: () -> Void
     let onDismiss: () -> Void
 
     @State private var grid: [[ElementTile]] = []
     @State private var collectedElements: [String: Int] = [:]
     @State private var showSuccess = false
-    @State private var showHint = false
+    @State private var showHintOverlay = false
     @State private var revealedProduct = false
     @State private var isAnimating = false  // Prevent interactions during animations
 
@@ -195,6 +232,15 @@ struct MaterialPuzzleView: View {
                     .padding(.bottom, 100)
                 }
                 .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+
+            // Chemistry hint overlay
+            if showHintOverlay {
+                HintOverlayView(
+                    hintData: formula.hintData,
+                    workshopState: workshopState,
+                    onDismiss: { showHintOverlay = false }
+                )
             }
         }
         .onAppear {
@@ -463,10 +509,10 @@ struct MaterialPuzzleView: View {
     }
 
     private var hintButton: some View {
-        Button(action: { showHint.toggle() }) {
+        Button(action: { showHintOverlay = true }) {
             HStack {
-                Image(systemName: "lightbulb")
-                Text(showHint ? "Drag tiles to swap them - line up 3 in a row!" : "Need a hint?")
+                Image(systemName: "lightbulb.fill")
+                Text("Need a hint?")
             }
             .font(.custom("EBGaramond-Italic", size: 14))
             .foregroundColor(RenaissanceColors.warmBrown)
@@ -1007,6 +1053,7 @@ struct TileView: View {
     MaterialPuzzleView(
         buildingName: "Pantheon",
         formula: .limeMortar,
+        workshopState: WorkshopState(),
         onComplete: {},
         onDismiss: {}
     )

@@ -81,5 +81,11 @@ RenaissanceArchitectAcademy/UINavigation/
 RenaissanceArchitectAcademy/GameStateIcons/
 RenaissanceArchitectAcademy/OriginalAssets_Backup/
 
-# Raw bird animation frames (125 GIF extracts + working folders)
+# Raw animation frames (GIF extracts + working folders)
 RenaissanceArchitectAcademy/Styles/bird_frames/
+RenaissanceArchitectAcademy/Styles/volcano_frames/
+RenaissanceArchitectAcademy/Styles/apprentice_frames/
+RenaissanceArchitectAcademy/Styles/bird_turn_frames/
+RenaissanceArchitectAcademy/Styles/*.mp4
+RenaissanceArchitectAcademy/*.gif
+Styles/

@@ -1,30 +1,44 @@
 import SwiftUI
 
-/// 3-tier hint overlay: riddle → choose method (craft/earn) → detailed hint scroll
-/// Phases: riddle → chooseMethod → crafting → trueFalse → hintScroll
+/// 5-phase hint overlay: riddle → choose method → craft/earn → hint scroll → done
+/// Visual: phase progress bar at top, mascot, content card, action button
 struct HintOverlayView: View {
     let hintData: HintData
     let workshopState: WorkshopState?
     let onDismiss: () -> Void
 
-    enum Phase {
-        case riddle
-        case chooseMethod
-        case crafting
-        case trueFalse
-        case hintScroll
+    enum Phase: Int, CaseIterable {
+        case riddle = 1
+        case chooseMethod = 2
+        case crafting = 3   // also used for trueFalse
+        case hintScroll = 4
+        case done = 5
     }
 
     @State private var phase: Phase = .riddle
     @State private var showContent = false
     @State private var trueFalseAnswer: Bool? = nil
     @State private var trueFalseShake = false
-    @State private var craftingMaterials: [(String, CGFloat)] = []  // (icon, offset)
+    @State private var craftingMaterials: [(String, CGFloat)] = []
     @State private var showScrollReveal = false
+    @State private var phaseDirection: Edge = .trailing
 
-    // How many total raw materials the player has
+    // True when user chose "Earn by Activity" (true/false path)
+    @State private var isTrueFalsePath = false
+
     private var totalMaterials: Int {
         workshopState?.rawMaterials.values.reduce(0, +) ?? 0
+    }
+
+    /// Which step number is active (for the progress bar)
+    private var activeStep: Int {
+        switch phase {
+        case .riddle: return 1
+        case .chooseMethod: return 2
+        case .crafting: return 3
+        case .hintScroll: return 4
+        case .done: return 5
+        }
     }
 
     var body: some View {
@@ -34,25 +48,20 @@ struct HintOverlayView: View {
                 .ignoresSafeArea()
                 .onTapGesture { onDismiss() }
 
-            VStack(spacing: 20) {
-                Spacer()
+            VStack(spacing: 0) {
+                // Phase progress bar
+                phaseProgressBar
+                    .padding(.top, 40)
+                    .padding(.bottom, 20)
 
-                switch phase {
-                case .riddle:
-                    riddlePhase
-                case .chooseMethod:
-                    chooseMethodPhase
-                case .crafting:
-                    craftingPhase
-                case .trueFalse:
-                    trueFalsePhase
-                case .hintScroll:
-                    hintScrollPhase
-                }
+                // Mascot
+                mascotSection
+                    .padding(.bottom, 12)
 
-                Spacer()
+                // Phase content card
+                phaseContent
+                    .padding(.horizontal, 32)
             }
-            .padding(.horizontal, 32)
         }
         .onAppear {
             withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
@@ -61,167 +70,266 @@ struct HintOverlayView: View {
         }
     }
 
-    // MARK: - Phase 1: Riddle (Free)
+    // MARK: - Phase Progress Bar
 
-    private var riddlePhase: some View {
-        VStack(spacing: 20) {
-            // Bird mascot
-            BirdCharacter(isSitting: true)
-                .frame(width: 140, height: 140)
-                .scaleEffect(showContent ? 1 : 0.3)
-                .opacity(showContent ? 1 : 0)
+    private var phaseProgressBar: some View {
+        let labels = ["Riddle", "Choose", isTrueFalsePath ? "Earn" : "Craft", "Hint", "Done"]
 
-            // Dialogue bubble with riddle
-            VStack(spacing: 16) {
-                HStack(spacing: 6) {
-                    Image(systemName: "sparkles")
-                        .foregroundStyle(RenaissanceColors.goldSuccess)
-                    Text("A Riddle for You...")
-                        .font(.custom("Cinzel-Bold", size: 18))
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
+        return HStack(spacing: 0) {
+            ForEach(1...5, id: \.self) { step in
+                if step > 1 {
+                    // Connecting line
+                    Rectangle()
+                        .fill(step <= activeStep ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray.opacity(0.3))
+                        .frame(height: 2)
+                        .animation(.easeInOut(duration: 0.3), value: activeStep)
                 }
 
-                Text(hintData.riddle)
-                    .font(.custom("EBGaramond-Italic", size: 18))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.9))
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(4)
-                    .padding(.horizontal, 8)
+                // Step circle + label
+                VStack(spacing: 4) {
+                    ZStack {
+                        Circle()
+                            .fill(
+                                step < activeStep
+                                    ? RenaissanceColors.sageGreen
+                                    : step == activeStep
+                                        ? RenaissanceColors.goldSuccess
+                                        : Color.clear
+                            )
+                            .frame(width: 32, height: 32)
 
-                Divider()
-                    .background(RenaissanceColors.ochre.opacity(0.3))
+                        Circle()
+                            .stroke(
+                                step < activeStep
+                                    ? RenaissanceColors.sageGreen
+                                    : step == activeStep
+                                        ? RenaissanceColors.goldSuccess
+                                        : RenaissanceColors.stoneGray.opacity(0.4),
+                                lineWidth: 2
+                            )
+                            .frame(width: 32, height: 32)
 
-                // Two buttons
-                VStack(spacing: 10) {
-                    Button {
-                        onDismiss()
-                    } label: {
-                        hintChoiceLabel(icon: "lightbulb.fill", text: "That helps!", color: RenaissanceColors.sageGreen)
-                    }
-                    .buttonStyle(.plain)
-
-                    Button {
-                        withAnimation(.spring(response: 0.4)) {
-                            phase = .chooseMethod
+                        if step < activeStep {
+                            // Completed: checkmark
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundStyle(.white)
+                        } else {
+                            // Number
+                            Text("\(step)")
+                                .font(.custom("Cinzel-Bold", size: 13))
+                                .foregroundStyle(
+                                    step == activeStep ? .white : RenaissanceColors.stoneGray.opacity(0.6)
+                                )
                         }
-                    } label: {
-                        hintChoiceLabel(icon: "arrow.right.circle", text: "I need more help...", color: RenaissanceColors.renaissanceBlue)
                     }
-                    .buttonStyle(.plain)
+                    .shadow(
+                        color: step == activeStep ? RenaissanceColors.goldSuccess.opacity(0.5) : .clear,
+                        radius: 6
+                    )
+                    .scaleEffect(step == activeStep ? 1.15 : 1.0)
+                    .animation(.spring(response: 0.4, dampingFraction: 0.6), value: activeStep)
+
+                    Text(labels[step - 1])
+                        .font(.custom("EBGaramond-Regular", size: 10))
+                        .foregroundStyle(
+                            step == activeStep
+                                ? RenaissanceColors.goldSuccess
+                                : step < activeStep
+                                    ? RenaissanceColors.sageGreen
+                                    : RenaissanceColors.stoneGray.opacity(0.5)
+                        )
                 }
             }
-            .padding(24)
-            .background(DialogueBubble())
-            .opacity(showContent ? 1 : 0)
-            .offset(y: showContent ? 0 : 30)
         }
+        .padding(.horizontal, 40)
     }
 
-    // MARK: - Phase 2: Choose Method
+    // MARK: - Mascot Section
 
-    private var chooseMethodPhase: some View {
-        VStack(spacing: 20) {
-            BirdCharacter(isSitting: true)
-                .frame(width: 120, height: 120)
+    private var mascotSection: some View {
+        BirdCharacter(isSitting: true)
+            .frame(width: 140, height: 140)
+            .scaleEffect(showContent ? 1 : 0.3)
+            .opacity(showContent ? 1 : 0)
+    }
 
-            VStack(spacing: 16) {
-                Text("How would you like your hint?")
+    // MARK: - Phase Content (with slide transition)
+
+    @ViewBuilder
+    private var phaseContent: some View {
+        Group {
+            switch phase {
+            case .riddle:
+                riddleCard
+            case .chooseMethod:
+                chooseMethodCard
+            case .crafting:
+                if isTrueFalsePath {
+                    trueFalseCard
+                } else {
+                    craftingCard
+                }
+            case .hintScroll:
+                hintScrollCard
+            case .done:
+                EmptyView()
+            }
+        }
+        .transition(.asymmetric(
+            insertion: .move(edge: .trailing).combined(with: .opacity),
+            removal: .move(edge: .leading).combined(with: .opacity)
+        ))
+        .id(phase)
+    }
+
+    // MARK: - Phase 1: Riddle Card
+
+    private var riddleCard: some View {
+        VStack(spacing: 16) {
+            HStack(spacing: 6) {
+                Image(systemName: "sparkles")
+                    .foregroundStyle(RenaissanceColors.goldSuccess)
+                Text("A Riddle for You...")
                     .font(.custom("Cinzel-Bold", size: 18))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
+            }
 
-                // Craft option
+            Text(hintData.riddle)
+                .font(.custom("EBGaramond-Italic", size: 18))
+                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.9))
+                .multilineTextAlignment(.center)
+                .lineSpacing(4)
+                .padding(.horizontal, 8)
+
+            Divider()
+                .background(RenaissanceColors.ochre.opacity(0.3))
+
+            VStack(spacing: 10) {
                 Button {
-                    withAnimation(.spring(response: 0.4)) {
-                        deductMaterials()
-                        phase = .crafting
-                    }
+                    onDismiss()
                 } label: {
-                    HStack(spacing: 12) {
-                        Image(systemName: "hammer.fill")
-                            .foregroundStyle(RenaissanceColors.warmBrown)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Craft a Hint Scroll")
-                                .font(.custom("EBGaramond-Regular", size: 17))
-                                .foregroundStyle(RenaissanceColors.sepiaInk)
-                            Text("Costs 3 raw materials")
-                                .font(.custom("EBGaramond-Italic", size: 13))
-                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
-                        }
-                        Spacer()
-                        if totalMaterials >= 3 {
-                            Image(systemName: "chevron.right")
-                                .foregroundStyle(RenaissanceColors.stoneGray)
-                        } else {
-                            Text("Not enough")
-                                .font(.custom("EBGaramond-Italic", size: 12))
-                                .foregroundStyle(RenaissanceColors.errorRed)
-                        }
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 14)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(totalMaterials >= 3 ? RenaissanceColors.parchment : RenaissanceColors.parchment.opacity(0.5))
-                            .shadow(color: RenaissanceColors.warmBrown.opacity(0.2), radius: 4, y: 2)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(RenaissanceColors.ochre.opacity(0.5), lineWidth: 1)
-                    )
+                    hintChoiceLabel(icon: "lightbulb.fill", text: "That helps!", color: RenaissanceColors.sageGreen)
                 }
                 .buttonStyle(.plain)
-                .disabled(totalMaterials < 3)
-                .opacity(totalMaterials >= 3 ? 1 : 0.6)
 
-                // Earn option
                 Button {
                     withAnimation(.spring(response: 0.4)) {
-                        phase = .trueFalse
+                        phase = .chooseMethod
                     }
                 } label: {
-                    HStack(spacing: 12) {
-                        Image(systemName: "brain.head.profile")
-                            .foregroundStyle(RenaissanceColors.renaissanceBlue)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Earn by Activity")
-                                .font(.custom("EBGaramond-Regular", size: 17))
-                                .foregroundStyle(RenaissanceColors.sepiaInk)
-                            Text("Answer a true/false question")
-                                .font(.custom("EBGaramond-Italic", size: 13))
-                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
-                        }
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                            .foregroundStyle(RenaissanceColors.stoneGray)
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 14)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(RenaissanceColors.parchment)
-                            .shadow(color: RenaissanceColors.warmBrown.opacity(0.2), radius: 4, y: 2)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(RenaissanceColors.ochre.opacity(0.5), lineWidth: 1)
-                    )
+                    hintChoiceLabel(icon: "arrow.right.circle", text: "I need more help...", color: RenaissanceColors.renaissanceBlue)
                 }
                 .buttonStyle(.plain)
             }
-            .padding(24)
-            .background(DialogueBubble())
         }
+        .padding(24)
+        .background(DialogueBubble())
+        .opacity(showContent ? 1 : 0)
+        .offset(y: showContent ? 0 : 30)
     }
 
-    // MARK: - Phase 3: Crafting Animation
+    // MARK: - Phase 2: Choose Method Card
 
-    private var craftingPhase: some View {
+    private var chooseMethodCard: some View {
+        VStack(spacing: 16) {
+            Text("How would you like your hint?")
+                .font(.custom("Cinzel-Bold", size: 18))
+                .foregroundStyle(RenaissanceColors.sepiaInk)
+
+            // Craft option
+            Button {
+                withAnimation(.spring(response: 0.4)) {
+                    isTrueFalsePath = false
+                    deductMaterials()
+                    phase = .crafting
+                }
+            } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: "hammer.fill")
+                        .foregroundStyle(RenaissanceColors.warmBrown)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Craft a Hint Scroll")
+                            .font(.custom("EBGaramond-Regular", size: 17))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                        Text("Costs 2 raw materials")
+                            .font(.custom("EBGaramond-Italic", size: 13))
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+                    }
+                    Spacer()
+                    if totalMaterials >= 2 {
+                        Image(systemName: "chevron.right")
+                            .foregroundStyle(RenaissanceColors.stoneGray)
+                    } else {
+                        Text("Not enough")
+                            .font(.custom("EBGaramond-Italic", size: 12))
+                            .foregroundStyle(RenaissanceColors.errorRed)
+                    }
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 14)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(totalMaterials >= 2 ? RenaissanceColors.parchment : RenaissanceColors.parchment.opacity(0.5))
+                        .shadow(color: RenaissanceColors.warmBrown.opacity(0.2), radius: 4, y: 2)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(RenaissanceColors.ochre.opacity(0.5), lineWidth: 1)
+                )
+            }
+            .buttonStyle(.plain)
+            .disabled(totalMaterials < 2)
+            .opacity(totalMaterials >= 2 ? 1 : 0.6)
+
+            // Earn option
+            Button {
+                withAnimation(.spring(response: 0.4)) {
+                    isTrueFalsePath = true
+                    phase = .crafting
+                }
+            } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: "brain.head.profile")
+                        .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Earn by Activity")
+                            .font(.custom("EBGaramond-Regular", size: 17))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                        Text("Answer a true/false question")
+                            .font(.custom("EBGaramond-Italic", size: 13))
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .foregroundStyle(RenaissanceColors.stoneGray)
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 14)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(RenaissanceColors.parchment)
+                        .shadow(color: RenaissanceColors.warmBrown.opacity(0.2), radius: 4, y: 2)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(RenaissanceColors.ochre.opacity(0.5), lineWidth: 1)
+                )
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(24)
+        .background(DialogueBubble())
+    }
+
+    // MARK: - Phase 3a: Crafting Animation Card
+
+    private var craftingCard: some View {
         VStack(spacing: 24) {
             Text("Crafting Hint Scroll...")
                 .font(.custom("Cinzel-Bold", size: 20))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
-            // Floating material icons
             ZStack {
                 ForEach(Array(craftingMaterials.enumerated()), id: \.offset) { index, item in
                     Text(item.0)
@@ -230,7 +338,6 @@ struct HintOverlayView: View {
                         .opacity(item.1 < -80 ? 0 : 1)
                 }
 
-                // Scroll appearing
                 Image(systemName: "scroll.fill")
                     .font(.system(size: 48))
                     .foregroundStyle(RenaissanceColors.ochre)
@@ -246,53 +353,46 @@ struct HintOverlayView: View {
         }
     }
 
-    // MARK: - Phase 4: True/False Activity
+    // MARK: - Phase 3b: True/False Activity Card
 
-    private var trueFalsePhase: some View {
-        VStack(spacing: 20) {
-            BirdCharacter(isSitting: true)
-                .frame(width: 120, height: 120)
+    private var trueFalseCard: some View {
+        VStack(spacing: 16) {
+            Text("Quick Question!")
+                .font(.custom("Cinzel-Bold", size: 18))
+                .foregroundStyle(RenaissanceColors.sepiaInk)
 
-            VStack(spacing: 16) {
-                Text("Quick Question!")
-                    .font(.custom("Cinzel-Bold", size: 18))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+            if case .trueFalse(let statement, _, let explanation) = hintData.activityType {
+                Text(statement)
+                    .font(.custom("EBGaramond-Regular", size: 17))
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.9))
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(4)
+                    .padding(.horizontal, 8)
 
-                if case .trueFalse(let statement, _, let explanation) = hintData.activityType {
-                    Text(statement)
-                        .font(.custom("EBGaramond-Regular", size: 17))
-                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.9))
+                HStack(spacing: 16) {
+                    trueFalseButton(label: "True", value: true)
+                    trueFalseButton(label: "False", value: false)
+                }
+                .offset(x: trueFalseShake ? -8 : 0)
+
+                if let answer = trueFalseAnswer, !isAnswerCorrect(answer) {
+                    Text(explanation)
+                        .font(.custom("EBGaramond-Italic", size: 14))
+                        .foregroundStyle(RenaissanceColors.errorRed.opacity(0.8))
                         .multilineTextAlignment(.center)
-                        .lineSpacing(4)
-                        .padding(.horizontal, 8)
-
-                    HStack(spacing: 16) {
-                        trueFalseButton(label: "True", value: true)
-                        trueFalseButton(label: "False", value: false)
-                    }
-                    .offset(x: trueFalseShake ? -8 : 0)
-
-                    // Show explanation after wrong answer
-                    if let answer = trueFalseAnswer, !isAnswerCorrect(answer) {
-                        Text(explanation)
-                            .font(.custom("EBGaramond-Italic", size: 14))
-                            .foregroundStyle(RenaissanceColors.errorRed.opacity(0.8))
-                            .multilineTextAlignment(.center)
-                            .padding(.top, 4)
-                            .transition(.opacity)
-                    }
+                        .padding(.top, 4)
+                        .transition(.opacity)
                 }
             }
-            .padding(24)
-            .background(DialogueBubble())
         }
+        .padding(24)
+        .background(DialogueBubble())
     }
 
-    // MARK: - Phase 5: Hint Scroll Reveal
+    // MARK: - Phase 4: Hint Scroll Reveal Card
 
-    private var hintScrollPhase: some View {
+    private var hintScrollCard: some View {
         VStack(spacing: 20) {
-            // Scroll icon
             Image(systemName: "scroll.fill")
                 .font(.system(size: 40))
                 .foregroundStyle(RenaissanceColors.ochre)
@@ -375,7 +475,6 @@ struct HintOverlayView: View {
             guard trueFalseAnswer == nil || !isAnswerCorrect(trueFalseAnswer!) else { return }
             if isCorrect {
                 trueFalseAnswer = value
-                // Advance to scroll after short delay
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                     withAnimation(.spring(response: 0.4)) {
                         phase = .hintScroll
@@ -383,13 +482,11 @@ struct HintOverlayView: View {
                 }
             } else {
                 trueFalseAnswer = value
-                // Shake animation
                 withAnimation(.easeInOut(duration: 0.08).repeatCount(4, autoreverses: true)) {
                     trueFalseShake = true
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
                     trueFalseShake = false
-                    // Reset so they can try again
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                         withAnimation { trueFalseAnswer = nil }
                     }
@@ -436,11 +533,11 @@ struct HintOverlayView: View {
         return false
     }
 
-    /// Deduct 3 materials from workshop inventory (1 each from most abundant)
+    /// Deduct 2 materials from workshop inventory (1 each from most abundant)
     private func deductMaterials() {
         guard let workshop = workshopState else { return }
         let sorted = workshop.rawMaterials.sorted { $0.value > $1.value }
-        var toDeduct = 3
+        var toDeduct = 2
         var icons: [String] = []
         for (material, count) in sorted where toDeduct > 0 && count > 0 {
             let take = min(count, toDeduct)
@@ -455,20 +552,17 @@ struct HintOverlayView: View {
 
     /// Animate materials floating up and dissolving, then show scroll
     private func startCraftingAnimation() {
-        // Float materials upward
         for i in craftingMaterials.indices {
             let delay = Double(i) * 0.3
             withAnimation(.easeIn(duration: 0.8).delay(delay)) {
                 craftingMaterials[i].1 = -100
             }
         }
-        // Show scroll after materials dissolve
         let totalDelay = Double(craftingMaterials.count) * 0.3 + 0.5
         DispatchQueue.main.asyncAfter(deadline: .now() + totalDelay) {
             withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
                 showScrollReveal = true
             }
-            // Auto-advance to hint scroll phase
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                 withAnimation(.spring(response: 0.4)) {
                     phase = .hintScroll

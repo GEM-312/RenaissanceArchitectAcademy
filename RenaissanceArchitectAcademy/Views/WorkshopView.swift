@@ -1,14 +1,33 @@
 import SwiftUI
 
-/// Workshop mini-game — Township-style SpriteKit crafting experience
-/// Da Vinci stick figure walks between resource stations, collects materials, crafts at workbench/furnace
+/// Workshop mini-game — outdoor gathering + indoor crafting
+/// Outdoor: SpriteKit map where apprentice collects materials from resource stations
+/// Indoor: Crafting room with workbench, furnace, pigment table, storage shelf
 struct WorkshopView: View {
     var workshop: WorkshopState
 
+    @State private var showInterior = false
+
     var body: some View {
-        WorkshopMapView(workshop: workshop)
-            .onAppear { workshop.startRespawnTimer() }
-            .onDisappear { workshop.stopRespawnTimer() }
+        ZStack {
+            if showInterior {
+                WorkshopInteriorView(workshop: workshop) {
+                    withAnimation(.easeInOut(duration: 0.4)) {
+                        showInterior = false
+                    }
+                }
+                .transition(.move(edge: .trailing))
+            } else {
+                WorkshopMapView(workshop: workshop, onEnterInterior: {
+                    withAnimation(.easeInOut(duration: 0.4)) {
+                        showInterior = true
+                    }
+                })
+                .transition(.move(edge: .leading))
+            }
+        }
+        .onAppear { workshop.startRespawnTimer() }
+        .onDisappear { workshop.stopRespawnTimer() }
     }
 }
 

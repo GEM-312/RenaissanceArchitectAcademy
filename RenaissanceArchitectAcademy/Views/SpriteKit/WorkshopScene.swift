@@ -247,8 +247,8 @@ class WorkshopScene: SKScene {
     // MARK: - Background
 
     private func setupBackground() {
-        // Terrain texture matches the map exactly — full image visible
-        let terrainTexture = SKTexture(imageNamed: "Terrain")
+        // Workshop-specific terrain — full image visible at default zoom
+        let terrainTexture = SKTexture(imageNamed: "WorkshopTerrain")
         let terrain = SKSpriteNode(texture: terrainTexture)
         terrain.size = mapSize
         terrain.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)

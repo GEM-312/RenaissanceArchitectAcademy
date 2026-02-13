@@ -35,6 +35,19 @@ enum ResourceStationType: String, CaseIterable, Hashable {
         self == .workbench || self == .furnace
     }
 
+    /// Image asset name for this station (nil = use shape fallback)
+    var imageName: String? {
+        switch self {
+        case .quarry:       return "StationQuarry"
+        case .river:        return "StationRiver"
+        case .volcano:      return "StationVolcano"
+        case .clayPit:      return "StationClayPit"
+        case .mine:         return "StationMine"
+        case .forest:       return "StationForest"
+        default:            return nil  // pigmentTable, market, workbench, furnace use shapes
+        }
+    }
+
     /// Label shown on the map
     var label: String { rawValue }
 }
@@ -47,9 +60,17 @@ class ResourceNode: SKNode {
 
     let stationType: ResourceStationType
     private var bodyShape: SKShapeNode!
+    private var spriteNode: SKSpriteNode?
     private var labelNode: SKLabelNode!
     private var countLabel: SKLabelNode?
     private var isDepleted = false
+
+    /// Size for station sprite images (points)
+    private let spriteSize: CGFloat = 120
+
+    /// Volcano animation: 15 frames at 15fps
+    private static let volcanoFrameCount = 15
+    private static let volcanoFPS: TimeInterval = 1.0 / 15.0
 
     private let strokeColor = PlatformColor(RenaissanceColors.sepiaInk)
     private let sketchLineWidth: CGFloat = 2.0
@@ -71,9 +92,41 @@ class ResourceNode: SKNode {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Visual Setup (da Vinci sketch style)
+    // MARK: - Visual Setup (image sprite or da Vinci sketch fallback)
 
     private func setupVisual() {
+        // Try image sprite first
+        if let imageName = stationType.imageName {
+            let texture = SKTexture(imageNamed: imageName)
+            let sprite = SKSpriteNode(texture: texture)
+            sprite.size = CGSize(width: spriteSize, height: spriteSize)
+            sprite.zPosition = 1
+            addChild(sprite)
+            spriteNode = sprite
+
+            // Volcano: loop through 15 animation frames
+            if stationType == .volcano {
+                startVolcanoAnimation()
+            }
+
+            // Invisible shape for hit testing and animations
+            bodyShape = SKShapeNode(circleOfRadius: spriteSize / 2)
+            bodyShape.fillColor = .clear
+            bodyShape.strokeColor = .clear
+            bodyShape.zPosition = 0
+            addChild(bodyShape)
+
+            // Ground shadow under sprite
+            let shadow = SKShapeNode(ellipseOf: CGSize(width: spriteSize * 0.8, height: spriteSize * 0.3))
+            shadow.fillColor = PlatformColor(RenaissanceColors.sepiaInk.opacity(0.12))
+            shadow.strokeColor = .clear
+            shadow.position = CGPoint(x: 0, y: -spriteSize / 2 + 5)
+            shadow.zPosition = 0
+            addChild(shadow)
+            return
+        }
+
+        // Fallback: hand-drawn shapes for stations without images
         switch stationType {
         case .quarry:
             bodyShape = createQuarry()
@@ -436,12 +489,17 @@ class ResourceNode: SKNode {
         let newDepleted = totalCount <= 0
         if newDepleted != isDepleted {
             isDepleted = newDepleted
+            let target: SKNode = spriteNode ?? bodyShape
             if isDepleted {
-                bodyShape.alpha = 0.4
-                bodyShape.removeAction(forKey: "pulse")
+                target.alpha = 0.4
+                target.removeAction(forKey: "pulse")
+                // Pause volcano animation when depleted
+                if stationType == .volcano { spriteNode?.removeAction(forKey: "volcanoAnim") }
             } else {
-                bodyShape.alpha = 1.0
+                target.alpha = 1.0
                 addPulseAnimation()
+                // Resume volcano animation when restocked
+                if stationType == .volcano { startVolcanoAnimation() }
             }
         }
     }
@@ -449,16 +507,18 @@ class ResourceNode: SKNode {
     // MARK: - Animations
 
     private func addPulseAnimation() {
+        let target: SKNode = spriteNode ?? bodyShape
         let scaleUp = SKAction.scale(to: 1.05, duration: 1.2)
         scaleUp.timingMode = .easeInEaseOut
         let scaleDown = SKAction.scale(to: 1.0, duration: 1.2)
         scaleDown.timingMode = .easeInEaseOut
         let pulse = SKAction.sequence([scaleUp, scaleDown])
-        bodyShape.run(SKAction.repeatForever(pulse), withKey: "pulse")
+        target.run(SKAction.repeatForever(pulse), withKey: "pulse")
     }
 
     func animateTap() {
-        bodyShape.removeAction(forKey: "pulse")
+        let target: SKNode = spriteNode ?? bodyShape
+        target.removeAction(forKey: "pulse")
 
         let scaleUp = SKAction.scale(to: 1.2, duration: 0.1)
         scaleUp.timingMode = .easeOut
@@ -466,12 +526,22 @@ class ResourceNode: SKNode {
         scaleDown.timingMode = .easeIn
         let bounce = SKAction.sequence([scaleUp, scaleDown])
 
-        bodyShape.run(bounce) { [weak self] in
+        target.run(bounce) { [weak self] in
             guard let self = self else { return }
             if !self.isDepleted && !self.stationType.isCraftingStation {
                 self.addPulseAnimation()
             }
         }
+    }
+
+    /// Start looping volcano frame animation (VolcanoFrame00-14 at 15fps)
+    private func startVolcanoAnimation() {
+        guard let sprite = spriteNode else { return }
+        let textures = (0..<Self.volcanoFrameCount).map { i in
+            SKTexture(imageNamed: String(format: "VolcanoFrame%02d", i))
+        }
+        let animate = SKAction.animate(with: textures, timePerFrame: Self.volcanoFPS)
+        sprite.run(SKAction.repeatForever(animate), withKey: "volcanoAnim")
     }
 
     func showCollectionBurst() {

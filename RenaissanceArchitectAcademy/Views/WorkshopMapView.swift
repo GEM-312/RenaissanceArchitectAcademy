@@ -6,6 +6,7 @@ import SpriteKit
 struct WorkshopMapView: View {
 
     @Bindable var workshop: WorkshopState
+    var onEnterInterior: (() -> Void)? = nil
 
     @Environment(\.dismiss) private var dismiss
 
@@ -97,19 +98,25 @@ struct WorkshopMapView: View {
             self.playerFacingRight = facingRight
         }
 
-        // Station reached — show appropriate overlay
+        // Station reached — show appropriate overlay or enter interior
         newScene.onStationReached = { stationType in
             self.activeStation = stationType
             dismissAllOverlays()
 
             switch stationType {
-            case .workbench:
-                withAnimation(.spring(response: 0.3)) {
-                    showWorkbenchOverlay = true
-                }
-            case .furnace:
-                withAnimation(.spring(response: 0.3)) {
-                    showFurnaceOverlay = true
+            case .workbench, .furnace:
+                // Transition to interior crafting room
+                if let onEnterInterior = onEnterInterior {
+                    onEnterInterior()
+                } else {
+                    // Fallback: show inline overlay if no interior callback
+                    withAnimation(.spring(response: 0.3)) {
+                        if stationType == .workbench {
+                            showWorkbenchOverlay = true
+                        } else {
+                            showFurnaceOverlay = true
+                        }
+                    }
                 }
             default:
                 // Resource station — show hint then collection
@@ -729,5 +736,5 @@ struct WorkshopMapView: View {
 }
 
 #Preview {
-    WorkshopMapView(workshop: WorkshopState())
+    WorkshopMapView(workshop: WorkshopState(), onEnterInterior: {})
 }

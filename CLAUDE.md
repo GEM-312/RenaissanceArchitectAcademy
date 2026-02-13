@@ -642,12 +642,12 @@ os.makedirs('OUTPUT_FOLDER', exist_ok=True)
 frame = 0
 while True:
     gif.seek(frame)
-    img = gif.copy().convert('RGBA').resize((320, 320), Image.LANCZOS)
+    img = gif.copy().convert('RGBA').resize((512, 512), Image.LANCZOS)
     img.save(f'OUTPUT_FOLDER/frame_{frame:03d}.png')
     frame += 1
 "
 ```
-- Resize to **320x320** (good balance of quality vs file size)
+- **IMPORTANT:** Always extract at **512x512** (not 320). Sprites displayed at 170pt need 340px on 2x retina — 512px source gives SpriteKit room to downsample cleanly instead of upscaling.
 - Typically yields 100-125 frames
 
 ### Step 2 — Select best 15 key frames (Claude does this)
@@ -811,6 +811,7 @@ The city map (3500x2500 points) is divided into 6 zones. Generate each tile at *
 - **Shared ViewModel**: ContentView owns CityViewModel, passes to child views
 - **Callback-based communication**: SpriteKit → SwiftUI via closures (onBuildingSelected, onMascotReachedBuilding)
 - **Consistent character design**: MascotNode (SpriteKit) matches SplashCharacter/BirdCharacter (SwiftUI)
+- **Scene Editor by default**: Every new SpriteKit scene gets SceneEditorMode integrated on creation (DEBUG-only). Press E to toggle — drag nodes to reposition, visual edge editing, dumps positions to console. This ensures all scenes are tunable without code changes.
 
 ## Git Commands
 ```bash

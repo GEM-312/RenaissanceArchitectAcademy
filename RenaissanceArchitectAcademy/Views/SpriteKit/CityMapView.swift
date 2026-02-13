@@ -187,6 +187,7 @@ struct CityMapView: View {
                 MaterialPuzzleView(
                     buildingName: plot.building.name,
                     formula: formulaForBuilding(plot.building.name),
+                    workshopState: workshopState,
                     onComplete: {
                         withAnimation {
                             showMaterialPuzzle = false
