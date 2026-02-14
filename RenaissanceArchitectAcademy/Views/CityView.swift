@@ -11,6 +11,10 @@ struct CityView: View {
     @State private var activeChallenge: InteractiveChallenge? = nil
     @State private var showWorkshop = false
 
+    // Sketching navigation state
+    @State private var showingSketching = false
+    @State private var activeSketchingChallenge: SketchingChallenge? = nil
+
     var filterEra: Era?
     var workshopState: WorkshopState = WorkshopState()
 
@@ -94,10 +98,14 @@ struct CityView: View {
                         plot: selected,
                         onDismiss: { viewModel.selectedPlot = nil },
                         onBeginChallenge: {
-                            // Look up the interactive challenge for this building
-                            if let challenge = ChallengeContent.interactiveChallenge(for: selected.building.name) {
+                            // Check for sketching challenge first, then fall back to quiz
+                            if let sketchChallenge = SketchingContent.sketchingChallenge(for: selected.building.name) {
+                                activeSketchingChallenge = sketchChallenge
+                                viewModel.selectedPlot = nil
+                                showingSketching = true
+                            } else if let challenge = ChallengeContent.interactiveChallenge(for: selected.building.name) {
                                 activeChallenge = challenge
-                                viewModel.selectedPlot = nil  // Dismiss detail overlay
+                                viewModel.selectedPlot = nil
                                 showingChallenge = true
                             }
                         },
@@ -123,6 +131,26 @@ struct CityView: View {
                         onDismiss: {
                             showingChallenge = false
                             activeChallenge = nil
+                        }
+                    )
+                    .transition(.move(edge: .trailing))
+                }
+
+                // Sketching Challenge view (full screen)
+                if showingSketching, let sketchChallenge = activeSketchingChallenge {
+                    SketchingChallengeView(
+                        challenge: sketchChallenge,
+                        onComplete: { completedPhases in
+                            // Update sketching progress
+                            if let plot = viewModel.buildingPlots.first(where: { $0.building.name == sketchChallenge.buildingName }) {
+                                viewModel.completeSketchingPhase(for: plot.id, phases: completedPhases)
+                            }
+                            showingSketching = false
+                            activeSketchingChallenge = nil
+                        },
+                        onDismiss: {
+                            showingSketching = false
+                            activeSketchingChallenge = nil
                         }
                     )
                     .transition(.move(edge: .trailing))

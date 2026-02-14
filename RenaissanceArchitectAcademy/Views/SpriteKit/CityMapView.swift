@@ -27,6 +27,9 @@ struct CityMapView: View {
     /// Shared workshop state for hint crafting cost
     var workshopState: WorkshopState
 
+    /// Navigate to other screens via top bar
+    var onNavigate: ((SidebarDestination) -> Void)? = nil
+
     /// The currently selected plot (when user taps a building)
     @State private var selectedPlot: BuildingPlot?
 
@@ -35,6 +38,9 @@ struct CityMapView: View {
 
     /// Controls the challenge view
     @State private var showChallenge = false
+
+    /// Controls the sketching challenge view
+    @State private var showSketching = false
 
     /// Controls the mascot dialogue (new game flow)
     @State private var showMascotDialogue = false
@@ -166,8 +172,13 @@ struct CityMapView: View {
                             // Go straight to challenge — after completing, will offer Workshop
                             showChallenge = true
                         case .needToSketch:
-                            // Skip to challenge (future: sketching game)
-                            showChallenge = true
+                            // Route to sketching challenge if available, otherwise quiz
+                            if let plot = selectedPlot,
+                               SketchingContent.sketchingChallenge(for: plot.building.name) != nil {
+                                showSketching = true
+                            } else {
+                                showChallenge = true
+                            }
                         }
                     },
                     onDismiss: {
@@ -337,6 +348,31 @@ struct CityMapView: View {
                     .foregroundColor(RenaissanceColors.sepiaInk)
             }
         }
+        .sheet(isPresented: $showSketching) {
+            if let plot = selectedPlot,
+               let sketchChallenge = SketchingContent.sketchingChallenge(for: plot.building.name) {
+                SketchingChallengeView(
+                    challenge: sketchChallenge,
+                    onComplete: { completedPhases in
+                        viewModel.completeSketchingPhase(for: plot.id, phases: completedPhases)
+                        // Update the SpriteKit building state
+                        if let buildingId = buildingIdToPlotId.first(where: { $0.value == plot.id })?.key {
+                            scene?.updateBuildingState(buildingId, state: .sketched)
+                        }
+                        showSketching = false
+                        selectedPlot = nil
+                    },
+                    onDismiss: {
+                        showSketching = false
+                        selectedPlot = nil
+                    }
+                )
+            } else {
+                Text("Sketching challenge coming soon!")
+                    .font(.custom("Cinzel-Bold", size: 24))
+                    .foregroundColor(RenaissanceColors.sepiaInk)
+            }
+        }
         .sheet(isPresented: $showWorkshopSheet) {
             WorkshopView(workshop: workshopState)
                 #if os(macOS)
@@ -416,7 +452,7 @@ struct CityMapView: View {
     private func syncCompletionStates(in scene: CityScene) {
         for (buildingId, plotId) in buildingIdToPlotId {
             if let plot = viewModel.buildingPlots.first(where: { $0.id == plotId }) {
-                let state: BuildingState = plot.isCompleted ? .complete : .available
+                let state: BuildingState = plot.isCompleted ? .complete : (plot.sketchingProgress.isSketchingComplete ? .sketched : .available)
                 scene.updateBuildingState(buildingId, state: state)
             }
         }
@@ -451,38 +487,13 @@ struct CityMapView: View {
     // MARK: - UI Components
 
     private var topBar: some View {
-        HStack {
-            // Title
-            Text("City of Learning")
-                .font(.custom("Cinzel-Bold", size: 24))
-                .foregroundColor(RenaissanceColors.sepiaInk)
-                .padding(.horizontal, 20)
-                .padding(.vertical, 12)
-                .background(
-                    Capsule()
-                        .fill(RenaissanceColors.parchment.opacity(0.95))
-                        .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
-                )
-
-            Spacer()
-
-            // Buildings completed counter
-            let completedCount = viewModel.buildingPlots.filter { $0.isCompleted }.count
-            let totalCount = viewModel.buildingPlots.count
-            HStack(spacing: 8) {
-                Image(systemName: "checkmark.seal.fill")
-                    .foregroundColor(RenaissanceColors.sageGreen)
-                Text("\(completedCount)/\(totalCount)")
-                    .font(.custom("EBGaramond-Regular", size: 18))
-                    .foregroundColor(RenaissanceColors.sepiaInk)
+        GameTopBarView(
+            title: "City of Learning",
+            viewModel: viewModel,
+            onNavigate: { destination in
+                onNavigate?(destination)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
-            .background(
-                Capsule()
-                    .fill(RenaissanceColors.parchment.opacity(0.95))
-            )
-        }
+        )
     }
 
     private var bottomHint: some View {

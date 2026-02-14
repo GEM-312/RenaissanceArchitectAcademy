@@ -116,6 +116,11 @@ class BuildingNode: SKNode {
             buildingSprite.alpha = 1.0
             addPulseAnimation()
 
+        case .sketched:
+            buildingSprite.alpha = 1.0
+            buildingSprite.fillColor = PlatformColor(RenaissanceColors.ochre.opacity(0.2))
+            addStateIcon("StateAvailable")
+
         case .construction:
             buildingSprite.alpha = 0.7
             addStateIcon("StateConstruction")
@@ -157,6 +162,7 @@ class BuildingNode: SKNode {
         switch state {
         case .locked: return PlatformColor(RenaissanceColors.stoneGray)
         case .available: return PlatformColor(RenaissanceColors.renaissanceBlue)
+        case .sketched: return PlatformColor(RenaissanceColors.ochre)
         case .construction: return PlatformColor(RenaissanceColors.ochre)
         case .complete: return PlatformColor(RenaissanceColors.sageGreen)
         }

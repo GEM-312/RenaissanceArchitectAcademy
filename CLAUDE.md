@@ -64,6 +64,12 @@ RenaissanceArchitectAcademy/
 │   │   ├── WorkshopView.swift               # Workshop entry (outdoor/indoor toggle)
 │   │   ├── WorkshopMapView.swift            # SwiftUI wrapper for outdoor WorkshopScene
 │   │   ├── WorkshopInteriorView.swift       # Interior crafting room (workbench, furnace, pigment, shelf)
+│   │   ├── SketchingChallengeView.swift     # Master orchestrator for sketching mini-game
+│   │   ├── KnowledgeTestsView.swift         # Quiz challenges list (relocated from building cards)
+│   │   ├── GameTopBarView.swift             # Shared top nav bar (Profile/Map/Eras/Workshop + building strip)
+│   │   ├── Sketching/                       # Sketching phase views
+│   │   │   ├── PiantaCanvasView.swift       # Phase 1: Floor plan grid canvas
+│   │   │   └── SketchingToolbarView.swift   # Shared tool palette (wall/column/room/eraser/undo)
 │   │   └── SpriteKit/                      # SpriteKit scenes
 │   │       ├── CityScene.swift             # Main SKScene with buildings, rivers, mascot position
 │   │       ├── BuildingNode.swift          # Tappable building sprites
@@ -81,7 +87,9 @@ RenaissanceArchitectAcademy/
 │   │   ├── CraftedItem.swift          # Crafted items enum (mortar, concrete, glass, etc.)
 │   │   ├── Recipe.swift               # Crafting recipes with temperature + educational text
 │   │   ├── StudentProfile.swift       # MasteryLevel, Achievement, Resources
-│   │   └── Challenge.swift            # Challenge system + all building challenges
+│   │   ├── Challenge.swift            # Challenge system + all building challenges
+│   │   ├── SketchingChallenge.swift   # Sketching data models (phases, grid types, validation)
+│   │   └── SketchingContent.swift     # Static sketching challenge data per building
 │   ├── Styles/
 │   │   ├── RenaissanceColors.swift    # Full color palette + gradients
 │   │   └── RenaissanceButton.swift    # Engineering blueprint style buttons
@@ -796,6 +804,167 @@ ResourceNode uses `stationType.imageName` to load sprites (120pt SKSpriteNode). 
   - Storage Shelf: full inventory grid of raw materials + crafted items
 - **Outdoor→indoor transition** — WorkshopView manages state, slide animation between views
 - **Updated .gitignore** — added volcano_frames/, apprentice_frames/, bird_turn_frames/ to exclusions
+- **Workshop camera fix** — matched all camera params to city map: .aspectFill, zoom 0.5-3.5, padding 500, removed position reset in fitCameraToMap
+- **Interior editor mode** — SwiftUI drag-to-reposition editor for WorkshopInteriorView furniture positions
+  - Press E to toggle, drag furniture to new positions, yellow highlight + coordinate label
+  - Dumps relative positions (0-1) to console on exit in copy-paste Swift format
+- **CLAUDE.md rule** — editor mode REQUIRED for all new scenes/views, camera panning pattern documented
+
+### Session Log - Feb 13, 2025 (Part 2)
+- **Tile-based expandable map system** — CityScene terrain converted from single sprite to tile grid
+  - `TerrainTile` struct: imageName (nil = placeholder), origin point, size
+  - `terrainTiles` array in CityScene.swift — add entries to expand map in any direction
+  - `mapSize` is now a computed `lazy var` that auto-calculates from all tiles
+  - Placeholder tiles render parchment rectangle + dashed border + "Expansion Area" label
+  - Camera, grid, buildings all auto-adjust since they reference `mapSize`
+  - To expand: add terrain art to Assets, add TerrainTile entry, build — done
+
+### Session Log - Feb 13, 2025 (Part 3)
+- **Sketching Mini-Game** — Renaissance architectural drawing system replacing quizzes as primary building interaction
+  - 4 historical phases: Pianta (floor plan), Alzato (elevation), Sezione (section), Prospettiva (perspective)
+  - Phase 1 (Pianta) fully implemented: squared grid canvas, wall drawing, column placement, room detection, proportion validation
+  - Data models: `SketchingChallenge`, `SketchingPhase`, `SketchingPhaseContent`, `PiantaPhaseData`, grid/validation types
+  - Content for 4 buildings: Pantheon, Colosseum, Aqueduct, Duomo (each with Phase 1)
+  - `SketchingChallengeView` orchestrator: intro → phase selector → canvas → completion with Pow effects
+  - `PiantaCanvasView`: SwiftUI Canvas grid, DragGesture wall drawing, snap-to-grid, flood-fill room detection
+  - `SketchingToolbarView`: wall/column/room label/eraser/undo tool palette
+  - 3-level hint system: tap hint button → area highlight → dotted outline → full guide lines
+  - BuildingState expanded: `.sketched` state between `.available` and `.construction`
+  - `SketchingProgress` tracks completed phases per building in `BuildingPlot`
+  - BuildingPlotView shows 4-stage visual progression (blank → sketched → construction → complete)
+  - Routing updated: building cards → sketching first, quiz fallback for buildings without sketching content
+  - Mascot "I need to sketch it" choice now routes to sketching challenge
+  - `KnowledgeTestsView` — quizzes relocated to separate sidebar section "Knowledge Tests"
+  - All existing quiz code untouched — still accessible via Knowledge Tests and "I don't know" mascot path
+
+### Session Log - Feb 13, 2025 (Part 4)
+- **Bird companion hint system** — interactive hint guide on PiantaCanvasView
+  - BirdCharacter (80x80) sits at top-right of canvas with idle bounce animation
+  - 3-level progressive hints: tap "Ask Bird" → area highlight → dotted outline → full guide lines + column markers
+  - Bird flies to target rooms, shows speech bubbles with contextual messages
+  - Encouragement: "Great first wall!" (first wall), "Column placed!" (first column), "A perfect circle!" (first circle)
+  - Celebration: bird excited jump + "Perfect ratio!" when room matches target proportions
+  - Final validation: "Magnifico! A true architect!" on plan completion
+- **Circle drawing tool** — Pantheon rotunda is now a circle (historically accurate)
+  - `RoomShape` enum: `.rectangle`, `.circle` added to `RoomDefinition`
+  - `CirclePlacement` struct (center + radius in grid cells)
+  - Circle tool in toolbar: drag from center outward to set radius, preview shows "r=N"
+  - Circle detection: exact center + radius match required (strict validation)
+  - Hint overlays show circle outlines for circle targets
+  - Pantheon rotunda data updated: circle with center (5,6), diameter 6
+- **Strict validation system** — prevents passing with messy/random drawings
+  - Circle: center and radius must match exactly (0 tolerance)
+  - Rectangles: 90% wall coverage required per side (was 70%)
+  - Neatness check: max 1 extra circle, max 3x expected walls, max 2 extra columns
+  - Visual feedback panel: room-by-room checklist, neatness warnings, column count
+  - Bird speech on failure: "Too many circles!" / "Too many walls!" / etc.
+- **GameTopBarView** — shared top navigation bar across City Map, Workshop, Crafting Room
+  - Left: quick-nav buttons (Profile, Map, Eras, Workshop) with icons + labels
+  - Center-right: screen title capsule
+  - Bottom strip: horizontal scrollable building progress icons with plot numbers
+  - Each building shows colored icon (green=complete, ochre=sketched, gray=locked)
+  - Back button (optional) for Workshop/Crafting Room screens
+  - `onNavigate` callback routes to `SidebarDestination` from any screen
+  - Replaces per-view custom top bars with consistent UI system
+
+## Sketching Mini-Game System (Feb 13, 2025)
+
+### Architecture
+```
+Building card → BuildingDetailOverlay → "Begin Sketching" → SketchingChallengeView → Phase views
+                                      → "Begin Challenge" (fallback if no sketching content)
+```
+
+### Key Files
+| File | Purpose |
+|------|---------|
+| `Models/SketchingChallenge.swift` | All data models: phases, grid types, validation |
+| `Models/SketchingContent.swift` | Static challenge data per building (Pantheon, Colosseum, Aqueduct, Duomo) |
+| `Views/SketchingChallengeView.swift` | Master orchestrator: intro → phases → completion |
+| `Views/Sketching/PiantaCanvasView.swift` | Phase 1: grid canvas, wall drawing, room detection |
+| `Views/Sketching/SketchingToolbarView.swift` | Shared tool palette |
+| `Views/KnowledgeTestsView.swift` | Quiz challenges list (relocated from building cards) |
+
+### Building Flow (New vs Old)
+```
+OLD: Building card → Quiz questions
+NEW: Building card → Sketching phases → (future: materials → construction)
+     Quizzes → Sidebar "Knowledge Tests" or mascot "I don't know" path
+```
+
+### 4-Stage Building Card Progression
+1. **Blank** — dashed placeholder + grid lines (no sketching done)
+2. **Sketched** — sepia ink icon + "Sketched" label (sketching phases complete)
+3. **Under Construction** — (future: materials gathered)
+4. **Complete** — green tint + checkmark (all done)
+
+### PiantaCanvasView Mechanics
+- SwiftUI Canvas with squared grid (12x12 or 16x16)
+- DragGesture draws walls (snaps to horizontal/vertical)
+- Tap places columns at grid intersections
+- Room detection: checks wall coverage (70% threshold per side) against target rooms
+- Proportion validation: compares room width:height to required ratio (tolerance 0.15)
+- 3-level hint: area highlight → dotted outline → full guide lines
+- Pow spray celebration on successful validation
+
+### Data Model Pattern
+```swift
+SketchingContent.sketchingChallenge(for: "Pantheon")  // Same pattern as ChallengeContent
+```
+
+## Shared UI System — GameTopBarView (Feb 13, 2025)
+
+### Overview
+Consistent top navigation bar displayed across City Map, Workshop, and Crafting Room screens. Based on UISystem.JPG hand-drawn wireframe.
+
+### Layout
+```
++--[←]--[👤 Profile]--[🗺 Map]--[🏛 Eras]--[🔨 Workshop]------[Screen Title]--+
+|                                                                                 |
++--[ 01 ][ 02 ][ 03 ][ 04 ][ 05 ][ 06 ][ 07 ]... (scrollable building strip)--+
+```
+
+### Integration
+| Screen | File | Title | Back Button |
+|--------|------|-------|-------------|
+| City Map | CityMapView.swift | "City of Learning" | No |
+| Workshop (outdoor) | WorkshopMapView.swift | "Workshop" | Yes (dismiss) |
+| Crafting Room | WorkshopInteriorView.swift | "Crafting Room" | Yes (onBack) |
+
+### Navigation Flow
+Nav buttons trigger `onNavigate(SidebarDestination)` callback → ContentView's `selectedDestination` changes → view switches.
+
+### Building Strip
+Horizontal ScrollView showing all 17 buildings:
+- **Green** icon = completed
+- **Ochre** icon = sketched
+- **Gray** icon = locked/available
+- Plot number (01-17) below each icon
+
+### Key File
+`Views/GameTopBarView.swift` — shared component, takes `title`, `viewModel`, `onNavigate`, optional `showBackButton` + `onBack`.
+
+## Tile-Based Expandable Map (Feb 13, 2025)
+
+### How It Works
+CityScene uses a `terrainTiles` array instead of a single terrain sprite. Each tile has an optional image, an origin point, and a size. `mapSize` auto-computes from tile bounds.
+
+### Adding New Tiles
+```swift
+// In CityScene.swift — terrainTiles array
+private let terrainTiles: [TerrainTile] = [
+    TerrainTile(imageName: "Terrain", origin: .zero, size: CGSize(width: 3500, height: 2500)),          // Current map
+    TerrainTile(imageName: "TerrainEast", origin: CGPoint(x: 3500, y: 0), size: CGSize(width: 3500, height: 2500)),  // East expansion
+]
+```
+
+### Expansion Directions
+| Direction | Origin | Notes |
+|-----------|--------|-------|
+| East (right) | `(3500, 0)` | Zero-effort, no coordinate shifts |
+| North (up) | `(0, 2500)` | Zero-effort, no coordinate shifts |
+| Northeast | `(3500, 2500)` | Zero-effort |
+| West/South | Negative origins | Requires shifting all existing building/decoration coordinates |
 
 ### Next Steps
 - [ ] Remove backgrounds from volcano frames (Marina in Photoshop)
@@ -803,46 +972,18 @@ ResourceNode uses `stationType.imageName` to load sprites (120pt SKSpriteNode). 
 - [ ] Add station sprites for remaining 4 stations (pigment table, market, workbench, furnace)
 - [ ] Create challenges for remaining 11 buildings
 - [ ] Add building images to map
+- [x] Design architecture/sketching gameplay (see Research + Sketching System sections)
+- [x] Sketching game Phase 1 (Pianta floor plan) — implemented
+- [ ] Sketching game Phase 2 (Alzato elevation) — drag-drop facade elements
+- [ ] Sketching game Phase 3 (Sezione cross-section) — structural + light rays
+- [ ] Sketching game Phase 4 (Prospettiva perspective) — vanishing points
+- [ ] Add sketching content for remaining buildings (currently: Pantheon, Colosseum, Aqueduct, Duomo)
 - [ ] Rising answer mechanic (LinguaLeo-style)
 - [ ] Sound effects (challenge_success, challenge_fail, puzzle_match)
 - [ ] Persist progress with UserDefaults/SwiftData
 - [ ] Building construction animation
 - [ ] Full bloom animation (gray sketch → watercolor)
-- [ ] Sketching game (for "I need to sketch it" option)
-
-## Gemini Map Art Prompts
-
-The city map (3500x2500 points) is divided into 6 zones. Generate each tile at **1500x1200 px**, then stitch in Photoshop on a **7000x5000** canvas (2x retina). **Terrain ground only** — buildings, trees, rivers, and labels are SpriteKit nodes rendered on top. Style must match existing Midjourney science icons: fine sepia ink lines, soft transparent watercolor washes, cream parchment, faint geometric construction lines.
-
-### Zone I — Ancient Rome (left side, 8 buildings)
-> Top-down terrain map, fine sepia ink line drawing with soft transparent watercolor washes on aged cream parchment. Faint geometric construction lines and circles in the background. Warm sandy ground with subtle terracotta and ochre watercolor tints. Worn dirt paths, rocky patches, dry grass texture sketched in thin sepia lines. Delicate, airy, minimal. Pale warm tones — tan, sandy beige, light terracotta wash. No buildings, no trees, no bushes, no water, no rivers, no text, no words, no labels. Leonardo da Vinci notebook study style. 1500x1200 pixels.
-
-### Zone II — Florence (top right, 2 buildings)
-> Top-down terrain map, fine sepia ink line drawing with soft transparent watercolor washes on aged cream parchment. Faint geometric construction lines and arcs in the background. Rolling gentle hill contours with sage green and warm gold watercolor tints. Vineyard row patterns etched in thin sepia ink. Dirt footpaths, meadow ground texture. Delicate, airy, minimal. Pale green and gold washes. No buildings, no trees, no bushes, no rivers, no water, no text, no words, no labels. Leonardo da Vinci notebook study style. 1500x1200 pixels.
-
-### Zone III — Venice (right side, 2 buildings)
-> Top-down terrain map, fine sepia ink line drawing with soft transparent watercolor washes on aged cream parchment. Faint geometric construction lines and circles in the background. Cobblestone paving patterns and worn stone ground textures sketched in thin sepia ink. Subtle pale blue-gray and teal watercolor tints near edges. Weathered stone squares. Delicate, airy, minimal. No buildings, no bridges, no canals, no water, no trees, no bushes, no text, no words, no labels. Leonardo da Vinci notebook study style. 1500x1200 pixels.
-
-### Zone IV — Padua (center, 1 building)
-> Top-down terrain map, fine sepia ink line drawing with soft transparent watercolor washes on aged cream parchment. Faint geometric construction lines and arcs in the background. Cobblestone courtyard patterns and gravel path textures in thin sepia ink. Subtle muted green and warm stone watercolor tints. Geometric paving details. Delicate, airy, minimal. No buildings, no trees, no bushes, no fountains, no water, no text, no words, no labels. Leonardo da Vinci notebook study style. 1500x1200 pixels.
-
-### Zone V — Milan (upper center, 2 buildings)
-> Top-down terrain map, fine sepia ink line drawing with soft transparent watercolor washes on aged cream parchment. Faint geometric construction lines, gear diagrams, and engineering sketches fading into the background. Packed dirt ground, brick-paved path patterns in thin sepia ink. Subtle ochre and pale blue watercolor tints. Delicate, airy, minimal. No buildings, no trees, no bushes, no canals, no water, no text, no words, no labels. Leonardo da Vinci notebook study style. 1500x1200 pixels.
-
-### Zone VI — Renaissance Rome (lower right, 2 buildings)
-> Top-down terrain map, fine sepia ink line drawing with soft transparent watercolor washes on aged cream parchment. Faint geometric construction lines, star chart circles, and astronomical diagrams in the background. Grand stone plaza paving patterns and ceremonial pathway markings in thin sepia ink. Subtle pale gold and terracotta watercolor tints. Delicate, airy, minimal. No buildings, no trees, no bushes, no columns, no fountains, no water, no text, no words, no labels. Leonardo da Vinci notebook study style. 1500x1200 pixels.
-
-### Stitching Instructions
-- Canvas: 7000x5000 px (2x retina of 3500x2500 map)
-- Zone I: left third (x: 0-2000)
-- Zone V: upper center (x: 2000-3600, y: 2500-5000)
-- Zone IV: center (x: 3000-5000, y: 2000-4000)
-- Zone II: top right (x: 4000-7000, y: 3000-5000)
-- Zone III: right (x: 5000-7000, y: 1500-3500)
-- Zone VI: bottom right (x: 3500-6000, y: 0-2500)
-- Era divider: vertical blend line around x: 2000-2400
-- Use soft-edge blending between tiles for seamless transitions
-- All tiles share the same parchment background (#F5E6D3) for consistency
+- [ ] Generate expansion terrain tiles for map growth
 
 ## How to Run
 1. Open `RenaissanceArchitectAcademy.xcodeproj` in Xcode
@@ -858,7 +999,11 @@ The city map (3500x2500 points) is divided into 6 zones. Generate each tile at *
 - **Shared ViewModel**: ContentView owns CityViewModel, passes to child views
 - **Callback-based communication**: SpriteKit → SwiftUI via closures (onBuildingSelected, onMascotReachedBuilding)
 - **Consistent character design**: MascotNode (SpriteKit) matches SplashCharacter/BirdCharacter (SwiftUI)
-- **Scene Editor by default**: Every new SpriteKit scene gets SceneEditorMode integrated on creation (DEBUG-only). Press E to toggle — drag nodes to reposition, visual edge editing, dumps positions to console. This ensures all scenes are tunable without code changes.
+- **Editor Mode REQUIRED for ALL scenes/views**: Every new scene or view with positioned elements MUST have editor mode integrated on creation (DEBUG-only). This is a MANDATORY requirement — no exceptions.
+  - **SpriteKit scenes**: Use `SceneEditorMode` class. Press E to toggle, drag nodes to reposition, arrows to nudge, dumps positions to console on exit. See CityScene.swift and WorkshopScene.swift for reference.
+  - **SwiftUI views with positioned elements**: Add `#if DEBUG` editor state variables, `DragGesture` on positionable items, yellow highlight on selected item, coordinate labels, `.onKeyPress("e")` to toggle, and `dumpPositions()` on exit. See WorkshopInteriorView.swift for reference.
+  - Both types: Press E to toggle on/off, print all positions to Xcode console on deactivation in copy-paste Swift format.
+- **Camera/panning for ALL SpriteKit scenes**: Every SpriteKit scene with a camera must use the same camera pattern as CityScene.swift: `.aspectFill` scale mode, zoom range `0.5-3.5`, `fitCameraToMap()` on setup + `didChangeSize`, `clampCamera()` with generous padding. Smaller maps need larger padding to maintain panning freedom (e.g., workshop uses 500 vs city's 200).
 
 ## Git Commands
 ```bash

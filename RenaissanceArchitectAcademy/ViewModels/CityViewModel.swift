@@ -229,4 +229,10 @@ class CityViewModel: ObservableObject {
             buildingPlots[index].challengeProgress = 1.0
         }
     }
+
+    func completeSketchingPhase(for plotId: Int, phases: Set<SketchingPhaseType>) {
+        if let index = buildingPlots.firstIndex(where: { $0.id == plotId }) {
+            buildingPlots[index].sketchingProgress.completedPhases.formUnion(phases)
+        }
+    }
 }

@@ -236,8 +236,11 @@ class WorkshopScene: SKScene {
         fitCameraToMap()
     }
 
+    /// Set camera scale so the full map is visible
     private func fitCameraToMap() {
         guard let cameraNode = cameraNode else { return }
+        // With .aspectFill, self.size = initial scene size (stays constant)
+        // Camera scale determines visible area
         let s = self.size
         guard s.width > 0 && s.height > 0 else { return }
         let fitScale = max(mapSize.width / s.width, mapSize.height / s.height)
@@ -435,25 +438,31 @@ class WorkshopScene: SKScene {
         lastPanLocation = nil
     }
 
+    // Scroll wheel/trackpad on macOS
     override func scrollWheel(with event: NSEvent) {
+        // Check if Option key is held for zooming
         if event.modifierFlags.contains(.option) {
             // Option + scroll = zoom
             let zoomFactor: CGFloat = 1.0 - (event.deltaY * 0.05)
             let newScale = cameraNode.xScale * zoomFactor
-            cameraNode.setScale(max(0.8, min(2.5, newScale)))
+            let clampedScale = max(0.5, min(3.5, newScale))
+            cameraNode.setScale(clampedScale)
         } else {
-            // Scroll = pan
+            // Regular scroll = pan the map
+            // Multiply by scale so panning feels consistent at any zoom level
             let scale = cameraNode.xScale
             cameraNode.position.x -= event.deltaX * scale * 2
-            cameraNode.position.y += event.deltaY * scale * 2
+            cameraNode.position.y += event.deltaY * scale * 2  // Inverted for natural scrolling
         }
         clampCamera()
     }
 
+    // Pinch-to-zoom on trackpad
     override func magnify(with event: NSEvent) {
         let zoomFactor: CGFloat = 1.0 + event.magnification
         let newScale = cameraNode.xScale / zoomFactor
-        cameraNode.setScale(max(0.8, min(2.5, newScale)))
+        let clampedScale = max(0.5, min(3.5, newScale))
+        cameraNode.setScale(clampedScale)
         clampCamera()
     }
 
@@ -657,10 +666,13 @@ class WorkshopScene: SKScene {
     }
 
     private func handleDragTo(_ location: CGPoint, from lastLocation: CGPoint) {
-        let dx = location.x - lastLocation.x
-        let dy = location.y - lastLocation.y
-        cameraNode.position.x -= dx
-        cameraNode.position.y -= dy
+        // Pan camera
+        let deltaX = location.x - lastLocation.x
+        let deltaY = location.y - lastLocation.y
+
+        cameraNode.position.x -= deltaX
+        cameraNode.position.y -= deltaY
+
         clampCamera()
         lastPanLocation = location
     }
@@ -670,32 +682,41 @@ class WorkshopScene: SKScene {
     private func clampCamera() {
         let scale = cameraNode.xScale
         let viewSize = view?.bounds.size ?? CGSize(width: 1024, height: 768)
-        let padding: CGFloat = 100
 
+        // Larger padding than city (200) because workshop map is smaller (1500x1000 vs 3500x2500)
+        // This gives equivalent panning freedom relative to the map size
+        let padding: CGFloat = 500
+
+        // Calculate visible area at current zoom
         let visibleWidth = viewSize.width * scale
         let visibleHeight = viewSize.height * scale
 
+        // Allow camera to move so all parts of map (plus padding) are reachable
         let minX = (visibleWidth / 2) - padding
         let maxX = mapSize.width - (visibleWidth / 2) + padding
         let minY = (visibleHeight / 2) - padding
         let maxY = mapSize.height - (visibleHeight / 2) + padding
 
+        // Only clamp if the map is larger than the visible area
         if maxX > minX {
             cameraNode.position.x = max(minX, min(maxX, cameraNode.position.x))
         } else {
+            // Map fits in view, center it
             cameraNode.position.x = mapSize.width / 2
         }
 
         if maxY > minY {
             cameraNode.position.y = max(minY, min(maxY, cameraNode.position.y))
         } else {
+            // Map fits in view, center it
             cameraNode.position.y = mapSize.height / 2
         }
     }
 
     func handlePinch(scale: CGFloat) {
         let newScale = cameraNode.xScale / scale
-        cameraNode.setScale(max(0.8, min(2.5, newScale)))
+        let clampedScale = max(0.5, min(3.5, newScale))
+        cameraNode.setScale(clampedScale)
         clampCamera()
     }
 

@@ -36,22 +36,26 @@ struct BuildingPlotView: View {
                 )
 
                 VStack(spacing: isLargeScreen ? 12 : 8) {
-                    // Building icon container
+                    // Building icon container — 4 visual states
                     ZStack {
-                        // Background circle for completed buildings
                         if plot.isCompleted {
+                            // State 4: Complete — full watercolor
                             Circle()
                                 .fill(RenaissanceColors.terracotta.opacity(0.15))
                                 .frame(width: iconSize + 16, height: iconSize + 16)
-                        }
-
-                        // Building icon or placeholder
-                        if plot.isCompleted {
                             Image(systemName: plot.building.iconName)
                                 .font(.system(size: iconSize))
                                 .foregroundStyle(RenaissanceColors.terracotta)
+                        } else if plot.sketchingProgress.isSketchingComplete {
+                            // State 2: Sketched — sepia ink drawing
+                            Circle()
+                                .fill(RenaissanceColors.ochre.opacity(0.1))
+                                .frame(width: iconSize + 16, height: iconSize + 16)
+                            Image(systemName: plot.building.iconName)
+                                .font(.system(size: iconSize))
+                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                         } else {
-                            // Engineering-style placeholder
+                            // State 1: Blank — dashed placeholder
                             Image(systemName: "square.dashed")
                                 .font(.system(size: iconSize, weight: .ultraLight))
                                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.25))
@@ -104,18 +108,28 @@ struct BuildingPlotView: View {
                     }
 
                     // Progress indicator
-                    if !plot.isCompleted {
-                        Text(isLargeScreen ? "Tap to begin challenge" : "Begin")
+                    if plot.isCompleted {
+                        if isLargeScreen {
+                            HStack(spacing: 4) {
+                                Image(systemName: "checkmark.seal.fill")
+                                    .font(.caption2)
+                                Text("Completed")
+                                    .font(.custom("EBGaramond-Regular", size: 12, relativeTo: .caption2))
+                            }
+                            .foregroundStyle(RenaissanceColors.sageGreen)
+                        }
+                    } else if plot.sketchingProgress.isSketchingComplete {
+                        HStack(spacing: 4) {
+                            Image(systemName: "pencil.and.outline")
+                                .font(.caption2)
+                            Text(isLargeScreen ? "Sketched — collect materials" : "Sketched")
+                                .font(.custom("EBGaramond-Italic", size: isLargeScreen ? 12 : 10, relativeTo: .caption2))
+                        }
+                        .foregroundStyle(RenaissanceColors.ochre)
+                    } else {
+                        Text(isLargeScreen ? "Tap to begin sketching" : "Begin")
                             .font(.custom("EBGaramond-Italic", size: isLargeScreen ? 12 : 10, relativeTo: .caption2))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
-                    } else if isLargeScreen {
-                        HStack(spacing: 4) {
-                            Image(systemName: "checkmark.seal.fill")
-                                .font(.caption2)
-                            Text("Completed")
-                                .font(.custom("EBGaramond-Regular", size: 12, relativeTo: .caption2))
-                        }
-                        .foregroundStyle(RenaissanceColors.sageGreen)
                     }
                 }
                 .padding(isLargeScreen ? 20 : 12)

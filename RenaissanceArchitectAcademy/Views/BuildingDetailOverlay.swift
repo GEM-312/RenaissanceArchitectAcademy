@@ -15,6 +15,14 @@ struct BuildingDetailOverlay: View {
     private var cardMaxWidth: CGFloat { isLargeScreen ? 600 : 500 }
     private var cardMaxHeight: CGFloat { isLargeScreen ? 550 : 450 }
 
+    private var buttonTitle: String {
+        if plot.isCompleted { return "Review Challenge" }
+        if SketchingContent.sketchingChallenge(for: plot.building.name) != nil {
+            return "Begin Sketching"
+        }
+        return "Begin Challenge"
+    }
+
     var body: some View {
         ZStack {
             // Dimmed background with blur
@@ -127,7 +135,7 @@ struct BuildingDetailOverlay: View {
                     }
 
                     RenaissanceButton(
-                        title: plot.isCompleted ? "Review Challenge" : "Begin Challenge",
+                        title: buttonTitle,
                         action: onBeginChallenge
                     )
                     #if os(macOS)

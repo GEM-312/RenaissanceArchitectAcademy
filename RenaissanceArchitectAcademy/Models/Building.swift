@@ -27,14 +27,16 @@ enum RenaissanceCity: String, CaseIterable, Codable {
 enum BuildingState: String, CaseIterable {
     case locked       // Not yet available
     case available    // Ready to start
-    case construction // In progress
-    case complete     // Finished
+    case sketched     // Sketching phases complete (sepia ink drawing)
+    case construction // In progress (partial watercolor)
+    case complete     // Finished (full watercolor)
 
     /// Custom state image name from Assets.xcassets
     var imageName: String {
         switch self {
         case .locked: return "StateLocked"
         case .available: return "StateAvailable"
+        case .sketched: return "StateAvailable"  // Reuse until we have a sketch icon
         case .construction: return "StateConstruction"
         case .complete: return "StateComplete"
         }
@@ -199,4 +201,5 @@ struct BuildingPlot: Identifiable {
     let building: Building
     var isCompleted: Bool
     var challengeProgress: Double = 0.0
+    var sketchingProgress: SketchingProgress = SketchingProgress()
 }

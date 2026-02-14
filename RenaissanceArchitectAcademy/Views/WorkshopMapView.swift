@@ -6,6 +6,8 @@ import SpriteKit
 struct WorkshopMapView: View {
 
     @Bindable var workshop: WorkshopState
+    var viewModel: CityViewModel? = nil
+    var onNavigate: ((SidebarDestination) -> Void)? = nil
     var onEnterInterior: (() -> Void)? = nil
 
     @Environment(\.dismiss) private var dismiss
@@ -178,39 +180,47 @@ struct WorkshopMapView: View {
     // MARK: - Layer 3: Top Bar + Inventory
 
     private var topBar: some View {
-        HStack {
-            Button {
-                dismiss()
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "chevron.left")
-                    Text("Back")
+        VStack(spacing: 4) {
+            if let viewModel = viewModel {
+                GameTopBarView(
+                    title: "Workshop",
+                    viewModel: viewModel,
+                    onNavigate: { destination in
+                        onNavigate?(destination)
+                    },
+                    showBackButton: true,
+                    onBack: { dismiss() }
+                )
+            } else {
+                // Fallback if no viewModel
+                HStack {
+                    Button { dismiss() } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "chevron.left")
+                            Text("Back")
+                        }
+                        .font(.custom("EBGaramond-Italic", size: 16))
+                        .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(
+                            Capsule()
+                                .fill(RenaissanceColors.parchment.opacity(0.95))
+                                .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
+                        )
+                    }
+                    Spacer()
+                    Text("Workshop")
+                        .font(.custom("Cinzel-Bold", size: 20))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 10)
+                        .background(
+                            Capsule()
+                                .fill(RenaissanceColors.parchment.opacity(0.95))
+                        )
                 }
-                .font(.custom("EBGaramond-Italic", size: 16))
-                .foregroundStyle(RenaissanceColors.renaissanceBlue)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(
-                    Capsule()
-                        .fill(RenaissanceColors.parchment.opacity(0.95))
-                        .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
-                )
             }
-
-            Spacer()
-
-            Text("Leonardo's Workshop")
-                .font(.custom("Cinzel-Bold", size: 20))
-                .foregroundStyle(RenaissanceColors.sepiaInk)
-                .padding(.horizontal, 20)
-                .padding(.vertical, 10)
-                .background(
-                    Capsule()
-                        .fill(RenaissanceColors.parchment.opacity(0.95))
-                        .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
-                )
-
-            Spacer()
 
             // Status message
             if let status = workshop.statusMessage {

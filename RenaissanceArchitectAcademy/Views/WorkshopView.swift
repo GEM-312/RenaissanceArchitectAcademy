@@ -5,20 +5,22 @@ import SwiftUI
 /// Indoor: Crafting room with workbench, furnace, pigment table, storage shelf
 struct WorkshopView: View {
     var workshop: WorkshopState
+    var viewModel: CityViewModel? = nil
+    var onNavigate: ((SidebarDestination) -> Void)? = nil
 
     @State private var showInterior = false
 
     var body: some View {
         ZStack {
             if showInterior {
-                WorkshopInteriorView(workshop: workshop) {
+                WorkshopInteriorView(workshop: workshop, viewModel: viewModel, onNavigate: onNavigate) {
                     withAnimation(.easeInOut(duration: 0.4)) {
                         showInterior = false
                     }
                 }
                 .transition(.move(edge: .trailing))
             } else {
-                WorkshopMapView(workshop: workshop, onEnterInterior: {
+                WorkshopMapView(workshop: workshop, viewModel: viewModel, onNavigate: onNavigate, onEnterInterior: {
                     withAnimation(.easeInOut(duration: 0.4)) {
                         showInterior = true
                     }

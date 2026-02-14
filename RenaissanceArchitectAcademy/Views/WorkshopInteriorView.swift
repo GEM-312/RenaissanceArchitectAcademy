@@ -6,6 +6,8 @@ import SwiftUI
 struct WorkshopInteriorView: View {
 
     @Bindable var workshop: WorkshopState
+    var viewModel: CityViewModel? = nil
+    var onNavigate: ((SidebarDestination) -> Void)? = nil
     var onBack: () -> Void
 
     // Which station overlay is showing
@@ -20,6 +22,32 @@ struct WorkshopInteriorView: View {
         case pigmentTable = "Pigment Table"
         case shelf = "Storage"
     }
+
+    // MARK: - Default Furniture Positions (relative 0-1)
+
+    /// Default positions for each furniture station — edit these after using editor mode
+    private static let defaultPositions: [InteriorStation: CGPoint] = [
+        .workbench:    CGPoint(x: 0.25, y: 0.6),
+        .furnace:      CGPoint(x: 0.72, y: 0.45),
+        .pigmentTable: CGPoint(x: 0.48, y: 0.65),
+        .shelf:        CGPoint(x: 0.85, y: 0.35),
+    ]
+
+    /// Default image widths as fraction of screen width
+    private static let defaultWidths: [InteriorStation: CGFloat] = [
+        .workbench:    0.28,
+        .furnace:      0.22,
+        .pigmentTable: 0.26,
+        .shelf:        0.22,
+    ]
+
+    // MARK: - Editor Mode (DEBUG only)
+
+    #if DEBUG
+    @State private var editorActive = false
+    @State private var editedPositions: [InteriorStation: CGPoint] = defaultPositions
+    @State private var selectedEditorStation: InteriorStation? = nil
+    #endif
 
     var body: some View {
         GeometryReader { geo in
@@ -59,6 +87,13 @@ struct WorkshopInteriorView: View {
                     educationalOverlay
                         .transition(.opacity.combined(with: .scale(scale: 0.9)))
                 }
+
+                // Layer 6: Editor mode overlay (DEBUG only)
+                #if DEBUG
+                if editorActive {
+                    editorOverlay(in: geo.size)
+                }
+                #endif
             }
         }
         .onAppear {
@@ -66,6 +101,12 @@ struct WorkshopInteriorView: View {
                 appeared = true
             }
         }
+        #if DEBUG
+        .onKeyPress("e") {
+            toggleEditor()
+            return .handled
+        }
+        #endif
     }
 
     // MARK: - Furniture Layer
@@ -74,41 +115,36 @@ struct WorkshopInteriorView: View {
         // Position furniture relative to the room background
         // Room image: wide workshop interior, left side has tables, center has workspace, right has shelves
         ZStack {
-            // Workbench — left-center area
-            furnitureButton(
-                imageName: "InteriorWorkbench",
-                station: .workbench,
-                size: size,
-                relativeX: 0.25, relativeY: 0.6,
-                imageWidth: size.width * 0.28
-            )
+            ForEach(InteriorStation.allCases, id: \.self) { station in
+                let imageName: String = {
+                    switch station {
+                    case .workbench:    return "InteriorWorkbench"
+                    case .furnace:      return "InteriorFurnace"
+                    case .pigmentTable: return "InteriorPigmentTable"
+                    case .shelf:        return "InteriorShelf"
+                    }
+                }()
 
-            // Furnace — right-center area
-            furnitureButton(
-                imageName: "InteriorFurnace",
-                station: .furnace,
-                size: size,
-                relativeX: 0.72, relativeY: 0.45,
-                imageWidth: size.width * 0.22
-            )
+                #if DEBUG
+                let pos = editorActive ? editedPositions[station]! : Self.defaultPositions[station]!
+                #else
+                let pos = Self.defaultPositions[station]!
+                #endif
 
-            // Pigment Table — center area
-            furnitureButton(
-                imageName: "InteriorPigmentTable",
-                station: .pigmentTable,
-                size: size,
-                relativeX: 0.48, relativeY: 0.65,
-                imageWidth: size.width * 0.26
-            )
+                let imgWidth = size.width * (Self.defaultWidths[station] ?? 0.25)
 
-            // Storage Shelf — far right wall
-            furnitureButton(
-                imageName: "InteriorShelf",
-                station: .shelf,
-                size: size,
-                relativeX: 0.85, relativeY: 0.35,
-                imageWidth: size.width * 0.22
-            )
+                furnitureButton(
+                    imageName: imageName,
+                    station: station,
+                    size: size,
+                    relativeX: pos.x,
+                    relativeY: pos.y,
+                    imageWidth: imgWidth
+                )
+                #if DEBUG
+                .gesture(editorActive ? editorDragGesture(for: station, in: size) : nil)
+                #endif
+            }
         }
     }
 
@@ -672,39 +708,47 @@ struct WorkshopInteriorView: View {
     // MARK: - Top Bar
 
     private var topBar: some View {
-        HStack {
-            Button {
-                onBack()
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "arrow.left")
-                    Text("Back to Workshop")
+        VStack(spacing: 4) {
+            if let viewModel = viewModel {
+                GameTopBarView(
+                    title: "Crafting Room",
+                    viewModel: viewModel,
+                    onNavigate: { destination in
+                        onNavigate?(destination)
+                    },
+                    showBackButton: true,
+                    onBack: onBack
+                )
+            } else {
+                // Fallback if no viewModel
+                HStack {
+                    Button(action: onBack) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "arrow.left")
+                            Text("Back")
+                        }
+                        .font(.custom("EBGaramond-Italic", size: 16))
+                        .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(
+                            Capsule()
+                                .fill(RenaissanceColors.parchment.opacity(0.95))
+                                .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
+                        )
+                    }
+                    Spacer()
+                    Text("Crafting Room")
+                        .font(.custom("Cinzel-Bold", size: 20))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 10)
+                        .background(
+                            Capsule()
+                                .fill(RenaissanceColors.parchment.opacity(0.95))
+                        )
                 }
-                .font(.custom("EBGaramond-Italic", size: 16))
-                .foregroundStyle(RenaissanceColors.renaissanceBlue)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(
-                    Capsule()
-                        .fill(RenaissanceColors.parchment.opacity(0.95))
-                        .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
-                )
             }
-
-            Spacer()
-
-            Text("Crafting Room")
-                .font(.custom("Cinzel-Bold", size: 20))
-                .foregroundStyle(RenaissanceColors.sepiaInk)
-                .padding(.horizontal, 20)
-                .padding(.vertical, 10)
-                .background(
-                    Capsule()
-                        .fill(RenaissanceColors.parchment.opacity(0.95))
-                        .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
-                )
-
-            Spacer()
 
             // Status message
             if let status = workshop.statusMessage {
@@ -853,6 +897,103 @@ struct WorkshopInteriorView: View {
             dismissOverlay()
         }
     }
+
+    // MARK: - Editor Mode (DEBUG only)
+
+    #if DEBUG
+    private func toggleEditor() {
+        editorActive.toggle()
+        if editorActive {
+            // Initialize edited positions from defaults
+            editedPositions = Self.defaultPositions
+            selectedEditorStation = nil
+            print("🎨 INTERIOR EDITOR ON — drag furniture to reposition, press E to finish")
+        } else {
+            dumpFurniturePositions()
+            selectedEditorStation = nil
+            print("🎨 INTERIOR EDITOR OFF — positions printed above ↑")
+        }
+    }
+
+    private func editorDragGesture(for station: InteriorStation, in size: CGSize) -> some Gesture {
+        DragGesture()
+            .onChanged { value in
+                selectedEditorStation = station
+                let relX = value.location.x / size.width
+                let relY = value.location.y / size.height
+                editedPositions[station] = CGPoint(
+                    x: max(0.05, min(0.95, relX)),
+                    y: max(0.05, min(0.95, relY))
+                )
+            }
+            .onEnded { _ in
+                if let pos = editedPositions[station] {
+                    print("  \"\(station.rawValue)\": CGPoint(x: \(String(format: "%.2f", pos.x)), y: \(String(format: "%.2f", pos.y)))")
+                }
+            }
+    }
+
+    private func editorOverlay(in size: CGSize) -> some View {
+        ZStack {
+            // Editor badge
+            VStack {
+                HStack {
+                    Spacer()
+                    Text("EDITOR MODE")
+                        .font(.system(size: 14, weight: .bold, design: .monospaced))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(
+                            Capsule()
+                                .fill(.red.opacity(0.9))
+                                .overlay(Capsule().strokeBorder(.white, lineWidth: 2))
+                        )
+                        .opacity(editorActive ? 1 : 0)
+                    Spacer()
+                }
+                .padding(.top, 50)
+
+                Spacer()
+            }
+
+            // Yellow highlight around selected station
+            if let station = selectedEditorStation, let pos = editedPositions[station] {
+                let imgWidth = size.width * (Self.defaultWidths[station] ?? 0.25)
+                RoundedRectangle(cornerRadius: 8)
+                    .strokeBorder(.yellow, lineWidth: 3)
+                    .frame(width: imgWidth + 20, height: imgWidth * 0.8 + 40)
+                    .position(x: size.width * pos.x, y: size.height * pos.y)
+
+                // Coordinate label
+                Text("x: \(String(format: "%.2f", pos.x))  y: \(String(format: "%.2f", pos.y))")
+                    .font(.system(size: 13, weight: .bold, design: .monospaced))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(
+                        Capsule()
+                            .fill(.black.opacity(0.85))
+                            .overlay(Capsule().strokeBorder(.yellow, lineWidth: 1))
+                    )
+                    .position(x: size.width * pos.x, y: size.height * pos.y - imgWidth * 0.4 - 30)
+            }
+        }
+        .allowsHitTesting(false)
+    }
+
+    private func dumpFurniturePositions() {
+        print("\n// ========== INTERIOR FURNITURE POSITIONS ==========")
+        print("private static let defaultPositions: [InteriorStation: CGPoint] = [")
+        for station in InteriorStation.allCases {
+            if let pos = editedPositions[station] {
+                print("    .\(station): CGPoint(x: \(String(format: "%.2f", pos.x)), y: \(String(format: "%.2f", pos.y))),")
+            }
+        }
+        print("]")
+        print("// ===================================================\n")
+    }
+    #endif
 }
 
 #Preview {

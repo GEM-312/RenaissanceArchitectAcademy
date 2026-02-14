@@ -2,11 +2,12 @@ import SwiftUI
 
 /// Navigation options in the sidebar
 enum SidebarDestination: Hashable {
-    case cityMap        // NEW: SpriteKit isometric city view
+    case cityMap        // SpriteKit isometric city view
     case allBuildings   // Grid view of all buildings
     case era(Era)
     case profile
     case workshop       // Crafting mini-game
+    case knowledgeTests // Quiz challenges (relocated)
 }
 
 struct SidebarView: View {
@@ -66,6 +67,21 @@ struct SidebarView: View {
                 }
             } header: {
                 Label("Craft", systemImage: "flame")
+                    .font(.caption)
+                    .foregroundStyle(RenaissanceColors.warmBrown)
+            }
+
+            // Knowledge Tests Section
+            Section {
+                SidebarRow(
+                    title: "Knowledge Tests",
+                    icon: "book.fill",
+                    isSelected: selectedDestination == .knowledgeTests
+                ) {
+                    selectedDestination = .knowledgeTests
+                }
+            } header: {
+                Label("Study", systemImage: "graduationcap")
                     .font(.caption)
                     .foregroundStyle(RenaissanceColors.warmBrown)
             }

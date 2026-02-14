@@ -44,8 +44,38 @@ class CityScene: SKScene {
     private lazy var editorMode = SceneEditorMode(scene: self)
     #endif
 
-    // Map bounds for camera clamping - expanded for 17 buildings!
-    private let mapSize = CGSize(width: 3500, height: 2500)
+    // MARK: - Terrain Tile System
+
+    /// Terrain tile for the expandable map system
+    private struct TerrainTile {
+        let imageName: String?  // nil = placeholder (parchment, no image yet)
+        let origin: CGPoint     // bottom-left corner in map coordinates
+        let size: CGSize        // tile dimensions in points
+    }
+
+    /// Map tiles — add entries to expand the map in any direction.
+    /// The first tile is the current terrain. Add new tiles adjacent to it.
+    /// mapSize auto-adjusts and camera panning covers all tiles.
+    private let terrainTiles: [TerrainTile] = [
+        // Current map
+        TerrainTile(imageName: "Terrain", origin: .zero, size: CGSize(width: 3500, height: 2500)),
+
+        // === Expansion tiles ===
+        // Uncomment and replace nil with image name once art is created:
+        // TerrainTile(imageName: nil, origin: CGPoint(x: 3500, y: 0),    size: CGSize(width: 3500, height: 2500)),  // East
+        // TerrainTile(imageName: nil, origin: CGPoint(x: 0, y: 2500),    size: CGSize(width: 3500, height: 2500)),  // North
+        // TerrainTile(imageName: nil, origin: CGPoint(x: 3500, y: 2500), size: CGSize(width: 3500, height: 2500)),  // Northeast
+    ]
+
+    /// Map size auto-computed from all terrain tiles
+    private lazy var mapSize: CGSize = {
+        var maxX: CGFloat = 0, maxY: CGFloat = 0
+        for tile in terrainTiles {
+            maxX = max(maxX, tile.origin.x + tile.size.width)
+            maxY = max(maxY, tile.origin.y + tile.size.height)
+        }
+        return CGSize(width: max(3500, maxX), height: max(2500, maxY))
+    }()
 
     // MARK: - Scene Setup
 
@@ -137,13 +167,47 @@ class CityScene: SKScene {
     // MARK: - Terrain
 
     private func setupTerrain() {
-        // Terrain texture matches the map exactly — full image visible at default zoom
-        let terrainTexture = SKTexture(imageNamed: "Terrain")
-        let terrain = SKSpriteNode(texture: terrainTexture)
-        terrain.size = mapSize
-        terrain.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
-        terrain.zPosition = -100
-        addChild(terrain)
+        // Lay out each terrain tile
+        for tile in terrainTiles {
+            let centerX = tile.origin.x + tile.size.width / 2
+            let centerY = tile.origin.y + tile.size.height / 2
+
+            if let imageName = tile.imageName {
+                // Tile with art
+                let texture = SKTexture(imageNamed: imageName)
+                let sprite = SKSpriteNode(texture: texture)
+                sprite.size = tile.size
+                sprite.position = CGPoint(x: centerX, y: centerY)
+                sprite.zPosition = -100
+                addChild(sprite)
+            } else {
+                // Placeholder tile — parchment rectangle with dashed border
+                let placeholder = SKSpriteNode(color: PlatformColor(red: 0.96, green: 0.90, blue: 0.83, alpha: 1.0), size: tile.size)
+                placeholder.position = CGPoint(x: centerX, y: centerY)
+                placeholder.zPosition = -100
+                addChild(placeholder)
+
+                // Dashed border
+                let borderPath = CGMutablePath()
+                borderPath.addRect(CGRect(origin: CGPoint(x: -tile.size.width / 2, y: -tile.size.height / 2), size: tile.size))
+                let border = SKShapeNode(path: borderPath.copy(dashingWithPhase: 0, lengths: [20, 12]))
+                border.strokeColor = PlatformColor(RenaissanceColors.ochre.opacity(0.4))
+                border.lineWidth = 2
+                border.fillColor = .clear
+                border.position = CGPoint(x: centerX, y: centerY)
+                border.zPosition = -99
+                addChild(border)
+
+                // "Expansion Area" label
+                let label = SKLabelNode(text: "Expansion Area")
+                label.fontName = "EBGaramond-Italic"
+                label.fontSize = 28
+                label.fontColor = PlatformColor(RenaissanceColors.sepiaInk.opacity(0.25))
+                label.position = CGPoint(x: centerX, y: centerY)
+                label.zPosition = -98
+                addChild(label)
+            }
+        }
 
         // Grid lines (Leonardo's notebook style)
         addGridOverlay()

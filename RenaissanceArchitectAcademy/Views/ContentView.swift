@@ -87,13 +87,19 @@ struct ContentView: View {
         #endif
     }
 
+    /// Navigate to a destination from any screen
+    private func navigateTo(_ destination: SidebarDestination) {
+        withAnimation(.easeInOut(duration: 0.3)) {
+            selectedDestination = destination
+        }
+    }
+
     /// Detail view based on sidebar selection
     @ViewBuilder
     private var detailView: some View {
         switch selectedDestination {
         case .cityMap:
-            // NEW: SpriteKit isometric city map (your sketch!)
-            CityMapView(viewModel: cityViewModel, workshopState: workshopState)
+            CityMapView(viewModel: cityViewModel, workshopState: workshopState, onNavigate: navigateTo)
         case .allBuildings:
             CityView(viewModel: cityViewModel, filterEra: nil, workshopState: workshopState)
         case .era(let era):
@@ -101,9 +107,11 @@ struct ContentView: View {
         case .profile:
             ProfileView()
         case .workshop:
-            WorkshopView(workshop: workshopState)
+            WorkshopView(workshop: workshopState, viewModel: cityViewModel, onNavigate: navigateTo)
+        case .knowledgeTests:
+            KnowledgeTestsView(viewModel: cityViewModel, workshopState: workshopState)
         case .none:
-            CityMapView(viewModel: cityViewModel, workshopState: workshopState)  // Default to the new map
+            CityMapView(viewModel: cityViewModel, workshopState: workshopState, onNavigate: navigateTo)
         }
     }
 }
