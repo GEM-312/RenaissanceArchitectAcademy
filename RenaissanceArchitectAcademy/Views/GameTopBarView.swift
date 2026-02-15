@@ -1,62 +1,22 @@
 import SwiftUI
 
-/// Shared top navigation bar across all game screens (City Map, Workshop, Crafting Room)
-/// Shows quick-nav buttons (Profile, Map, Eras) + horizontal building progress strip
+/// Floating navigation overlay — nav buttons on LEFT, building icons on RIGHT
+/// Each button has its own small background, no big panel
 struct GameTopBarView: View {
     let title: String
     @ObservedObject var viewModel: CityViewModel
     var onNavigate: (SidebarDestination) -> Void
     var showBackButton: Bool = false
     var onBack: (() -> Void)? = nil
-
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    private var isLargeScreen: Bool { horizontalSizeClass == .regular }
+    var onBackToMenu: (() -> Void)? = nil
 
     var body: some View {
-        VStack(spacing: 6) {
-            // Row 1: Nav buttons + title
-            HStack(spacing: 8) {
-                // Back button (workshop/crafting only)
-                if showBackButton, let onBack = onBack {
-                    Button(action: onBack) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundStyle(RenaissanceColors.renaissanceBlue)
-                            .frame(width: 32, height: 32)
-                            .background(
-                                Circle()
-                                    .fill(RenaissanceColors.parchment.opacity(0.95))
-                                    .shadow(color: .black.opacity(0.08), radius: 2, y: 1)
-                            )
-                    }
-                    .buttonStyle(.plain)
-                }
-
-                // Quick-nav: Profile
-                navButton(icon: "person.fill", label: "Profile") {
-                    onNavigate(.profile)
-                }
-
-                // Quick-nav: Map
-                navButton(icon: "map.fill", label: "Map") {
-                    onNavigate(.cityMap)
-                }
-
-                // Quick-nav: Eras
-                navButton(icon: "building.columns.fill", label: "Eras") {
-                    onNavigate(.allBuildings)
-                }
-
-                // Quick-nav: Workshop
-                navButton(icon: "hammer.fill", label: "Workshop") {
-                    onNavigate(.workshop)
-                }
-
-                Spacer()
-
+        HStack(alignment: .top, spacing: 0) {
+            // LEFT: Title + Nav buttons (flush left)
+            VStack(alignment: .leading, spacing: 4) {
                 // Title capsule
                 Text(title)
-                    .font(.custom("Cinzel-Bold", size: isLargeScreen ? 18 : 14, relativeTo: .headline))
+                    .font(.custom("Cinzel-Bold", size: 16))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 6)
@@ -65,28 +25,77 @@ struct GameTopBarView: View {
                             .fill(RenaissanceColors.parchment.opacity(0.95))
                             .shadow(color: .black.opacity(0.08), radius: 2, y: 1)
                     )
+                    .padding(.bottom, 4)
+
+                navColumn
             }
 
-            // Row 2: Building progress strip
-            buildingStrip
+            Spacer(minLength: 0)
+
+            // RIGHT: Building achievement icons (flush right)
+            buildingColumn
+                .fixedSize()
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    // MARK: - Nav Column (LEFT side, flush left)
+
+    private var navColumn: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            if showBackButton, let onBack = onBack {
+                navButton(icon: "chevron.left", label: "Back", action: onBack)
+            }
+
+            navButton(icon: "map.fill", label: "Map") {
+                onNavigate(.cityMap)
+            }
+
+            navButton(icon: "building.2", label: "All") {
+                onNavigate(.allBuildings)
+            }
+
+            navButton(icon: "building.columns", label: "Rome") {
+                onNavigate(.era(.ancientRome))
+            }
+
+            navButton(icon: "paintpalette", label: "Ren.") {
+                onNavigate(.era(.renaissance))
+            }
+
+            navButton(icon: "hammer.fill", label: "Workshop") {
+                onNavigate(.workshop)
+            }
+
+            navButton(icon: "book.fill", label: "Tests") {
+                onNavigate(.knowledgeTests)
+            }
+
+            navButton(icon: "person.fill", label: "Profile") {
+                onNavigate(.profile)
+            }
+
+            if let onBackToMenu = onBackToMenu {
+                navButton(icon: "house.fill", label: "Home", action: onBackToMenu)
+            }
         }
     }
 
-    // MARK: - Nav Button
+    // MARK: - Nav Button (with individual background)
 
     private func navButton(icon: String, label: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             VStack(spacing: 2) {
                 Image(systemName: icon)
-                    .font(.system(size: 13))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
+                    .font(.system(size: 22))
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
                 Text(label)
-                    .font(.custom("EBGaramond-Regular", size: 8, relativeTo: .caption2))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                    .font(.custom("EBGaramond-Regular", size: 11, relativeTo: .caption))
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
             }
-            .frame(width: 40, height: 36)
+            .frame(width: 60, height: 48)
             .background(
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: 10)
                     .fill(RenaissanceColors.parchment.opacity(0.95))
                     .shadow(color: .black.opacity(0.06), radius: 2, y: 1)
             )
@@ -94,40 +103,34 @@ struct GameTopBarView: View {
         .buttonStyle(.plain)
     }
 
-    // MARK: - Building Progress Strip
+    // MARK: - Building Column (RIGHT side, with individual backgrounds)
 
-    private var buildingStrip: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 6) {
-                ForEach(viewModel.buildingPlots) { plot in
-                    buildingStripItem(plot)
-                }
+    private var buildingColumn: some View {
+        LazyVGrid(columns: [
+            GridItem(.fixed(44), spacing: 2),
+            GridItem(.fixed(44), spacing: 2)
+        ], spacing: 2) {
+            ForEach(viewModel.buildingPlots) { plot in
+                buildingGridItem(plot)
             }
-            .padding(.horizontal, 4)
         }
-        .frame(height: 42)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(RenaissanceColors.parchment.opacity(0.9))
-                .shadow(color: .black.opacity(0.06), radius: 2, y: 1)
-        )
     }
 
-    private func buildingStripItem(_ plot: BuildingPlot) -> some View {
+    private func buildingGridItem(_ plot: BuildingPlot) -> some View {
         let isComplete = plot.isCompleted
         let isSketched = plot.sketchingProgress.isSketchingComplete
 
-        return VStack(spacing: 1) {
-            // Building icon
+        return VStack(spacing: 0) {
             ZStack {
-                RoundedRectangle(cornerRadius: 4)
-                    .fill(isComplete ? RenaissanceColors.sageGreen.opacity(0.2) :
-                          isSketched ? RenaissanceColors.ochre.opacity(0.15) :
-                          RenaissanceColors.stoneGray.opacity(0.1))
-                    .frame(width: 26, height: 22)
+                RoundedRectangle(cornerRadius: 5)
+                    .fill(isComplete ? RenaissanceColors.sageGreen.opacity(0.25) :
+                          isSketched ? RenaissanceColors.ochre.opacity(0.2) :
+                          RenaissanceColors.parchment.opacity(0.9))
+                    .shadow(color: .black.opacity(0.06), radius: 1, y: 1)
+                    .frame(width: 40, height: 34)
 
                 Image(systemName: buildingIcon(for: plot.building.name))
-                    .font(.system(size: 10))
+                    .font(.system(size: 16))
                     .foregroundStyle(
                         isComplete ? RenaissanceColors.sageGreen :
                         isSketched ? RenaissanceColors.ochre :
@@ -135,12 +138,13 @@ struct GameTopBarView: View {
                     )
             }
 
-            // Progress number
             Text(String(format: "%02d", plot.id))
                 .font(.system(size: 8, weight: .medium, design: .monospaced))
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
         }
     }
+
+    // MARK: - Building Icons
 
     private func buildingIcon(for name: String) -> String {
         switch name {

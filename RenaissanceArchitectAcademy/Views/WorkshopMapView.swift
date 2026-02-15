@@ -8,6 +8,7 @@ struct WorkshopMapView: View {
     @Bindable var workshop: WorkshopState
     var viewModel: CityViewModel? = nil
     var onNavigate: ((SidebarDestination) -> Void)? = nil
+    var onBackToMenu: (() -> Void)? = nil
     var onEnterInterior: (() -> Void)? = nil
 
     @Environment(\.dismiss) private var dismiss
@@ -38,14 +39,33 @@ struct WorkshopMapView: View {
                 // Layer 2: Companion overlay (Splash + Bird trailing player)
                 companionOverlay(in: geometry.size)
 
-                // Layer 3: Top bar + bottom inventory bar
+                // Layer 3: Nav (left) + Buildings (right) with margins — same as city map
                 VStack(spacing: 0) {
-                    topBar
+                    navigationPanel
+                        .frame(maxWidth: .infinity)
                     Spacer()
                     inventoryBar
                 }
-                .padding(.horizontal)
-                .padding(.vertical, 8)
+                .frame(maxWidth: .infinity)
+                .padding(16)
+
+                // Status message overlay
+                if let status = workshop.statusMessage {
+                    VStack {
+                        Text(status)
+                            .font(.custom("EBGaramond-Italic", size: 14))
+                            .foregroundStyle(RenaissanceColors.terracotta)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(
+                                Capsule()
+                                    .fill(RenaissanceColors.parchment.opacity(0.95))
+                            )
+                        Spacer()
+                    }
+                    .padding(.top, 8)
+                    .allowsHitTesting(false)
+                }
 
                 // Layer 4: Hint bubble (Splash shows text at resource nodes)
                 if showHintBubble, let station = activeStation {
@@ -86,7 +106,7 @@ struct WorkshopMapView: View {
         if let existing = scene { return existing }
 
         let newScene = WorkshopScene()
-        newScene.size = CGSize(width: 1500, height: 1000)
+        newScene.size = CGSize(width: 3500, height: 2500)
         newScene.scaleMode = .aspectFill
 
         // Player position updates
@@ -177,10 +197,10 @@ struct WorkshopMapView: View {
         .allowsHitTesting(false)
     }
 
-    // MARK: - Layer 3: Top Bar + Inventory
+    // MARK: - Layer 3: Navigation Panel + Inventory
 
-    private var topBar: some View {
-        VStack(spacing: 4) {
+    private var navigationPanel: some View {
+        Group {
             if let viewModel = viewModel {
                 GameTopBarView(
                     title: "Workshop",
@@ -189,11 +209,12 @@ struct WorkshopMapView: View {
                         onNavigate?(destination)
                     },
                     showBackButton: true,
-                    onBack: { dismiss() }
+                    onBack: { dismiss() },
+                    onBackToMenu: onBackToMenu
                 )
             } else {
                 // Fallback if no viewModel
-                HStack {
+                VStack(spacing: 8) {
                     Button { dismiss() } label: {
                         HStack(spacing: 6) {
                             Image(systemName: "chevron.left")
@@ -209,7 +230,6 @@ struct WorkshopMapView: View {
                                 .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
                         )
                     }
-                    Spacer()
                     Text("Workshop")
                         .font(.custom("Cinzel-Bold", size: 20))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
@@ -220,19 +240,6 @@ struct WorkshopMapView: View {
                                 .fill(RenaissanceColors.parchment.opacity(0.95))
                         )
                 }
-            }
-
-            // Status message
-            if let status = workshop.statusMessage {
-                Text(status)
-                    .font(.custom("EBGaramond-Italic", size: 14))
-                    .foregroundStyle(RenaissanceColors.terracotta)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(
-                        Capsule()
-                            .fill(RenaissanceColors.parchment.opacity(0.95))
-                    )
             }
         }
     }

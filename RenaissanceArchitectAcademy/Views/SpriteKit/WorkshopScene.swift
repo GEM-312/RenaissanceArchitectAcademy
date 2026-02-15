@@ -14,121 +14,121 @@ class WorkshopScene: SKScene {
     // Camera control
     private var lastPanLocation: CGPoint?
 
-    // Map size (smaller than city's 3500×2500)
-    private let mapSize = CGSize(width: 1500, height: 1000)
+    // Map size — matches city's 3500×2500 so terrain renders at same density
+    private let mapSize = CGSize(width: 3500, height: 2500)
 
     #if DEBUG
     private lazy var editorMode = SceneEditorMode(scene: self)
     #endif
 
-    // Station positions — resources ring edges, crafting at center
+    // Station positions — scaled to 3500x2500 coordinate space
     private let stationPositions: [ResourceStationType: CGPoint] = [
-        .quarry:       CGPoint(x: 200,  y: 850),
-        .river:        CGPoint(x: 500,  y: 900),
-        .volcano:      CGPoint(x: 850,  y: 880),
-        .clayPit:      CGPoint(x: 1200, y: 800),
-        .mine:         CGPoint(x: 1350, y: 550),
-        .pigmentTable: CGPoint(x: 1250, y: 250),
-        .forest:       CGPoint(x: 200,  y: 400),
-        .market:       CGPoint(x: 500,  y: 200),
-        .workbench:    CGPoint(x: 600,  y: 500),
-        .furnace:      CGPoint(x: 900,  y: 480),
+        .quarry:       CGPoint(x: 467,  y: 2125),
+        .river:        CGPoint(x: 1167, y: 2250),
+        .volcano:      CGPoint(x: 1983, y: 2200),
+        .clayPit:      CGPoint(x: 2800, y: 2000),
+        .mine:         CGPoint(x: 3150, y: 1375),
+        .pigmentTable: CGPoint(x: 2917, y: 625),
+        .forest:       CGPoint(x: 467,  y: 1000),
+        .market:       CGPoint(x: 1167, y: 500),
+        .workbench:    CGPoint(x: 1400, y: 1250),
+        .furnace:      CGPoint(x: 2100, y: 1200),
     ]
 
     // MARK: - Waypoint Graph (road network for pathfinding)
 
-    /// 64 road junctions forming walkable paths between stations
+    /// 64 road junctions — scaled to 3500x2500 coordinate space
     private var waypoints: [CGPoint] = [
-        // --- Row D: center band (y ~430-500) ---
-        /* 0  */ CGPoint(x: 750,  y: 490),   // central hub
-        /* 1  */ CGPoint(x: 520,  y: 470),   // west hub
-        /* 2  */ CGPoint(x: 980,  y: 460),   // east hub
-        // --- Row B: upper band (y ~700-720) ---
-        /* 3  */ CGPoint(x: 250,  y: 700),   // NW road
-        /* 4  */ CGPoint(x: 500,  y: 720),   // N road
-        /* 5  */ CGPoint(x: 750,  y: 740),   // N center
-        /* 6  */ CGPoint(x: 1050, y: 750),   // NE road
+        // --- Row D: center band ---
+        /* 0  */ CGPoint(x: 1750, y: 1225),  // central hub
+        /* 1  */ CGPoint(x: 1213, y: 1175),  // west hub
+        /* 2  */ CGPoint(x: 2287, y: 1150),  // east hub
+        // --- Row B: upper band ---
+        /* 3  */ CGPoint(x: 583,  y: 1750),  // NW road
+        /* 4  */ CGPoint(x: 1167, y: 1800),  // N road
+        /* 5  */ CGPoint(x: 1750, y: 1850),  // N center
+        /* 6  */ CGPoint(x: 2450, y: 1875),  // NE road
         // --- Row D continued ---
-        /* 7  */ CGPoint(x: 250,  y: 500),   // W road
-        // --- Row E: south band (y ~280-370) ---
-        /* 8  */ CGPoint(x: 350,  y: 320),   // SW road
-        /* 9  */ CGPoint(x: 600,  y: 280),   // S road
-        /* 10 */ CGPoint(x: 900,  y: 300),   // S center
-        /* 11 */ CGPoint(x: 1150, y: 300),   // SE road
+        /* 7  */ CGPoint(x: 583,  y: 1250),  // W road
+        // --- Row E: south band ---
+        /* 8  */ CGPoint(x: 817,  y: 800),   // SW road
+        /* 9  */ CGPoint(x: 1400, y: 700),   // S road
+        /* 10 */ CGPoint(x: 2100, y: 750),   // S center
+        /* 11 */ CGPoint(x: 2683, y: 750),   // SE road
         // --- Row B/C: east side ---
-        /* 12 */ CGPoint(x: 1250, y: 680),   // E upper
-        /* 13 */ CGPoint(x: 1200, y: 500),   // E mid
-        /* 14 */ CGPoint(x: 1280, y: 400),   // E lower
-        // --- Row A: top (y ~830) ---
-        /* 15 */ CGPoint(x: 400,  y: 830),   // N upper (quarry-river link)
-        // --- Row C: mid band (y ~590-630) ---
-        /* 16 */ CGPoint(x: 250,  y: 600),   // W mid
-        /* 17 */ CGPoint(x: 400,  y: 590),   // W-center
-        /* 18 */ CGPoint(x: 630,  y: 620),   // center-N
-        /* 19 */ CGPoint(x: 880,  y: 630),   // center-NE
-        /* 20 */ CGPoint(x: 1100, y: 620),   // E mid-N
+        /* 12 */ CGPoint(x: 2917, y: 1700),  // E upper
+        /* 13 */ CGPoint(x: 2800, y: 1250),  // E mid
+        /* 14 */ CGPoint(x: 2987, y: 1000),  // E lower
+        // --- Row A: top ---
+        /* 15 */ CGPoint(x: 933,  y: 2075),  // N upper (quarry-river link)
+        // --- Row C: mid band ---
+        /* 16 */ CGPoint(x: 583,  y: 1500),  // W mid
+        /* 17 */ CGPoint(x: 933,  y: 1475),  // W-center
+        /* 18 */ CGPoint(x: 1470, y: 1550),  // center-N
+        /* 19 */ CGPoint(x: 2053, y: 1575),  // center-NE
+        /* 20 */ CGPoint(x: 2567, y: 1550),  // E mid-N
         // --- Row A: top corners ---
-        /* 21 */ CGPoint(x: 150,  y: 780),   // near quarry
-        /* 22 */ CGPoint(x: 650,  y: 820),   // top center
-        /* 23 */ CGPoint(x: 1130, y: 780),   // near clay pit
+        /* 21 */ CGPoint(x: 350,  y: 1950),  // near quarry
+        /* 22 */ CGPoint(x: 1517, y: 2050),  // top center
+        /* 23 */ CGPoint(x: 2637, y: 1950),  // near clay pit
         // --- Row D: inner ring ---
-        /* 24 */ CGPoint(x: 350,  y: 480),   // W inner (near forest)
-        /* 25 */ CGPoint(x: 450,  y: 360),   // SW inner
-        /* 26 */ CGPoint(x: 750,  y: 350),   // S mid
-        /* 27 */ CGPoint(x: 1050, y: 370),   // SE inner
-        // --- Row F: bottom (y ~150-220) ---
-        /* 28 */ CGPoint(x: 500,  y: 150),   // near market
-        /* 29 */ CGPoint(x: 750,  y: 180),   // S center low
-        /* 30 */ CGPoint(x: 1000, y: 220),   // S-E low
-        /* 31 */ CGPoint(x: 1350, y: 450),   // near mine
+        /* 24 */ CGPoint(x: 817,  y: 1200),  // W inner (near forest)
+        /* 25 */ CGPoint(x: 1050, y: 900),   // SW inner
+        /* 26 */ CGPoint(x: 1750, y: 875),   // S mid
+        /* 27 */ CGPoint(x: 2450, y: 925),   // SE inner
+        // --- Row F: bottom ---
+        /* 28 */ CGPoint(x: 1167, y: 375),   // near market
+        /* 29 */ CGPoint(x: 1750, y: 450),   // S center low
+        /* 30 */ CGPoint(x: 2333, y: 550),   // S-E low
+        /* 31 */ CGPoint(x: 3150, y: 1125),  // near mine
 
-        // ====== New 32 waypoints (32-63) — fills all gaps ======
+        // ====== Waypoints 32-63 ======
 
-        // --- Row A extras: top edge (y ~850-870) ---
-        /* 32 */ CGPoint(x: 300,  y: 870),   // between quarry and wp15
-        /* 33 */ CGPoint(x: 750,  y: 870),   // top center
-        /* 34 */ CGPoint(x: 1000, y: 850),   // near volcano
-        /* 35 */ CGPoint(x: 1300, y: 830),   // near clay pit
+        // --- Row A extras: top edge ---
+        /* 32 */ CGPoint(x: 700,  y: 2175),  // between quarry and wp15
+        /* 33 */ CGPoint(x: 1750, y: 2175),  // top center
+        /* 34 */ CGPoint(x: 2333, y: 2125),  // near volcano
+        /* 35 */ CGPoint(x: 3033, y: 2075),  // near clay pit
 
-        // --- Row B extras: upper (y ~750) ---
-        /* 36 */ CGPoint(x: 400,  y: 750),   // between wp3 and wp4
-        /* 37 */ CGPoint(x: 650,  y: 750),   // upper center
-        /* 38 */ CGPoint(x: 900,  y: 760),   // between wp5 and wp6
-        /* 39 */ CGPoint(x: 1200, y: 720),   // upper east
+        // --- Row B extras: upper ---
+        /* 36 */ CGPoint(x: 933,  y: 1875),  // between wp3 and wp4
+        /* 37 */ CGPoint(x: 1517, y: 1875),  // upper center
+        /* 38 */ CGPoint(x: 2100, y: 1900),  // between wp5 and wp6
+        /* 39 */ CGPoint(x: 2800, y: 1800),  // upper east
 
-        // --- Row C extras: mid (y ~550-650) ---
-        /* 40 */ CGPoint(x: 150,  y: 550),   // far west
-        /* 41 */ CGPoint(x: 520,  y: 620),   // mid west-center
-        /* 42 */ CGPoint(x: 750,  y: 620),   // mid center
-        /* 43 */ CGPoint(x: 1000, y: 550),   // mid east
-        /* 44 */ CGPoint(x: 1300, y: 600),   // far east mid
+        // --- Row C extras: mid ---
+        /* 40 */ CGPoint(x: 350,  y: 1375),  // far west
+        /* 41 */ CGPoint(x: 1213, y: 1550),  // mid west-center
+        /* 42 */ CGPoint(x: 1750, y: 1550),  // mid center
+        /* 43 */ CGPoint(x: 2333, y: 1375),  // mid east
+        /* 44 */ CGPoint(x: 3033, y: 1500),  // far east mid
 
-        // --- Row D extras: lower-mid (y ~420-480) ---
-        /* 45 */ CGPoint(x: 150,  y: 420),   // far west lower
-        /* 46 */ CGPoint(x: 450,  y: 470),   // between wp24 and wp1
-        /* 47 */ CGPoint(x: 650,  y: 430),   // between wp1 and wp0
-        /* 48 */ CGPoint(x: 850,  y: 450),   // between wp0 and wp2
-        /* 49 */ CGPoint(x: 1100, y: 450),   // between wp2 and wp13
+        // --- Row D extras: lower-mid ---
+        /* 45 */ CGPoint(x: 350,  y: 1050),  // far west lower
+        /* 46 */ CGPoint(x: 1050, y: 1175),  // between wp24 and wp1
+        /* 47 */ CGPoint(x: 1517, y: 1075),  // between wp1 and wp0
+        /* 48 */ CGPoint(x: 1983, y: 1125),  // between wp0 and wp2
+        /* 49 */ CGPoint(x: 2567, y: 1125),  // between wp2 and wp13
 
-        // --- Row E extras: south (y ~280-350) ---
-        /* 50 */ CGPoint(x: 250,  y: 280),   // far SW
-        /* 51 */ CGPoint(x: 450,  y: 280),   // SW
-        /* 52 */ CGPoint(x: 700,  y: 320),   // S center-west
-        /* 53 */ CGPoint(x: 850,  y: 350),   // S center
-        /* 54 */ CGPoint(x: 1000, y: 340),   // S east inner
+        // --- Row E extras: south ---
+        /* 50 */ CGPoint(x: 583,  y: 700),   // far SW
+        /* 51 */ CGPoint(x: 1050, y: 700),   // SW
+        /* 52 */ CGPoint(x: 1633, y: 800),   // S center-west
+        /* 53 */ CGPoint(x: 1983, y: 875),   // S center
+        /* 54 */ CGPoint(x: 2333, y: 850),   // S east inner
 
-        // --- Row F extras: bottom (y ~150-200) ---
-        /* 55 */ CGPoint(x: 300,  y: 180),   // bottom west
-        /* 56 */ CGPoint(x: 600,  y: 200),   // bottom center-west
-        /* 57 */ CGPoint(x: 900,  y: 150),   // bottom center-east
-        /* 58 */ CGPoint(x: 1100, y: 180),   // bottom east
+        // --- Row F extras: bottom ---
+        /* 55 */ CGPoint(x: 700,  y: 450),   // bottom west
+        /* 56 */ CGPoint(x: 1400, y: 500),   // bottom center-west
+        /* 57 */ CGPoint(x: 2100, y: 375),   // bottom center-east
+        /* 58 */ CGPoint(x: 2567, y: 450),   // bottom east
 
         // --- Far edges + corners ---
-        /* 59 */ CGPoint(x: 100,  y: 650),   // far west mid
-        /* 60 */ CGPoint(x: 1350, y: 700),   // far NE
-        /* 61 */ CGPoint(x: 1400, y: 550),   // far east
-        /* 62 */ CGPoint(x: 1250, y: 250),   // near pigment table
-        /* 63 */ CGPoint(x: 1350, y: 320),   // far SE
+        /* 59 */ CGPoint(x: 233,  y: 1625),  // far west mid
+        /* 60 */ CGPoint(x: 3150, y: 1750),  // far NE
+        /* 61 */ CGPoint(x: 3267, y: 1375),  // far east
+        /* 62 */ CGPoint(x: 2917, y: 625),   // near pigment table
+        /* 63 */ CGPoint(x: 3150, y: 800),   // far SE
     ]
 
     /// Bidirectional edges: each pair [a, b] means a↔b (~100 edges)
@@ -267,7 +267,7 @@ class WorkshopScene: SKScene {
 
         let lineColor = PlatformColor(RenaissanceColors.sepiaInk.opacity(0.08))
 
-        for x in stride(from: 0, through: mapSize.width, by: 80) {
+        for x in stride(from: 0, through: mapSize.width, by: 100) {
             let path = CGMutablePath()
             path.move(to: CGPoint(x: x, y: 0))
             path.addLine(to: CGPoint(x: x, y: mapSize.height))
@@ -277,7 +277,7 @@ class WorkshopScene: SKScene {
             gridNode.addChild(line)
         }
 
-        for y in stride(from: 0, through: mapSize.height, by: 80) {
+        for y in stride(from: 0, through: mapSize.height, by: 100) {
             let path = CGMutablePath()
             path.move(to: CGPoint(x: 0, y: y))
             path.addLine(to: CGPoint(x: mapSize.width, y: y))
@@ -308,7 +308,7 @@ class WorkshopScene: SKScene {
         let pathNode = SKNode()
         pathNode.zPosition = -50
 
-        let craftingCenter = CGPoint(x: 750, y: 490)  // between workbench and furnace
+        let craftingCenter = CGPoint(x: 1750, y: 1225)  // between workbench and furnace
 
         for (stationType, pos) in stationPositions {
             if stationType.isCraftingStation { continue }
@@ -615,7 +615,7 @@ class WorkshopScene: SKScene {
         stationNode.animateTap()
 
         let stationPos = stationNode.position
-        let targetPos = CGPoint(x: stationPos.x - 60, y: stationPos.y - 30)
+        let targetPos = CGPoint(x: stationPos.x - 140, y: stationPos.y - 75)
         let playerPos = playerNode.position
 
         #if DEBUG
@@ -624,12 +624,12 @@ class WorkshopScene: SKScene {
 
         // If very close, walk directly (adjacent stations like Workbench ↔ Furnace)
         let directDistance = hypot(targetPos.x - playerPos.x, targetPos.y - playerPos.y)
-        if directDistance < 150 {
+        if directDistance < 350 {
             let facingRight = targetPos.x > playerPos.x
             playerNode.setFacingDirection(facingRight)
             onPlayerFacingChanged?(facingRight)
 
-            playerNode.walkTo(destination: targetPos, duration: max(0.3, TimeInterval(directDistance / 200))) { [weak self] in
+            playerNode.walkTo(destination: targetPos, duration: max(0.3, TimeInterval(directDistance / 467))) { [weak self] in
                 self?.onStationReached?(stationNode.stationType)
             }
             return
@@ -647,7 +647,7 @@ class WorkshopScene: SKScene {
             let facingRight = targetPos.x > playerPos.x
             playerNode.setFacingDirection(facingRight)
             onPlayerFacingChanged?(facingRight)
-            playerNode.walkTo(destination: targetPos, duration: max(0.5, TimeInterval(directDistance / 200))) { [weak self] in
+            playerNode.walkTo(destination: targetPos, duration: max(0.5, TimeInterval(directDistance / 467))) { [weak self] in
                 self?.onStationReached?(stationNode.stationType)
             }
             return
@@ -660,7 +660,7 @@ class WorkshopScene: SKScene {
         onPlayerFacingChanged?(facingRight)
 
         // Walk along the path
-        playerNode.walkPath(path, speed: 200) { [weak self] in
+        playerNode.walkPath(path, speed: 467) { [weak self] in
             self?.onStationReached?(stationNode.stationType)
         }
     }
@@ -683,9 +683,7 @@ class WorkshopScene: SKScene {
         let scale = cameraNode.xScale
         let viewSize = view?.bounds.size ?? CGSize(width: 1024, height: 768)
 
-        // Larger padding than city (200) because workshop map is smaller (1500x1000 vs 3500x2500)
-        // This gives equivalent panning freedom relative to the map size
-        let padding: CGFloat = 500
+        let padding: CGFloat = 200
 
         // Calculate visible area at current zoom
         let visibleWidth = viewSize.width * scale

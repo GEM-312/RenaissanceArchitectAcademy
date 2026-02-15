@@ -7,20 +7,21 @@ struct WorkshopView: View {
     var workshop: WorkshopState
     var viewModel: CityViewModel? = nil
     var onNavigate: ((SidebarDestination) -> Void)? = nil
+    var onBackToMenu: (() -> Void)? = nil
 
     @State private var showInterior = false
 
     var body: some View {
         ZStack {
             if showInterior {
-                WorkshopInteriorView(workshop: workshop, viewModel: viewModel, onNavigate: onNavigate) {
+                WorkshopInteriorView(workshop: workshop, viewModel: viewModel, onNavigate: onNavigate, onBackToMenu: onBackToMenu) {
                     withAnimation(.easeInOut(duration: 0.4)) {
                         showInterior = false
                     }
                 }
                 .transition(.move(edge: .trailing))
             } else {
-                WorkshopMapView(workshop: workshop, viewModel: viewModel, onNavigate: onNavigate, onEnterInterior: {
+                WorkshopMapView(workshop: workshop, viewModel: viewModel, onNavigate: onNavigate, onBackToMenu: onBackToMenu, onEnterInterior: {
                     withAnimation(.easeInOut(duration: 0.4)) {
                         showInterior = true
                     }

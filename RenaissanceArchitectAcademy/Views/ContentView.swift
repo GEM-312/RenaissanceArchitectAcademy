@@ -32,58 +32,12 @@ struct ContentView: View {
                     }
                 )
             } else {
-                // Use sidebar navigation on iPad landscape / Mac
-                if horizontalSizeClass == .regular {
-                    NavigationSplitView {
-                        SidebarView(
-                            selectedDestination: $selectedDestination,
-                            onBackToMenu: {
-                                withAnimation {
-                                    showingMainMenu = true
-                                }
-                            }
-                        )
-                    } detail: {
-                        detailView
-                    }
-                    #if os(macOS)
-                    .navigationSplitViewStyle(.balanced)
-                    #endif
-                } else {
-                    // Compact view for iPad portrait
-                    NavigationStack {
-                        detailView
-                            .toolbar {
-                                #if os(iOS)
-                                ToolbarItem(placement: .navigationBarLeading) {
-                                    Button {
-                                        withAnimation {
-                                            showingMainMenu = true
-                                        }
-                                    } label: {
-                                        Label("Menu", systemImage: "line.3.horizontal")
-                                    }
-                                    .tint(RenaissanceColors.sepiaInk)
-                                }
-                                #else
-                                ToolbarItem(placement: .automatic) {
-                                    Button {
-                                        withAnimation {
-                                            showingMainMenu = true
-                                        }
-                                    } label: {
-                                        Label("Menu", systemImage: "line.3.horizontal")
-                                    }
-                                    .tint(RenaissanceColors.sepiaInk)
-                                }
-                                #endif
-                            }
-                    }
-                }
+                // Full-width detail view — no sidebar
+                detailView
             }
         }
         #if os(macOS)
-        .frame(minWidth: 800, minHeight: 600)
+        .frame(minWidth: 800, minHeight: 700)
         #endif
     }
 
@@ -94,12 +48,19 @@ struct ContentView: View {
         }
     }
 
+    /// Return to the main menu
+    private func backToMenu() {
+        withAnimation(.easeInOut(duration: 0.5)) {
+            showingMainMenu = true
+        }
+    }
+
     /// Detail view based on sidebar selection
     @ViewBuilder
     private var detailView: some View {
         switch selectedDestination {
         case .cityMap:
-            CityMapView(viewModel: cityViewModel, workshopState: workshopState, onNavigate: navigateTo)
+            CityMapView(viewModel: cityViewModel, workshopState: workshopState, onNavigate: navigateTo, onBackToMenu: backToMenu)
         case .allBuildings:
             CityView(viewModel: cityViewModel, filterEra: nil, workshopState: workshopState)
         case .era(let era):
@@ -107,11 +68,11 @@ struct ContentView: View {
         case .profile:
             ProfileView()
         case .workshop:
-            WorkshopView(workshop: workshopState, viewModel: cityViewModel, onNavigate: navigateTo)
+            WorkshopView(workshop: workshopState, viewModel: cityViewModel, onNavigate: navigateTo, onBackToMenu: backToMenu)
         case .knowledgeTests:
             KnowledgeTestsView(viewModel: cityViewModel, workshopState: workshopState)
         case .none:
-            CityMapView(viewModel: cityViewModel, workshopState: workshopState, onNavigate: navigateTo)
+            CityMapView(viewModel: cityViewModel, workshopState: workshopState, onNavigate: navigateTo, onBackToMenu: backToMenu)
         }
     }
 }
