@@ -22,17 +22,16 @@ class WorkshopScene: SKScene {
     #endif
 
     // Station positions — scaled to 3500x2500 coordinate space
+    // Workbench, furnace, and pigment table are inside the Crafting Room (interior scene)
     private let stationPositions: [ResourceStationType: CGPoint] = [
-        .quarry:       CGPoint(x: 467,  y: 2125),
-        .river:        CGPoint(x: 1167, y: 2250),
-        .volcano:      CGPoint(x: 1983, y: 2200),
-        .clayPit:      CGPoint(x: 2800, y: 2000),
-        .mine:         CGPoint(x: 3150, y: 1375),
-        .pigmentTable: CGPoint(x: 2917, y: 625),
-        .forest:       CGPoint(x: 467,  y: 1000),
+        .quarry:       CGPoint(x: 499,  y: 1441),
+        .river:        CGPoint(x: 1229, y: 1190),
+        .volcano:      CGPoint(x: 2879, y: 450),
+        .clayPit:      CGPoint(x: 2796, y: 2046),
+        .mine:         CGPoint(x: 1032, y: 1758),
+        .forest:       CGPoint(x: 293,  y: 679),
         .market:       CGPoint(x: 1167, y: 500),
-        .workbench:    CGPoint(x: 1400, y: 1250),
-        .furnace:      CGPoint(x: 2100, y: 1200),
+        .craftingRoom: CGPoint(x: 1750, y: 1225),
     ]
 
     // MARK: - Waypoint Graph (road network for pathfinding)
@@ -188,18 +187,15 @@ class WorkshopScene: SKScene {
         .volcano:      [33, 38, 34],
         .clayPit:      [23, 39, 35],
         .mine:         [61, 31, 14],
-        .pigmentTable: [62, 11, 58],
         .forest:       [45, 7, 24],
         .market:       [28, 55, 51],
-        .workbench:    [1, 47, 18],
-        .furnace:      [48, 2, 0],
+        .craftingRoom: [0, 47, 48],
     ]
 
     // MARK: - Callbacks to SwiftUI
 
     var onPlayerPositionChanged: ((CGPoint, Bool) -> Void)?
     var onStationReached: ((ResourceStationType) -> Void)?
-    var onPlayerFacingChanged: ((Bool) -> Void)?
 
     // MARK: - Scene Setup
 
@@ -308,7 +304,7 @@ class WorkshopScene: SKScene {
         let pathNode = SKNode()
         pathNode.zPosition = -50
 
-        let craftingCenter = CGPoint(x: 1750, y: 1225)  // between workbench and furnace
+        let craftingCenter = stationPositions[.craftingRoom] ?? CGPoint(x: 1750, y: 1225)
 
         for (stationType, pos) in stationPositions {
             if stationType.isCraftingStation { continue }
@@ -323,18 +319,6 @@ class WorkshopScene: SKScene {
             dottedLine.path = linePath.copy(dashingWithPhase: 0, lengths: [12, 8])
             pathNode.addChild(dottedLine)
         }
-
-        // Path between workbench and furnace
-        let wbPos = stationPositions[.workbench]!
-        let fPos = stationPositions[.furnace]!
-        let connectPath = CGMutablePath()
-        connectPath.move(to: wbPos)
-        connectPath.addLine(to: fPos)
-        let connectLine = SKShapeNode(path: connectPath)
-        connectLine.strokeColor = PlatformColor(RenaissanceColors.ochre.opacity(0.35))
-        connectLine.lineWidth = 2.5
-        connectLine.path = connectPath.copy(dashingWithPhase: 0, lengths: [8, 6])
-        pathNode.addChild(connectLine)
 
         addChild(pathNode)
     }
@@ -627,7 +611,6 @@ class WorkshopScene: SKScene {
         if directDistance < 350 {
             let facingRight = targetPos.x > playerPos.x
             playerNode.setFacingDirection(facingRight)
-            onPlayerFacingChanged?(facingRight)
 
             playerNode.walkTo(destination: targetPos, duration: max(0.3, TimeInterval(directDistance / 467))) { [weak self] in
                 self?.onStationReached?(stationNode.stationType)
@@ -646,7 +629,6 @@ class WorkshopScene: SKScene {
             // Fallback: direct walk
             let facingRight = targetPos.x > playerPos.x
             playerNode.setFacingDirection(facingRight)
-            onPlayerFacingChanged?(facingRight)
             playerNode.walkTo(destination: targetPos, duration: max(0.5, TimeInterval(directDistance / 467))) { [weak self] in
                 self?.onStationReached?(stationNode.stationType)
             }
@@ -657,7 +639,6 @@ class WorkshopScene: SKScene {
         let firstTarget = path[0]
         let facingRight = firstTarget.x > playerPos.x
         playerNode.setFacingDirection(facingRight)
-        onPlayerFacingChanged?(facingRight)
 
         // Walk along the path
         playerNode.walkPath(path, speed: 467) { [weak self] in

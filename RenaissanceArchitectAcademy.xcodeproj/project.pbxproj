@@ -57,7 +57,14 @@
 		036 /* PiantaCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 136 /* PiantaCanvasView.swift */; };
 		037 /* SketchingToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 137 /* SketchingToolbarView.swift */; };
 		038 /* GameTopBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 138 /* GameTopBarView.swift */; };
+		039 /* OnboardingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 139 /* OnboardingState.swift */; };
+		040 /* OnboardingContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 140 /* OnboardingContent.swift */; };
+		041 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 141 /* OnboardingView.swift */; };
+		042 /* CharacterSelectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 142 /* CharacterSelectView.swift */; };
+		043 /* StoryNarrativeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 143 /* StoryNarrativeView.swift */; };
+		044 /* StationLessonOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144 /* StationLessonOverlay.swift */; };
 		5475D2EF2F3146CC003AA131 /* building_complete.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2EE2F3146CB003AA131 /* building_complete.mp3 */; };
+		045 /* footstep.wav in Resources */ = {isa = PBXBuildFile; fileRef = 145 /* footstep.wav */; };
 		5475D2F82F319000003AA131 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2F92F319000003AA131 /* Assets.xcassets */; };
 		F001 /* Cinzel-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B022F313B22007D8C64 /* Cinzel-Black.ttf */; };
 		F002 /* Cinzel-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B032F313B22007D8C64 /* Cinzel-Bold.ttf */; };
@@ -120,6 +127,12 @@
 		136 /* PiantaCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiantaCanvasView.swift; sourceTree = "<group>"; };
 		137 /* SketchingToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchingToolbarView.swift; sourceTree = "<group>"; };
 		138 /* GameTopBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameTopBarView.swift; sourceTree = "<group>"; };
+		139 /* OnboardingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingState.swift; sourceTree = "<group>"; };
+		140 /* OnboardingContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingContent.swift; sourceTree = "<group>"; };
+		141 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		142 /* CharacterSelectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterSelectView.swift; sourceTree = "<group>"; };
+		143 /* StoryNarrativeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryNarrativeView.swift; sourceTree = "<group>"; };
+		144 /* StationLessonOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationLessonOverlay.swift; sourceTree = "<group>"; };
 		544299972F3646ED00F92073 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BuildingNode.swift; path = Views/SpriteKit/BuildingNode.swift; sourceTree = "<group>"; };
 		544299982F3646ED00F92073 /* CityMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityMapView.swift; path = Views/SpriteKit/CityMapView.swift; sourceTree = "<group>"; };
 		544299992F3646ED00F92073 /* CityScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityScene.swift; path = Views/SpriteKit/CityScene.swift; sourceTree = "<group>"; };
@@ -156,6 +169,7 @@
 		54477B1B2F313B22007D8C64 /* Amellina.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Amellina.ttf; sourceTree = "<group>"; };
 		54477B172F313D06007D8C64 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5475D2EE2F3146CB003AA131 /* building_complete.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = building_complete.mp3; sourceTree = "<group>"; };
+		145 /* footstep.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = footstep.wav; sourceTree = "<group>"; };
 		5475D2F92F319000003AA131 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -199,6 +213,7 @@
 				54477B162F313B22007D8C64 /* Fonts */,
 				101 /* RenaissanceArchitectAcademyApp.swift */,
 				5475D2EE2F3146CB003AA131 /* building_complete.mp3 */,
+				145 /* footstep.wav */,
 				303 /* Views */,
 				304 /* ViewModels */,
 				305 /* Models */,
@@ -240,9 +255,21 @@
 				544299B62F38000100F92073 /* WorkshopMapView.swift */,
 				544299C12F3B000100F92073 /* WorkshopInteriorView.swift */,
 				138 /* GameTopBarView.swift */,
+				141 /* OnboardingView.swift */,
 				308 /* Sketching */,
+				309 /* Onboarding */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		309 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				142 /* CharacterSelectView.swift */,
+				143 /* StoryNarrativeView.swift */,
+				144 /* StationLessonOverlay.swift */,
+			);
+			path = Onboarding;
 			sourceTree = "<group>";
 		};
 		308 /* Sketching */ = {
@@ -274,6 +301,8 @@
 				127 /* Recipe.swift */,
 				132 /* SketchingChallenge.swift */,
 				133 /* SketchingContent.swift */,
+				139 /* OnboardingState.swift */,
+				140 /* OnboardingContent.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -399,6 +428,7 @@
 				F009 /* EBGaramond-BoldItalic.ttf in Resources */,
 				F010 /* EBGaramond-ExtraBold.ttf in Resources */,
 				5475D2EF2F3146CC003AA131 /* building_complete.mp3 in Resources */,
+				045 /* footstep.wav in Resources */,
 				F011 /* EBGaramond-ExtraBoldItalic.ttf in Resources */,
 				F012 /* EBGaramond-Italic.ttf in Resources */,
 				F013 /* EBGaramond-Italic-VariableFont_wght.ttf in Resources */,
@@ -468,6 +498,12 @@
 				036 /* PiantaCanvasView.swift in Sources */,
 				037 /* SketchingToolbarView.swift in Sources */,
 				038 /* GameTopBarView.swift in Sources */,
+				039 /* OnboardingState.swift in Sources */,
+				040 /* OnboardingContent.swift in Sources */,
+				041 /* OnboardingView.swift in Sources */,
+				042 /* CharacterSelectView.swift in Sources */,
+				043 /* StoryNarrativeView.swift in Sources */,
+				044 /* StationLessonOverlay.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

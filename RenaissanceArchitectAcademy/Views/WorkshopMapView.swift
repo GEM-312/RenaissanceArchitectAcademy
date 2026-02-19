@@ -19,7 +19,13 @@ struct WorkshopMapView: View {
     // Player tracking
     @State private var playerPosition: CGPoint = CGPoint(x: 0.5, y: 0.5)
     @State private var playerIsWalking = false
-    @State private var playerFacingRight = true
+
+    // Station lesson overlay
+    @State private var showStationLesson = false
+    @State private var pendingLessonStation: ResourceStationType?
+
+    // Forest choice dialogue (after lesson)
+    @State private var showForestChoice = false
 
     // Overlay states
     @State private var activeStation: ResourceStationType?
@@ -36,8 +42,40 @@ struct WorkshopMapView: View {
                     .ignoresSafeArea()
                     .gesture(pinchGesture)
 
-                // Layer 2: Companion overlay (Splash + Bird trailing player)
-                companionOverlay(in: geometry.size)
+                // Layer 2: Station lesson overlay (bird teaches before first collection)
+                if showStationLesson, let station = pendingLessonStation,
+                   let lesson = OnboardingContent.lesson(for: station) {
+                    StationLessonOverlay(lesson: lesson) {
+                        withAnimation(.spring(response: 0.3)) {
+                            showStationLesson = false
+                            workshop.stationsLessonSeen.insert(station)
+                        }
+
+                        if station == .forest {
+                            // Forest gets a special choice dialogue
+                            withAnimation(.spring(response: 0.3)) {
+                                showForestChoice = true
+                            }
+                        } else {
+                            // Normal flow: show hint then collection
+                            withAnimation(.spring(response: 0.3)) {
+                                showHintBubble = true
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                                withAnimation(.spring(response: 0.3)) {
+                                    showCollectionOverlay = true
+                                }
+                            }
+                        }
+                    }
+                    .transition(.opacity)
+                }
+
+                // Layer 2b: Forest choice dialogue (after lesson)
+                if showForestChoice {
+                    forestChoiceOverlay
+                        .transition(.opacity)
+                }
 
                 // Layer 3: Nav (left) + Buildings (right) with margins — same as city map
                 VStack(spacing: 0) {
@@ -115,40 +153,39 @@ struct WorkshopMapView: View {
             self.playerIsWalking = isWalking
         }
 
-        // Facing direction updates
-        newScene.onPlayerFacingChanged = { facingRight in
-            self.playerFacingRight = facingRight
-        }
-
         // Station reached — show appropriate overlay or enter interior
         newScene.onStationReached = { stationType in
             self.activeStation = stationType
             dismissAllOverlays()
 
             switch stationType {
-            case .workbench, .furnace:
+            case .craftingRoom:
                 // Transition to interior crafting room
                 if let onEnterInterior = onEnterInterior {
                     onEnterInterior()
                 } else {
-                    // Fallback: show inline overlay if no interior callback
+                    // Fallback: show inline overlay
                     withAnimation(.spring(response: 0.3)) {
-                        if stationType == .workbench {
-                            showWorkbenchOverlay = true
-                        } else {
-                            showFurnaceOverlay = true
-                        }
+                        showWorkbenchOverlay = true
                     }
                 }
             default:
-                // Resource station — show hint then collection
-                withAnimation(.spring(response: 0.3)) {
-                    showHintBubble = true
-                }
-                // Show collection UI after hint displays briefly
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                // Resource station — check if bird lesson needed first
+                if !workshop.stationsLessonSeen.contains(stationType),
+                   OnboardingContent.lesson(for: stationType) != nil {
+                    pendingLessonStation = stationType
                     withAnimation(.spring(response: 0.3)) {
-                        showCollectionOverlay = true
+                        showStationLesson = true
+                    }
+                } else {
+                    // Already seen lesson — show hint then collection
+                    withAnimation(.spring(response: 0.3)) {
+                        showHintBubble = true
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                        withAnimation(.spring(response: 0.3)) {
+                            showCollectionOverlay = true
+                        }
                     }
                 }
             }
@@ -175,26 +212,8 @@ struct WorkshopMapView: View {
         showCollectionOverlay = false
         showWorkbenchOverlay = false
         showFurnaceOverlay = false
-    }
-
-    // MARK: - Layer 2: Companion Overlay
-
-    private func companionOverlay(in size: CGSize) -> some View {
-        let screenX = playerPosition.x * size.width
-        let screenY = playerPosition.y * size.height
-
-        // Companions trail slightly behind the player
-        let offsetX: CGFloat = playerFacingRight ? -55 : 55
-
-        return BirdCharacter()
-            .frame(width: 200, height: 200)
-            .offset(y: -20)
-            .scaleEffect(x: playerFacingRight ? 1 : -1, y: 1)
-            .offset(y: playerIsWalking ? -4 : 0)
-            .position(x: screenX + offsetX, y: screenY + 15)
-        .animation(.easeInOut(duration: 0.15), value: playerPosition)
-        .animation(.easeInOut(duration: 0.1), value: playerIsWalking)
-        .allowsHitTesting(false)
+        showStationLesson = false
+        showForestChoice = false
     }
 
     // MARK: - Layer 3: Navigation Panel + Inventory
@@ -346,6 +365,136 @@ struct WorkshopMapView: View {
         .onTapGesture {
             withAnimation(.easeOut(duration: 0.2)) {
                 showHintBubble = false
+            }
+        }
+    }
+
+    // MARK: - Forest Choice Overlay
+
+    private var forestChoiceOverlay: some View {
+        ZStack {
+            // Dimmed background
+            Color.black.opacity(0.5)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    // Dismiss and go to normal collection
+                    withAnimation(.spring(response: 0.3)) {
+                        showForestChoice = false
+                        showHintBubble = true
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                        withAnimation(.spring(response: 0.3)) {
+                            showCollectionOverlay = true
+                        }
+                    }
+                }
+
+            VStack(spacing: 24) {
+                Spacer()
+
+                // Bird sitting on top
+                BirdCharacter(isSitting: true)
+                    .frame(width: 180, height: 180)
+                    .padding(.bottom, -36)
+
+                // Dialogue bubble with choices
+                VStack(spacing: 20) {
+                    Text("The Forest Awaits!")
+                        .font(.custom("Cinzel-Bold", size: 22))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+
+                    Text("Italy's forests hold many secrets — from the mighty oaks of Tuscany to the stone pines of Rome. Would you like to collect timber, or explore the forest and learn about its trees?")
+                        .font(.custom("EBGaramond-Regular", size: 17))
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                        .multilineTextAlignment(.center)
+
+                    VStack(spacing: 12) {
+                        // Choice 1: Collect Timber
+                        Button {
+                            withAnimation(.spring(response: 0.3)) {
+                                showForestChoice = false
+                                showHintBubble = true
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                                withAnimation(.spring(response: 0.3)) {
+                                    showCollectionOverlay = true
+                                }
+                            }
+                        } label: {
+                            HStack(spacing: 12) {
+                                Image(systemName: "tree")
+                                    .font(.title3)
+                                    .foregroundStyle(RenaissanceColors.warmBrown)
+
+                                Text("Collect Timber")
+                                    .font(.custom("EBGaramond-Regular", size: 17))
+                                    .foregroundStyle(RenaissanceColors.sepiaInk)
+
+                                Spacer()
+
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                                    .foregroundStyle(RenaissanceColors.stoneGray)
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 14)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(RenaissanceColors.parchment)
+                                    .shadow(color: RenaissanceColors.warmBrown.opacity(0.2), radius: 4, y: 2)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(RenaissanceColors.ochre.opacity(0.5), lineWidth: 1)
+                            )
+                        }
+                        .buttonStyle(.plain)
+
+                        // Choice 2: Explore the Forest
+                        Button {
+                            withAnimation(.spring(response: 0.3)) {
+                                showForestChoice = false
+                                activeStation = nil
+                            }
+                            // TODO: Navigate to ForestScene when implemented
+                            workshop.statusMessage = "The Forest of Knowledge is coming soon!"
+                        } label: {
+                            HStack(spacing: 12) {
+                                Image(systemName: "leaf.fill")
+                                    .font(.title3)
+                                    .foregroundStyle(RenaissanceColors.sageGreen)
+
+                                Text("Explore the Forest")
+                                    .font(.custom("EBGaramond-Regular", size: 17))
+                                    .foregroundStyle(RenaissanceColors.sepiaInk)
+
+                                Spacer()
+
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                                    .foregroundStyle(RenaissanceColors.stoneGray)
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 14)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(RenaissanceColors.parchment)
+                                    .shadow(color: RenaissanceColors.sageGreen.opacity(0.2), radius: 4, y: 2)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(RenaissanceColors.sageGreen.opacity(0.5), lineWidth: 1)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(.top, 8)
+                }
+                .padding(28)
+                .background(DialogueBubble())
+                .padding(.horizontal, 40)
+
+                Spacer()
             }
         }
     }

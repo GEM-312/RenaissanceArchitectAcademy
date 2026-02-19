@@ -42,6 +42,11 @@ RenaissanceArchitectAcademy/
 │   │   ├── SketchingChallengeView.swift      # Master orchestrator for sketching mini-game
 │   │   ├── KnowledgeTestsView.swift          # Quiz challenges list
 │   │   ├── GameTopBarView.swift              # Shared top nav bar + building strip
+│   │   ├── OnboardingView.swift              # Onboarding orchestrator (character → story → bird)
+│   │   ├── Onboarding/
+│   │   │   ├── CharacterSelectView.swift     # Boy/girl selection + name entry
+│   │   │   ├── StoryNarrativeView.swift      # Animated story page with typewriter text
+│   │   │   └── StationLessonOverlay.swift    # Bird lesson modal before first station visit
 │   │   ├── Sketching/
 │   │   │   ├── PiantaCanvasView.swift        # Phase 1: Floor plan grid canvas
 │   │   │   └── SketchingToolbarView.swift    # Tool palette
@@ -63,7 +68,9 @@ RenaissanceArchitectAcademy/
 │   │   ├── StudentProfile.swift              # MasteryLevel, Achievement, Resources
 │   │   ├── Challenge.swift                   # Challenge system + all building challenges
 │   │   ├── SketchingChallenge.swift          # Sketching data models
-│   │   └── SketchingContent.swift            # Static sketching challenge data per building
+│   │   ├── SketchingContent.swift            # Static sketching challenge data per building
+│   │   ├── OnboardingState.swift             # ApprenticeGender, OnboardingState (UserDefaults)
+│   │   └── OnboardingContent.swift           # Story pages + 8 station lesson content
 │   └── Styles/
 │       ├── RenaissanceColors.swift           # Full color palette + gradients
 │       └── RenaissanceButton.swift           # Engineering blueprint style buttons
@@ -136,11 +143,22 @@ RenaissanceArchitectAcademy/
 - 3 formulas: limeMortar, concrete, glass (mapped per building)
 - Gravity, auto-reshuffle, distractor elements
 
+### Onboarding System (Models/OnboardingState + OnboardingContent, Views/Onboarding/)
+- Character selection (boy/girl) + name entry → 3-page animated narrative → bird companion intro
+- `OnboardingState` @Observable with UserDefaults persistence (hasCompletedOnboarding, gender, name)
+- `StoryNarrativeView` — typewriter text reveal, BirdCharacter entrance animation
+- `StationLessonOverlay` — bird teaches history/science before first station visit (per session)
+- `stationsLessonSeen: Set<ResourceStationType>` in WorkshopState tracks which lessons shown
+- Currently always shows onboarding (skip check commented out in ContentView for development)
+- Forest station: after lesson, shows choice dialogue (Collect Timber vs Explore the Forest)
+
 ### Workshop (outdoor SpriteKit + indoor SwiftUI)
-- **Outdoor**: Apprentice walks between 10 stations (Dijkstra pathfinding, 64 waypoints)
+- **Outdoor**: Apprentice walks between 8 resource stations + 1 crafting room (Dijkstra pathfinding, 64 waypoints)
 - **Indoor** (WorkshopInteriorView): Workbench (mix), Furnace (fire), Pigment Table, Storage Shelf
-- Crafting flow: Collect → Mix at workbench → Fire in furnace → Educational popup
-- 6 stations have Midjourney sprites; volcano has 15-frame animation
+- Crafting flow: Collect → enter Crafting Room → Mix at workbench → Fire in furnace → Educational popup
+- 6 resource stations have Midjourney sprites; volcano has 15-frame animation
+- Crafting Room replaces old outdoor workbench/furnace/pigmentTable — single entry to interior
+- Footstep sound (footstep.wav) plays during apprentice walking (0.55s interval)
 
 ### GameTopBarView
 - Shared nav bar across City Map, Workshop, Crafting Room
@@ -195,15 +213,32 @@ Styles/[name]_frames/clean/    # Photoshop exports (no bg)
 ```
 
 ## Next Steps
-- [ ] Remove backgrounds from volcano frames (Marina in Photoshop)
-- [ ] Adjust 64 waypoints to match new terrain in editor mode
-- [ ] Add station sprites for remaining 4 stations (pigment table, market, workbench, furnace)
+
+### Game Flow & Progression
+- [ ] Prompt user to explore cities/buildings after workshop play (bird nudge system)
+- [ ] Trigger quizzes after certain gameplay milestones (time played, materials collected, buildings visited)
+- [ ] Award system — badges, achievements for completing challenges, crafting, sketching
+- [ ] Currency system — coins/ducats earned from quizzes, crafting, exploration; spent on building upgrades
+- [ ] Re-enable onboarding skip (uncomment check in ContentView after onboarding is finalized)
+
+### New Scenes
+- [ ] Forest Scene — Italian tree biodiversity, biology & environment education (connected from workshop forest choice)
+- [ ] Building-specific scenes for each of the 17 buildings
+
+### Content
 - [ ] Create challenges for remaining 11 buildings
-- [ ] Add building images to map
+- [ ] Add building images to city map
 - [ ] Sketching Phase 2 (Alzato elevation) — drag-drop facade elements
 - [ ] Sketching Phase 3 (Sezione cross-section) — structural + light rays
 - [ ] Sketching Phase 4 (Prospettiva perspective) — vanishing points
 - [ ] Add sketching content for remaining buildings
+
+### Art & Assets
+- [ ] Remove backgrounds from volcano frames (Marina in Photoshop)
+- [ ] Add station sprites for remaining stations (market, crafting room)
+
+### Technical
+- [ ] Adjust 64 waypoints to match new terrain in editor mode
 - [ ] Sound effects (challenge_success, challenge_fail, puzzle_match)
 - [ ] Persist progress with UserDefaults/SwiftData
 - [ ] Building construction animation

@@ -17,6 +17,9 @@ class WorkshopState {
     var educationalText: String = ""
     var statusMessage: String? = nil
 
+    /// Stations whose bird lesson has been shown this session (resets each launch)
+    var stationsLessonSeen: Set<ResourceStationType> = []
+
     // MARK: - Station Stocks
 
     /// Stock per station — each station has finite materials that regenerate
@@ -60,29 +63,32 @@ class WorkshopState {
         return stock.values.reduce(0, +)
     }
 
-    /// Educational hint text shown by Splash at each station
+    /// Educational hint text shown by the bird at each station
+    /// Explains what the materials are, what they craft into, and which buildings need them
     func hintFor(station: ResourceStationType) -> String {
         switch station {
         case .quarry:
-            return "Limestone is calcium carbonate — the Romans quarried it for mortar and concrete. Marble dust adds strength!"
+            return "Collect limestone, marble dust, and marble here. You'll craft them into lime mortar, Roman concrete, glass, and marble slabs — needed for the Aqueduct, Pantheon, Colosseum, and nearly every structure!"
         case .river:
-            return "Sand and water are essential binding agents. Da Vinci studied water flow in his famous notebooks."
+            return "Collect sand and water — the two most versatile materials! You'll need them for mortar, concrete, glass, terracotta, and pigments. Almost every recipe at the workbench requires water or sand."
         case .volcano:
-            return "Volcanic ash (pozzolana) from Mount Vesuvius made Roman concrete so strong it still stands today!"
+            return "Collect volcanic ash — the secret ingredient for Roman concrete! Mix it with limestone, water, and sand at the workbench. Buildings like the Pantheon, Aqueduct, and Harbor all need concrete."
         case .clayPit:
-            return "Clay fires into terracotta at over 1000\u{00B0}C. 'Terra cotta' means 'baked earth' in Italian."
+            return "Collect clay to craft terracotta tiles and bronze fittings. The Duomo's herringbone dome, the Insula's roof, and the Glassworks all need terracotta. Clay molds are also used for casting bronze!"
         case .mine:
-            return "Iron ore was smelted for tools and nails. Lead was cast into sheets for waterproof roofing and water pipes!"
+            return "Collect iron ore and lead. Iron crafts into bronze fittings, timber beams, and carved wood. Lead makes waterproof sheeting and stained glass. The Colosseum, Aqueduct, and Printing Press all need these metals."
         case .pigmentTable:
-            return "Renaissance painters ground minerals into pigments. Lapis lazuli blue was rarer than gold!"
+            return "Collect red ochre, lapis lazuli, and verdigris. Grind them into fresco pigments at the workbench — the Duomo needs red fresco, the Vatican Observatory needs blue. These colors are worth more than gold!"
         case .forest:
-            return "Oak and chestnut timber framed roofs across Italy. Walnut was prized for fine furniture and carved panels."
+            return "Collect timber for beams and carved wood. Timber beams support roofs in the Roman Baths, Harbor, Arsenal, and Workshop. Carved walnut builds the Anatomy Theater and Printing Press."
         case .market:
-            return "Merchants traded silk from the East, lead ingots from mines, and marble blocks quarried across the Mediterranean."
+            return "Collect silk, lead, and marble from merchants. Silk crafts into fabric for the Colosseum's velarium and Leonardo's Flying Machine. Lead and marble are used across many buildings."
         case .workbench:
             return "Combine raw materials here to create building supplies."
         case .furnace:
             return "Set the right temperature and fire your mixture!"
+        case .craftingRoom:
+            return "Enter the Crafting Room to mix materials at the workbench, grind pigments, and fire recipes in the furnace. This is where raw materials become building supplies!"
         }
     }
 

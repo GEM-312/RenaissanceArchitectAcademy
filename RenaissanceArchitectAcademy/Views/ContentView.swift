@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var showingMainMenu = true
+    @State private var showingOnboarding = false
     @State private var selectedDestination: SidebarDestination? = .cityMap  // Start with SpriteKit map!
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
@@ -11,17 +12,30 @@ struct ContentView: View {
     // Shared Workshop state - so materials persist between workshop and challenges
     @State private var workshopState = WorkshopState()
 
+    // Onboarding state — persists to UserDefaults
+    @State private var onboardingState = OnboardingState()
+
     var body: some View {
         ZStack {
             // Parchment background
             RenaissanceColors.parchment
                 .ignoresSafeArea()
 
-            if showingMainMenu {
+            if showingOnboarding {
+                OnboardingView(onboardingState: onboardingState) {
+                    withAnimation(.easeInOut(duration: 0.5)) {
+                        showingOnboarding = false
+                        showingMainMenu = false
+                    }
+                }
+                .transition(.opacity)
+            } else if showingMainMenu {
                 MainMenuView(
                     onStartGame: {
+                        // TODO: Re-enable skip after onboarding is finalized:
+                        // if onboardingState.hasCompletedOnboarding { showingMainMenu = false; return }
                         withAnimation(.easeInOut(duration: 0.5)) {
-                            showingMainMenu = false
+                            showingOnboarding = true
                         }
                     },
                     onOpenWorkshop: {

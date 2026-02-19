@@ -57,7 +57,7 @@ struct MainMenuView: View {
 
                         Text("Where Science Builds Civilization")
                             .font(.custom("Amellina", size: taglineSize + 6, relativeTo: .headline))
-                            .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                            .foregroundStyle(Color.black)
 
                         Image(systemName: "leaf.fill")
                             .font(.caption)

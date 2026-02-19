@@ -76,11 +76,28 @@ class PlayerNode: SKNode {
         // 1.3x faster than original GIF pace (0.347 / 1.3 ≈ 0.267s per frame)
         let walkAction = SKAction.animate(with: walkTextures, timePerFrame: 0.18, resize: false, restore: false)
         sprite.run(SKAction.repeatForever(walkAction), withKey: "walk")
+
+        startFootstepSound()
     }
 
     private func stopWalkAnimation() {
         sprite.removeAction(forKey: "walk")
+        stopFootstepSound()
         startIdleAnimation()
+    }
+
+    // MARK: - Footstep Sound
+
+    private func startFootstepSound() {
+        removeAction(forKey: "footsteps")
+        let step = SKAction.playSoundFileNamed("footstep.wav", waitForCompletion: false)
+        let pause = SKAction.wait(forDuration: 0.55)
+        let sequence = SKAction.sequence([step, pause])
+        run(SKAction.repeatForever(sequence), withKey: "footsteps")
+    }
+
+    private func stopFootstepSound() {
+        removeAction(forKey: "footsteps")
     }
 
     // MARK: - Walk To Destination (30-step lerp, same as CityScene)

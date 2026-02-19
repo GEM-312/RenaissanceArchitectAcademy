@@ -13,6 +13,7 @@ enum ResourceStationType: String, CaseIterable, Hashable {
     case market = "Market"
     case workbench = "Workbench"
     case furnace = "Furnace"
+    case craftingRoom = "Crafting Room"
 
     /// Materials available at this station
     var materials: [Material] {
@@ -27,12 +28,13 @@ enum ResourceStationType: String, CaseIterable, Hashable {
         case .market:       return [.silk, .lead, .marble]
         case .workbench:    return []   // crafting station
         case .furnace:      return []   // processing station
+        case .craftingRoom: return []   // enters interior
         }
     }
 
     /// Whether this is a crafting/processing station (not a resource)
     var isCraftingStation: Bool {
-        self == .workbench || self == .furnace
+        self == .workbench || self == .furnace || self == .craftingRoom
     }
 
     /// Image asset name for this station (nil = use shape fallback)
@@ -66,14 +68,10 @@ class ResourceNode: SKNode {
     private var isDepleted = false
 
     /// Size for station sprite images (points)
-    private let spriteSize: CGFloat = 120
-
-    /// Volcano animation: 15 frames at 15fps
-    private static let volcanoFrameCount = 15
-    private static let volcanoFPS: TimeInterval = 1.0 / 15.0
+    private let spriteSize: CGFloat = 420
 
     private let strokeColor = PlatformColor(RenaissanceColors.sepiaInk)
-    private let sketchLineWidth: CGFloat = 2.0
+    private let sketchLineWidth: CGFloat = 4.0
 
     // MARK: - Initialization
 
@@ -104,25 +102,12 @@ class ResourceNode: SKNode {
             addChild(sprite)
             spriteNode = sprite
 
-            // Volcano: loop through 15 animation frames
-            if stationType == .volcano {
-                startVolcanoAnimation()
-            }
-
             // Invisible shape for hit testing and animations
             bodyShape = SKShapeNode(circleOfRadius: spriteSize / 2)
             bodyShape.fillColor = .clear
             bodyShape.strokeColor = .clear
             bodyShape.zPosition = 0
             addChild(bodyShape)
-
-            // Ground shadow under sprite
-            let shadow = SKShapeNode(ellipseOf: CGSize(width: spriteSize * 0.8, height: spriteSize * 0.3))
-            shadow.fillColor = PlatformColor(RenaissanceColors.sepiaInk.opacity(0.12))
-            shadow.strokeColor = .clear
-            shadow.position = CGPoint(x: 0, y: -spriteSize / 2 + 5)
-            shadow.zPosition = 0
-            addChild(shadow)
             return
         }
 
@@ -148,6 +133,8 @@ class ResourceNode: SKNode {
             bodyShape = createWorkbench()
         case .furnace:
             bodyShape = createFurnace()
+        case .craftingRoom:
+            bodyShape = createCraftingRoom()
         }
 
         bodyShape.zPosition = 1
@@ -170,19 +157,19 @@ class ResourceNode: SKNode {
     private func createQuarry() -> SKShapeNode {
         let path = CGMutablePath()
         // Rough rock pile shape
-        path.move(to: CGPoint(x: -40, y: -20))
-        path.addLine(to: CGPoint(x: -25, y: 15))
-        path.addLine(to: CGPoint(x: -10, y: 5))
-        path.addLine(to: CGPoint(x: 0, y: 25))
-        path.addLine(to: CGPoint(x: 15, y: 10))
-        path.addLine(to: CGPoint(x: 35, y: 20))
-        path.addLine(to: CGPoint(x: 40, y: -20))
+        path.move(to: CGPoint(x: -160, y: -80))
+        path.addLine(to: CGPoint(x: -100, y: 60))
+        path.addLine(to: CGPoint(x: -40, y: 20))
+        path.addLine(to: CGPoint(x: 0, y: 100))
+        path.addLine(to: CGPoint(x: 60, y: 40))
+        path.addLine(to: CGPoint(x: 140, y: 80))
+        path.addLine(to: CGPoint(x: 160, y: -80))
         path.closeSubpath()
         // Chisel mark lines
-        path.move(to: CGPoint(x: -15, y: 0))
-        path.addLine(to: CGPoint(x: -5, y: -10))
-        path.move(to: CGPoint(x: 10, y: 5))
-        path.addLine(to: CGPoint(x: 20, y: -5))
+        path.move(to: CGPoint(x: -60, y: 0))
+        path.addLine(to: CGPoint(x: -20, y: -40))
+        path.move(to: CGPoint(x: 40, y: 20))
+        path.addLine(to: CGPoint(x: 80, y: -20))
 
         let shape = SKShapeNode(path: path)
         shape.fillColor = PlatformColor(RenaissanceColors.stoneGray.opacity(0.4))
@@ -195,26 +182,26 @@ class ResourceNode: SKNode {
     private func createRiver() -> SKShapeNode {
         let path = CGMutablePath()
         // Wavy pool shape
-        path.move(to: CGPoint(x: -40, y: -15))
-        path.addCurve(to: CGPoint(x: 0, y: -15),
-                      control1: CGPoint(x: -30, y: -25),
-                      control2: CGPoint(x: -10, y: -5))
-        path.addCurve(to: CGPoint(x: 40, y: -15),
-                      control1: CGPoint(x: 10, y: -25),
-                      control2: CGPoint(x: 30, y: -5))
-        path.addLine(to: CGPoint(x: 40, y: 10))
-        path.addCurve(to: CGPoint(x: 0, y: 10),
-                      control1: CGPoint(x: 30, y: 20),
-                      control2: CGPoint(x: 10, y: 0))
-        path.addCurve(to: CGPoint(x: -40, y: 10),
-                      control1: CGPoint(x: -10, y: 20),
-                      control2: CGPoint(x: -30, y: 0))
+        path.move(to: CGPoint(x: -160, y: -60))
+        path.addCurve(to: CGPoint(x: 0, y: -60),
+                      control1: CGPoint(x: -120, y: -100),
+                      control2: CGPoint(x: -40, y: -20))
+        path.addCurve(to: CGPoint(x: 160, y: -60),
+                      control1: CGPoint(x: 40, y: -100),
+                      control2: CGPoint(x: 120, y: -20))
+        path.addLine(to: CGPoint(x: 160, y: 40))
+        path.addCurve(to: CGPoint(x: 0, y: 40),
+                      control1: CGPoint(x: 120, y: 80),
+                      control2: CGPoint(x: 40, y: 0))
+        path.addCurve(to: CGPoint(x: -160, y: 40),
+                      control1: CGPoint(x: -40, y: 80),
+                      control2: CGPoint(x: -120, y: 0))
         path.closeSubpath()
         // Inner wave lines
-        path.move(to: CGPoint(x: -25, y: 0))
-        path.addCurve(to: CGPoint(x: 25, y: 0),
-                      control1: CGPoint(x: -10, y: 8),
-                      control2: CGPoint(x: 10, y: -8))
+        path.move(to: CGPoint(x: -100, y: 0))
+        path.addCurve(to: CGPoint(x: 100, y: 0),
+                      control1: CGPoint(x: -40, y: 32),
+                      control2: CGPoint(x: 40, y: -32))
 
         let shape = SKShapeNode(path: path)
         shape.fillColor = PlatformColor(RenaissanceColors.renaissanceBlue.opacity(0.3))
@@ -227,24 +214,24 @@ class ResourceNode: SKNode {
     private func createVolcano() -> SKShapeNode {
         let path = CGMutablePath()
         // Mountain triangle
-        path.move(to: CGPoint(x: -40, y: -20))
-        path.addLine(to: CGPoint(x: -5, y: 30))
-        path.addLine(to: CGPoint(x: 5, y: 30))
-        path.addLine(to: CGPoint(x: 40, y: -20))
+        path.move(to: CGPoint(x: -160, y: -80))
+        path.addLine(to: CGPoint(x: -20, y: 120))
+        path.addLine(to: CGPoint(x: 20, y: 120))
+        path.addLine(to: CGPoint(x: 160, y: -80))
         path.closeSubpath()
         // Crater opening
-        path.move(to: CGPoint(x: -5, y: 30))
-        path.addLine(to: CGPoint(x: -3, y: 25))
-        path.addLine(to: CGPoint(x: 3, y: 25))
-        path.addLine(to: CGPoint(x: 5, y: 30))
+        path.move(to: CGPoint(x: -20, y: 120))
+        path.addLine(to: CGPoint(x: -12, y: 100))
+        path.addLine(to: CGPoint(x: 12, y: 100))
+        path.addLine(to: CGPoint(x: 20, y: 120))
         // Smoke spiral
-        path.move(to: CGPoint(x: 0, y: 32))
-        path.addCurve(to: CGPoint(x: 8, y: 45),
-                      control1: CGPoint(x: 6, y: 34),
-                      control2: CGPoint(x: 10, y: 40))
-        path.addCurve(to: CGPoint(x: -2, y: 52),
-                      control1: CGPoint(x: 6, y: 50),
-                      control2: CGPoint(x: 2, y: 52))
+        path.move(to: CGPoint(x: 0, y: 128))
+        path.addCurve(to: CGPoint(x: 32, y: 180),
+                      control1: CGPoint(x: 24, y: 136),
+                      control2: CGPoint(x: 40, y: 160))
+        path.addCurve(to: CGPoint(x: -8, y: 208),
+                      control1: CGPoint(x: 24, y: 200),
+                      control2: CGPoint(x: 8, y: 208))
 
         let shape = SKShapeNode(path: path)
         shape.fillColor = PlatformColor(RenaissanceColors.stoneGray.opacity(0.3))
@@ -257,11 +244,11 @@ class ResourceNode: SKNode {
     private func createClayPit() -> SKShapeNode {
         let path = CGMutablePath()
         // Oval pit
-        path.addEllipse(in: CGRect(x: -35, y: -18, width: 70, height: 36))
+        path.addEllipse(in: CGRect(x: -140, y: -72, width: 280, height: 144))
         // Clay chunks inside
-        path.addEllipse(in: CGRect(x: -15, y: -8, width: 12, height: 10))
-        path.addEllipse(in: CGRect(x: 5, y: -5, width: 10, height: 8))
-        path.addEllipse(in: CGRect(x: -5, y: 3, width: 8, height: 7))
+        path.addEllipse(in: CGRect(x: -60, y: -32, width: 48, height: 40))
+        path.addEllipse(in: CGRect(x: 20, y: -20, width: 40, height: 32))
+        path.addEllipse(in: CGRect(x: -20, y: 12, width: 32, height: 28))
 
         let shape = SKShapeNode(path: path)
         shape.fillColor = PlatformColor(RenaissanceColors.warmBrown.opacity(0.3))
@@ -274,18 +261,18 @@ class ResourceNode: SKNode {
     private func createMine() -> SKShapeNode {
         let path = CGMutablePath()
         // Cave arch
-        path.move(to: CGPoint(x: -30, y: -20))
-        path.addLine(to: CGPoint(x: -30, y: 10))
-        path.addCurve(to: CGPoint(x: 30, y: 10),
-                      control1: CGPoint(x: -30, y: 35),
-                      control2: CGPoint(x: 30, y: 35))
-        path.addLine(to: CGPoint(x: 30, y: -20))
+        path.move(to: CGPoint(x: -120, y: -80))
+        path.addLine(to: CGPoint(x: -120, y: 40))
+        path.addCurve(to: CGPoint(x: 120, y: 40),
+                      control1: CGPoint(x: -120, y: 140),
+                      control2: CGPoint(x: 120, y: 140))
+        path.addLine(to: CGPoint(x: 120, y: -80))
         path.closeSubpath()
         // Crossed pickaxe handles
-        path.move(to: CGPoint(x: -12, y: -15))
-        path.addLine(to: CGPoint(x: 12, y: 10))
-        path.move(to: CGPoint(x: 12, y: -15))
-        path.addLine(to: CGPoint(x: -12, y: 10))
+        path.move(to: CGPoint(x: -48, y: -60))
+        path.addLine(to: CGPoint(x: 48, y: 40))
+        path.move(to: CGPoint(x: 48, y: -60))
+        path.addLine(to: CGPoint(x: -48, y: 40))
 
         let shape = SKShapeNode(path: path)
         shape.fillColor = PlatformColor(RenaissanceColors.stoneGray.opacity(0.25))
@@ -301,12 +288,12 @@ class ResourceNode: SKNode {
 
         // Table top
         let tablePath = CGMutablePath()
-        tablePath.addRect(CGRect(x: -40, y: -5, width: 80, height: 10))
+        tablePath.addRect(CGRect(x: -160, y: -20, width: 320, height: 40))
         // Table legs
-        tablePath.move(to: CGPoint(x: -30, y: -5))
-        tablePath.addLine(to: CGPoint(x: -30, y: -20))
-        tablePath.move(to: CGPoint(x: 30, y: -5))
-        tablePath.addLine(to: CGPoint(x: 30, y: -20))
+        tablePath.move(to: CGPoint(x: -120, y: -20))
+        tablePath.addLine(to: CGPoint(x: -120, y: -80))
+        tablePath.move(to: CGPoint(x: 120, y: -20))
+        tablePath.addLine(to: CGPoint(x: 120, y: -80))
 
         let table = SKShapeNode(path: tablePath)
         table.fillColor = PlatformColor(RenaissanceColors.warmBrown.opacity(0.3))
@@ -316,16 +303,16 @@ class ResourceNode: SKNode {
 
         // Three pigment circles on the table
         let colors: [(PlatformColor, CGFloat)] = [
-            (PlatformColor(RenaissanceColors.errorRed.opacity(0.6)), -22),
+            (PlatformColor(RenaissanceColors.errorRed.opacity(0.6)), -88),
             (PlatformColor(RenaissanceColors.renaissanceBlue.opacity(0.6)), 0),
-            (PlatformColor(RenaissanceColors.sageGreen.opacity(0.6)), 22)
+            (PlatformColor(RenaissanceColors.sageGreen.opacity(0.6)), 88)
         ]
         for (color, xPos) in colors {
-            let circle = SKShapeNode(circleOfRadius: 8)
+            let circle = SKShapeNode(circleOfRadius: 32)
             circle.fillColor = color
             circle.strokeColor = strokeColor
-            circle.lineWidth = 1.5
-            circle.position = CGPoint(x: xPos, y: 12)
+            circle.lineWidth = 4
+            circle.position = CGPoint(x: xPos, y: 48)
             container.addChild(circle)
         }
 
@@ -340,36 +327,36 @@ class ResourceNode: SKNode {
         container.strokeColor = .clear
 
         // Three trees
-        let treePositions: [CGFloat] = [-20, 5, 25]
-        let treeHeights: [CGFloat] = [35, 45, 30]
+        let treePositions: [CGFloat] = [-80, 20, 100]
+        let treeHeights: [CGFloat] = [140, 180, 120]
         for (xPos, height) in zip(treePositions, treeHeights) {
             // Trunk
             let trunkPath = CGMutablePath()
-            trunkPath.addRect(CGRect(x: xPos - 3, y: -15, width: 6, height: height * 0.4))
+            trunkPath.addRect(CGRect(x: xPos - 12, y: -60, width: 24, height: height * 0.4))
             let trunk = SKShapeNode(path: trunkPath)
             trunk.fillColor = PlatformColor(RenaissanceColors.warmBrown.opacity(0.5))
             trunk.strokeColor = strokeColor
-            trunk.lineWidth = 1.5
+            trunk.lineWidth = 4
             container.addChild(trunk)
 
             // Foliage
             let foliage = SKShapeNode(circleOfRadius: height * 0.3)
             foliage.fillColor = PlatformColor(RenaissanceColors.sageGreen.opacity(0.5))
             foliage.strokeColor = strokeColor
-            foliage.lineWidth = 1.5
-            foliage.position = CGPoint(x: xPos, y: -15 + height * 0.4 + height * 0.25)
+            foliage.lineWidth = 4
+            foliage.position = CGPoint(x: xPos, y: -60 + height * 0.4 + height * 0.25)
             container.addChild(foliage)
         }
 
         // Axe leaning against tree
         let axePath = CGMutablePath()
-        axePath.move(to: CGPoint(x: -30, y: -20))
-        axePath.addLine(to: CGPoint(x: -22, y: 10))  // handle
-        axePath.move(to: CGPoint(x: -26, y: 5))
-        axePath.addLine(to: CGPoint(x: -18, y: 8))   // blade
+        axePath.move(to: CGPoint(x: -120, y: -80))
+        axePath.addLine(to: CGPoint(x: -88, y: 40))  // handle
+        axePath.move(to: CGPoint(x: -104, y: 20))
+        axePath.addLine(to: CGPoint(x: -72, y: 32))   // blade
         let axe = SKShapeNode(path: axePath)
         axe.strokeColor = strokeColor
-        axe.lineWidth = 2
+        axe.lineWidth = 4
         container.addChild(axe)
 
         return container
@@ -379,20 +366,20 @@ class ResourceNode: SKNode {
     private func createMarket() -> SKShapeNode {
         let path = CGMutablePath()
         // Stall frame (tent/awning shape)
-        path.move(to: CGPoint(x: -40, y: -15))
-        path.addLine(to: CGPoint(x: -40, y: 15))
-        path.addLine(to: CGPoint(x: -45, y: 25))  // awning peak left
-        path.addLine(to: CGPoint(x: 0, y: 30))    // top center
-        path.addLine(to: CGPoint(x: 45, y: 25))   // awning peak right
-        path.addLine(to: CGPoint(x: 40, y: 15))
-        path.addLine(to: CGPoint(x: 40, y: -15))
+        path.move(to: CGPoint(x: -160, y: -60))
+        path.addLine(to: CGPoint(x: -160, y: 60))
+        path.addLine(to: CGPoint(x: -180, y: 100))  // awning peak left
+        path.addLine(to: CGPoint(x: 0, y: 120))     // top center
+        path.addLine(to: CGPoint(x: 180, y: 100))   // awning peak right
+        path.addLine(to: CGPoint(x: 160, y: 60))
+        path.addLine(to: CGPoint(x: 160, y: -60))
         path.closeSubpath()
         // Counter/table
-        path.addRect(CGRect(x: -35, y: -15, width: 70, height: 8))
+        path.addRect(CGRect(x: -140, y: -60, width: 280, height: 32))
         // Hanging goods (circles for silk bolts, lead ingots)
-        path.addEllipse(in: CGRect(x: -25, y: 0, width: 12, height: 10))
-        path.addEllipse(in: CGRect(x: -5, y: 2, width: 10, height: 8))
-        path.addEllipse(in: CGRect(x: 15, y: 0, width: 12, height: 10))
+        path.addEllipse(in: CGRect(x: -100, y: 0, width: 48, height: 40))
+        path.addEllipse(in: CGRect(x: -20, y: 8, width: 40, height: 32))
+        path.addEllipse(in: CGRect(x: 60, y: 0, width: 48, height: 40))
 
         let shape = SKShapeNode(path: path)
         shape.fillColor = PlatformColor(RenaissanceColors.ochre.opacity(0.25))
@@ -405,22 +392,22 @@ class ResourceNode: SKNode {
     private func createWorkbench() -> SKShapeNode {
         let path = CGMutablePath()
         // Bench top
-        path.addRect(CGRect(x: -45, y: 0, width: 90, height: 12))
+        path.addRect(CGRect(x: -180, y: 0, width: 360, height: 48))
         // Legs
-        path.move(to: CGPoint(x: -35, y: 0))
-        path.addLine(to: CGPoint(x: -35, y: -18))
-        path.move(to: CGPoint(x: 35, y: 0))
-        path.addLine(to: CGPoint(x: 35, y: -18))
+        path.move(to: CGPoint(x: -140, y: 0))
+        path.addLine(to: CGPoint(x: -140, y: -72))
+        path.move(to: CGPoint(x: 140, y: 0))
+        path.addLine(to: CGPoint(x: 140, y: -72))
         // Tool sketches on top — hammer
-        path.move(to: CGPoint(x: -20, y: 12))
-        path.addLine(to: CGPoint(x: -20, y: 25))
-        path.addRect(CGRect(x: -26, y: 25, width: 12, height: 6))
+        path.move(to: CGPoint(x: -80, y: 48))
+        path.addLine(to: CGPoint(x: -80, y: 100))
+        path.addRect(CGRect(x: -104, y: 100, width: 48, height: 24))
         // Tool sketches — saw
-        path.move(to: CGPoint(x: 15, y: 12))
-        path.addLine(to: CGPoint(x: 15, y: 22))
-        path.addLine(to: CGPoint(x: 25, y: 22))
-        path.addLine(to: CGPoint(x: 25, y: 18))
-        path.addLine(to: CGPoint(x: 15, y: 18))
+        path.move(to: CGPoint(x: 60, y: 48))
+        path.addLine(to: CGPoint(x: 60, y: 88))
+        path.addLine(to: CGPoint(x: 100, y: 88))
+        path.addLine(to: CGPoint(x: 100, y: 72))
+        path.addLine(to: CGPoint(x: 60, y: 72))
 
         let shape = SKShapeNode(path: path)
         shape.fillColor = PlatformColor(RenaissanceColors.warmBrown.opacity(0.35))
@@ -433,23 +420,54 @@ class ResourceNode: SKNode {
     private func createFurnace() -> SKShapeNode {
         let path = CGMutablePath()
         // Trapezoidal body
-        path.move(to: CGPoint(x: -30, y: -20))
-        path.addLine(to: CGPoint(x: -22, y: 20))
-        path.addLine(to: CGPoint(x: 22, y: 20))
-        path.addLine(to: CGPoint(x: 30, y: -20))
+        path.move(to: CGPoint(x: -120, y: -80))
+        path.addLine(to: CGPoint(x: -88, y: 80))
+        path.addLine(to: CGPoint(x: 88, y: 80))
+        path.addLine(to: CGPoint(x: 120, y: -80))
         path.closeSubpath()
         // Chimney
-        path.addRect(CGRect(x: 5, y: 20, width: 12, height: 20))
+        path.addRect(CGRect(x: 20, y: 80, width: 48, height: 80))
         // Opening
-        path.addRect(CGRect(x: -12, y: -15, width: 24, height: 16))
+        path.addRect(CGRect(x: -48, y: -60, width: 96, height: 64))
         // Brick lines
-        path.move(to: CGPoint(x: -26, y: 0))
-        path.addLine(to: CGPoint(x: 26, y: 0))
-        path.move(to: CGPoint(x: -24, y: 10))
-        path.addLine(to: CGPoint(x: 24, y: 10))
+        path.move(to: CGPoint(x: -104, y: 0))
+        path.addLine(to: CGPoint(x: 104, y: 0))
+        path.move(to: CGPoint(x: -96, y: 40))
+        path.addLine(to: CGPoint(x: 96, y: 40))
 
         let shape = SKShapeNode(path: path)
         shape.fillColor = PlatformColor(RenaissanceColors.terracotta.opacity(0.35))
+        shape.strokeColor = strokeColor
+        shape.lineWidth = sketchLineWidth
+        return shape
+    }
+
+    /// Building with arched door (enter interior)
+    private func createCraftingRoom() -> SKShapeNode {
+        let path = CGMutablePath()
+        // Building body
+        path.addRect(CGRect(x: -160, y: -100, width: 320, height: 220))
+        // Roof (triangle)
+        path.move(to: CGPoint(x: -180, y: 120))
+        path.addLine(to: CGPoint(x: 0, y: 200))
+        path.addLine(to: CGPoint(x: 180, y: 120))
+        path.closeSubpath()
+        // Arched door
+        path.move(to: CGPoint(x: -50, y: -100))
+        path.addLine(to: CGPoint(x: -50, y: 20))
+        path.addCurve(to: CGPoint(x: 50, y: 20),
+                      control1: CGPoint(x: -50, y: 80),
+                      control2: CGPoint(x: 50, y: 80))
+        path.addLine(to: CGPoint(x: 50, y: -100))
+        // Window left
+        path.addRect(CGRect(x: -130, y: 20, width: 50, height: 50))
+        // Window right
+        path.addRect(CGRect(x: 80, y: 20, width: 50, height: 50))
+        // Chimney
+        path.addRect(CGRect(x: 80, y: 120, width: 40, height: 60))
+
+        let shape = SKShapeNode(path: path)
+        shape.fillColor = PlatformColor(RenaissanceColors.warmBrown.opacity(0.25))
         shape.strokeColor = strokeColor
         shape.lineWidth = sketchLineWidth
         return shape
@@ -460,9 +478,9 @@ class ResourceNode: SKNode {
     private func setupLabel() {
         labelNode = SKLabelNode(text: stationType.label)
         labelNode.fontName = "Cinzel-Regular"
-        labelNode.fontSize = 13
+        labelNode.fontSize = 36
         labelNode.fontColor = strokeColor
-        labelNode.position = CGPoint(x: 0, y: -35)
+        labelNode.position = CGPoint(x: 0, y: -140)
         labelNode.zPosition = 10
         addChild(labelNode)
     }
@@ -472,9 +490,9 @@ class ResourceNode: SKNode {
     private func setupCountLabel() {
         countLabel = SKLabelNode(text: "")
         countLabel?.fontName = "EBGaramond-Regular"
-        countLabel?.fontSize = 12
+        countLabel?.fontSize = 32
         countLabel?.fontColor = PlatformColor(RenaissanceColors.warmBrown)
-        countLabel?.position = CGPoint(x: 0, y: -48)
+        countLabel?.position = CGPoint(x: 0, y: -175)
         countLabel?.zPosition = 10
         if let label = countLabel {
             addChild(label)
@@ -493,13 +511,9 @@ class ResourceNode: SKNode {
             if isDepleted {
                 target.alpha = 0.4
                 target.removeAction(forKey: "pulse")
-                // Pause volcano animation when depleted
-                if stationType == .volcano { spriteNode?.removeAction(forKey: "volcanoAnim") }
             } else {
                 target.alpha = 1.0
                 addPulseAnimation()
-                // Resume volcano animation when restocked
-                if stationType == .volcano { startVolcanoAnimation() }
             }
         }
     }
@@ -534,29 +548,19 @@ class ResourceNode: SKNode {
         }
     }
 
-    /// Start looping volcano frame animation (VolcanoFrame00-14 at 15fps)
-    private func startVolcanoAnimation() {
-        guard let sprite = spriteNode else { return }
-        let textures = (0..<Self.volcanoFrameCount).map { i in
-            SKTexture(imageNamed: String(format: "VolcanoFrame%02d", i))
-        }
-        let animate = SKAction.animate(with: textures, timePerFrame: Self.volcanoFPS)
-        sprite.run(SKAction.repeatForever(animate), withKey: "volcanoAnim")
-    }
-
     func showCollectionBurst() {
         // Particle burst when collecting
         let burstCount = 8
         for i in 0..<burstCount {
             let angle = (CGFloat(i) / CGFloat(burstCount)) * .pi * 2
-            let particle = SKShapeNode(circleOfRadius: 4)
+            let particle = SKShapeNode(circleOfRadius: 12)
             particle.fillColor = PlatformColor(RenaissanceColors.goldSuccess.opacity(0.8))
             particle.strokeColor = .clear
             particle.position = .zero
             particle.zPosition = 20
             addChild(particle)
 
-            let dest = CGPoint(x: cos(angle) * 40, y: sin(angle) * 40)
+            let dest = CGPoint(x: cos(angle) * 160, y: sin(angle) * 160)
             let moveAction = SKAction.move(to: dest, duration: 0.4)
             moveAction.timingMode = .easeOut
             let fadeAction = SKAction.fadeOut(withDuration: 0.4)
