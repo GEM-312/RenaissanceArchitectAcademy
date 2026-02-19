@@ -134,16 +134,6 @@ struct MainMenuView: View {
                         #if os(macOS)
                         .keyboardShortcut("c", modifiers: [.command])
                         #endif
-
-                    RenaissanceButton(title: "Codex", action: {})
-                        #if os(macOS)
-                        .keyboardShortcut("k", modifiers: [.command])
-                        #endif
-
-                    RenaissanceButton(title: "Workshop", action: onOpenWorkshop)
-                        #if os(macOS)
-                        .keyboardShortcut("w", modifiers: [.command])
-                        #endif
                 }
                 .opacity(showButtons ? 1 : 0)
                 .offset(y: showButtons ? 0 : 20)
