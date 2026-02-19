@@ -4,6 +4,7 @@ import SwiftUI
 /// Title on top, dome image centered, buttons in a horizontal row at the bottom
 struct MainMenuView: View {
     var onStartGame: () -> Void
+    var onContinue: () -> Void = {}
     var onOpenWorkshop: () -> Void = {}
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var showContent = false
@@ -129,7 +130,7 @@ struct MainMenuView: View {
                         .keyboardShortcut(.return, modifiers: [])
                         #endif
 
-                    RenaissanceButton(title: "Continue", action: {})
+                    RenaissanceButton(title: "Continue", action: onContinue)
                         #if os(macOS)
                         .keyboardShortcut("c", modifiers: [.command])
                         #endif

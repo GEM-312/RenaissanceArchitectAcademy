@@ -38,6 +38,13 @@ struct ContentView: View {
                             showingOnboarding = true
                         }
                     },
+                    onContinue: {
+                        // Skip onboarding, go straight to city map
+                        selectedDestination = .cityMap
+                        withAnimation(.easeInOut(duration: 0.5)) {
+                            showingMainMenu = false
+                        }
+                    },
                     onOpenWorkshop: {
                         selectedDestination = .workshop
                         withAnimation(.easeInOut(duration: 0.5)) {
