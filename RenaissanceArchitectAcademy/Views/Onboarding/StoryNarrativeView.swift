@@ -11,13 +11,33 @@ struct StoryNarrativeView: View {
     @State private var showButton = false
     @State private var typewriterTimer: Timer?
 
+    // Animated background frames
+    @State private var bgFrame: Int = 0
+    @State private var bgTimer: Timer?
+    private let bgFrameCount = 15
+    private let bgFPS: Double = 10
+
     private let charsPerTick = 2
     private let tickInterval: TimeInterval = 0.03
 
     var body: some View {
         ZStack {
-            RenaissanceColors.parchment
-                .ignoresSafeArea()
+            if let prefix = page.backgroundFramePrefix {
+                // Animated background frames (looping)
+                Image(String(format: "%@%02d", prefix, bgFrame))
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
+                    .opacity(0.45)
+
+                // Darkened overlay so text stays readable
+                RenaissanceColors.parchment
+                    .opacity(0.55)
+                    .ignoresSafeArea()
+            } else {
+                RenaissanceColors.parchment
+                    .ignoresSafeArea()
+            }
 
             DecorativeCorners()
 
@@ -78,9 +98,12 @@ struct StoryNarrativeView: View {
         }
         .onAppear {
             startReveal()
+            startBackgroundAnimation()
         }
         .onDisappear {
             stopTypewriter()
+            bgTimer?.invalidate()
+            bgTimer = nil
         }
         // Tap to skip typewriter and reveal all text
         .onTapGesture {
@@ -135,5 +158,12 @@ struct StoryNarrativeView: View {
     private func stopTypewriter() {
         typewriterTimer?.invalidate()
         typewriterTimer = nil
+    }
+
+    private func startBackgroundAnimation() {
+        guard page.backgroundFramePrefix != nil else { return }
+        bgTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / bgFPS, repeats: true) { _ in
+            bgFrame = (bgFrame + 1) % bgFrameCount
+        }
     }
 }

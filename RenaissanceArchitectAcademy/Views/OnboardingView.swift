@@ -1,13 +1,14 @@
 import SwiftUI
 
-/// Master onboarding orchestrator — state machine through character select and story pages
+/// Master onboarding orchestrator — state machine through character select, transition video, and story pages
 struct OnboardingView: View {
     @Bindable var onboardingState: OnboardingState
     var onComplete: () -> Void
 
     enum Phase: Equatable {
         case characterSelect
-        case story(Int)  // index into OnboardingContent.storyPages
+        case avatarTransition   // travel video after choosing character
+        case story(Int)         // index into OnboardingContent.storyPages
     }
 
     @State private var phase: Phase = .characterSelect
@@ -17,6 +18,14 @@ struct OnboardingView: View {
             switch phase {
             case .characterSelect:
                 CharacterSelectView(onboardingState: onboardingState) {
+                    withAnimation(.easeInOut(duration: 0.4)) {
+                        phase = .avatarTransition
+                    }
+                }
+                .transition(.opacity)
+
+            case .avatarTransition:
+                AvatarTransitionView(gender: onboardingState.apprenticeGender) {
                     withAnimation(.easeInOut(duration: 0.6)) {
                         phase = .story(0)
                     }

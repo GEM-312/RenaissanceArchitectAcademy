@@ -10,6 +10,7 @@ struct WorkshopMapView: View {
     var onNavigate: ((SidebarDestination) -> Void)? = nil
     var onBackToMenu: (() -> Void)? = nil
     var onEnterInterior: (() -> Void)? = nil
+    var onboardingState: OnboardingState? = nil
 
     @Environment(\.dismiss) private var dismiss
 
@@ -229,7 +230,8 @@ struct WorkshopMapView: View {
                     },
                     showBackButton: true,
                     onBack: { dismiss() },
-                    onBackToMenu: onBackToMenu
+                    onBackToMenu: onBackToMenu,
+                    onboardingState: onboardingState
                 )
             } else {
                 // Fallback if no viewModel

@@ -7,6 +7,8 @@ struct StoryPage: Identifiable {
     let text: String
     /// Whether the bird companion should appear on this page
     let showBird: Bool
+    /// Optional animated background frames prefix (e.g. "WorkshopWelcomeFrame"), 15 frames 00-14
+    var backgroundFramePrefix: String? = nil
 }
 
 /// A historical lesson the bird teaches before the player's first visit to a workshop station
@@ -51,7 +53,8 @@ enum OnboardingContent {
 
             "But first," says the workshop master, "you will need a teacher..."
             """,
-            showBird: false
+            showBird: false,
+            backgroundFramePrefix: "WorkshopWelcomeFrame"
         ),
         StoryPage(
             title: "The Bird Companion",

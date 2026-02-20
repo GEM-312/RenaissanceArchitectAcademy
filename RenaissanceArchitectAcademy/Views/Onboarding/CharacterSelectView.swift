@@ -10,6 +10,11 @@ struct CharacterSelectView: View {
     @State private var showContent = false
     @FocusState private var nameFieldFocused: Bool
 
+    /// Current animation frame index (0-14), shared between both avatars
+    @State private var currentFrame: Int = 0
+    private let frameCount = 15
+    private let fps: Double = 10
+
     var body: some View {
         ZStack {
             RenaissanceColors.parchment
@@ -39,7 +44,7 @@ struct CharacterSelectView: View {
                 .opacity(showContent ? 1 : 0)
                 .offset(y: showContent ? 0 : -20)
 
-                // Gender cards
+                // Gender cards — 2x bigger with animated avatars
                 HStack(spacing: 24) {
                     genderCard(gender: .boy)
                     genderCard(gender: .girl)
@@ -53,6 +58,7 @@ struct CharacterSelectView: View {
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     TextField("Enter your name...", text: $name)
+                        .textFieldStyle(.plain)
                         .font(.custom("EBGaramond-Regular", size: 18))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 20)
@@ -60,12 +66,14 @@ struct CharacterSelectView: View {
                         .frame(maxWidth: 280)
                         .background(
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.white.opacity(0.5))
+                                .fill(RenaissanceColors.parchment)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 8)
                                         .strokeBorder(RenaissanceColors.ochre.opacity(0.4), lineWidth: 1)
                                 )
                         )
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .colorScheme(.light)
                         .focused($nameFieldFocused)
                         #if os(iOS)
                         .textInputAutocapitalization(.words)
@@ -75,7 +83,7 @@ struct CharacterSelectView: View {
 
                 Spacer()
 
-                // Continue button
+                // Continue button — ochre instead of blue
                 Button {
                     if let gender = selectedGender {
                         onboardingState.apprenticeGender = gender
@@ -91,7 +99,7 @@ struct CharacterSelectView: View {
                         .background(
                             RoundedRectangle(cornerRadius: 10)
                                 .fill(selectedGender != nil
-                                      ? RenaissanceColors.renaissanceBlue
+                                      ? RenaissanceColors.ochre
                                       : RenaissanceColors.stoneGray.opacity(0.4))
                         )
                 }
@@ -105,13 +113,28 @@ struct CharacterSelectView: View {
             withAnimation(.easeOut(duration: 0.8)) {
                 showContent = true
             }
+            startFrameAnimation()
         }
     }
 
-    // MARK: - Gender Card
+    // MARK: - Frame Animation (plays once, no loop, no crossfade)
+
+    private func startFrameAnimation() {
+        Timer.scheduledTimer(withTimeInterval: 1.0 / fps, repeats: true) { timer in
+            if currentFrame < frameCount - 1 {
+                currentFrame += 1
+            } else {
+                timer.invalidate()
+            }
+        }
+    }
+
+    // MARK: - Gender Card (2x bigger with animated avatar)
 
     private func genderCard(gender: ApprenticeGender) -> some View {
         let isSelected = selectedGender == gender
+        let framePrefix = gender == .boy ? "AvatarBoyFrame" : "AvatarGirlFrame"
+        let frameName = String(format: "%@%02d", framePrefix, currentFrame)
 
         return Button {
             withAnimation(.spring(response: 0.3)) {
@@ -119,28 +142,30 @@ struct CharacterSelectView: View {
             }
         } label: {
             VStack(spacing: 12) {
-                // Placeholder silhouette using SF Symbol
-                Image(systemName: gender == .boy ? "figure.stand" : "figure.stand.dress")
-                    .font(.system(size: 64))
-                    .foregroundStyle(isSelected ? RenaissanceColors.renaissanceBlue : RenaissanceColors.sepiaInk.opacity(0.4))
+                // Animated avatar from extracted frames
+                Image(frameName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 270, height: 270)
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
 
                 Text(gender.displayName)
-                    .font(.custom("Cinzel-Regular", size: 16))
+                    .font(.custom("Cinzel-Regular", size: 20))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
-            .frame(width: 140, height: 160)
+            .frame(width: 300, height: 360)
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: 16)
                     .fill(isSelected
-                          ? RenaissanceColors.renaissanceBlue.opacity(0.08)
+                          ? RenaissanceColors.ochre.opacity(0.1)
                           : RenaissanceColors.parchment)
                     .shadow(color: .black.opacity(isSelected ? 0.12 : 0.05), radius: isSelected ? 8 : 4, y: 2)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: 16)
                     .strokeBorder(
-                        isSelected ? RenaissanceColors.renaissanceBlue : RenaissanceColors.ochre.opacity(0.3),
-                        lineWidth: isSelected ? 2 : 1
+                        isSelected ? RenaissanceColors.ochre : RenaissanceColors.ochre.opacity(0.3),
+                        lineWidth: isSelected ? 2.5 : 1
                     )
             )
             .scaleEffect(isSelected ? 1.05 : 1.0)

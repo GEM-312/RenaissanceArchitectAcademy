@@ -81,19 +81,19 @@ struct ContentView: View {
     private var detailView: some View {
         switch selectedDestination {
         case .cityMap:
-            CityMapView(viewModel: cityViewModel, workshopState: workshopState, onNavigate: navigateTo, onBackToMenu: backToMenu)
+            CityMapView(viewModel: cityViewModel, workshopState: workshopState, onNavigate: navigateTo, onBackToMenu: backToMenu, onboardingState: onboardingState)
         case .allBuildings:
             CityView(viewModel: cityViewModel, filterEra: nil, workshopState: workshopState)
         case .era(let era):
             CityView(viewModel: cityViewModel, filterEra: era, workshopState: workshopState)
         case .profile:
-            ProfileView()
+            ProfileView(viewModel: cityViewModel, workshopState: workshopState, onboardingState: onboardingState)
         case .workshop:
-            WorkshopView(workshop: workshopState, viewModel: cityViewModel, onNavigate: navigateTo, onBackToMenu: backToMenu)
+            WorkshopView(workshop: workshopState, viewModel: cityViewModel, onNavigate: navigateTo, onBackToMenu: backToMenu, onboardingState: onboardingState)
         case .knowledgeTests:
             KnowledgeTestsView(viewModel: cityViewModel, workshopState: workshopState)
         case .none:
-            CityMapView(viewModel: cityViewModel, workshopState: workshopState, onNavigate: navigateTo, onBackToMenu: backToMenu)
+            CityMapView(viewModel: cityViewModel, workshopState: workshopState, onNavigate: navigateTo, onBackToMenu: backToMenu, onboardingState: onboardingState)
         }
     }
 }

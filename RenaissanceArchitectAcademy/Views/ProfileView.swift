@@ -2,34 +2,78 @@ import SwiftUI
 
 /// Student Profile View - Leonardo's Notebook aesthetic
 /// Displays achievements, science mastery, resources, and progress
+/// Layout matches the hand-drawn sketch: Header → Materials+Achievements → Sciences → Stats+Mastery
 struct ProfileView: View {
+    @ObservedObject var viewModel: CityViewModel
+    var workshopState: WorkshopState
+    var onboardingState: OnboardingState
+
     @State private var profile = StudentProfile.newStudent(name: "Young Architect")
     @State private var selectedCategory: Achievement.AchievementCategory?
-    @State private var showingEditName = false
+
+    /// Display name from onboarding, fallback to "Young Architect"
+    private var displayName: String {
+        let name = onboardingState.apprenticeName
+        return name.isEmpty ? "Young Architect" : name
+    }
+
+    /// Avatar frame prefix based on gender choice
+    private var avatarFramePrefix: String {
+        switch onboardingState.apprenticeGender {
+        case .boy: return "AvatarBoyFrame"
+        case .girl: return "AvatarGirlFrame"
+        }
+    }
+
+    /// Number of completed buildings from live city data
+    private var completedBuildings: Int {
+        viewModel.buildingPlots.filter(\.isCompleted).count
+    }
+
+    /// Total raw materials collected
+    private var totalRawMaterials: Int {
+        workshopState.rawMaterials.values.reduce(0, +)
+    }
+
+    /// Total crafted items
+    private var totalCraftedItems: Int {
+        workshopState.craftedMaterials.values.reduce(0, +)
+    }
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 24) {
-                // Header with avatar and name
-                ProfileHeaderView(profile: $profile, showingEditName: $showingEditName)
-
-                // Resources bar
-                ResourcesBarView(resources: profile.resources)
-
-                // Mastery Level Card
-                MasteryLevelCard(masteryLevel: profile.masteryLevel, progress: profile.overallProgress)
-
-                // Science Mastery Grid
-                ScienceMasteryGrid(masteries: profile.scienceMasteries)
-
-                // Achievements Section
-                AchievementsSection(
-                    achievements: profile.achievements,
-                    selectedCategory: $selectedCategory
+            VStack(spacing: 20) {
+                // ── Row 1: Header (rank | avatar | currency) ──
+                ProfileHeaderRow(
+                    displayName: displayName,
+                    avatarFramePrefix: avatarFramePrefix,
+                    masteryLevel: profile.masteryLevel,
+                    goldFlorins: profile.resources.goldFlorins
                 )
 
-                // Statistics
-                StatisticsCard(profile: profile)
+                // ── Row 2: Materials + Achievements side-by-side ──
+                HStack(alignment: .top, spacing: 16) {
+                    MaterialsCard(workshopState: workshopState)
+                    AchievementsSection(
+                        achievements: profile.achievements,
+                        selectedCategory: $selectedCategory
+                    )
+                }
+
+                // ── Row 3: Sciences horizontal scroll ──
+                SciencesRow(masteries: profile.scienceMasteries)
+
+                // ── Row 4: Statistics + Mastery Level side-by-side ──
+                HStack(alignment: .top, spacing: 16) {
+                    StatisticsCard(
+                        buildingPlots: viewModel.buildingPlots,
+                        totalPlayTime: profile.totalPlayTime
+                    )
+                    MasteryLevelCard(
+                        masteryLevel: profile.masteryLevel,
+                        progress: profile.overallProgress
+                    )
+                }
             }
             .padding()
         }
@@ -41,57 +85,100 @@ struct ProfileView: View {
     }
 }
 
-// MARK: - Profile Header
-struct ProfileHeaderView: View {
-    @Binding var profile: StudentProfile
-    @Binding var showingEditName: Bool
+// MARK: - Row 1: Profile Header Row (avatar as background)
+struct ProfileHeaderRow: View {
+    let displayName: String
+    let avatarFramePrefix: String
+    let masteryLevel: MasteryLevel
+    let goldFlorins: Int
+
+    @State private var currentFrame: Int = 0
+    private let frameCount = 15
+    private let fps: Double = 10
 
     var body: some View {
-        VStack(spacing: 12) {
-            // Avatar with decorative frame
-            ZStack {
-                // Decorative circle frame
-                Circle()
-                    .stroke(
-                        LinearGradient(
-                            colors: [RenaissanceColors.ochre, RenaissanceColors.warmBrown],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 4
+        ZStack {
+            // Avatar animation as background
+            Image(String(format: "%@%02d", avatarFramePrefix, currentFrame))
+                .resizable()
+                .scaledToFit()
+                .frame(height: 280)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .opacity(0.35)
+
+            // Overlay: rank (left), name (center), florins (right)
+            VStack {
+                Spacer()
+
+                HStack(alignment: .bottom) {
+                    // Left — Current Rank
+                    VStack(spacing: 4) {
+                        Text(masteryLevel.icon)
+                            .font(.system(size: 28))
+                        Text(masteryLevel.rawValue)
+                            .font(.custom("Cinzel-Bold", size: 12))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                    }
+                    .padding(8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(RenaissanceColors.parchment.opacity(0.85))
                     )
-                    .frame(width: 110, height: 110)
 
-                Circle()
-                    .fill(RenaissanceColors.parchment)
-                    .frame(width: 100, height: 100)
+                    Spacer()
 
-                Image(systemName: profile.avatarName)
-                    .font(.system(size: 50))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    // Center — Name
+                    Text(displayName)
+                        .font(.custom("Cinzel-Bold", size: 20))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(
+                            Capsule()
+                                .fill(RenaissanceColors.parchment.opacity(0.85))
+                        )
+
+                    Spacer()
+
+                    // Right — Gold Florins
+                    VStack(spacing: 4) {
+                        ZStack {
+                            Circle()
+                                .fill(RenaissanceColors.goldSuccess)
+                                .frame(width: 36, height: 36)
+                            Image(systemName: "dollarsign.circle.fill")
+                                .font(.system(size: 22))
+                                .foregroundStyle(.white)
+                        }
+                        Text("\(goldFlorins)")
+                            .font(.custom("Cinzel-Bold", size: 13))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                    }
+                    .padding(8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(RenaissanceColors.parchment.opacity(0.85))
+                    )
+                }
+                .padding(.horizontal, 8)
+                .padding(.bottom, 8)
             }
-
-            // Name with edit button
-            HStack {
-                Text(profile.name)
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
-
-                Button {
-                    showingEditName = true
-                } label: {
-                    Image(systemName: "pencil.circle")
-                        .foregroundStyle(RenaissanceColors.warmBrown)
+        }
+        .frame(height: 280)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(RenaissanceColors.parchment.opacity(0.6))
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .onAppear {
+            Timer.scheduledTimer(withTimeInterval: 1.0 / fps, repeats: true) { timer in
+                if currentFrame < frameCount - 1 {
+                    currentFrame += 1
+                } else {
+                    timer.invalidate()
                 }
             }
-
-            // Joined date
-            Text("Joined \(profile.dateJoined.formatted(date: .abbreviated, time: .omitted))")
-                .font(.caption)
-                .foregroundStyle(RenaissanceColors.stoneGray)
         }
-        .padding()
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(RenaissanceColors.parchment.opacity(0.8))
@@ -100,243 +187,98 @@ struct ProfileHeaderView: View {
     }
 }
 
-// MARK: - Resources Bar
-struct ResourcesBarView: View {
-    let resources: Resources
+// MARK: - Row 2 Left: Materials Card
+struct MaterialsCard: View {
+    var workshopState: WorkshopState
 
-    var body: some View {
-        HStack(spacing: 16) {
-            ResourceItem(icon: "dollarsign.circle.fill", value: resources.goldFlorins, label: "Florins", color: RenaissanceColors.goldSuccess)
-            ResourceItem(icon: "square.stack.3d.up.fill", value: resources.stoneBlocks, label: "Stone", color: RenaissanceColors.stoneGray)
-            ResourceItem(icon: "rectangle.stack.fill", value: resources.woodPlanks, label: "Wood", color: RenaissanceColors.warmBrown)
-            ResourceItem(icon: "drop.fill", value: resources.pigmentJars, label: "Pigment", color: RenaissanceColors.renaissanceBlue)
+    private var rawItems: [(Material, Int)] {
+        Material.allCases.compactMap { mat in
+            let count = workshopState.rawMaterials[mat] ?? 0
+            return count > 0 ? (mat, count) : nil
         }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(RenaissanceColors.parchment)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(RenaissanceColors.ochre.opacity(0.5), lineWidth: 1)
-                )
-        )
     }
-}
 
-struct ResourceItem: View {
-    let icon: String
-    let value: Int
-    let label: String
-    let color: Color
-
-    var body: some View {
-        VStack(spacing: 4) {
-            Image(systemName: icon)
-                .font(.title2)
-                .foregroundStyle(color)
-
-            Text("\(value)")
-                .font(.headline)
-                .foregroundStyle(RenaissanceColors.sepiaInk)
-
-            Text(label)
-                .font(.caption2)
-                .foregroundStyle(RenaissanceColors.stoneGray)
+    private var craftedItems: [(CraftedItem, Int)] {
+        CraftedItem.allCases.compactMap { item in
+            let count = workshopState.craftedMaterials[item] ?? 0
+            return count > 0 ? (item, count) : nil
         }
-        .frame(maxWidth: .infinity)
     }
-}
 
-// MARK: - Mastery Level Card
-struct MasteryLevelCard: View {
-    let masteryLevel: MasteryLevel
-    let progress: Double
+    private var hasAnyMaterials: Bool {
+        !rawItems.isEmpty || !craftedItems.isEmpty
+    }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text("Mastery Level")
-                    .font(.headline)
+                Image(systemName: "shippingbox.fill")
+                    .foregroundStyle(RenaissanceColors.warmBrown)
+                Text("Materials")
+                    .font(.custom("Cinzel-Bold", size: 14))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
-
-                Spacer()
-
-                Text(masteryLevel.icon)
-                    .font(.title2)
-
-                Text(masteryLevel.rawValue)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(masteryColor)
             }
 
-            Text(masteryLevel.description)
-                .font(.caption)
-                .foregroundStyle(RenaissanceColors.stoneGray)
-
-            // Progress bar
-            VStack(alignment: .leading, spacing: 4) {
-                GeometryReader { geometry in
-                    ZStack(alignment: .leading) {
-                        // Background
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(RenaissanceColors.stoneGray.opacity(0.3))
-                            .frame(height: 8)
-
-                        // Progress fill
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(
-                                LinearGradient(
-                                    colors: [masteryColor.opacity(0.8), masteryColor],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .frame(width: geometry.size.width * progress, height: 8)
+            if hasAnyMaterials {
+                // Raw materials
+                if !rawItems.isEmpty {
+                    Text("Raw")
+                        .font(.custom("EBGaramond-Regular", size: 11))
+                        .foregroundStyle(RenaissanceColors.stoneGray)
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 50))], spacing: 6) {
+                        ForEach(rawItems, id: \.0) { mat, count in
+                            VStack(spacing: 2) {
+                                Text(mat.icon)
+                                    .font(.system(size: 20))
+                                Text("\(count)")
+                                    .font(.custom("EBGaramond-Regular", size: 11))
+                                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                            }
+                        }
                     }
                 }
-                .frame(height: 8)
 
-                Text("\(Int(progress * 100))% Overall Progress")
-                    .font(.caption2)
-                    .foregroundStyle(RenaissanceColors.stoneGray)
-            }
-        }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(RenaissanceColors.parchment)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(masteryColor.opacity(0.3), lineWidth: 2)
-                )
-        )
-    }
-
-    private var masteryColor: Color {
-        switch masteryLevel {
-        case .apprentice: return RenaissanceColors.renaissanceBlue
-        case .architect: return RenaissanceColors.ochre
-        case .master: return RenaissanceColors.goldSuccess
-        }
-    }
-}
-
-// MARK: - Science Mastery Grid
-struct ScienceMasteryGrid: View {
-    let masteries: [ScienceMastery]
-
-    private let columns = [
-        GridItem(.adaptive(minimum: 100, maximum: 150), spacing: 12)
-    ]
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Image(systemName: "books.vertical.fill")
-                    .foregroundStyle(RenaissanceColors.warmBrown)
-
-                Text("Sciences")
-                    .font(.headline)
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
-            }
-
-            LazyVGrid(columns: columns, spacing: 12) {
-                ForEach(masteries) { mastery in
-                    ScienceMasteryCard(mastery: mastery)
+                // Crafted materials
+                if !craftedItems.isEmpty {
+                    Text("Crafted")
+                        .font(.custom("EBGaramond-Regular", size: 11))
+                        .foregroundStyle(RenaissanceColors.stoneGray)
+                        .padding(.top, 4)
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 50))], spacing: 6) {
+                        ForEach(craftedItems, id: \.0) { item, count in
+                            VStack(spacing: 2) {
+                                Text(item.icon)
+                                    .font(.system(size: 20))
+                                Text("\(count)")
+                                    .font(.custom("EBGaramond-Regular", size: 11))
+                                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                            }
+                        }
+                    }
                 }
+            } else {
+                Text("Visit the Workshop\nto collect materials!")
+                    .font(.custom("EBGaramond-Italic", size: 12))
+                    .foregroundStyle(RenaissanceColors.stoneGray)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
             }
         }
-        .padding()
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .topLeading)
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(RenaissanceColors.parchment.opacity(0.6))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1)
+                )
         )
     }
 }
 
-struct ScienceMasteryCard: View {
-    let mastery: ScienceMastery
-
-    // Icons with squared backgrounds that need soft edge blending
-    private var needsBlending: Bool {
-        mastery.science == .chemistry || mastery.science == .engineering
-    }
-
-    var body: some View {
-        VStack(spacing: 8) {
-            // Science icon with border box
-            ZStack {
-                // Soft blurred parchment background (rounded rect shape)
-                RoundedRectangle(cornerRadius: 14)
-                    .fill(RenaissanceColors.parchment.opacity(0.9))
-                    .frame(width: 92, height: 92)
-                    .blur(radius: 6)
-
-                // Science icon (behind the border)
-                if let imageName = mastery.science.customImageName {
-                    if needsBlending {
-                        // Chemistry & Engineering - clip to rounded rect to match border
-                        Image(imageName)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 85, height: 85)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                            .opacity(0.85)
-                    } else {
-                        // Other custom icons already blend nicely
-                        Image(imageName)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 85, height: 85)
-                    }
-                } else {
-                    // SF Symbol fallbacks
-                    Image(systemName: mastery.science.sfSymbolName)
-                        .font(.system(size: 45))
-                        .foregroundStyle(RenaissanceColors.color(for: mastery.science))
-                }
-
-                // Border box (on top of icon)
-                RoundedRectangle(cornerRadius: 14)
-                    .stroke(RenaissanceColors.ochre.opacity(0.4), lineWidth: 1.5)
-                    .frame(width: 92, height: 92)
-            }
-            .frame(width: 100, height: 100)
-
-            // Science name
-            Text(mastery.science.rawValue)
-                .font(.caption)
-                .fontWeight(.medium)
-                .foregroundStyle(RenaissanceColors.sepiaInk)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-
-            // Progress ring
-            ZStack {
-                Circle()
-                    .stroke(RenaissanceColors.stoneGray.opacity(0.3), lineWidth: 3)
-
-                Circle()
-                    .trim(from: 0, to: mastery.progressPercentage)
-                    .stroke(
-                        RenaissanceColors.color(for: mastery.science),
-                        style: StrokeStyle(lineWidth: 3, lineCap: .round)
-                    )
-                    .rotationEffect(.degrees(-90))
-
-                Text("\(mastery.level)")
-                    .font(.caption2)
-                    .fontWeight(.bold)
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
-            }
-            .frame(width: 32, height: 32)
-        }
-        .padding(8)
-    }
-}
-
-// MARK: - Achievements Section
+// MARK: - Row 2 Right: Achievements Section
 struct AchievementsSection: View {
     let achievements: [Achievement]
     @Binding var selectedCategory: Achievement.AchievementCategory?
@@ -349,29 +291,25 @@ struct AchievementsSection: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Image(systemName: "seal.fill")
                     .foregroundStyle(RenaissanceColors.goldSuccess)
-
                 Text("Achievements")
-                    .font(.headline)
+                    .font(.custom("Cinzel-Bold", size: 14))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
-
                 Spacer()
-
                 Text("\(achievements.filter { $0.isUnlocked }.count)/\(achievements.count)")
-                    .font(.subheadline)
+                    .font(.custom("EBGaramond-Regular", size: 12))
                     .foregroundStyle(RenaissanceColors.stoneGray)
             }
 
-            // Category filter
+            // Category filter chips
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
+                HStack(spacing: 6) {
                     CategoryChip(title: "All", isSelected: selectedCategory == nil) {
                         selectedCategory = nil
                     }
-
                     ForEach(Achievement.AchievementCategory.allCases, id: \.self) { category in
                         CategoryChip(
                             title: category.rawValue,
@@ -383,17 +321,22 @@ struct AchievementsSection: View {
                 }
             }
 
-            // Achievement grid
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 80))], spacing: 12) {
+            // Achievement badges grid
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 60))], spacing: 8) {
                 ForEach(filteredAchievements) { achievement in
                     AchievementBadge(achievement: achievement)
                 }
             }
         }
-        .padding()
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .topLeading)
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(RenaissanceColors.parchment.opacity(0.6))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1)
+                )
         )
     }
 }
@@ -406,10 +349,10 @@ struct CategoryChip: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.caption)
+                .font(.custom("EBGaramond-Regular", size: 11))
                 .fontWeight(isSelected ? .semibold : .regular)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 4)
                 .background(
                     Capsule()
                         .fill(isSelected ? RenaissanceColors.ochre : RenaissanceColors.parchment)
@@ -424,36 +367,31 @@ struct AchievementBadge: View {
     let achievement: Achievement
 
     var body: some View {
-        VStack(spacing: 6) {
-            // Wax seal style badge
+        VStack(spacing: 4) {
             ZStack {
-                // Outer seal
                 Circle()
                     .fill(
                         achievement.isUnlocked
                             ? RenaissanceColors.goldSuccess
                             : RenaissanceColors.stoneGray.opacity(0.5)
                     )
-                    .frame(width: 56, height: 56)
+                    .frame(width: 44, height: 44)
                     .shadow(
                         color: achievement.isUnlocked
                             ? RenaissanceColors.goldSuccess.opacity(0.4)
                             : .clear,
-                        radius: 4
+                        radius: 3
                     )
 
-                // Inner icon
                 Image(systemName: achievement.iconName)
-                    .font(.title3)
+                    .font(.body)
                     .foregroundStyle(
-                        achievement.isUnlocked
-                            ? .white
-                            : RenaissanceColors.stoneGray
+                        achievement.isUnlocked ? .white : RenaissanceColors.stoneGray
                     )
             }
 
             Text(achievement.name)
-                .font(.caption2)
+                .font(.custom("EBGaramond-Regular", size: 10))
                 .foregroundStyle(
                     achievement.isUnlocked
                         ? RenaissanceColors.sepiaInk
@@ -462,50 +400,210 @@ struct AchievementBadge: View {
                 .lineLimit(2)
                 .multilineTextAlignment(.center)
         }
-        .frame(width: 80)
+        .frame(width: 64)
         .opacity(achievement.isUnlocked ? 1.0 : 0.6)
     }
 }
 
-// MARK: - Statistics Card
-struct StatisticsCard: View {
-    let profile: StudentProfile
+// MARK: - Row 3: Sciences Horizontal Scroll
+struct SciencesRow: View {
+    let masteries: [ScienceMastery]
+
+    // Icons with squared backgrounds that need soft edge blending
+    private func needsBlending(_ science: Science) -> Bool {
+        science == .chemistry || science == .engineering
+    }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Image(systemName: "chart.bar.fill")
-                    .foregroundStyle(RenaissanceColors.renaissanceBlue)
-
-                Text("Statistics")
-                    .font(.headline)
+                Image(systemName: "books.vertical.fill")
+                    .foregroundStyle(RenaissanceColors.warmBrown)
+                Text("Sciences")
+                    .font(.custom("Cinzel-Bold", size: 14))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
+            .padding(.horizontal, 12)
 
-            HStack(spacing: 20) {
-                StatItem(
-                    icon: "building.columns.fill",
-                    value: "\(profile.buildingsCompleted)",
-                    label: "Buildings"
-                )
-
-                StatItem(
-                    icon: "clock.fill",
-                    value: formatPlayTime(profile.totalPlayTime),
-                    label: "Play Time"
-                )
-
-                StatItem(
-                    icon: "star.fill",
-                    value: "\(profile.totalAchievements)",
-                    label: "Achievements"
-                )
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    ForEach(masteries) { mastery in
+                        ScienceMasteryCard(mastery: mastery)
+                    }
+                }
+                .padding(.horizontal, 12)
             }
         }
-        .padding()
+        .padding(.vertical, 12)
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(RenaissanceColors.parchment.opacity(0.6))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1)
+                )
+        )
+    }
+}
+
+struct ScienceMasteryCard: View {
+    let mastery: ScienceMastery
+
+    private var needsBlending: Bool {
+        mastery.science == .chemistry || mastery.science == .engineering
+    }
+
+    var body: some View {
+        VStack(spacing: 6) {
+            // Science icon with border box
+            ZStack {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(RenaissanceColors.parchment.opacity(0.9))
+                    .frame(width: 72, height: 72)
+                    .blur(radius: 4)
+
+                if let imageName = mastery.science.customImageName {
+                    if needsBlending {
+                        Image(imageName)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 65, height: 65)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .opacity(0.85)
+                    } else {
+                        Image(imageName)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 65, height: 65)
+                    }
+                } else {
+                    Image(systemName: mastery.science.sfSymbolName)
+                        .font(.system(size: 32))
+                        .foregroundStyle(RenaissanceColors.color(for: mastery.science))
+                }
+
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(RenaissanceColors.ochre.opacity(0.4), lineWidth: 1.5)
+                    .frame(width: 72, height: 72)
+            }
+            .frame(width: 76, height: 76)
+
+            // Science name
+            Text(mastery.science.rawValue)
+                .font(.custom("EBGaramond-Regular", size: 11))
+                .foregroundStyle(RenaissanceColors.sepiaInk)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+
+            // Progress ring
+            ZStack {
+                Circle()
+                    .stroke(RenaissanceColors.stoneGray.opacity(0.3), lineWidth: 2.5)
+
+                Circle()
+                    .trim(from: 0, to: mastery.progressPercentage)
+                    .stroke(
+                        RenaissanceColors.color(for: mastery.science),
+                        style: StrokeStyle(lineWidth: 2.5, lineCap: .round)
+                    )
+                    .rotationEffect(.degrees(-90))
+
+                Text("\(mastery.level)")
+                    .font(.custom("EBGaramond-Regular", size: 10))
+                    .fontWeight(.bold)
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
+            }
+            .frame(width: 26, height: 26)
+        }
+        .frame(width: 80)
+    }
+}
+
+// MARK: - Row 4 Left: Statistics Card
+struct StatisticsCard: View {
+    let buildingPlots: [BuildingPlot]
+    let totalPlayTime: TimeInterval
+
+    private var completedPlots: [BuildingPlot] {
+        buildingPlots.filter(\.isCompleted)
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Image(systemName: "chart.bar.fill")
+                    .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                Text("Statistics")
+                    .font(.custom("Cinzel-Bold", size: 14))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
+            }
+
+            // Buildings completed — individual icons
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Buildings (\(completedPlots.count)/\(buildingPlots.count))")
+                    .font(.custom("EBGaramond-Regular", size: 12))
+                    .foregroundStyle(RenaissanceColors.stoneGray)
+
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 36))], spacing: 6) {
+                    ForEach(buildingPlots) { plot in
+                        VStack(spacing: 2) {
+                            Image(systemName: plot.building.iconName)
+                                .font(.system(size: 16))
+                                .foregroundStyle(
+                                    plot.isCompleted
+                                        ? RenaissanceColors.sageGreen
+                                        : RenaissanceColors.stoneGray.opacity(0.4)
+                                )
+                            // Tiny dot indicator
+                            Circle()
+                                .fill(plot.isCompleted ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray.opacity(0.3))
+                                .frame(width: 5, height: 5)
+                        }
+                    }
+                }
+            }
+
+            Divider()
+                .overlay(RenaissanceColors.ochre.opacity(0.3))
+
+            // Play Time
+            HStack(spacing: 8) {
+                Image(systemName: "clock.fill")
+                    .font(.system(size: 14))
+                    .foregroundStyle(RenaissanceColors.warmBrown)
+                Text("Play Time")
+                    .font(.custom("EBGaramond-Regular", size: 12))
+                    .foregroundStyle(RenaissanceColors.stoneGray)
+                Spacer()
+                Text(formatPlayTime(totalPlayTime))
+                    .font(.custom("Cinzel-Bold", size: 12))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
+            }
+
+            // Exploration
+            HStack(spacing: 8) {
+                Image(systemName: "map.fill")
+                    .font(.system(size: 14))
+                    .foregroundStyle(RenaissanceColors.warmBrown)
+                Text("Exploration")
+                    .font(.custom("EBGaramond-Regular", size: 12))
+                    .foregroundStyle(RenaissanceColors.stoneGray)
+                Spacer()
+                let visited = buildingPlots.filter { $0.challengeProgress > 0 || $0.isCompleted }.count
+                Text("\(visited) visited")
+                    .font(.custom("Cinzel-Bold", size: 12))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
+            }
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .topLeading)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(RenaissanceColors.parchment.opacity(0.6))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1)
+                )
         )
     }
 
@@ -519,31 +617,102 @@ struct StatisticsCard: View {
     }
 }
 
-struct StatItem: View {
-    let icon: String
-    let value: String
-    let label: String
+// MARK: - Row 4 Right: Mastery Level Card
+struct MasteryLevelCard: View {
+    let masteryLevel: MasteryLevel
+    let progress: Double
 
     var body: some View {
-        VStack(spacing: 4) {
-            Image(systemName: icon)
-                .font(.title3)
-                .foregroundStyle(RenaissanceColors.warmBrown)
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Text(masteryLevel.icon)
+                    .font(.system(size: 24))
+                Text("Mastery Level")
+                    .font(.custom("Cinzel-Bold", size: 14))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
+            }
 
-            Text(value)
-                .font(.headline)
-                .foregroundStyle(RenaissanceColors.sepiaInk)
+            Text(masteryLevel.rawValue)
+                .font(.custom("Cinzel-Bold", size: 18))
+                .foregroundStyle(masteryColor)
 
-            Text(label)
-                .font(.caption2)
+            Text(masteryLevel.description)
+                .font(.custom("EBGaramond-Italic", size: 12))
                 .foregroundStyle(RenaissanceColors.stoneGray)
+
+            // Progress bar
+            VStack(alignment: .leading, spacing: 4) {
+                GeometryReader { geometry in
+                    ZStack(alignment: .leading) {
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(RenaissanceColors.stoneGray.opacity(0.3))
+                            .frame(height: 8)
+
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(
+                                LinearGradient(
+                                    colors: [masteryColor.opacity(0.8), masteryColor],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .frame(width: geometry.size.width * progress, height: 8)
+                    }
+                }
+                .frame(height: 8)
+
+                Text("\(Int(progress * 100))% Progress")
+                    .font(.custom("EBGaramond-Regular", size: 11))
+                    .foregroundStyle(RenaissanceColors.stoneGray)
+            }
+
+            // Plant visual (growth indicator matching sketch)
+            HStack {
+                Spacer()
+                Image(systemName: plantIcon)
+                    .font(.system(size: 32))
+                    .foregroundStyle(RenaissanceColors.sageGreen)
+                Spacer()
+            }
+            .padding(.top, 4)
         }
-        .frame(maxWidth: .infinity)
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .topLeading)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(RenaissanceColors.parchment.opacity(0.6))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(masteryColor.opacity(0.3), lineWidth: 2)
+                )
+        )
+    }
+
+    private var masteryColor: Color {
+        switch masteryLevel {
+        case .apprentice: return RenaissanceColors.renaissanceBlue
+        case .architect: return RenaissanceColors.ochre
+        case .master: return RenaissanceColors.goldSuccess
+        }
+    }
+
+    /// Plant icon grows with mastery level
+    private var plantIcon: String {
+        switch masteryLevel {
+        case .apprentice: return "leaf.fill"
+        case .architect: return "tree.fill"
+        case .master: return "tree.fill"
+        }
     }
 }
 
+// MARK: - Preview
 #Preview {
     NavigationStack {
-        ProfileView()
+        ProfileView(
+            viewModel: CityViewModel(),
+            workshopState: WorkshopState(),
+            onboardingState: OnboardingState()
+        )
     }
 }

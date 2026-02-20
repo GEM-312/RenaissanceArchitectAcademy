@@ -9,6 +9,7 @@ struct WorkshopInteriorView: View {
     var viewModel: CityViewModel? = nil
     var onNavigate: ((SidebarDestination) -> Void)? = nil
     var onBackToMenu: (() -> Void)? = nil
+    var onboardingState: OnboardingState? = nil
     var onBack: () -> Void
 
     // Which station overlay is showing
@@ -738,7 +739,8 @@ struct WorkshopInteriorView: View {
                     },
                     showBackButton: true,
                     onBack: onBack,
-                    onBackToMenu: onBackToMenu
+                    onBackToMenu: onBackToMenu,
+                    onboardingState: onboardingState
                 )
             } else {
                 // Fallback if no viewModel

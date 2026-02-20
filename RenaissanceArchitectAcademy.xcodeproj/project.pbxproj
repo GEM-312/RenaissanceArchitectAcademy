@@ -63,6 +63,9 @@
 		042 /* CharacterSelectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 142 /* CharacterSelectView.swift */; };
 		043 /* StoryNarrativeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 143 /* StoryNarrativeView.swift */; };
 		044 /* StationLessonOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144 /* StationLessonOverlay.swift */; };
+		046 /* AvatarTransitionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146 /* AvatarTransitionView.swift */; };
+		047 /* BoyAvatarTransition.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 147 /* BoyAvatarTransition.mp4 */; };
+		048 /* GirlAvatarTransition.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 148 /* GirlAvatarTransition.mp4 */; };
 		5475D2EF2F3146CC003AA131 /* building_complete.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2EE2F3146CB003AA131 /* building_complete.mp3 */; };
 		045 /* footstep.wav in Resources */ = {isa = PBXBuildFile; fileRef = 145 /* footstep.wav */; };
 		5475D2F82F319000003AA131 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2F92F319000003AA131 /* Assets.xcassets */; };
@@ -133,6 +136,9 @@
 		142 /* CharacterSelectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterSelectView.swift; sourceTree = "<group>"; };
 		143 /* StoryNarrativeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryNarrativeView.swift; sourceTree = "<group>"; };
 		144 /* StationLessonOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationLessonOverlay.swift; sourceTree = "<group>"; };
+		146 /* AvatarTransitionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarTransitionView.swift; sourceTree = "<group>"; };
+		147 /* BoyAvatarTransition.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = BoyAvatarTransition.mp4; sourceTree = "<group>"; };
+		148 /* GirlAvatarTransition.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = GirlAvatarTransition.mp4; sourceTree = "<group>"; };
 		544299972F3646ED00F92073 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BuildingNode.swift; path = Views/SpriteKit/BuildingNode.swift; sourceTree = "<group>"; };
 		544299982F3646ED00F92073 /* CityMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityMapView.swift; path = Views/SpriteKit/CityMapView.swift; sourceTree = "<group>"; };
 		544299992F3646ED00F92073 /* CityScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityScene.swift; path = Views/SpriteKit/CityScene.swift; sourceTree = "<group>"; };
@@ -214,6 +220,8 @@
 				101 /* RenaissanceArchitectAcademyApp.swift */,
 				5475D2EE2F3146CB003AA131 /* building_complete.mp3 */,
 				145 /* footstep.wav */,
+				147 /* BoyAvatarTransition.mp4 */,
+				148 /* GirlAvatarTransition.mp4 */,
 				303 /* Views */,
 				304 /* ViewModels */,
 				305 /* Models */,
@@ -268,6 +276,7 @@
 				142 /* CharacterSelectView.swift */,
 				143 /* StoryNarrativeView.swift */,
 				144 /* StationLessonOverlay.swift */,
+				146 /* AvatarTransitionView.swift */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -429,6 +438,8 @@
 				F010 /* EBGaramond-ExtraBold.ttf in Resources */,
 				5475D2EF2F3146CC003AA131 /* building_complete.mp3 in Resources */,
 				045 /* footstep.wav in Resources */,
+				047 /* BoyAvatarTransition.mp4 in Resources */,
+				048 /* GirlAvatarTransition.mp4 in Resources */,
 				F011 /* EBGaramond-ExtraBoldItalic.ttf in Resources */,
 				F012 /* EBGaramond-Italic.ttf in Resources */,
 				F013 /* EBGaramond-Italic-VariableFont_wght.ttf in Resources */,
@@ -504,6 +515,7 @@
 				042 /* CharacterSelectView.swift in Sources */,
 				043 /* StoryNarrativeView.swift in Sources */,
 				044 /* StationLessonOverlay.swift in Sources */,
+				046 /* AvatarTransitionView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

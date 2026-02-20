@@ -30,6 +30,9 @@ struct CityMapView: View {
     /// Return to main menu (Home button in panel)
     var onBackToMenu: (() -> Void)? = nil
 
+    /// Onboarding state for avatar display
+    var onboardingState: OnboardingState? = nil
+
     /// The currently selected plot (when user taps a building)
     @State private var selectedPlot: BuildingPlot?
 
@@ -467,7 +470,8 @@ struct CityMapView: View {
             onNavigate: { destination in
                 onNavigate?(destination)
             },
-            onBackToMenu: onBackToMenu
+            onBackToMenu: onBackToMenu,
+            onboardingState: onboardingState
         )
     }
 

@@ -9,34 +9,49 @@ struct GameTopBarView: View {
     var showBackButton: Bool = false
     var onBack: (() -> Void)? = nil
     var onBackToMenu: (() -> Void)? = nil
+    var onboardingState: OnboardingState? = nil
 
     var body: some View {
-        HStack(alignment: .top, spacing: 0) {
-            // LEFT: Title + Nav buttons (flush left)
-            VStack(alignment: .leading, spacing: 4) {
-                // Title capsule
-                Text(title)
-                    .font(.custom("Cinzel-Bold", size: 16))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 6)
-                    .background(
-                        Capsule()
-                            .fill(RenaissanceColors.parchment.opacity(0.95))
-                            .shadow(color: .black.opacity(0.08), radius: 2, y: 1)
-                    )
-                    .padding(.bottom, 4)
+        ZStack(alignment: .bottomLeading) {
+            // Top bar: nav buttons (left) + building icons (right)
+            VStack {
+                HStack(alignment: .top, spacing: 0) {
+                    // LEFT: Title + Nav buttons (flush left)
+                    VStack(alignment: .leading, spacing: 4) {
+                        // Title capsule
+                        Text(title)
+                            .font(.custom("Cinzel-Bold", size: 16))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 6)
+                            .background(
+                                Capsule()
+                                    .fill(RenaissanceColors.parchment.opacity(0.95))
+                                    .shadow(color: .black.opacity(0.08), radius: 2, y: 1)
+                            )
+                            .padding(.bottom, 4)
 
-                navColumn
+                        navColumn
+                    }
+
+                    Spacer(minLength: 0)
+
+                    // RIGHT: Building achievement icons (flush right)
+                    buildingColumn
+                        .fixedSize()
+                }
+
+                Spacer()
             }
 
-            Spacer(minLength: 0)
-
-            // RIGHT: Building achievement icons (flush right)
-            buildingColumn
-                .fixedSize()
+            // Bottom-left: Avatar profile card
+            avatarProfileCard {
+                onNavigate(.profile)
+            }
+            .padding(.leading, 8)
+            .padding(.bottom, 8)
         }
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     // MARK: - Nav Column (LEFT side, flush left)
@@ -71,10 +86,6 @@ struct GameTopBarView: View {
                 onNavigate(.knowledgeTests)
             }
 
-            navButton(icon: "person.fill", label: "Profile") {
-                onNavigate(.profile)
-            }
-
             if let onBackToMenu = onBackToMenu {
                 navButton(icon: "house.fill", label: "Home", action: onBackToMenu)
             }
@@ -98,6 +109,47 @@ struct GameTopBarView: View {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(RenaissanceColors.parchment.opacity(0.95))
                     .shadow(color: .black.opacity(0.06), radius: 2, y: 1)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: - Avatar Profile Card (bottom-left corner)
+
+    private func avatarProfileCard(action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: 6) {
+                if let state = onboardingState {
+                    let prefix = state.apprenticeGender == .boy ? "AvatarBoyFrame" : "AvatarGirlFrame"
+                    Image("\(prefix)00")
+                        .resizable()
+                        .scaledToFit()
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+
+                    Text(state.apprenticeName.isEmpty ? "Profile" : state.apprenticeName)
+                        .font(.custom("Cinzel-Bold", size: 14))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .lineLimit(1)
+                } else {
+                    Image(systemName: "person.fill")
+                        .font(.system(size: 48))
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                        .frame(height: 140)
+                    Text("Profile")
+                        .font(.custom("Cinzel-Bold", size: 14))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                }
+            }
+            .padding(8)
+            .frame(width: 160)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(RenaissanceColors.parchment.opacity(0.95))
+                    .shadow(color: .black.opacity(0.1), radius: 6, y: 3)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(RenaissanceColors.ochre.opacity(0.4), lineWidth: 1.5)
             )
         }
         .buttonStyle(.plain)
