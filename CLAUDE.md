@@ -50,16 +50,24 @@ RenaissanceArchitectAcademy/
 │   │   ├── Sketching/
 │   │   │   ├── PiantaCanvasView.swift        # Phase 1: Floor plan grid canvas
 │   │   │   └── SketchingToolbarView.swift    # Tool palette
+│   │   ├── BuildingLessonView.swift          # Paged lesson reader (Read to Earn)
+│   │   ├── BuildingChecklistView.swift       # Building material checklist
+│   │   ├── ForestMapView.swift               # SwiftUI wrapper for ForestScene
+│   │   ├── NotebookView.swift                # Building notebook with entries
+│   │   ├── NotebookCanvasView.swift          # Drawing canvas for notebook
 │   │   └── SpriteKit/
 │   │       ├── CityScene.swift               # Main SKScene - terrain tiles, rivers, buildings, camera
 │   │       ├── BuildingNode.swift            # Tappable building sprites
 │   │       ├── CityMapView.swift             # SwiftUI wrapper + mascot overlay
 │   │       ├── PlayerNode.swift              # Da Vinci stick figure (Workshop)
 │   │       ├── ResourceNode.swift            # Resource station nodes (Workshop)
-│   │       └── WorkshopScene.swift           # Workshop SpriteKit scene
+│   │       ├── WorkshopScene.swift           # Workshop SpriteKit scene
+│   │       └── ForestScene.swift             # Forest exploration SpriteKit scene
 │   ├── ViewModels/
 │   │   ├── CityViewModel.swift               # @MainActor, @Published state, 17 buildings
-│   │   └── WorkshopState.swift               # Crafting state, station stocks, recipes
+│   │   ├── WorkshopState.swift               # Crafting state, station stocks, recipes
+│   │   ├── NotebookState.swift               # Notebook entries per building
+│   │   └── PersistenceManager.swift          # Save/load game progress
 │   ├── Models/
 │   │   ├── Building.swift                    # Era, RenaissanceCity, Science, Building, BuildingPlot, BuildingState
 │   │   ├── Material.swift                    # Raw materials enum
@@ -70,7 +78,18 @@ RenaissanceArchitectAcademy/
 │   │   ├── SketchingChallenge.swift          # Sketching data models
 │   │   ├── SketchingContent.swift            # Static sketching challenge data per building
 │   │   ├── OnboardingState.swift             # ApprenticeGender, OnboardingState (UserDefaults)
-│   │   └── OnboardingContent.swift           # Story pages + 8 station lesson content
+│   │   ├── OnboardingContent.swift           # Story pages + 8 station lesson content
+│   │   ├── BuildingLesson.swift              # Lesson section types (reading, funFact, question, fillInBlanks, environmentPrompt)
+│   │   ├── LessonContent.swift               # Pantheon lesson + switch router for all 17 buildings
+│   │   ├── LessonContentRome.swift           # 7 Ancient Rome lessons (buildings 1-3, 5-8)
+│   │   ├── LessonContentRenaissance.swift    # 9 Renaissance lessons (buildings 9-17)
+│   │   ├── NotebookEntry.swift               # Notebook entry model + drawing strokes
+│   │   ├── NotebookContent.swift             # Pantheon vocab + switch router for all 17 buildings
+│   │   ├── NotebookContentRome.swift         # 7 Rome vocabulary sets (6 terms each)
+│   │   ├── NotebookContentRenaissance.swift  # 9 Renaissance vocabulary sets (6 terms each)
+│   │   ├── BuildingProgress.swift            # Building progress tracking
+│   │   ├── BuildingProgressRecord.swift      # Progress persistence record
+│   │   └── PlayerSave.swift                  # Player save data model
 │   └── Styles/
 │       ├── RenaissanceColors.swift           # Full color palette + gradients
 │       └── RenaissanceButton.swift           # Engineering blueprint style buttons
@@ -122,6 +141,17 @@ RenaissanceArchitectAcademy/
   - "I need materials" → MaterialPuzzleView (match-3)
   - "I don't know" → Quiz challenge
   - "I need to sketch it" → Sketching challenge
+
+### Lesson System (Read to Earn) — ALL 17 BUILDINGS COMPLETE
+- Paged lesson experience: readings → fun facts → questions → fill-in-blanks → environment prompts
+- Models: `BuildingLesson.swift` defines section types; `LessonContent.swift` routes by building name
+- Content split across 3 files: `LessonContent.swift` (Pantheon), `LessonContentRome.swift` (7), `LessonContentRenaissance.swift` (9)
+- Each lesson: ~18-22 sections, 3 sciences per building, math questions with progressive hints
+- Lookup: `LessonContent.lesson(for: buildingName)` — returns `BuildingLesson?`
+- Vocabulary: `NotebookContent.vocabularyFor(buildingName:)` — 6 terms per building (96 total + 8 Pantheon)
+- Notebook split: `NotebookContentRome.swift` (7 buildings), `NotebookContentRenaissance.swift` (9 buildings)
+- Environment prompts link to `.workshop` and `.forest` destinations
+- +10 florins awarded on lesson completion
 
 ### Challenge System
 - Question types: multipleChoice, dragDropEquation, hydraulicsFlow
@@ -214,6 +244,15 @@ Styles/[name]_frames/clean/    # Photoshop exports (no bg)
 
 ## Next Steps
 
+### PRIORITY: Forest Scene & Lessons
+- [ ] Build out ForestScene.swift — Italian tree biodiversity, biology & environment education
+- [ ] Forest terrain image needed (ForestTerrain.png) — or use Forest1-4 assets already in xcassets
+- [ ] Tree stations: oak, pine, cypress, chestnut, olive — each with educational content
+- [ ] Timber collection mechanics (connects to building `requiredMaterials` needing `.timberBeams`)
+- [ ] Lesson environment prompts already link to `.forest` — need ForestScene to handle arrival
+- [ ] ForestMapView.swift and ForestScene.swift already exist as stubs — need full implementation
+- [ ] Biology/ecology lessons per tree species (growth patterns, wood properties, uses in construction)
+
 ### Game Flow & Progression
 - [ ] Prompt user to explore cities/buildings after workshop play (bird nudge system)
 - [ ] Trigger quizzes after certain gameplay milestones (time played, materials collected, buildings visited)
@@ -222,10 +261,11 @@ Styles/[name]_frames/clean/    # Photoshop exports (no bg)
 - [ ] Re-enable onboarding skip (uncomment check in ContentView after onboarding is finalized)
 
 ### New Scenes
-- [ ] Forest Scene — Italian tree biodiversity, biology & environment education (connected from workshop forest choice)
 - [ ] Building-specific scenes for each of the 17 buildings
 
 ### Content
+- [x] ~~Create lessons for all 17 buildings~~ (DONE — Feb 2026)
+- [x] ~~Create vocabulary for all 17 buildings~~ (DONE — Feb 2026)
 - [ ] Create challenges for remaining 11 buildings
 - [ ] Add building images to city map
 - [ ] Sketching Phase 2 (Alzato elevation) — drag-drop facade elements
