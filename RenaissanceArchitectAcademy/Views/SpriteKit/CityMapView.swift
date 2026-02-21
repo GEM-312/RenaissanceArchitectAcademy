@@ -24,6 +24,9 @@ struct CityMapView: View {
     /// Shared workshop state for hint crafting cost
     var workshopState: WorkshopState
 
+    /// Shared notebook state for building notebooks
+    var notebookState: NotebookState? = nil
+
     /// Navigate to other screens via top bar
     var onNavigate: ((SidebarDestination) -> Void)? = nil
 
@@ -52,28 +55,29 @@ struct CityMapView: View {
     @State private var showMaterialPuzzle = false
 
     /// Tracks which dialogue path brought user to the challenge
-    @State private var challengeEntryPath: BuildingStartChoice?
+    @State private var challengeEntryPath: BuildingCardChoice?
 
     /// Controls the "Go to Workshop" prompt after quiz completion
     @State private var showWorkshopPrompt = false
 
+    /// Controls the building lesson view (Card 1: Read to Earn)
+    @State private var showBuildingLesson = false
+
+    /// Controls the environment picker (Card 2: Explore Environments)
+    @State private var showEnvironmentPicker = false
+
+    /// Controls the building checklist view (Card 3: Ready to Build)
+    @State private var showBuildingChecklist = false
+
     /// Controls the Workshop sheet (opened from post-quiz prompt)
     @State private var showWorkshopSheet = false
 
+    /// Controls the locked building message overlay
+    @State private var showLockedMessage = false
+    @State private var lockedMessage = ""
+
     /// Reference to the SpriteKit scene (so we can call methods on it)
     @State private var scene: CityScene?
-
-    /// Mascot position in screen coordinates (0-1 normalized)
-    @State private var mascotPosition: CGPoint = CGPoint(x: 0.5, y: 0.5)
-
-    /// Whether mascot is currently walking
-    @State private var mascotIsWalking = false
-
-    /// Whether mascot is visible on the map
-    @State private var mascotVisible = true
-
-    /// Mascot facing direction (true = right)
-    @State private var mascotFacingRight = true
 
     /// Environment for navigation
     @Environment(\.dismiss) private var dismiss
@@ -112,11 +116,6 @@ struct CityMapView: View {
                     .ignoresSafeArea()
                     .gesture(pinchGesture)
 
-                // SwiftUI Mascot overlay (same look everywhere!)
-                if mascotVisible && !showMascotDialogue && !showMaterialPuzzle {
-                    mascotOverlay(in: geometry.size)
-                }
-
                 // Nav (left) + Buildings (right) with margins
                 VStack(spacing: 0) {
                     navigationPanel
@@ -127,35 +126,47 @@ struct CityMapView: View {
                 .frame(maxWidth: .infinity)
                 .padding(16)
 
-            // Mascot dialogue (NEW: shown when building is tapped)
+            // Mascot dialogue — 3 game-loop cards
             if showMascotDialogue, let plot = selectedPlot {
                 MascotDialogueView(
-                    buildingName: plot.building.name,
+                    plot: plot,
+                    viewModel: viewModel,
+                    workshopState: workshopState,
+                    notebookState: notebookState,
+                    onOpenNotebook: { buildingId in
+                        withAnimation {
+                            showMascotDialogue = false
+                            selectedPlot = nil
+                        }
+                        scene?.resetMascot()
+                        onNavigate?(.notebook(buildingId))
+                    },
                     onChoice: { choice in
                         withAnimation {
                             showMascotDialogue = false
                         }
                         challengeEntryPath = choice
                         switch choice {
-                        case .needMaterials:
-                            // Mascot walks off, puzzle appears after short delay
-                            scene?.mascotWalkToPuzzle()
-                            // Show puzzle after mascot starts walking
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        case .readToEarn:
+                            // Show building lesson view
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                                 withAnimation(.spring(response: 0.3)) {
-                                    showMaterialPuzzle = true
+                                    showBuildingLesson = true
                                 }
                             }
-                        case .dontKnow:
-                            // Go straight to challenge — after completing, will offer Workshop
-                            showChallenge = true
-                        case .needToSketch:
-                            // Route to sketching challenge if available, otherwise quiz
-                            if let plot = selectedPlot,
-                               SketchingContent.sketchingChallenge(for: plot.building.name) != nil {
-                                showSketching = true
-                            } else {
-                                showChallenge = true
+                        case .environments:
+                            // Show environment picker
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                withAnimation(.spring(response: 0.3)) {
+                                    showEnvironmentPicker = true
+                                }
+                            }
+                        case .readyToBuild:
+                            // Show building checklist
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                withAnimation(.spring(response: 0.3)) {
+                                    showBuildingChecklist = true
+                                }
                             }
                         }
                     },
@@ -164,10 +175,174 @@ struct CityMapView: View {
                             showMascotDialogue = false
                             selectedPlot = nil
                         }
-                        // Reset mascot position
                         scene?.resetMascot()
                     }
                 )
+                .transition(.opacity)
+            }
+
+            // Building Lesson (Card 1: Read to Earn)
+            if showBuildingLesson, let plot = selectedPlot {
+                BuildingLessonView(
+                    plot: plot,
+                    viewModel: viewModel,
+                    workshopState: workshopState,
+                    notebookState: notebookState,
+                    onNavigate: { destination in
+                        withAnimation {
+                            showBuildingLesson = false
+                            selectedPlot = nil
+                        }
+                        scene?.resetMascot()
+                        onNavigate?(destination)
+                    },
+                    onDismiss: {
+                        withAnimation {
+                            showBuildingLesson = false
+                            selectedPlot = nil
+                        }
+                        scene?.resetMascot()
+                    }
+                )
+                .transition(.opacity)
+            }
+
+            // Environment Picker (Card 2: Explore Environments)
+            if showEnvironmentPicker {
+                ZStack {
+                    Color.black.opacity(0.5)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            withAnimation {
+                                showEnvironmentPicker = false
+                                selectedPlot = nil
+                            }
+                            scene?.resetMascot()
+                        }
+
+                    VStack(spacing: 20) {
+                        Spacer()
+
+                        BirdCharacter(isSitting: true)
+                            .frame(width: 140, height: 140)
+
+                        VStack(spacing: 16) {
+                            Text("Where to next?")
+                                .font(.custom("Cinzel-Bold", size: 22))
+                                .foregroundStyle(RenaissanceColors.sepiaInk)
+
+                            environmentButton(icon: "hammer.fill", title: "Workshop", subtitle: "Collect raw materials", color: RenaissanceColors.warmBrown) {
+                                withAnimation { showEnvironmentPicker = false; selectedPlot = nil }
+                                scene?.resetMascot()
+                                onNavigate?(.workshop)
+                            }
+
+                            environmentButton(icon: "tree.fill", title: "Forest", subtitle: "Gather timber & explore", color: RenaissanceColors.sageGreen) {
+                                withAnimation { showEnvironmentPicker = false; selectedPlot = nil }
+                                scene?.resetMascot()
+                                onNavigate?(.forest)
+                            }
+
+                            Button {
+                                withAnimation {
+                                    showEnvironmentPicker = false
+                                    selectedPlot = nil
+                                }
+                                scene?.resetMascot()
+                            } label: {
+                                Text("Stay on Map")
+                                    .font(.custom("EBGaramond-Italic", size: 16))
+                                    .foregroundStyle(RenaissanceColors.stoneGray)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        .padding(24)
+                        .background(DialogueBubble())
+                        .padding(.horizontal, 40)
+
+                        Spacer()
+                    }
+                }
+                .transition(.opacity)
+            }
+
+            // Building Checklist (Card 3: Ready to Build)
+            if showBuildingChecklist, let plot = selectedPlot {
+                BuildingChecklistView(
+                    plot: plot,
+                    viewModel: viewModel,
+                    workshopState: workshopState,
+                    onBeginConstruction: {
+                        // Transition to construction → complete
+                        viewModel.completeChallenge(for: plot.id)
+                        viewModel.earnFlorins(GameRewards.buildCompleteFlorins)
+                        if let buildingId = buildingIdToPlotId.first(where: { $0.value == plot.id })?.key {
+                            scene?.updateBuildingState(buildingId, state: .complete)
+                        }
+                        withAnimation {
+                            showBuildingChecklist = false
+                            selectedPlot = nil
+                        }
+                        scene?.resetMascot()
+                    },
+                    onDismiss: {
+                        withAnimation {
+                            showBuildingChecklist = false
+                            selectedPlot = nil
+                        }
+                        scene?.resetMascot()
+                    }
+                )
+                .transition(.opacity)
+            }
+
+            // Locked building message
+            if showLockedMessage {
+                ZStack {
+                    Color.black.opacity(0.5)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            withAnimation {
+                                showLockedMessage = false
+                            }
+                            scene?.resetMascot()
+                        }
+
+                    VStack(spacing: 20) {
+                        Spacer()
+
+                        BirdCharacter(isSitting: true)
+                            .frame(width: 160, height: 160)
+
+                        VStack(spacing: 16) {
+                            Image(systemName: "lock.fill")
+                                .font(.system(size: 32))
+                                .foregroundStyle(RenaissanceColors.ochre)
+
+                            Text("Not Yet Unlocked")
+                                .font(.custom("Cinzel-Bold", size: 22))
+                                .foregroundStyle(RenaissanceColors.sepiaInk)
+
+                            Text(lockedMessage)
+                                .font(.custom("EBGaramond-Regular", size: 17))
+                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                                .multilineTextAlignment(.center)
+                                .lineSpacing(4)
+
+                            RenaissanceButton(title: "Got It") {
+                                withAnimation {
+                                    showLockedMessage = false
+                                }
+                                scene?.resetMascot()
+                            }
+                        }
+                        .padding(28)
+                        .background(DialogueBubble())
+                        .padding(.horizontal, 40)
+
+                        Spacer()
+                    }
+                }
                 .transition(.opacity)
             }
 
@@ -302,7 +477,7 @@ struct CityMapView: View {
                         showChallenge = false
 
                         // If user came from "I don't know", offer to go to Workshop
-                        if challengeEntryPath == .dontKnow {
+                        if challengeEntryPath == .readToEarn {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
                                 withAnimation(.spring(response: 0.4)) {
                                     showWorkshopPrompt = true
@@ -373,11 +548,20 @@ struct CityMapView: View {
         newScene.size = CGSize(width: 3500, height: 2500)
         newScene.scaleMode = .aspectFill
 
-        // When mascot reaches building, show dialogue
+        // When mascot reaches building, show dialogue (or locked message)
         newScene.onMascotReachedBuilding = { [self] buildingId in
             // Convert SpriteKit ID ("duomo") to ViewModel ID (4)
             guard let plotId = buildingIdToPlotId[buildingId],
                   let plot = viewModel.buildingPlots.first(where: { $0.id == plotId }) else {
+                return
+            }
+
+            // Block tapping locked buildings — show unlock message instead
+            if !viewModel.isTierUnlocked(plot.building.difficultyTier) {
+                lockedMessage = viewModel.tierUnlockMessage(for: plot.building.difficultyTier)
+                withAnimation(.spring(response: 0.3)) {
+                    showLockedMessage = true
+                }
                 return
             }
 
@@ -400,18 +584,6 @@ struct CityMapView: View {
             // Now handled by onMascotReachedBuilding
         }
 
-        // Mascot position updates from SpriteKit
-        newScene.onMascotPositionChanged = { [self] position, isWalking in
-            // Update SwiftUI mascot position
-            self.mascotPosition = position
-            self.mascotIsWalking = isWalking
-
-            // Update facing direction based on movement
-            if let scene = self.scene {
-                self.mascotFacingRight = scene.getMascotFacingRight()
-            }
-        }
-
         // Store reference immediately
         scene = newScene
 
@@ -428,26 +600,25 @@ struct CityMapView: View {
     private func syncCompletionStates(in scene: CityScene) {
         for (buildingId, plotId) in buildingIdToPlotId {
             if let plot = viewModel.buildingPlots.first(where: { $0.id == plotId }) {
-                let state: BuildingState = plot.isCompleted ? .complete : (plot.sketchingProgress.isSketchingComplete ? .sketched : .available)
+                let tierUnlocked = viewModel.isTierUnlocked(plot.building.difficultyTier)
+                let state: BuildingState
+                if !tierUnlocked {
+                    state = .locked
+                } else if plot.isCompleted {
+                    state = .complete
+                } else if plot.sketchingProgress.isSketchingComplete {
+                    state = .sketched
+                } else {
+                    state = .available
+                }
                 scene.updateBuildingState(buildingId, state: state)
+
+                // Set tier badge on building node
+                if let node = scene.buildingNodes[buildingId] {
+                    node.setTierBadge(plot.building.difficultyTier.rawValue)
+                }
             }
         }
-    }
-
-    // MARK: - Mascot Overlay
-
-    /// SwiftUI mascot that follows position from SpriteKit
-    private func mascotOverlay(in size: CGSize) -> some View {
-        let screenX = mascotPosition.x * size.width
-        let screenY = mascotPosition.y * size.height
-
-        return BirdCharacter()
-            .frame(width: 200, height: 200)
-            .scaleEffect(x: mascotFacingRight ? 1 : -1, y: 1)
-            .offset(y: mascotIsWalking ? -5 : 0)
-            .position(x: screenX, y: screenY)
-        .animation(.easeInOut(duration: 0.1), value: mascotPosition)
-        .animation(.easeInOut(duration: 0.15), value: mascotIsWalking)
     }
 
     // MARK: - Gestures
@@ -492,6 +663,47 @@ struct CityMapView: View {
                     .fill(RenaissanceColors.parchment.opacity(0.9))
                     .shadow(color: .black.opacity(0.1), radius: 2, y: 1)
             )
+    }
+
+    // MARK: - Environment Button
+
+    private func environmentButton(icon: String, title: String, subtitle: String, color: Color, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .font(.system(size: 20))
+                    .foregroundStyle(color)
+                    .frame(width: 40, height: 40)
+                    .background(Circle().fill(color.opacity(0.12)))
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.custom("Cinzel-Bold", size: 16))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                    Text(subtitle)
+                        .font(.custom("EBGaramond-Italic", size: 13))
+                        .foregroundStyle(RenaissanceColors.stoneGray)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundStyle(RenaissanceColors.stoneGray)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(RenaissanceColors.parchment)
+                    .shadow(color: color.opacity(0.15), radius: 4, y: 2)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(color.opacity(0.3), lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Material Formulas

@@ -1,31 +1,24 @@
 import SwiftUI
 
-/// Player's choice when starting a building
-enum BuildingStartChoice: String, CaseIterable {
-    case needMaterials = "I need materials"
-    case dontKnow = "I don't know"
-    case needToSketch = "I need to sketch it"
-
-    var icon: String {
-        switch self {
-        case .needMaterials: return "cube.box"
-        case .dontKnow: return "questionmark.circle"
-        case .needToSketch: return "pencil.and.outline"
-        }
-    }
-}
-
-/// Mascot dialogue view with Splash (watercolor) and Bird companion
-/// Appears when user taps a building to start
+/// Mascot dialogue view with 3 visual game-loop cards
+/// Appears when user taps a building — Learn, Explore, Build
 struct MascotDialogueView: View {
-    let buildingName: String
-    let onChoice: (BuildingStartChoice) -> Void
+    let plot: BuildingPlot
+    @ObservedObject var viewModel: CityViewModel
+    var workshopState: WorkshopState
+    var notebookState: NotebookState? = nil
+    var onOpenNotebook: ((Int) -> Void)? = nil
+    let onChoice: (BuildingCardChoice) -> Void
     let onDismiss: () -> Void
 
     @State private var showMascot = false
     @State private var showDialogue = false
     @State private var showChoices = false
     @State private var birdOffset: CGFloat = 0
+
+    private var progress: BuildingProgress {
+        viewModel.buildingProgressMap[plot.id] ?? BuildingProgress()
+    }
 
     var body: some View {
         ZStack {
@@ -34,80 +27,223 @@ struct MascotDialogueView: View {
                 .ignoresSafeArea()
                 .onTapGesture { onDismiss() }
 
-            VStack(spacing: 24) {
+            VStack(spacing: 16) {
                 Spacer()
 
                 // Bird sitting on top of dialogue box
                 BirdCharacter(isSitting: true)
-                    .frame(width: 200, height: 200)
+                    .frame(width: 180, height: 180)
                     .offset(y: birdOffset)
                     .scaleEffect(showMascot ? 1 : 0.3)
                     .opacity(showMascot ? 1 : 0)
-                    .padding(.bottom, -40)
+                    .padding(.bottom, -30)
 
-                // Dialogue bubble
-                VStack(spacing: 20) {
-                    // Dialogue text
-                    VStack(spacing: 12) {
-                        Text("Great choice!")
-                            .font(.custom("Cinzel-Bold", size: 24))
+                // Dialogue bubble with cards
+                VStack(spacing: 16) {
+                    // Title
+                    VStack(spacing: 8) {
+                        Text(plot.building.name)
+                            .font(.custom("Cinzel-Bold", size: 22))
                             .foregroundColor(RenaissanceColors.sepiaInk)
 
-                        Text("Do you know what you need to build the \(buildingName)?")
-                            .font(.custom("EBGaramond-Regular", size: 18))
-                            .foregroundColor(RenaissanceColors.sepiaInk.opacity(0.8))
-                            .multilineTextAlignment(.center)
+                        // Science icons row
+                        HStack(spacing: 6) {
+                            ForEach(plot.building.sciences, id: \.self) { science in
+                                if let imageName = science.customImageName {
+                                    Image(imageName)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 28, height: 28)
+                                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                                } else {
+                                    Image(systemName: science.sfSymbolName)
+                                        .font(.system(size: 16))
+                                        .foregroundStyle(RenaissanceColors.warmBrown)
+                                        .frame(width: 28, height: 28)
+                                }
+                            }
+                        }
                     }
                     .opacity(showDialogue ? 1 : 0)
                     .offset(y: showDialogue ? 0 : 20)
 
-                    // Choice buttons
-                    VStack(spacing: 12) {
-                        ForEach(BuildingStartChoice.allCases, id: \.self) { choice in
-                            ChoiceButton(choice: choice) {
-                                withAnimation(.spring()) {
-                                    onChoice(choice)
-                                }
+                    // Notebook button (if entries exist)
+                    if let ns = notebookState, ns.hasEntries(for: plot.id) {
+                        Button {
+                            onDismiss()
+                            onOpenNotebook?(plot.id)
+                        } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: "book.closed.fill")
+                                    .font(.system(size: 13))
+                                Text("Open Notebook")
+                                    .font(.custom("Cinzel-Bold", size: 12))
                             }
-                            .opacity(showChoices ? 1 : 0)
-                            .offset(x: showChoices ? 0 : -50)
-                            .animation(
-                                .spring(response: 0.5, dampingFraction: 0.7)
-                                .delay(Double(BuildingStartChoice.allCases.firstIndex(of: choice)!) * 0.1),
-                                value: showChoices
+                            .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 7)
+                            .background(
+                                Capsule()
+                                    .fill(RenaissanceColors.renaissanceBlue.opacity(0.1))
                             )
                         }
+                        .buttonStyle(.plain)
+                        .opacity(showDialogue ? 1 : 0)
                     }
-                    .padding(.top, 8)
+
+                    // 3 Cards in HStack
+                    HStack(spacing: 12) {
+                        ForEach(Array(BuildingCardChoice.allCases.enumerated()), id: \.element) { index, choice in
+                            buildingCard(choice: choice, index: index)
+                                .opacity(showChoices ? 1 : 0)
+                                .offset(y: showChoices ? 0 : 30)
+                                .animation(
+                                    .spring(response: 0.5, dampingFraction: 0.7)
+                                    .delay(Double(index) * 0.12),
+                                    value: showChoices
+                                )
+                        }
+                    }
                 }
-                .padding(28)
-                .background(
-                    DialogueBubble()
-                )
-                .padding(.horizontal, 40)
+                .padding(20)
+                .background(DialogueBubble())
+                .padding(.horizontal, 24)
 
                 Spacer()
             }
         }
         .onAppear {
-            // Animate entrance
             withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
                 showMascot = true
             }
-
             withAnimation(.easeOut(duration: 0.5).delay(0.3)) {
                 showDialogue = true
             }
-
             withAnimation(.spring(response: 0.5).delay(0.6)) {
                 showChoices = true
             }
-
-            // Bird bobbing animation
             withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                 birdOffset = -10
             }
         }
+    }
+
+    // MARK: - Card Builder
+
+    @ViewBuilder
+    private func buildingCard(choice: BuildingCardChoice, index: Int) -> some View {
+        Button {
+            withAnimation(.spring()) {
+                onChoice(choice)
+            }
+        } label: {
+            VStack(spacing: 10) {
+                // Icon circle
+                ZStack {
+                    Circle()
+                        .fill(cardColor(for: choice).opacity(0.15))
+                        .frame(width: 50, height: 50)
+                    Image(systemName: choice.icon)
+                        .font(.system(size: 22))
+                        .foregroundStyle(cardColor(for: choice))
+                }
+
+                // Title
+                Text(choice.rawValue)
+                    .font(.custom("Cinzel-Bold", size: 13))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.8)
+
+                // Card-specific content
+                cardDetail(for: choice)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .padding(.horizontal, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(RenaissanceColors.parchment)
+                    .shadow(color: cardColor(for: choice).opacity(0.15), radius: 6, y: 3)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(cardColor(for: choice).opacity(0.4), lineWidth: 1.5)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private func cardDetail(for choice: BuildingCardChoice) -> some View {
+        switch choice {
+        case .readToEarn:
+            // Florins badge
+            HStack(spacing: 4) {
+                Image(systemName: "dollarsign.circle.fill")
+                    .font(.system(size: 12))
+                    .foregroundStyle(RenaissanceColors.goldSuccess)
+                Text("+\(GameRewards.lessonReadFlorins)")
+                    .font(.custom("Cinzel-Bold", size: 12))
+                    .foregroundStyle(RenaissanceColors.goldSuccess)
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 4)
+            .background(
+                Capsule()
+                    .fill(RenaissanceColors.goldSuccess.opacity(0.12))
+            )
+
+        case .environments:
+            Text(choice.subtitle)
+                .font(.custom("EBGaramond-Italic", size: 11))
+                .foregroundStyle(RenaissanceColors.stoneGray)
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+
+        case .readyToBuild:
+            // Mini checklist preview
+            let reqCount = requirementsMet()
+            let totalReqs = totalRequirements()
+            HStack(spacing: 4) {
+                Image(systemName: reqCount == totalReqs ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 12))
+                    .foregroundStyle(reqCount == totalReqs ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray)
+                Text("\(reqCount)/\(totalReqs)")
+                    .font(.custom("Cinzel-Bold", size: 12))
+                    .foregroundStyle(reqCount == totalReqs ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray)
+            }
+        }
+    }
+
+    private func cardColor(for choice: BuildingCardChoice) -> Color {
+        switch choice {
+        case .readToEarn: return RenaissanceColors.ochre
+        case .environments: return RenaissanceColors.renaissanceBlue
+        case .readyToBuild: return RenaissanceColors.sageGreen
+        }
+    }
+
+    /// Count how many requirements are met for this building
+    private func requirementsMet() -> Int {
+        var met = 0
+        let sciences = plot.building.sciences
+        let badgesEarned = progress.scienceBadgesEarned
+        if sciences.allSatisfy({ badgesEarned.contains($0) }) { met += 1 }
+        let hasSketchContent = SketchingContent.sketchingChallenge(for: plot.building.name) != nil
+        if !hasSketchContent || progress.sketchCompleted { met += 1 }
+        let hasQuizContent = ChallengeContent.interactiveChallenge(for: plot.building.name) != nil
+        if !hasQuizContent || progress.quizPassed { met += 1 }
+        let materialsOk = plot.building.requiredMaterials.allSatisfy { item, needed in
+            (workshopState.craftedMaterials[item] ?? 0) >= needed
+        }
+        if materialsOk { met += 1 }
+        return met
+    }
+
+    private func totalRequirements() -> Int {
+        return 4 // sciences, sketch, quiz, materials
     }
 }
 
@@ -224,47 +360,6 @@ struct BirdCharacter: View {
     }
 }
 
-/// Choice button for dialogue
-struct ChoiceButton: View {
-    let choice: BuildingStartChoice
-    let action: () -> Void
-
-    @State private var isPressed = false
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 12) {
-                Image(systemName: choice.icon)
-                    .font(.title3)
-                    .foregroundColor(RenaissanceColors.warmBrown)
-
-                Text(choice.rawValue)
-                    .font(.custom("EBGaramond-Regular", size: 17))
-                    .foregroundColor(RenaissanceColors.sepiaInk)
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .font(.caption)
-                    .foregroundColor(RenaissanceColors.stoneGray)
-            }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 14)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(RenaissanceColors.parchment)
-                    .shadow(color: RenaissanceColors.warmBrown.opacity(0.2), radius: 4, y: 2)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(RenaissanceColors.ochre.opacity(0.5), lineWidth: 1)
-            )
-        }
-        .buttonStyle(.plain)
-        .scaleEffect(isPressed ? 0.97 : 1)
-        .animation(.spring(response: 0.2), value: isPressed)
-    }
-}
 
 // MARK: - Shape Components
 
@@ -431,7 +526,14 @@ struct DialogueCornerFlourish: View {
 
 #Preview {
     MascotDialogueView(
-        buildingName: "Pantheon",
+        plot: BuildingPlot(
+            id: 4,
+            building: Building(name: "Pantheon", era: .ancientRome, sciences: [.geometry, .architecture, .materials], iconName: "circle.circle"),
+            isCompleted: false
+        ),
+        viewModel: CityViewModel(),
+        workshopState: WorkshopState(),
+        notebookState: NotebookState(),
         onChoice: { choice in
             print("Chose: \(choice.rawValue)")
         },

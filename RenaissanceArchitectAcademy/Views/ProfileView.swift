@@ -48,7 +48,7 @@ struct ProfileView: View {
                     displayName: displayName,
                     avatarFramePrefix: avatarFramePrefix,
                     masteryLevel: profile.masteryLevel,
-                    goldFlorins: profile.resources.goldFlorins
+                    goldFlorins: viewModel.goldFlorins
                 )
 
                 // ── Row 2: Materials + Achievements side-by-side ──

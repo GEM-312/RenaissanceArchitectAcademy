@@ -7,6 +7,7 @@ struct WorkshopMapView: View {
 
     @Bindable var workshop: WorkshopState
     var viewModel: CityViewModel? = nil
+    var notebookState: NotebookState? = nil
     var onNavigate: ((SidebarDestination) -> Void)? = nil
     var onBackToMenu: (() -> Void)? = nil
     var onEnterInterior: (() -> Void)? = nil
@@ -50,6 +51,16 @@ struct WorkshopMapView: View {
                         withAnimation(.spring(response: 0.3)) {
                             showStationLesson = false
                             workshop.stationsLessonSeen.insert(station)
+                        }
+
+                        // Save bird station lesson to notebooks of matching buildings
+                        if let ns = notebookState, let vm = viewModel,
+                           !ns.isStationLessonAdded(station.rawValue) {
+                            let results = NotebookContent.entriesFromStationLesson(lesson, buildings: vm.buildingPlots)
+                            for (bid, bname, entry) in results {
+                                ns.addEntries([entry], buildingId: bid, buildingName: bname)
+                            }
+                            ns.markStationLessonAdded(station.rawValue)
                         }
 
                         if station == .forest {
@@ -458,8 +469,7 @@ struct WorkshopMapView: View {
                                 showForestChoice = false
                                 activeStation = nil
                             }
-                            // TODO: Navigate to ForestScene when implemented
-                            workshop.statusMessage = "The Forest of Knowledge is coming soon!"
+                            onNavigate?(.forest)
                         } label: {
                             HStack(spacing: 12) {
                                 Image(systemName: "leaf.fill")
@@ -512,13 +522,33 @@ struct WorkshopMapView: View {
                     .font(.custom("Cinzel-Regular", size: 16))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
+                // Florins display
+                if let vm = viewModel {
+                    HStack(spacing: 4) {
+                        Image(systemName: "dollarsign.circle.fill")
+                            .font(.system(size: 14))
+                            .foregroundStyle(RenaissanceColors.goldSuccess)
+                        Text("\(vm.goldFlorins) florins")
+                            .font(.custom("Cinzel-Bold", size: 13))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                    }
+                    .padding(.bottom, 4)
+                }
+
                 HStack(spacing: 16) {
                     ForEach(station.materials, id: \.self) { material in
                         let stock = workshop.stationStocks[station]?[material] ?? 0
+                        let canAfford = (viewModel?.goldFlorins ?? 0) >= material.cost
                         Button {
+                            // Check florins before collecting
+                            guard let vm = viewModel else { return }
+                            guard vm.goldFlorins >= material.cost else {
+                                workshop.statusMessage = "Not enough florins! Need \(material.cost)"
+                                return
+                            }
                             if workshop.collectFromStation(station, material: material) {
+                                vm.goldFlorins -= material.cost
                                 scene?.showCollectionEffect(at: station)
-                                // Update station stock display
                                 let total = workshop.totalStockFor(station: station)
                                 scene?.updateStationStock(station, totalCount: total)
                             }
@@ -530,21 +560,29 @@ struct WorkshopMapView: View {
                                     .font(.custom("EBGaramond-Regular", size: 12))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                                     .lineLimit(1)
-                                Text("×\(stock)")
-                                    .font(.custom("EBGaramond-Regular", size: 12))
-                                    .foregroundStyle(stock > 0 ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray)
+                                HStack(spacing: 2) {
+                                    Text("×\(stock)")
+                                        .font(.custom("EBGaramond-Regular", size: 12))
+                                        .foregroundStyle(stock > 0 ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray)
+                                    Image(systemName: "dollarsign.circle.fill")
+                                        .font(.system(size: 9))
+                                        .foregroundStyle(RenaissanceColors.goldSuccess)
+                                    Text("\(material.cost)")
+                                        .font(.custom("EBGaramond-Regular", size: 11))
+                                        .foregroundStyle(canAfford ? RenaissanceColors.goldSuccess : RenaissanceColors.errorRed)
+                                }
                             }
                             .padding(10)
                             .background(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .fill(stock > 0 ? RenaissanceColors.parchment : RenaissanceColors.stoneGray.opacity(0.15))
+                                    .fill(stock > 0 && canAfford ? RenaissanceColors.parchment : RenaissanceColors.stoneGray.opacity(0.15))
                             )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(stock > 0 ? RenaissanceColors.renaissanceBlue : RenaissanceColors.stoneGray.opacity(0.3), lineWidth: 1)
+                                    .strokeBorder(stock > 0 && canAfford ? RenaissanceColors.renaissanceBlue : RenaissanceColors.stoneGray.opacity(0.3), lineWidth: 1)
                             )
                         }
-                        .disabled(stock <= 0)
+                        .disabled(stock <= 0 || !canAfford)
                     }
                 }
 

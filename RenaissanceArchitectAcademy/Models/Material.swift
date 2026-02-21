@@ -19,6 +19,19 @@ enum Material: String, CaseIterable, Identifiable, Codable {
 
     var id: String { rawValue }
 
+    /// Cost in gold florins to collect one unit
+    var cost: Int {
+        switch self {
+        case .water, .sand, .clay:             return 1   // Common
+        case .limestone, .timber:              return 2   // Basic building
+        case .volcanicAsh, .ironOre, .lead:    return 3   // Specialized
+        case .marbleDust, .marble:             return 4   // Premium stone
+        case .redOchre, .verdigrisGreen:       return 5   // Pigments
+        case .lapisBlue:                       return 8   // Rare pigment
+        case .silk:                            return 6   // Imported luxury
+        }
+    }
+
     var icon: String {
         switch self {
         case .limestone: return "🪨"

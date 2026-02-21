@@ -18,18 +18,37 @@ struct GameTopBarView: View {
                 HStack(alignment: .top, spacing: 0) {
                     // LEFT: Title + Nav buttons (flush left)
                     VStack(alignment: .leading, spacing: 4) {
-                        // Title capsule
-                        Text(title)
-                            .font(.custom("Cinzel-Bold", size: 16))
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
-                            .padding(.horizontal, 14)
+                        // Title + Florins row
+                        HStack(spacing: 8) {
+                            Text(title)
+                                .font(.custom("Cinzel-Bold", size: 16))
+                                .foregroundStyle(RenaissanceColors.sepiaInk)
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 6)
+                                .background(
+                                    Capsule()
+                                        .fill(RenaissanceColors.parchment.opacity(0.95))
+                                        .shadow(color: .black.opacity(0.08), radius: 2, y: 1)
+                                )
+
+                            // Gold Florins badge
+                            HStack(spacing: 4) {
+                                Image(systemName: "dollarsign.circle.fill")
+                                    .font(.system(size: 14))
+                                    .foregroundStyle(RenaissanceColors.goldSuccess)
+                                Text("\(viewModel.goldFlorins)")
+                                    .font(.custom("Cinzel-Bold", size: 13))
+                                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                            }
+                            .padding(.horizontal, 10)
                             .padding(.vertical, 6)
                             .background(
                                 Capsule()
                                     .fill(RenaissanceColors.parchment.opacity(0.95))
                                     .shadow(color: .black.opacity(0.08), radius: 2, y: 1)
                             )
-                            .padding(.bottom, 4)
+                        }
+                        .padding(.bottom, 4)
 
                         navColumn
                     }
@@ -84,6 +103,11 @@ struct GameTopBarView: View {
 
             navButton(icon: "book.fill", label: "Tests") {
                 onNavigate(.knowledgeTests)
+            }
+
+            navButton(icon: "book.closed.fill", label: "Notes") {
+                // Navigate to most recently modified notebook, or Pantheon default
+                onNavigate(.notebook(4))
             }
 
             if let onBackToMenu = onBackToMenu {

@@ -64,6 +64,25 @@
 		043 /* StoryNarrativeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 143 /* StoryNarrativeView.swift */; };
 		044 /* StationLessonOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144 /* StationLessonOverlay.swift */; };
 		046 /* AvatarTransitionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146 /* AvatarTransitionView.swift */; };
+		049 /* ForestScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149 /* ForestScene.swift */; };
+		050 /* ForestMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150 /* ForestMapView.swift */; };
+		051 /* BuildingProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 151 /* BuildingProgress.swift */; };
+		052 /* BuildingLessonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152 /* BuildingLessonView.swift */; };
+		053 /* BuildingChecklistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 153 /* BuildingChecklistView.swift */; };
+		054 /* BuildingLesson.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154 /* BuildingLesson.swift */; };
+		055 /* LessonContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155 /* LessonContent.swift */; };
+		056 /* NotebookEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 156 /* NotebookEntry.swift */; };
+		057 /* NotebookContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157 /* NotebookContent.swift */; };
+		058 /* NotebookState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158 /* NotebookState.swift */; };
+		059 /* NotebookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159 /* NotebookView.swift */; };
+		060 /* NotebookCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160 /* NotebookCanvasView.swift */; };
+		061 /* PlayerSave.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161 /* PlayerSave.swift */; };
+		062 /* BuildingProgressRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162 /* BuildingProgressRecord.swift */; };
+		063 /* PersistenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163 /* PersistenceManager.swift */; };
+		064 /* LessonContentRome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164 /* LessonContentRome.swift */; };
+		065 /* LessonContentRenaissance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165 /* LessonContentRenaissance.swift */; };
+		066 /* NotebookContentRome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166 /* NotebookContentRome.swift */; };
+		067 /* NotebookContentRenaissance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167 /* NotebookContentRenaissance.swift */; };
 		047 /* BoyAvatarTransition.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 147 /* BoyAvatarTransition.mp4 */; };
 		048 /* GirlAvatarTransition.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 148 /* GirlAvatarTransition.mp4 */; };
 		5475D2EF2F3146CC003AA131 /* building_complete.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2EE2F3146CB003AA131 /* building_complete.mp3 */; };
@@ -139,6 +158,25 @@
 		146 /* AvatarTransitionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarTransitionView.swift; sourceTree = "<group>"; };
 		147 /* BoyAvatarTransition.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = BoyAvatarTransition.mp4; sourceTree = "<group>"; };
 		148 /* GirlAvatarTransition.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = GirlAvatarTransition.mp4; sourceTree = "<group>"; };
+		149 /* ForestScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ForestScene.swift; path = Views/SpriteKit/ForestScene.swift; sourceTree = "<group>"; };
+		150 /* ForestMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForestMapView.swift; sourceTree = "<group>"; };
+		151 /* BuildingProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingProgress.swift; sourceTree = "<group>"; };
+		152 /* BuildingLessonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingLessonView.swift; sourceTree = "<group>"; };
+		153 /* BuildingChecklistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingChecklistView.swift; sourceTree = "<group>"; };
+		154 /* BuildingLesson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingLesson.swift; sourceTree = "<group>"; };
+		155 /* LessonContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonContent.swift; sourceTree = "<group>"; };
+		156 /* NotebookEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookEntry.swift; sourceTree = "<group>"; };
+		157 /* NotebookContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookContent.swift; sourceTree = "<group>"; };
+		158 /* NotebookState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookState.swift; sourceTree = "<group>"; };
+		159 /* NotebookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookView.swift; sourceTree = "<group>"; };
+		160 /* NotebookCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookCanvasView.swift; sourceTree = "<group>"; };
+		161 /* PlayerSave.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerSave.swift; sourceTree = "<group>"; };
+		162 /* BuildingProgressRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingProgressRecord.swift; sourceTree = "<group>"; };
+		163 /* PersistenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceManager.swift; sourceTree = "<group>"; };
+		164 /* LessonContentRome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonContentRome.swift; sourceTree = "<group>"; };
+		165 /* LessonContentRenaissance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonContentRenaissance.swift; sourceTree = "<group>"; };
+		166 /* NotebookContentRome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookContentRome.swift; sourceTree = "<group>"; };
+		167 /* NotebookContentRenaissance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookContentRenaissance.swift; sourceTree = "<group>"; };
 		544299972F3646ED00F92073 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BuildingNode.swift; path = Views/SpriteKit/BuildingNode.swift; sourceTree = "<group>"; };
 		544299982F3646ED00F92073 /* CityMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityMapView.swift; path = Views/SpriteKit/CityMapView.swift; sourceTree = "<group>"; };
 		544299992F3646ED00F92073 /* CityScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityScene.swift; path = Views/SpriteKit/CityScene.swift; sourceTree = "<group>"; };
@@ -208,6 +246,7 @@
 				544299B02F38000100F92073 /* PlayerNode.swift */,
 				544299B22F38000100F92073 /* ResourceNode.swift */,
 				544299B42F38000100F92073 /* WorkshopScene.swift */,
+				149 /* ForestScene.swift */,
 				544299A52F369AB700F92073 /* MascotDialogueView.swift */,
 				544299A62F369AB700F92073 /* MaterialPuzzleView.swift */,
 				544299972F3646ED00F92073 /* BuildingNode.swift */,
@@ -262,7 +301,12 @@
 				135 /* KnowledgeTestsView.swift */,
 				544299B62F38000100F92073 /* WorkshopMapView.swift */,
 				544299C12F3B000100F92073 /* WorkshopInteriorView.swift */,
+				150 /* ForestMapView.swift */,
+				152 /* BuildingLessonView.swift */,
+				153 /* BuildingChecklistView.swift */,
 				138 /* GameTopBarView.swift */,
+				159 /* NotebookView.swift */,
+				160 /* NotebookCanvasView.swift */,
 				141 /* OnboardingView.swift */,
 				308 /* Sketching */,
 				309 /* Onboarding */,
@@ -295,6 +339,8 @@
 			children = (
 				107 /* CityViewModel.swift */,
 				128 /* WorkshopState.swift */,
+				158 /* NotebookState.swift */,
+				163 /* PersistenceManager.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -312,6 +358,17 @@
 				133 /* SketchingContent.swift */,
 				139 /* OnboardingState.swift */,
 				140 /* OnboardingContent.swift */,
+				151 /* BuildingProgress.swift */,
+				154 /* BuildingLesson.swift */,
+				155 /* LessonContent.swift */,
+				156 /* NotebookEntry.swift */,
+				157 /* NotebookContent.swift */,
+				161 /* PlayerSave.swift */,
+				162 /* BuildingProgressRecord.swift */,
+			164 /* LessonContentRome.swift */,
+			165 /* LessonContentRenaissance.swift */,
+			166 /* NotebookContentRome.swift */,
+			167 /* NotebookContentRenaissance.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -516,6 +573,25 @@
 				043 /* StoryNarrativeView.swift in Sources */,
 				044 /* StationLessonOverlay.swift in Sources */,
 				046 /* AvatarTransitionView.swift in Sources */,
+				049 /* ForestScene.swift in Sources */,
+				050 /* ForestMapView.swift in Sources */,
+				051 /* BuildingProgress.swift in Sources */,
+				052 /* BuildingLessonView.swift in Sources */,
+				053 /* BuildingChecklistView.swift in Sources */,
+				054 /* BuildingLesson.swift in Sources */,
+				055 /* LessonContent.swift in Sources */,
+				056 /* NotebookEntry.swift in Sources */,
+				057 /* NotebookContent.swift in Sources */,
+				058 /* NotebookState.swift in Sources */,
+				059 /* NotebookView.swift in Sources */,
+				060 /* NotebookCanvasView.swift in Sources */,
+				061 /* PlayerSave.swift in Sources */,
+				062 /* BuildingProgressRecord.swift in Sources */,
+				063 /* PersistenceManager.swift in Sources */,
+			064 /* LessonContentRome.swift in Sources */,
+			065 /* LessonContentRenaissance.swift in Sources */,
+			066 /* NotebookContentRome.swift in Sources */,
+			067 /* NotebookContentRenaissance.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

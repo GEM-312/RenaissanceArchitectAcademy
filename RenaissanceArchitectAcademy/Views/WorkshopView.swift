@@ -6,6 +6,7 @@ import SwiftUI
 struct WorkshopView: View {
     var workshop: WorkshopState
     var viewModel: CityViewModel? = nil
+    var notebookState: NotebookState? = nil
     var onNavigate: ((SidebarDestination) -> Void)? = nil
     var onBackToMenu: (() -> Void)? = nil
     var onboardingState: OnboardingState? = nil
@@ -25,6 +26,7 @@ struct WorkshopView: View {
                 WorkshopMapView(
                     workshop: workshop,
                     viewModel: viewModel,
+                    notebookState: notebookState,
                     onNavigate: onNavigate,
                     onBackToMenu: onBackToMenu,
                     onEnterInterior: {

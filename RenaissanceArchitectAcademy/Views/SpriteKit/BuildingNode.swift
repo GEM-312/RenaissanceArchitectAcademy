@@ -16,6 +16,7 @@ class BuildingNode: SKNode {
     private var buildingSprite: SKShapeNode!
     private var labelNode: SKLabelNode!
     private var stateIndicator: SKSpriteNode?
+    private var tierBadge: SKNode?
     private var currentState: BuildingState = .available
 
     // Building sizes (isometric style)
@@ -208,6 +209,49 @@ class BuildingNode: SKNode {
                 self?.addPulseAnimation()
             }
         }
+    }
+
+    // MARK: - Tier Badge
+
+    /// Show a small tier indicator (colored dot + label) on the building
+    func setTierBadge(_ tierName: String) {
+        tierBadge?.removeFromParent()
+
+        let badgeColor: PlatformColor
+        switch tierName {
+        case "Apprentice":
+            badgeColor = PlatformColor(RenaissanceColors.renaissanceBlue)
+        case "Architect":
+            badgeColor = PlatformColor(RenaissanceColors.ochre)
+        case "Master":
+            badgeColor = PlatformColor(RenaissanceColors.terracotta)
+        default:
+            badgeColor = PlatformColor(RenaissanceColors.stoneGray)
+        }
+
+        let container = SKNode()
+
+        // Colored dot
+        let dot = SKShapeNode(circleOfRadius: 5)
+        dot.fillColor = badgeColor
+        dot.strokeColor = PlatformColor(RenaissanceColors.sepiaInk.opacity(0.5))
+        dot.lineWidth = 0.5
+        container.addChild(dot)
+
+        // Tier text
+        let label = SKLabelNode(text: tierName)
+        label.fontName = "Cinzel-Regular"
+        label.fontSize = 9
+        label.fontColor = badgeColor
+        label.horizontalAlignmentMode = .left
+        label.verticalAlignmentMode = .center
+        label.position = CGPoint(x: 8, y: 0)
+        container.addChild(label)
+
+        container.position = CGPoint(x: -buildingSize.width * 0.3, y: -buildingSize.height * 0.55)
+        container.zPosition = 25
+        addChild(container)
+        tierBadge = container
     }
 
     // MARK: - Construction Progress

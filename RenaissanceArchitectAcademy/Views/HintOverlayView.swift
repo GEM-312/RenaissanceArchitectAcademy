@@ -26,6 +26,12 @@ struct HintOverlayView: View {
     // True when user chose "Earn by Activity" (true/false path)
     @State private var isTrueFalsePath = false
 
+    // Transaction display
+    @State private var transactionMaterials: [(Material, Int)] = []
+    @State private var wasEarnPath: Bool = false
+    // Pre-generated earn reward (shown on activity card, awarded on correct answer)
+    @State private var pendingEarnReward: [(Material, Int)] = []
+
     private var totalMaterials: Int {
         workshopState?.rawMaterials.values.reduce(0, +) ?? 0
     }
@@ -286,6 +292,7 @@ struct HintOverlayView: View {
             Button {
                 withAnimation(.spring(response: 0.4)) {
                     isTrueFalsePath = true
+                    generatePendingReward()
                     phase = .crafting
                 }
             } label: {
@@ -296,7 +303,7 @@ struct HintOverlayView: View {
                         Text("Earn by Activity")
                             .font(.custom("EBGaramond-Regular", size: 17))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
-                        Text("Answer a true/false question")
+                        Text("Answer correctly to earn 3 materials")
                             .font(.custom("EBGaramond-Italic", size: 13))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                     }
@@ -369,6 +376,25 @@ struct HintOverlayView: View {
                     .lineSpacing(4)
                     .padding(.horizontal, 8)
 
+                // Reward preview
+                if !pendingEarnReward.isEmpty {
+                    HStack(spacing: 4) {
+                        Text("Reward:")
+                            .font(.custom("EBGaramond-Italic", size: 14))
+                            .foregroundStyle(RenaissanceColors.ochre)
+                        ForEach(pendingEarnReward, id: \.0) { material, count in
+                            HStack(spacing: 2) {
+                                Text(material.icon)
+                                    .font(.system(size: 18))
+                                Text("×\(count)")
+                                    .font(.custom("Cinzel-Bold", size: 13))
+                                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
+                            }
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
+
                 HStack(spacing: 16) {
                     trueFalseButton(label: "True", value: true)
                     trueFalseButton(label: "False", value: false)
@@ -413,6 +439,30 @@ struct HintOverlayView: View {
                     .multilineTextAlignment(.center)
                     .lineSpacing(5)
                     .padding(.horizontal, 8)
+
+                // Transaction display
+                if !transactionMaterials.isEmpty {
+                    Divider()
+                        .background(RenaissanceColors.ochre.opacity(0.3))
+
+                    VStack(spacing: 6) {
+                        Text("You spent:")
+                            .font(.custom("EBGaramond-Italic", size: 14))
+                            .foregroundStyle(RenaissanceColors.ochre)
+
+                        HStack(spacing: 12) {
+                            ForEach(transactionMaterials, id: \.0) { material, count in
+                                HStack(spacing: 4) {
+                                    Text(material.icon)
+                                        .font(.system(size: 20))
+                                    Text("×\(count)")
+                                        .font(.custom("Cinzel-Bold", size: 14))
+                                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                                }
+                            }
+                        }
+                    }
+                }
 
                 Divider()
                     .background(RenaissanceColors.ochre.opacity(0.3))
@@ -475,6 +525,7 @@ struct HintOverlayView: View {
             guard trueFalseAnswer == nil || !isAnswerCorrect(trueFalseAnswer!) else { return }
             if isCorrect {
                 trueFalseAnswer = value
+                awardEarnMaterials()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                     withAnimation(.spring(response: 0.4)) {
                         phase = .hintScroll
@@ -539,15 +590,51 @@ struct HintOverlayView: View {
         let sorted = workshop.rawMaterials.sorted { $0.value > $1.value }
         var toDeduct = 2
         var icons: [String] = []
+        var spent: [Material: Int] = [:]
         for (material, count) in sorted where toDeduct > 0 && count > 0 {
             let take = min(count, toDeduct)
             workshop.rawMaterials[material, default: 0] -= take
             toDeduct -= take
+            spent[material, default: 0] += take
             for _ in 0..<take {
                 icons.append(material.icon)
             }
         }
         craftingMaterials = icons.map { ($0, CGFloat(0)) }
+        transactionMaterials = spent.map { ($0.key, $0.value) }
+        wasEarnPath = false
+    }
+
+    /// Pre-generate 3 random materials to show as reward on the activity card
+    private func generatePendingReward() {
+        let pool: [Material] = [.limestone, .sand, .water, .clay, .ironOre, .timber]
+        var reward: [Material: Int] = [:]
+        for _ in 0..<3 {
+            let mat = pool.randomElement()!
+            reward[mat, default: 0] += 1
+        }
+        pendingEarnReward = reward.map { ($0.key, $0.value) }
+    }
+
+    /// Award 3 earned materials, then deduct 2 to pay for the hint scroll
+    private func awardEarnMaterials() {
+        guard let workshop = workshopState else { return }
+        // Add earned materials
+        for (mat, count) in pendingEarnReward {
+            workshop.rawMaterials[mat, default: 0] += count
+        }
+        // Deduct 2 for scroll cost (from most abundant)
+        let sorted = workshop.rawMaterials.sorted { $0.value > $1.value }
+        var toDeduct = 2
+        var spent: [Material: Int] = [:]
+        for (material, count) in sorted where toDeduct > 0 && count > 0 {
+            let take = min(count, toDeduct)
+            workshop.rawMaterials[material, default: 0] -= take
+            toDeduct -= take
+            spent[material, default: 0] += take
+        }
+        transactionMaterials = spent.map { ($0.key, $0.value) }
+        wasEarnPath = true
     }
 
     /// Animate materials floating up and dissolving, then show scroll

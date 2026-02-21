@@ -1,10 +1,13 @@
 import SwiftUI
 
 /// State management for the Workshop crafting mini-game
+@MainActor
 @Observable
 class WorkshopState {
     // Player inventory — starts at zero, must collect from stations
     var rawMaterials: [Material: Int] = [:]
+
+    var persistenceManager: PersistenceManager?
 
     var workbenchSlots: [Material?] = [nil, nil, nil, nil]
     var furnaceTemperature: Recipe.Temperature = .medium
@@ -54,6 +57,7 @@ class WorkshopState {
         stationStocks[station] = stock
         rawMaterials[material, default: 0] += 1
         statusMessage = "Collected \(material.rawValue)!"
+        persistInventory()
         return true
     }
 
@@ -211,5 +215,24 @@ class WorkshopState {
         isProcessing = false
         processProgress = 0.0
         statusMessage = "Created \(recipe.output.rawValue)!"
+        persistInventory()
+    }
+
+    // MARK: - Persistence
+
+    func loadFromPersistence() {
+        guard let manager = persistenceManager else { return }
+        let save = manager.loadPlayerSave()
+        rawMaterials = save.rawMaterials
+        craftedMaterials = save.craftedMaterials
+    }
+
+    private func persistInventory() {
+        guard let manager = persistenceManager else { return }
+        let save = manager.loadPlayerSave()
+        save.rawMaterials = rawMaterials
+        save.craftedMaterials = craftedMaterials
+        save.lastSaved = Date()
+        manager.save()
     }
 }

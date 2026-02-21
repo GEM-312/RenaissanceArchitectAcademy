@@ -162,8 +162,13 @@ struct StoryNarrativeView: View {
 
     private func startBackgroundAnimation() {
         guard page.backgroundFramePrefix != nil else { return }
-        bgTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / bgFPS, repeats: true) { _ in
-            bgFrame = (bgFrame + 1) % bgFrameCount
+        bgTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / bgFPS, repeats: true) { timer in
+            if bgFrame < bgFrameCount - 1 {
+                bgFrame += 1
+            } else {
+                timer.invalidate()
+                bgTimer = nil
+            }
         }
     }
 }

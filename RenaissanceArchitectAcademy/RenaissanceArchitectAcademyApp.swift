@@ -1,10 +1,22 @@
 import SwiftUI
+import SwiftData
 import CoreText
 
 @main
 struct RenaissanceArchitectAcademyApp: App {
 
+    let modelContainer: ModelContainer
+
     init() {
+        // Set up SwiftData persistence first (stored property must be initialized)
+        do {
+            let schema = Schema([PlayerSave.self, BuildingProgressRecord.self])
+            let config = ModelConfiguration(isStoredInMemoryOnly: false)
+            modelContainer = try ModelContainer(for: schema, configurations: config)
+        } catch {
+            fatalError("Failed to create ModelContainer: \(error)")
+        }
+
         // Register custom fonts at app launch
         registerCustomFonts()
     }
@@ -13,6 +25,7 @@ struct RenaissanceArchitectAcademyApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(modelContainer)
         #if os(macOS)
         .windowStyle(.hiddenTitleBar)
         .defaultSize(width: 1200, height: 800)

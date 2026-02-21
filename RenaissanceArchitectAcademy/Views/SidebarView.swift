@@ -7,7 +7,9 @@ enum SidebarDestination: Hashable {
     case era(Era)
     case profile
     case workshop       // Crafting mini-game
+    case forest         // Italian forest exploration
     case knowledgeTests // Quiz challenges
+    case notebook(Int)  // Building notebook by plot ID
 }
 
 // Add iconName to Era

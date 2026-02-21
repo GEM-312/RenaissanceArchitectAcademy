@@ -111,13 +111,15 @@ struct Building: Identifiable {
     let city: RenaissanceCity?  // Only for Renaissance buildings
     let sciences: [Science]
     let iconName: String
+    let difficultyTier: MasteryLevel
 
-    init(name: String, era: Era, city: RenaissanceCity? = nil, sciences: [Science], iconName: String) {
+    init(name: String, era: Era, city: RenaissanceCity? = nil, sciences: [Science], iconName: String, difficultyTier: MasteryLevel = .apprentice) {
         self.name = name
         self.era = era
         self.city = city
         self.sciences = sciences
         self.iconName = iconName
+        self.difficultyTier = difficultyTier
     }
 
     /// Crafted materials needed from the Workshop to build this structure

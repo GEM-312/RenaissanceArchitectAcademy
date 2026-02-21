@@ -1,10 +1,12 @@
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
     @State private var showingMainMenu = true
     @State private var showingOnboarding = false
     @State private var selectedDestination: SidebarDestination? = .cityMap  // Start with SpriteKit map!
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.modelContext) private var modelContext
 
     // Shared ViewModel - so map and era views share progress!
     @StateObject private var cityViewModel = CityViewModel()
@@ -12,8 +14,17 @@ struct ContentView: View {
     // Shared Workshop state - so materials persist between workshop and challenges
     @State private var workshopState = WorkshopState()
 
-    // Onboarding state — persists to UserDefaults
+    // Onboarding state — persists to SwiftData
     @State private var onboardingState = OnboardingState()
+
+    // Notebook state — persists to Documents/Notebooks/
+    @State private var notebookState = NotebookState()
+
+    // Persistence manager — kept as @State so helpers can access it
+    @State private var persistenceManager: PersistenceManager?
+
+    // Persistence loading guard
+    @State private var hasLoadedPersistence = false
 
     var body: some View {
         ZStack {
@@ -23,6 +34,11 @@ struct ContentView: View {
 
             if showingOnboarding {
                 OnboardingView(onboardingState: onboardingState) {
+                    // Onboarding completed — switch to the new player's data
+                    let name = onboardingState.apprenticeName
+                    if !name.isEmpty {
+                        switchToPlayer(name)
+                    }
                     withAnimation(.easeInOut(duration: 0.5)) {
                         showingOnboarding = false
                         showingMainMenu = false
@@ -57,9 +73,40 @@ struct ContentView: View {
                 detailView
             }
         }
+        .onAppear {
+            guard !hasLoadedPersistence else { return }
+            hasLoadedPersistence = true
+            let manager = PersistenceManager(modelContext: modelContext)
+            persistenceManager = manager
+
+            // Try to load the most recent player's data
+            if let recentName = manager.loadMostRecentPlayer() {
+                manager.currentPlayerName = recentName
+            }
+
+            cityViewModel.persistenceManager = manager
+            cityViewModel.loadFromPersistence()
+            workshopState.persistenceManager = manager
+            workshopState.loadFromPersistence()
+            onboardingState.loadFromSwiftData(manager: manager)
+
+            // Scope notebook to the current player
+            notebookState.switchPlayer(to: manager.currentPlayerName)
+        }
         #if os(macOS)
         .frame(minWidth: 800, minHeight: 700)
         #endif
+    }
+
+    // MARK: - Player Switching
+
+    /// Switch all systems to a specific player's save data
+    private func switchToPlayer(_ name: String) {
+        guard let manager = persistenceManager else { return }
+        manager.currentPlayerName = name
+        cityViewModel.loadFromPersistence()
+        workshopState.loadFromPersistence()
+        notebookState.switchPlayer(to: name)
     }
 
     /// Navigate to a destination from any screen
@@ -81,7 +128,7 @@ struct ContentView: View {
     private var detailView: some View {
         switch selectedDestination {
         case .cityMap:
-            CityMapView(viewModel: cityViewModel, workshopState: workshopState, onNavigate: navigateTo, onBackToMenu: backToMenu, onboardingState: onboardingState)
+            CityMapView(viewModel: cityViewModel, workshopState: workshopState, notebookState: notebookState, onNavigate: navigateTo, onBackToMenu: backToMenu, onboardingState: onboardingState)
         case .allBuildings:
             CityView(viewModel: cityViewModel, filterEra: nil, workshopState: workshopState)
         case .era(let era):
@@ -89,11 +136,26 @@ struct ContentView: View {
         case .profile:
             ProfileView(viewModel: cityViewModel, workshopState: workshopState, onboardingState: onboardingState)
         case .workshop:
-            WorkshopView(workshop: workshopState, viewModel: cityViewModel, onNavigate: navigateTo, onBackToMenu: backToMenu, onboardingState: onboardingState)
+            WorkshopView(workshop: workshopState, viewModel: cityViewModel, notebookState: notebookState, onNavigate: navigateTo, onBackToMenu: backToMenu, onboardingState: onboardingState)
+        case .forest:
+            ForestMapView(workshop: workshopState, viewModel: cityViewModel, onNavigate: navigateTo, onBackToWorkshop: { navigateTo(.workshop) }, onBackToMenu: backToMenu, onboardingState: onboardingState)
         case .knowledgeTests:
             KnowledgeTestsView(viewModel: cityViewModel, workshopState: workshopState)
+        case .notebook(let buildingId):
+            if let plot = cityViewModel.buildingPlots.first(where: { $0.id == buildingId }) {
+                NotebookView(
+                    buildingId: buildingId,
+                    buildingName: plot.building.name,
+                    sciences: plot.building.sciences,
+                    era: plot.building.era,
+                    notebookState: notebookState,
+                    onDismiss: { navigateTo(.cityMap) }
+                )
+            } else {
+                CityMapView(viewModel: cityViewModel, workshopState: workshopState, notebookState: notebookState, onNavigate: navigateTo, onBackToMenu: backToMenu, onboardingState: onboardingState)
+            }
         case .none:
-            CityMapView(viewModel: cityViewModel, workshopState: workshopState, onNavigate: navigateTo, onBackToMenu: backToMenu, onboardingState: onboardingState)
+            CityMapView(viewModel: cityViewModel, workshopState: workshopState, notebookState: notebookState, onNavigate: navigateTo, onBackToMenu: backToMenu, onboardingState: onboardingState)
         }
     }
 }
