@@ -11,6 +11,7 @@ struct ForestMapView: View {
     var onBackToWorkshop: (() -> Void)? = nil
     var onBackToMenu: (() -> Void)? = nil
     var onboardingState: OnboardingState? = nil
+    @Binding var returnToLessonPlotId: Int?
 
     @State private var scene: ForestScene?
     @State private var playerPosition: CGPoint = CGPoint(x: 0.5, y: 0.5)
@@ -148,7 +149,13 @@ struct ForestMapView: View {
                     showBackButton: true,
                     onBack: { onBackToWorkshop?() },
                     onBackToMenu: onBackToMenu,
-                    onboardingState: onboardingState
+                    onboardingState: onboardingState,
+                    returnToLessonBuildingName: returnToLessonPlotId.flatMap { id in
+                        viewModel.buildingPlots.first(where: { $0.id == id })?.building.name
+                    },
+                    onReturnToLesson: returnToLessonPlotId != nil ? {
+                        onNavigate?(.cityMap)
+                    } : nil
                 )
             } else {
                 // Fallback if no viewModel
@@ -293,5 +300,5 @@ struct ForestMapView: View {
 }
 
 #Preview {
-    ForestMapView(workshop: WorkshopState())
+    ForestMapView(workshop: WorkshopState(), returnToLessonPlotId: .constant(nil))
 }

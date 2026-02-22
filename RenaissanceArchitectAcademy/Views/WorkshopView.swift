@@ -10,13 +10,14 @@ struct WorkshopView: View {
     var onNavigate: ((SidebarDestination) -> Void)? = nil
     var onBackToMenu: (() -> Void)? = nil
     var onboardingState: OnboardingState? = nil
+    @Binding var returnToLessonPlotId: Int?
 
     @State private var showInterior = false
 
     var body: some View {
         ZStack {
             if showInterior {
-                WorkshopInteriorView(workshop: workshop, viewModel: viewModel, onNavigate: onNavigate, onBackToMenu: onBackToMenu, onboardingState: onboardingState) {
+                WorkshopInteriorView(workshop: workshop, viewModel: viewModel, onNavigate: onNavigate, onBackToMenu: onBackToMenu, onboardingState: onboardingState, returnToLessonPlotId: $returnToLessonPlotId) {
                     withAnimation(.easeInOut(duration: 0.4)) {
                         showInterior = false
                     }
@@ -34,7 +35,8 @@ struct WorkshopView: View {
                             showInterior = true
                         }
                     },
-                    onboardingState: onboardingState
+                    onboardingState: onboardingState,
+                    returnToLessonPlotId: $returnToLessonPlotId
                 )
                 .transition(.move(edge: .leading))
             }
@@ -45,5 +47,5 @@ struct WorkshopView: View {
 }
 
 #Preview {
-    WorkshopView(workshop: WorkshopState())
+    WorkshopView(workshop: WorkshopState(), returnToLessonPlotId: .constant(nil))
 }

@@ -12,6 +12,7 @@ struct WorkshopMapView: View {
     var onBackToMenu: (() -> Void)? = nil
     var onEnterInterior: (() -> Void)? = nil
     var onboardingState: OnboardingState? = nil
+    @Binding var returnToLessonPlotId: Int?
 
     @Environment(\.dismiss) private var dismiss
 
@@ -242,7 +243,13 @@ struct WorkshopMapView: View {
                     showBackButton: true,
                     onBack: { dismiss() },
                     onBackToMenu: onBackToMenu,
-                    onboardingState: onboardingState
+                    onboardingState: onboardingState,
+                    returnToLessonBuildingName: returnToLessonPlotId.flatMap { id in
+                        viewModel.buildingPlots.first(where: { $0.id == id })?.building.name
+                    },
+                    onReturnToLesson: returnToLessonPlotId != nil ? {
+                        onNavigate?(.cityMap)
+                    } : nil
                 )
             } else {
                 // Fallback if no viewModel
@@ -417,7 +424,7 @@ struct WorkshopMapView: View {
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     Text("Italy's forests hold many secrets — from the mighty oaks of Tuscany to the stone pines of Rome. Would you like to collect timber, or explore the forest and learn about its trees?")
-                        .font(.custom("EBGaramond-Regular", size: 17))
+                        .font(.system(size: 17))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
                         .multilineTextAlignment(.center)
 
@@ -440,7 +447,7 @@ struct WorkshopMapView: View {
                                     .foregroundStyle(RenaissanceColors.warmBrown)
 
                                 Text("Collect Timber")
-                                    .font(.custom("EBGaramond-Regular", size: 17))
+                                    .font(.system(size: 17))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                                 Spacer()
@@ -477,7 +484,7 @@ struct WorkshopMapView: View {
                                     .foregroundStyle(RenaissanceColors.sageGreen)
 
                                 Text("Explore the Forest")
-                                    .font(.custom("EBGaramond-Regular", size: 17))
+                                    .font(.system(size: 17))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                                 Spacer()
@@ -883,7 +890,7 @@ struct WorkshopMapView: View {
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 Text(workshop.educationalText)
-                    .font(.custom("EBGaramond-Regular", size: 17))
+                    .font(.system(size: 17))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
@@ -942,5 +949,5 @@ struct WorkshopMapView: View {
 }
 
 #Preview {
-    WorkshopMapView(workshop: WorkshopState(), onEnterInterior: {})
+    WorkshopMapView(workshop: WorkshopState(), onEnterInterior: {}, returnToLessonPlotId: .constant(nil))
 }

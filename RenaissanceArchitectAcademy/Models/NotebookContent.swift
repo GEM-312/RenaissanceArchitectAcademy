@@ -65,6 +65,19 @@ enum NotebookContent {
             case .environmentPrompt:
                 // Skip environment prompts — not knowledge content
                 break
+
+            case .curiosity:
+                // Skip curiosity Q&A — supplementary, not core content
+                break
+
+            case .mathVisual(let visual):
+                entries.append(NotebookEntry(
+                    buildingId: buildingId,
+                    entryType: .keyFact,
+                    science: visual.science,
+                    title: visual.title,
+                    body: visual.caption
+                ))
             }
         }
 

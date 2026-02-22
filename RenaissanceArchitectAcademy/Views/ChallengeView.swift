@@ -274,7 +274,7 @@ struct ChallengeView: View {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundStyle(RenaissanceColors.sageGreen)
                     Text("\(progress.correctAnswers)")
-                        .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .body))
+                        .font(.system(size: 17))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
             }

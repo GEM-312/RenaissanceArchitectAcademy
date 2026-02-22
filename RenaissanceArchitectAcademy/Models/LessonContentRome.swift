@@ -10,140 +10,440 @@ extension LessonContent {
         buildingName: "Aqueduct",
         title: "Rivers in the Sky",
         sections: [
+
+            // ── 1. Hook ───────────────────────────────────────
+
             .reading(LessonReading(
-                title: "Why Build Rivers in the Sky?",
-                body: "Imagine a city of one million people — and no faucets! Ancient Rome needed about **1 million cubic meters** of fresh water every single day for drinking, cooking, bathing, and fountains. The nearest clean springs were hidden in the hills, sometimes **50 kilometers away**. Roman engineers solved this problem by building **aqueducts** — long channels that carried water from mountain springs all the way into the city, using nothing but the gentle pull of gravity.",
+                title: "Rivers in the Sky",
+                body: """
+                Turn on a faucet. Water comes out. You don't think about it.
+
+                Now imagine there are no faucets. No pipes. No pumps. Nothing.
+
+                That was Rome. A million people, and the nearest clean water \
+                was up in the mountains, far from the city.
+
+                So the Romans did something bold. They built long stone \
+                channels — called **aqueducts** — that carried water from \
+                mountain springs all the way into the city.
+
+                No engines. No electricity. Just the gentle pull of **gravity**.
+                """,
                 science: .engineering,
                 illustrationIcon: "drop.fill"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Why didn't the Romans just build their city near a river?",
+                    answer: "Rome was built near the **Tiber River**, but a million people need way more water than one river can safely provide. The Tiber was also polluted with sewage. Mountain springs were cleaner and more reliable."
+                ),
+                CuriosityQA(
+                    question: "Do aqueducts still exist today?",
+                    answer: "Yes! Some Roman aqueducts still carry water. The **Acqua Vergine** in Rome has been running since 19 BC — over 2,000 years. Modern cities use the same idea, just with metal pipes instead of stone channels."
+                )
+            ])),
+
+            // ── 2. The Slope Trick ────────────────────────────
+
             .reading(LessonReading(
-                title: "The Magic of Gradient",
-                body: "Here is the cleverest part: Roman aqueducts had no pumps! Instead, engineers tilted the channel very slightly downhill — a slope called the **gradient**. A typical gradient was **1:200**, which means for every 200 meters the channel travels forward, it drops just 1 meter. That is about the thickness of a ruler over the length of two football fields! If the slope was too steep, water would rush and tear the channel apart. Too flat, and water would sit still and grow algae. Getting the gradient just right was a masterpiece of **mathematics** and **surveying**.",
+                title: "The Slope Trick",
+                body: """
+                Here is the secret: the channel was tilted. Just barely.
+
+                The Romans angled it slightly downhill. This tiny tilt is \
+                called the **gradient**.
+
+                Think of a playground slide. If it is too steep, you fly \
+                off. If it is too flat, you don't move. The Romans needed \
+                the perfect in-between — just enough tilt for water to \
+                flow smoothly, mile after mile.
+
+                Too steep? Water rushes and destroys the stone. Too flat? \
+                Water sits still and turns green. Getting it right was the \
+                whole game.
+                """,
                 science: .mathematics,
                 illustrationIcon: "arrow.down.right"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "How did they measure such a tiny slope without modern tools?",
+                    answer: "They used a tool called a **chorobates** — a long wooden table with a groove of water on top. Basically the world's first spirit level. If the water in the groove was even, the surface was flat. Tilt it a tiny bit, and you have your gradient."
+                ),
+                CuriosityQA(
+                    question: "What happens if they got the gradient wrong?",
+                    answer: "Too steep and the water would rush like a waterfall, tearing the stone apart. Too flat and the water would stop moving and grow algae. Either way, the aqueduct would fail. That is why planning sometimes took **years** before building even started."
+                )
+            ])),
+
+            // ── 3. Fun Fact ───────────────────────────────────
+
             .funFact(LessonFunFact(
-                text: "The **Aqua Claudia**, one of Rome's greatest aqueducts, stretched about **69 kilometers** from its source to the city. But only about **16 kilometers** of that distance was carried on tall stone arches — the rest ran through underground tunnels carved into hillsides!"
+                text: """
+                The **Aqua Claudia** — one of Rome's greatest aqueducts — \
+                stretched **69 kilometers**. But here is the surprise: only \
+                16 km rode on top of tall stone arches. The rest? Hidden \
+                underground, tunneled straight through hillsides.
+                """
             )),
+
+            // ── 4. Question ───────────────────────────────────
+
             .question(LessonQuestion(
-                question: "If an aqueduct has a gradient of 1:200, how many meters does the water drop over a 10-kilometer (10,000 m) stretch?",
-                options: ["5 meters", "20 meters", "50 meters", "100 meters"],
-                correctIndex: 2,
-                explanation: "At a 1:200 gradient, the water drops 1 meter for every 200 meters of length. So 10,000 ÷ 200 = 50 meters of total drop. That gentle slope kept the water flowing smoothly all the way to Rome!",
-                science: .mathematics,
-                hints: [
-                    "The gradient 1:200 means 1 meter of drop for every 200 meters of distance.",
-                    "Divide the total distance (10,000 m) by the gradient denominator (200).",
-                    "10,000 ÷ 200 = 50. The answer is 50 meters."
-                ]
-            )),
-            .reading(LessonReading(
-                title: "Inside the Specus",
-                body: "The water flowed through a channel called the **specus** (say: SPEK-us). Think of it like a long, covered bathtub made of stone. The inside was coated with **opus signinum**, a special waterproof plaster made from crushed pottery mixed into Roman concrete. This kept every precious drop from leaking away. The specus was usually about **1 meter wide** and **1.5 meters tall** — big enough for a worker to walk inside for repairs.",
-                science: .engineering,
-                illustrationIcon: "rectangle.split.3x1"
-            )),
-            .reading(LessonReading(
-                title: "Crossing the Valleys — Arcade Bridges",
-                body: "When the aqueduct reached a valley, engineers could not just let the channel dip down and come back up — water does not climb hills on its own! So they built towering **stone arcades** to carry the channel across at the same height. The most famous is the **Pont du Gard** in southern France, a stunning **triple arcade** standing nearly **50 meters tall**. Each arch spreads the weight evenly to the pillars below, like a team of friends linking arms to hold something heavy.",
-                science: .engineering,
-                illustrationIcon: "archway"
-            )),
-            .funFact(LessonFunFact(
-                text: "The **Pont du Gard** was built without any mortar between its massive stones! The blocks — some weighing **6 tonnes** each — were cut so precisely that friction alone holds them together. It has stood for nearly 2,000 years."
-            )),
-            .question(LessonQuestion(
-                question: "Why did Romans build tall arcades for their aqueducts?",
+                question: "How did Roman aqueducts move water without any pumps?",
                 options: [
-                    "To make the aqueduct look impressive",
-                    "To keep the water channel at a steady downhill slope across valleys",
-                    "To protect the water from enemies",
-                    "To let boats pass underneath"
+                    "They used windmills to push the water",
+                    "Gravity pulled the water down a gentle slope",
+                    "Slaves carried buckets along the channel",
+                    "They heated the water to make steam"
                 ],
                 correctIndex: 1,
-                explanation: "The aqueduct relied on gravity, so the water channel had to maintain a steady downhill slope. When the land dipped into a valley, tall arcades kept the channel up at the right height so the gradient stayed consistent.",
-                science: .hydraulics
-            )),
-            .reading(LessonReading(
-                title: "The Inverted Siphon",
-                body: "Sometimes a valley was too wide or deep for an arcade. Roman engineers had another trick: the **inverted siphon**. They sealed the water into strong **lead pipes** that plunged down one side of the valley and shot back up the other side. Water pressure pushed the water upward — as long as the exit was slightly lower than the entrance. It is the same science that makes water rise through a bendy straw! These siphons needed incredibly strong pipes because the water pressure at the bottom was enormous.",
-                science: .hydraulics,
-                illustrationIcon: "arrow.down.to.line"
-            )),
-            .reading(LessonReading(
-                title: "The Castellum Divisorium — Splitting the Flow",
-                body: "When the aqueduct finally reached the city, the water entered a large basin called the **castellum divisorium** (say: kas-TEL-um di-vi-SOR-ee-um). This was like a roundabout for water! It split the flow into separate channels — some going to public fountains, some to bathhouses, and some to wealthy homes. Lead pipes called **fistulae** carried water to individual buildings. The Romans even had water meters — the size of the pipe determined how much water you were allowed!",
-                science: .hydraulics,
-                illustrationIcon: "arrow.triangle.branch"
-            )),
-            .question(LessonQuestion(
-                question: "What is a castellum divisorium?",
-                options: [
-                    "A military fortress guarding the aqueduct",
-                    "A distribution basin that splits water into separate channels",
-                    "A storage tank on top of a hill",
-                    "A filter that cleans the water"
-                ],
-                correctIndex: 1,
-                explanation: "The castellum divisorium was the aqueduct's distribution hub — a large basin where the incoming water was divided into separate channels heading to different parts of the city.",
-                science: .hydraulics
-            )),
-            .reading(LessonReading(
-                title: "Roman Concrete — The Secret Ingredient",
-                body: "The arches and channels of an aqueduct were built with **Roman concrete**, one of the strongest building materials in history. The secret ingredient? **Volcanic ash** called pozzolana, mixed with lime and water. This concrete could even harden underwater! Regular concrete today is strong for about 50 years, but Roman concrete has lasted over **2,000 years** because the volcanic ash creates crystals that actually get stronger over time.",
-                science: .materials,
-                illustrationIcon: "cube.fill"
-            )),
-            .fillInBlanks(LessonFillInBlanks(
-                title: "Complete the Passage",
-                text: "An aqueduct carries water using the force of {{gravity}} instead of pumps. The water flows through a covered channel called the {{specus}}, which is lined with waterproof {{plaster}}. When the channel crosses a valley, it rides on top of tall stone {{arcades}}. At the city, a {{castellum}} splits the water into separate pipes.",
-                distractors: ["pumps", "columns", "bridges", "forum"],
+                explanation: "The whole trick was gravity. By tilting the channel just slightly downhill, water flowed on its own — no machines needed. Simple idea, incredible execution.",
                 science: .engineering
             )),
+
+            // ── 5. The Gradient — Math Concept ────────────────
+
             .reading(LessonReading(
-                title: "Surveying the Route",
-                body: "Before building could begin, engineers had to plan the route carefully. They used a tool called a **groma** — a wooden cross with hanging weights — to make perfectly straight lines. For checking the slope, they used a **chorobates**, a long wooden table with a water-filled groove on top (the world's first spirit level!). Planning an aqueduct route could take **years** of careful measurement across mountains and valleys.",
+                title: "Measuring the Tilt",
+                body: """
+                The Romans measured their slope as a **ratio**.
+
+                A gradient of **1:200** means: for every 200 steps forward, \
+                the channel drops by 1 step.
+
+                That is tiny. Like tilting a football field by the height \
+                of a ruler. But that tiny tilt was enough to keep water \
+                moving across entire countries.
+
+                In the quiz, you will calculate how much water drops over \
+                a real aqueduct distance. The math is just division — the \
+                hard part was getting it right 2,000 years ago.
+                """,
                 science: .mathematics,
                 illustrationIcon: "ruler"
             )),
-            .funFact(LessonFunFact(
-                text: "Rome had **11 major aqueducts** by the 3rd century AD, delivering roughly **1 million cubic meters** of water per day. That is about **400 Olympic swimming pools** worth of fresh water — every single day!"
-            )),
-            .question(LessonQuestion(
-                question: "If an aqueduct delivers 500 liters of water per second, how many liters does it deliver in one hour (3,600 seconds)?",
-                options: ["180,000 liters", "500,000 liters", "1,800,000 liters", "3,600,000 liters"],
-                correctIndex: 2,
-                explanation: "Multiply the flow rate by the number of seconds: 500 × 3,600 = 1,800,000 liters per hour. That is enough to fill about 720 bathtubs every hour!",
+
+            // ── 5b. Gradient Visual ──────────────────────────
+
+            .mathVisual(LessonMathVisual(
+                type: .aqueductGradient,
+                title: "Visualize the Gradient",
                 science: .mathematics,
-                hints: [
-                    "Flow = rate × time. You need to multiply liters per second by the number of seconds in one hour.",
-                    "There are 3,600 seconds in one hour. Multiply 500 × 3,600.",
-                    "500 × 3,600 = 1,800,000. The answer is 1,800,000 liters."
-                ]
+                totalSteps: 5,
+                caption: "A gradient of 1:200 means for every 200 meters forward, the channel drops 1 meter. This tiny tilt is the secret to Roman aqueducts."
             )),
+
+            // ── 6. The Water Channel ──────────────────────────
+
             .reading(LessonReading(
-                title: "Maintenance and Repair",
-                body: "Aqueducts needed constant care. Mineral deposits called **sinter** built up inside the specus over time, like limescale in a teakettle. Workers called **aquarii** crawled through the channels to scrape them clean. Inspection hatches along the route let workers check for cracks and leaks. The Roman water commissioner **Frontinus** wrote an entire book about managing the aqueduct system — it is one of the oldest engineering manuals that still survives today!",
+                title: "The Channel",
+                body: """
+                The water flowed through a stone channel called the \
+                **specus** (say: SPECK-us).
+
+                Picture a long stone bathtub with a lid on top. That is \
+                basically it.
+
+                The inside was coated with a special **waterproof plaster** \
+                made from crushed pottery. Every drop was precious. They \
+                could not afford leaks.
+
+                The channel was big enough for a person to walk inside — \
+                because someone had to clean it.
+                """,
+                science: .engineering,
+                illustrationIcon: "rectangle.split.3x1"
+            )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "What was the waterproof plaster made of?",
+                    answer: "It was called **opus signinum** — crushed pottery mixed into Roman concrete. The tiny pieces of broken clay sealed the pores and made the surface waterproof. Romans recycled broken pots into building material."
+                ),
+                CuriosityQA(
+                    question: "How long did it take to build one aqueduct?",
+                    answer: "A major aqueduct could take **10 to 20 years** to build. The planning alone took years. Thousands of workers — including soldiers — cut stone, dug tunnels, and stacked arches by hand."
+                )
+            ])),
+
+            // ── 7. Crossing Valleys ───────────────────────────
+
+            .reading(LessonReading(
+                title: "The Valley Problem",
+                body: """
+                Here is a problem. The channel needs to go downhill. \
+                Always downhill. Never up.
+
+                But what happens when you reach a valley?
+
+                You cannot dip the channel down and back up. Water does \
+                not climb.
+
+                So the Romans built giant **stone arcades** — rows of \
+                arches stacked on top of each other — to carry the channel \
+                across the valley at the same height.
+
+                The most famous one is the **Pont du Gard** in France. \
+                Three levels of arches, nearly **50 meters tall**. It is \
+                still standing today.
+                """,
+                science: .engineering,
+                illustrationIcon: "archway"
+            )),
+
+            // ── 8. Fun Fact ───────────────────────────────────
+
+            .funFact(LessonFunFact(
+                text: """
+                The **Pont du Gard** was built without any glue or mortar \
+                between the stones. The blocks — some weighing as much as \
+                an elephant — were cut so perfectly that **friction alone** \
+                holds them together. Two thousand years later, it still stands.
+                """
+            )),
+
+            // ── 9. Question ───────────────────────────────────
+
+            .question(LessonQuestion(
+                question: "Why did the Romans build tall stone arcades across valleys?",
+                options: [
+                    "To impress the people in the valley below",
+                    "To keep the water channel at the right height so gravity still worked",
+                    "To protect the water from enemy attacks",
+                    "To let boats pass underneath"
+                ],
+                correctIndex: 1,
+                explanation: "The water had to keep flowing downhill. When the land dipped into a valley, the arcades held the channel up high so the gentle slope never broke. No slope, no flow.",
+                science: .hydraulics
+            )),
+
+            // ── 10. The Straw Trick ──────────────────────────
+
+            .reading(LessonReading(
+                title: "The Straw Trick",
+                body: """
+                Sometimes a valley was just too wide for arches.
+
+                The Romans had a backup plan: the **inverted siphon**.
+
+                Imagine drinking through a bendy straw. The water goes \
+                down, then comes back up. It works because of **pressure**.
+
+                The Romans did the same thing — but with huge **lead pipes**. \
+                Water plunged down one side of the valley and shot back \
+                up the other side. As long as the exit was a little lower \
+                than the entrance, pressure did the rest.
+                """,
+                science: .hydraulics,
+                illustrationIcon: "arrow.down.to.line"
+            )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Isn't lead poisonous? Did the water make people sick?",
+                    answer: "Good question! Yes, lead is toxic. But the Romans got a bit lucky — mineral buildup inside the pipes created a natural coating that mostly blocked the lead from dissolving into the water. Still, some historians think low-level lead exposure was a real problem in Rome."
+                ),
+                CuriosityQA(
+                    question: "Why didn't the pipes burst from the pressure?",
+                    answer: "Sometimes they did! The pressure at the bottom of a deep valley was enormous. Romans used extra-thick lead pipes reinforced with stone casings. Maintaining siphons was one of the hardest jobs in the whole system."
+                )
+            ])),
+
+            // ── 11. Splitting the Water ──────────────────────
+
+            .reading(LessonReading(
+                title: "Sharing the Water",
+                body: """
+                The water finally arrives in the city. Now what?
+
+                It flows into a big stone basin called a **castellum**. \
+                Think of it like a roundabout — but for water.
+
+                From there, the water splits into smaller pipes. Some go \
+                to public fountains. Some go to bathhouses. Some go to \
+                rich people's homes.
+
+                The Romans even had water meters. The size of your pipe \
+                decided how much water you got. Bigger pipe, more water.
+                """,
+                science: .hydraulics,
+                illustrationIcon: "arrow.triangle.branch"
+            )),
+
+            // ── 12. Question ─────────────────────────────────
+
+            .question(LessonQuestion(
+                question: "What does a castellum do?",
+                options: [
+                    "It is a fort that guards the aqueduct",
+                    "It splits the water into pipes going to different places",
+                    "It stores water on top of a hill",
+                    "It filters dirt out of the water"
+                ],
+                correctIndex: 1,
+                explanation: "The castellum was the city's water roundabout — a stone basin where the incoming flow was split into separate pipes heading to fountains, baths, and homes all across Rome.",
+                science: .hydraulics
+            )),
+
+            // ── 13. Concrete — with Workshop prompt ──────────
+
+            .reading(LessonReading(
+                title: "Concrete That Lasts Forever",
+                body: """
+                Modern concrete cracks and crumbles after about 50 years.
+
+                Roman concrete has lasted over **2,000 years**. Some of it \
+                is stronger today than when it was poured.
+
+                What is the difference?
+
+                The secret is **volcanic ash** — a powder called \
+                **pozzolana** from near Mount Vesuvius. Mix it with \
+                **lime** and water, and something amazing happens. The ash \
+                creates tiny crystals that grow stronger over time.
+
+                It even hardens underwater. Perfect for aqueducts.
+                """,
+                science: .materials,
+                illustrationIcon: "cube.fill"
+            )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Why don't we use Roman concrete today?",
+                    answer: "We actually are starting to! In 2023, **MIT researchers** figured out the Romans used **hot mixing** — combining quicklime and ash at very high temperatures. This created tiny lumps that can **heal cracks on their own**. Scientists are now trying to bring this back into modern building."
+                ),
+                CuriosityQA(
+                    question: "Where did they get the volcanic ash?",
+                    answer: "From the area around **Mount Vesuvius** and other volcanic regions in Italy. The ash is called **pozzolana**, named after the town of **Pozzuoli** near Naples. Romans shipped it all over their empire."
+                )
+            ])),
+
+            // ── 14. Workshop prompt — right after concrete ───
+
+            .environmentPrompt(LessonEnvironmentPrompt(
+                destination: .workshop,
+                title: "Collect Volcanic Ash & Limestone",
+                description: "You just learned about Roman concrete. Visit the Workshop to collect volcanic ash from the volcano and limestone from the quarry — mix them to make your own concrete.",
+                icon: "hammer.fill"
+            )),
+
+            // ── 15. Fill in Blanks ───────────────────────────
+
+            .fillInBlanks(LessonFillInBlanks(
+                title: "Complete the Passage",
+                text: """
+                An aqueduct moves water using {{gravity}} instead of \
+                pumps. The water flows through a stone channel called \
+                the {{specus}}. When the channel crosses a valley, it \
+                rides on top of stone {{arcades}}. At the city, a \
+                {{castellum}} splits the water into separate pipes.
+                """,
+                distractors: ["pumps", "columns", "bridges", "forum"],
+                science: .engineering
+            )),
+
+            // ── 16. Flow Math Concept ────────────────────────
+
+            .reading(LessonReading(
+                title: "How Much Water?",
+                body: """
+                Here is a fun way to think about aqueduct math.
+
+                If water flows at a steady speed — say, 500 cups per \
+                second — and you want to know how much arrives in an \
+                hour, you just multiply.
+
+                **Speed times time equals total.**
+
+                That is it. That is the whole formula. You will use it \
+                in the quiz to figure out how much water Rome actually \
+                got every day. The numbers are wild.
+                """,
+                science: .mathematics,
+                illustrationIcon: "drop.fill"
+            )),
+
+            // ── 16b. Flow Rate Visual ──────────────────────
+
+            .mathVisual(LessonMathVisual(
+                type: .aqueductFlowRate,
+                title: "Visualize the Flow",
+                science: .mathematics,
+                totalSteps: 5,
+                caption: "Speed times time equals total. At 500 cups per second for one hour, that is 1,800,000 cups — enough to fill thousands of bathtubs."
+            )),
+
+            // ── 17. Fun Fact ─────────────────────────────────
+
+            .funFact(LessonFunFact(
+                text: """
+                By the 3rd century, Rome had **11 aqueducts** delivering \
+                about **1 million cubic meters** of water per day. That \
+                is roughly **400 Olympic swimming pools** — every single \
+                day. For a civilization with no electricity.
+                """
+            )),
+
+            // ── 18. Keeping It Running ───────────────────────
+
+            .reading(LessonReading(
+                title: "Keeping It Running",
+                body: """
+                Building the aqueduct was hard. Keeping it working? \
+                Just as hard.
+
+                Mineral buildup — like the crusty stuff inside an old \
+                teakettle — would clog the channels over time.
+
+                Workers called **aquarii** crawled through the tunnels \
+                to scrape the walls clean. It was dark, tight, and \
+                never-ending work.
+
+                A Roman water commissioner named **Frontinus** wrote an \
+                entire book about managing the system. It is one of the \
+                oldest engineering manuals that still exists.
+                """,
                 science: .engineering,
                 illustrationIcon: "wrench.and.screwdriver"
             )),
+
+            // ── 19. Forest prompt — right when timber is needed
+
             .reading(LessonReading(
-                title: "Materials for Your Aqueduct",
-                body: "To build your own aqueduct model, you will need several materials. **Roman concrete** made with volcanic ash and lime gives the arches their incredible strength. **Lime mortar** binds the stone blocks together. **Lead sheeting** lines the pipes and siphons to make them watertight. And **marble slabs** finish the decorative facades of the castellum divisorium. Time to gather your supplies!",
-                science: .materials,
-                illustrationIcon: "shippingbox"
+                title: "Building the Arches",
+                body: """
+                One last thing. Those stone arches did not build themselves.
+
+                Workers needed **massive wooden scaffolding** to hold the \
+                stones in place while building. Imagine a wooden skeleton \
+                shaped like an arch — stones are placed on top, and once \
+                the keystone locks them together, the wood is removed.
+
+                That means **timber**. Lots of it. Some scaffolding stood \
+                50 meters tall.
+                """,
+                science: .engineering,
+                illustrationIcon: "tree.fill"
             )),
-            .environmentPrompt(LessonEnvironmentPrompt(
-                destination: .workshop,
-                title: "Gather Concrete Ingredients",
-                description: "Visit the workshop to collect volcanic ash from the volcano station and limestone from the quarry — the key ingredients for Roman concrete and lime mortar.",
-                icon: "hammer.fill"
-            )),
+
             .environmentPrompt(LessonEnvironmentPrompt(
                 destination: .forest,
-                title: "Collect Timber for Scaffolding",
-                description: "Head into the forest to gather timber beams for the massive scaffolding needed to build aqueduct arches — some standing 50 meters tall!",
+                title: "Gather Timber for Scaffolding",
+                description: "You need timber beams to build the scaffolding for your aqueduct arches. Head into the forest to collect wood.",
                 icon: "leaf.fill"
+            )),
+
+            // ── 20. Crafting Room prompt ─────────────────────
+
+            .environmentPrompt(LessonEnvironmentPrompt(
+                destination: .craftingRoom,
+                title: "Craft Your Building Materials",
+                description: "You have raw materials — now turn them into building supplies. Visit the Crafting Room to mix concrete, prepare lime mortar, and shape lead pipes.",
+                icon: "hammer.fill"
             ))
         ]
     )

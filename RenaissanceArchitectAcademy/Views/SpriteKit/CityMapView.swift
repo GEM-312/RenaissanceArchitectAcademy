@@ -36,6 +36,9 @@ struct CityMapView: View {
     /// Onboarding state for avatar display
     var onboardingState: OnboardingState? = nil
 
+    /// When set, auto-opens the lesson for this plot ID (used for return-from-workshop)
+    @Binding var returnToLessonPlotId: Int?
+
     /// The currently selected plot (when user taps a building)
     @State private var selectedPlot: BuildingPlot?
 
@@ -189,6 +192,8 @@ struct CityMapView: View {
                     workshopState: workshopState,
                     notebookState: notebookState,
                     onNavigate: { destination in
+                        // Store return-to-lesson before navigating to workshop/forest
+                        returnToLessonPlotId = plot.id
                         withAnimation {
                             showBuildingLesson = false
                             selectedPlot = nil
@@ -324,7 +329,7 @@ struct CityMapView: View {
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
                             Text(lockedMessage)
-                                .font(.custom("EBGaramond-Regular", size: 17))
+                                .font(.system(size: 17))
                                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
                                 .multilineTextAlignment(.center)
                                 .lineSpacing(4)
@@ -397,7 +402,7 @@ struct CityMapView: View {
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
                             Text("Now head to the Workshop to collect raw materials and craft what you need to build.")
-                                .font(.custom("EBGaramond-Regular", size: 17))
+                                .font(.system(size: 17))
                                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
                                 .multilineTextAlignment(.center)
                                 .lineSpacing(4)
@@ -455,6 +460,13 @@ struct CityMapView: View {
             // Sync completion states when view appears (e.g., after completing in Era view)
             if let currentScene = scene {
                 syncCompletionStates(in: currentScene)
+            }
+            // Auto-open lesson if returning from workshop/forest
+            if let plotId = returnToLessonPlotId,
+               let plot = viewModel.buildingPlots.first(where: { $0.id == plotId }) {
+                selectedPlot = plot
+                showBuildingLesson = true
+                returnToLessonPlotId = nil
             }
         }
         .sheet(isPresented: $showChallenge) {
@@ -525,7 +537,7 @@ struct CityMapView: View {
             }
         }
         .sheet(isPresented: $showWorkshopSheet) {
-            WorkshopView(workshop: workshopState)
+            WorkshopView(workshop: workshopState, returnToLessonPlotId: .constant(nil))
                 #if os(macOS)
                 .frame(minWidth: 900, minHeight: 600)
                 #endif
@@ -730,5 +742,5 @@ struct CityMapView: View {
 // MARK: - Preview
 
 #Preview {
-    CityMapView(viewModel: CityViewModel(), workshopState: WorkshopState())
+    CityMapView(viewModel: CityViewModel(), workshopState: WorkshopState(), returnToLessonPlotId: .constant(nil))
 }

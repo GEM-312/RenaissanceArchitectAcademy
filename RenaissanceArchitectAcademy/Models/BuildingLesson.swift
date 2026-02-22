@@ -14,6 +14,23 @@ enum LessonSection {
     case question(LessonQuestion)
     case fillInBlanks(LessonFillInBlanks)
     case environmentPrompt(LessonEnvironmentPrompt)
+    case curiosity(LessonCuriosity)          // "Students Also Ask" — tappable Q&A
+    case mathVisual(LessonMathVisual)        // Animated step-by-step math diagram
+}
+
+/// Types of animated math diagrams — expandable per building
+enum MathVisualType {
+    case aqueductGradient   // Slope ratio diagram (1:200)
+    case aqueductFlowRate   // Flow rate calculation (speed × time = total)
+}
+
+/// An animated step-by-step math diagram embedded in a lesson
+struct LessonMathVisual {
+    let type: MathVisualType
+    let title: String
+    let science: Science
+    let totalSteps: Int
+    let caption: String
 }
 
 /// A reading section with text and optional illustration placeholder
@@ -73,6 +90,17 @@ struct LessonEnvironmentPrompt {
     let title: String
     let description: String
     let icon: String
+}
+
+/// "Students Also Ask" — expandable Q&A cards shown after readings
+struct LessonCuriosity {
+    let questions: [CuriosityQA]
+}
+
+/// A single curiosity question + pre-written answer
+struct CuriosityQA {
+    let question: String
+    let answer: String
 }
 
 /// Fill-in-the-blanks activity — key words removed from text, user picks from word bank

@@ -10,6 +10,7 @@ struct WorkshopInteriorView: View {
     var onNavigate: ((SidebarDestination) -> Void)? = nil
     var onBackToMenu: (() -> Void)? = nil
     var onboardingState: OnboardingState? = nil
+    @Binding var returnToLessonPlotId: Int?
     var onBack: () -> Void
 
     // Which station overlay is showing
@@ -740,7 +741,13 @@ struct WorkshopInteriorView: View {
                     showBackButton: true,
                     onBack: onBack,
                     onBackToMenu: onBackToMenu,
-                    onboardingState: onboardingState
+                    onboardingState: onboardingState,
+                    returnToLessonBuildingName: returnToLessonPlotId.flatMap { id in
+                        viewModel.buildingPlots.first(where: { $0.id == id })?.building.name
+                    },
+                    onReturnToLesson: returnToLessonPlotId != nil ? {
+                        onNavigate?(.cityMap)
+                    } : nil
                 )
             } else {
                 // Fallback if no viewModel
@@ -850,7 +857,7 @@ struct WorkshopInteriorView: View {
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 Text(workshop.educationalText)
-                    .font(.custom("EBGaramond-Regular", size: 17))
+                    .font(.system(size: 17))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
@@ -1005,5 +1012,5 @@ struct WorkshopInteriorView: View {
 }
 
 #Preview {
-    WorkshopInteriorView(workshop: WorkshopState(), onBack: {})
+    WorkshopInteriorView(workshop: WorkshopState(), returnToLessonPlotId: .constant(nil), onBack: {})
 }

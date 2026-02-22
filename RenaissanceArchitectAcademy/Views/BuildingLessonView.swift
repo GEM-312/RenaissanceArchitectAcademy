@@ -27,6 +27,12 @@ struct BuildingLessonView: View {
     @State private var showScratchPad = false        // toggle scratch pad visibility
     @State private var scratchPadText: String = ""   // macOS text fallback
 
+    // Curiosity Q&A state
+    @State private var expandedCuriosityIndex: Int? = nil  // which Q is tapped open
+
+    // Math visual state
+    @State private var mathVisualStep: Int = 1  // starts at step 1 on appear
+
     // Fill-in-blanks state
     @State private var blankAnswers: [Int: String] = [:]  // blankIndex → word placed
     @State private var activeBlankIndex: Int? = nil
@@ -41,6 +47,26 @@ struct BuildingLessonView: View {
         lesson?.sections ?? []
     }
 
+    /// Group sections into pages: inline sections attach to their preceding primary section
+    /// Primary: .reading, .funFact, .question, .fillInBlanks → start a new page
+    /// Inline: .curiosity, .mathVisual, .environmentPrompt → attach to previous page
+    private var pages: [[LessonSection]] {
+        var result: [[LessonSection]] = []
+        for section in sections {
+            switch section {
+            case .curiosity, .mathVisual, .environmentPrompt:
+                if result.isEmpty {
+                    result.append([section])
+                } else {
+                    result[result.count - 1].append(section)
+                }
+            default:
+                result.append([section])
+            }
+        }
+        return result
+    }
+
     private var progress: BuildingProgress {
         viewModel.buildingProgressMap[plot.id] ?? BuildingProgress()
     }
@@ -49,17 +75,22 @@ struct BuildingLessonView: View {
         progress.lessonRead
     }
 
-    /// Whether the current section is "complete" (user can advance)
+    /// Whether the current page is "complete" (user can advance)
     private var canContinue: Bool {
-        guard currentIndex < sections.count else { return true }
-        switch sections[currentIndex] {
-        case .reading, .funFact, .environmentPrompt:
-            return true
-        case .question:
-            return showExplanation
-        case .fillInBlanks(let activity):
-            return blanksChecked && allBlanksCorrect(activity)
+        guard currentIndex < pages.count else { return true }
+        for section in pages[currentIndex] {
+            switch section {
+            case .reading, .funFact, .environmentPrompt, .curiosity:
+                continue
+            case .question:
+                if !showExplanation { return false }
+            case .fillInBlanks(let activity):
+                if !(blanksChecked && allBlanksCorrect(activity)) { return false }
+            case .mathVisual(let visual):
+                if mathVisualStep < visual.totalSteps { return false }
+            }
         }
+        return true
     }
 
     // MARK: - Body
@@ -74,13 +105,17 @@ struct BuildingLessonView: View {
                 topBar
 
                 // Content area
-                if currentIndex < sections.count {
+                if currentIndex < pages.count {
                     ScrollView {
                         VStack(spacing: 0) {
-                            sectionView(sections[currentIndex])
-                                .padding(.horizontal, 24)
-                                .padding(.top, 20)
-                                .padding(.bottom, 12)
+                            VStack(alignment: .leading, spacing: 20) {
+                                ForEach(Array(pages[currentIndex].enumerated()), id: \.offset) { _, section in
+                                    sectionView(section)
+                                }
+                            }
+                            .padding(.horizontal, 24)
+                            .padding(.top, 20)
+                            .padding(.bottom, 12)
 
                             // Continue / Next button
                             continueButton
@@ -114,14 +149,14 @@ struct BuildingLessonView: View {
         .onAppear {
             // Restore bookmark from previous session
             let saved = viewModel.loadLessonBookmark(for: plot.id)
-            if saved > 0 && saved < sections.count {
+            if saved > 0 && saved < pages.count {
                 currentIndex = saved
             }
             freezeWordBankIfNeeded()
         }
         .onDisappear {
             // Save bookmark when leaving (unless lesson is complete)
-            if currentIndex < sections.count {
+            if currentIndex < pages.count {
                 viewModel.saveLessonBookmark(for: plot.id, sectionIndex: currentIndex)
             }
         }
@@ -204,8 +239,8 @@ struct BuildingLessonView: View {
     }
 
     private func progressWidth(in totalWidth: CGFloat) -> CGFloat {
-        guard !sections.isEmpty else { return totalWidth }
-        let fraction = CGFloat(currentIndex) / CGFloat(sections.count)
+        guard !pages.isEmpty else { return totalWidth }
+        let fraction = CGFloat(currentIndex) / CGFloat(pages.count)
         return max(6, totalWidth * fraction)
     }
 
@@ -224,6 +259,10 @@ struct BuildingLessonView: View {
             fillInBlanksView(activity)
         case .environmentPrompt(let prompt):
             environmentPromptView(prompt)
+        case .curiosity(let curiosity):
+            curiosityView(curiosity)
+        case .mathVisual(let visual):
+            MathVisualView(visual: visual, currentStep: $mathVisualStep)
         }
     }
 
@@ -346,9 +385,9 @@ struct BuildingLessonView: View {
                     }
 
                     Text(question.explanation)
-                        .font(.custom("EBGaramond-Regular", size: 15))
+                        .font(.system(size: 16))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
-                        .lineSpacing(4)
+                        .lineSpacing(6)
                 }
                 .padding(14)
                 .background(
@@ -475,9 +514,9 @@ struct BuildingLessonView: View {
                         .padding(.top, 2)
 
                     Text(hints[index])
-                        .font(.custom("EBGaramond-Regular", size: 15))
+                        .font(.system(size: 16))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
-                        .lineSpacing(4)
+                        .lineSpacing(6)
                 }
                 .padding(12)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -522,7 +561,7 @@ struct BuildingLessonView: View {
                     )
 
                 Text(text)
-                    .font(.custom("EBGaramond-Regular", size: 16))
+                    .font(.system(size: 16))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .multilineTextAlignment(.leading)
 
@@ -612,7 +651,7 @@ struct BuildingLessonView: View {
                     Image(systemName: correct ? "checkmark.circle.fill" : "arrow.counterclockwise.circle.fill")
                         .foregroundStyle(correct ? RenaissanceColors.sageGreen : RenaissanceColors.ochre)
                     Text(correct ? "All correct!" : "Some answers need fixing — tap a blank to change it")
-                        .font(.custom("EBGaramond-Regular", size: 14))
+                        .font(.system(size: 15))
                         .foregroundStyle(correct ? RenaissanceColors.sageGreen : RenaissanceColors.ochre)
                 }
                 .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -682,7 +721,7 @@ struct BuildingLessonView: View {
                         placeWord(word, from: activity)
                     } label: {
                         Text(word)
-                            .font(.custom("EBGaramond-Regular", size: 15))
+                            .font(.system(size: 16))
                             .foregroundStyle(isUsed ? RenaissanceColors.stoneGray.opacity(0.4) : RenaissanceColors.sepiaInk)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 6)
@@ -746,60 +785,76 @@ struct BuildingLessonView: View {
     // MARK: - Environment Prompt View
 
     private func environmentPromptView(_ prompt: LessonEnvironmentPrompt) -> some View {
-        VStack(spacing: 16) {
-            Image(systemName: prompt.icon)
-                .font(.system(size: 44))
-                .foregroundStyle(destinationColor(prompt.destination))
-                .frame(width: 80, height: 80)
+        let hasRawMaterials = workshopState?.rawMaterials.values.contains(where: { $0 > 0 }) ?? false
+        let needsMaterialsFirst = prompt.destination == .craftingRoom && !hasRawMaterials
+
+        return VStack(spacing: 14) {
+            Image(systemName: needsMaterialsFirst ? "exclamationmark.triangle.fill" : prompt.icon)
+                .font(.system(size: 36))
+                .foregroundStyle(needsMaterialsFirst ? RenaissanceColors.ochre : destinationColor(prompt.destination))
+                .frame(width: 64, height: 64)
                 .background(
                     Circle()
-                        .fill(destinationColor(prompt.destination).opacity(0.1))
+                        .fill((needsMaterialsFirst ? RenaissanceColors.ochre : destinationColor(prompt.destination)).opacity(0.1))
                 )
 
             Text(prompt.title)
-                .font(.custom("Cinzel-Bold", size: 20))
+                .font(.custom("Cinzel-Bold", size: 18))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
                 .multilineTextAlignment(.center)
 
-            Text(prompt.description)
-                .font(.custom("EBGaramond-Regular", size: 16))
+            Text(needsMaterialsFirst
+                 ? "You haven't collected any raw materials yet. Visit the Workshop first to gather resources from the quarry, volcano, and river — then come back to craft them."
+                 : prompt.description)
+                .font(.system(size: 16))
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
                 .multilineTextAlignment(.center)
-                .lineSpacing(4)
+                .lineSpacing(6)
 
             Button {
-                // Navigate to full scene via onNavigate
                 onDismiss()
-                switch prompt.destination {
-                case .workshop:
+                if needsMaterialsFirst {
                     onNavigate?(.workshop)
-                case .forest:
-                    onNavigate?(.forest)
-                case .craftingRoom:
-                    onNavigate?(.workshop)
+                } else {
+                    switch prompt.destination {
+                    case .workshop:
+                        onNavigate?(.workshop)
+                    case .forest:
+                        onNavigate?(.forest)
+                    case .craftingRoom:
+                        onNavigate?(.workshop)
+                    }
                 }
             } label: {
                 HStack(spacing: 8) {
-                    Image(systemName: prompt.icon)
-                        .font(.system(size: 16))
-                    Text("Visit \(prompt.destination.rawValue.capitalized)")
-                        .font(.custom("Cinzel-Bold", size: 15))
+                    Image(systemName: needsMaterialsFirst ? "hammer.fill" : prompt.icon)
+                        .font(.system(size: 14))
+                    Text(needsMaterialsFirst ? "Visit Workshop First" : "Visit \(prompt.destination.rawValue.capitalized)")
+                        .font(.custom("Cinzel-Bold", size: 14))
                 }
                 .foregroundStyle(.white)
-                .padding(.horizontal, 24)
-                .padding(.vertical, 12)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 10)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(destinationColor(prompt.destination))
+                        .fill(needsMaterialsFirst ? RenaissanceColors.warmBrown : destinationColor(prompt.destination))
                 )
             }
             .buttonStyle(.plain)
 
             Text("Return to the lesson from the navigation bar")
-                .font(.custom("EBGaramond-Italic", size: 13))
+                .font(.custom("EBGaramond-Italic", size: 12))
                 .foregroundStyle(RenaissanceColors.stoneGray)
         }
-        .padding(.vertical, 12)
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(destinationColor(prompt.destination).opacity(0.05))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(destinationColor(prompt.destination).opacity(0.2), lineWidth: 1)
+        )
     }
 
     private func destinationColor(_ dest: LessonDestination) -> Color {
@@ -807,6 +862,70 @@ struct BuildingLessonView: View {
         case .workshop: return RenaissanceColors.warmBrown
         case .forest: return RenaissanceColors.sageGreen
         case .craftingRoom: return RenaissanceColors.renaissanceBlue
+        }
+    }
+
+    // MARK: - Curiosity Q&A ("Students Also Ask")
+
+    private func curiosityView(_ curiosity: LessonCuriosity) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // Header
+            HStack(spacing: 8) {
+                Image(systemName: "questionmark.bubble.fill")
+                    .font(.system(size: 18))
+                    .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                Text("Students Also Ask")
+                    .font(.custom("Cinzel-Bold", size: 16))
+                    .foregroundStyle(RenaissanceColors.renaissanceBlue)
+            }
+
+            // Expandable Q&A cards
+            ForEach(Array(curiosity.questions.enumerated()), id: \.offset) { index, qa in
+                VStack(alignment: .leading, spacing: 0) {
+                    // Question row (tappable)
+                    Button {
+                        withAnimation(.spring(response: 0.3)) {
+                            if expandedCuriosityIndex == index {
+                                expandedCuriosityIndex = nil
+                            } else {
+                                expandedCuriosityIndex = index
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: 10) {
+                            Text(qa.question)
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundStyle(RenaissanceColors.sepiaInk)
+                                .multilineTextAlignment(.leading)
+
+                            Spacer()
+
+                            Image(systemName: expandedCuriosityIndex == index ? "chevron.up" : "chevron.down")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundStyle(RenaissanceColors.renaissanceBlue.opacity(0.6))
+                        }
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 12)
+                    }
+                    .buttonStyle(.plain)
+
+                    // Answer (revealed when expanded)
+                    if expandedCuriosityIndex == index {
+                        markdownText(qa.answer)
+                            .padding(.horizontal, 14)
+                            .padding(.bottom, 14)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+                }
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(RenaissanceColors.renaissanceBlue.opacity(0.04))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(RenaissanceColors.renaissanceBlue.opacity(0.15), lineWidth: 1)
+                )
+            }
         }
     }
 
@@ -818,7 +937,7 @@ struct BuildingLessonView: View {
                 Button {
                     advance()
                 } label: {
-                    Text(currentIndex < sections.count - 1 ? "Continue" : "Finish Lesson")
+                    Text(currentIndex < pages.count - 1 ? "Continue" : "Finish Lesson")
                         .font(.custom("Cinzel-Bold", size: 16))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .frame(maxWidth: .infinity)
@@ -996,11 +1115,11 @@ struct BuildingLessonView: View {
 
     private func advance() {
         resetSectionState()
-        if currentIndex < sections.count - 1 {
+        if currentIndex < pages.count - 1 {
             currentIndex += 1
         } else {
-            // Past last section → completion
-            currentIndex = sections.count
+            // Past last page → completion
+            currentIndex = pages.count
         }
         freezeWordBankIfNeeded()
     }
@@ -1022,13 +1141,18 @@ struct BuildingLessonView: View {
         activeBlankIndex = nil
         blanksChecked = false
         frozenWordBank = []
+        expandedCuriosityIndex = nil
+        mathVisualStep = 1
     }
 
     /// Shuffle the word bank once and store it so it doesn't re-shuffle on every render
     private func freezeWordBankIfNeeded() {
-        guard currentIndex < sections.count else { return }
-        if case .fillInBlanks(let activity) = sections[currentIndex] {
-            frozenWordBank = (activity.correctWords + activity.distractors).shuffled()
+        guard currentIndex < pages.count else { return }
+        for section in pages[currentIndex] {
+            if case .fillInBlanks(let activity) = section {
+                frozenWordBank = (activity.correctWords + activity.distractors).shuffled()
+                return
+            }
         }
     }
 
@@ -1065,15 +1189,16 @@ struct BuildingLessonView: View {
         return parts.reduce(Text("")) { result, part in
             if part.isBold {
                 return result + Text(part.text)
-                    .font(.custom("Cinzel-Bold", size: 16))
+                    .font(.system(size: 17, weight: .bold))
                     .foregroundColor(RenaissanceColors.sepiaInk)
             } else {
                 return result + Text(part.text)
-                    .font(.custom("EBGaramond-Regular", size: 16))
+                    .font(.system(size: 17))
                     .foregroundColor(RenaissanceColors.sepiaInk)
             }
         }
-        .lineSpacing(6)
+        .tracking(0.15)
+        .lineSpacing(8)
         .multilineTextAlignment(.leading)
     }
 
@@ -1144,7 +1269,7 @@ struct WrappingHStack: View {
                     } label: {
                         if let placed = segment.placedWord {
                             Text(placed)
-                                .font(.custom("Cinzel-Bold", size: 15))
+                                .font(.system(size: 16, weight: .semibold))
                                 .foregroundStyle(
                                     segment.isCorrect ? RenaissanceColors.sageGreen :
                                     segment.isWrong ? RenaissanceColors.errorRed :
@@ -1171,7 +1296,7 @@ struct WrappingHStack: View {
                                 )
                         } else {
                             Text("_______")
-                                .font(.custom("EBGaramond-Regular", size: 15))
+                                .font(.system(size: 16))
                                 .foregroundStyle(RenaissanceColors.stoneGray.opacity(0.5))
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 4)
@@ -1194,9 +1319,9 @@ struct WrappingHStack: View {
                 } else {
                     // Plain text
                     Text(segment.text)
-                        .font(.custom("EBGaramond-Regular", size: 16))
+                        .font(.system(size: 17))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
-                        .lineSpacing(6)
+                        .lineSpacing(8)
                 }
             }
         }

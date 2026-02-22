@@ -26,6 +26,9 @@ struct ContentView: View {
     // Persistence loading guard
     @State private var hasLoadedPersistence = false
 
+    // Lesson return — stores plot ID when student navigates to workshop/forest from a lesson
+    @State private var returnToLessonPlotId: Int? = nil
+
     var body: some View {
         ZStack {
             // Parchment background
@@ -128,7 +131,7 @@ struct ContentView: View {
     private var detailView: some View {
         switch selectedDestination {
         case .cityMap:
-            CityMapView(viewModel: cityViewModel, workshopState: workshopState, notebookState: notebookState, onNavigate: navigateTo, onBackToMenu: backToMenu, onboardingState: onboardingState)
+            CityMapView(viewModel: cityViewModel, workshopState: workshopState, notebookState: notebookState, onNavigate: navigateTo, onBackToMenu: backToMenu, onboardingState: onboardingState, returnToLessonPlotId: $returnToLessonPlotId)
         case .allBuildings:
             CityView(viewModel: cityViewModel, filterEra: nil, workshopState: workshopState)
         case .era(let era):
@@ -136,9 +139,9 @@ struct ContentView: View {
         case .profile:
             ProfileView(viewModel: cityViewModel, workshopState: workshopState, onboardingState: onboardingState)
         case .workshop:
-            WorkshopView(workshop: workshopState, viewModel: cityViewModel, notebookState: notebookState, onNavigate: navigateTo, onBackToMenu: backToMenu, onboardingState: onboardingState)
+            WorkshopView(workshop: workshopState, viewModel: cityViewModel, notebookState: notebookState, onNavigate: navigateTo, onBackToMenu: backToMenu, onboardingState: onboardingState, returnToLessonPlotId: $returnToLessonPlotId)
         case .forest:
-            ForestMapView(workshop: workshopState, viewModel: cityViewModel, onNavigate: navigateTo, onBackToWorkshop: { navigateTo(.workshop) }, onBackToMenu: backToMenu, onboardingState: onboardingState)
+            ForestMapView(workshop: workshopState, viewModel: cityViewModel, onNavigate: navigateTo, onBackToWorkshop: { navigateTo(.workshop) }, onBackToMenu: backToMenu, onboardingState: onboardingState, returnToLessonPlotId: $returnToLessonPlotId)
         case .knowledgeTests:
             KnowledgeTestsView(viewModel: cityViewModel, workshopState: workshopState)
         case .notebook(let buildingId):
@@ -152,10 +155,10 @@ struct ContentView: View {
                     onDismiss: { navigateTo(.cityMap) }
                 )
             } else {
-                CityMapView(viewModel: cityViewModel, workshopState: workshopState, notebookState: notebookState, onNavigate: navigateTo, onBackToMenu: backToMenu, onboardingState: onboardingState)
+                CityMapView(viewModel: cityViewModel, workshopState: workshopState, notebookState: notebookState, onNavigate: navigateTo, onBackToMenu: backToMenu, onboardingState: onboardingState, returnToLessonPlotId: $returnToLessonPlotId)
             }
         case .none:
-            CityMapView(viewModel: cityViewModel, workshopState: workshopState, notebookState: notebookState, onNavigate: navigateTo, onBackToMenu: backToMenu, onboardingState: onboardingState)
+            CityMapView(viewModel: cityViewModel, workshopState: workshopState, notebookState: notebookState, onNavigate: navigateTo, onBackToMenu: backToMenu, onboardingState: onboardingState, returnToLessonPlotId: $returnToLessonPlotId)
         }
     }
 }

@@ -10,6 +10,8 @@ struct GameTopBarView: View {
     var onBack: (() -> Void)? = nil
     var onBackToMenu: (() -> Void)? = nil
     var onboardingState: OnboardingState? = nil
+    var returnToLessonBuildingName: String? = nil
+    var onReturnToLesson: (() -> Void)? = nil
 
     var body: some View {
         ZStack(alignment: .bottomLeading) {
@@ -79,6 +81,31 @@ struct GameTopBarView: View {
         VStack(alignment: .leading, spacing: 4) {
             if showBackButton, let onBack = onBack {
                 navButton(icon: "chevron.left", label: "Back", action: onBack)
+            }
+
+            if let buildingName = returnToLessonBuildingName, let returnAction = onReturnToLesson {
+                Button(action: returnAction) {
+                    VStack(spacing: 2) {
+                        Image(systemName: "book.fill")
+                            .font(.system(size: 20))
+                            .foregroundStyle(RenaissanceColors.ochre)
+                        Text("Lesson")
+                            .font(.custom("EBGaramond-Regular", size: 10, relativeTo: .caption))
+                            .foregroundStyle(RenaissanceColors.ochre)
+                    }
+                    .frame(width: 60, height: 48)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(RenaissanceColors.ochre.opacity(0.15))
+                            .shadow(color: RenaissanceColors.ochre.opacity(0.2), radius: 3, y: 1)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(RenaissanceColors.ochre.opacity(0.4), lineWidth: 1.5)
+                    )
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Back to \(buildingName) lesson")
             }
 
             navButton(icon: "map.fill", label: "Map") {

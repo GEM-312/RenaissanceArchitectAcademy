@@ -163,11 +163,11 @@ struct CityView: View {
         #endif
         #if os(iOS)
         .fullScreenCover(isPresented: $showWorkshop) {
-            WorkshopView(workshop: workshopState)
+            WorkshopView(workshop: workshopState, returnToLessonPlotId: .constant(nil))
         }
         #else
         .sheet(isPresented: $showWorkshop) {
-            WorkshopView(workshop: workshopState)
+            WorkshopView(workshop: workshopState, returnToLessonPlotId: .constant(nil))
                 .frame(minWidth: 900, minHeight: 600)
         }
         #endif

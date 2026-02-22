@@ -83,6 +83,9 @@
 		065 /* LessonContentRenaissance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165 /* LessonContentRenaissance.swift */; };
 		066 /* NotebookContentRome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166 /* NotebookContentRome.swift */; };
 		067 /* NotebookContentRenaissance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167 /* NotebookContentRenaissance.swift */; };
+		068 /* MathVisualView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168 /* MathVisualView.swift */; };
+		069 /* GradientSlopeVisual.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169 /* GradientSlopeVisual.swift */; };
+		070 /* FlowRateVisual.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170 /* FlowRateVisual.swift */; };
 		047 /* BoyAvatarTransition.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 147 /* BoyAvatarTransition.mp4 */; };
 		048 /* GirlAvatarTransition.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 148 /* GirlAvatarTransition.mp4 */; };
 		5475D2EF2F3146CC003AA131 /* building_complete.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2EE2F3146CB003AA131 /* building_complete.mp3 */; };
@@ -177,6 +180,9 @@
 		165 /* LessonContentRenaissance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonContentRenaissance.swift; sourceTree = "<group>"; };
 		166 /* NotebookContentRome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookContentRome.swift; sourceTree = "<group>"; };
 		167 /* NotebookContentRenaissance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookContentRenaissance.swift; sourceTree = "<group>"; };
+		168 /* MathVisualView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathVisualView.swift; sourceTree = "<group>"; };
+		169 /* GradientSlopeVisual.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientSlopeVisual.swift; sourceTree = "<group>"; };
+		170 /* FlowRateVisual.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowRateVisual.swift; sourceTree = "<group>"; };
 		544299972F3646ED00F92073 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BuildingNode.swift; path = Views/SpriteKit/BuildingNode.swift; sourceTree = "<group>"; };
 		544299982F3646ED00F92073 /* CityMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityMapView.swift; path = Views/SpriteKit/CityMapView.swift; sourceTree = "<group>"; };
 		544299992F3646ED00F92073 /* CityScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityScene.swift; path = Views/SpriteKit/CityScene.swift; sourceTree = "<group>"; };
@@ -307,6 +313,9 @@
 				138 /* GameTopBarView.swift */,
 				159 /* NotebookView.swift */,
 				160 /* NotebookCanvasView.swift */,
+				168 /* MathVisualView.swift */,
+				169 /* GradientSlopeVisual.swift */,
+				170 /* FlowRateVisual.swift */,
 				141 /* OnboardingView.swift */,
 				308 /* Sketching */,
 				309 /* Onboarding */,
@@ -592,6 +601,9 @@
 			065 /* LessonContentRenaissance.swift in Sources */,
 			066 /* NotebookContentRome.swift in Sources */,
 			067 /* NotebookContentRenaissance.swift in Sources */,
+			068 /* MathVisualView.swift in Sources */,
+			069 /* GradientSlopeVisual.swift in Sources */,
+			070 /* FlowRateVisual.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -49,7 +49,7 @@ struct StationLessonOverlay: View {
 
                 // Typewriter text
                 Text(revealedText)
-                    .font(.custom("EBGaramond-Regular", size: 16))
+                    .font(.system(size: 17))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
                     .multilineTextAlignment(.leading)
                     .lineSpacing(5)

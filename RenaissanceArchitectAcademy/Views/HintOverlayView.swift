@@ -256,7 +256,7 @@ struct HintOverlayView: View {
                         .foregroundStyle(RenaissanceColors.warmBrown)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Craft a Hint Scroll")
-                            .font(.custom("EBGaramond-Regular", size: 17))
+                            .font(.system(size: 17))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("Costs 2 raw materials")
                             .font(.custom("EBGaramond-Italic", size: 13))
@@ -301,7 +301,7 @@ struct HintOverlayView: View {
                         .foregroundStyle(RenaissanceColors.renaissanceBlue)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Earn by Activity")
-                            .font(.custom("EBGaramond-Regular", size: 17))
+                            .font(.system(size: 17))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("Answer correctly to earn 3 materials")
                             .font(.custom("EBGaramond-Italic", size: 13))
@@ -370,7 +370,7 @@ struct HintOverlayView: View {
 
             if case .trueFalse(let statement, _, let explanation) = hintData.activityType {
                 Text(statement)
-                    .font(.custom("EBGaramond-Regular", size: 17))
+                    .font(.system(size: 17))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.9))
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
@@ -434,7 +434,7 @@ struct HintOverlayView: View {
                     .background(RenaissanceColors.ochre.opacity(0.3))
 
                 Text(hintData.detailedHint)
-                    .font(.custom("EBGaramond-Regular", size: 17))
+                    .font(.system(size: 17))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.9))
                     .multilineTextAlignment(.center)
                     .lineSpacing(5)
@@ -496,7 +496,7 @@ struct HintOverlayView: View {
             Image(systemName: icon)
                 .foregroundStyle(color)
             Text(text)
-                .font(.custom("EBGaramond-Regular", size: 16))
+                .font(.system(size: 16))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
             Spacer()
             Image(systemName: "chevron.right")
