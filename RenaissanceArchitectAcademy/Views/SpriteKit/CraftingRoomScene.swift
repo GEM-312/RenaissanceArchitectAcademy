@@ -48,8 +48,8 @@ class CraftingRoomScene: SKScene {
         .shelf:        CGPoint(x: 2975, y: 875),
     ]
 
-    /// Sprite display size for furniture images
-    private let furnitureSpriteSize = CGSize(width: 500, height: 500)
+    /// Sprite display size for furniture images (smaller than outdoor — interior perspective)
+    private let furnitureSpriteSize = CGSize(width: 760, height: 760)
 
     // MARK: - Waypoint Graph (simple indoor paths)
 
@@ -234,6 +234,9 @@ class CraftingRoomScene: SKScene {
         // Spawn at door position (bottom center)
         playerNode.position = waypoints[0]
         playerNode.zPosition = 50
+        // Scale up for interior scene — player is 170pt in outdoor maps,
+        // needs to be ~2.5x larger to look right in this close-up room
+        playerNode.setScale(5.0)
         addChild(playerNode)
         updatePlayerScreenPosition()
     }

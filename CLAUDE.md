@@ -21,7 +21,8 @@ RenaissanceArchitectAcademy/
 │   ├── Assets.xcassets/                      # Science*, Nav*, State*, City*, BirdFrame00-12,
 │   │                                         # ApprenticeFrame00-14, VolcanoFrame00-14,
 │   │                                         # Station*, Interior*, WorkshopTerrain, etc.
-│   ├── Fonts/                                # Cinzel, EBGaramond, PetitFormalScript
+│   ├── Fonts/                                # Cinzel, EBGaramond, PetitFormalScript, Mulish,
+│   │                                         # LibreBaskerville, LibreFranklin, Delius
 │   ├── Views/
 │   │   ├── ContentView.swift                 # Root view, navigation state, shared ViewModel
 │   │   ├── MainMenuView.swift                # Title + background image
@@ -38,7 +39,6 @@ RenaissanceArchitectAcademy/
 │   │   ├── MoleculeView.swift                # Chemical structure diagrams (7 molecules)
 │   │   ├── WorkshopView.swift                # Workshop entry (outdoor/indoor toggle)
 │   │   ├── WorkshopMapView.swift             # SwiftUI wrapper for outdoor WorkshopScene
-│   │   ├── WorkshopInteriorView.swift        # Interior crafting room
 │   │   ├── SketchingChallengeView.swift      # Master orchestrator for sketching mini-game
 │   │   ├── KnowledgeTestsView.swift          # Quiz challenges list
 │   │   ├── GameTopBarView.swift              # Shared top nav bar + building strip
@@ -61,7 +61,9 @@ RenaissanceArchitectAcademy/
 │   │       ├── CityMapView.swift             # SwiftUI wrapper + mascot overlay
 │   │       ├── PlayerNode.swift              # Da Vinci stick figure (Workshop)
 │   │       ├── ResourceNode.swift            # Resource station nodes (Workshop)
-│   │       ├── WorkshopScene.swift           # Workshop SpriteKit scene
+│   │       ├── WorkshopScene.swift           # Workshop outdoor SpriteKit scene
+│   │       ├── CraftingRoomScene.swift       # Crafting room interior SpriteKit scene
+│   │       ├── CraftingRoomMapView.swift     # SwiftUI wrapper for CraftingRoomScene
 │   │       └── ForestScene.swift             # Forest exploration SpriteKit scene
 │   ├── ViewModels/
 │   │   ├── CityViewModel.swift               # @MainActor, @Published state, 17 buildings
@@ -89,7 +91,9 @@ RenaissanceArchitectAcademy/
 │   │   ├── NotebookContentRenaissance.swift  # 9 Renaissance vocabulary sets (6 terms each)
 │   │   ├── BuildingProgress.swift            # Building progress tracking
 │   │   ├── BuildingProgressRecord.swift      # Progress persistence record
-│   │   └── PlayerSave.swift                  # Player save data model
+│   │   ├── PlayerSave.swift                  # Player save data model
+│   │   ├── MasterAssignment.swift            # Master crafting task assignments
+│   │   └── LessonRecord.swift               # Lesson completion tracking
 │   └── Styles/
 │       ├── RenaissanceColors.swift           # Full color palette + gradients
 │       └── RenaissanceButton.swift           # Engineering blueprint style buttons
@@ -182,13 +186,18 @@ RenaissanceArchitectAcademy/
 - Currently always shows onboarding (skip check commented out in ContentView for development)
 - Forest station: after lesson, shows choice dialogue (Collect Timber vs Explore the Forest)
 
-### Workshop (outdoor SpriteKit + indoor SwiftUI)
-- **Outdoor**: Apprentice walks between 8 resource stations + 1 crafting room (Dijkstra pathfinding, 64 waypoints)
-- **Indoor** (WorkshopInteriorView): Workbench (mix), Furnace (fire), Pigment Table, Storage Shelf
-- Crafting flow: Collect → enter Crafting Room → Mix at workbench → Fire in furnace → Educational popup
+### Workshop (outdoor SpriteKit + indoor SpriteKit)
+- **Outdoor** (WorkshopScene + WorkshopMapView): Apprentice walks between 8 resource stations + 1 crafting room (Dijkstra pathfinding, 64 waypoints)
+- **Indoor** (CraftingRoomScene + CraftingRoomMapView): Apprentice walks between 4 furniture stations (Dijkstra pathfinding, 11 waypoints)
+  - Furniture: Workbench (mix), Furnace (fire), Pigment Table (pigment collection + recipes), Storage Shelf (inventory)
+  - `CraftingStation` enum: `.workbench`, `.furnace`, `.pigmentTable`, `.shelf`
+  - Tap furniture → apprentice walks there → SwiftUI overlay appears
+  - Player spawns at door position (bottom-center), walks to furniture via waypoint graph
+- Crafting flow: Collect outdoors → enter Crafting Room → Mix at workbench → Fire in furnace → Educational popup
 - 6 resource stations have Midjourney sprites; volcano has 15-frame animation
-- Crafting Room replaces old outdoor workbench/furnace/pigmentTable — single entry to interior
+- Crafting room station pulses like resource stations on outdoor map
 - Footstep sound (footstep.wav) plays during apprentice walking (0.55s interval)
+- Master assignments: `MasterAssignment` model, random crafting tasks with bonus florins
 
 ### GameTopBarView
 - Shared nav bar across City Map, Workshop, Crafting Room
@@ -219,7 +228,11 @@ Mathematics, Physics, Chemistry, Geometry, Engineering, Astronomy, Biology, Geol
 | errorRed | #CD5C5C | Errors |
 
 ### Custom Fonts (registered via CoreText in App.swift)
-Cinzel-Bold (titles), Cinzel-Regular (labels), EBGaramond-Regular (body), EBGaramond-Italic (buttons/hints), PetitFormalScript-Regular (tagline)
+- **Cinzel-Bold** (titles), **Cinzel-Regular** (labels, section headers)
+- **Mulish-Light** (body text, buttons), **Mulish-Medium/SemiBold/Bold** (emphasis)
+- **LibreBaskerville** (serif body alternative), **LibreFranklin** (sans-serif alternative)
+- **EBGaramond-Regular/Italic** (legacy body — being replaced by Mulish)
+- **PetitFormalScript-Regular** (tagline), **Delius-Regular** (handwritten accent)
 
 ### Resizing New Midjourney Assets
 ```bash
@@ -244,20 +257,34 @@ Styles/[name]_frames/clean/    # Photoshop exports (no bg)
 
 ## Next Steps
 
-### PRIORITY: Forest Scene & Lessons
+### PRIORITY 1: Forest Scene (next session)
 - [ ] Build out ForestScene.swift — Italian tree biodiversity, biology & environment education
+- [ ] ForestScene.swift and ForestMapView.swift already exist as stubs — need full implementation
 - [ ] Forest terrain image needed (ForestTerrain.png) — or use Forest1-4 assets already in xcassets
 - [ ] Tree stations: oak, pine, cypress, chestnut, olive — each with educational content
 - [ ] Timber collection mechanics (connects to building `requiredMaterials` needing `.timberBeams`)
 - [ ] Lesson environment prompts already link to `.forest` — need ForestScene to handle arrival
-- [ ] ForestMapView.swift and ForestScene.swift already exist as stubs — need full implementation
 - [ ] Biology/ecology lessons per tree species (growth patterns, wood properties, uses in construction)
+- [ ] Apprentice walks between tree stations (same Dijkstra pattern as Workshop/CraftingRoom)
+
+### PRIORITY 2: Crafting Room Scene Polish (next session)
+- [ ] Tune furniture positions and waypoints using editor mode (press E)
+- [ ] Test all 4 station overlays end-to-end (workbench → furnace → educational popup)
+- [ ] Verify crafting room terrain/background looks right at 3500×2500
+- [ ] Consider adding door entrance animation when transitioning from outdoor
+
+### PRIORITY 3: App-Wide Style Consistency (next session)
+- [ ] Audit font usage across all views — standardize on Cinzel (titles) + Mulish (body/buttons)
+- [ ] Remove remaining EBGaramond references, replace with Mulish-Light
+- [ ] Consistent overlay styling (background opacity, corner radius, shadow, padding)
+- [ ] Consistent button styling across scenes (glass buttons vs filled vs outlined)
+- [ ] Color palette audit — ensure all views use RenaissanceColors consistently
+- [ ] Spacing and padding consistency (16pt standard margins, 12pt inner padding)
 
 ### Game Flow & Progression
 - [ ] Prompt user to explore cities/buildings after workshop play (bird nudge system)
 - [ ] Trigger quizzes after certain gameplay milestones (time played, materials collected, buildings visited)
 - [ ] Award system — badges, achievements for completing challenges, crafting, sketching
-- [ ] Currency system — coins/ducats earned from quizzes, crafting, exploration; spent on building upgrades
 - [ ] Re-enable onboarding skip (uncomment check in ContentView after onboarding is finalized)
 
 ### New Scenes
@@ -275,11 +302,25 @@ Styles/[name]_frames/clean/    # Photoshop exports (no bg)
 
 ### Art & Assets
 - [ ] Remove backgrounds from volcano frames (Marina in Photoshop)
-- [ ] Add station sprites for remaining stations (market, crafting room)
+- [x] ~~Add station sprites for remaining stations (market, crafting room)~~ (DONE — Feb 22 2026)
+
+### PRIORITY 4: Audio & Sound Design (next session)
+- [ ] Background music — ambient Renaissance lute/harpsichord loop for main menu, city map, workshop
+- [ ] Forest ambience — birds, wind, rustling leaves (looping)
+- [ ] Crafting room ambience — crackling fire, workshop sounds
+- [ ] UI sounds — button tap, overlay open/close, page turn (lessons)
+- [ ] Crafting sounds — workbench mixing, furnace fire whoosh, crafting complete chime
+- [ ] Collection sounds — resource pickup, timber chop, stone quarry hit
+- [ ] Challenge sounds — correct answer ding, wrong answer buzz, quiz complete fanfare
+- [ ] Walking sounds — footstep.wav already exists (0.55s interval), add surface variants (stone, grass, wood)
+- [ ] Transition sounds — scene enter/exit swoosh, crafting room door creak
+- [ ] Bird companion — chirp on hint, squawk on wrong answer, happy trill on success
+- [ ] Sketch sounds — pencil scratch on canvas, stamp for column placement
+- [ ] Consider AVAudioPlayer for music loops, SKAction.playSoundFileNamed for SFX
+- [ ] Volume controls — separate sliders for music vs SFX in settings/profile
 
 ### Technical
 - [ ] Adjust 64 waypoints to match new terrain in editor mode
-- [ ] Sound effects (challenge_success, challenge_fail, puzzle_match)
 - [ ] Persist progress with UserDefaults/SwiftData
 - [ ] Building construction animation
 - [ ] Full bloom animation (gray sketch → watercolor)
