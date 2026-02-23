@@ -7,6 +7,7 @@ struct ContentView: View {
     @State private var selectedDestination: SidebarDestination? = .cityMap  // Start with SpriteKit map!
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.scenePhase) private var scenePhase
 
     // Shared ViewModel - so map and era views share progress!
     @StateObject private var cityViewModel = CityViewModel()
@@ -28,6 +29,9 @@ struct ContentView: View {
 
     // Lesson return — stores plot ID when student navigates to workshop/forest from a lesson
     @State private var returnToLessonPlotId: Int? = nil
+
+    // Play time tracking
+    @State private var sessionStartDate: Date? = nil
 
     var body: some View {
         ZStack {
@@ -93,8 +97,27 @@ struct ContentView: View {
             workshopState.loadFromPersistence()
             onboardingState.loadFromSwiftData(manager: manager)
 
+            // Seed lesson records into SwiftData on first launch
+            LessonSeedService.seedIfNeeded(context: modelContext)
+
             // Scope notebook to the current player
             notebookState.switchPlayer(to: manager.currentPlayerName)
+
+            // Start tracking play time
+            sessionStartDate = Date()
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            switch newPhase {
+            case .background, .inactive:
+                flushPlayTime()
+            case .active:
+                // Restart session clock when returning
+                if sessionStartDate == nil {
+                    sessionStartDate = Date()
+                }
+            @unknown default:
+                break
+            }
         }
         #if os(macOS)
         .frame(minWidth: 800, minHeight: 700)
@@ -119,6 +142,16 @@ struct ContentView: View {
         }
     }
 
+    /// Save accumulated play time since session start
+    private func flushPlayTime() {
+        guard let start = sessionStartDate else { return }
+        let elapsed = Date().timeIntervalSince(start)
+        if elapsed > 1 {
+            cityViewModel.addPlayTime(elapsed)
+        }
+        sessionStartDate = nil
+    }
+
     /// Return to the main menu
     private func backToMenu() {
         withAnimation(.easeInOut(duration: 0.5)) {
@@ -137,7 +170,7 @@ struct ContentView: View {
         case .era(let era):
             CityView(viewModel: cityViewModel, filterEra: era, workshopState: workshopState)
         case .profile:
-            ProfileView(viewModel: cityViewModel, workshopState: workshopState, onboardingState: onboardingState)
+            ProfileView(viewModel: cityViewModel, workshopState: workshopState, onboardingState: onboardingState, onNavigate: navigateTo, onBackToMenu: backToMenu)
         case .workshop:
             WorkshopView(workshop: workshopState, viewModel: cityViewModel, notebookState: notebookState, onNavigate: navigateTo, onBackToMenu: backToMenu, onboardingState: onboardingState, returnToLessonPlotId: $returnToLessonPlotId)
         case .forest:

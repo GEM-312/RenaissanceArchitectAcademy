@@ -59,12 +59,12 @@ struct SketchingChallengeView: View {
                 // Header
                 VStack(spacing: 8) {
                     Text(challenge.buildingName)
-                        .font(.custom("Cinzel-Bold", size: isLargeScreen ? 36 : 28, relativeTo: .title))
+                        .font(.custom("Cinzel-Regular", size: isLargeScreen ? 36 : 28, relativeTo: .title))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     Text("Sketching Challenge")
-                        .font(.custom("EBGaramond-Italic", size: isLargeScreen ? 20 : 16, relativeTo: .subheadline))
-                        .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                        .font(.custom("Mulish-Light", size: isLargeScreen ? 20 : 16, relativeTo: .subheadline))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
 
                 // Decorative divider
@@ -74,7 +74,7 @@ struct SketchingChallengeView: View {
                         .frame(height: 1)
                     Image(systemName: "pencil.and.ruler")
                         .font(.caption)
-                        .foregroundStyle(RenaissanceColors.warmBrown)
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
                     Rectangle()
                         .fill(RenaissanceColors.ochre.opacity(0.4))
                         .frame(height: 1)
@@ -83,7 +83,7 @@ struct SketchingChallengeView: View {
 
                 // Introduction text
                 Text(challenge.introduction)
-                    .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 18 : 16, relativeTo: .body))
+                    .font(.custom("Mulish-Light", size: isLargeScreen ? 18 : 16, relativeTo: .body))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
@@ -93,7 +93,7 @@ struct SketchingChallengeView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Drawing Phases")
                         .font(.custom("Cinzel-Regular", size: 14, relativeTo: .caption))
-                        .foregroundStyle(RenaissanceColors.warmBrown)
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     ForEach(Array(challenge.phases.enumerated()), id: \.offset) { index, phase in
                         HStack(spacing: 12) {
@@ -102,19 +102,19 @@ struct SketchingChallengeView: View {
                                     .fill(RenaissanceColors.renaissanceBlue.opacity(0.15))
                                     .frame(width: 32, height: 32)
                                 Text("\(index + 1)")
-                                    .font(.custom("Cinzel-Bold", size: 14, relativeTo: .caption))
-                                    .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                                    .font(.custom("Cinzel-Regular", size: 14, relativeTo: .caption))
+                                    .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
 
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(phase.title)
-                                    .font(.custom("EBGaramond-Regular", size: 15, relativeTo: .body))
+                                    .font(.custom("Mulish-Light", size: 15, relativeTo: .body))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                                 HStack(spacing: 4) {
                                     ForEach(phase.sciencesFocused, id: \.self) { science in
                                         Image(systemName: science.sfSymbolName)
-                                            .font(.system(size: 10))
+                                            .font(.custom("Mulish-Light", size: 10, relativeTo: .caption2))
                                             .foregroundStyle(RenaissanceColors.color(for: science))
                                     }
                                 }
@@ -123,7 +123,7 @@ struct SketchingChallengeView: View {
                             Spacer()
 
                             Image(systemName: phase.phaseType.iconName)
-                                .foregroundStyle(RenaissanceColors.stoneGray)
+                                .foregroundStyle(RenaissanceColors.sepiaInk)
                         }
                         .padding(.vertical, 4)
                     }
@@ -150,8 +150,8 @@ struct SketchingChallengeView: View {
                     Button("Back") {
                         onDismiss()
                     }
-                    .font(.custom("EBGaramond-Italic", size: 14, relativeTo: .caption))
-                    .foregroundStyle(RenaissanceColors.stoneGray)
+                    .font(.custom("Mulish-Light", size: 14, relativeTo: .caption))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
                     .buttonStyle(.plain)
                 }
                 .padding(.top, 8)
@@ -224,14 +224,14 @@ struct SketchingChallengeView: View {
                 VStack(spacing: 20) {
                     Spacer()
                     Image(systemName: "hammer.fill")
-                        .font(.system(size: 48))
-                        .foregroundStyle(RenaissanceColors.stoneGray)
+                        .font(.custom("Mulish-Light", size: 48, relativeTo: .title3))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text("Coming Soon")
-                        .font(.custom("Cinzel-Bold", size: 24, relativeTo: .title))
+                        .font(.custom("Cinzel-Regular", size: 24, relativeTo: .title))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text("This drawing phase is under construction.")
-                        .font(.custom("EBGaramond-Italic", size: 16, relativeTo: .body))
-                        .foregroundStyle(RenaissanceColors.stoneGray)
+                        .font(.custom("Mulish-Light", size: 16, relativeTo: .body))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
                     Spacer()
                 }
             }
@@ -251,17 +251,17 @@ struct SketchingChallengeView: View {
                         .fill(RenaissanceColors.goldSuccess.opacity(0.15))
                         .frame(width: 100, height: 100)
                     Image(systemName: "checkmark.seal.fill")
-                        .font(.system(size: 48))
+                        .font(.custom("Mulish-Light", size: 48, relativeTo: .title3))
                         .foregroundStyle(RenaissanceColors.goldSuccess)
                 }
 
                 Text("Masterful Work!")
-                    .font(.custom("Cinzel-Bold", size: isLargeScreen ? 32 : 26, relativeTo: .title))
+                    .font(.custom("Cinzel-Regular", size: isLargeScreen ? 32 : 26, relativeTo: .title))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 Text(challenge.buildingName)
-                    .font(.custom("EBGaramond-Italic", size: 18, relativeTo: .subheadline))
-                    .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                    .font(.custom("Mulish-Light", size: 18, relativeTo: .subheadline))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 // Decorative divider
                 HStack(spacing: 12) {
@@ -279,7 +279,7 @@ struct SketchingChallengeView: View {
 
                 // Educational summary
                 Text(challenge.educationalSummary)
-                    .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 17 : 15, relativeTo: .body))
+                    .font(.custom("Mulish-Light", size: isLargeScreen ? 17 : 15, relativeTo: .body))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
@@ -294,7 +294,7 @@ struct SketchingChallengeView: View {
                                 .foregroundStyle(completedPhases.contains(phase.phaseType)
                                                  ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray)
                             Text(phase.phaseType.italianTitle)
-                                .font(.custom("EBGaramond-Regular", size: 12, relativeTo: .caption2))
+                                .font(.custom("Mulish-Light", size: 12, relativeTo: .caption2))
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                         }
                     }

@@ -46,7 +46,9 @@ enum ResourceStationType: String, CaseIterable, Hashable {
         case .clayPit:      return "StationClayPit"
         case .mine:         return "StationMine"
         case .forest:       return "StationForest"
-        default:            return nil  // pigmentTable, market, workbench, furnace use shapes
+        case .market:       return "StationMarket"
+        case .craftingRoom: return "StationCraftingRoom"
+        default:            return nil  // pigmentTable, workbench, furnace use shapes
         }
     }
 
@@ -80,8 +82,8 @@ class ResourceNode: SKNode {
         super.init()
         setupVisual()
         setupLabel()
-        if !stationType.isCraftingStation {
-            setupCountLabel()
+        if !stationType.isCraftingStation || stationType == .craftingRoom {
+            if stationType != .craftingRoom { setupCountLabel() }
             addPulseAnimation()
         }
     }
@@ -489,7 +491,7 @@ class ResourceNode: SKNode {
 
     private func setupCountLabel() {
         countLabel = SKLabelNode(text: "")
-        countLabel?.fontName = "EBGaramond-Regular"
+        countLabel?.fontName = "Mulish-Light"
         countLabel?.fontSize = 32
         countLabel?.fontColor = PlatformColor(RenaissanceColors.warmBrown)
         countLabel?.position = CGPoint(x: 0, y: -175)
@@ -542,7 +544,7 @@ class ResourceNode: SKNode {
 
         target.run(bounce) { [weak self] in
             guard let self = self else { return }
-            if !self.isDepleted && !self.stationType.isCraftingStation {
+            if !self.isDepleted && (!self.stationType.isCraftingStation || self.stationType == .craftingRoom) {
                 self.addPulseAnimation()
             }
         }

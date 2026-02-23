@@ -181,7 +181,7 @@ struct CityView: View {
                 Image(systemName: "hammer.fill")
                     .font(.caption)
                 Text("Workshop")
-                    .font(.custom("EBGaramond-Italic", size: 14, relativeTo: .caption))
+                    .font(.custom("Mulish-Light", size: 14, relativeTo: .caption))
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
@@ -204,12 +204,12 @@ struct CityHeaderView: View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(.custom("Cinzel-Bold", size: 32, relativeTo: .title))
+                    .font(.custom("Cinzel-Regular", size: 32, relativeTo: .title))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 Text("\(completedCount)/\(totalCount) buildings completed")
-                    .font(.custom("EBGaramond-Italic", size: 14, relativeTo: .caption))
-                    .foregroundStyle(RenaissanceColors.stoneGray)
+                    .font(.custom("Mulish-Light", size: 14, relativeTo: .caption))
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
             }
 
             Spacer()
@@ -244,8 +244,8 @@ struct CityProgressBar: View {
                 Spacer()
 
                 Text("\(completedCount)/\(totalCount)")
-                    .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .caption))
-                    .foregroundStyle(RenaissanceColors.stoneGray)
+                    .font(.custom("Mulish-Light", size: 14, relativeTo: .caption))
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
             }
 
             GeometryReader { geometry in

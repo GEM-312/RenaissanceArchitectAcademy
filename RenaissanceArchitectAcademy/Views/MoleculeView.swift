@@ -15,12 +15,12 @@ struct AtomLabel: View {
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
             Text(atom.symbol)
-                .font(.custom("EBGaramond-Regular", size: atomFontSize))
+                .font(.custom("Mulish-Light", size: atomFontSize))
                 .foregroundColor(RenaissanceColors.sepiaInk)
 
             if let charge = atom.charge {
                 Text(charge)
-                    .font(.custom("EBGaramond-Regular", size: atomFontSize * 0.5))
+                    .font(.custom("Mulish-Light", size: atomFontSize * 0.5))
                     .foregroundColor(RenaissanceColors.sepiaInk)
                     .baselineOffset(atomFontSize * 0.35)
             }
@@ -203,12 +203,12 @@ struct MoleculeView: View {
     private var formulaLabel: some View {
         VStack(spacing: 2) {
             Text(molecule.formula)
-                .font(.custom("Cinzel-Bold", size: 16))
+                .font(.custom("Cinzel-Regular", size: 16))
                 .foregroundColor(RenaissanceColors.sepiaInk)
 
             Text(molecule.name)
-                .font(.custom("EBGaramond-Italic", size: 13))
-                .foregroundColor(RenaissanceColors.warmBrown)
+                .font(.custom("Mulish-Light", size: 13))
+                .foregroundColor(RenaissanceColors.sepiaInk)
         }
     }
 

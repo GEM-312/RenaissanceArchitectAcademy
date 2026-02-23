@@ -165,7 +165,7 @@ class CityScene: SKScene {
 
                 // "Expansion Area" label
                 let label = SKLabelNode(text: "Expansion Area")
-                label.fontName = "EBGaramond-Italic"
+                label.fontName = "Mulish-Light"
                 label.fontSize = 28
                 label.fontColor = PlatformColor(RenaissanceColors.sepiaInk.opacity(0.25))
                 label.position = CGPoint(x: centerX, y: centerY)
@@ -280,7 +280,7 @@ class CityScene: SKScene {
 
     private func addRiverLabel(_ name: String, at position: CGPoint, rotation: CGFloat) {
         let label = SKLabelNode(text: name)
-        label.fontName = "EBGaramond-Italic"
+        label.fontName = "Mulish-Light"
         label.fontSize = 20
         label.fontColor = PlatformColor(RenaissanceColors.renaissanceBlue.opacity(0.8))
         label.position = position
@@ -412,18 +412,18 @@ class CityScene: SKScene {
 
         // Era labels at the top
         let romeLabel = SKLabelNode(text: "ANCIENT ROME")
-        romeLabel.fontName = "Cinzel-Bold"
+        romeLabel.fontName = "Cinzel-Regular"
         romeLabel.fontSize = 32
-        romeLabel.fontColor = PlatformColor(RenaissanceColors.terracotta.opacity(0.5))
+        romeLabel.fontColor = PlatformColor(RenaissanceColors.sepiaInk)
         romeLabel.position = CGPoint(x: 500, y: mapSize.height - 100)
         romeLabel.zPosition = -30
         romeLabel.name = "label_ancientRome"
         addChild(romeLabel)
 
         let renaissanceLabel = SKLabelNode(text: "RENAISSANCE ITALY")
-        renaissanceLabel.fontName = "Cinzel-Bold"
+        renaissanceLabel.fontName = "Cinzel-Regular"
         renaissanceLabel.fontSize = 32
-        renaissanceLabel.fontColor = PlatformColor(RenaissanceColors.renaissanceBlue.opacity(0.5))
+        renaissanceLabel.fontColor = PlatformColor(RenaissanceColors.sepiaInk)
         renaissanceLabel.position = CGPoint(x: 2400, y: mapSize.height - 100)
         renaissanceLabel.zPosition = -30
         renaissanceLabel.name = "label_renaissanceItaly"
@@ -459,7 +459,7 @@ class CityScene: SKScene {
 
         // Roman numeral
         let numLabel = SKLabelNode(text: numeral)
-        numLabel.fontName = "Cinzel-Bold"
+        numLabel.fontName = "Cinzel-Regular"
         numLabel.fontSize = 36
         numLabel.fontColor = PlatformColor(RenaissanceColors.sepiaInk.opacity(0.4))
         numLabel.position = CGPoint(x: 0, y: 20)
@@ -467,7 +467,7 @@ class CityScene: SKScene {
 
         // Zone name
         let nameLabel = SKLabelNode(text: name)
-        nameLabel.fontName = "EBGaramond-Italic"
+        nameLabel.fontName = "Mulish-Light"
         nameLabel.fontSize = 18
         nameLabel.fontColor = PlatformColor(RenaissanceColors.sepiaInk.opacity(0.3))
         nameLabel.position = CGPoint(x: 0, y: -10)

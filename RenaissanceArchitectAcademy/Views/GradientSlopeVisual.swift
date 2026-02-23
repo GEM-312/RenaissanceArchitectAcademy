@@ -25,7 +25,7 @@ struct GradientSlopeVisual: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(RenaissanceColors.blueprintBlue.opacity(0.2), lineWidth: 1)
+                    .stroke(RenaissanceColors.ochre.opacity(0.25), lineWidth: 1)
             )
             .clipped()
 
@@ -100,8 +100,8 @@ struct GradientSlopeVisual: View {
             // Ratio label in center
             let labelCenter = CGPoint(x: w / 2, y: h * 0.2)
             let ratioText = Text("1 : 200")
-                .font(.custom("Cinzel-Bold", size: 24))
-                .foregroundColor(RenaissanceColors.blueprintBlue)
+                .font(.custom("Mulish-Bold", size: 24))
+                .foregroundColor(RenaissanceColors.sepiaInk)
             context.draw(context.resolve(ratioText), at: labelCenter, anchor: .center)
         }
 
@@ -114,7 +114,7 @@ struct GradientSlopeVisual: View {
         if currentStep >= 5 {
             let checkPos = CGPoint(x: w - pad, y: pad)
             let checkText = Text(Image(systemName: "checkmark.circle.fill"))
-                .font(.system(size: 28))
+                .font(.custom("Mulish-Light", size: 28, relativeTo: .title3))
                 .foregroundColor(RenaissanceColors.sageGreen)
             context.draw(context.resolve(checkText), at: checkPos, anchor: .center)
         }
@@ -124,7 +124,7 @@ struct GradientSlopeVisual: View {
 
     private func drawGrid(context: GraphicsContext, size: CGSize) {
         let spacing: CGFloat = 20
-        let color = RenaissanceColors.blueprintBlue.opacity(0.15)
+        let color = RenaissanceColors.ochre.opacity(0.12)
 
         for x in stride(from: 0, through: size.width, by: spacing) {
             var path = Path()
@@ -147,13 +147,13 @@ struct GradientSlopeVisual: View {
         var topPath = Path()
         topPath.move(to: CGPoint(x: start.x, y: start.y - thickness / 2))
         topPath.addLine(to: CGPoint(x: end.x, y: end.y - thickness / 2))
-        context.stroke(topPath, with: .color(RenaissanceColors.blueprintBlue), style: StrokeStyle(lineWidth: 1.5, lineCap: .round))
+        context.stroke(topPath, with: .color(RenaissanceColors.warmBrown), style: StrokeStyle(lineWidth: 1.5, lineCap: .round))
 
         // Bottom surface
         var bottomPath = Path()
         bottomPath.move(to: CGPoint(x: start.x, y: start.y + thickness / 2))
         bottomPath.addLine(to: CGPoint(x: end.x, y: end.y + thickness / 2))
-        context.stroke(bottomPath, with: .color(RenaissanceColors.blueprintBlue), style: StrokeStyle(lineWidth: 1.5, lineCap: .round))
+        context.stroke(bottomPath, with: .color(RenaissanceColors.warmBrown), style: StrokeStyle(lineWidth: 1.5, lineCap: .round))
 
         // Fill between
         var fillPath = Path()
@@ -162,7 +162,7 @@ struct GradientSlopeVisual: View {
         fillPath.addLine(to: CGPoint(x: end.x, y: end.y + thickness / 2))
         fillPath.addLine(to: CGPoint(x: start.x, y: start.y + thickness / 2))
         fillPath.closeSubpath()
-        context.fill(fillPath, with: .color(RenaissanceColors.blueprintBlue.opacity(0.08)))
+        context.fill(fillPath, with: .color(RenaissanceColors.warmBrown.opacity(0.08)))
 
         // Arch supports (decorative)
         let archCount = 5
@@ -186,14 +186,14 @@ struct GradientSlopeVisual: View {
             archPath.move(to: CGPoint(x: cx + 12, y: cy))
             archPath.addLine(to: CGPoint(x: cx + 12, y: cy + archHeight + 5))
 
-            context.stroke(archPath, with: .color(RenaissanceColors.blueprintBlue.opacity(0.4)), style: StrokeStyle(lineWidth: 1, lineCap: .round))
+            context.stroke(archPath, with: .color(RenaissanceColors.warmBrown.opacity(0.35)), style: StrokeStyle(lineWidth: 1, lineCap: .round))
         }
     }
 
     // MARK: - Dimension Lines
 
     private func drawDimensionLine(context: GraphicsContext, from start: CGPoint, to end: CGPoint, label: String, horizontal: Bool) {
-        let color = RenaissanceColors.warmBrown
+        let color = RenaissanceColors.terracotta
 
         // Main line
         var linePath = Path()
@@ -222,7 +222,7 @@ struct GradientSlopeVisual: View {
         // Label
         let mid = CGPoint(x: (start.x + end.x) / 2, y: (start.y + end.y) / 2)
         let labelText = Text(label)
-            .font(.custom("Cinzel-Bold", size: 13))
+            .font(.custom("Mulish-SemiBold", size: 13))
             .foregroundColor(color)
 
         if horizontal {
@@ -253,7 +253,7 @@ struct GradientSlopeVisual: View {
                 width: dropSize,
                 height: dropSize
             ))
-            context.fill(dropPath, with: .color(RenaissanceColors.renaissanceBlue.opacity(0.7)))
+            context.fill(dropPath, with: .color(RenaissanceColors.renaissanceBlue.opacity(0.6)))
         }
     }
 
@@ -274,35 +274,35 @@ struct GradientSlopeVisual: View {
         switch currentStep {
         case 0:
             Text("Tap \"Next Step\" to begin")
-                .font(.custom("EBGaramond-Italic", size: 15))
-                .foregroundStyle(RenaissanceColors.stoneGray)
+                .font(.custom("Mulish-Light", size: 15))
+                .foregroundStyle(RenaissanceColors.sepiaInk)
         case 1:
             Text("A flat aqueduct channel sits on its stone arches.")
-                .font(.system(size: 16))
+                .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
         case 2:
             Text("The channel tilts slightly downhill. The horizontal distance is **200 meters**.")
-                .font(.system(size: 16))
+                .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
         case 3:
             VStack(alignment: .leading, spacing: 4) {
                 Text("The drop is just **1 meter** over that distance.")
-                    .font(.system(size: 16))
+                    .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
-                Text("Gradient = drop / distance = 1 : 200")
-                    .font(.custom("Cinzel-Bold", size: 14))
-                    .foregroundStyle(RenaissanceColors.blueprintBlue)
+                Text("Gradient = drop \u{00F7} distance = 1 : 200")
+                    .font(.custom("Mulish-SemiBold", size: 14))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
             }
         case 4:
             Text("Water flows down this gentle slope using only **gravity** -- no pumps needed!")
-                .font(.system(size: 16))
+                .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
         case 5:
             HStack(spacing: 6) {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundStyle(RenaissanceColors.sageGreen)
                 Text("A 1:200 gradient means 1 meter of drop for every 200 meters of length. This tiny tilt kept water flowing across entire countries.")
-                    .font(.system(size: 16))
+                    .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
         default:

@@ -28,7 +28,7 @@ struct HydraulicsFlowView: View {
         VStack(spacing: isLargeScreen ? 24 : 16) {
             // Instructions
             Text("Trace the water flow path from start to end")
-                .font(.custom("EBGaramond-Italic", size: isLargeScreen ? 18 : 14))
+                .font(.custom("Mulish-Light", size: isLargeScreen ? 18 : 14))
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
 
             // Drawing canvas
@@ -36,7 +36,7 @@ struct HydraulicsFlowView: View {
                 .changeEffect(
                     .spray(origin: UnitPoint(x: 0.5, y: 0.5)) {
                         Image(systemName: "drop.fill")
-                            .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
                     },
                     value: showSuccessEffect
                 )
@@ -60,7 +60,7 @@ struct HydraulicsFlowView: View {
                             Image(systemName: "arrow.counterclockwise")
                             Text("Clear")
                         }
-                        .font(.custom("EBGaramond-Italic", size: 16))
+                        .font(.custom("Mulish-Light", size: 16))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                     }
                     .buttonStyle(.plain)
@@ -176,7 +176,7 @@ struct HydraulicsFlowView: View {
 
                 // Label
                 Text(checkpoint.label)
-                    .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 12 : 10))
+                    .font(.custom("Mulish-Light", size: isLargeScreen ? 12 : 10))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
             }
             .position(x: x, y: y)
@@ -194,12 +194,12 @@ struct HydraulicsFlowView: View {
                     .frame(width: 20, height: 20)
                     .overlay(
                         Image(systemName: label == "START" ? "drop.fill" : "flag.fill")
-                            .font(.system(size: 10))
+                            .font(.custom("Mulish-Light", size: 10, relativeTo: .caption2))
                             .foregroundStyle(.white)
                     )
 
                 Text(label)
-                    .font(.custom("Cinzel-Bold", size: 10))
+                    .font(.custom("Cinzel-Regular", size: 10))
                     .foregroundStyle(color)
             }
             .position(x: x, y: y)
@@ -253,7 +253,7 @@ struct HydraulicsFlowView: View {
             legendItem(color: RenaissanceColors.terracotta, label: "End")
             legendItem(color: RenaissanceColors.ochre, label: "Checkpoint", isDashed: true)
         }
-        .font(.custom("EBGaramond-Regular", size: 12))
+        .font(.custom("Mulish-Light", size: 12))
     }
 
     private func legendItem(color: Color, label: String, isDashed: Bool = false) -> some View {
@@ -281,7 +281,7 @@ struct HydraulicsFlowView: View {
                     Image(systemName: showHint ? "lightbulb.fill" : "lightbulb")
                         .foregroundStyle(RenaissanceColors.highlightAmber)
                     Text(showHint ? "Hide Hint" : "Show Hint")
-                        .font(.custom("EBGaramond-Italic", size: 14))
+                        .font(.custom("Mulish-Light", size: 14))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                 }
             }
@@ -289,8 +289,8 @@ struct HydraulicsFlowView: View {
 
             if showHint {
                 Text(hint)
-                    .font(.custom("EBGaramond-Italic", size: isLargeScreen ? 14 : 12))
-                    .foregroundStyle(RenaissanceColors.warmBrown)
+                    .font(.custom("Mulish-Light", size: isLargeScreen ? 14 : 12))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
                     .padding(10)
                     .background(
                         RoundedRectangle(cornerRadius: 8)
@@ -313,9 +313,9 @@ struct HydraulicsFlowView: View {
                 Image(systemName: "checkmark.seal")
                 Text("Check Flow")
             }
-            .font(.custom("EBGaramond-Italic", size: 18))
+            .font(.custom("Mulish-Light", size: 18))
             .tracking(2)
-            .foregroundStyle(canCheck ? RenaissanceColors.sepiaInk : RenaissanceColors.stoneGray)
+            .foregroundStyle(canCheck ? RenaissanceColors.sepiaInk : RenaissanceColors.sepiaInk)
             .padding(.horizontal, 24)
             .padding(.vertical, 14)
             .background(RenaissanceColors.parchment.opacity(canCheck ? 0.9 : 0.5))

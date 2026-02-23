@@ -43,7 +43,7 @@ struct MascotDialogueView: View {
                     // Title
                     VStack(spacing: 8) {
                         Text(plot.building.name)
-                            .font(.custom("Cinzel-Bold", size: 22))
+                            .font(.custom("Cinzel-Regular", size: 22))
                             .foregroundColor(RenaissanceColors.sepiaInk)
 
                         // Science icons row
@@ -57,8 +57,8 @@ struct MascotDialogueView: View {
                                         .clipShape(RoundedRectangle(cornerRadius: 6))
                                 } else {
                                     Image(systemName: science.sfSymbolName)
-                                        .font(.system(size: 16))
-                                        .foregroundStyle(RenaissanceColors.warmBrown)
+                                        .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
+                                        .foregroundStyle(RenaissanceColors.sepiaInk)
                                         .frame(width: 28, height: 28)
                                 }
                             }
@@ -75,11 +75,11 @@ struct MascotDialogueView: View {
                         } label: {
                             HStack(spacing: 6) {
                                 Image(systemName: "book.closed.fill")
-                                    .font(.system(size: 13))
+                                    .font(.custom("Mulish-Light", size: 13, relativeTo: .footnote))
                                 Text("Open Notebook")
-                                    .font(.custom("Cinzel-Bold", size: 12))
+                                    .font(.custom("Cinzel-Regular", size: 12))
                             }
-                            .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
                             .padding(.horizontal, 14)
                             .padding(.vertical, 7)
                             .background(
@@ -144,13 +144,13 @@ struct MascotDialogueView: View {
                         .fill(cardColor(for: choice).opacity(0.15))
                         .frame(width: 50, height: 50)
                     Image(systemName: choice.icon)
-                        .font(.system(size: 22))
+                        .font(.custom("Mulish-Light", size: 22, relativeTo: .title3))
                         .foregroundStyle(cardColor(for: choice))
                 }
 
                 // Title
                 Text(choice.rawValue)
-                    .font(.custom("Cinzel-Bold", size: 13))
+                    .font(.custom("Cinzel-Regular", size: 13))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
@@ -182,10 +182,10 @@ struct MascotDialogueView: View {
             // Florins badge
             HStack(spacing: 4) {
                 Image(systemName: "dollarsign.circle.fill")
-                    .font(.system(size: 12))
+                    .font(.custom("Mulish-Light", size: 12, relativeTo: .caption))
                     .foregroundStyle(RenaissanceColors.goldSuccess)
                 Text("+\(GameRewards.lessonReadFlorins)")
-                    .font(.custom("Cinzel-Bold", size: 12))
+                    .font(.custom("Cinzel-Regular", size: 12))
                     .foregroundStyle(RenaissanceColors.goldSuccess)
             }
             .padding(.horizontal, 10)
@@ -197,8 +197,8 @@ struct MascotDialogueView: View {
 
         case .environments:
             Text(choice.subtitle)
-                .font(.custom("EBGaramond-Italic", size: 11))
-                .foregroundStyle(RenaissanceColors.stoneGray)
+                .font(.custom("Mulish-Light", size: 11))
+                .foregroundStyle(RenaissanceColors.sepiaInk)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
 
@@ -208,10 +208,10 @@ struct MascotDialogueView: View {
             let totalReqs = totalRequirements()
             HStack(spacing: 4) {
                 Image(systemName: reqCount == totalReqs ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: 12))
+                    .font(.custom("Mulish-Light", size: 12, relativeTo: .caption))
                     .foregroundStyle(reqCount == totalReqs ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray)
                 Text("\(reqCount)/\(totalReqs)")
-                    .font(.custom("Cinzel-Bold", size: 12))
+                    .font(.custom("Cinzel-Regular", size: 12))
                     .foregroundStyle(reqCount == totalReqs ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray)
             }
         }

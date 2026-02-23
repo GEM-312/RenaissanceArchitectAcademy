@@ -46,7 +46,7 @@ struct StoryNarrativeView: View {
 
                 // Title
                 Text(page.title)
-                    .font(.custom("Cinzel-Bold", size: 36))
+                    .font(.custom("Cinzel-Regular", size: 36))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .opacity(showTitle ? 1 : 0)
                     .offset(y: showTitle ? 0 : -15)
@@ -57,7 +57,7 @@ struct StoryNarrativeView: View {
 
                 // Typewriter text
                 Text(revealedText)
-                    .font(.custom("EBGaramond-Regular", size: 19))
+                    .font(.custom("Mulish-Light", size: 19))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
                     .multilineTextAlignment(.center)
                     .lineSpacing(6)
@@ -81,7 +81,7 @@ struct StoryNarrativeView: View {
                     onContinue()
                 } label: {
                     Text("Continue")
-                        .font(.custom("Cinzel-Bold", size: 18))
+                        .font(.custom("Cinzel-Regular", size: 18))
                         .foregroundStyle(.white)
                         .padding(.horizontal, 40)
                         .padding(.vertical, 14)

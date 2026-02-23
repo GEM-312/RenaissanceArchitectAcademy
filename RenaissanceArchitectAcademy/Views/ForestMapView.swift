@@ -20,6 +20,11 @@ struct ForestMapView: View {
     // POI info overlay state
     @State private var selectedPOIIndex: Int?
 
+    // Floating timber collection feedback
+    @State private var showTimberFloat = false
+    @State private var timberFloatAmount = 0
+    @State private var timberFloatFlorins = 0
+
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -53,6 +58,25 @@ struct ForestMapView: View {
                     poiInfoOverlay(poi: poi)
                         .transition(.opacity.combined(with: .scale(scale: 0.9)))
                 }
+
+                // Layer 5: Floating "+N 🪵 +N florins" timber collection feedback
+                if showTimberFloat {
+                    HStack(spacing: 8) {
+                        Text("+\(timberFloatAmount) 🪵")
+                            .font(.custom("Cinzel-Bold", size: 22))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                        if timberFloatFlorins > 0 {
+                            Text("+\(timberFloatFlorins) florins")
+                                .font(.custom("Cinzel-Bold", size: 20))
+                                .foregroundStyle(RenaissanceColors.goldSuccess)
+                        }
+                    }
+                    .shadow(color: .white, radius: 4)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                    .padding(.bottom, 80)
+                    .allowsHitTesting(false)
+                }
             }
         }
     }
@@ -70,59 +94,105 @@ struct ForestMapView: View {
                     }
                 }
 
-            VStack(spacing: 16) {
-                // Title
-                Text("\(poi.name) (\(poi.italianName))")
-                    .font(.custom("Cinzel-Bold", size: 20))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+            ScrollView {
+                VStack(spacing: 16) {
+                    // Title + wood type badge
+                    VStack(spacing: 8) {
+                        Text("\(poi.name) (\(poi.italianName))")
+                            .font(.custom("Cinzel-Regular", size: 20))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
 
-                // Used for
-                HStack(spacing: 6) {
-                    Image(systemName: "hammer.fill")
-                        .font(.caption)
-                        .foregroundStyle(RenaissanceColors.warmBrown)
-                    Text("Used for: \(poi.usedFor)")
-                        .font(.custom("EBGaramond-Italic", size: 16))
-                        .foregroundStyle(RenaissanceColors.warmBrown)
-                }
+                        HStack(spacing: 8) {
+                            // Wood type badge
+                            Text(poi.woodType)
+                                .font(.custom("Mulish-Medium", size: 12))
+                                .foregroundStyle(RenaissanceColors.sepiaInk)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 4)
+                                .background(
+                                    Capsule()
+                                        .fill(RenaissanceColors.ochre.opacity(0.12))
+                                )
 
-                // Buildings
-                HStack(spacing: 6) {
-                    Image(systemName: "building.columns.fill")
-                        .font(.caption)
-                        .foregroundStyle(RenaissanceColors.sageGreen)
-                    Text("Buildings: \(poi.buildings)")
-                        .font(.custom("EBGaramond-Regular", size: 15))
-                        .foregroundStyle(RenaissanceColors.sageGreen)
-                }
-
-                // Description
-                Text(poi.description)
-                    .font(.custom("EBGaramond-Regular", size: 16))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                // Dismiss button
-                Button {
-                    withAnimation(.easeOut(duration: 0.2)) {
-                        selectedPOIIndex = nil
+                            // Buildings badge
+                            Text(poi.buildings)
+                                .font(.custom("Mulish-Medium", size: 12))
+                                .foregroundStyle(RenaissanceColors.sepiaInk)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 4)
+                                .background(
+                                    Capsule()
+                                        .fill(RenaissanceColors.ochre.opacity(0.1))
+                                )
+                        }
                     }
-                } label: {
-                    Text("Continue Exploring")
-                        .font(.custom("EBGaramond-Italic", size: 16))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 10)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(RenaissanceColors.sageGreen)
-                        )
+
+                    // Description
+                    Text(poi.description)
+                        .font(.system(size: 15))
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    // Architecture section
+                    infoCard(
+                        icon: "building.columns.fill",
+                        title: "Architecture",
+                        text: poi.usedFor
+                    )
+
+                    // Furniture section
+                    infoCard(
+                        icon: "chair.lounge.fill",
+                        title: "Furniture",
+                        text: poi.furnitureUse
+                    )
+
+                    // Modern use section
+                    infoCard(
+                        icon: "hammer.fill",
+                        title: "Today",
+                        text: poi.modernUse
+                    )
+
+                    // Buttons
+                    VStack(spacing: 10) {
+                        // Collect Timber button — warm ochre style
+                        Button {
+                            collectTimber(from: poi)
+                        } label: {
+                            HStack(spacing: 8) {
+                                Image(systemName: "leaf.fill")
+                                    .font(.body)
+                                Text("Collect Timber (+\(poi.timberYield) 🪵)")
+                                    .font(.custom("Mulish-SemiBold", size: 16))
+                            }
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 12)
+                            .frame(maxWidth: .infinity)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(RenaissanceColors.ochre)
+                            )
+                        }
+
+                        // Continue Exploring button
+                        Button {
+                            withAnimation(.easeOut(duration: 0.2)) {
+                                selectedPOIIndex = nil
+                            }
+                        } label: {
+                            Text("Continue Exploring")
+                                .font(.custom("Mulish-Light", size: 15))
+                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+                        }
+                    }
+                    .padding(.top, 4)
                 }
-                .padding(.top, 4)
+                .padding(24)
             }
-            .padding(28)
-            .frame(maxWidth: 420)
+            .frame(maxWidth: 420, maxHeight: 520)
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .fill(RenaissanceColors.parchment)
@@ -132,6 +202,76 @@ struct ForestMapView: View {
                 RoundedRectangle(cornerRadius: 16)
                     .stroke(RenaissanceColors.ochre.opacity(0.4), lineWidth: 1.5)
             )
+        }
+    }
+
+    // MARK: - Info Card (reusable for architecture/furniture/today sections)
+
+    private func infoCard(icon: String, title: String, text: String) -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            // Icon in warm ochre on parchment rounded square
+            Image(systemName: icon)
+                .font(.system(size: 16, weight: .medium))
+                .foregroundStyle(RenaissanceColors.sepiaInk)
+                .frame(width: 36, height: 36)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(RenaissanceColors.ochre.opacity(0.1))
+                )
+                .padding(.top, 2)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.custom("Cinzel-Regular", size: 14))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
+
+                Text(text)
+                    .font(.system(size: 14))
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.75))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(RenaissanceColors.ochre.opacity(0.06))
+        )
+    }
+
+    // MARK: - Timber Collection
+
+    private func collectTimber(from poi: ForestScene.ForestPOI) {
+        var collected = 0
+        for _ in 0..<poi.timberYield {
+            if workshop.collectFromStation(.forest, material: .timber) {
+                collected += 1
+            }
+        }
+
+        // Award florins for timber collection
+        let florinsEarned = collected * GameRewards.timberCollectFlorins
+        if florinsEarned > 0 {
+            viewModel?.earnFlorins(florinsEarned)
+        }
+
+        // Dismiss overlay
+        withAnimation(.easeOut(duration: 0.2)) {
+            selectedPOIIndex = nil
+        }
+
+        // Show floating feedback
+        if collected > 0 {
+            timberFloatAmount = collected
+            timberFloatFlorins = florinsEarned
+            withAnimation(.spring(response: 0.4)) {
+                showTimberFloat = true
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                withAnimation(.easeOut(duration: 0.3)) {
+                    showTimberFloat = false
+                }
+            }
         }
     }
 
@@ -165,25 +305,18 @@ struct ForestMapView: View {
                             Image(systemName: "chevron.left")
                             Text("Workshop")
                         }
-                        .font(.custom("EBGaramond-Italic", size: 16))
-                        .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                        .font(.custom("Mulish-Light", size: 16))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
-                        .background(
-                            Capsule()
-                                .fill(RenaissanceColors.parchment.opacity(0.95))
-                                .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
-                        )
+                        .glassButton(shape: Capsule())
                     }
                     Text("Italian Forest")
-                        .font(.custom("Cinzel-Bold", size: 20))
+                        .font(.custom("Cinzel-Regular", size: 20))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 10)
-                        .background(
-                            Capsule()
-                                .fill(RenaissanceColors.parchment.opacity(0.95))
-                        )
+                        .glassButton(shape: Capsule())
                 }
             }
         }
@@ -203,7 +336,7 @@ struct ForestMapView: View {
                                 Text(material.icon)
                                     .font(.caption)
                                 Text("\(count)")
-                                    .font(.custom("EBGaramond-Regular", size: 12))
+                                    .font(.custom("Mulish-Light", size: 12))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                             .padding(.horizontal, 6)
@@ -231,7 +364,7 @@ struct ForestMapView: View {
                                 Text(item.icon)
                                     .font(.caption)
                                 Text("\(count)")
-                                    .font(.custom("EBGaramond-Regular", size: 12))
+                                    .font(.custom("Mulish-Light", size: 12))
                                     .foregroundStyle(RenaissanceColors.sageGreen)
                             }
                             .padding(.horizontal, 6)

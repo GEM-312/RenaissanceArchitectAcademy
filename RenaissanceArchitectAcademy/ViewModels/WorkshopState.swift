@@ -20,6 +20,11 @@ class WorkshopState {
     var educationalText: String = ""
     var statusMessage: String? = nil
 
+    /// Master assignment — current crafting task from the workshop master
+    var currentAssignment: MasterAssignment?
+    /// Whether the "Earn Florins" overlay is visible
+    var showEarnFlorinsOverlay: Bool = false
+
     /// Stations whose bird lesson has been shown this session (resets each launch)
     var stationsLessonSeen: Set<ResourceStationType> = []
 
@@ -100,7 +105,9 @@ class WorkshopState {
 
     func startRespawnTimer() {
         respawnTimer = Timer.scheduledTimer(withTimeInterval: stationRespawnTime, repeats: true) { [weak self] _ in
-            self?.respawnStations()
+            Task { @MainActor in
+                self?.respawnStations()
+            }
         }
     }
 
@@ -227,12 +234,32 @@ class WorkshopState {
         craftedMaterials = save.craftedMaterials
     }
 
-    private func persistInventory() {
+    func addRawMaterials(_ materials: [Material: Int]) {
+        for (mat, count) in materials {
+            rawMaterials[mat, default: 0] += count
+        }
+        persistInventory()
+    }
+
+    func persistInventory() {
         guard let manager = persistenceManager else { return }
         let save = manager.loadPlayerSave()
         save.rawMaterials = rawMaterials
         save.craftedMaterials = craftedMaterials
         save.lastSaved = Date()
         manager.save()
+    }
+
+    // MARK: - Master Assignments
+
+    /// Generate a new random assignment from the workshop master
+    func generateNewAssignment() {
+        currentAssignment = MasterAssignment.randomAssignment()
+    }
+
+    /// Check if the just-crafted item matches the current assignment
+    func checkAssignmentCompletion(craftedItem: CraftedItem) -> Bool {
+        guard let assignment = currentAssignment else { return false }
+        return assignment.targetItem == craftedItem
     }
 }

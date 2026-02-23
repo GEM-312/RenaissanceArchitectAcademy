@@ -35,11 +35,11 @@ struct StationLessonOverlay: View {
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text(lesson.stationLabel)
-                            .font(.custom("EBGaramond-Italic", size: 14))
+                            .font(.custom("Mulish-Light", size: 14))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
 
                         Text(lesson.title)
-                            .font(.custom("Cinzel-Bold", size: 20))
+                            .font(.custom("Cinzel-Regular", size: 20))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                 }
@@ -49,7 +49,7 @@ struct StationLessonOverlay: View {
 
                 // Typewriter text
                 Text(revealedText)
-                    .font(.system(size: 17))
+                    .font(.custom("Mulish-Light", size: 17, relativeTo: .body))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
                     .multilineTextAlignment(.leading)
                     .lineSpacing(5)
@@ -69,7 +69,7 @@ struct StationLessonOverlay: View {
                                     .font(.caption2)
                             }
                             Text(science.rawValue)
-                                .font(.custom("EBGaramond-Regular", size: 12))
+                                .font(.custom("Mulish-Light", size: 12))
                         }
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
@@ -77,7 +77,7 @@ struct StationLessonOverlay: View {
                             Capsule()
                                 .fill(RenaissanceColors.renaissanceBlue.opacity(0.1))
                         )
-                        .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                 }
 
@@ -87,7 +87,7 @@ struct StationLessonOverlay: View {
                     onDismiss()
                 } label: {
                     Text("Continue")
-                        .font(.custom("Cinzel-Bold", size: 16))
+                        .font(.custom("Cinzel-Regular", size: 16))
                         .foregroundStyle(.white)
                         .padding(.horizontal, 32)
                         .padding(.vertical, 10)

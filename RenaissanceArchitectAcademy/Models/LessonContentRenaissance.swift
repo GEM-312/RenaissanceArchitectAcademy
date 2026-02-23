@@ -30,6 +30,17 @@ extension LessonContent {
                 illustrationIcon: "building.columns.fill"
             )),
 
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Why couldn't they just use the same technique as the Pantheon?",
+                    answer: "The Romans built the Pantheon's dome using **concrete** — but the recipe was lost after the fall of Rome. Nobody in 1400s Florence knew how to make Roman concrete. Brunelleschi had to invent an entirely new method using **brick and stone**. It's like knowing someone built a skyscraper but having no idea what steel is."
+                ),
+                CuriosityQA(
+                    question: "Why didn't they just build wooden scaffolding like every other dome?",
+                    answer: "The opening was **42 meters** across. No tree in Europe was long enough to span that gap, and a wooden framework that wide would have collapsed under its own weight. Brunelleschi's breakthrough was figuring out how to build the dome **ring by ring**, each ring supporting itself. No scaffolding needed."
+                )
+            ])),
+
             // ── 2. Fun Fact: The Competition ────────────────────
 
             .funFact(LessonFunFact(
@@ -111,6 +122,14 @@ extension LessonContent {
                 ]
             )),
 
+            .mathVisual(LessonMathVisual(
+                type: .duomoCurvature,
+                title: "Visualize the Curvature",
+                science: .geometry,
+                totalSteps: 5,
+                caption: "Each ring of bricks follows a curve that steepens as it rises — a catenary shape that channels gravity straight down through the walls."
+            )),
+
             // ── 7. ARCHITECTURE: Double Shell ───────────────────
 
             .reading(LessonReading(
@@ -131,6 +150,17 @@ extension LessonContent {
                 science: .architecture,
                 illustrationIcon: "circle.circle"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "How do you build two domes at once without them collapsing?",
+                    answer: "Brunelleschi built both shells **simultaneously**, connecting them with **stone ribs** every 45 degrees. Think of it like building two nested bowls and gluing toothpicks between them. The ribs transfer weight from the outer dome to the inner dome, so they strengthen each other as they rise."
+                ),
+                CuriosityQA(
+                    question: "Can you really walk between the two shells?",
+                    answer: "Yes! The gap is about **1.2 meters** wide — just enough for a person. A narrow staircase of **463 steps** spirals between the shells all the way to the lantern at the top. Tourists still climb it today, and you can see the herringbone brickwork up close. It's one of the best-preserved construction secrets in architecture."
+                )
+            ])),
 
             // ── 8. QUESTION: Architecture ───────────────────────
 
@@ -166,6 +196,14 @@ extension LessonContent {
                 """,
                 science: .physics,
                 illustrationIcon: "arrow.down.circle"
+            )),
+
+            .mathVisual(LessonMathVisual(
+                type: .duomoForceRing,
+                title: "Forces in the Lantern Ring",
+                science: .physics,
+                totalSteps: 5,
+                caption: "The 725-tonne lantern compresses the dome's peak like a giant paperweight — converting dangerous outward hoop stress into safe downward compression."
             )),
 
             // ── 10. Fun Fact: Four Million Bricks ───────────────
@@ -258,6 +296,17 @@ extension LessonContent {
                 science: .physics,
                 illustrationIcon: "rectangle.split.3x3"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Where did Brunelleschi learn the herringbone technique?",
+                    answer: "Nobody knows for sure. Some historians believe he saw it in **ancient Roman ruins** during his years studying in Rome. Others think he adapted it from **Persian bricklaying** traditions that reached Italy through trade. Either way, he kept the technique **secret** during construction — workers only learned their own small part of the process."
+                ),
+                CuriosityQA(
+                    question: "Could we build the Duomo dome today with modern technology?",
+                    answer: "We could build it faster, but probably not **better**. Modern engineers who've studied the dome say Brunelleschi's design is astonishingly efficient — the herringbone pattern, double shell, and stone chains all work together in a way that **modern computer simulations** confirm is nearly optimal. Six hundred years later, it still has no structural cracks."
+                )
+            ])),
 
             // ── 16. QUESTION: Physics ───────────────────────────
 
@@ -361,6 +410,17 @@ extension LessonContent {
                 illustrationIcon: "leaf.fill"
             )),
 
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Why did universities suddenly need gardens in the 1500s?",
+                    answer: "The **Age of Exploration** flooded Europe with thousands of unknown plants from the Americas, Africa, and Asia. Doctors had no idea which were safe. A botanical garden was the only way to grow, observe, and **test** these plants systematically. It was the Renaissance equivalent of a research lab."
+                ),
+                CuriosityQA(
+                    question: "How did a garden change the way people thought about science?",
+                    answer: "Before botanical gardens, knowledge came from **books**. If Aristotle said a plant cured fevers, you believed it. Gardens forced people to **observe for themselves** — to plant, measure, and compare. This shift from trusting ancient authority to trusting your own eyes was the seed of the **scientific method**."
+                )
+            ])),
+
             // ── 2. Fun Fact: The Palm Tree ──────────────────────
 
             .funFact(LessonFunFact(
@@ -458,6 +518,25 @@ extension LessonContent {
                 illustrationIcon: "flame.fill"
             )),
 
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "How is distillation like cooking soup in reverse?",
+                    answer: "When you boil soup, the liquid turns to steam and escapes — you lose the water and keep the solids. Distillation does the **opposite**: you capture the steam, cool it back into liquid, and keep it. The steam carries dissolved plant chemicals with it, so you end up with a **concentrated liquid extract** instead of a pile of wilted leaves."
+                ),
+                CuriosityQA(
+                    question: "Did Renaissance distilleries actually produce useful medicine?",
+                    answer: "Absolutely. **Willow bark** distillate contained **salicylic acid** — the active ingredient in aspirin. **Lavender oil** is still used as an antiseptic. **Quinine** from cinchona bark saved millions from malaria. They didn't know the chemistry behind it, but their **trial-and-error** methods found real cures."
+                )
+            ])),
+
+            .mathVisual(LessonMathVisual(
+                type: .gardenPhotosynthesis,
+                title: "Photosynthesis in Action",
+                science: .biology,
+                totalSteps: 5,
+                caption: "Plants convert sunlight, water, and CO₂ into glucose and oxygen — the chemical equation that powers nearly all life on Earth."
+            )),
+
             // ── 8. GEOLOGY: Soil and Growth ─────────────────────
 
             .reading(LessonReading(
@@ -526,6 +605,14 @@ extension LessonContent {
                 """,
                 science: .biology,
                 illustrationIcon: "books.vertical.fill"
+            )),
+
+            .mathVisual(LessonMathVisual(
+                type: .gardenGrowthRate,
+                title: "Plant Growth Over Time",
+                science: .biology,
+                totalSteps: 5,
+                caption: "Plants don't grow at a constant rate — growth follows an S-curve: slow at first, then rapid, then leveling off as the plant matures."
             )),
 
             // ── 12. QUESTION: Biology ───────────────────────────
@@ -625,6 +712,17 @@ extension LessonContent {
                 illustrationIcon: "flame.fill"
             )),
 
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Why were glassmakers treated like both prisoners and royalty?",
+                    answer: "Venetian glass was worth more per pound than **gold**. Glassmakers held the secrets to this fortune, so Venice couldn't afford to let them leave — but also couldn't afford to mistreat them. They received **noble titles**, tax exemptions, and their daughters could marry into aristocracy. Golden handcuffs, Renaissance style."
+                ),
+                CuriosityQA(
+                    question: "Why was fire such a serious threat to Venice specifically?",
+                    answer: "Venice is built on **wooden pilings** driven into mud. The entire city is essentially a wooden platform sitting in a lagoon. One rogue spark from a 1,400°C furnace could set a neighborhood ablaze — and there's no way to dig firebreaks when everything sits on water. Moving the furnaces to Murano was a matter of **survival**."
+                )
+            ])),
+
             // ── 2. Fun Fact: Death Penalty ──────────────────────
 
             .funFact(LessonFunFact(
@@ -676,6 +774,14 @@ extension LessonContent {
                 science: .chemistry
             )),
 
+            .mathVisual(LessonMathVisual(
+                type: .glassTemperature,
+                title: "Glass Phase Diagram",
+                science: .chemistry,
+                totalSteps: 5,
+                caption: "As temperature rises, silica transforms from solid to a taffy-like workable state to liquid — each phase requiring precise control by the glassmaker."
+            )),
+
             // ── 5. CHEMISTRY: Cristallo Glass ───────────────────
 
             .reading(LessonReading(
@@ -695,6 +801,17 @@ extension LessonContent {
                 science: .chemistry,
                 illustrationIcon: "sparkle"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Why does iron make glass greenish?",
+                    answer: "Iron atoms absorb **red and blue** wavelengths of light, letting mostly **green** pass through. Even tiny amounts of iron — just 0.1% — create a noticeable tint. Sand from beaches almost always contains iron, which is why ancient glass was rarely clear. Barovier's genius was figuring out how to **neutralize** this with manganese dioxide."
+                ),
+                CuriosityQA(
+                    question: "How did 'cristallo' change the world beyond just pretty cups?",
+                    answer: "Clear glass made **lenses** possible. You can't bend light precisely through tinted glass — impurities scatter the rays. Cristallo's clarity enabled **spectacles**, then **microscopes**, then **telescopes**. Galileo's discoveries about Jupiter's moons? Thank a 15th-century glassmaker on Murano."
+                )
+            ])),
 
             // ── 6. Fun Fact: Colored Glass ──────────────────────
 
@@ -743,6 +860,14 @@ extension LessonContent {
                 correctIndex: 2,
                 explanation: "Refraction occurs because light changes speed when moving between materials. Light travels slower through glass than through air, causing it to bend at the boundary. This principle — first observed by Venetian glassmakers — is the foundation of all lens-based technology.",
                 science: .optics
+            )),
+
+            .mathVisual(LessonMathVisual(
+                type: .glassRefraction,
+                title: "Light Bending Through Glass",
+                science: .optics,
+                totalSteps: 5,
+                caption: "Snell's Law governs refraction: when light enters glass at an angle, it bends toward the thicker part of the lens — the principle behind every spectacle, microscope, and telescope."
             )),
 
             // ── 9. MATERIALS: Glassblowing ──────────────────────
@@ -868,6 +993,17 @@ extension LessonContent {
                 illustrationIcon: "ferry.fill"
             )),
 
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "How could they build a warship in one day when it takes months today?",
+                    answer: "The secret wasn't speed — it was **preparation**. Every single component was pre-built to standard sizes and stored in warehouses. Assembly day was like snapping together **LEGO bricks**. Modern ships are custom-designed, but Arsenal ships were identical. Trade customization for speed, and you get extraordinary throughput."
+                ),
+                CuriosityQA(
+                    question: "Why did Venice need so many ships so fast?",
+                    answer: "Venice was a **sea empire**. Its wealth came from controlling trade routes across the Mediterranean. When enemies like the Ottoman Empire threatened, Venice needed to launch fleets of hundreds of galleys within weeks. The Arsenal was essentially a **military-industrial complex** — centuries before that term existed."
+                )
+            ])),
+
             // ── 2. Fun Fact: Henry III's Visit ──────────────────
 
             .funFact(LessonFunFact(
@@ -957,6 +1093,14 @@ extension LessonContent {
                 science: .physics
             )),
 
+            .mathVisual(LessonMathVisual(
+                type: .arsenalPulleySystem,
+                title: "Pulley Mechanical Advantage",
+                science: .physics,
+                totalSteps: 5,
+                caption: "Each pulley in a system divides the required force — a 4-pulley block lets one worker lift what would normally take four."
+            )),
+
             // ── 7. MATERIALS: Wood and Rope ─────────────────────
 
             .reading(LessonReading(
@@ -989,6 +1133,17 @@ extension LessonContent {
                 foundations of structural engineering.
                 """
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "What's the 'square-cube law' and why does it matter?",
+                    answer: "If you double the length of a ship, its surface area grows by **4×** (squared) but its volume — and weight — grows by **8×** (cubed). So a ship twice as big is eight times heavier but only four times stronger. This means bigger ships need **disproportionately thicker** hulls. Galileo realized this universal law applies to everything from ships to bones to skyscrapers."
+                ),
+                CuriosityQA(
+                    question: "How did the Arsenal keep 16,000 workers organized?",
+                    answer: "Through extreme **specialization**. Caulkers only caulked. Sawyers only sawed. Rope-makers only twisted hemp. Each worker mastered one task and did it thousands of times. This made them incredibly fast and consistent — the same principle behind every modern factory. The Arsenal basically invented the **division of labor**."
+                )
+            ])),
 
             // ── 9. QUESTION: Materials ──────────────────────────
 
@@ -1024,6 +1179,14 @@ extension LessonContent {
                 """,
                 science: .engineering,
                 illustrationIcon: "gearshape.2.fill"
+            )),
+
+            .mathVisual(LessonMathVisual(
+                type: .arsenalProductionRate,
+                title: "Assembly Line Production",
+                science: .engineering,
+                totalSteps: 5,
+                caption: "Standardized parts and specialized stations turned shipbuilding from a months-long craft into a days-long assembly process — the world's first production rate optimization."
             )),
 
             // ── 11. FILL IN BLANKS: Engineering ─────────────────
@@ -1124,6 +1287,17 @@ extension LessonContent {
                 illustrationIcon: "person.fill"
             )),
 
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Why did everyone trust Galen for 1,300 years without checking?",
+                    answer: "The medieval Church taught that **ancient authorities** were infallible. Questioning Galen was like questioning scripture — it could end your career or worse. Plus, dissecting humans was largely **forbidden**. If you can't open a body to check, you have to take the textbook's word for it. Vesalius didn't just discover anatomy — he discovered that **experts can be wrong**."
+                ),
+                CuriosityQA(
+                    question: "What were Galen's biggest mistakes?",
+                    answer: "Galen thought the liver had **five lobes** (it has four in humans — five in pigs). He believed blood passed between the heart's ventricles through invisible **pores** (there are none). He thought the jaw was two bones (it's one). These errors seem obvious now, but for 1,300 years, **no one looked** closely enough to notice."
+                )
+            ])),
+
             // ── 2. Fun Fact: Vesalius's Age ─────────────────────
 
             .funFact(LessonFunFact(
@@ -1171,6 +1345,14 @@ extension LessonContent {
                 """,
                 science: .biology,
                 illustrationIcon: "eye.circle.fill"
+            )),
+
+            .mathVisual(LessonMathVisual(
+                type: .anatomyProportion,
+                title: "The Vitruvian Proportions",
+                science: .biology,
+                totalSteps: 5,
+                caption: "Renaissance anatomists discovered mathematical ratios in the human body — arm span equals height, the navel divides the body at the golden ratio."
             )),
 
             // ── 5. OPTICS: Candlelight Design ──────────────────
@@ -1227,6 +1409,17 @@ extension LessonContent {
                 science: .chemistry,
                 illustrationIcon: "snowflake"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Why does vinegar slow decomposition?",
+                    answer: "Vinegar is **acidic** (about pH 2.4). Bacteria that cause decay thrive in neutral environments. The acid in vinegar **denatures** bacterial proteins — essentially cooking them without heat. Renaissance embalmers didn't know about bacteria, but they knew vinegar-soaked meat lasted longer. They applied the same logic to cadavers."
+                ),
+                CuriosityQA(
+                    question: "Why only teach anatomy in winter?",
+                    answer: "No refrigerators, no formaldehyde, no freezers. A cadaver at room temperature in summer would be **unusable within days**. Winter cold acted as natural refrigeration, stretching a body's usefulness to 3-4 weeks. The entire academic calendar of medical schools was built around this one brutal constraint: **bodies rot**."
+                )
+            ])),
 
             // ── 8. Fun Fact: Where Bodies Came From ─────────────
 
@@ -1300,6 +1493,14 @@ extension LessonContent {
                 illustrationIcon: "sparkles"
             )),
 
+            .mathVisual(LessonMathVisual(
+                type: .anatomyCirculation,
+                title: "Blood Circulation",
+                science: .biology,
+                totalSteps: 5,
+                caption: "William Harvey, trained at Padua, proved blood flows in a closed loop: heart → arteries → capillaries → veins → heart — a discovery that overturned 1,400 years of medical theory."
+            )),
+
             // ── 13. QUESTION: Biology ───────────────────────────
 
             .question(LessonQuestion(
@@ -1344,6 +1545,17 @@ extension LessonContent {
                 science: .engineering,
                 illustrationIcon: "pencil.and.outline"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Why did Leonardo jump between so many different subjects?",
+                    answer: "Leonardo didn't see boundaries between fields. To him, painting required **anatomy** (to draw muscles), anatomy required **engineering** (to understand joints as levers), and engineering required **mathematics** (to calculate forces). Each subject fed the others. His genius wasn't despite his scattered interests — it was **because** of them."
+                ),
+                CuriosityQA(
+                    question: "Why did he write 7,000 pages but publish almost nothing?",
+                    answer: "Leonardo was a **perfectionist** who rarely considered anything finished. He also had no incentive to publish — his notebooks were his private thinking tool, not meant for an audience. Only about **one-third** of his notebooks survive today. Imagine what was in the lost pages."
+                )
+            ])),
 
             // ── 2. Fun Fact: Mirror Writing ─────────────────────
 
@@ -1447,6 +1659,14 @@ extension LessonContent {
                 science: .physics
             )),
 
+            .mathVisual(LessonMathVisual(
+                type: .leonardoGearRatio,
+                title: "Gear Ratios in Action",
+                science: .engineering,
+                totalSteps: 5,
+                caption: "A small gear driving a large gear trades speed for force — the same principle Leonardo used to multiply human muscle power in his machines."
+            )),
+
             // ── 8. MATERIALS: The Bronze Horse ──────────────────
 
             .reading(LessonReading(
@@ -1483,6 +1703,17 @@ extension LessonContent {
                 science: .materials
             )),
 
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Could we cast the Gran Cavallo today?",
+                    answer: "Yes — and someone did. In **1999**, an American art collector named Charles Dent funded a **full-size bronze horse** cast using Leonardo's original plans. It was unveiled in Milan, exactly 500 years after the French destroyed the clay model. Modern foundry techniques made the casting straightforward, but Leonardo's engineering **design** is what made the proportions perfect."
+                ),
+                CuriosityQA(
+                    question: "Why did Leonardo study horses so obsessively?",
+                    answer: "He believed you couldn't sculpt what you didn't **understand**. He measured dozens of horses, recording the exact ratios between leg length, chest width, and head size. He even dissected dead horses to study their muscles. For Leonardo, **art without science was blind** — beauty had to be rooted in truth."
+                )
+            ])),
+
             // ── 10. ENGINEERING: Anatomy Studies ────────────────
 
             .reading(LessonReading(
@@ -1518,6 +1749,14 @@ extension LessonContent {
                 """,
                 distractors: ["Brunelleschi", "3000", "Latin", "Renaissance", "Pegasus"],
                 science: .engineering
+            )),
+
+            .mathVisual(LessonMathVisual(
+                type: .leonardoGoldenSpiral,
+                title: "The Golden Spiral",
+                science: .geometry,
+                totalSteps: 5,
+                caption: "The golden ratio (φ ≈ 1.618) appears everywhere in Leonardo's work — from the Vitruvian Man's proportions to the spiral compositions of his paintings."
             )),
 
             // ── 12. PHYSICS: Camera Obscura ─────────────────────
@@ -1660,6 +1899,17 @@ extension LessonContent {
                 illustrationIcon: "bird.fill"
             )),
 
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Why did Leonardo think humans could fly like birds?",
+                    answer: "He observed that birds are essentially **machines** that convert muscle power into lift. If you could build a machine with the right **wing shape** and enough **power**, the physics should work regardless of whether the pilot has feathers. His logic was sound — his problem was that human muscles produce about **20 times too little power** for flapping flight."
+                ),
+                CuriosityQA(
+                    question: "Did anyone actually try to fly before Leonardo?",
+                    answer: "Many tried — and most got hurt. In 1010, a monk named **Eilmer of Malmesbury** strapped wings to his arms and jumped off an abbey tower. He glided about **200 meters** before crashing and breaking both legs. Leonardo's approach was different: he studied the **science first** and built models before risking his neck. Method over madness."
+                )
+            ])),
+
             // ── 2. Fun Fact: The Codex ──────────────────────────
 
             .funFact(LessonFunFact(
@@ -1727,6 +1977,14 @@ extension LessonContent {
                 science: .physics
             )),
 
+            .mathVisual(LessonMathVisual(
+                type: .flyingLiftFormula,
+                title: "The Lift Equation",
+                science: .physics,
+                totalSteps: 5,
+                caption: "Lift = ½ × air density × velocity² × wing area × lift coefficient — the equation that governs whether anything flies or falls."
+            )),
+
             // ── 6. ENGINEERING: The Ornithopter ─────────────────
 
             .reading(LessonReading(
@@ -1751,6 +2009,17 @@ extension LessonContent {
                 illustrationIcon: "figure.strengthtraining.traditional"
             )),
 
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Why can't human legs produce enough power for flapping flight?",
+                    answer: "Birds have **massive chest muscles** — a pigeon's flight muscles are **30-35%** of its body weight. Human legs are our strongest muscles, but they only produce about **75 watts** sustained. A human-sized bird would need **1,500 watts**. Evolution optimized birds for flight over millions of years. We're optimized for **walking**."
+                ),
+                CuriosityQA(
+                    question: "What was the ornithopter made of?",
+                    answer: "Leonardo specified a frame of lightweight **pine wood** and **bamboo** joints, covered with **starched silk** for the wing membrane. Starched silk is remarkably strong and airtight for its weight — it doesn't stretch like leather. The controls used **leather straps** and **hemp cords**. Every gram mattered."
+                )
+            ])),
+
             // ── 7. MATH: Wing Area Calculation ──────────────────
 
             .question(LessonQuestion(
@@ -1769,6 +2038,14 @@ extension LessonContent {
                     "One wing: A = ½ × 6 × 2.5 = 7.5 m². Now double it for both wings.",
                     "Two wings: 7.5 × 2 = 15.0 m²"
                 ]
+            )),
+
+            .mathVisual(LessonMathVisual(
+                type: .flyingWingArea,
+                title: "Wing Area and Weight",
+                science: .physics,
+                totalSteps: 5,
+                caption: "More wing area means more lift — but also more weight and drag. Leonardo calculated the minimum wing area needed to support a human pilot's weight."
             )),
 
             // ── 8. ENGINEERING: The Glider ──────────────────────
@@ -1924,6 +2201,17 @@ extension LessonContent {
                 illustrationIcon: "moon.stars.fill"
             )),
 
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Why did 11 minutes per year matter so much?",
+                    answer: "Eleven minutes sounds trivial. But compound it over **1,600 years** and you lose 10 full days. Easter was supposed to fall near the spring equinox, but it had drifted into what was effectively still winter. When your **entire religious calendar** depends on astronomical accuracy, 11 minutes a year is a crisis in slow motion."
+                ),
+                CuriosityQA(
+                    question: "How did they measure time precisely enough to notice the error?",
+                    answer: "They used the **meridian line** — a beam of sunlight through a hole in the wall, hitting a metal strip on the floor. By marking where the sun's beam fell on the **summer solstice** year after year, they could detect drift of just fractions of a degree. It's astonishingly precise for technology that's basically a hole and a ruler."
+                )
+            ])),
+
             // ── 2. Fun Fact: The Lost Days ──────────────────────
 
             .funFact(LessonFunFact(
@@ -2032,6 +2320,17 @@ extension LessonContent {
                 illustrationIcon: "scope"
             )),
 
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Why could Galileo improve the Dutch telescope so dramatically?",
+                    answer: "The Dutch version used **cheap, bubbly glass** and gave only 3x magnification. Galileo had access to **Venetian cristallo** — the clearest glass in the world, perfected by Murano glassmakers over centuries. Better glass meant better lenses, and better lenses meant **20x magnification**. Technology builds on technology."
+                ),
+                CuriosityQA(
+                    question: "Why were Jupiter's moons such a big deal?",
+                    answer: "The Church taught that **everything** orbited Earth. Four moons clearly orbiting Jupiter proved that celestial bodies could orbit something **other** than our planet. If moons orbit Jupiter, maybe Earth orbits the Sun. One observation through a glass tube unraveled a **1,500-year-old worldview**."
+                )
+            ])),
+
             // ── 8. Fun Fact: Galileo's Trouble ──────────────────
 
             .funFact(LessonFunFact(
@@ -2082,6 +2381,14 @@ extension LessonContent {
                 science: .optics
             )),
 
+            .mathVisual(LessonMathVisual(
+                type: .observatoryMagnification,
+                title: "Telescope Magnification",
+                science: .optics,
+                totalSteps: 5,
+                caption: "Magnification equals the focal length of the objective lens divided by the focal length of the eyepiece — a simple ratio that opened the universe."
+            )),
+
             // ── 11. MATH: Angular Size ──────────────────────────
 
             .question(LessonQuestion(
@@ -2100,6 +2407,14 @@ extension LessonContent {
                     "0.5° × 20 = ?",
                     "0.5 × 20 = 10°. The Moon appeared 10° wide through the telescope."
                 ]
+            )),
+
+            .mathVisual(LessonMathVisual(
+                type: .observatoryParallax,
+                title: "Stellar Parallax",
+                science: .astronomy,
+                totalSteps: 5,
+                caption: "As Earth orbits the Sun, nearby stars appear to shift against distant backgrounds — a tiny angle that reveals enormous distances across the cosmos."
             )),
 
             // ── 12. FILL IN BLANKS: Astronomy ───────────────────
@@ -2188,6 +2503,17 @@ extension LessonContent {
                 science: .engineering,
                 illustrationIcon: "book.fill"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Why was a goldsmith the one to invent the printing press?",
+                    answer: "Goldsmiths worked with **precision metalwork** every day — casting, engraving, and alloying metals. Gutenberg needed all three skills: casting tiny letter molds, engraving letter punches, and formulating the perfect **type metal alloy**. He didn't invent from scratch — he combined his existing craft skills in a revolutionary new way."
+                ),
+                CuriosityQA(
+                    question: "How expensive was a hand-copied book really?",
+                    answer: "A single Bible took about **2 years** of a monk's labor. At medieval wages, that's roughly equivalent to **$50,000-$100,000** today. Only cathedrals, wealthy nobles, and universities could afford them. Most people in 1440s Europe had never **touched** a book, let alone owned one. The printing press turned a luxury into a commodity."
+                )
+            ])),
 
             // ── 2. Fun Fact: Gutenberg's Debt ───────────────────
 
@@ -2279,6 +2605,17 @@ extension LessonContent {
                 """
             )),
 
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Why couldn't they just carve letters from wood?",
+                    answer: "They tried — **woodblock printing** existed in China for centuries. But wood wears down after a few hundred impressions, and carving a new block for every page is incredibly slow. Metal type could survive **thousands** of impressions, and individual letters could be **rearranged** for any text. Metal made printing economically viable."
+                ),
+                CuriosityQA(
+                    question: "How did Gutenberg keep his project secret for so long?",
+                    answer: "He worked in near-total secrecy for **over a decade**, swearing his workers to silence. He rented a building far from his guild and told creditors he was working on a 'commercial venture.' The first anyone outside his workshop saw of the printing press was the **finished Bibles** — a product so perfect it was initially mistaken for hand-copied manuscripts."
+                )
+            ])),
+
             // ── 7. QUESTION: Chemistry ──────────────────────────
 
             .question(LessonQuestion(
@@ -2367,6 +2704,14 @@ extension LessonContent {
                 science: .physics
             )),
 
+            .mathVisual(LessonMathVisual(
+                type: .pressForceMultiplier,
+                title: "Screw Press Force",
+                science: .engineering,
+                totalSteps: 5,
+                caption: "A screw converts rotation into linear force — tighter thread pitch means more force multiplication, allowing one person to apply tonnes of pressure per page."
+            )),
+
             // ── 12. FILL IN BLANKS: Engineering ─────────────────
 
             .fillInBlanks(LessonFillInBlanks(
@@ -2409,6 +2754,14 @@ extension LessonContent {
                 """,
                 science: .engineering,
                 illustrationIcon: "books.vertical.fill"
+            )),
+
+            .mathVisual(LessonMathVisual(
+                type: .pressTypeSetting,
+                title: "Typesetting Mathematics",
+                science: .engineering,
+                totalSteps: 5,
+                caption: "A page of the Gutenberg Bible contains about 2,500 characters — each one a separate metal block, hand-placed by a compositor who could set roughly 1,500 characters per hour."
             )),
 
             // ── 15. Fun Fact: Speed of Spread ───────────────────

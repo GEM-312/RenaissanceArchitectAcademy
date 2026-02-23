@@ -38,16 +38,16 @@ struct BuildingDetailOverlay: View {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(plot.building.name)
-                            .font(.custom("Cinzel-Bold", size: titleSize, relativeTo: .title))
+                            .font(.custom("Cinzel-Regular", size: titleSize, relativeTo: .title))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         HStack(spacing: 8) {
                             Image(systemName: plot.building.era == .ancientRome ? "building.columns" : "paintpalette")
                                 .font(.subheadline)
                             Text(plot.building.era.rawValue)
-                                .font(.custom("EBGaramond-Italic", size: isLargeScreen ? 20 : 16, relativeTo: .subheadline))
+                                .font(.custom("Mulish-Light", size: isLargeScreen ? 20 : 16, relativeTo: .subheadline))
                         }
-                        .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                     }
 
                     Spacer()
@@ -94,7 +94,7 @@ struct BuildingDetailOverlay: View {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
                         Image(systemName: "books.vertical.fill")
-                            .foregroundStyle(RenaissanceColors.warmBrown)
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("Sciences Required")
                             .font(.custom("Cinzel-Regular", size: isLargeScreen ? 16 : 14, relativeTo: .caption))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
@@ -111,14 +111,14 @@ struct BuildingDetailOverlay: View {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Image(systemName: "scroll.fill")
-                            .foregroundStyle(RenaissanceColors.warmBrown)
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("Description")
                             .font(.custom("Cinzel-Regular", size: isLargeScreen ? 16 : 14, relativeTo: .caption))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                     }
 
                     Text(plot.building.description)
-                        .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 16 : 14, relativeTo: .body))
+                        .font(.custom("Mulish-Light", size: isLargeScreen ? 16 : 14, relativeTo: .body))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -182,7 +182,7 @@ struct ScienceBadge: View {
                 .foregroundStyle(RenaissanceColors.color(for: science))
 
             Text(science.rawValue)
-                .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 15 : 13, relativeTo: .caption))
+                .font(.custom("Mulish-Light", size: isLargeScreen ? 15 : 13, relativeTo: .caption))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
         }
         .padding(.horizontal, isLargeScreen ? 14 : 10)

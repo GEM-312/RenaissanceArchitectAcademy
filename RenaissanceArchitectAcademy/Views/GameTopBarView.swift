@@ -23,32 +23,24 @@ struct GameTopBarView: View {
                         // Title + Florins row
                         HStack(spacing: 8) {
                             Text(title)
-                                .font(.custom("Cinzel-Bold", size: 16))
+                                .font(.custom("Cinzel-Regular", size: 16))
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                                 .padding(.horizontal, 14)
                                 .padding(.vertical, 6)
-                                .background(
-                                    Capsule()
-                                        .fill(RenaissanceColors.parchment.opacity(0.95))
-                                        .shadow(color: .black.opacity(0.08), radius: 2, y: 1)
-                                )
+                                .glassButton(shape: Capsule())
 
                             // Gold Florins badge
                             HStack(spacing: 4) {
                                 Image(systemName: "dollarsign.circle.fill")
-                                    .font(.system(size: 14))
-                                    .foregroundStyle(RenaissanceColors.goldSuccess)
+                                    .font(.custom("Mulish-Light", size: 14, relativeTo: .footnote))
+                                    .foregroundStyle(RenaissanceColors.iconOchre)
                                 Text("\(viewModel.goldFlorins)")
-                                    .font(.custom("Cinzel-Bold", size: 13))
+                                    .font(.custom("Cinzel-Regular", size: 13))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                             .padding(.horizontal, 10)
                             .padding(.vertical, 6)
-                            .background(
-                                Capsule()
-                                    .fill(RenaissanceColors.parchment.opacity(0.95))
-                                    .shadow(color: .black.opacity(0.08), radius: 2, y: 1)
-                            )
+                            .glassButton(shape: Capsule())
                         }
                         .padding(.bottom, 4)
 
@@ -87,22 +79,14 @@ struct GameTopBarView: View {
                 Button(action: returnAction) {
                     VStack(spacing: 2) {
                         Image(systemName: "book.fill")
-                            .font(.system(size: 20))
-                            .foregroundStyle(RenaissanceColors.ochre)
+                            .font(.system(size: 20, weight: .medium))
+                            .foregroundStyle(RenaissanceColors.iconOchre)
                         Text("Lesson")
-                            .font(.custom("EBGaramond-Regular", size: 10, relativeTo: .caption))
-                            .foregroundStyle(RenaissanceColors.ochre)
+                            .font(.custom("Mulish-Light", size: 10, relativeTo: .caption))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                     .frame(width: 60, height: 48)
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(RenaissanceColors.ochre.opacity(0.15))
-                            .shadow(color: RenaissanceColors.ochre.opacity(0.2), radius: 3, y: 1)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(RenaissanceColors.ochre.opacity(0.4), lineWidth: 1.5)
-                    )
+                    .glassButton(shape: RoundedRectangle(cornerRadius: 10))
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("Back to \(buildingName) lesson")
@@ -112,20 +96,24 @@ struct GameTopBarView: View {
                 onNavigate(.cityMap)
             }
 
-            navButton(icon: "building.2", label: "All") {
+            navButton(icon: "building.2.fill", label: "All") {
                 onNavigate(.allBuildings)
             }
 
-            navButton(icon: "building.columns", label: "Rome") {
+            navButton(icon: "building.columns.fill", label: "Rome") {
                 onNavigate(.era(.ancientRome))
             }
 
-            navButton(icon: "paintpalette", label: "Ren.") {
+            navButton(icon: "paintpalette.fill", label: "Ren.") {
                 onNavigate(.era(.renaissance))
             }
 
             navButton(icon: "hammer.fill", label: "Workshop") {
                 onNavigate(.workshop)
+            }
+
+            navButton(icon: "leaf.fill", label: "Forest") {
+                onNavigate(.forest)
             }
 
             navButton(icon: "book.fill", label: "Tests") {
@@ -143,24 +131,20 @@ struct GameTopBarView: View {
         }
     }
 
-    // MARK: - Nav Button (with individual background)
+    // MARK: - Nav Button — clear background, shadow + blurred border
 
     private func navButton(icon: String, label: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             VStack(spacing: 2) {
                 Image(systemName: icon)
-                    .font(.system(size: 22))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                    .font(.system(size: 20, weight: .medium))
+                    .foregroundStyle(RenaissanceColors.iconOchre)
                 Text(label)
-                    .font(.custom("EBGaramond-Regular", size: 11, relativeTo: .caption))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+                    .font(.custom("Mulish-Light", size: 11, relativeTo: .caption))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
             }
             .frame(width: 60, height: 48)
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(RenaissanceColors.parchment.opacity(0.95))
-                    .shadow(color: .black.opacity(0.06), radius: 2, y: 1)
-            )
+            .glassButton(shape: RoundedRectangle(cornerRadius: 10))
         }
         .buttonStyle(.plain)
     }
@@ -178,30 +162,22 @@ struct GameTopBarView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 12))
 
                     Text(state.apprenticeName.isEmpty ? "Profile" : state.apprenticeName)
-                        .font(.custom("Cinzel-Bold", size: 14))
+                        .font(.custom("Cinzel-Regular", size: 14))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .lineLimit(1)
                 } else {
                     Image(systemName: "person.fill")
-                        .font(.system(size: 48))
-                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                        .font(.system(size: 40, weight: .medium))
+                        .foregroundStyle(RenaissanceColors.iconOchre)
                         .frame(height: 140)
                     Text("Profile")
-                        .font(.custom("Cinzel-Bold", size: 14))
+                        .font(.custom("Cinzel-Regular", size: 14))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
             }
             .padding(8)
             .frame(width: 160)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(RenaissanceColors.parchment.opacity(0.95))
-                    .shadow(color: .black.opacity(0.1), radius: 6, y: 3)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(RenaissanceColors.ochre.opacity(0.4), lineWidth: 1.5)
-            )
+            .glassButton(shape: RoundedRectangle(cornerRadius: 16))
         }
         .buttonStyle(.plain)
     }
@@ -233,11 +209,11 @@ struct GameTopBarView: View {
                     .frame(width: 40, height: 34)
 
                 Image(systemName: buildingIcon(for: plot.building.name))
-                    .font(.system(size: 16))
+                    .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
                     .foregroundStyle(
                         isComplete ? RenaissanceColors.sageGreen :
-                        isSketched ? RenaissanceColors.ochre :
-                        RenaissanceColors.stoneGray.opacity(0.6)
+                        isSketched ? RenaissanceColors.sepiaInk :
+                        RenaissanceColors.sepiaInk.opacity(0.6)
                     )
             }
 
@@ -270,5 +246,23 @@ struct GameTopBarView: View {
         case "Printing Press": return "book.fill"
         default: return "building.2.fill"
         }
+    }
+}
+
+// MARK: - Glass Button Modifier — no fill, shadow + blurred border
+
+extension View {
+    func glassButton<S: Shape>(shape: S) -> some View {
+        self
+            .background(
+                shape
+                    .fill(RenaissanceColors.parchment.opacity(0.8))
+            )
+            .overlay(
+                shape
+                    .stroke(RenaissanceColors.iconOchre.opacity(0.2), lineWidth: 1)
+                    .blur(radius: 0.5)
+            )
+            .shadow(color: .black.opacity(0.1), radius: 6, y: 3)
     }
 }

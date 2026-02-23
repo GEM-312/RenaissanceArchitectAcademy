@@ -60,7 +60,7 @@ struct DragDropEquationView: View {
             ForEach(Array(parts.enumerated()), id: \.offset) { index, part in
                 // Text part of equation
                 Text(part)
-                    .font(.custom("Cinzel-Bold", size: isLargeScreen ? 28 : 22))
+                    .font(.custom("Cinzel-Regular", size: isLargeScreen ? 28 : 22))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 // Drop zone (if not last part)
@@ -123,7 +123,7 @@ struct DragDropEquationView: View {
             // Dropped element or placeholder
             if let answer = droppedAnswers[index] {
                 Text(answer)
-                    .font(.custom("Cinzel-Bold", size: isLargeScreen ? 22 : 18))
+                    .font(.custom("Cinzel-Regular", size: isLargeScreen ? 22 : 18))
                     .foregroundStyle(
                         hasSubmitted
                             ? (isCorrect ? RenaissanceColors.sageGreen : RenaissanceColors.errorRed)
@@ -135,8 +135,8 @@ struct DragDropEquationView: View {
                     .animation(.easeInOut, value: isWrong)
             } else {
                 Text("?")
-                    .font(.custom("EBGaramond-Italic", size: isLargeScreen ? 20 : 16))
-                    .foregroundStyle(RenaissanceColors.stoneGray)
+                    .font(.custom("Mulish-Light", size: isLargeScreen ? 20 : 16))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
             }
         }
         .onTapGesture {
@@ -174,7 +174,7 @@ struct DragDropEquationView: View {
     private var elementsBank: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Drag elements to complete the equation:")
-                .font(.custom("EBGaramond-Italic", size: isLargeScreen ? 16 : 14))
+                .font(.custom("Mulish-Light", size: isLargeScreen ? 16 : 14))
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
 
             // Draggable elements in a flow layout
@@ -198,11 +198,11 @@ struct DragDropEquationView: View {
     private func draggableElement(_ element: ChemicalElement) -> some View {
         VStack(spacing: 4) {
             Text(element.symbol)
-                .font(.custom("Cinzel-Bold", size: isLargeScreen ? 20 : 16))
+                .font(.custom("Cinzel-Regular", size: isLargeScreen ? 20 : 16))
                 .foregroundStyle(elementColor(element.color))
 
             Text(element.name)
-                .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 12 : 10))
+                .font(.custom("Mulish-Light", size: isLargeScreen ? 12 : 10))
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                 .lineLimit(2)
                 .multilineTextAlignment(.center)
@@ -222,7 +222,7 @@ struct DragDropEquationView: View {
         .draggable(element.symbol) {
             // Drag preview
             Text(element.symbol)
-                .font(.custom("Cinzel-Bold", size: 20))
+                .font(.custom("Cinzel-Regular", size: 20))
                 .foregroundStyle(elementColor(element.color))
                 .padding(12)
                 .background(
@@ -258,7 +258,7 @@ struct DragDropEquationView: View {
                     Image(systemName: showHint ? "lightbulb.fill" : "lightbulb")
                         .foregroundStyle(RenaissanceColors.highlightAmber)
                     Text(showHint ? "Hide Hint" : "Show Hint")
-                        .font(.custom("EBGaramond-Italic", size: 14))
+                        .font(.custom("Mulish-Light", size: 14))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                 }
             }
@@ -266,8 +266,8 @@ struct DragDropEquationView: View {
 
             if showHint {
                 Text(hint)
-                    .font(.custom("EBGaramond-Italic", size: isLargeScreen ? 16 : 14))
-                    .foregroundStyle(RenaissanceColors.warmBrown)
+                    .font(.custom("Mulish-Light", size: isLargeScreen ? 16 : 14))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
                     .padding()
                     .background(
                         RoundedRectangle(cornerRadius: 8)
@@ -294,7 +294,7 @@ struct DragDropEquationView: View {
                 Image(systemName: "checkmark.seal")
                 Text("Check Answer")
             }
-            .font(.custom("EBGaramond-Italic", size: 18))
+            .font(.custom("Mulish-Light", size: 18))
             .tracking(2)
             .foregroundStyle(allFilled ? RenaissanceColors.sepiaInk : RenaissanceColors.stoneGray)
             .padding(.horizontal, 24)

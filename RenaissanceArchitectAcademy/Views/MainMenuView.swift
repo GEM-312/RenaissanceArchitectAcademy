@@ -34,7 +34,7 @@ struct MainMenuView: View {
 
                     AnimatedText(
                         text: "Renaissance",
-                        font: .custom("Cinzel-Bold", size: titleSize, relativeTo: .largeTitle),
+                        font: .custom("Cinzel-Regular", size: titleSize, relativeTo: .largeTitle),
                         color: RenaissanceColors.sepiaInk,
                         isAnimating: showContent,
                         delayPerLetter: 0.1,
@@ -43,8 +43,8 @@ struct MainMenuView: View {
 
                     AnimatedText(
                         text: "Architect Academy",
-                        font: .custom("EBGaramond-Italic", size: subtitleSize, relativeTo: .title),
-                        color: RenaissanceColors.sepiaInk.opacity(0.8),
+                        font: .custom("Mulish-Light", size: subtitleSize, relativeTo: .title),
+                        color: RenaissanceColors.sepiaInk,
                         isAnimating: showContent,
                         initialDelay: 1.2,
                         delayPerLetter: 0.07,
@@ -173,7 +173,7 @@ struct DividerOrnament: View {
 
             Image(systemName: "fleuron")
                 .font(.caption)
-                .foregroundStyle(RenaissanceColors.ochre)
+                .foregroundStyle(RenaissanceColors.sepiaInk)
 
             Rectangle()
                 .fill(RenaissanceColors.ochre.opacity(0.5))

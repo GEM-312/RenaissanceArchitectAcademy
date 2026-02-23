@@ -16,19 +16,15 @@ struct RenaissanceButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.custom("EBGaramond-Italic", size: 20, relativeTo: .body))
+                .font(.custom("Cinzel-Regular", size: 18, relativeTo: .body))
                 .tracking(2)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
-            .frame(width: buttonWidth)
-            .padding(.horizontal, 24)
-            .padding(.vertical, 14)
-            .background(
-                RenaissanceColors.parchment.opacity(0.9)
-            )
-            .overlay(
-                EngineeringBorder()
-            )
-            .scaleEffect(isPressed ? 0.98 : 1.0)
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 24)
+                .padding(.vertical, 14)
+                .glassButton(shape: RoundedRectangle(cornerRadius: 20))
+                .shadow(color: .clear, radius: 0)
+                .scaleEffect(isPressed ? 0.98 : 1.0)
         }
         .buttonStyle(.plain)
         .onLongPressGesture(minimumDuration: .infinity, pressing: { pressing in
@@ -128,7 +124,7 @@ struct RenaissanceSecondaryButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.custom("EBGaramond-Italic", size: 18, relativeTo: .body))
+                .font(.custom("Mulish-Light", size: 18, relativeTo: .body))
                 .tracking(2)
             .foregroundStyle(RenaissanceColors.sepiaInk)
             .padding(.horizontal, 20)

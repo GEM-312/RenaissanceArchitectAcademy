@@ -47,7 +47,8 @@
 		544299B52F38000100F92073 /* WorkshopScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299B42F38000100F92073 /* WorkshopScene.swift */; };
 		544299B72F38000100F92073 /* WorkshopMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299B62F38000100F92073 /* WorkshopMapView.swift */; };
 		544299C02F3A000100F92073 /* SceneEditorMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299BF2F3A000100F92073 /* SceneEditorMode.swift */; };
-		544299C22F3B000100F92073 /* WorkshopInteriorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299C12F3B000100F92073 /* WorkshopInteriorView.swift */; };
+		074 /* CraftingRoomScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 174 /* CraftingRoomScene.swift */; };
+		075 /* CraftingRoomMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175 /* CraftingRoomMapView.swift */; };
 		030 /* MoleculeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130 /* MoleculeView.swift */; };
 		031 /* HintOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 131 /* HintOverlayView.swift */; };
 		032 /* SketchingChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 132 /* SketchingChallenge.swift */; };
@@ -86,6 +87,9 @@
 		068 /* MathVisualView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168 /* MathVisualView.swift */; };
 		069 /* GradientSlopeVisual.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169 /* GradientSlopeVisual.swift */; };
 		070 /* FlowRateVisual.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170 /* FlowRateVisual.swift */; };
+		071 /* MasterAssignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 171 /* MasterAssignment.swift */; };
+		072 /* LessonRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172 /* LessonRecord.swift */; };
+		073 /* MathVisualTemplates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173 /* MathVisualTemplates.swift */; };
 		047 /* BoyAvatarTransition.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 147 /* BoyAvatarTransition.mp4 */; };
 		048 /* GirlAvatarTransition.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 148 /* GirlAvatarTransition.mp4 */; };
 		5475D2EF2F3146CC003AA131 /* building_complete.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2EE2F3146CB003AA131 /* building_complete.mp3 */; };
@@ -113,6 +117,23 @@
 		F020 /* PetitFormalScript-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B152F313B22007D8C64 /* PetitFormalScript-Regular.ttf */; };
 		F021 /* GreatVibes-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B1A2F313B22007D8C64 /* GreatVibes-Regular.ttf */; };
 		F022 /* Amellina.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B1B2F313B22007D8C64 /* Amellina.ttf */; };
+		F023 /* LibreBaskerville-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B1C2F313B22007D8C64 /* LibreBaskerville-Bold.ttf */; };
+		F024 /* LibreBaskerville-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B1D2F313B22007D8C64 /* LibreBaskerville-Regular.ttf */; };
+		F025 /* LibreBaskerville-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B1E2F313B22007D8C64 /* LibreBaskerville-Italic.ttf */; };
+		F026 /* LibreBaskerville-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B1F2F313B22007D8C64 /* LibreBaskerville-SemiBold.ttf */; };
+		F027 /* LibreFranklin-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B202F313B22007D8C64 /* LibreFranklin-Regular.ttf */; };
+		F032 /* Delius-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B252F313B22007D8C64 /* Delius-Regular.ttf */; };
+		F033 /* Mulish-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B262F313B22007D8C64 /* Mulish-Light.ttf */; };
+		F034 /* Mulish-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B272F313B22007D8C64 /* Mulish-Regular.ttf */; };
+		F035 /* Mulish-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B282F313B22007D8C64 /* Mulish-Medium.ttf */; };
+		F036 /* Mulish-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B292F313B22007D8C64 /* Mulish-SemiBold.ttf */; };
+		F037 /* Mulish-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B2A2F313B22007D8C64 /* Mulish-Bold.ttf */; };
+		F038 /* Mulish-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B2B2F313B22007D8C64 /* Mulish-Italic.ttf */; };
+		F039 /* Mulish-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B2C2F313B22007D8C64 /* Mulish-LightItalic.ttf */; };
+		F028 /* LibreFranklin-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B212F313B22007D8C64 /* LibreFranklin-Bold.ttf */; };
+		F029 /* LibreFranklin-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B222F313B22007D8C64 /* LibreFranklin-Medium.ttf */; };
+		F030 /* LibreFranklin-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B232F313B22007D8C64 /* LibreFranklin-SemiBold.ttf */; };
+		F031 /* LibreFranklin-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B242F313B22007D8C64 /* LibreFranklin-Italic.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -183,6 +204,9 @@
 		168 /* MathVisualView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathVisualView.swift; sourceTree = "<group>"; };
 		169 /* GradientSlopeVisual.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientSlopeVisual.swift; sourceTree = "<group>"; };
 		170 /* FlowRateVisual.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowRateVisual.swift; sourceTree = "<group>"; };
+		171 /* MasterAssignment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterAssignment.swift; sourceTree = "<group>"; };
+		172 /* LessonRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonRecord.swift; sourceTree = "<group>"; };
+		173 /* MathVisualTemplates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathVisualTemplates.swift; sourceTree = "<group>"; };
 		544299972F3646ED00F92073 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BuildingNode.swift; path = Views/SpriteKit/BuildingNode.swift; sourceTree = "<group>"; };
 		544299982F3646ED00F92073 /* CityMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityMapView.swift; path = Views/SpriteKit/CityMapView.swift; sourceTree = "<group>"; };
 		544299992F3646ED00F92073 /* CityScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityScene.swift; path = Views/SpriteKit/CityScene.swift; sourceTree = "<group>"; };
@@ -194,7 +218,8 @@
 		544299B42F38000100F92073 /* WorkshopScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkshopScene.swift; path = Views/SpriteKit/WorkshopScene.swift; sourceTree = "<group>"; };
 		544299B62F38000100F92073 /* WorkshopMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopMapView.swift; sourceTree = "<group>"; };
 		544299BF2F3A000100F92073 /* SceneEditorMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SceneEditorMode.swift; path = Views/SpriteKit/SceneEditorMode.swift; sourceTree = "<group>"; };
-		544299C12F3B000100F92073 /* WorkshopInteriorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopInteriorView.swift; sourceTree = "<group>"; };
+		174 /* CraftingRoomScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CraftingRoomScene.swift; path = Views/SpriteKit/CraftingRoomScene.swift; sourceTree = "<group>"; };
+		175 /* CraftingRoomMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CraftingRoomMapView.swift; path = Views/SpriteKit/CraftingRoomMapView.swift; sourceTree = "<group>"; };
 		54477B022F313B22007D8C64 /* Cinzel-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-Black.ttf"; sourceTree = "<group>"; };
 		54477B032F313B22007D8C64 /* Cinzel-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-Bold.ttf"; sourceTree = "<group>"; };
 		54477B042F313B22007D8C64 /* Cinzel-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cinzel-ExtraBold.ttf"; sourceTree = "<group>"; };
@@ -217,6 +242,23 @@
 		54477B152F313B22007D8C64 /* PetitFormalScript-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PetitFormalScript-Regular.ttf"; sourceTree = "<group>"; };
 		54477B1A2F313B22007D8C64 /* GreatVibes-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GreatVibes-Regular.ttf"; sourceTree = "<group>"; };
 		54477B1B2F313B22007D8C64 /* Amellina.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Amellina.ttf; sourceTree = "<group>"; };
+		54477B1C2F313B22007D8C64 /* LibreBaskerville-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LibreBaskerville-Bold.ttf"; sourceTree = "<group>"; };
+		54477B1D2F313B22007D8C64 /* LibreBaskerville-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LibreBaskerville-Regular.ttf"; sourceTree = "<group>"; };
+		54477B1E2F313B22007D8C64 /* LibreBaskerville-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LibreBaskerville-Italic.ttf"; sourceTree = "<group>"; };
+		54477B1F2F313B22007D8C64 /* LibreBaskerville-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LibreBaskerville-SemiBold.ttf"; sourceTree = "<group>"; };
+		54477B202F313B22007D8C64 /* LibreFranklin-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LibreFranklin-Regular.ttf"; sourceTree = "<group>"; };
+		54477B252F313B22007D8C64 /* Delius-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Delius-Regular.ttf"; sourceTree = "<group>"; };
+		54477B262F313B22007D8C64 /* Mulish-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Mulish-Light.ttf"; sourceTree = "<group>"; };
+		54477B272F313B22007D8C64 /* Mulish-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Mulish-Regular.ttf"; sourceTree = "<group>"; };
+		54477B282F313B22007D8C64 /* Mulish-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Mulish-Medium.ttf"; sourceTree = "<group>"; };
+		54477B292F313B22007D8C64 /* Mulish-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Mulish-SemiBold.ttf"; sourceTree = "<group>"; };
+		54477B2A2F313B22007D8C64 /* Mulish-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Mulish-Bold.ttf"; sourceTree = "<group>"; };
+		54477B2B2F313B22007D8C64 /* Mulish-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Mulish-Italic.ttf"; sourceTree = "<group>"; };
+		54477B2C2F313B22007D8C64 /* Mulish-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Mulish-LightItalic.ttf"; sourceTree = "<group>"; };
+		54477B212F313B22007D8C64 /* LibreFranklin-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LibreFranklin-Bold.ttf"; sourceTree = "<group>"; };
+		54477B222F313B22007D8C64 /* LibreFranklin-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LibreFranklin-Medium.ttf"; sourceTree = "<group>"; };
+		54477B232F313B22007D8C64 /* LibreFranklin-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LibreFranklin-SemiBold.ttf"; sourceTree = "<group>"; };
+		54477B242F313B22007D8C64 /* LibreFranklin-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LibreFranklin-Italic.ttf"; sourceTree = "<group>"; };
 		54477B172F313D06007D8C64 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5475D2EE2F3146CB003AA131 /* building_complete.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = building_complete.mp3; sourceTree = "<group>"; };
 		145 /* footstep.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = footstep.wav; sourceTree = "<group>"; };
@@ -253,6 +295,8 @@
 				544299B22F38000100F92073 /* ResourceNode.swift */,
 				544299B42F38000100F92073 /* WorkshopScene.swift */,
 				149 /* ForestScene.swift */,
+				174 /* CraftingRoomScene.swift */,
+				175 /* CraftingRoomMapView.swift */,
 				544299A52F369AB700F92073 /* MascotDialogueView.swift */,
 				544299A62F369AB700F92073 /* MaterialPuzzleView.swift */,
 				544299972F3646ED00F92073 /* BuildingNode.swift */,
@@ -306,7 +350,6 @@
 				134 /* SketchingChallengeView.swift */,
 				135 /* KnowledgeTestsView.swift */,
 				544299B62F38000100F92073 /* WorkshopMapView.swift */,
-				544299C12F3B000100F92073 /* WorkshopInteriorView.swift */,
 				150 /* ForestMapView.swift */,
 				152 /* BuildingLessonView.swift */,
 				153 /* BuildingChecklistView.swift */,
@@ -316,6 +359,7 @@
 				168 /* MathVisualView.swift */,
 				169 /* GradientSlopeVisual.swift */,
 				170 /* FlowRateVisual.swift */,
+				173 /* MathVisualTemplates.swift */,
 				141 /* OnboardingView.swift */,
 				308 /* Sketching */,
 				309 /* Onboarding */,
@@ -378,6 +422,8 @@
 			165 /* LessonContentRenaissance.swift */,
 			166 /* NotebookContentRome.swift */,
 			167 /* NotebookContentRenaissance.swift */,
+		171 /* MasterAssignment.swift */,
+		172 /* LessonRecord.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -424,6 +470,23 @@
 				54477B152F313B22007D8C64 /* PetitFormalScript-Regular.ttf */,
 				54477B1A2F313B22007D8C64 /* GreatVibes-Regular.ttf */,
 				54477B1B2F313B22007D8C64 /* Amellina.ttf */,
+				54477B1C2F313B22007D8C64 /* LibreBaskerville-Bold.ttf */,
+				54477B1D2F313B22007D8C64 /* LibreBaskerville-Regular.ttf */,
+				54477B1E2F313B22007D8C64 /* LibreBaskerville-Italic.ttf */,
+				54477B1F2F313B22007D8C64 /* LibreBaskerville-SemiBold.ttf */,
+				54477B202F313B22007D8C64 /* LibreFranklin-Regular.ttf */,
+				54477B252F313B22007D8C64 /* Delius-Regular.ttf */,
+				54477B262F313B22007D8C64 /* Mulish-Light.ttf */,
+				54477B272F313B22007D8C64 /* Mulish-Regular.ttf */,
+				54477B282F313B22007D8C64 /* Mulish-Medium.ttf */,
+				54477B292F313B22007D8C64 /* Mulish-SemiBold.ttf */,
+				54477B2A2F313B22007D8C64 /* Mulish-Bold.ttf */,
+				54477B2B2F313B22007D8C64 /* Mulish-Italic.ttf */,
+				54477B2C2F313B22007D8C64 /* Mulish-LightItalic.ttf */,
+				54477B212F313B22007D8C64 /* LibreFranklin-Bold.ttf */,
+				54477B222F313B22007D8C64 /* LibreFranklin-Medium.ttf */,
+				54477B232F313B22007D8C64 /* LibreFranklin-SemiBold.ttf */,
+				54477B242F313B22007D8C64 /* LibreFranklin-Italic.ttf */,
 			);
 			path = Fonts;
 			sourceTree = "<group>";
@@ -518,6 +581,23 @@
 				F020 /* PetitFormalScript-Regular.ttf in Resources */,
 				F021 /* GreatVibes-Regular.ttf in Resources */,
 				F022 /* Amellina.ttf in Resources */,
+				F023 /* LibreBaskerville-Bold.ttf in Resources */,
+				F024 /* LibreBaskerville-Regular.ttf in Resources */,
+				F025 /* LibreBaskerville-Italic.ttf in Resources */,
+				F026 /* LibreBaskerville-SemiBold.ttf in Resources */,
+				F027 /* LibreFranklin-Regular.ttf in Resources */,
+				F032 /* Delius-Regular.ttf in Resources */,
+				F033 /* Mulish-Light.ttf in Resources */,
+				F034 /* Mulish-Regular.ttf in Resources */,
+				F035 /* Mulish-Medium.ttf in Resources */,
+				F036 /* Mulish-SemiBold.ttf in Resources */,
+				F037 /* Mulish-Bold.ttf in Resources */,
+				F038 /* Mulish-Italic.ttf in Resources */,
+				F039 /* Mulish-LightItalic.ttf in Resources */,
+				F028 /* LibreFranklin-Bold.ttf in Resources */,
+				F029 /* LibreFranklin-Medium.ttf in Resources */,
+				F030 /* LibreFranklin-SemiBold.ttf in Resources */,
+				F031 /* LibreFranklin-Italic.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -565,7 +645,8 @@
 				544299B52F38000100F92073 /* WorkshopScene.swift in Sources */,
 				544299B72F38000100F92073 /* WorkshopMapView.swift in Sources */,
 				544299C02F3A000100F92073 /* SceneEditorMode.swift in Sources */,
-				544299C22F3B000100F92073 /* WorkshopInteriorView.swift in Sources */,
+				074 /* CraftingRoomScene.swift in Sources */,
+				075 /* CraftingRoomMapView.swift in Sources */,
 				030 /* MoleculeView.swift in Sources */,
 				031 /* HintOverlayView.swift in Sources */,
 				032 /* SketchingChallenge.swift in Sources */,
@@ -604,6 +685,9 @@
 			068 /* MathVisualView.swift in Sources */,
 			069 /* GradientSlopeVisual.swift in Sources */,
 			070 /* FlowRateVisual.swift in Sources */,
+			071 /* MasterAssignment.swift in Sources */,
+		072 /* LessonRecord.swift in Sources */,
+		073 /* MathVisualTemplates.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

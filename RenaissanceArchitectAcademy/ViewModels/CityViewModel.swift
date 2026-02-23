@@ -7,6 +7,7 @@ class CityViewModel: ObservableObject {
     @Published var goldFlorins: Int = 0
     @Published var earnedScienceBadges: Set<Science> = []
     @Published var buildingProgressMap: [Int: BuildingProgress] = [:]
+    @Published var totalPlayTime: TimeInterval = 0
 
     var persistenceManager: PersistenceManager?
 
@@ -236,6 +237,7 @@ class CityViewModel: ObservableObject {
         let save = manager.loadPlayerSave()
         goldFlorins = save.goldFlorins
         earnedScienceBadges = save.earnedScienceBadges
+        totalPlayTime = save.totalPlayTimeSeconds
 
         let records = manager.loadAllBuildingProgress()
         for (buildingId, record) in records {
@@ -335,11 +337,30 @@ class CityViewModel: ObservableObject {
         persistBuildingProgress(for: plotId)
     }
 
+    // MARK: - Play Time
+
+    func addPlayTime(_ seconds: TimeInterval) {
+        totalPlayTime += seconds
+        guard let manager = persistenceManager else { return }
+        let save = manager.loadPlayerSave()
+        save.totalPlayTimeSeconds = totalPlayTime
+        save.lastSaved = Date()
+        manager.save()
+    }
+
     // MARK: - Game Economy & Progress
 
     func earnFlorins(_ amount: Int) {
         goldFlorins += amount
         persistPlayerSave()
+    }
+
+    @discardableResult
+    func spendFlorins(_ amount: Int) -> Bool {
+        guard goldFlorins >= amount else { return false }
+        goldFlorins -= amount
+        persistPlayerSave()
+        return true
     }
 
     func earnScienceBadge(for plotId: Int, science: Science) {

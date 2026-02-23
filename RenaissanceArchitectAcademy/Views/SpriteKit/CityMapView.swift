@@ -233,7 +233,7 @@ struct CityMapView: View {
 
                         VStack(spacing: 16) {
                             Text("Where to next?")
-                                .font(.custom("Cinzel-Bold", size: 22))
+                                .font(.custom("Cinzel-Regular", size: 22))
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
                             environmentButton(icon: "hammer.fill", title: "Workshop", subtitle: "Collect raw materials", color: RenaissanceColors.warmBrown) {
@@ -256,8 +256,8 @@ struct CityMapView: View {
                                 scene?.resetMascot()
                             } label: {
                                 Text("Stay on Map")
-                                    .font(.custom("EBGaramond-Italic", size: 16))
-                                    .foregroundStyle(RenaissanceColors.stoneGray)
+                                    .font(.custom("Mulish-Light", size: 16))
+                                    .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                             .buttonStyle(.plain)
                         }
@@ -321,15 +321,15 @@ struct CityMapView: View {
 
                         VStack(spacing: 16) {
                             Image(systemName: "lock.fill")
-                                .font(.system(size: 32))
-                                .foregroundStyle(RenaissanceColors.ochre)
+                                .font(.custom("Mulish-Light", size: 32, relativeTo: .title3))
+                                .foregroundStyle(RenaissanceColors.sepiaInk)
 
                             Text("Not Yet Unlocked")
-                                .font(.custom("Cinzel-Bold", size: 22))
+                                .font(.custom("Cinzel-Regular", size: 22))
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
                             Text(lockedMessage)
-                                .font(.system(size: 17))
+                                .font(.custom("Mulish-Light", size: 17, relativeTo: .body))
                                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
                                 .multilineTextAlignment(.center)
                                 .lineSpacing(4)
@@ -398,11 +398,11 @@ struct CityMapView: View {
 
                         VStack(spacing: 16) {
                             Text("Nice work on the quiz!")
-                                .font(.custom("Cinzel-Bold", size: 22))
+                                .font(.custom("Cinzel-Regular", size: 22))
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
                             Text("Now head to the Workshop to collect raw materials and craft what you need to build.")
-                                .font(.system(size: 17))
+                                .font(.custom("Mulish-Light", size: 17, relativeTo: .body))
                                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
                                 .multilineTextAlignment(.center)
                                 .lineSpacing(4)
@@ -507,7 +507,7 @@ struct CityMapView: View {
             } else {
                 // Fallback if no challenge exists yet
                 Text("Challenge coming soon!")
-                    .font(.custom("Cinzel-Bold", size: 24))
+                    .font(.custom("Cinzel-Regular", size: 24))
                     .foregroundColor(RenaissanceColors.sepiaInk)
             }
         }
@@ -532,7 +532,7 @@ struct CityMapView: View {
                 )
             } else {
                 Text("Sketching challenge coming soon!")
-                    .font(.custom("Cinzel-Bold", size: 24))
+                    .font(.custom("Cinzel-Regular", size: 24))
                     .foregroundColor(RenaissanceColors.sepiaInk)
             }
         }
@@ -666,7 +666,7 @@ struct CityMapView: View {
         #endif
 
         return Text(hintText)
-            .font(.custom("EBGaramond-Italic", size: 16))
+            .font(.custom("Mulish-Light", size: 16))
             .foregroundColor(RenaissanceColors.sepiaInk.opacity(0.8))
             .padding(.horizontal, 24)
             .padding(.vertical, 12)
@@ -683,25 +683,25 @@ struct CityMapView: View {
         Button(action: action) {
             HStack(spacing: 12) {
                 Image(systemName: icon)
-                    .font(.system(size: 20))
+                    .font(.custom("Mulish-Light", size: 20, relativeTo: .title3))
                     .foregroundStyle(color)
                     .frame(width: 40, height: 40)
                     .background(Circle().fill(color.opacity(0.12)))
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(.custom("Cinzel-Bold", size: 16))
+                        .font(.custom("Cinzel-Regular", size: 16))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text(subtitle)
-                        .font(.custom("EBGaramond-Italic", size: 13))
-                        .foregroundStyle(RenaissanceColors.stoneGray)
+                        .font(.custom("Mulish-Light", size: 13))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
 
                 Spacer()
 
                 Image(systemName: "chevron.right")
                     .font(.caption)
-                    .foregroundStyle(RenaissanceColors.stoneGray)
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)

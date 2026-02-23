@@ -31,11 +31,11 @@ struct CharacterSelectView: View {
                         .frame(width: 200)
 
                     Text("Choose Your Apprentice")
-                        .font(.custom("Cinzel-Bold", size: 32))
+                        .font(.custom("Cinzel-Regular", size: 32))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     Text("Florence, 1485")
-                        .font(.custom("EBGaramond-Italic", size: 18))
+                        .font(.custom("Mulish-Light", size: 18))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
 
                     DividerOrnament()
@@ -59,7 +59,7 @@ struct CharacterSelectView: View {
 
                     TextField("Enter your name...", text: $name)
                         .textFieldStyle(.plain)
-                        .font(.custom("EBGaramond-Regular", size: 18))
+                        .font(.custom("Mulish-Light", size: 18))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 12)
@@ -92,7 +92,7 @@ struct CharacterSelectView: View {
                     }
                 } label: {
                     Text("Continue")
-                        .font(.custom("Cinzel-Bold", size: 18))
+                        .font(.custom("Cinzel-Regular", size: 18))
                         .foregroundStyle(.white)
                         .padding(.horizontal, 40)
                         .padding(.vertical, 14)

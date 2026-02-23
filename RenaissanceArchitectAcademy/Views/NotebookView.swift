@@ -50,7 +50,7 @@ struct NotebookView: View {
                                 addNoteSection
                             }
 
-                            ForEach(entriesForTab(notebook ?? BuildingNotebook(id: buildingId, buildingName: buildingName))) { entry in
+                            ForEach(entriesForTab(notebook)) { entry in
                                 entryCard(entry)
                             }
                         }
@@ -78,7 +78,7 @@ struct NotebookView: View {
                         }
                     } label: {
                         Image(systemName: isDrawingMode ? "pencil.slash" : "pencil.tip")
-                            .font(.system(size: 22, weight: .semibold))
+                            .font(.custom("Mulish-SemiBold", size: 22, relativeTo: .title3))
                             .foregroundStyle(.white)
                             .frame(width: 56, height: 56)
                             .background(
@@ -110,7 +110,7 @@ struct NotebookView: View {
                         }
                     } label: {
                         Image(systemName: isDrawingMode ? "pencil.slash" : "pencil.tip")
-                            .font(.system(size: 22, weight: .semibold))
+                            .font(.custom("Mulish-SemiBold", size: 22, relativeTo: .title3))
                             .foregroundStyle(.white)
                             .frame(width: 56, height: 56)
                             .background(
@@ -147,7 +147,7 @@ struct NotebookView: View {
                         onDismiss()
                     } label: {
                         Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .semibold))
+                            .font(.custom("Mulish-SemiBold", size: 16, relativeTo: .subheadline))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                             .frame(width: 36, height: 36)
                     }
@@ -158,13 +158,13 @@ struct NotebookView: View {
 
                 VStack(spacing: 4) {
                     Text(buildingName)
-                        .font(.custom("Cinzel-Bold", size: 22))
+                        .font(.custom("Cinzel-Regular", size: 22))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     HStack(spacing: 6) {
                         Text(era.rawValue)
-                            .font(.custom("EBGaramond-Italic", size: 13))
-                            .foregroundStyle(RenaissanceColors.stoneGray)
+                            .font(.custom("Mulish-Light", size: 13))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         ForEach(sciences, id: \.self) { science in
                             scienceChip(science)
@@ -180,16 +180,16 @@ struct NotebookView: View {
 
             HStack(spacing: 6) {
                 Image(systemName: "book.closed.fill")
-                    .font(.system(size: 14))
-                    .foregroundStyle(RenaissanceColors.ochre)
+                    .font(.custom("Mulish-Light", size: 14, relativeTo: .footnote))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
                 let count = notebook?.entries.count ?? 0
                 Text("\(count) \(count == 1 ? "entry" : "entries")")
-                    .font(.custom("EBGaramond-Regular", size: 14))
-                    .foregroundStyle(RenaissanceColors.stoneGray)
+                    .font(.custom("Mulish-Light", size: 14))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 if isDrawingMode {
                     Text("  Drawing Mode")
-                        .font(.custom("Cinzel-Bold", size: 12))
+                        .font(.custom("Cinzel-Regular", size: 12))
                         .foregroundStyle(RenaissanceColors.errorRed)
                 }
             }
@@ -220,9 +220,9 @@ struct NotebookView: View {
         } label: {
             HStack(spacing: 5) {
                 Image(systemName: tab.icon)
-                    .font(.system(size: 12))
+                    .font(.custom("Delius-Regular", size: 12, relativeTo: .caption))
                 Text(tab.label)
-                    .font(.custom("Cinzel-Bold", size: 12))
+                    .font(.custom("Cinzel-Regular", size: 12))
             }
             .foregroundStyle(selectedTab == tab ? .white : RenaissanceColors.sepiaInk)
             .padding(.horizontal, 14)
@@ -272,12 +272,12 @@ struct NotebookView: View {
                     }
                     Spacer()
                     Text(entry.dateAdded, style: .date)
-                        .font(.custom("EBGaramond-Regular", size: 11))
-                        .foregroundStyle(RenaissanceColors.stoneGray)
+                        .font(.custom("Mulish-Light", size: 11))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
 
                 Text(entry.title)
-                    .font(.custom("Cinzel-Bold", size: 16))
+                    .font(.custom("Delius-Regular", size: 16))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .lineLimit(2)
 
@@ -324,16 +324,16 @@ struct NotebookView: View {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 8) {
                     Image(systemName: "paperclip")
-                        .font(.system(size: 16))
-                        .foregroundStyle(RenaissanceColors.ochre)
+                        .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
                         .rotationEffect(.degrees(-30))
                     Text("Fun Fact")
-                        .font(.custom("Cinzel-Bold", size: 14))
-                        .foregroundStyle(RenaissanceColors.ochre)
+                        .font(.custom("Cinzel-Regular", size: 14))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
                     Spacer()
                     Text(entry.dateAdded, style: .date)
-                        .font(.custom("EBGaramond-Regular", size: 11))
-                        .foregroundStyle(RenaissanceColors.stoneGray)
+                        .font(.custom("Mulish-Light", size: 11))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
 
                 markdownText(entry.body)
@@ -378,7 +378,7 @@ struct NotebookView: View {
             if isAddingNote {
                 VStack(spacing: 10) {
                     TextField("Title", text: $newNoteTitle)
-                        .font(.custom("Cinzel-Bold", size: 16))
+                        .font(.custom("Cinzel-Regular", size: 16))
                         .textFieldStyle(.plain)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
@@ -388,7 +388,7 @@ struct NotebookView: View {
                         )
 
                     TextEditor(text: $newNoteBody)
-                        .font(.custom("EBGaramond-Regular", size: 15))
+                        .font(.custom("Delius-Regular", size: 15))
                         .scrollContentBackground(.hidden)
                         .frame(minHeight: 80, maxHeight: 140)
                         .padding(8)
@@ -403,8 +403,8 @@ struct NotebookView: View {
                             newNoteTitle = ""
                             newNoteBody = ""
                         }
-                        .font(.custom("EBGaramond-Regular", size: 14))
-                        .foregroundStyle(RenaissanceColors.stoneGray)
+                        .font(.custom("Delius-Regular", size: 14))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
                         .buttonStyle(.plain)
 
                         Spacer()
@@ -425,7 +425,7 @@ struct NotebookView: View {
                                 Image(systemName: "checkmark")
                                 Text("Save")
                             }
-                            .font(.custom("Cinzel-Bold", size: 14))
+                            .font(.custom("Cinzel-Regular", size: 14))
                             .foregroundStyle(.white)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
@@ -452,11 +452,11 @@ struct NotebookView: View {
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: "plus.circle.fill")
-                            .font(.system(size: 16))
+                            .font(.custom("Delius-Regular", size: 16, relativeTo: .subheadline))
                         Text("Add Note")
-                            .font(.custom("Cinzel-Bold", size: 14))
+                            .font(.custom("Cinzel-Regular", size: 14))
                     }
-                    .foregroundStyle(RenaissanceColors.ochre)
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
                     .background(
@@ -480,7 +480,7 @@ struct NotebookView: View {
                     macTool = tool
                 } label: {
                     Image(systemName: iconForTool(tool))
-                        .font(.system(size: 14, weight: macTool == tool ? .bold : .regular))
+                        .font(.custom(macTool == tool ? "Mulish-Bold" : "Mulish-Light", size: 14, relativeTo: .footnote))
                         .foregroundStyle(macTool == tool ? .white : RenaissanceColors.sepiaInk)
                         .frame(width: 32, height: 32)
                         .background(
@@ -536,14 +536,14 @@ struct NotebookView: View {
         VStack(spacing: 16) {
             Spacer()
             Image(systemName: "book.closed")
-                .font(.system(size: 48))
-                .foregroundStyle(RenaissanceColors.stoneGray.opacity(0.4))
+                .font(.custom("Mulish-Light", size: 48, relativeTo: .title3))
+                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
             Text("No entries yet")
-                .font(.custom("Cinzel-Bold", size: 18))
-                .foregroundStyle(RenaissanceColors.stoneGray)
+                .font(.custom("Cinzel-Regular", size: 18))
+                .foregroundStyle(RenaissanceColors.sepiaInk)
             Text("Complete the lesson to fill your notebook with knowledge about \(buildingName).")
-                .font(.custom("EBGaramond-Regular", size: 15))
-                .foregroundStyle(RenaissanceColors.stoneGray.opacity(0.8))
+                .font(.custom("Mulish-Light", size: 15))
+                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
             Spacer()
@@ -562,11 +562,11 @@ struct NotebookView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 3))
             } else {
                 Image(systemName: science.sfSymbolName)
-                    .font(.system(size: 11))
-                    .foregroundStyle(RenaissanceColors.warmBrown)
+                    .font(.custom("Mulish-Light", size: 11, relativeTo: .caption))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
             }
             Text(science.rawValue)
-                .font(.custom("EBGaramond-Regular", size: 11))
+                .font(.custom("Mulish-Light", size: 11))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
         }
         .padding(.horizontal, 6)
@@ -582,11 +582,11 @@ struct NotebookView: View {
         return parts.reduce(Text("")) { result, part in
             if part.isBold {
                 return result + Text(part.text)
-                    .font(.custom("Cinzel-Bold", size: 15))
+                    .font(.custom("Delius-Regular", size: 15))
                     .foregroundColor(RenaissanceColors.sepiaInk)
             } else {
                 return result + Text(part.text)
-                    .font(.custom("EBGaramond-Regular", size: 15))
+                    .font(.custom("Delius-Regular", size: 15))
                     .foregroundColor(RenaissanceColors.sepiaInk)
             }
         }

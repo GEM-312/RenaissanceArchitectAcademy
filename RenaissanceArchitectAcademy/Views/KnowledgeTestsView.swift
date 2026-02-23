@@ -37,12 +37,12 @@ struct KnowledgeTestsView: View {
                     // Header
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Knowledge Tests")
-                            .font(.custom("Cinzel-Bold", size: isLargeScreen ? 32 : 26, relativeTo: .title))
+                            .font(.custom("Cinzel-Regular", size: isLargeScreen ? 32 : 26, relativeTo: .title))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         Text("Test your understanding of Renaissance sciences")
-                            .font(.custom("EBGaramond-Italic", size: isLargeScreen ? 16 : 14, relativeTo: .subheadline))
-                            .foregroundStyle(RenaissanceColors.stoneGray)
+                            .font(.custom("Mulish-Light", size: isLargeScreen ? 16 : 14, relativeTo: .subheadline))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                     .padding(.horizontal, isLargeScreen ? 40 : 20)
                     .padding(.top, 20)
@@ -104,17 +104,17 @@ struct KnowledgeTestsView: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(plot.building.name)
-                        .font(.custom("EBGaramond-Regular", size: 17, relativeTo: .body))
+                        .font(.custom("Mulish-Light", size: 17, relativeTo: .body))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     HStack(spacing: 6) {
                         Text("\(challenge.questions.count) questions")
-                            .font(.custom("EBGaramond-Italic", size: 13, relativeTo: .caption))
-                            .foregroundStyle(RenaissanceColors.stoneGray)
+                            .font(.custom("Mulish-Light", size: 13, relativeTo: .caption))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         ForEach(plot.building.sciences.prefix(3), id: \.self) { science in
                             Image(systemName: science.sfSymbolName)
-                                .font(.system(size: 10))
+                                .font(.custom("Mulish-Light", size: 10, relativeTo: .caption2))
                                 .foregroundStyle(RenaissanceColors.color(for: science))
                         }
                     }
@@ -130,7 +130,7 @@ struct KnowledgeTestsView: View {
                 } else {
                     Image(systemName: "chevron.right")
                         .font(.caption)
-                        .foregroundStyle(RenaissanceColors.stoneGray)
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
             }
             .padding(16)

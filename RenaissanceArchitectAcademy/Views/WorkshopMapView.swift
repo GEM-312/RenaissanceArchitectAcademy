@@ -27,9 +27,6 @@ struct WorkshopMapView: View {
     @State private var showStationLesson = false
     @State private var pendingLessonStation: ResourceStationType?
 
-    // Forest choice dialogue (after lesson)
-    @State private var showForestChoice = false
-
     // Overlay states
     @State private var activeStation: ResourceStationType?
     @State private var showHintBubble = false
@@ -65,12 +62,17 @@ struct WorkshopMapView: View {
                         }
 
                         if station == .forest {
-                            // Forest gets a special choice dialogue
-                            withAnimation(.spring(response: 0.3)) {
-                                showForestChoice = true
+                            // Navigate directly to the forest
+                            activeStation = nil
+                            onNavigate?(.forest)
+                        } else if station == .craftingRoom {
+                            // Enter crafting room after lesson
+                            activeStation = nil
+                            if let onEnterInterior = onEnterInterior {
+                                onEnterInterior()
                             }
                         } else {
-                            // Normal flow: show hint then collection
+                            // Normal flow: show hint bubble with bird, then collection
                             withAnimation(.spring(response: 0.3)) {
                                 showHintBubble = true
                             }
@@ -82,12 +84,6 @@ struct WorkshopMapView: View {
                         }
                     }
                     .transition(.opacity)
-                }
-
-                // Layer 2b: Forest choice dialogue (after lesson)
-                if showForestChoice {
-                    forestChoiceOverlay
-                        .transition(.opacity)
                 }
 
                 // Layer 3: Nav (left) + Buildings (right) with margins — same as city map
@@ -104,8 +100,8 @@ struct WorkshopMapView: View {
                 if let status = workshop.statusMessage {
                     VStack {
                         Text(status)
-                            .font(.custom("EBGaramond-Italic", size: 14))
-                            .foregroundStyle(RenaissanceColors.terracotta)
+                            .font(.custom("Mulish-Light", size: 14))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 6)
                             .background(
@@ -147,6 +143,27 @@ struct WorkshopMapView: View {
                     educationalOverlay
                         .transition(.opacity.combined(with: .scale(scale: 0.9)))
                 }
+
+                // Earn Florins overlay (shown when player can't afford materials)
+                if workshop.showEarnFlorinsOverlay {
+                    earnFlorinsOverlay
+                        .transition(.opacity.combined(with: .scale(scale: 0.9)))
+                }
+
+                // Master's Task floating card
+                if let assignment = workshop.currentAssignment,
+                   !workshop.showEarnFlorinsOverlay,
+                   !showCollectionOverlay,
+                   !showWorkbenchOverlay,
+                   !showFurnaceOverlay,
+                   !workshop.showEducationalPopup {
+                    masterTaskCard(assignment: assignment)
+                }
+            }
+        }
+        .onAppear {
+            if workshop.currentAssignment == nil {
+                workshop.generateNewAssignment()
             }
         }
     }
@@ -166,24 +183,14 @@ struct WorkshopMapView: View {
             self.playerIsWalking = isWalking
         }
 
-        // Station reached — show appropriate overlay or enter interior
+        // Station reached — show bird lesson first, then collection
         newScene.onStationReached = { stationType in
             self.activeStation = stationType
             dismissAllOverlays()
 
             switch stationType {
             case .craftingRoom:
-                // Transition to interior crafting room
-                if let onEnterInterior = onEnterInterior {
-                    onEnterInterior()
-                } else {
-                    // Fallback: show inline overlay
-                    withAnimation(.spring(response: 0.3)) {
-                        showWorkbenchOverlay = true
-                    }
-                }
-            default:
-                // Resource station — check if bird lesson needed first
+                // Check if bird lesson needed for crafting room
                 if !workshop.stationsLessonSeen.contains(stationType),
                    OnboardingContent.lesson(for: stationType) != nil {
                     pendingLessonStation = stationType
@@ -191,7 +198,25 @@ struct WorkshopMapView: View {
                         showStationLesson = true
                     }
                 } else {
-                    // Already seen lesson — show hint then collection
+                    // Transition to interior crafting room
+                    if let onEnterInterior = onEnterInterior {
+                        onEnterInterior()
+                    } else {
+                        withAnimation(.spring(response: 0.3)) {
+                            showWorkbenchOverlay = true
+                        }
+                    }
+                }
+            default:
+                // Check if bird lesson needed for this station
+                if !workshop.stationsLessonSeen.contains(stationType),
+                   OnboardingContent.lesson(for: stationType) != nil {
+                    pendingLessonStation = stationType
+                    withAnimation(.spring(response: 0.3)) {
+                        showStationLesson = true
+                    }
+                } else {
+                    // Already seen lesson — show hint bubble + collection
                     withAnimation(.spring(response: 0.3)) {
                         showHintBubble = true
                     }
@@ -226,7 +251,6 @@ struct WorkshopMapView: View {
         showWorkbenchOverlay = false
         showFurnaceOverlay = false
         showStationLesson = false
-        showForestChoice = false
     }
 
     // MARK: - Layer 3: Navigation Panel + Inventory
@@ -259,25 +283,18 @@ struct WorkshopMapView: View {
                             Image(systemName: "chevron.left")
                             Text("Back")
                         }
-                        .font(.custom("EBGaramond-Italic", size: 16))
-                        .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                        .font(.custom("Mulish-Light", size: 16))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
-                        .background(
-                            Capsule()
-                                .fill(RenaissanceColors.parchment.opacity(0.95))
-                                .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
-                        )
+                        .glassButton(shape: Capsule())
                     }
                     Text("Workshop")
-                        .font(.custom("Cinzel-Bold", size: 20))
+                        .font(.custom("Cinzel-Regular", size: 20))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 10)
-                        .background(
-                            Capsule()
-                                .fill(RenaissanceColors.parchment.opacity(0.95))
-                        )
+                        .glassButton(shape: Capsule())
                 }
             }
         }
@@ -295,7 +312,7 @@ struct WorkshopMapView: View {
                                 Text(material.icon)
                                     .font(.caption)
                                 Text("\(count)")
-                                    .font(.custom("EBGaramond-Regular", size: 12))
+                                    .font(.custom("Mulish-Light", size: 12))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                             .padding(.horizontal, 6)
@@ -323,7 +340,7 @@ struct WorkshopMapView: View {
                                 Text(item.icon)
                                     .font(.caption)
                                 Text("\(count)")
-                                    .font(.custom("EBGaramond-Regular", size: 12))
+                                    .font(.custom("Mulish-Light", size: 12))
                                     .foregroundStyle(RenaissanceColors.sageGreen)
                             }
                             .padding(.horizontal, 6)
@@ -361,11 +378,11 @@ struct WorkshopMapView: View {
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text(station.label)
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(.custom("Cinzel-Regular", size: 16))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         Text(workshop.hintFor(station: station))
-                            .font(.custom("EBGaramond-Italic", size: 14))
+                            .font(.custom("Mulish-Light", size: 14))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -389,135 +406,6 @@ struct WorkshopMapView: View {
         }
     }
 
-    // MARK: - Forest Choice Overlay
-
-    private var forestChoiceOverlay: some View {
-        ZStack {
-            // Dimmed background
-            Color.black.opacity(0.5)
-                .ignoresSafeArea()
-                .onTapGesture {
-                    // Dismiss and go to normal collection
-                    withAnimation(.spring(response: 0.3)) {
-                        showForestChoice = false
-                        showHintBubble = true
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-                        withAnimation(.spring(response: 0.3)) {
-                            showCollectionOverlay = true
-                        }
-                    }
-                }
-
-            VStack(spacing: 24) {
-                Spacer()
-
-                // Bird sitting on top
-                BirdCharacter(isSitting: true)
-                    .frame(width: 180, height: 180)
-                    .padding(.bottom, -36)
-
-                // Dialogue bubble with choices
-                VStack(spacing: 20) {
-                    Text("The Forest Awaits!")
-                        .font(.custom("Cinzel-Bold", size: 22))
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
-
-                    Text("Italy's forests hold many secrets — from the mighty oaks of Tuscany to the stone pines of Rome. Would you like to collect timber, or explore the forest and learn about its trees?")
-                        .font(.system(size: 17))
-                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
-                        .multilineTextAlignment(.center)
-
-                    VStack(spacing: 12) {
-                        // Choice 1: Collect Timber
-                        Button {
-                            withAnimation(.spring(response: 0.3)) {
-                                showForestChoice = false
-                                showHintBubble = true
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-                                withAnimation(.spring(response: 0.3)) {
-                                    showCollectionOverlay = true
-                                }
-                            }
-                        } label: {
-                            HStack(spacing: 12) {
-                                Image(systemName: "tree")
-                                    .font(.title3)
-                                    .foregroundStyle(RenaissanceColors.warmBrown)
-
-                                Text("Collect Timber")
-                                    .font(.system(size: 17))
-                                    .foregroundStyle(RenaissanceColors.sepiaInk)
-
-                                Spacer()
-
-                                Image(systemName: "chevron.right")
-                                    .font(.caption)
-                                    .foregroundStyle(RenaissanceColors.stoneGray)
-                            }
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 14)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(RenaissanceColors.parchment)
-                                    .shadow(color: RenaissanceColors.warmBrown.opacity(0.2), radius: 4, y: 2)
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(RenaissanceColors.ochre.opacity(0.5), lineWidth: 1)
-                            )
-                        }
-                        .buttonStyle(.plain)
-
-                        // Choice 2: Explore the Forest
-                        Button {
-                            withAnimation(.spring(response: 0.3)) {
-                                showForestChoice = false
-                                activeStation = nil
-                            }
-                            onNavigate?(.forest)
-                        } label: {
-                            HStack(spacing: 12) {
-                                Image(systemName: "leaf.fill")
-                                    .font(.title3)
-                                    .foregroundStyle(RenaissanceColors.sageGreen)
-
-                                Text("Explore the Forest")
-                                    .font(.system(size: 17))
-                                    .foregroundStyle(RenaissanceColors.sepiaInk)
-
-                                Spacer()
-
-                                Image(systemName: "chevron.right")
-                                    .font(.caption)
-                                    .foregroundStyle(RenaissanceColors.stoneGray)
-                            }
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 14)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(RenaissanceColors.parchment)
-                                    .shadow(color: RenaissanceColors.sageGreen.opacity(0.2), radius: 4, y: 2)
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(RenaissanceColors.sageGreen.opacity(0.5), lineWidth: 1)
-                            )
-                        }
-                        .buttonStyle(.plain)
-                    }
-                    .padding(.top, 8)
-                }
-                .padding(28)
-                .background(DialogueBubble())
-                .padding(.horizontal, 40)
-
-                Spacer()
-            }
-        }
-    }
-
     // MARK: - Layer 5: Collection Overlay
 
     private func collectionOverlay(for station: ResourceStationType) -> some View {
@@ -533,10 +421,10 @@ struct WorkshopMapView: View {
                 if let vm = viewModel {
                     HStack(spacing: 4) {
                         Image(systemName: "dollarsign.circle.fill")
-                            .font(.system(size: 14))
-                            .foregroundStyle(RenaissanceColors.goldSuccess)
+                            .font(.custom("Mulish-Light", size: 14, relativeTo: .footnote))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("\(vm.goldFlorins) florins")
-                            .font(.custom("Cinzel-Bold", size: 13))
+                            .font(.custom("Cinzel-Regular", size: 13))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                     .padding(.bottom, 4)
@@ -550,7 +438,11 @@ struct WorkshopMapView: View {
                             // Check florins before collecting
                             guard let vm = viewModel else { return }
                             guard vm.goldFlorins >= material.cost else {
-                                workshop.statusMessage = "Not enough florins! Need \(material.cost)"
+                                withAnimation(.spring(response: 0.3)) {
+                                    showCollectionOverlay = false
+                                    showHintBubble = false
+                                }
+                                workshop.showEarnFlorinsOverlay = true
                                 return
                             }
                             if workshop.collectFromStation(station, material: material) {
@@ -564,19 +456,19 @@ struct WorkshopMapView: View {
                                 Text(material.icon)
                                     .font(.title2)
                                 Text(material.rawValue)
-                                    .font(.custom("EBGaramond-Regular", size: 12))
+                                    .font(.custom("Mulish-Light", size: 12))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                                     .lineLimit(1)
                                 HStack(spacing: 2) {
                                     Text("×\(stock)")
-                                        .font(.custom("EBGaramond-Regular", size: 12))
-                                        .foregroundStyle(stock > 0 ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray)
+                                        .font(.custom("Mulish-Light", size: 12))
+                                        .foregroundStyle(stock > 0 ? RenaissanceColors.sageGreen : RenaissanceColors.sepiaInk)
                                     Image(systemName: "dollarsign.circle.fill")
-                                        .font(.system(size: 9))
-                                        .foregroundStyle(RenaissanceColors.goldSuccess)
+                                        .font(.custom("Mulish-Light", size: 9, relativeTo: .caption2))
+                                        .foregroundStyle(RenaissanceColors.sepiaInk)
                                     Text("\(material.cost)")
-                                        .font(.custom("EBGaramond-Regular", size: 11))
-                                        .foregroundStyle(canAfford ? RenaissanceColors.goldSuccess : RenaissanceColors.errorRed)
+                                        .font(.custom("Mulish-Light", size: 11))
+                                        .foregroundStyle(canAfford ? RenaissanceColors.sepiaInk : RenaissanceColors.errorRed)
                                 }
                             }
                             .padding(10)
@@ -589,7 +481,7 @@ struct WorkshopMapView: View {
                                     .strokeBorder(stock > 0 && canAfford ? RenaissanceColors.renaissanceBlue : RenaissanceColors.stoneGray.opacity(0.3), lineWidth: 1)
                             )
                         }
-                        .disabled(stock <= 0 || !canAfford)
+                        .disabled(stock <= 0)
                     }
                 }
 
@@ -600,8 +492,8 @@ struct WorkshopMapView: View {
                         activeStation = nil
                     }
                 }
-                .font(.custom("EBGaramond-Italic", size: 15))
-                .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                .font(.custom("Mulish-Light", size: 15))
+                .foregroundStyle(RenaissanceColors.sepiaInk)
                 .padding(.top, 4)
             }
             .padding(20)
@@ -631,7 +523,7 @@ struct WorkshopMapView: View {
                     HStack(spacing: 6) {
                         Text(recipe.output.icon)
                         Text(recipe.output.rawValue)
-                            .font(.custom("EBGaramond-Italic", size: 15))
+                            .font(.custom("Mulish-Light", size: 15))
                             .foregroundStyle(RenaissanceColors.sageGreen)
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundStyle(RenaissanceColors.sageGreen)
@@ -639,8 +531,8 @@ struct WorkshopMapView: View {
                     }
                 } else {
                     Text("Add materials to mix")
-                        .font(.custom("EBGaramond-Italic", size: 14))
-                        .foregroundStyle(RenaissanceColors.stoneGray)
+                        .font(.custom("Mulish-Light", size: 14))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
 
                 // 4 mixing slots
@@ -663,7 +555,7 @@ struct WorkshopMapView: View {
                                         Text(material.icon)
                                             .font(.title3)
                                         Text("×\(count)")
-                                            .font(.custom("EBGaramond-Regular", size: 11))
+                                            .font(.custom("Mulish-Light", size: 11))
                                             .foregroundStyle(RenaissanceColors.sepiaInk)
                                     }
                                     .padding(6)
@@ -685,7 +577,7 @@ struct WorkshopMapView: View {
                             workshop.clearWorkbench()
                         }
                     }
-                    .font(.custom("EBGaramond-Italic", size: 15))
+                    .font(.custom("Mulish-Light", size: 15))
                     .padding(.horizontal, 20)
                     .padding(.vertical, 8)
                     .background(
@@ -703,7 +595,7 @@ struct WorkshopMapView: View {
                             workshop.statusMessage = "Mixed! Walk to the Furnace to fire."
                         }
                     }
-                    .font(.custom("EBGaramond-Italic", size: 15))
+                    .font(.custom("Mulish-Light", size: 15))
                     .padding(.horizontal, 24)
                     .padding(.vertical, 8)
                     .background(
@@ -723,8 +615,8 @@ struct WorkshopMapView: View {
                             activeStation = nil
                         }
                     }
-                    .font(.custom("EBGaramond-Italic", size: 15))
-                    .foregroundStyle(RenaissanceColors.stoneGray)
+                    .font(.custom("Mulish-Light", size: 15))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
             }
             .padding(20)
@@ -759,7 +651,7 @@ struct WorkshopMapView: View {
             } else {
                 Image(systemName: "plus")
                     .font(.caption)
-                    .foregroundStyle(RenaissanceColors.stoneGray.opacity(0.5))
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
             }
         }
     }
@@ -799,26 +691,26 @@ struct WorkshopMapView: View {
                             HStack(spacing: 4) {
                                 ForEach(Array(input.keys.sorted(by: { $0.rawValue < $1.rawValue })), id: \.self) { material in
                                     Text("\(material.icon)×\(input[material]!)")
-                                        .font(.custom("EBGaramond-Regular", size: 13))
+                                        .font(.custom("Mulish-Light", size: 13))
                                 }
                             }
                             if let recipe = workshop.currentRecipe {
                                 Text("→ \(recipe.output.icon) \(recipe.output.rawValue)")
-                                    .font(.custom("EBGaramond-Italic", size: 13))
+                                    .font(.custom("Mulish-Light", size: 13))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                         }
                     } else {
                         Text("Mix ingredients at the Workbench first")
-                            .font(.custom("EBGaramond-Italic", size: 14))
-                            .foregroundStyle(RenaissanceColors.stoneGray)
+                            .font(.custom("Mulish-Light", size: 14))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                 }
 
                 // Temperature picker
                 VStack(spacing: 4) {
                     Text("Temperature")
-                        .font(.custom("EBGaramond-Regular", size: 13))
+                        .font(.custom("Mulish-Light", size: 13))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     Picker("Temperature", selection: $workshop.furnaceTemperature) {
@@ -841,7 +733,7 @@ struct WorkshopMapView: View {
                         fireFurnace()
                     } label: {
                         Text("FIRE!")
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(.custom("Cinzel-Regular", size: 16))
                             .foregroundStyle(.white)
                             .padding(.horizontal, 32)
                             .padding(.vertical, 10)
@@ -862,8 +754,8 @@ struct WorkshopMapView: View {
                             activeStation = nil
                         }
                     }
-                    .font(.custom("EBGaramond-Italic", size: 15))
-                    .foregroundStyle(RenaissanceColors.stoneGray)
+                    .font(.custom("Mulish-Light", size: 15))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
             }
             .padding(20)
@@ -886,11 +778,11 @@ struct WorkshopMapView: View {
 
             VStack(spacing: 20) {
                 Text("Did You Know?")
-                    .font(.custom("Cinzel-Bold", size: 24))
+                    .font(.custom("Cinzel-Regular", size: 24))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 Text(workshop.educationalText)
-                    .font(.system(size: 17))
+                    .font(.custom("Mulish-Light", size: 17, relativeTo: .body))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
@@ -898,7 +790,7 @@ struct WorkshopMapView: View {
                 Button("Continue") {
                     workshop.showEducationalPopup = false
                 }
-                .font(.custom("EBGaramond-Italic", size: 18))
+                .font(.custom("Mulish-Light", size: 18))
                 .padding(.horizontal, 32)
                 .padding(.vertical, 10)
                 .background(
@@ -915,6 +807,176 @@ struct WorkshopMapView: View {
                     .shadow(color: .black.opacity(0.2), radius: 12, y: 4)
             )
         }
+    }
+
+    // MARK: - Earn Florins Overlay
+
+    private var earnFlorinsOverlay: some View {
+        ZStack {
+            Color.black.opacity(0.4)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    workshop.showEarnFlorinsOverlay = false
+                }
+
+            VStack(spacing: 20) {
+                HStack(spacing: 12) {
+                    BirdCharacter()
+                        .frame(width: 70, height: 70)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Earn Florins")
+                            .font(.custom("Cinzel-Bold", size: 22))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                        Text("You need more florins! Here's how:")
+                            .font(.custom("Mulish-Light", size: 14))
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
+                    }
+                }
+
+                VStack(spacing: 10) {
+                    earnOptionCard(
+                        icon: "book.fill",
+                        title: "Read a Lesson",
+                        reward: "+\(GameRewards.lessonReadFlorins) florins"
+                    ) {
+                        workshop.showEarnFlorinsOverlay = false
+                        dismissAllOverlays()
+                        onNavigate?(.cityMap)
+                    }
+
+                    earnOptionCard(
+                        icon: "leaf.fill",
+                        title: "Explore the Forest",
+                        reward: "+\(GameRewards.timberCollectFlorins)/timber"
+                    ) {
+                        workshop.showEarnFlorinsOverlay = false
+                        dismissAllOverlays()
+                        onNavigate?(.forest)
+                    }
+
+                    earnOptionCard(
+                        icon: "flame.fill",
+                        title: "Craft an Item",
+                        reward: "+\(GameRewards.craftCompleteFlorins) florins"
+                    ) {
+                        workshop.showEarnFlorinsOverlay = false
+                        dismissAllOverlays()
+                        if let onEnterInterior = onEnterInterior {
+                            onEnterInterior()
+                        }
+                    }
+
+                    if let assignment = workshop.currentAssignment {
+                        earnOptionCard(
+                            icon: "scroll.fill",
+                            title: "Master's Task: \(assignment.targetItem.rawValue)",
+                            reward: "+\(assignment.rewardFlorins) bonus"
+                        ) {
+                            workshop.showEarnFlorinsOverlay = false
+                            dismissAllOverlays()
+                            if let onEnterInterior = onEnterInterior {
+                                onEnterInterior()
+                            }
+                        }
+                    }
+                }
+
+                Button("Maybe Later") {
+                    workshop.showEarnFlorinsOverlay = false
+                }
+                .font(.custom("Mulish-Light", size: 15))
+                .foregroundStyle(RenaissanceColors.sepiaInk)
+            }
+            .padding(24)
+            .frame(maxWidth: 400)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(RenaissanceColors.parchment)
+                    .shadow(color: .black.opacity(0.2), radius: 12, y: 4)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 2)
+            )
+        }
+    }
+
+    private func earnOptionCard(icon: String, title: String, reward: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .font(.body)
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .frame(width: 32, height: 32)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(RenaissanceColors.warmBrown.opacity(0.1))
+                    )
+
+                Text(title)
+                    .font(.custom("Cinzel-Regular", size: 14))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
+
+                Spacer()
+
+                Text(reward)
+                    .font(.custom("Mulish-SemiBold", size: 13))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
+
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
+            }
+            .padding(12)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(RenaissanceColors.parchment.opacity(0.6))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .strokeBorder(RenaissanceColors.warmBrown.opacity(0.2), lineWidth: 1)
+                    )
+            )
+        }
+    }
+
+    // MARK: - Master Task Card
+
+    private func masterTaskCard(assignment: MasterAssignment) -> some View {
+        VStack {
+            HStack {
+                Spacer()
+                HStack(spacing: 8) {
+                    Image(systemName: "scroll.fill")
+                        .font(.caption)
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+
+                    Text("Craft \(assignment.targetItem.icon) \(assignment.targetItem.rawValue)")
+                        .font(.custom("Mulish-Medium", size: 13))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+
+                    Text("+\(assignment.rewardFlorins)")
+                        .font(.custom("Cinzel-Bold", size: 13))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+                .background(
+                    Capsule()
+                        .fill(RenaissanceColors.parchment.opacity(0.92))
+                        .shadow(color: .black.opacity(0.1), radius: 3, y: 2)
+                )
+                .overlay(
+                    Capsule()
+                        .strokeBorder(RenaissanceColors.warmBrown.opacity(0.25), lineWidth: 1)
+                )
+                .padding(.trailing, 16)
+            }
+            .padding(.top, 70)
+
+            Spacer()
+        }
+        .allowsHitTesting(false)
     }
 
     // MARK: - Gestures
@@ -938,7 +1000,23 @@ struct WorkshopMapView: View {
         }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + recipe.processingTime) {
+            let craftedItem = recipe.output
             workshop.completeProcessing()
+
+            // Award crafting florins
+            viewModel?.earnFlorins(GameRewards.craftCompleteFlorins)
+            var bonusText = ""
+
+            // Check master assignment
+            if workshop.checkAssignmentCompletion(craftedItem: craftedItem) {
+                viewModel?.earnFlorins(GameRewards.masterAssignmentFlorins)
+                bonusText = "\n\nMaster's Task complete! +\(GameRewards.masterAssignmentFlorins) bonus florins!"
+                workshop.generateNewAssignment()
+            }
+
+            // Append reward info to educational popup
+            workshop.educationalText += "\n\n+\(GameRewards.craftCompleteFlorins) florins earned!" + bonusText
+
             // Close furnace after educational popup
             withAnimation(.spring(response: 0.3)) {
                 showFurnaceOverlay = false

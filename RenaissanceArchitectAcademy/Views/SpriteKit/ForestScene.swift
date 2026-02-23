@@ -26,37 +26,61 @@ class ForestScene: SKScene {
         let name: String
         let italianName: String
         let position: CGPoint
-        let usedFor: String
+        let woodType: String           // "Hardwood" / "Softwood"
+        let usedFor: String            // Architecture uses
+        let furnitureUse: String       // Furniture/decorative uses
+        let modernUse: String          // Where this wood is used today
         let buildings: String
         let description: String
+        let timberYield: Int           // How much timber per collection (1-3)
     }
 
     private let pointsOfInterest: [ForestPOI] = [
         ForestPOI(name: "Oak", italianName: "Quercia",
                   position: CGPoint(x: 500, y: 1650),
-                  usedFor: "Roof trusses, beams, doors",
+                  woodType: "Hardwood",
+                  usedFor: "Roof trusses, load-bearing beams, and heavy doors. Oak spans cathedral naves and supports the massive roof structures of the Colosseum.",
+                  furnitureUse: "Dining tables, church pews, carved altarpieces. Oak's tight grain holds intricate carvings for generations.",
+                  modernUse: "Hardwood flooring, wine barrels, shipbuilding, and whiskey casks. Still the gold standard for structural timber.",
                   buildings: "ALL buildings (structural)",
-                  description: "The strongest Italian hardwood — oak beams span cathedral naves and support the massive roof trusses of the Colosseum. Its heartwood resists rot for centuries."),
+                  description: "The strongest Italian hardwood — oak heartwood resists rot for centuries. A single oak beam can support tons of stone.",
+                  timberYield: 3),
         ForestPOI(name: "Chestnut", italianName: "Castagno",
                   position: CGPoint(x: 2900, y: 1700),
-                  usedFor: "Exterior frames, joinery",
+                  woodType: "Hardwood",
+                  usedFor: "Window frames, exterior cladding, and water-resistant joinery. Rich in natural tannins that repel insects and moisture.",
+                  furnitureUse: "Storage chests, bed frames, and rustic tables. Called 'the bread tree' — its flour fed mountain villages.",
+                  modernUse: "Fence posts, outdoor furniture, and garden structures. Tannin content makes it naturally rot-resistant without treatment.",
                   buildings: "Palazzo, Villa",
-                  description: "Called 'the bread tree' because its flour fed mountain villages. Chestnut wood is rich in tannins that naturally repel insects and moisture — perfect for palazzo window frames."),
+                  description: "Chestnut's natural tannins make it the most weather-resistant Italian wood — perfect for anything exposed to rain.",
+                  timberYield: 2),
         ForestPOI(name: "Cypress", italianName: "Cipresso",
                   position: CGPoint(x: 1750, y: 1900),
-                  usedFor: "Interior panels, chests",
+                  woodType: "Softwood",
+                  usedFor: "Church doors, chapel interiors, and ceiling panels. Its aromatic oils repel moths and preserve sacred spaces.",
+                  furnitureUse: "Carved chests, wardrobes, and hope chests. The scent protects stored linens and vestments from insects.",
+                  modernUse: "Essential oils, garden trellises, and decorative structures. The iconic sentinel tree of Tuscan landscapes.",
                   buildings: "Chapel, Villa",
-                  description: "The tall sentinel of Tuscan landscapes. Cypress wood is aromatic and moth-resistant, making it the ideal choice for church doors, carved chests, and chapel interiors."),
+                  description: "The tall sentinel of Tuscany. Cypress is aromatic and moth-resistant — ancient Romans believed it sacred to the gods.",
+                  timberYield: 2),
         ForestPOI(name: "Walnut", italianName: "Noce",
                   position: CGPoint(x: 600, y: 750),
-                  usedFor: "Fine furniture, decoration",
+                  woodType: "Hardwood",
+                  usedFor: "Inlaid palazzo ceilings, ornamental door frames, and decorative wall panels in the finest Renaissance interiors.",
+                  furnitureUse: "Writing desks, portrait frames, and marquetry inlay. The most prized wood for master carvers and cabinet makers.",
+                  modernUse: "Gunstocks, luxury veneer, musical instruments, and high-end cabinetry. Still commands premium prices worldwide.",
                   buildings: "Palazzo (luxury)",
-                  description: "The most prized wood in Renaissance Italy. Walnut's deep grain and rich color made it the choice of master carvers for palazzo furniture, inlaid desks, and portrait frames."),
+                  description: "The most prized wood in Renaissance Italy. Walnut's deep grain and rich color made it the choice of master artisans.",
+                  timberYield: 1),
         ForestPOI(name: "Poplar", italianName: "Pioppo",
                   position: CGPoint(x: 2800, y: 700),
-                  usedFor: "Scaffolding, painting panels",
+                  woodType: "Softwood",
+                  usedFor: "Scaffolding, temporary centering for arches, and formwork. Every Renaissance construction site depended on poplar.",
+                  furnitureUse: "Painting panels for tempera art, simple shelving, and crates. Botticelli's 'Birth of Venus' was painted on poplar.",
+                  modernUse: "Plywood, paper pulp, matchsticks, and packaging. Fast-growing and sustainable — Italy's most renewable timber.",
                   buildings: "Construction phase + Chapel frescoes",
-                  description: "Fast-growing and lightweight, poplar was the builder's workhorse — scaffolding for every construction site. Artists also split poplar into smooth panels for tempera paintings."),
+                  description: "Fast-growing and lightweight, poplar was the builder's workhorse and the artist's canvas — scaffolding by day, painting panels by night.",
+                  timberYield: 2),
     ]
 
     private var poiNodes: [SKNode] = []
@@ -186,7 +210,7 @@ class ForestScene: SKScene {
 
     private func setupTitle() {
         let title = SKLabelNode(text: "THE ITALIAN FOREST")
-        title.fontName = "Cinzel-Bold"
+        title.fontName = "Cinzel-Regular"
         title.fontSize = 28
         title.fontColor = PlatformColor(RenaissanceColors.sepiaInk.opacity(0.4))
         title.position = CGPoint(x: mapSize.width / 2, y: mapSize.height - 50)
@@ -203,12 +227,20 @@ class ForestScene: SKScene {
             container.zPosition = 10
             container.name = "poi_\(index)"
 
-            // Glowing circle background
+            // Glowing circle background — warm ochre/parchment palette
             let glow = SKShapeNode(circleOfRadius: 40)
-            glow.fillColor = PlatformColor(RenaissanceColors.sageGreen.opacity(0.2))
-            glow.strokeColor = PlatformColor(RenaissanceColors.sageGreen.opacity(0.5))
+            glow.fillColor = PlatformColor(RenaissanceColors.ochre.opacity(0.15))
+            glow.strokeColor = PlatformColor(RenaissanceColors.ochre.opacity(0.4))
             glow.lineWidth = 2
             container.addChild(glow)
+
+            // Leaf icon above the circle
+            let leafLabel = SKLabelNode(text: "🌿")
+            leafLabel.fontSize = 22
+            leafLabel.position = CGPoint(x: 0, y: 4)
+            leafLabel.zPosition = 11
+            leafLabel.verticalAlignmentMode = .center
+            container.addChild(leafLabel)
 
             // Pulsing animation
             let scaleUp = SKAction.scale(to: 1.15, duration: 1.2)
@@ -219,18 +251,18 @@ class ForestScene: SKScene {
 
             // Tree name label
             let label = SKLabelNode(text: poi.name)
-            label.fontName = "Cinzel-Bold"
+            label.fontName = "Cinzel-Regular"
             label.fontSize = 15
-            label.fontColor = PlatformColor(RenaissanceColors.sepiaInk)
+            label.fontColor = PlatformColor(RenaissanceColors.ochre)
             label.position = CGPoint(x: 0, y: -55)
             label.zPosition = 11
             container.addChild(label)
 
             // Italian name
             let italianLabel = SKLabelNode(text: poi.italianName)
-            italianLabel.fontName = "EBGaramond-Italic"
+            italianLabel.fontName = "Mulish-Light"
             italianLabel.fontSize = 13
-            italianLabel.fontColor = PlatformColor(RenaissanceColors.ochre)
+            italianLabel.fontColor = PlatformColor(RenaissanceColors.warmBrown)
             italianLabel.position = CGPoint(x: 0, y: -72)
             italianLabel.zPosition = 11
             container.addChild(italianLabel)
@@ -456,9 +488,8 @@ class ForestScene: SKScene {
             let poi = pointsOfInterest[i]
             print("    ForestPOI(name: \"\(poi.name)\", italianName: \"\(poi.italianName)\",")
             print("              position: CGPoint(x: \(Int(p.x)), y: \(Int(p.y))),")
-            print("              usedFor: \"\(poi.usedFor)\",")
-            print("              buildings: \"\(poi.buildings)\",")
-            print("              description: \"...\"),")
+            print("              woodType: \"\(poi.woodType)\", timberYield: \(poi.timberYield),")
+            print("              buildings: \"\(poi.buildings)\"),")
         }
         print("]")
         print("// =============================================\n")

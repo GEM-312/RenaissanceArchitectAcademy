@@ -38,4 +38,7 @@ enum GameRewards {
     static let quizPassFlorins = 25
     static let sketchCompleteFlorins = 15
     static let buildCompleteFlorins = 50
+    static let timberCollectFlorins = 1
+    static let craftCompleteFlorins = 5
+    static let masterAssignmentFlorins = 15
 }

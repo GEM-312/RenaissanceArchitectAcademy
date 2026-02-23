@@ -65,7 +65,7 @@ struct PiantaCanvasView: View {
 
             // Instructions
             Text(phaseData.hint ?? "Draw the walls of the building on the grid below.")
-                .font(.custom("EBGaramond-Italic", size: isLargeScreen ? 16 : 14, relativeTo: .body))
+                .font(.custom("Mulish-Light", size: isLargeScreen ? 16 : 14, relativeTo: .body))
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
@@ -200,16 +200,16 @@ struct PiantaCanvasView: View {
                         .foregroundStyle(roomResult.isCorrect ? RenaissanceColors.sageGreen : RenaissanceColors.errorRed)
                         .font(.caption)
                     Text(roomResult.room.label)
-                        .font(.custom("EBGaramond-Regular", size: 13, relativeTo: .caption))
+                        .font(.custom("Mulish-Light", size: 13, relativeTo: .caption))
                     Spacer()
                     if !roomResult.isCorrect {
                         if !roomResult.isDetected {
                             Text(roomResult.room.shape == .circle ? "Draw the circle" : "Draw the walls")
-                                .font(.custom("EBGaramond-Italic", size: 11, relativeTo: .caption2))
+                                .font(.custom("Mulish-Light", size: 11, relativeTo: .caption2))
                                 .foregroundStyle(RenaissanceColors.errorRed)
                         } else {
                             Text(roomResult.room.shape == .circle ? "Wrong position or size" : "Check proportions")
-                                .font(.custom("EBGaramond-Italic", size: 11, relativeTo: .caption2))
+                                .font(.custom("Mulish-Light", size: 11, relativeTo: .caption2))
                                 .foregroundStyle(RenaissanceColors.errorRed)
                         }
                     }
@@ -220,11 +220,11 @@ struct PiantaCanvasView: View {
             if let feedback = result.neatnessFeedback {
                 HStack(spacing: 6) {
                     Image(systemName: "exclamationmark.triangle.fill")
-                        .foregroundStyle(RenaissanceColors.ochre)
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
                         .font(.caption)
                     Text(feedback)
-                        .font(.custom("EBGaramond-Italic", size: 12, relativeTo: .caption))
-                        .foregroundStyle(RenaissanceColors.ochre)
+                        .font(.custom("Mulish-Light", size: 12, relativeTo: .caption))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
             }
 
@@ -235,7 +235,7 @@ struct PiantaCanvasView: View {
                         .foregroundStyle(result.columnsCorrect >= result.columnsTotal - 1 ? RenaissanceColors.sageGreen : RenaissanceColors.errorRed)
                         .font(.caption)
                     Text("Columns: \(result.columnsCorrect)/\(result.columnsTotal)")
-                        .font(.custom("EBGaramond-Regular", size: 13, relativeTo: .caption))
+                        .font(.custom("Mulish-Light", size: 13, relativeTo: .caption))
                     Spacer()
                 }
             }
@@ -260,20 +260,20 @@ struct PiantaCanvasView: View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Pianta: Floor Plan")
-                    .font(.custom("Cinzel-Bold", size: isLargeScreen ? 22 : 18, relativeTo: .title3))
+                    .font(.custom("Cinzel-Regular", size: isLargeScreen ? 22 : 18, relativeTo: .title3))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 HStack(spacing: 4) {
                     ForEach(phaseData.proportionalRatios, id: \.displayString) { ratio in
                         Text("Ratio \(ratio.displayString)")
-                            .font(.custom("EBGaramond-Regular", size: 12, relativeTo: .caption2))
+                            .font(.custom("Mulish-Light", size: 12, relativeTo: .caption2))
                             .padding(.horizontal, 8)
                             .padding(.vertical, 3)
                             .background(
                                 Capsule()
                                     .fill(RenaissanceColors.renaissanceBlue.opacity(0.12))
                             )
-                            .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                 }
             }
@@ -289,13 +289,13 @@ struct PiantaCanvasView: View {
                         .font(.body)
                     if hintLevel == 0 {
                         Text("Ask Bird")
-                            .font(.custom("EBGaramond-Italic", size: 12, relativeTo: .caption2))
+                            .font(.custom("Mulish-Light", size: 12, relativeTo: .caption2))
                     } else {
                         Text("More help")
-                            .font(.custom("EBGaramond-Italic", size: 12, relativeTo: .caption2))
+                            .font(.custom("Mulish-Light", size: 12, relativeTo: .caption2))
                     }
                 }
-                .foregroundStyle(RenaissanceColors.ochre)
+                .foregroundStyle(RenaissanceColors.sepiaInk)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 6)
                 .background(
@@ -388,7 +388,7 @@ struct PiantaCanvasView: View {
 
     private func birdSpeechBubble(text: String) -> some View {
         Text(text)
-            .font(.custom("EBGaramond-Italic", size: 11, relativeTo: .caption2))
+            .font(.custom("Mulish-Light", size: 11, relativeTo: .caption2))
             .foregroundStyle(RenaissanceColors.sepiaInk)
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
@@ -608,12 +608,12 @@ struct PiantaCanvasView: View {
                             )
                         VStack(spacing: 2) {
                             Text(room.label)
-                                .font(.custom("EBGaramond-Italic", size: 9, relativeTo: .caption2))
-                                .foregroundStyle(RenaissanceColors.ochre.opacity(0.5))
+                                .font(.custom("Mulish-Light", size: 9, relativeTo: .caption2))
+                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                             if let ratio = room.requiredRatio {
                                 Text(ratio.displayString)
-                                    .font(.custom("EBGaramond-Regular", size: 8, relativeTo: .caption2))
-                                    .foregroundStyle(RenaissanceColors.ochre.opacity(0.4))
+                                    .font(.custom("Mulish-Light", size: 8, relativeTo: .caption2))
+                                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
                             }
                         }
                     }
@@ -633,12 +633,12 @@ struct PiantaCanvasView: View {
                             )
                         VStack(spacing: 2) {
                             Text(room.label)
-                                .font(.custom("EBGaramond-Italic", size: 9, relativeTo: .caption2))
-                                .foregroundStyle(RenaissanceColors.ochre.opacity(0.5))
+                                .font(.custom("Mulish-Light", size: 9, relativeTo: .caption2))
+                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                             if let ratio = room.requiredRatio {
                                 Text(ratio.displayString)
-                                    .font(.custom("EBGaramond-Regular", size: 8, relativeTo: .caption2))
-                                    .foregroundStyle(RenaissanceColors.ochre.opacity(0.4))
+                                    .font(.custom("Mulish-Light", size: 8, relativeTo: .caption2))
+                                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
                             }
                         }
                     }
@@ -664,8 +664,8 @@ struct PiantaCanvasView: View {
                         .stroke(RenaissanceColors.warmBrown.opacity(0.3), style: StrokeStyle(lineWidth: 1, dash: [3, 3]))
                         .frame(width: cellSize * 0.6, height: cellSize * 0.6)
                     Image(systemName: "plus")
-                        .font(.system(size: 6))
-                        .foregroundStyle(RenaissanceColors.warmBrown.opacity(0.3))
+                        .font(.custom("Mulish-Light", size: 6, relativeTo: .caption2))
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.3))
                 }
                 .position(point)
                 .allowsHitTesting(false)
@@ -715,8 +715,8 @@ struct PiantaCanvasView: View {
                 )
             // Radius label
             Text("r=\(radius)")
-                .font(.custom("EBGaramond-Regular", size: 10, relativeTo: .caption2))
-                .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                .font(.custom("Mulish-Light", size: 10, relativeTo: .caption2))
+                .foregroundStyle(RenaissanceColors.sepiaInk)
                 .offset(y: -diameter / 2 - 12)
         }
         .frame(width: max(diameter, 1), height: max(diameter, 1))
@@ -771,7 +771,7 @@ struct PiantaCanvasView: View {
                 .font(.custom("Cinzel-Regular", size: 10, relativeTo: .caption2))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
             Text(sizeText)
-                .font(.custom("EBGaramond-Regular", size: 9, relativeTo: .caption2))
+                .font(.custom("Mulish-Light", size: 9, relativeTo: .caption2))
                 .foregroundStyle(isCorrect ? RenaissanceColors.sageGreen : RenaissanceColors.errorRed)
             if isCorrect {
                 Image(systemName: "checkmark.circle.fill")
@@ -838,19 +838,19 @@ struct PiantaCanvasView: View {
                         .foregroundStyle(detected?.matchesTarget == true ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray)
 
                     Text(target.label)
-                        .font(.custom("EBGaramond-Regular", size: 13, relativeTo: .caption))
+                        .font(.custom("Mulish-Light", size: 13, relativeTo: .caption))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     if target.shape == .circle {
                         Image(systemName: "circle.dashed")
                             .font(.caption2)
-                            .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
 
                     if let ratio = target.requiredRatio {
                         Text(ratio.displayString)
-                            .font(.custom("EBGaramond-Italic", size: 11, relativeTo: .caption2))
-                            .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                            .font(.custom("Mulish-Light", size: 11, relativeTo: .caption2))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                 }
             }

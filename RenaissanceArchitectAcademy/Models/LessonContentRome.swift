@@ -460,6 +460,18 @@ extension LessonContent {
                 science: .architecture,
                 illustrationIcon: "building.columns"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Why did the Romans build the Colosseum on such a massive scale?",
+                    answer: "It was a political move as much as an engineering one. Emperor Vespasian built it on the site of **Nero's private palace lake** — turning one tyrant's luxury into entertainment for the people. The message was clear: this space belongs to Rome now, not to one emperor. Bigger meant more public goodwill."
+                ),
+                CuriosityQA(
+                    question: "How did they build something this huge in only 8 years?",
+                    answer: "The Romans were masters of **modular construction**. The Colosseum is basically the same arch-and-vault unit repeated 80 times around an oval. Think of it like stacking identical LEGO modules in a ring. Multiple crews could work on different sections simultaneously. Plus, they had an estimated **60,000 to 100,000 laborers** working at once."
+                )
+            ])),
+
             .reading(LessonReading(
                 title: "The Elliptical Design",
                 body: "The Colosseum is shaped like a giant **ellipse** — a stretched circle, like an egg viewed from above. It measures **188 meters long** and **156 meters wide**, with walls rising **48 meters** high (about as tall as a 15-story building). The elliptical shape is not just for looks — it gives every spectator a better view of the action than a simple circle would, and it makes the structure stronger because forces spread evenly around the curve.",
@@ -484,6 +496,15 @@ extension LessonContent {
                 science: .architecture,
                 illustrationIcon: "square.grid.3x3"
             )),
+
+            .mathVisual(LessonMathVisual(
+                type: .colosseumArchForce,
+                title: "Visualize the Forces",
+                science: .engineering,
+                totalSteps: 5,
+                caption: "Each arch transfers weight sideways and downward through the stones. The keystone at the top locks everything in place — remove it and the whole arch collapses."
+            )),
+
             .funFact(LessonFunFact(
                 text: "The Colosseum had **76 numbered entrances** called **vomitoria** (from the Latin word meaning \"to spew forth\"). These cleverly designed passages could fill the entire arena in just **15 minutes** and empty it in about **5 minutes** — better crowd flow than most modern stadiums!"
             )),
@@ -511,6 +532,18 @@ extension LessonContent {
                 science: .engineering,
                 illustrationIcon: "arrow.up.square"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "How did the elevator system actually work without electricity?",
+                    answer: "Pure human power and clever engineering. Teams of workers turned **capstans** — large wooden drums — that wound ropes around pulleys. The mechanical advantage of the pulley system meant a few workers could lift a cage with a **500-kilogram lion** inside. It is the same physics behind modern cranes, just powered by muscle instead of motors."
+                ),
+                CuriosityQA(
+                    question: "What happened to all the animals used in the arena?",
+                    answer: "The numbers were staggering and tragic. During the 100-day opening games alone, an estimated **9,000 animals** were killed. Over the centuries, Roman arena games drove several species to **local extinction** in North Africa, including lions, hippos, and elephants. It was one of the ancient world's greatest ecological disasters."
+                )
+            ])),
+
             .funFact(LessonFunFact(
                 text: "During the opening games in **80 AD**, the Romans flooded the arena to stage a **naumachia** — a mock sea battle with real warships! They later built the permanent hypogeum below, which made flooding impossible, but those first sea battles must have been an incredible sight."
             )),
@@ -538,6 +571,15 @@ extension LessonContent {
                 science: .acoustics,
                 illustrationIcon: "speaker.wave.3"
             )),
+
+            .mathVisual(LessonMathVisual(
+                type: .colosseumSoundWave,
+                title: "Visualize Sound Waves",
+                science: .acoustics,
+                totalSteps: 5,
+                caption: "Sound waves bounce off the curved stone walls and converge toward the seating tiers. The elliptical shape focuses sound the way a satellite dish focuses radio signals."
+            )),
+
             .reading(LessonReading(
                 title: "Seating by Social Class",
                 body: "Seating in the Colosseum was strictly organized by social class. The **emperor's box** (pulvinar) was at the center of the long side, with the best view. **Senators** sat in the front rows on marble seats. Behind them came the **equestrians** (wealthy businessmen), then ordinary **citizens**, and at the very top — the **women and the poor**, sitting on wooden benches under the velarium masts. Even in entertainment, Rome was a society of strict hierarchy!",
@@ -556,6 +598,18 @@ extension LessonContent {
                 science: .materials,
                 illustrationIcon: "square.stack.3d.up"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Why use three different materials instead of just one?",
+                    answer: "Each material had a specific job. **Travertine** was strong and beautiful for the outer facade. **Concrete** could be poured into any shape for curved vaults. **Tufa and brick** were lighter for upper levels. Using the right material in the right place is like choosing the right tool for each job — it saves weight, money, and makes the whole structure stronger."
+                ),
+                CuriosityQA(
+                    question: "How did they make curved concrete vaults without modern molds?",
+                    answer: "They built temporary wooden frames called **centering** in the exact shape of the vault. Concrete was poured over the wooden frame and left to harden. Once the concrete set, the wood was removed and reused for the next vault. The Colosseum has hundreds of identical vaults — so they recycled the same wooden forms over and over."
+                )
+            ])),
+
             .funFact(LessonFunFact(
                 text: "Building the Colosseum required about **100,000 cubic meters** of travertine, roughly **6,000 tonnes** of concrete, and **300 tonnes** of iron clamps. An estimated **60,000 to 100,000** Jewish slaves captured after the siege of Jerusalem did much of the construction work."
             )),
@@ -604,6 +658,18 @@ extension LessonContent {
                 science: .materials,
                 illustrationIcon: "drop.halffull"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Did Romans have soap?",
+                    answer: "Not really! Instead of soap, Romans rubbed **olive oil** all over their skin, then scraped it off with a curved metal tool called a **strigil**. The oil pulled dirt and sweat away with it. Soap existed in the ancient world, but Romans considered it a barbarian product. They preferred their oil-and-scrape method."
+                ),
+                CuriosityQA(
+                    question: "Were Roman baths mixed or separated by gender?",
+                    answer: "It changed over time. Early baths had **separate hours** for men and women — women bathed in the morning, men in the afternoon. Some larger bath complexes built **duplicate facilities** side by side. Emperor Hadrian officially banned mixed bathing, though enforcement was spotty."
+                )
+            ])),
+
             .reading(LessonReading(
                 title: "Three Rooms, Three Temperatures",
                 body: "A typical Roman bath visit followed a set path through three main rooms. First, the **tepidarium** (say: tep-ih-DAR-ee-um) — a warm room to help your body adjust. Next, the **caldarium** — a steamy hot room with heated pools, like a modern hot tub. Finally, the **frigidarium** — a cold plunge pool to refresh and close your pores. Some bathers went back and forth between hot and cold several times! This hot-cold therapy is the ancestor of modern spa treatments.",
@@ -637,6 +703,15 @@ extension LessonContent {
                 science: .chemistry,
                 illustrationIcon: "wind"
             )),
+
+            .mathVisual(LessonMathVisual(
+                type: .bathsHeatTransfer,
+                title: "Visualize Heat Transfer",
+                science: .chemistry,
+                totalSteps: 5,
+                caption: "Hot air from the furnace flows under the raised floor, rises through hollow wall tubes (tubuli), and exits through roof vents. The cycle repeats as cool air gets pulled back into the furnace."
+            )),
+
             .question(LessonQuestion(
                 question: "Why were the bath floors raised on brick pillars?",
                 options: [
@@ -655,12 +730,33 @@ extension LessonContent {
                 science: .materials,
                 illustrationIcon: "pipe.and.drop"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "How much water did a Roman bathhouse use per day?",
+                    answer: "The Baths of Caracalla consumed an estimated **8 million liters per day** — roughly the same as 3,200 modern households. That is why the baths needed their own dedicated **aqueduct branch**. The water was constantly flowing through, not sitting still, which kept it relatively clean."
+                ),
+                CuriosityQA(
+                    question: "Did the Romans know lead pipes were dangerous?",
+                    answer: "The architect **Vitruvius** actually warned about lead in his writings. He noticed that lead workers looked pale and sickly, and recommended **terracotta pipes** instead. But lead was so much easier to shape that most builders used it anyway. Luckily, mineral buildup inside the pipes created a natural coating that reduced direct contact with the water."
+                )
+            ])),
+
             .reading(LessonReading(
                 title: "Mosaic Floors — Art Meets Engineering",
                 body: "The floors and walls of Roman baths were decorated with stunning **mosaics** — pictures made from thousands of tiny colored stone or glass cubes called **tesserae**. But mosaics were not just pretty — they were also practical! The rough surface of the tiny tiles gave bathers grip on wet floors, preventing slipping. Mosaic artists laid a base of Roman concrete, then pressed each tessera into a bed of wet mortar, creating images of sea creatures, athletes, and geometric patterns.",
                 science: .materials,
                 illustrationIcon: "square.grid.4x3.fill"
             )),
+
+            .mathVisual(LessonMathVisual(
+                type: .bathsWaterVolume,
+                title: "Visualize the Water Volume",
+                science: .hydraulics,
+                totalSteps: 5,
+                caption: "Volume = length times width times depth. A caldarium pool measuring 10 m by 5 m by 1.5 m holds 75 cubic meters of water — that is 75,000 liters, enough to fill 375 bathtubs."
+            )),
+
             .funFact(LessonFunFact(
                 text: "Some Roman baths had **heated swimming pools** large enough for dozens of people. The Baths of Diocletian, the biggest in Rome, could hold over **3,000 bathers** at once and even had a **revolving dining room** that turned slowly so guests could enjoy the view from every angle!"
             )),
@@ -670,6 +766,18 @@ extension LessonContent {
                 science: .materials,
                 illustrationIcon: "window.ceiling"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Is the hypocaust system really the same as modern radiant floor heating?",
+                    answer: "Almost identical in principle! Modern radiant heating runs **hot water through tubes** under the floor instead of hot air through an open gap. The physics is the same — heat radiates upward from the floor, warming the room evenly from the ground up. It is considered the most comfortable type of heating because your feet stay warm."
+                ),
+                CuriosityQA(
+                    question: "How hot did the caldarium actually get?",
+                    answer: "The floor could reach temperatures above **50 degrees Celsius** — hot enough to burn bare feet, which is why bathers wore thick wooden sandals called **sculponae**. The air temperature hovered around **40 to 50 degrees Celsius**, similar to a modern sauna. The frigidarium plunge pool was a welcome relief after that kind of heat."
+                )
+            ])),
+
             .question(LessonQuestion(
                 question: "Why did the caldarium windows face south or west?",
                 options: [
@@ -727,12 +835,33 @@ extension LessonContent {
                 science: .engineering,
                 illustrationIcon: "road.lanes"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Why were Roman roads so much better than everyone else's?",
+                    answer: "Most ancient civilizations just packed down dirt or laid loose gravel. Romans treated roads like **buildings** — engineered structures with foundations, drainage, and a proper surface. They spent the money and labor upfront because they knew a good road pays for itself. A legion that marches twice as fast controls twice the territory."
+                ),
+                CuriosityQA(
+                    question: "Did ordinary people use Roman roads, or just the army?",
+                    answer: "Everyone used them! Merchants hauled goods to market, messengers carried mail, families traveled between cities, and farmers drove cattle to sale. The roads created a **connected economy** across the empire. Some roads even had ancient rest stops called **mansiones** where travelers could eat and sleep — like Roman highway service stations."
+                )
+            ])),
+
             .reading(LessonReading(
                 title: "Four Layers of Engineering",
                 body: "A Roman road was not just a flat path — it was a carefully engineered structure built in **four layers**, like a layered cake. First, the **statumen** (say: sta-TOO-men) — a foundation of large, flat stones. Next, the **rudus** — a layer of crushed rock mixed with lime mortar. Then the **nucleus** — a finer layer of gravel and sand packed down hard. Finally, the **summa crusta** (top surface) — large, flat **basalt paving stones** fitted tightly together. Each layer had a specific job, making the road incredibly strong and durable.",
                 science: .engineering,
                 illustrationIcon: "square.stack"
             )),
+
+            .mathVisual(LessonMathVisual(
+                type: .roadsLayerCross,
+                title: "Visualize the Road Layers",
+                science: .engineering,
+                totalSteps: 5,
+                caption: "A cross-section reveals four distinct layers, each finer than the one below. The crowned surface slopes gently from center to edges for drainage."
+            )),
+
             .question(LessonQuestion(
                 question: "What are the four layers of a Roman road from bottom to top?",
                 options: [
@@ -751,6 +880,18 @@ extension LessonContent {
                 science: .engineering,
                 illustrationIcon: "cloud.rain"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Why is water so destructive to roads?",
+                    answer: "Water is sneaky. It seeps into tiny cracks, then **freezes and expands** in winter, making the cracks bigger. This is called the **freeze-thaw cycle**. Over time, small cracks become potholes. Water also softens the soil underneath the road, causing it to sink and buckle. Every road engineer today still fights the same battle the Romans did."
+                ),
+                CuriosityQA(
+                    question: "Do modern roads still use the crown design?",
+                    answer: "Absolutely. Every highway, street, and parking lot you drive on is **slightly higher in the center**. The standard modern road crown is about a **2 percent slope** — almost identical to what the Romans used. Some things are so well designed that 2,000 years of progress cannot improve on them."
+                )
+            ])),
+
             .funFact(LessonFunFact(
                 text: "Roman roads were so straight that when modern engineers build new roads along the same routes, they often cannot improve on the Roman alignment! The Romans preferred to go **straight over hills** rather than around them, which made their roads shorter and easier to navigate."
             )),
@@ -766,6 +907,15 @@ extension LessonContent {
                 science: .geology,
                 illustrationIcon: "mountain.2"
             )),
+
+            .mathVisual(LessonMathVisual(
+                type: .roadsLoadDistribution,
+                title: "Visualize Load Distribution",
+                science: .engineering,
+                totalSteps: 5,
+                caption: "When a wagon wheel presses on the surface, the force spreads outward and downward through each layer. By the time it reaches the soil, the load is distributed over a much wider area — preventing the road from sinking."
+            )),
+
             .question(LessonQuestion(
                 question: "Why did Roman engineers build roads with a crowned (curved) surface?",
                 options: [
@@ -793,6 +943,18 @@ extension LessonContent {
                 science: .materials,
                 illustrationIcon: "drop.triangle"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Is lime mortar basically the same as modern cement?",
+                    answer: "Close but not quite. Modern **Portland cement** uses a different chemistry that sets faster and harder, but it is also more brittle. Lime mortar is **flexible** — it can absorb small movements without cracking, which is why Roman roads survived earthquakes and ground settling. Some modern restoration projects are going back to lime mortar because it works better with old stone."
+                ),
+                CuriosityQA(
+                    question: "How hot does a lime kiln need to be?",
+                    answer: "About **900 degrees Celsius** — hot enough to make steel glow bright orange. Roman lime kilns burned wood for days to reach these temperatures. A single kiln might consume an entire **hillside of trees** to produce enough quicklime for a few kilometers of road. It was one of the most energy-intensive processes in the ancient world."
+                )
+            ])),
+
             .fillInBlanks(LessonFillInBlanks(
                 title: "Complete the Passage",
                 text: "Roman roads were built in four layers. The bottom layer of large flat stones is the {{statumen}}. Above that, the {{rudus}} is made of crushed rock and lime mortar. The {{nucleus}} layer uses fine gravel and sand. The top paving surface is called the {{summa crusta}} and was made of hard {{basalt}} stones.",
@@ -850,6 +1012,18 @@ extension LessonContent {
                 science: .engineering,
                 illustrationIcon: "ferry"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "How much food did Rome import through its harbors?",
+                    answer: "Staggering amounts. Egypt alone shipped about **150,000 tonnes of grain** to Rome every year — enough to feed roughly **a third of the city**. A single large grain ship could carry 1,000 tonnes. Lose the harbor, and Rome starves. That is why Portus was considered as important as the army."
+                ),
+                CuriosityQA(
+                    question: "Why not just grow food closer to Rome?",
+                    answer: "The farmland around Rome could not produce nearly enough for a million people. Plus, wealthy Romans had converted much of Italy's farmland into **latifundia** — huge estates growing luxury crops like olives and grapes instead of wheat. It was cheaper to ship grain from Egypt's incredibly fertile Nile Delta than to restructure Italian agriculture."
+                )
+            ])),
+
             .reading(LessonReading(
                 title: "Breakwaters — Taming the Waves",
                 body: "The biggest challenge of building a harbor is protecting ships from ocean waves and storms. Roman engineers built massive **breakwaters** — long walls stretching out into the sea to block incoming waves. The breakwaters at Portus extended over **500 meters** into the Mediterranean. They were built by sinking enormous wooden frames called **caissons** into the water, then filling them with concrete. The calm water behind the breakwaters created a safe anchorage where hundreds of ships could dock at once.",
@@ -865,6 +1039,15 @@ extension LessonContent {
                 science: .physics,
                 illustrationIcon: "tornado"
             )),
+
+            .mathVisual(LessonMathVisual(
+                type: .harborBuoyancy,
+                title: "Visualize Buoyancy",
+                science: .physics,
+                totalSteps: 5,
+                caption: "Archimedes' principle: a floating ship displaces water equal to its own weight. A grain ship weighing 1,000 tonnes pushes aside 1,000 tonnes of water — and the water pushes back, keeping the ship afloat."
+            )),
+
             .question(LessonQuestion(
                 question: "What makes Roman marine concrete special?",
                 options: [
@@ -883,6 +1066,18 @@ extension LessonContent {
                 science: .hydraulics,
                 illustrationIcon: "hexagon"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Why a hexagon and not a circle?",
+                    answer: "A circle has more perimeter per area, but it is hard to dock ships against a curved wall. Flat sides make perfect **wharves** — straight edges where ships can pull up parallel and unload easily. A hexagon gives you six long, flat docking walls while still distributing wave forces almost as evenly as a circle. It is the best of both worlds."
+                ),
+                CuriosityQA(
+                    question: "How do we know the harbor was hexagonal?",
+                    answer: "The basin's outline is still visible today! **Aerial photographs** taken in the 1920s revealed the perfect hexagonal shape preserved in the landscape near Rome's Fiumicino airport. Archaeological excavations have since confirmed the geometry and uncovered warehouses, offices, and even a **ship graveyard** with preserved Roman vessels."
+                )
+            ])),
+
             .reading(LessonReading(
                 title: "The Lighthouse — Ancient Navigation",
                 body: "Every harbor needed a **lighthouse** to guide ships safely to port, especially at night. The Romans modeled theirs after the famous **Pharos** of Alexandria, one of the Seven Wonders of the Ancient World. The Portus lighthouse was a tall stone tower with a fire burning at the top, amplified by polished bronze mirrors that reflected the light out to sea. Ships could see the beacon from **50 kilometers** away. The tower also served as a landmark during the day, visible above the flat coastline.",
@@ -916,12 +1111,33 @@ extension LessonContent {
                 science: .hydraulics,
                 illustrationIcon: "moon.stars"
             )),
+
+            .mathVisual(LessonMathVisual(
+                type: .harborTidalForce,
+                title: "Visualize Tidal Forces",
+                science: .hydraulics,
+                totalSteps: 5,
+                caption: "Waves strike the breakwater with enormous force. A 2-meter wave hitting a 500-meter wall generates forces measured in thousands of tonnes. The breakwater must be massive enough to absorb this energy without moving."
+            )),
+
             .reading(LessonReading(
                 title: "Lead Sheeting for Waterproofing",
                 body: "While Roman concrete handled the big structural elements, many harbor components needed extra waterproofing. **Lead sheeting** was hammered thin and wrapped around underwater wooden structures, pipe joints, and sluice gate frames. Lead is soft, easy to shape, and does not rust in saltwater — making it ideal for marine use. Roman plumbers (the word \"plumber\" comes from **plumbum**, Latin for lead) were skilled at folding and soldering lead sheets into watertight seals.",
                 science: .engineering,
                 illustrationIcon: "shield.lefthalf.filled"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "How did they sink those huge concrete blocks into the sea?",
+                    answer: "They built watertight **wooden caissons** — basically giant boxes — floated them into position, then filled them with concrete. The weight of the wet concrete sank the caisson to the seafloor. Once the concrete hardened underwater, the wooden box rotted away, leaving a solid concrete block. It is remarkably similar to how we build bridge foundations today."
+                ),
+                CuriosityQA(
+                    question: "Could Roman ships survive storms on the open sea?",
+                    answer: "Roman merchant ships were surprisingly seaworthy, but they avoided sailing in winter. The **mare clausum** (closed sea) season ran from November to March, when storms made sailing too dangerous. Even during the sailing season, a sudden storm could sink an entire fleet. Archaeologists have found hundreds of **shipwrecks** on the Mediterranean seafloor, many still loaded with cargo."
+                )
+            ])),
+
             .fillInBlanks(LessonFillInBlanks(
                 title: "Complete the Passage",
                 text: "Roman harbor concrete used {{pozzolana}} volcanic ash, which actually hardens in {{seawater}}. Long walls called {{breakwaters}} protected the harbor from waves. Emperor Trajan built a {{hexagonal}} inner basin at Portus. Giant {{treadwheel}} cranes lifted cargo weighing up to 6 tonnes.",
@@ -967,12 +1183,33 @@ extension LessonContent {
                 science: .engineering,
                 illustrationIcon: "hammer"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Why didn't armies just climb over the walls with ladders?",
+                    answer: "They tried! It was called **escalade**, and it was terrifyingly dangerous. Defenders could push ladders away, pour boiling oil on climbers, or drop heavy stones on their heads. A ladder attack had a very high casualty rate. Siege machines let armies attack from a safe distance or from inside a protected structure — much better odds for the attackers."
+                ),
+                CuriosityQA(
+                    question: "How long could a siege last?",
+                    answer: "Some lasted years. The Roman siege of **Numantia** in Spain lasted **8 months**. Julius Caesar's siege of **Alesia** in Gaul involved building **40 kilometers of walls** around the enemy city. The longest recorded siege in antiquity was **Veii**, which took the Romans a grueling **10 years** to capture. Patience was often the deadliest weapon."
+                )
+            ])),
+
             .reading(LessonReading(
                 title: "The Catapult — Stored Energy Unleashed",
                 body: "The **catapult** (or onager) worked by converting **potential energy** into **kinetic energy**. Soldiers cranked back a heavy wooden arm against a tightly wound bundle of rope, storing energy like pulling back a rubber band. When released, all that stored energy converted into motion, hurling a stone projectile over **300 meters**! The science behind this is called **energy transformation** — the energy does not disappear, it just changes from one form (stored tension) to another (movement). A catapult stone could weigh up to **25 kilograms**.",
                 science: .physics,
                 illustrationIcon: "bolt.fill"
             )),
+
+            .mathVisual(LessonMathVisual(
+                type: .siegeProjectile,
+                title: "Visualize the Trajectory",
+                science: .physics,
+                totalSteps: 5,
+                caption: "A catapult stone follows a parabolic arc — rising as it leaves the arm, then curving back down under gravity. The launch angle and force determine how far it flies. A 45-degree angle gives the maximum range."
+            )),
+
             .question(LessonQuestion(
                 question: "What type of energy transformation occurs when a catapult fires?",
                 options: [
@@ -991,6 +1228,15 @@ extension LessonContent {
                 science: .physics,
                 illustrationIcon: "arrow.left.and.right"
             )),
+
+            .mathVisual(LessonMathVisual(
+                type: .siegeLeverArm,
+                title: "Visualize the Lever",
+                science: .physics,
+                totalSteps: 5,
+                caption: "Effort times effort arm equals load times load arm. A 3:1 mechanical advantage means a soldier pushing with 100 kg of force can launch a 300 kg stone — the lever multiplies strength."
+            )),
+
             .question(LessonQuestion(
                 question: "If a lever arm is 4 meters long with the fulcrum at 1 meter from the load end, what is the mechanical advantage (effort arm ÷ load arm)?",
                 options: ["1", "2", "3", "4"],
@@ -1018,6 +1264,18 @@ extension LessonContent {
                 science: .engineering,
                 illustrationIcon: "building"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "How did they move a 20-meter wooden tower?",
+                    answer: "Very slowly and with great difficulty. The tower sat on **massive wooden wheels** or rollers, and dozens or even hundreds of soldiers pushed it from behind. The ground in front had to be leveled first — any ditch or bump could tip the whole structure over. Defenders would dig trenches specifically to stop siege towers from reaching the walls."
+                ),
+                CuriosityQA(
+                    question: "What stopped defenders from just burning the tower?",
+                    answer: "Fire was the biggest threat. Romans covered the front and sides with **fresh animal hides** soaked in water or vinegar, which resisted burning. Some towers had metal plating. They also positioned archers and ballistae to suppress the defenders while the tower advanced. It was a race — could the tower reach the wall before the defenders set it ablaze?"
+                )
+            ])),
+
             .reading(LessonReading(
                 title: "The Battering Ram",
                 body: "The **battering ram** was the simplest but most effective siege weapon. It was a massive tree trunk, sometimes tipped with an iron head shaped like a ram's horns (that is where the name comes from!). The trunk hung from ropes inside a wheeled wooden shed called a **testudo** (tortoise), which protected the operators from arrows and boiling oil. Soldiers swung the ram back and forth in rhythm, and the repeated impacts could shatter gates and crack stone walls. It is pure **kinetic energy** applied again and again to the same spot.",
@@ -1042,6 +1300,18 @@ extension LessonContent {
                 science: .physics,
                 illustrationIcon: "arrow.up.forward"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Why is a trebuchet more powerful than a catapult?",
+                    answer: "A catapult stores energy in twisted rope, which has limits. A trebuchet uses **gravity** — and you can always add more weight to the counterweight. A 10-tonne counterweight stores far more energy than any rope bundle could. Trebuchets could also be reloaded faster because you just needed to winch the counterweight back up, rather than re-twist rope bundles."
+                ),
+                CuriosityQA(
+                    question: "Are siege weapons still used in any form today?",
+                    answer: "The physics absolutely is! Modern **artillery** uses the same principles — converting stored energy into projectile motion. Even spacecraft launches follow the same trajectory math. And believe it or not, **pumpkin-chunking competitions** use trebuchets and catapults to hurl pumpkins hundreds of meters, keeping the ancient engineering alive for fun."
+                )
+            ])),
+
             .funFact(LessonFunFact(
                 text: "During sieges, the Romans sometimes launched diseased animal carcasses over city walls to spread illness — an early and terrible form of **biological warfare**. They also launched **beehive pots** to cause chaos inside the city. Siege warfare was brutal but incredibly inventive."
             )),
@@ -1102,6 +1372,18 @@ extension LessonContent {
                 science: .architecture,
                 illustrationIcon: "building.2"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Were Roman insulae the world's first apartment buildings?",
+                    answer: "Pretty much! While some earlier civilizations stacked dwellings (like the mud-brick buildings in ancient Egypt), Roman insulae were the first purpose-built, multi-story **rental apartment buildings** at scale. The concept disappeared after Rome fell and did not return until the **18th and 19th centuries** in cities like Paris and New York."
+                ),
+                CuriosityQA(
+                    question: "How much did it cost to rent an apartment?",
+                    answer: "Rent varied wildly by floor. A ground-floor apartment might cost **2,000 sesterces per year** — about a laborer's entire annual wage. A cramped top-floor room could be as cheap as **40 sesterces**. Landlords were infamous for charging high rents for terrible conditions. The poet **Martial** complained bitterly about his tiny, overpriced sixth-floor room."
+                )
+            ])),
+
             .reading(LessonReading(
                 title: "Ground Floor Shops — The Tabernae",
                 body: "The ground floor of every insula was lined with small shops called **tabernae** (say: ta-BER-nye). These were the ancient equivalent of street-level retail — bakeries, wine shops, cobblers, and food stalls. Each taberna opened directly onto the street through a wide doorway with a wooden counter. Some shopkeepers lived in a small loft above their shop called a **pergula**. The tabernae made the ground floor the most valuable and noisy part of the building — the higher you lived, the quieter (but less convenient) it was.",
@@ -1132,6 +1414,18 @@ extension LessonContent {
                 science: .materials,
                 illustrationIcon: "rectangle.split.3x1.fill"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Why did landlords cut corners on building quality?",
+                    answer: "Simple economics. Rome had a massive **housing shortage**, so landlords could rent even terrible apartments at high prices. Building cheap and fast maximized profit. There was no building inspection system — the government set height limits but rarely checked construction quality. It is the same tension between profit and safety that modern cities still struggle with."
+                ),
+                CuriosityQA(
+                    question: "How thick were insula walls supposed to be?",
+                    answer: "Vitruvius recommended walls of at least **45 centimeters (1.5 Roman feet)** for load-bearing walls. Good insulae had ground-floor walls up to **60 centimeters** thick. But greedy landlords sometimes built upper walls as thin as **20 centimeters** — barely wider than a modern cinder block. No wonder they collapsed."
+                )
+            ])),
+
             .funFact(LessonFunFact(
                 text: "The poet **Juvenal** complained that Rome's insulae were so poorly built that they collapsed regularly. He wrote: \"We live in a city propped up by thin sticks!\" Even the famous writer **Cicero** owned insulae as investments and grumbled about spending money on repairs."
             )),
@@ -1141,6 +1435,15 @@ extension LessonContent {
                 science: .materials,
                 illustrationIcon: "flame.fill"
             )),
+
+            .mathVisual(LessonMathVisual(
+                type: .insulaFloorLoading,
+                title: "Visualize Floor Loading",
+                science: .engineering,
+                totalSteps: 5,
+                caption: "Each floor carries its own weight plus the weight of every floor above it. The ground floor supports the entire building — that is why it needs the thickest walls and strongest materials."
+            )),
+
             .question(LessonQuestion(
                 question: "Why were fires so common in Roman insulae?",
                 options: [
@@ -1159,6 +1462,15 @@ extension LessonContent {
                 science: .architecture,
                 illustrationIcon: "ruler"
             )),
+
+            .mathVisual(LessonMathVisual(
+                type: .insulaHeightRatio,
+                title: "Visualize the Height Ratio",
+                science: .mathematics,
+                totalSteps: 5,
+                caption: "A building's height-to-base ratio determines its stability. A 20-meter tall insula on a 10-meter wide base has a 2:1 ratio. Go above 3:1 and the building becomes dangerously top-heavy."
+            )),
+
             .question(LessonQuestion(
                 question: "If Augustus's height limit was 70 Roman feet (about 20 meters) and each story is approximately 3 meters tall, how many stories could an insula have?",
                 options: ["4 stories", "5 stories", "6 stories", "8 stories"],
@@ -1177,6 +1489,18 @@ extension LessonContent {
                 science: .architecture,
                 illustrationIcon: "person.3.fill"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Did Romans have any kind of sanitation system?",
+                    answer: "Rome had impressive **sewers** — the famous **Cloaca Maxima** was large enough to drive a wagon through. But most insulae were not connected to it! Upper-floor residents used **chamber pots** and were supposed to carry them downstairs to public cesspits. In practice, many people just dumped waste out the window. Roman law let you sue someone who hit you with thrown waste, which tells you how often it happened."
+                ),
+                CuriosityQA(
+                    question: "How does ancient Roman density compare to today's most crowded cities?",
+                    answer: "Rome's densest neighborhoods (about **50,000 per km squared**) are comparable to today's most crowded places like **Dhaka, Bangladesh** or parts of **Mumbai, India**. Modern New York City's Manhattan averages about 27,000 per km squared. The difference is that modern buildings have elevators, plumbing, fire escapes, and building codes — Romans had none of that."
+                )
+            ])),
+
             .funFact(LessonFunFact(
                 text: "Romans dealt with so much noise from the crowded insulae that Emperor Julius Caesar **banned wheeled traffic** during daytime hours. This meant that all deliveries by cart had to happen at night — so residents were kept awake by the rumble of wheels on stone streets instead!"
             )),

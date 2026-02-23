@@ -200,8 +200,8 @@ struct MaterialPuzzleView: View {
                     Button("Return to City") {
                         onDismiss()
                     }
-                    .font(.custom("EBGaramond-Italic", size: 16))
-                    .foregroundColor(RenaissanceColors.stoneGray)
+                    .font(.custom("Mulish-Light", size: 16))
+                    .foregroundColor(RenaissanceColors.sepiaInk)
                     .padding(.bottom, 20)
                 }
                 .padding()
@@ -220,7 +220,7 @@ struct MaterialPuzzleView: View {
                         Image(systemName: "shuffle")
                         Text("No moves! Reshuffling...")
                     }
-                    .font(.custom("EBGaramond-Regular", size: 18))
+                    .font(.custom("Mulish-Light", size: 18))
                     .foregroundColor(.white)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)
@@ -299,12 +299,12 @@ struct MaterialPuzzleView: View {
     private var header: some View {
         VStack(spacing: 4) {
             Text("Gather Materials")
-                .font(.custom("Cinzel-Bold", size: 26))
+                .font(.custom("Cinzel-Regular", size: 26))
                 .foregroundColor(RenaissanceColors.sepiaInk)
 
             Text("for the \(buildingName)")
-                .font(.custom("EBGaramond-Italic", size: 17))
-                .foregroundColor(RenaissanceColors.warmBrown)
+                .font(.custom("Mulish-Light", size: 17))
+                .foregroundColor(RenaissanceColors.sepiaInk)
         }
     }
 
@@ -317,8 +317,8 @@ struct MaterialPuzzleView: View {
             // Show formula with hidden answer until solved
             HStack(spacing: 8) {
                 Text(formula.reactants)
-                    .font(.custom("EBGaramond-Regular", size: 22))
-                    .foregroundColor(RenaissanceColors.renaissanceBlue)
+                    .font(.custom("Mulish-Light", size: 22))
+                    .foregroundColor(RenaissanceColors.sepiaInk)
 
                 Text("→")
                     .font(.title2)
@@ -326,7 +326,7 @@ struct MaterialPuzzleView: View {
 
                 // Hidden answer
                 Text(revealedProduct ? formula.product : "???")
-                    .font(.custom("EBGaramond-Regular", size: 22))
+                    .font(.custom("Mulish-Light", size: 22))
                     .foregroundColor(revealedProduct ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 4)
@@ -337,8 +337,8 @@ struct MaterialPuzzleView: View {
             }
 
             Text(formula.description)
-                .font(.custom("EBGaramond-Italic", size: 14))
-                .foregroundColor(RenaissanceColors.stoneGray)
+                .font(.custom("Mulish-Light", size: 14))
+                .foregroundColor(RenaissanceColors.sepiaInk)
         }
         .padding()
         .frame(maxWidth: .infinity)
@@ -356,7 +356,7 @@ struct MaterialPuzzleView: View {
     private var elementProgressView: some View {
         VStack(spacing: 8) {
             Text("Discovered Elements:")
-                .font(.custom("EBGaramond-Regular", size: 15))
+                .font(.custom("Mulish-Light", size: 15))
                 .foregroundColor(RenaissanceColors.sepiaInk)
 
             HStack(spacing: 16) {
@@ -371,8 +371,8 @@ struct MaterialPuzzleView: View {
                                 .fill(RenaissanceColors.stoneGray.opacity(0.3))
                                 .frame(width: 45, height: 45)
                             Text("?")
-                                .font(.custom("Cinzel-Bold", size: 20))
-                                .foregroundColor(RenaissanceColors.stoneGray)
+                                .font(.custom("Cinzel-Regular", size: 20))
+                                .foregroundColor(RenaissanceColors.sepiaInk)
                         }
                     }
                 } else {
@@ -398,13 +398,13 @@ struct MaterialPuzzleView: View {
                                         .foregroundColor(RenaissanceColors.sageGreen)
                                 } else {
                                     Text(element)
-                                        .font(.custom("Cinzel-Bold", size: 16))
+                                        .font(.custom("Cinzel-Regular", size: 16))
                                         .foregroundColor(RenaissanceColors.sepiaInk)
                                 }
                             }
 
                             Text("\(min(collected, required))/\(required)")
-                                .font(.custom("EBGaramond-Regular", size: 13))
+                                .font(.custom("Mulish-Light", size: 13))
                                 .foregroundColor(isComplete ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray)
                         }
                     }
@@ -418,8 +418,8 @@ struct MaterialPuzzleView: View {
                                     .fill(RenaissanceColors.stoneGray.opacity(0.3))
                                     .frame(width: 45, height: 45)
                                 Text("?")
-                                    .font(.custom("Cinzel-Bold", size: 20))
-                                    .foregroundColor(RenaissanceColors.stoneGray)
+                                    .font(.custom("Cinzel-Regular", size: 20))
+                                    .foregroundColor(RenaissanceColors.sepiaInk)
                             }
                         }
                     }
@@ -514,8 +514,8 @@ struct MaterialPuzzleView: View {
                 Image(systemName: "lightbulb.fill")
                 Text("Need a hint?")
             }
-            .font(.custom("EBGaramond-Italic", size: 14))
-            .foregroundColor(RenaissanceColors.warmBrown)
+            .font(.custom("Mulish-Light", size: 14))
+            .foregroundColor(RenaissanceColors.sepiaInk)
             .padding(.horizontal, 16)
             .padding(.vertical, 8)
             .background(
@@ -533,20 +533,20 @@ struct MaterialPuzzleView: View {
 
             VStack(spacing: 20) {
                 Image(systemName: "checkmark.seal.fill")
-                    .font(.system(size: 60))
+                    .font(.custom("Mulish-Light", size: 60, relativeTo: .title3))
                     .foregroundColor(RenaissanceColors.goldSuccess)
 
                 Text("Formula Complete!")
-                    .font(.custom("Cinzel-Bold", size: 26))
+                    .font(.custom("Cinzel-Regular", size: 26))
                     .foregroundColor(RenaissanceColors.sepiaInk)
 
                 Text("\(formula.reactants) \u{2192} \(formula.product)")
-                    .font(.custom("EBGaramond-Regular", size: 20))
-                    .foregroundColor(RenaissanceColors.renaissanceBlue)
+                    .font(.custom("Mulish-Light", size: 20))
+                    .foregroundColor(RenaissanceColors.sepiaInk)
 
                 Text("You created \(formula.name)!")
-                    .font(.custom("EBGaramond-Italic", size: 17))
-                    .foregroundColor(RenaissanceColors.warmBrown)
+                    .font(.custom("Mulish-Light", size: 17))
+                    .foregroundColor(RenaissanceColors.sepiaInk)
 
                 if let moleculeData = MoleculeData.molecule(forFormula: formula.name) {
                     MoleculeView(molecule: moleculeData, showLabel: false)
@@ -1037,7 +1037,7 @@ struct TileView: View {
 
             // Element symbol in sepia
             Text(tile.symbol)
-                .font(.custom("Cinzel-Bold", size: size * 0.35))
+                .font(.custom("Cinzel-Regular", size: size * 0.35))
                 .foregroundColor(RenaissanceColors.sepiaInk)
         }
         .opacity(tile.isMatched ? 0.3 : 1)

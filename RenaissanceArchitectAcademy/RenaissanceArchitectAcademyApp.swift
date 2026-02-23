@@ -10,7 +10,7 @@ struct RenaissanceArchitectAcademyApp: App {
     init() {
         // Set up SwiftData persistence first (stored property must be initialized)
         do {
-            let schema = Schema([PlayerSave.self, BuildingProgressRecord.self])
+            let schema = Schema([PlayerSave.self, BuildingProgressRecord.self, LessonRecord.self])
             let config = ModelConfiguration(isStoredInMemoryOnly: false)
             modelContainer = try ModelContainer(for: schema, configurations: config)
         } catch {
@@ -42,7 +42,14 @@ struct RenaissanceArchitectAcademyApp: App {
             "EBGaramond-Bold", "EBGaramond-BoldItalic", "EBGaramond-ExtraBold",
             "EBGaramond-ExtraBoldItalic", "EBGaramond-VariableFont_wght",
             "EBGaramond-Italic-VariableFont_wght", "PetitFormalScript-Regular",
-            "GreatVibes-Regular", "Amellina"
+            "GreatVibes-Regular", "Amellina",
+            "LibreBaskerville-Bold", "LibreBaskerville-Regular",
+            "LibreBaskerville-Italic", "LibreBaskerville-SemiBold",
+            "LibreFranklin-Regular", "LibreFranklin-Bold",
+            "LibreFranklin-Medium", "LibreFranklin-SemiBold", "LibreFranklin-Italic",
+            "Delius-Regular", "Mulish-Light", "Mulish-Regular",
+            "Mulish-Medium", "Mulish-SemiBold", "Mulish-Bold",
+            "Mulish-Italic", "Mulish-LightItalic"
         ]
 
         for fontFile in fontFiles {

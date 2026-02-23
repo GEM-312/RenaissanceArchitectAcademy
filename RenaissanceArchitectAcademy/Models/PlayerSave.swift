@@ -10,6 +10,7 @@ final class PlayerSave {
     var earnedScienceBadgesRaw: [String] = []
     var rawMaterialsJSON: Data? = nil
     var craftedMaterialsJSON: Data? = nil
+    var totalPlayTimeSeconds: Double = 0
     var lastSaved: Date = Date()
 
     init() {}

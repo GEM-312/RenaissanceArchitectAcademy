@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Animated flow rate diagram — 5 steps
 /// Step 1: Pipe + empty basin appear
-/// Step 2: Formula "speed x time = total" typewriter-reveals
+/// Step 2: Formula "speed × time = total" typewriter-reveals
 /// Step 3: Clock appears, water fills basin, counter ticks up
 /// Step 4: Basin full, counter stops at 1,800,000, formula highlights
 /// Step 5: Summary + bathtub icon grid
@@ -26,7 +26,7 @@ struct FlowRateVisual: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(RenaissanceColors.blueprintBlue.opacity(0.2), lineWidth: 1)
+                    .stroke(RenaissanceColors.ochre.opacity(0.25), lineWidth: 1)
             )
             .clipped()
 
@@ -76,8 +76,8 @@ struct FlowRateVisual: View {
             x: pipeStartX, y: pipeY - pipeHeight / 2,
             width: pipeEndX - pipeStartX, height: pipeHeight
         ), cornerSize: CGSize(width: 4, height: 4))
-        context.fill(pipePath, with: .color(RenaissanceColors.blueprintBlue.opacity(0.15)))
-        context.stroke(pipePath, with: .color(RenaissanceColors.blueprintBlue), lineWidth: 1.5)
+        context.fill(pipePath, with: .color(RenaissanceColors.warmBrown.opacity(0.15)))
+        context.stroke(pipePath, with: .color(RenaissanceColors.warmBrown), lineWidth: 1.5)
 
         // Pipe opening arrow
         var arrowPath = Path()
@@ -98,7 +98,7 @@ struct FlowRateVisual: View {
         basinPath.addLine(to: CGPoint(x: basinX, y: basinY + basinH))
         basinPath.addLine(to: CGPoint(x: basinX + basinW, y: basinY + basinH))
         basinPath.addLine(to: CGPoint(x: basinX + basinW, y: basinY))
-        context.stroke(basinPath, with: .color(RenaissanceColors.blueprintBlue), style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
+        context.stroke(basinPath, with: .color(RenaissanceColors.warmBrown), style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
 
         // Water fill (step 3+)
         if currentStep >= 3 {
@@ -109,7 +109,7 @@ struct FlowRateVisual: View {
                 x: basinX + 2, y: waterY,
                 width: basinW - 4, height: waterH - 2
             ))
-            context.fill(waterPath, with: .color(RenaissanceColors.renaissanceBlue.opacity(0.3)))
+            context.fill(waterPath, with: .color(RenaissanceColors.renaissanceBlue.opacity(0.2)))
 
             // Water stream from pipe to basin
             if fillLevel < 1.0 {
@@ -119,7 +119,7 @@ struct FlowRateVisual: View {
                     to: CGPoint(x: basinX + basinW / 4, y: waterY),
                     control: CGPoint(x: basinX, y: pipeY + 20)
                 )
-                context.stroke(streamPath, with: .color(RenaissanceColors.renaissanceBlue.opacity(0.5)), style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                context.stroke(streamPath, with: .color(RenaissanceColors.renaissanceBlue.opacity(0.4)), style: StrokeStyle(lineWidth: 3, lineCap: .round))
             }
         }
 
@@ -129,21 +129,21 @@ struct FlowRateVisual: View {
             let highlighted = currentStep >= 4
 
             let formulaText = Text("speed  \u{00D7}  time  =  total")
-                .font(.custom("Cinzel-Bold", size: 18))
-                .foregroundColor(highlighted ? RenaissanceColors.goldSuccess : RenaissanceColors.blueprintBlue)
+                .font(.custom("Mulish-SemiBold", size: 18))
+                .foregroundColor(highlighted ? RenaissanceColors.goldSuccess : RenaissanceColors.warmBrown)
             context.draw(context.resolve(formulaText), at: CGPoint(x: w / 2, y: formulaY), anchor: .center)
 
             // Values below formula (step 3+)
             if currentStep >= 3 {
                 let valuesText = Text("500 cups/s  \u{00D7}  3,600 s  =  ?")
-                    .font(.system(size: 15))
+                    .font(.custom("Mulish-Light", size: 15, relativeTo: .subheadline))
                     .foregroundColor(RenaissanceColors.sepiaInk.opacity(0.7))
                 context.draw(context.resolve(valuesText), at: CGPoint(x: w / 2, y: formulaY + 22), anchor: .center)
             }
 
             if currentStep >= 4 {
                 let resultText = Text("= 1,800,000 cups")
-                    .font(.custom("Cinzel-Bold", size: 16))
+                    .font(.custom("Mulish-SemiBold", size: 16))
                     .foregroundColor(RenaissanceColors.sageGreen)
                 context.draw(context.resolve(resultText), at: CGPoint(x: w / 2, y: formulaY + 42), anchor: .center)
             }
@@ -153,26 +153,26 @@ struct FlowRateVisual: View {
         if currentStep >= 3 {
             let counterStr = formatNumber(counterValue)
             let counterText = Text(counterStr)
-                .font(.custom("Cinzel-Bold", size: 20))
+                .font(.custom("Mulish-Bold", size: 20))
                 .foregroundColor(currentStep >= 4 ? RenaissanceColors.sageGreen : RenaissanceColors.sepiaInk)
             let counterPos = CGPoint(x: basinX + basinW / 2, y: basinY + basinH / 2)
             context.draw(context.resolve(counterText), at: counterPos, anchor: .center)
 
             // "cups" label
             let cupsText = Text("cups")
-                .font(.custom("EBGaramond-Italic", size: 13))
-                .foregroundColor(RenaissanceColors.stoneGray)
+                .font(.custom("Mulish-Light", size: 13))
+                .foregroundColor(RenaissanceColors.sepiaInk)
             context.draw(context.resolve(cupsText), at: CGPoint(x: counterPos.x, y: counterPos.y + 22), anchor: .center)
 
             // Clock icon (left of basin)
             let clockText = Text(Image(systemName: "clock.fill"))
-                .font(.system(size: 22))
-                .foregroundColor(RenaissanceColors.warmBrown.opacity(0.6))
+                .font(.custom("Mulish-Light", size: 22, relativeTo: .title3))
+                .foregroundColor(RenaissanceColors.sepiaInk.opacity(0.6))
             context.draw(context.resolve(clockText), at: CGPoint(x: pipeStartX + 30, y: h * 0.65), anchor: .center)
 
             let timeLabel = Text("1 hour")
-                .font(.custom("EBGaramond-Regular", size: 12))
-                .foregroundColor(RenaissanceColors.warmBrown)
+                .font(.custom("Mulish-Light", size: 12))
+                .foregroundColor(RenaissanceColors.sepiaInk)
             context.draw(context.resolve(timeLabel), at: CGPoint(x: pipeStartX + 30, y: h * 0.73), anchor: .center)
         }
 
@@ -189,15 +189,15 @@ struct FlowRateVisual: View {
                     let x = gridX + CGFloat(col) * (iconSize + 4)
                     let y = gridY + CGFloat(row) * (iconSize + 4)
                     let tubText = Text(Image(systemName: "bathtub.fill"))
-                        .font(.system(size: iconSize))
-                        .foregroundColor(RenaissanceColors.renaissanceBlue.opacity(0.5))
+                        .font(.custom("Mulish-Light", size: iconSize, relativeTo: .footnote))
+                        .foregroundColor(RenaissanceColors.sepiaInk.opacity(0.4))
                     context.draw(context.resolve(tubText), at: CGPoint(x: x, y: y), anchor: .topLeading)
                 }
             }
 
             let checkPos = CGPoint(x: w - 30, y: 30)
             let checkText = Text(Image(systemName: "checkmark.circle.fill"))
-                .font(.system(size: 28))
+                .font(.custom("Mulish-Light", size: 28, relativeTo: .title3))
                 .foregroundColor(RenaissanceColors.sageGreen)
             context.draw(context.resolve(checkText), at: checkPos, anchor: .center)
         }
@@ -207,7 +207,7 @@ struct FlowRateVisual: View {
 
     private func drawGrid(context: GraphicsContext, size: CGSize) {
         let spacing: CGFloat = 20
-        let color = RenaissanceColors.blueprintBlue.opacity(0.15)
+        let color = RenaissanceColors.ochre.opacity(0.12)
 
         for x in stride(from: 0, through: size.width, by: spacing) {
             var path = Path()
@@ -264,32 +264,32 @@ struct FlowRateVisual: View {
         switch currentStep {
         case 0:
             Text("Tap \"Next Step\" to begin")
-                .font(.custom("EBGaramond-Italic", size: 15))
-                .foregroundStyle(RenaissanceColors.stoneGray)
+                .font(.custom("Mulish-Light", size: 15))
+                .foregroundStyle(RenaissanceColors.sepiaInk)
         case 1:
             Text("A pipe delivers water into a large stone basin.")
-                .font(.system(size: 16))
+                .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
         case 2:
             VStack(alignment: .leading, spacing: 4) {
                 Text("The formula is simple:")
-                    .font(.system(size: 16))
+                    .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                 Text("speed \u{00D7} time = total water")
-                    .font(.custom("Cinzel-Bold", size: 15))
-                    .foregroundStyle(RenaissanceColors.blueprintBlue)
+                    .font(.custom("Mulish-SemiBold", size: 15))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
             }
         case 3:
             Text("500 cups per second, flowing for 1 hour (3,600 seconds). Watch the basin fill...")
-                .font(.system(size: 16))
+                .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
         case 4:
             VStack(alignment: .leading, spacing: 4) {
                 Text("**1,800,000 cups** in just one hour!")
-                    .font(.system(size: 16))
+                    .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                 Text("500 \u{00D7} 3,600 = 1,800,000")
-                    .font(.custom("Cinzel-Bold", size: 14))
+                    .font(.custom("Mulish-SemiBold", size: 14))
                     .foregroundStyle(RenaissanceColors.sageGreen)
             }
         case 5:
@@ -297,7 +297,7 @@ struct FlowRateVisual: View {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundStyle(RenaissanceColors.sageGreen)
                 Text("Rome's 11 aqueducts delivered about 1 million cubic meters of water per day -- roughly 400 Olympic swimming pools!")
-                    .font(.system(size: 16))
+                    .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
         default:

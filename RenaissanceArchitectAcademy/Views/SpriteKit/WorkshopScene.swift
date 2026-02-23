@@ -25,13 +25,13 @@ class WorkshopScene: SKScene {
     // Workbench, furnace, and pigment table are inside the Crafting Room (interior scene)
     private let stationPositions: [ResourceStationType: CGPoint] = [
         .quarry:       CGPoint(x: 499,  y: 1441),
-        .river:        CGPoint(x: 1229, y: 1190),
+        .river:        CGPoint(x: 1166, y: 1257),
         .volcano:      CGPoint(x: 2879, y: 450),
         .clayPit:      CGPoint(x: 2796, y: 2046),
         .mine:         CGPoint(x: 1032, y: 1758),
         .forest:       CGPoint(x: 293,  y: 679),
-        .market:       CGPoint(x: 1167, y: 500),
-        .craftingRoom: CGPoint(x: 1750, y: 1225),
+        .market:       CGPoint(x: 1397, y: 594),
+        .craftingRoom: CGPoint(x: 1636, y: 1144),
     ]
 
     // MARK: - Waypoint Graph (road network for pathfinding)
@@ -290,7 +290,7 @@ class WorkshopScene: SKScene {
 
     private func setupTitle() {
         let title = SKLabelNode(text: "LEONARDO'S WORKSHOP")
-        title.fontName = "Cinzel-Bold"
+        title.fontName = "Cinzel-Regular"
         title.fontSize = 28
         title.fontColor = PlatformColor(RenaissanceColors.sepiaInk.opacity(0.4))
         title.position = CGPoint(x: mapSize.width / 2, y: mapSize.height - 50)
@@ -339,7 +339,7 @@ class WorkshopScene: SKScene {
 
     private func setupPlayer() {
         playerNode = PlayerNode()
-        playerNode.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
+        playerNode.position = CGPoint(x: 1750, y: 1800)
         playerNode.zPosition = 50
         addChild(playerNode)
         updatePlayerScreenPosition()

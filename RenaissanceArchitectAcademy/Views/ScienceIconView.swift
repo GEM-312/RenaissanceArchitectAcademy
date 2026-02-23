@@ -6,19 +6,11 @@ struct ScienceIconView: View {
     var size: CGFloat = 40
 
     var body: some View {
-        Group {
-            if let imageName = science.customImageName {
-                Image(imageName)
-                    .resizable()
-                    .scaledToFit()
-            } else {
-                Image(systemName: science.sfSymbolName)
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundStyle(RenaissanceColors.color(for: science))
-            }
-        }
-        .frame(width: size, height: size)
+        Image(systemName: science.sfSymbolName)
+            .resizable()
+            .scaledToFit()
+            .foregroundStyle(RenaissanceColors.color(for: science))
+            .frame(width: size, height: size)
     }
 }
 
@@ -74,7 +66,7 @@ struct CityImageView: View {
 #Preview("Science Icons") {
     VStack(spacing: 20) {
         Text("Science Icons")
-            .font(.custom("Cinzel-Bold", size: 24))
+            .font(.custom("Mulish-Light", size: 24))
 
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 80))], spacing: 16) {
             ForEach(Science.allCases, id: \.self) { science in

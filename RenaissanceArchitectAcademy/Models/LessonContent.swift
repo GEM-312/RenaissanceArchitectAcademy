@@ -64,6 +64,17 @@ enum LessonContent {
                 illustrationIcon: "building.columns.fill"
             )),
 
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Why was the Pantheon round instead of rectangular like most temples?",
+                    answer: "Most Roman temples were rectangular because they copied **Greek** designs. The Pantheon broke the mold. A round room has no \"front\" — every direction is equal. For a temple to **all** the gods, that symmetry made perfect sense. No god gets a better spot than another."
+                ),
+                CuriosityQA(
+                    question: "Why did Hadrian tear everything down instead of just repairing it?",
+                    answer: "The original Pantheon was a conventional rectangular temple. Hadrian wanted something radically different — a **rotunda** topped by the world's largest dome. You can't bolt a dome onto a box. He needed to start from scratch to pull off his vision. Sometimes the boldest move is **demolition**."
+                )
+            ])),
+
             // ── 2. Fun Fact: The Inscription ────────────────────
 
             .funFact(LessonFunFact(
@@ -164,6 +175,17 @@ enum LessonContent {
                 illustrationIcon: "circle.circle"
             )),
 
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Why does the sphere shape matter structurally?",
+                    answer: "A sphere distributes force **evenly in every direction**. Think of squeezing an egg — it's surprisingly hard to crush because the curved shell spreads pressure everywhere. The Pantheon's dome works the same way. That geometric perfection isn't just beautiful, it's what keeps 4,535 tonnes of concrete from caving in."
+                ),
+                CuriosityQA(
+                    question: "Did anyone else build with this perfect sphere idea?",
+                    answer: "Not for over **1,300 years**. Brunelleschi's Duomo in Florence (1436) was the next great dome, but it used a pointed shape, not a hemisphere. The closest match is the **Hagia Sophia** in Istanbul (537 AD), which uses a shallower dome. Nobody truly replicated the Pantheon's perfect sphere until the modern era."
+                )
+            ])),
+
             // ── 7. Fun Fact: Perfect Number ─────────────────────
 
             .funFact(LessonFunFact(
@@ -245,6 +267,14 @@ enum LessonContent {
                 ]
             )),
 
+            .mathVisual(LessonMathVisual(
+                type: .pantheonDomeGeometry,
+                title: "Visualize the Dome",
+                science: .geometry,
+                totalSteps: 5,
+                caption: "The dome's height equals its diameter — a perfect sphere fits inside."
+            )),
+
             // ── 12. GEOMETRY CALCULATION: Hemisphere Volume ──────
 
             .question(LessonQuestion(
@@ -263,6 +293,14 @@ enum LessonContent {
                     "r = 21.65 m. Now compute r³ = 21.65 × 21.65 × 21.65",
                     "r³ ≈ 10,152. Plug in: V = (2/3) × 3.14 × 10,152"
                 ]
+            )),
+
+            .mathVisual(LessonMathVisual(
+                type: .pantheonOculusLight,
+                title: "Light Through the Oculus",
+                science: .geometry,
+                totalSteps: 5,
+                caption: "As the sun moves across the sky, its beam sweeps the interior like a clock hand — geometry written in light."
             )),
 
             // ── 12b. QUESTION: Geometry Ratio ────────────────────
@@ -305,6 +343,17 @@ enum LessonContent {
                 science: .materials,
                 illustrationIcon: "mountain.2.fill"
             )),
+
+            .curiosity(LessonCuriosity(questions: [
+                CuriosityQA(
+                    question: "Why can't we just recreate Roman concrete today?",
+                    answer: "We only recently figured out how. For centuries, the recipe was lost. In 2023, MIT discovered the secret was **hot mixing** — blending quicklime at over 200°C. Modern concrete uses a completely different chemistry. We optimized for speed; the Romans optimized for **eternity**."
+                ),
+                CuriosityQA(
+                    question: "What happened when Romans couldn't get volcanic ash?",
+                    answer: "They improvised. In places far from volcanoes, they crushed **fired clay tiles** into powder as a substitute. It worked — not quite as strong as pozzolana, but good enough to build across an empire. Necessity really is the mother of invention."
+                )
+            ])),
 
             // ── 13. Fun Fact: Self-healing ──────────────────────
 

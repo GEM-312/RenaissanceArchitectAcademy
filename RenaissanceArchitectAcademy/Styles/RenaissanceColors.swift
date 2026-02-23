@@ -34,6 +34,9 @@ enum RenaissanceColors {
     /// Stone gray for materials: #A39D93
     static let stoneGray = Color(red: 0.639, green: 0.616, blue: 0.576)
 
+    /// Icon ochre for nav buttons: #C49B54 — warm golden ochre
+    static let iconOchre = Color(red: 0.769, green: 0.608, blue: 0.329)
+
     /// Garden green for nature: #7A9B76 (same as sageGreen)
     static let gardenGreen = Color(red: 0.478, green: 0.608, blue: 0.463)
 

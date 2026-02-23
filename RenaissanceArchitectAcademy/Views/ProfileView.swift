@@ -7,8 +7,9 @@ struct ProfileView: View {
     @ObservedObject var viewModel: CityViewModel
     var workshopState: WorkshopState
     var onboardingState: OnboardingState
+    var onNavigate: ((SidebarDestination) -> Void)? = nil
+    var onBackToMenu: (() -> Void)? = nil
 
-    @State private var profile = StudentProfile.newStudent(name: "Young Architect")
     @State private var selectedCategory: Achievement.AchievementCategory?
 
     /// Display name from onboarding, fallback to "Young Architect"
@@ -40,14 +41,101 @@ struct ProfileView: View {
         workshopState.craftedMaterials.values.reduce(0, +)
     }
 
+    // MARK: - Computed Progress (from real game data)
+
+    /// Overall progress: milestones completed / total possible milestones
+    /// Each building: lesson (always) + quiz (if exists) + sketch (if exists) + completion (always)
+    private var computedProgress: Double {
+        var totalMilestones = 0
+        var doneMilestones = 0
+
+        for plot in viewModel.buildingPlots {
+            let progress = viewModel.buildingProgressMap[plot.id] ?? BuildingProgress()
+
+            // Lesson (all 17 buildings)
+            totalMilestones += 1
+            if progress.lessonRead { doneMilestones += 1 }
+
+            // Quiz (only buildings with quiz content)
+            if ChallengeContent.interactiveChallenge(for: plot.building.name) != nil {
+                totalMilestones += 1
+                if progress.quizPassed { doneMilestones += 1 }
+            }
+
+            // Sketch (only buildings with sketching content)
+            if SketchingContent.sketchingChallenge(for: plot.building.name) != nil {
+                totalMilestones += 1
+                if progress.sketchCompleted { doneMilestones += 1 }
+            }
+
+            // Building completed
+            totalMilestones += 1
+            if plot.isCompleted { doneMilestones += 1 }
+        }
+
+        guard totalMilestones > 0 else { return 0 }
+        return Double(doneMilestones) / Double(totalMilestones)
+    }
+
+    /// Mastery level derived from actual progress
+    private var computedMasteryLevel: MasteryLevel {
+        let progress = computedProgress
+        if progress >= 0.67 { return .master }
+        if progress >= 0.33 { return .architect }
+        return .apprentice
+    }
+
+    /// Science masteries computed from earned badges across buildings
+    private var computedScienceMasteries: [ScienceMastery] {
+        Science.allCases.map { science in
+            let buildingsWithScience = viewModel.buildingPlots.filter { $0.building.sciences.contains(science) }
+            let totalForScience = buildingsWithScience.count
+            let completedForScience = buildingsWithScience.filter { plot in
+                let progress = viewModel.buildingProgressMap[plot.id] ?? BuildingProgress()
+                return progress.scienceBadgesEarned.contains(science)
+            }.count
+            return ScienceMastery(
+                id: science.rawValue,
+                science: science,
+                level: completedForScience,
+                challengesCompleted: completedForScience,
+                totalChallenges: totalForScience
+            )
+        }
+    }
+
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
+                // ── Top bar: Title + Florins ──
+                HStack(spacing: 8) {
+                    Text("Profile")
+                        .font(.custom("Cinzel-Regular", size: 18))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+
+                    Spacer()
+
+                    HStack(spacing: 4) {
+                        Image(systemName: "dollarsign.circle.fill")
+                            .font(.system(size: 14))
+                            .foregroundStyle(RenaissanceColors.goldSuccess)
+                        Text("\(viewModel.goldFlorins)")
+                            .font(.custom("Cinzel-Regular", size: 14))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(
+                        Capsule()
+                            .fill(RenaissanceColors.parchment.opacity(0.9))
+                    )
+                }
+
                 // ── Row 1: Header (rank | avatar | currency) ──
                 ProfileHeaderRow(
                     displayName: displayName,
                     avatarFramePrefix: avatarFramePrefix,
-                    masteryLevel: profile.masteryLevel,
+                    masteryLevel: computedMasteryLevel,
                     goldFlorins: viewModel.goldFlorins
                 )
 
@@ -55,33 +143,37 @@ struct ProfileView: View {
                 HStack(alignment: .top, spacing: 16) {
                     MaterialsCard(workshopState: workshopState)
                     AchievementsSection(
-                        achievements: profile.achievements,
+                        achievements: StudentProfile.defaultAchievements,
                         selectedCategory: $selectedCategory
                     )
                 }
 
                 // ── Row 3: Sciences horizontal scroll ──
-                SciencesRow(masteries: profile.scienceMasteries)
+                SciencesRow(masteries: computedScienceMasteries)
 
                 // ── Row 4: Statistics + Mastery Level side-by-side ──
                 HStack(alignment: .top, spacing: 16) {
                     StatisticsCard(
                         buildingPlots: viewModel.buildingPlots,
-                        totalPlayTime: profile.totalPlayTime
+                        totalPlayTime: viewModel.totalPlayTime
                     )
                     MasteryLevelCard(
-                        masteryLevel: profile.masteryLevel,
-                        progress: profile.overallProgress
+                        masteryLevel: computedMasteryLevel,
+                        progress: computedProgress
+                    )
+                }
+
+                // ── Navigation Row ──
+                if let onNavigate = onNavigate {
+                    ProfileNavRow(
+                        onNavigate: onNavigate,
+                        onBackToMenu: onBackToMenu
                     )
                 }
             }
             .padding()
         }
         .background(RenaissanceColors.parchmentGradient)
-        .navigationTitle("Codex Personalis")
-        #if os(iOS)
-        .navigationBarTitleDisplayMode(.large)
-        #endif
     }
 }
 
@@ -114,9 +206,9 @@ struct ProfileHeaderRow: View {
                     // Left — Current Rank
                     VStack(spacing: 4) {
                         Text(masteryLevel.icon)
-                            .font(.system(size: 28))
+                            .font(.custom("Mulish-Light", size: 28, relativeTo: .title3))
                         Text(masteryLevel.rawValue)
-                            .font(.custom("Cinzel-Bold", size: 12))
+                            .font(.custom("Cinzel-Regular", size: 12))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                     .padding(8)
@@ -129,7 +221,7 @@ struct ProfileHeaderRow: View {
 
                     // Center — Name
                     Text(displayName)
-                        .font(.custom("Cinzel-Bold", size: 20))
+                        .font(.custom("Cinzel-Regular", size: 20))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
@@ -147,11 +239,11 @@ struct ProfileHeaderRow: View {
                                 .fill(RenaissanceColors.goldSuccess)
                                 .frame(width: 36, height: 36)
                             Image(systemName: "dollarsign.circle.fill")
-                                .font(.system(size: 22))
+                                .font(.custom("Mulish-Light", size: 22, relativeTo: .title3))
                                 .foregroundStyle(.white)
                         }
                         Text("\(goldFlorins)")
-                            .font(.custom("Cinzel-Bold", size: 13))
+                            .font(.custom("Cinzel-Regular", size: 13))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                     .padding(8)
@@ -213,9 +305,9 @@ struct MaterialsCard: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Image(systemName: "shippingbox.fill")
-                    .foregroundStyle(RenaissanceColors.warmBrown)
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
                 Text("Materials")
-                    .font(.custom("Cinzel-Bold", size: 14))
+                    .font(.custom("Cinzel-Regular", size: 14))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
 
@@ -223,15 +315,15 @@ struct MaterialsCard: View {
                 // Raw materials
                 if !rawItems.isEmpty {
                     Text("Raw")
-                        .font(.custom("EBGaramond-Regular", size: 11))
-                        .foregroundStyle(RenaissanceColors.stoneGray)
+                        .font(.custom("Mulish-Light", size: 11))
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 50))], spacing: 6) {
                         ForEach(rawItems, id: \.0) { mat, count in
                             VStack(spacing: 2) {
                                 Text(mat.icon)
-                                    .font(.system(size: 20))
+                                    .font(.custom("Mulish-Light", size: 20, relativeTo: .title3))
                                 Text("\(count)")
-                                    .font(.custom("EBGaramond-Regular", size: 11))
+                                    .font(.custom("Mulish-Light", size: 11))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                         }
@@ -241,16 +333,16 @@ struct MaterialsCard: View {
                 // Crafted materials
                 if !craftedItems.isEmpty {
                     Text("Crafted")
-                        .font(.custom("EBGaramond-Regular", size: 11))
-                        .foregroundStyle(RenaissanceColors.stoneGray)
+                        .font(.custom("Mulish-Light", size: 11))
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                         .padding(.top, 4)
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 50))], spacing: 6) {
                         ForEach(craftedItems, id: \.0) { item, count in
                             VStack(spacing: 2) {
                                 Text(item.icon)
-                                    .font(.system(size: 20))
+                                    .font(.custom("Mulish-Light", size: 20, relativeTo: .title3))
                                 Text("\(count)")
-                                    .font(.custom("EBGaramond-Regular", size: 11))
+                                    .font(.custom("Mulish-Light", size: 11))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                         }
@@ -258,8 +350,8 @@ struct MaterialsCard: View {
                 }
             } else {
                 Text("Visit the Workshop\nto collect materials!")
-                    .font(.custom("EBGaramond-Italic", size: 12))
-                    .foregroundStyle(RenaissanceColors.stoneGray)
+                    .font(.custom("Mulish-Light", size: 12))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
@@ -296,12 +388,12 @@ struct AchievementsSection: View {
                 Image(systemName: "seal.fill")
                     .foregroundStyle(RenaissanceColors.goldSuccess)
                 Text("Achievements")
-                    .font(.custom("Cinzel-Bold", size: 14))
+                    .font(.custom("Cinzel-Regular", size: 14))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                 Spacer()
                 Text("\(achievements.filter { $0.isUnlocked }.count)/\(achievements.count)")
-                    .font(.custom("EBGaramond-Regular", size: 12))
-                    .foregroundStyle(RenaissanceColors.stoneGray)
+                    .font(.custom("Mulish-Light", size: 12))
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
             }
 
             // Category filter chips
@@ -349,7 +441,7 @@ struct CategoryChip: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.custom("EBGaramond-Regular", size: 11))
+                .font(.custom("Mulish-Light", size: 11))
                 .fontWeight(isSelected ? .semibold : .regular)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 4)
@@ -386,16 +478,16 @@ struct AchievementBadge: View {
                 Image(systemName: achievement.iconName)
                     .font(.body)
                     .foregroundStyle(
-                        achievement.isUnlocked ? .white : RenaissanceColors.stoneGray
+                        achievement.isUnlocked ? .white : RenaissanceColors.sepiaInk
                     )
             }
 
             Text(achievement.name)
-                .font(.custom("EBGaramond-Regular", size: 10))
+                .font(.custom("Mulish-Light", size: 10))
                 .foregroundStyle(
                     achievement.isUnlocked
                         ? RenaissanceColors.sepiaInk
-                        : RenaissanceColors.stoneGray
+                        : RenaissanceColors.sepiaInk
                 )
                 .lineLimit(2)
                 .multilineTextAlignment(.center)
@@ -418,9 +510,9 @@ struct SciencesRow: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Image(systemName: "books.vertical.fill")
-                    .foregroundStyle(RenaissanceColors.warmBrown)
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
                 Text("Sciences")
-                    .font(.custom("Cinzel-Bold", size: 14))
+                    .font(.custom("Cinzel-Regular", size: 14))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
             .padding(.horizontal, 12)
@@ -478,7 +570,7 @@ struct ScienceMasteryCard: View {
                     }
                 } else {
                     Image(systemName: mastery.science.sfSymbolName)
-                        .font(.system(size: 32))
+                        .font(.custom("Mulish-Light", size: 32, relativeTo: .title3))
                         .foregroundStyle(RenaissanceColors.color(for: mastery.science))
                 }
 
@@ -490,7 +582,7 @@ struct ScienceMasteryCard: View {
 
             // Science name
             Text(mastery.science.rawValue)
-                .font(.custom("EBGaramond-Regular", size: 11))
+                .font(.custom("Mulish-Light", size: 11))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
@@ -509,7 +601,7 @@ struct ScienceMasteryCard: View {
                     .rotationEffect(.degrees(-90))
 
                 Text("\(mastery.level)")
-                    .font(.custom("EBGaramond-Regular", size: 10))
+                    .font(.custom("Mulish-Light", size: 10))
                     .fontWeight(.bold)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
@@ -532,27 +624,27 @@ struct StatisticsCard: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Image(systemName: "chart.bar.fill")
-                    .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
                 Text("Statistics")
-                    .font(.custom("Cinzel-Bold", size: 14))
+                    .font(.custom("Cinzel-Regular", size: 14))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
 
             // Buildings completed — individual icons
             VStack(alignment: .leading, spacing: 6) {
                 Text("Buildings (\(completedPlots.count)/\(buildingPlots.count))")
-                    .font(.custom("EBGaramond-Regular", size: 12))
-                    .foregroundStyle(RenaissanceColors.stoneGray)
+                    .font(.custom("Mulish-Light", size: 12))
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
 
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 36))], spacing: 6) {
                     ForEach(buildingPlots) { plot in
                         VStack(spacing: 2) {
                             Image(systemName: plot.building.iconName)
-                                .font(.system(size: 16))
+                                .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
                                 .foregroundStyle(
                                     plot.isCompleted
                                         ? RenaissanceColors.sageGreen
-                                        : RenaissanceColors.stoneGray.opacity(0.4)
+                                        : RenaissanceColors.sepiaInk.opacity(0.4)
                                 )
                             // Tiny dot indicator
                             Circle()
@@ -569,29 +661,29 @@ struct StatisticsCard: View {
             // Play Time
             HStack(spacing: 8) {
                 Image(systemName: "clock.fill")
-                    .font(.system(size: 14))
-                    .foregroundStyle(RenaissanceColors.warmBrown)
+                    .font(.custom("Mulish-Light", size: 14, relativeTo: .footnote))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
                 Text("Play Time")
-                    .font(.custom("EBGaramond-Regular", size: 12))
-                    .foregroundStyle(RenaissanceColors.stoneGray)
+                    .font(.custom("Mulish-Light", size: 12))
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                 Spacer()
                 Text(formatPlayTime(totalPlayTime))
-                    .font(.custom("Cinzel-Bold", size: 12))
+                    .font(.custom("Cinzel-Regular", size: 12))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
 
             // Exploration
             HStack(spacing: 8) {
                 Image(systemName: "map.fill")
-                    .font(.system(size: 14))
-                    .foregroundStyle(RenaissanceColors.warmBrown)
+                    .font(.custom("Mulish-Light", size: 14, relativeTo: .footnote))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
                 Text("Exploration")
-                    .font(.custom("EBGaramond-Regular", size: 12))
-                    .foregroundStyle(RenaissanceColors.stoneGray)
+                    .font(.custom("Mulish-Light", size: 12))
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                 Spacer()
                 let visited = buildingPlots.filter { $0.challengeProgress > 0 || $0.isCompleted }.count
                 Text("\(visited) visited")
-                    .font(.custom("Cinzel-Bold", size: 12))
+                    .font(.custom("Cinzel-Regular", size: 12))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
         }
@@ -626,19 +718,19 @@ struct MasteryLevelCard: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text(masteryLevel.icon)
-                    .font(.system(size: 24))
+                    .font(.custom("Mulish-Light", size: 24, relativeTo: .title3))
                 Text("Mastery Level")
-                    .font(.custom("Cinzel-Bold", size: 14))
+                    .font(.custom("Cinzel-Regular", size: 14))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
 
             Text(masteryLevel.rawValue)
-                .font(.custom("Cinzel-Bold", size: 18))
-                .foregroundStyle(masteryColor)
+                .font(.custom("Cinzel-Regular", size: 18))
+                .foregroundStyle(RenaissanceColors.sepiaInk)
 
             Text(masteryLevel.description)
-                .font(.custom("EBGaramond-Italic", size: 12))
-                .foregroundStyle(RenaissanceColors.stoneGray)
+                .font(.custom("Mulish-Light", size: 12))
+                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
 
             // Progress bar
             VStack(alignment: .leading, spacing: 4) {
@@ -662,15 +754,15 @@ struct MasteryLevelCard: View {
                 .frame(height: 8)
 
                 Text("\(Int(progress * 100))% Progress")
-                    .font(.custom("EBGaramond-Regular", size: 11))
-                    .foregroundStyle(RenaissanceColors.stoneGray)
+                    .font(.custom("Mulish-Light", size: 11))
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
             }
 
             // Plant visual (growth indicator matching sketch)
             HStack {
                 Spacer()
                 Image(systemName: plantIcon)
-                    .font(.system(size: 32))
+                    .font(.custom("Mulish-Light", size: 32, relativeTo: .title3))
                     .foregroundStyle(RenaissanceColors.sageGreen)
                 Spacer()
             }
@@ -703,6 +795,66 @@ struct MasteryLevelCard: View {
         case .architect: return "tree.fill"
         case .master: return "tree.fill"
         }
+    }
+}
+
+// MARK: - Navigation Row (horizontal, below content)
+struct ProfileNavRow: View {
+    let onNavigate: (SidebarDestination) -> Void
+    var onBackToMenu: (() -> Void)? = nil
+
+    var body: some View {
+        VStack(spacing: 8) {
+            Divider()
+                .overlay(RenaissanceColors.ochre.opacity(0.3))
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 10) {
+                    profileNavButton(icon: "map.fill", label: "Map") {
+                        onNavigate(.cityMap)
+                    }
+                    profileNavButton(icon: "hammer.fill", label: "Workshop") {
+                        onNavigate(.workshop)
+                    }
+                    profileNavButton(icon: "book.fill", label: "Tests") {
+                        onNavigate(.knowledgeTests)
+                    }
+                    profileNavButton(icon: "book.closed.fill", label: "Notes") {
+                        onNavigate(.notebook(4))
+                    }
+                    profileNavButton(icon: "leaf.fill", label: "Forest") {
+                        onNavigate(.forest)
+                    }
+                    if let onBackToMenu = onBackToMenu {
+                        profileNavButton(icon: "house.fill", label: "Home", action: onBackToMenu)
+                    }
+                }
+            }
+        }
+    }
+
+    private func profileNavButton(icon: String, label: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: 4) {
+                Image(systemName: icon)
+                    .font(.system(size: 20, weight: .medium))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                Text(label)
+                    .font(.custom("Mulish-Light", size: 11))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
+            }
+            .frame(width: 70, height: 52)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(RenaissanceColors.parchment.opacity(0.8))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(RenaissanceColors.iconOchre.opacity(0.2), lineWidth: 1)
+                    .blur(radius: 0.5)
+            )
+        }
+        .buttonStyle(.plain)
     }
 }
 

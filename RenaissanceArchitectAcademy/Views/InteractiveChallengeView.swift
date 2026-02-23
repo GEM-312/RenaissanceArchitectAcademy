@@ -78,12 +78,12 @@ struct InteractiveChallengeView: View {
                 // Header
                 VStack(spacing: 8) {
                     Text(challenge.buildingName)
-                        .font(.custom("Cinzel-Bold", size: titleSize, relativeTo: .title))
+                        .font(.custom("Cinzel-Regular", size: titleSize, relativeTo: .title))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     Text("Interactive Challenge")
-                        .font(.custom("EBGaramond-Italic", size: isLargeScreen ? 22 : 18, relativeTo: .title2))
-                        .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                        .font(.custom("Mulish-Light", size: isLargeScreen ? 22 : 18, relativeTo: .title2))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
 
                 decorativeDivider
@@ -92,14 +92,14 @@ struct InteractiveChallengeView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     HStack {
                         Image(systemName: "scroll.fill")
-                            .foregroundStyle(RenaissanceColors.warmBrown)
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("Historical Context")
                             .font(.custom("Cinzel-Regular", size: 14, relativeTo: .caption))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                     }
 
                     Text(challenge.introduction)
-                        .font(.custom("EBGaramond-Regular", size: bodySize, relativeTo: .body))
+                        .font(.custom("Mulish-Light", size: bodySize, relativeTo: .body))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.9))
                         .lineSpacing(6)
                 }
@@ -161,7 +161,7 @@ struct InteractiveChallengeView: View {
 
                 // Question text
                 Text(question.questionText)
-                    .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 22 : 18, relativeTo: .title3))
+                    .font(.custom("Mulish-Light", size: isLargeScreen ? 22 : 18, relativeTo: .title3))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
@@ -244,7 +244,7 @@ struct InteractiveChallengeView: View {
             HStack {
                 // Letter badge (A, B, C, D)
                 Text(String(UnicodeScalar(65 + index)!))
-                    .font(.custom("Cinzel-Bold", size: 16, relativeTo: .body))
+                    .font(.custom("Cinzel-Regular", size: 16, relativeTo: .body))
                     .foregroundStyle(
                         showResult && isCorrect ? .white :
                         showResult && isSelected && !isCorrect ? .white :
@@ -261,7 +261,7 @@ struct InteractiveChallengeView: View {
                     )
 
                 Text(text)
-                    .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 17 : 15, relativeTo: .body))
+                    .font(.custom("Mulish-Light", size: isLargeScreen ? 17 : 15, relativeTo: .body))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -338,28 +338,28 @@ struct InteractiveChallengeView: View {
                     .shadow(color: RenaissanceColors.goldSuccess.opacity(0.4), radius: 20)
 
                 Image(systemName: scorePercentage >= 0.7 ? "checkmark" : "arrow.clockwise")
-                    .font(.system(size: 44, weight: .bold))
+                    .font(.custom("Mulish-Bold", size: 44, relativeTo: .title3))
                     .foregroundStyle(.white)
             }
 
             Text("Challenge Complete!")
-                .font(.custom("Cinzel-Bold", size: titleSize, relativeTo: .title))
+                .font(.custom("Cinzel-Regular", size: titleSize, relativeTo: .title))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
             VStack(spacing: 8) {
                 Text("\(correctAnswers) of \(challenge.questions.count)")
-                    .font(.custom("Cinzel-Bold", size: 36, relativeTo: .largeTitle))
-                    .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                    .font(.custom("Cinzel-Regular", size: 36, relativeTo: .largeTitle))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 Text("Questions Correct")
-                    .font(.custom("EBGaramond-Italic", size: 18, relativeTo: .body))
+                    .font(.custom("Mulish-Light", size: 18, relativeTo: .body))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
             }
 
             decorativeDivider
 
             Text(feedbackMessage)
-                .font(.custom("EBGaramond-Regular", size: bodySize, relativeTo: .body))
+                .font(.custom("Mulish-Light", size: bodySize, relativeTo: .body))
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.9))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
@@ -425,8 +425,8 @@ struct InteractiveChallengeView: View {
                         }
                     } label: {
                         Image(systemName: hintAlreadyUsed ? "lightbulb.fill" : "lightbulb")
-                            .font(.system(size: 18))
-                            .foregroundStyle(hintAlreadyUsed ? RenaissanceColors.goldSuccess : RenaissanceColors.ochre)
+                            .font(.custom("Mulish-Light", size: 18, relativeTo: .body))
+                            .foregroundStyle(hintAlreadyUsed ? RenaissanceColors.goldSuccess : RenaissanceColors.sepiaInk)
                             .frame(width: 32, height: 32)
                             .background(
                                 Circle()
@@ -440,7 +440,7 @@ struct InteractiveChallengeView: View {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundStyle(RenaissanceColors.sageGreen)
                     Text("\(correctAnswers)")
-                        .font(.system(size: 17))
+                        .font(.custom("Mulish-Light", size: 17, relativeTo: .body))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
             }
@@ -470,7 +470,7 @@ struct InteractiveChallengeView: View {
                 Image(systemName: currentAnswerCorrect ? "checkmark.circle.fill" : "xmark.circle.fill")
                     .foregroundStyle(currentAnswerCorrect ? RenaissanceColors.sageGreen : RenaissanceColors.errorRed)
                 Text(currentAnswerCorrect ? "Correct!" : "Not quite...")
-                    .font(.custom("Cinzel-Bold", size: 16, relativeTo: .headline))
+                    .font(.custom("Cinzel-Regular", size: 16, relativeTo: .headline))
                     .foregroundStyle(currentAnswerCorrect ? RenaissanceColors.sageGreen : RenaissanceColors.errorRed)
             }
 
@@ -485,7 +485,7 @@ struct InteractiveChallengeView: View {
                 }
 
                 Text(question.explanation)
-                    .font(.custom("EBGaramond-Regular", size: bodySize, relativeTo: .body))
+                    .font(.custom("Mulish-Light", size: bodySize, relativeTo: .body))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.9))
                     .lineSpacing(4)
             }
@@ -504,8 +504,8 @@ struct InteractiveChallengeView: View {
                 }
 
                 Text(question.funFact)
-                    .font(.custom("EBGaramond-Italic", size: bodySize, relativeTo: .body))
-                    .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                    .font(.custom("Mulish-Light", size: bodySize, relativeTo: .body))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
                     .lineSpacing(4)
             }
         }
@@ -539,12 +539,12 @@ struct InteractiveChallengeView: View {
         VStack(spacing: 4) {
             Image(systemName: icon)
                 .font(.title2)
-                .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                .foregroundStyle(RenaissanceColors.sepiaInk)
             Text(title)
-                .font(.custom("Cinzel-Bold", size: 24, relativeTo: .title2))
+                .font(.custom("Cinzel-Regular", size: 24, relativeTo: .title2))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
             Text(subtitle)
-                .font(.custom("EBGaramond-Italic", size: 14, relativeTo: .caption))
+                .font(.custom("Mulish-Light", size: 14, relativeTo: .caption))
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
         }
         .padding()
