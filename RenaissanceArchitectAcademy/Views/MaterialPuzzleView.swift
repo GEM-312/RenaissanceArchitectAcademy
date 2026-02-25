@@ -227,7 +227,6 @@ struct MaterialPuzzleView: View {
                     .background(
                         Capsule()
                             .fill(RenaissanceColors.warmBrown)
-                            .shadow(radius: 5)
                     )
                     .padding(.bottom, 100)
                 }
@@ -311,7 +310,7 @@ struct MaterialPuzzleView: View {
     private var formulaCard: some View {
         VStack(spacing: 10) {
             Text(formula.name)
-                .font(.custom("Cinzel-Regular", size: 18))
+                .font(.custom("EBGaramond-SemiBold", size: 20))
                 .foregroundColor(RenaissanceColors.sepiaInk)
 
             // Show formula with hidden answer until solved
@@ -345,12 +344,8 @@ struct MaterialPuzzleView: View {
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(RenaissanceColors.parchment)
-                .shadow(color: .black.opacity(0.1), radius: 5, y: 2)
         )
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1)
-        )
+        .borderCard(radius: 12)
     }
 
     private var elementProgressView: some View {
@@ -371,7 +366,7 @@ struct MaterialPuzzleView: View {
                                 .fill(RenaissanceColors.stoneGray.opacity(0.3))
                                 .frame(width: 45, height: 45)
                             Text("?")
-                                .font(.custom("Cinzel-Regular", size: 20))
+                                .font(.custom("EBGaramond-SemiBold", size: 22))
                                 .foregroundColor(RenaissanceColors.sepiaInk)
                         }
                     }
@@ -398,7 +393,7 @@ struct MaterialPuzzleView: View {
                                         .foregroundColor(RenaissanceColors.sageGreen)
                                 } else {
                                     Text(element)
-                                        .font(.custom("Cinzel-Regular", size: 16))
+                                        .font(.custom("EBGaramond-SemiBold", size: 18))
                                         .foregroundColor(RenaissanceColors.sepiaInk)
                                 }
                             }
@@ -418,7 +413,7 @@ struct MaterialPuzzleView: View {
                                     .fill(RenaissanceColors.stoneGray.opacity(0.3))
                                     .frame(width: 45, height: 45)
                                 Text("?")
-                                    .font(.custom("Cinzel-Regular", size: 20))
+                                    .font(.custom("EBGaramond-SemiBold", size: 22))
                                     .foregroundColor(RenaissanceColors.sepiaInk)
                             }
                         }
@@ -501,10 +496,7 @@ struct MaterialPuzzleView: View {
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(RenaissanceColors.parchment.opacity(0.5))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(RenaissanceColors.ochre.opacity(0.2), lineWidth: 1)
-                )
+                .borderCard(radius: 16)
         )
     }
 

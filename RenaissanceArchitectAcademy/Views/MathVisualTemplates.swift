@@ -63,10 +63,7 @@ struct RatioDiagramVisual: View {
             .frame(height: 220)
         }
         .background(RenaissanceColors.parchment)
-        .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(RenaissanceColors.ochre.opacity(0.25), lineWidth: 1)
-        )
+        .borderCard(radius: 8)
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .onChange(of: currentStep) { _, newStep in
             if newStep >= 4 {
@@ -215,7 +212,7 @@ struct ForceArrowVisual: View {
             .frame(height: 220)
         }
         .background(RenaissanceColors.parchment)
-        .overlay(RoundedRectangle(cornerRadius: 8).stroke(RenaissanceColors.ochre.opacity(0.25), lineWidth: 1))
+        .borderCard(radius: 8)
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .onChange(of: currentStep) { _, newStep in
             if newStep >= 4 {
@@ -362,7 +359,7 @@ struct FlowCycleVisual: View {
             .frame(height: 220)
         }
         .background(RenaissanceColors.parchment)
-        .overlay(RoundedRectangle(cornerRadius: 8).stroke(RenaissanceColors.ochre.opacity(0.25), lineWidth: 1))
+        .borderCard(radius: 8)
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .onChange(of: currentStep) { _, newStep in
             if newStep >= 4 {
@@ -497,7 +494,7 @@ struct GraphCurveVisual: View {
             .frame(height: 220)
         }
         .background(RenaissanceColors.parchment)
-        .overlay(RoundedRectangle(cornerRadius: 8).stroke(RenaissanceColors.ochre.opacity(0.25), lineWidth: 1))
+        .borderCard(radius: 8)
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .onChange(of: currentStep) { _, newStep in
             if newStep >= 3 {
@@ -644,7 +641,7 @@ struct LayerStackVisual: View {
             .frame(height: 220)
         }
         .background(RenaissanceColors.parchment)
-        .overlay(RoundedRectangle(cornerRadius: 8).stroke(RenaissanceColors.ochre.opacity(0.25), lineWidth: 1))
+        .borderCard(radius: 8)
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 
@@ -753,7 +750,7 @@ struct MechanismVisual: View {
             .frame(height: 220)
         }
         .background(RenaissanceColors.parchment)
-        .overlay(RoundedRectangle(cornerRadius: 8).stroke(RenaissanceColors.ochre.opacity(0.25), lineWidth: 1))
+        .borderCard(radius: 8)
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .onChange(of: currentStep) { _, newStep in
             if newStep >= 4 {
@@ -1026,7 +1023,7 @@ struct GeometryDiagramVisual: View {
             .frame(height: 220)
         }
         .background(RenaissanceColors.parchment)
-        .overlay(RoundedRectangle(cornerRadius: 8).stroke(RenaissanceColors.ochre.opacity(0.25), lineWidth: 1))
+        .borderCard(radius: 8)
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .onChange(of: currentStep) { _, newStep in
             if newStep >= 2 {

@@ -30,6 +30,9 @@ class CraftingRoomScene: SKScene {
     private var playerNode: PlayerNode!
     private var furnitureNodes: [CraftingStation: SKSpriteNode] = [:]
 
+    /// Player gender — set from SwiftUI before scene appears
+    var apprenticeIsBoy: Bool = true
+
     // Camera control
     private var lastPanLocation: CGPoint?
 
@@ -230,7 +233,7 @@ class CraftingRoomScene: SKScene {
     // MARK: - Player
 
     private func setupPlayer() {
-        playerNode = PlayerNode()
+        playerNode = PlayerNode(isBoy: apprenticeIsBoy)
         // Spawn at door position (bottom center)
         playerNode.position = waypoints[0]
         playerNode.zPosition = 50
@@ -318,16 +321,19 @@ class CraftingRoomScene: SKScene {
         lastPanLocation = nil
     }
 
+    // Scroll wheel/trackpad on macOS — scroll = zoom, Option+scroll = pan
     override func scrollWheel(with event: NSEvent) {
         if event.modifierFlags.contains(.option) {
+            // Option + scroll = pan the map
+            let scale = cameraNode.xScale
+            cameraNode.position.x -= event.deltaX * scale * 2
+            cameraNode.position.y += event.deltaY * scale * 2
+        } else {
+            // Regular scroll = zoom (works with Magic Mouse)
             let zoomFactor: CGFloat = 1.0 - (event.deltaY * 0.05)
             let newScale = cameraNode.xScale * zoomFactor
             let clampedScale = max(0.5, min(3.5, newScale))
             cameraNode.setScale(clampedScale)
-        } else {
-            let scale = cameraNode.xScale
-            cameraNode.position.x -= event.deltaX * scale * 2
-            cameraNode.position.y += event.deltaY * scale * 2
         }
         clampCamera()
     }
@@ -567,6 +573,28 @@ class CraftingRoomScene: SKScene {
         let clampedScale = max(0.5, min(3.5, newScale))
         cameraNode.setScale(clampedScale)
         clampCamera()
+    }
+
+    /// Zoom via scroll delta (Magic Mouse swipe / scroll wheel)
+    func handleScrollZoom(deltaY: CGFloat) {
+        guard cameraNode != nil else { return }
+        let zoomFactor: CGFloat = 1.0 - (deltaY * 0.05)
+        let newScale = cameraNode.xScale * zoomFactor
+        let clampedScale = max(0.5, min(3.5, newScale))
+        cameraNode.setScale(clampedScale)
+        clampCamera()
+    }
+
+    // MARK: - Public Animation Methods
+
+    /// Play collecting animation on the player (bend down + sparkles)
+    func playPlayerCollectAnimation(completion: (() -> Void)? = nil) {
+        playerNode.playCollectAnimation(completion: completion)
+    }
+
+    /// Play celebrating animation on the player (jump + star burst)
+    func playPlayerCelebrateAnimation(completion: (() -> Void)? = nil) {
+        playerNode.playCelebrateAnimation(completion: completion)
     }
 
     // MARK: - Editor Mode (DEBUG only)

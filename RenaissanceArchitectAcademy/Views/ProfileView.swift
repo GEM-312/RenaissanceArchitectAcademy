@@ -110,7 +110,7 @@ struct ProfileView: View {
                 // ── Top bar: Title + Florins ──
                 HStack(spacing: 8) {
                     Text("Profile")
-                        .font(.custom("Cinzel-Regular", size: 18))
+                        .font(.custom("Cinzel-Bold", size: 20))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     Spacer()
@@ -120,7 +120,7 @@ struct ProfileView: View {
                             .font(.system(size: 14))
                             .foregroundStyle(RenaissanceColors.goldSuccess)
                         Text("\(viewModel.goldFlorins)")
-                            .font(.custom("Cinzel-Regular", size: 14))
+                            .font(.custom("EBGaramond-Regular", size: 16))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                     .padding(.horizontal, 10)
@@ -196,7 +196,7 @@ struct ProfileHeaderRow: View {
                 .scaledToFit()
                 .frame(height: 280)
                 .clipShape(RoundedRectangle(cornerRadius: 16))
-                .opacity(0.35)
+                .opacity(0.5)
 
             // Overlay: rank (left), name (center), florins (right)
             VStack {
@@ -208,7 +208,7 @@ struct ProfileHeaderRow: View {
                         Text(masteryLevel.icon)
                             .font(.custom("Mulish-Light", size: 28, relativeTo: .title3))
                         Text(masteryLevel.rawValue)
-                            .font(.custom("Cinzel-Regular", size: 12))
+                            .font(.custom("EBGaramond-Regular", size: 14))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                     .padding(8)
@@ -221,7 +221,7 @@ struct ProfileHeaderRow: View {
 
                     // Center — Name
                     Text(displayName)
-                        .font(.custom("Cinzel-Regular", size: 20))
+                        .font(.custom("EBGaramond-SemiBold", size: 22))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
@@ -243,7 +243,7 @@ struct ProfileHeaderRow: View {
                                 .foregroundStyle(.white)
                         }
                         Text("\(goldFlorins)")
-                            .font(.custom("Cinzel-Regular", size: 13))
+                            .font(.custom("EBGaramond-Regular", size: 15))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                     .padding(8)
@@ -274,7 +274,6 @@ struct ProfileHeaderRow: View {
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(RenaissanceColors.parchment.opacity(0.8))
-                .shadow(color: RenaissanceColors.sepiaInk.opacity(0.1), radius: 8, y: 4)
         )
     }
 }
@@ -305,9 +304,9 @@ struct MaterialsCard: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Image(systemName: "shippingbox.fill")
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .foregroundStyle(RenaissanceColors.warmBrown)
                 Text("Materials")
-                    .font(.custom("Cinzel-Regular", size: 14))
+                    .font(.custom("Cinzel-Bold", size: 15))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
 
@@ -361,11 +360,7 @@ struct MaterialsCard: View {
         .frame(maxWidth: .infinity, alignment: .topLeading)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(RenaissanceColors.parchment.opacity(0.6))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1)
-                )
+                .fill(RenaissanceColors.parchment)
         )
     }
 }
@@ -388,7 +383,7 @@ struct AchievementsSection: View {
                 Image(systemName: "seal.fill")
                     .foregroundStyle(RenaissanceColors.goldSuccess)
                 Text("Achievements")
-                    .font(.custom("Cinzel-Regular", size: 14))
+                    .font(.custom("Cinzel-Bold", size: 15))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                 Spacer()
                 Text("\(achievements.filter { $0.isUnlocked }.count)/\(achievements.count)")
@@ -424,11 +419,7 @@ struct AchievementsSection: View {
         .frame(maxWidth: .infinity, alignment: .topLeading)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(RenaissanceColors.parchment.opacity(0.6))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1)
-                )
+                .fill(RenaissanceColors.parchment)
         )
     }
 }
@@ -468,12 +459,6 @@ struct AchievementBadge: View {
                             : RenaissanceColors.stoneGray.opacity(0.5)
                     )
                     .frame(width: 44, height: 44)
-                    .shadow(
-                        color: achievement.isUnlocked
-                            ? RenaissanceColors.goldSuccess.opacity(0.4)
-                            : .clear,
-                        radius: 3
-                    )
 
                 Image(systemName: achievement.iconName)
                     .font(.body)
@@ -510,9 +495,9 @@ struct SciencesRow: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Image(systemName: "books.vertical.fill")
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .foregroundStyle(RenaissanceColors.renaissanceBlue)
                 Text("Sciences")
-                    .font(.custom("Cinzel-Regular", size: 14))
+                    .font(.custom("Cinzel-Bold", size: 15))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
             .padding(.horizontal, 12)
@@ -529,11 +514,7 @@ struct SciencesRow: View {
         .padding(.vertical, 12)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(RenaissanceColors.parchment.opacity(0.6))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1)
-                )
+                .fill(RenaissanceColors.parchment)
         )
     }
 }
@@ -575,7 +556,7 @@ struct ScienceMasteryCard: View {
                 }
 
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(RenaissanceColors.ochre.opacity(0.4), lineWidth: 1.5)
+                    .stroke(RenaissanceColors.ochre.opacity(0.5), lineWidth: 1.5)
                     .frame(width: 72, height: 72)
             }
             .frame(width: 76, height: 76)
@@ -624,9 +605,9 @@ struct StatisticsCard: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Image(systemName: "chart.bar.fill")
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .foregroundStyle(RenaissanceColors.terracotta)
                 Text("Statistics")
-                    .font(.custom("Cinzel-Regular", size: 14))
+                    .font(.custom("Cinzel-Bold", size: 15))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
 
@@ -662,13 +643,13 @@ struct StatisticsCard: View {
             HStack(spacing: 8) {
                 Image(systemName: "clock.fill")
                     .font(.custom("Mulish-Light", size: 14, relativeTo: .footnote))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .foregroundStyle(RenaissanceColors.ochre)
                 Text("Play Time")
                     .font(.custom("Mulish-Light", size: 12))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                 Spacer()
                 Text(formatPlayTime(totalPlayTime))
-                    .font(.custom("Cinzel-Regular", size: 12))
+                    .font(.custom("EBGaramond-Regular", size: 14))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
 
@@ -676,14 +657,14 @@ struct StatisticsCard: View {
             HStack(spacing: 8) {
                 Image(systemName: "map.fill")
                     .font(.custom("Mulish-Light", size: 14, relativeTo: .footnote))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .foregroundStyle(RenaissanceColors.renaissanceBlue)
                 Text("Exploration")
                     .font(.custom("Mulish-Light", size: 12))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                 Spacer()
                 let visited = buildingPlots.filter { $0.challengeProgress > 0 || $0.isCompleted }.count
                 Text("\(visited) visited")
-                    .font(.custom("Cinzel-Regular", size: 12))
+                    .font(.custom("EBGaramond-Regular", size: 14))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
         }
@@ -691,11 +672,7 @@ struct StatisticsCard: View {
         .frame(maxWidth: .infinity, alignment: .topLeading)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(RenaissanceColors.parchment.opacity(0.6))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1)
-                )
+                .fill(RenaissanceColors.parchment)
         )
     }
 
@@ -720,12 +697,12 @@ struct MasteryLevelCard: View {
                 Text(masteryLevel.icon)
                     .font(.custom("Mulish-Light", size: 24, relativeTo: .title3))
                 Text("Mastery Level")
-                    .font(.custom("Cinzel-Regular", size: 14))
+                    .font(.custom("Cinzel-Bold", size: 15))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
 
             Text(masteryLevel.rawValue)
-                .font(.custom("Cinzel-Regular", size: 18))
+                .font(.custom("EBGaramond-SemiBold", size: 20))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
             Text(masteryLevel.description)
@@ -743,7 +720,7 @@ struct MasteryLevelCard: View {
                         RoundedRectangle(cornerRadius: 4)
                             .fill(
                                 LinearGradient(
-                                    colors: [masteryColor.opacity(0.8), masteryColor],
+                                    colors: [RenaissanceColors.ochre.opacity(0.8), RenaissanceColors.ochre],
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 )
@@ -758,44 +735,15 @@ struct MasteryLevelCard: View {
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
             }
 
-            // Plant visual (growth indicator matching sketch)
-            HStack {
-                Spacer()
-                Image(systemName: plantIcon)
-                    .font(.custom("Mulish-Light", size: 32, relativeTo: .title3))
-                    .foregroundStyle(RenaissanceColors.sageGreen)
-                Spacer()
-            }
-            .padding(.top, 4)
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .topLeading)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(RenaissanceColors.parchment.opacity(0.6))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(masteryColor.opacity(0.3), lineWidth: 2)
-                )
+                .fill(RenaissanceColors.parchment)
         )
     }
 
-    private var masteryColor: Color {
-        switch masteryLevel {
-        case .apprentice: return RenaissanceColors.renaissanceBlue
-        case .architect: return RenaissanceColors.ochre
-        case .master: return RenaissanceColors.goldSuccess
-        }
-    }
-
-    /// Plant icon grows with mastery level
-    private var plantIcon: String {
-        switch masteryLevel {
-        case .apprentice: return "leaf.fill"
-        case .architect: return "tree.fill"
-        case .master: return "tree.fill"
-        }
-    }
 }
 
 // MARK: - Navigation Row (horizontal, below content)
@@ -838,21 +786,13 @@ struct ProfileNavRow: View {
             VStack(spacing: 4) {
                 Image(systemName: icon)
                     .font(.system(size: 20, weight: .medium))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                 Text(label)
                     .font(.custom("Mulish-Light", size: 11))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
             }
             .frame(width: 70, height: 52)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(RenaissanceColors.parchment.opacity(0.8))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(RenaissanceColors.iconOchre.opacity(0.2), lineWidth: 1)
-                    .blur(radius: 0.5)
-            )
+            .glassButton(shape: RoundedRectangle(cornerRadius: 12))
         }
         .buttonStyle(.plain)
     }

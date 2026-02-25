@@ -226,7 +226,6 @@ struct HydraulicsFlowView: View {
                     : RenaissanceColors.renaissanceBlue,
                 style: StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round)
             )
-            .shadow(color: RenaissanceColors.renaissanceBlue.opacity(0.3), radius: 2)
         }
     }
 

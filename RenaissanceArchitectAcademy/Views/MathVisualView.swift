@@ -80,10 +80,7 @@ struct MathVisualView: View {
                             RoundedRectangle(cornerRadius: 10)
                                 .fill(RenaissanceColors.ochre.opacity(0.1))
                         )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1)
-                        )
+                        .borderCard(radius: 10)
                     }
                     .buttonStyle(.plain)
                 } else {

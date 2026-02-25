@@ -203,7 +203,7 @@ struct MoleculeView: View {
     private var formulaLabel: some View {
         VStack(spacing: 2) {
             Text(molecule.formula)
-                .font(.custom("Cinzel-Regular", size: 16))
+                .font(.custom("EBGaramond-SemiBold", size: 18))
                 .foregroundColor(RenaissanceColors.sepiaInk)
 
             Text(molecule.name)

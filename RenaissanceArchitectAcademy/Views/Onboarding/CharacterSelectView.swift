@@ -54,7 +54,7 @@ struct CharacterSelectView: View {
                 // Name entry
                 VStack(spacing: 12) {
                     Text("Your Name")
-                        .font(.custom("Cinzel-Regular", size: 16))
+                        .font(.custom("EBGaramond-SemiBold", size: 18))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     TextField("Enter your name...", text: $name)
@@ -92,7 +92,7 @@ struct CharacterSelectView: View {
                     }
                 } label: {
                     Text("Continue")
-                        .font(.custom("Cinzel-Regular", size: 18))
+                        .font(.custom("EBGaramond-SemiBold", size: 20))
                         .foregroundStyle(.white)
                         .padding(.horizontal, 40)
                         .padding(.vertical, 14)
@@ -150,7 +150,7 @@ struct CharacterSelectView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 14))
 
                 Text(gender.displayName)
-                    .font(.custom("Cinzel-Regular", size: 20))
+                    .font(.custom("EBGaramond-SemiBold", size: 22))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
             .frame(width: 300, height: 360)
@@ -159,7 +159,6 @@ struct CharacterSelectView: View {
                     .fill(isSelected
                           ? RenaissanceColors.ochre.opacity(0.1)
                           : RenaissanceColors.parchment)
-                    .shadow(color: .black.opacity(isSelected ? 0.12 : 0.05), radius: isSelected ? 8 : 4, y: 2)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 16)

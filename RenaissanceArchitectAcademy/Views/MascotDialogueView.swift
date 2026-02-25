@@ -14,7 +14,6 @@ struct MascotDialogueView: View {
     @State private var showMascot = false
     @State private var showDialogue = false
     @State private var showChoices = false
-    @State private var birdOffset: CGFloat = 0
 
     private var progress: BuildingProgress {
         viewModel.buildingProgressMap[plot.id] ?? BuildingProgress()
@@ -23,18 +22,16 @@ struct MascotDialogueView: View {
     var body: some View {
         ZStack {
             // Dimmed background
-            Color.black.opacity(0.5)
+            RenaissanceColors.overlayDimming
                 .ignoresSafeArea()
                 .onTapGesture { onDismiss() }
 
             VStack(spacing: 16) {
                 Spacer()
 
-                // Bird sitting on top of dialogue box
-                BirdCharacter(isSitting: true)
+                // Bird flies in from the map and lands on top of dialogue box
+                BirdCharacter(isSitting: false)
                     .frame(width: 180, height: 180)
-                    .offset(y: birdOffset)
-                    .scaleEffect(showMascot ? 1 : 0.3)
                     .opacity(showMascot ? 1 : 0)
                     .padding(.bottom, -30)
 
@@ -43,7 +40,7 @@ struct MascotDialogueView: View {
                     // Title
                     VStack(spacing: 8) {
                         Text(plot.building.name)
-                            .font(.custom("Cinzel-Regular", size: 22))
+                            .font(.custom("EBGaramond-SemiBold", size: 24))
                             .foregroundColor(RenaissanceColors.sepiaInk)
 
                         // Science icons row
@@ -77,7 +74,7 @@ struct MascotDialogueView: View {
                                 Image(systemName: "book.closed.fill")
                                     .font(.custom("Mulish-Light", size: 13, relativeTo: .footnote))
                                 Text("Open Notebook")
-                                    .font(.custom("Cinzel-Regular", size: 12))
+                                    .font(.custom("EBGaramond-Regular", size: 14))
                             }
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                             .padding(.horizontal, 14)
@@ -122,9 +119,6 @@ struct MascotDialogueView: View {
             withAnimation(.spring(response: 0.5).delay(0.6)) {
                 showChoices = true
             }
-            withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                birdOffset = -10
-            }
         }
     }
 
@@ -150,7 +144,7 @@ struct MascotDialogueView: View {
 
                 // Title
                 Text(choice.rawValue)
-                    .font(.custom("Cinzel-Regular", size: 13))
+                    .font(.custom("EBGaramond-SemiBold", size: 15))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
@@ -165,7 +159,6 @@ struct MascotDialogueView: View {
             .background(
                 RoundedRectangle(cornerRadius: 14)
                     .fill(RenaissanceColors.parchment)
-                    .shadow(color: cardColor(for: choice).opacity(0.15), radius: 6, y: 3)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 14)
@@ -185,7 +178,7 @@ struct MascotDialogueView: View {
                     .font(.custom("Mulish-Light", size: 12, relativeTo: .caption))
                     .foregroundStyle(RenaissanceColors.goldSuccess)
                 Text("+\(GameRewards.lessonReadFlorins)")
-                    .font(.custom("Cinzel-Regular", size: 12))
+                    .font(.custom("EBGaramond-SemiBold", size: 14))
                     .foregroundStyle(RenaissanceColors.goldSuccess)
             }
             .padding(.horizontal, 10)
@@ -211,7 +204,7 @@ struct MascotDialogueView: View {
                     .font(.custom("Mulish-Light", size: 12, relativeTo: .caption))
                     .foregroundStyle(reqCount == totalReqs ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray)
                 Text("\(reqCount)/\(totalReqs)")
-                    .font(.custom("Cinzel-Regular", size: 12))
+                    .font(.custom("EBGaramond-SemiBold", size: 14))
                     .foregroundStyle(reqCount == totalReqs ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray)
             }
         }
@@ -300,62 +293,125 @@ struct SplashCharacter: View {
     }
 }
 
-/// Animated bird companion — 13-frame flying animation or sitting (perched)
+/// Animated bird companion — flies in from off-screen, lands, and sits still.
+///
+/// Two animation sets, both play ONCE and stop on last frame:
+/// 1. **Flying → Sitting** (BirdFlySitFrame00–14): bird flies in and lands
+/// 2. **Sitting Blink** (BirdSitBlinkFrame00–14): bird blinks once while perched
+///
+/// The bird also animates its SwiftUI position — it starts off-screen (top-right)
+/// and swoops down to its resting spot while the sprite frames play the wing flap.
+///
+/// Usage:
+/// - `BirdCharacter()` — flies in from top-right, plays landing, sits still
+/// - `BirdCharacter(isSitting: true)` — already sitting, plays one blink, sits still
 struct BirdCharacter: View {
-    /// When true, shows sitting/perched frames instead of flying
+    /// When true, starts in sitting position (skips fly-in)
     var isSitting: Bool = false
 
-    /// Total flying animation frames
-    private static let frameCount = 13
-    /// Seconds per frame (~15 fps for smooth flapping)
-    private static let frameDuration: TimeInterval = 1.0 / 15.0
+    private static let flySitFrameCount = 15
+    private static let sitBlinkFrameCount = 15
+    private static let flyFPS: TimeInterval = 1.0 / 12.0   // ~12fps for smooth landing
+    private static let blinkFPS: TimeInterval = 1.0 / 8.0   // ~8fps for gentle blink
+    /// Total duration of the fly-in sprite animation
+    private static let flyDuration: TimeInterval = Double(flySitFrameCount) * flyFPS
 
-    @State private var currentFrame = 0
-    @State private var showFrame2 = false
+    @State private var currentFrameName: String = "BirdFlySitFrame00"
     @State private var timer: Timer?
 
+    // Fly-in position animation state
+    @State private var flyOffset: CGSize = CGSize(width: -120, height: -200) // start off-screen top-left
+    @State private var flyRotation: Double = 15  // slight tilt while flying
+
     var body: some View {
-        Group {
-            if isSitting {
-                Image(showFrame2 ? "SittingBird2" : "SittingBird1")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-            } else {
-                Image("BirdFrame\(String(format: "%02d", currentFrame))")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-            }
-        }
-        .onAppear {
-            if isSitting {
-                withAnimation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) {
-                    showFrame2 = true
+        Image(currentFrameName)
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .rotationEffect(.degrees(isSitting ? 0 : flyRotation))
+            .offset(isSitting ? .zero : flyOffset)
+            .onAppear {
+                if isSitting {
+                    // Already sitting — show last fly frame, play blink once
+                    flyOffset = .zero
+                    flyRotation = 0
+                    playSittingBlink()
+                } else {
+                    playFlyIn()
                 }
-            } else {
-                startFlyingAnimation()
             }
-        }
-        .onDisappear {
-            timer?.invalidate()
-            timer = nil
-        }
-        .onChange(of: isSitting) { _, sitting in
-            if sitting {
+            .onDisappear {
                 timer?.invalidate()
                 timer = nil
-                withAnimation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) {
-                    showFrame2 = true
+            }
+            .onChange(of: isSitting) { _, sitting in
+                timer?.invalidate()
+                timer = nil
+                if sitting {
+                    playSittingBlink()
+                } else {
+                    playFlyIn()
                 }
+            }
+    }
+
+    /// Fly in from top-left: animate position + play sprite frames, then sit still
+    private func playFlyIn() {
+        timer?.invalidate()
+
+        // Reset to start position (off-screen top-left, tilted)
+        flyOffset = CGSize(width: -120, height: -200)
+        flyRotation = 15
+        currentFrameName = "BirdFlySitFrame00"
+
+        // Animate SwiftUI position — bird swoops down to center
+        withAnimation(.easeOut(duration: Self.flyDuration)) {
+            flyOffset = .zero
+            flyRotation = 0
+        }
+
+        // Play sprite frames in sync
+        var frame = 0
+        timer = Timer.scheduledTimer(withTimeInterval: Self.flyFPS, repeats: true) { t in
+            if frame < Self.flySitFrameCount - 1 {
+                frame += 1
+                currentFrameName = String(format: "BirdFlySitFrame%02d", frame)
             } else {
-                startFlyingAnimation()
+                t.invalidate()
+                // Stay on last frame (bird sitting still)
             }
         }
     }
 
-    private func startFlyingAnimation() {
+    /// Play fly-to-sit sprite animation ONCE without position movement (used by onChange)
+    private func playFlyToSit() {
         timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: Self.frameDuration, repeats: true) { _ in
-            currentFrame = (currentFrame + 1) % Self.frameCount
+        var frame = 0
+        currentFrameName = "BirdFlySitFrame00"
+
+        timer = Timer.scheduledTimer(withTimeInterval: Self.flyFPS, repeats: true) { t in
+            if frame < Self.flySitFrameCount - 1 {
+                frame += 1
+                currentFrameName = String(format: "BirdFlySitFrame%02d", frame)
+            } else {
+                t.invalidate()
+            }
+        }
+    }
+
+    /// Play sitting blink animation ONCE — stops on last frame
+    private func playSittingBlink() {
+        timer?.invalidate()
+        var frame = 0
+        currentFrameName = "BirdSitBlinkFrame00"
+
+        timer = Timer.scheduledTimer(withTimeInterval: Self.blinkFPS, repeats: true) { t in
+            if frame < Self.sitBlinkFrameCount - 1 {
+                frame += 1
+                currentFrameName = String(format: "BirdSitBlinkFrame%02d", frame)
+            } else {
+                t.invalidate()
+                // Stay on last frame
+            }
         }
     }
 }
@@ -480,7 +536,6 @@ struct DialogueBubble: View {
             // Main bubble
             RoundedRectangle(cornerRadius: 20)
                 .fill(RenaissanceColors.parchment)
-                .shadow(color: .black.opacity(0.2), radius: 20, y: 10)
 
             // Border
             RoundedRectangle(cornerRadius: 20)

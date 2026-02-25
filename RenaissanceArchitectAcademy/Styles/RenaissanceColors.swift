@@ -54,6 +54,12 @@ enum RenaissanceColors {
     /// Highlight amber: #FFBF00
     static let highlightAmber = Color(red: 1.0, green: 0.749, blue: 0.0)
 
+    /// Furnace orange for fire/heat actions: #E66619
+    static let furnaceOrange = Color(red: 0.9, green: 0.4, blue: 0.1)
+
+    /// Light parchment for card fills (slightly warmer): #FDF5E0
+    static let parchmentLight = Color(red: 0.99, green: 0.96, blue: 0.88)
+
     // MARK: - Gradients
 
     /// Parchment gradient for backgrounds
@@ -86,6 +92,47 @@ enum RenaissanceColors {
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )
+
+    // MARK: - Standardized Overlay Dimming
+
+    /// Modal/overlay background dimming — uniform across all views
+    static let overlayDimming = Color.black.opacity(0.45)
+}
+
+// MARK: - Standardized Border System
+
+extension View {
+    /// Standard card border — ochre, subtle, for content cards and sections
+    func borderCard(radius: CGFloat = 14) -> some View {
+        self.overlay(
+            RoundedRectangle(cornerRadius: radius)
+                .stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1)
+        )
+    }
+
+    /// Accent card border — ochre, medium emphasis, for interactive/highlighted cards
+    func borderAccent(radius: CGFloat = 14) -> some View {
+        self.overlay(
+            RoundedRectangle(cornerRadius: radius)
+                .stroke(RenaissanceColors.ochre.opacity(0.4), lineWidth: 1.5)
+        )
+    }
+
+    /// Modal border — ochre, prominent, for overlays and dialogue boxes
+    func borderModal(radius: CGFloat = 16) -> some View {
+        self.overlay(
+            RoundedRectangle(cornerRadius: radius)
+                .stroke(RenaissanceColors.ochre.opacity(0.4), lineWidth: 2)
+        )
+    }
+
+    /// Workshop border — warm brown, for crafting/workshop context cards
+    func borderWorkshop(radius: CGFloat = 16) -> some View {
+        self.overlay(
+            RoundedRectangle(cornerRadius: radius)
+                .stroke(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 1)
+        )
+    }
 }
 
 // MARK: - Color Extensions for Science Categories

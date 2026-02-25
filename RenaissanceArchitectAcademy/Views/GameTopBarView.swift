@@ -23,7 +23,7 @@ struct GameTopBarView: View {
                         // Title + Florins row
                         HStack(spacing: 8) {
                             Text(title)
-                                .font(.custom("Cinzel-Regular", size: 16))
+                                .font(.custom("EBGaramond-SemiBold", size: 18))
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                                 .padding(.horizontal, 14)
                                 .padding(.vertical, 6)
@@ -35,7 +35,7 @@ struct GameTopBarView: View {
                                     .font(.custom("Mulish-Light", size: 14, relativeTo: .footnote))
                                     .foregroundStyle(RenaissanceColors.iconOchre)
                                 Text("\(viewModel.goldFlorins)")
-                                    .font(.custom("Cinzel-Regular", size: 13))
+                                    .font(.custom("EBGaramond-Regular", size: 15))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                             .padding(.horizontal, 10)
@@ -80,13 +80,16 @@ struct GameTopBarView: View {
                     VStack(spacing: 2) {
                         Image(systemName: "book.fill")
                             .font(.system(size: 20, weight: .medium))
-                            .foregroundStyle(RenaissanceColors.iconOchre)
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                         Text("Lesson")
                             .font(.custom("Mulish-Light", size: 10, relativeTo: .caption))
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                     }
                     .frame(width: 60, height: 48)
-                    .glassButton(shape: RoundedRectangle(cornerRadius: 10))
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color.white.opacity(0.6))
+                    )
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("Back to \(buildingName) lesson")
@@ -138,13 +141,16 @@ struct GameTopBarView: View {
             VStack(spacing: 2) {
                 Image(systemName: icon)
                     .font(.system(size: 20, weight: .medium))
-                    .foregroundStyle(RenaissanceColors.iconOchre)
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                 Text(label)
                     .font(.custom("Mulish-Light", size: 11, relativeTo: .caption))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
             }
             .frame(width: 60, height: 48)
-            .glassButton(shape: RoundedRectangle(cornerRadius: 10))
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.white.opacity(0.6))
+            )
         }
         .buttonStyle(.plain)
     }
@@ -162,7 +168,7 @@ struct GameTopBarView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 12))
 
                     Text(state.apprenticeName.isEmpty ? "Profile" : state.apprenticeName)
-                        .font(.custom("Cinzel-Regular", size: 14))
+                        .font(.custom("EBGaramond-SemiBold", size: 16))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .lineLimit(1)
                 } else {
@@ -171,7 +177,7 @@ struct GameTopBarView: View {
                         .foregroundStyle(RenaissanceColors.iconOchre)
                         .frame(height: 140)
                     Text("Profile")
-                        .font(.custom("Cinzel-Regular", size: 14))
+                        .font(.custom("EBGaramond-SemiBold", size: 16))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
             }
@@ -202,18 +208,21 @@ struct GameTopBarView: View {
         return VStack(spacing: 0) {
             ZStack {
                 RoundedRectangle(cornerRadius: 5)
-                    .fill(isComplete ? RenaissanceColors.sageGreen.opacity(0.25) :
-                          isSketched ? RenaissanceColors.ochre.opacity(0.2) :
-                          RenaissanceColors.parchment.opacity(0.9))
-                    .shadow(color: .black.opacity(0.06), radius: 1, y: 1)
+                    .fill(isComplete ? RenaissanceColors.sageGreen.opacity(0.5) :
+                          isSketched ? RenaissanceColors.ochre.opacity(0.4) :
+                          Color.white.opacity(0.6))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 5)
+                            .stroke(RenaissanceColors.ochre.opacity(0.25), lineWidth: 1)
+                    )
                     .frame(width: 40, height: 34)
 
                 Image(systemName: buildingIcon(for: plot.building.name))
                     .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
                     .foregroundStyle(
                         isComplete ? RenaissanceColors.sageGreen :
-                        isSketched ? RenaissanceColors.sepiaInk :
-                        RenaissanceColors.sepiaInk.opacity(0.6)
+                        isSketched ? RenaissanceColors.ochre :
+                        RenaissanceColors.sepiaInk.opacity(0.5)
                     )
             }
 
@@ -249,7 +258,7 @@ struct GameTopBarView: View {
     }
 }
 
-// MARK: - Glass Button Modifier — no fill, shadow + blurred border
+// MARK: - Glass Button Modifier
 
 extension View {
     func glassButton<S: Shape>(shape: S) -> some View {
@@ -263,6 +272,5 @@ extension View {
                     .stroke(RenaissanceColors.iconOchre.opacity(0.2), lineWidth: 1)
                     .blur(radius: 0.5)
             )
-            .shadow(color: .black.opacity(0.1), radius: 6, y: 3)
     }
 }

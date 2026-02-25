@@ -43,7 +43,7 @@ struct MainMenuView: View {
 
                     AnimatedText(
                         text: "Architect Academy",
-                        font: .custom("Mulish-Light", size: subtitleSize, relativeTo: .title),
+                        font: .custom("EBGaramond-Regular", size: subtitleSize, relativeTo: .title),
                         color: RenaissanceColors.sepiaInk,
                         isAnimating: showContent,
                         initialDelay: 1.2,
@@ -58,7 +58,7 @@ struct MainMenuView: View {
 
                         Text("Where Science Builds Civilization")
                             .font(.custom("Amellina", size: taglineSize + 6, relativeTo: .headline))
-                            .foregroundStyle(Color.black)
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.75))
 
                         Image(systemName: "leaf.fill")
                             .font(.caption)

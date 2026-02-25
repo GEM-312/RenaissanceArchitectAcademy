@@ -84,7 +84,6 @@ struct NotebookView: View {
                             .background(
                                 Circle()
                                     .fill(isDrawingMode ? RenaissanceColors.errorRed : RenaissanceColors.ochre)
-                                    .shadow(color: (isDrawingMode ? RenaissanceColors.errorRed : RenaissanceColors.ochre).opacity(0.4), radius: 8, y: 4)
                             )
                     }
                     .buttonStyle(.plain)
@@ -116,7 +115,6 @@ struct NotebookView: View {
                             .background(
                                 Circle()
                                     .fill(isDrawingMode ? RenaissanceColors.errorRed : RenaissanceColors.ochre)
-                                    .shadow(color: (isDrawingMode ? RenaissanceColors.errorRed : RenaissanceColors.ochre).opacity(0.4), radius: 8, y: 4)
                             )
                     }
                     .buttonStyle(.plain)
@@ -158,7 +156,7 @@ struct NotebookView: View {
 
                 VStack(spacing: 4) {
                     Text(buildingName)
-                        .font(.custom("Cinzel-Regular", size: 22))
+                        .font(.custom("EBGaramond-SemiBold", size: 24))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     HStack(spacing: 6) {
@@ -189,7 +187,7 @@ struct NotebookView: View {
 
                 if isDrawingMode {
                     Text("  Drawing Mode")
-                        .font(.custom("Cinzel-Regular", size: 12))
+                        .font(.custom("EBGaramond-Regular", size: 14))
                         .foregroundStyle(RenaissanceColors.errorRed)
                 }
             }
@@ -222,7 +220,7 @@ struct NotebookView: View {
                 Image(systemName: tab.icon)
                     .font(.custom("Delius-Regular", size: 12, relativeTo: .caption))
                 Text(tab.label)
-                    .font(.custom("Cinzel-Regular", size: 12))
+                    .font(.custom("EBGaramond-Regular", size: 14))
             }
             .foregroundStyle(selectedTab == tab ? .white : RenaissanceColors.sepiaInk)
             .padding(.horizontal, 14)
@@ -307,7 +305,6 @@ struct NotebookView: View {
         .background(
             RoundedRectangle(cornerRadius: 14)
                 .fill(RenaissanceColors.parchment)
-                .shadow(color: .black.opacity(0.06), radius: 4, y: 2)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 14)
@@ -328,7 +325,7 @@ struct NotebookView: View {
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .rotationEffect(.degrees(-30))
                     Text("Fun Fact")
-                        .font(.custom("Cinzel-Regular", size: 14))
+                        .font(.custom("EBGaramond-Regular", size: 16))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Spacer()
                     Text(entry.dateAdded, style: .date)
@@ -361,14 +358,13 @@ struct NotebookView: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 14)
-                .fill(Color(red: 0.99, green: 0.96, blue: 0.88))
+                .fill(RenaissanceColors.parchment)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 14)
                 .stroke(isDrawingMode ? RenaissanceColors.renaissanceBlue.opacity(0.5) : RenaissanceColors.ochre.opacity(0.3), lineWidth: isDrawingMode ? 2 : 1.5)
         )
         .clipShape(RoundedRectangle(cornerRadius: 14))
-        .shadow(color: RenaissanceColors.ochre.opacity(0.1), radius: 6, y: 3)
     }
 
     // MARK: - Add Note Section
@@ -378,7 +374,7 @@ struct NotebookView: View {
             if isAddingNote {
                 VStack(spacing: 10) {
                     TextField("Title", text: $newNoteTitle)
-                        .font(.custom("Cinzel-Regular", size: 16))
+                        .font(.custom("EBGaramond-SemiBold", size: 18))
                         .textFieldStyle(.plain)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
@@ -425,7 +421,7 @@ struct NotebookView: View {
                                 Image(systemName: "checkmark")
                                 Text("Save")
                             }
-                            .font(.custom("Cinzel-Regular", size: 14))
+                            .font(.custom("EBGaramond-Regular", size: 16))
                             .foregroundStyle(.white)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
@@ -438,12 +434,8 @@ struct NotebookView: View {
                 .background(
                     RoundedRectangle(cornerRadius: 14)
                         .fill(RenaissanceColors.parchment)
-                        .shadow(color: .black.opacity(0.06), radius: 4, y: 2)
                 )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 14)
-                        .stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1)
-                )
+                .borderCard()
             } else {
                 Button {
                     withAnimation(.spring(response: 0.3)) {
@@ -454,7 +446,7 @@ struct NotebookView: View {
                         Image(systemName: "plus.circle.fill")
                             .font(.custom("Delius-Regular", size: 16, relativeTo: .subheadline))
                         Text("Add Note")
-                            .font(.custom("Cinzel-Regular", size: 14))
+                            .font(.custom("EBGaramond-Regular", size: 16))
                     }
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .frame(maxWidth: .infinity)
@@ -504,7 +496,6 @@ struct NotebookView: View {
                         .overlay(
                             Circle()
                                 .stroke(.white, lineWidth: macColor == color ? 2 : 0)
-                                .shadow(radius: macColor == color ? 2 : 0)
                         )
                 }
                 .buttonStyle(.plain)
@@ -515,7 +506,6 @@ struct NotebookView: View {
         .background(
             Capsule()
                 .fill(RenaissanceColors.parchment)
-                .shadow(color: .black.opacity(0.1), radius: 6, y: 2)
         )
         .padding(.leading, 24)
         .padding(.bottom, 24)
@@ -539,7 +529,7 @@ struct NotebookView: View {
                 .font(.custom("Mulish-Light", size: 48, relativeTo: .title3))
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
             Text("No entries yet")
-                .font(.custom("Cinzel-Regular", size: 18))
+                .font(.custom("EBGaramond-SemiBold", size: 20))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
             Text("Complete the lesson to fill your notebook with knowledge about \(buildingName).")
                 .font(.custom("Mulish-Light", size: 15))

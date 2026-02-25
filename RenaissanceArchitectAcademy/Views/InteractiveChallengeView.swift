@@ -94,7 +94,7 @@ struct InteractiveChallengeView: View {
                         Image(systemName: "scroll.fill")
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("Historical Context")
-                            .font(.custom("Cinzel-Regular", size: 14, relativeTo: .caption))
+                            .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .caption))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                     }
 
@@ -107,10 +107,7 @@ struct InteractiveChallengeView: View {
                 .background(
                     RoundedRectangle(cornerRadius: 8)
                         .fill(RenaissanceColors.ochre.opacity(0.1))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1)
-                        )
+                        .borderCard(radius: 8)
                 )
 
                 // Question count info
@@ -244,7 +241,7 @@ struct InteractiveChallengeView: View {
             HStack {
                 // Letter badge (A, B, C, D)
                 Text(String(UnicodeScalar(65 + index)!))
-                    .font(.custom("Cinzel-Regular", size: 16, relativeTo: .body))
+                    .font(.custom("EBGaramond-SemiBold", size: 18, relativeTo: .body))
                     .foregroundStyle(
                         showResult && isCorrect ? .white :
                         showResult && isSelected && !isCorrect ? .white :
@@ -335,7 +332,6 @@ struct InteractiveChallengeView: View {
                           ? RenaissanceColors.goldSuccess
                           : RenaissanceColors.terracotta)
                     .frame(width: 100, height: 100)
-                    .shadow(color: RenaissanceColors.goldSuccess.opacity(0.4), radius: 20)
 
                 Image(systemName: scorePercentage >= 0.7 ? "checkmark" : "arrow.clockwise")
                     .font(.custom("Mulish-Bold", size: 44, relativeTo: .title3))
@@ -406,7 +402,7 @@ struct InteractiveChallengeView: View {
         VStack(spacing: 8) {
             HStack {
                 Text("Question \(currentQuestionIndex + 1) of \(challenge.questions.count)")
-                    .font(.custom("Cinzel-Regular", size: 14, relativeTo: .caption))
+                    .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .caption))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
 
                 Spacer()
@@ -470,7 +466,7 @@ struct InteractiveChallengeView: View {
                 Image(systemName: currentAnswerCorrect ? "checkmark.circle.fill" : "xmark.circle.fill")
                     .foregroundStyle(currentAnswerCorrect ? RenaissanceColors.sageGreen : RenaissanceColors.errorRed)
                 Text(currentAnswerCorrect ? "Correct!" : "Not quite...")
-                    .font(.custom("Cinzel-Regular", size: 16, relativeTo: .headline))
+                    .font(.custom("EBGaramond-SemiBold", size: 18, relativeTo: .headline))
                     .foregroundStyle(currentAnswerCorrect ? RenaissanceColors.sageGreen : RenaissanceColors.errorRed)
             }
 
@@ -480,7 +476,7 @@ struct InteractiveChallengeView: View {
                     Image(systemName: "lightbulb.fill")
                         .foregroundStyle(RenaissanceColors.highlightAmber)
                     Text("Explanation")
-                        .font(.custom("Cinzel-Regular", size: 14, relativeTo: .caption))
+                        .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .caption))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                 }
 
@@ -499,7 +495,7 @@ struct InteractiveChallengeView: View {
                     Image(systemName: "sparkles")
                         .foregroundStyle(RenaissanceColors.goldSuccess)
                     Text("Did You Know?")
-                        .font(.custom("Cinzel-Regular", size: 14, relativeTo: .caption))
+                        .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .caption))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                 }
 
@@ -513,10 +509,7 @@ struct InteractiveChallengeView: View {
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(RenaissanceColors.ochre.opacity(0.08))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(RenaissanceColors.ochre.opacity(0.25), lineWidth: 1)
-                )
+                .borderCard(radius: 12)
         )
     }
 
@@ -552,10 +545,7 @@ struct InteractiveChallengeView: View {
         .background(
             RoundedRectangle(cornerRadius: 8)
                 .fill(RenaissanceColors.ochre.opacity(0.1))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1)
-                )
+                .borderCard(radius: 8)
         )
     }
 

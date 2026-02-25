@@ -92,7 +92,7 @@ struct SketchingChallengeView: View {
                 // Phase list
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Drawing Phases")
-                        .font(.custom("Cinzel-Regular", size: 14, relativeTo: .caption))
+                        .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .caption))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     ForEach(Array(challenge.phases.enumerated()), id: \.offset) { index, phase in
@@ -102,7 +102,7 @@ struct SketchingChallengeView: View {
                                     .fill(RenaissanceColors.renaissanceBlue.opacity(0.15))
                                     .frame(width: 32, height: 32)
                                 Text("\(index + 1)")
-                                    .font(.custom("Cinzel-Regular", size: 14, relativeTo: .caption))
+                                    .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .caption))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
 
@@ -132,10 +132,7 @@ struct SketchingChallengeView: View {
                 .background(
                     RoundedRectangle(cornerRadius: 12)
                         .fill(RenaissanceColors.parchment)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(RenaissanceColors.ochre.opacity(0.2), lineWidth: 1)
-                        )
+                        .borderCard(radius: 12)
                 )
                 .padding(.horizontal, isLargeScreen ? 60 : 24)
 

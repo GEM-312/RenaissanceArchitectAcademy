@@ -34,6 +34,15 @@ struct WorkshopMapView: View {
     @State private var showWorkbenchOverlay = false
     @State private var showFurnaceOverlay = false
 
+    // Job system states
+    @State private var jobBoardChoices: [WorkshopJob] = []
+    @State private var completedJob: WorkshopJob?
+    @State private var jobRewardFlorins: Int = 0
+    @State private var jobStreakBonus: Int = 0
+
+    // Magic Mouse scroll-to-zoom
+    @State private var scrollMonitor: Any?
+
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -150,14 +159,41 @@ struct WorkshopMapView: View {
                         .transition(.opacity.combined(with: .scale(scale: 0.9)))
                 }
 
-                // Master's Task floating card
-                if let assignment = workshop.currentAssignment,
+                // Bottega job progress card (replaces master task card when job active)
+                if let job = workshop.currentJob,
                    !workshop.showEarnFlorinsOverlay,
                    !showCollectionOverlay,
                    !showWorkbenchOverlay,
                    !showFurnaceOverlay,
-                   !workshop.showEducationalPopup {
+                   !workshop.showEducationalPopup,
+                   !workshop.showJobBoard,
+                   !workshop.showJobComplete {
+                    jobProgressCard(job: job)
+                }
+
+                // Master's Task floating card (only when no active job)
+                if workshop.currentJob == nil,
+                   let assignment = workshop.currentAssignment,
+                   !workshop.showEarnFlorinsOverlay,
+                   !showCollectionOverlay,
+                   !showWorkbenchOverlay,
+                   !showFurnaceOverlay,
+                   !workshop.showEducationalPopup,
+                   !workshop.showJobBoard,
+                   !workshop.showJobComplete {
                     masterTaskCard(assignment: assignment)
+                }
+
+                // Job Board overlay (3 job choices)
+                if workshop.showJobBoard {
+                    jobBoardOverlay
+                        .transition(.opacity.combined(with: .scale(scale: 0.9)))
+                }
+
+                // Job Complete celebration overlay
+                if workshop.showJobComplete, let lastJob = completedJob {
+                    jobCompleteOverlay(job: lastJob)
+                        .transition(.opacity.combined(with: .scale(scale: 0.9)))
                 }
             }
         }
@@ -165,6 +201,22 @@ struct WorkshopMapView: View {
             if workshop.currentAssignment == nil {
                 workshop.generateNewAssignment()
             }
+            #if os(macOS)
+            scrollMonitor = NSEvent.addLocalMonitorForEvents(matching: .scrollWheel) { [self] event in
+                if !showCollectionOverlay && !showHintBubble && !showWorkbenchOverlay && !showFurnaceOverlay && !workshop.showEducationalPopup && !workshop.showJobBoard && !workshop.showJobComplete {
+                    scene?.handleScrollZoom(deltaY: event.deltaY)
+                }
+                return event
+            }
+            #endif
+        }
+        .onDisappear {
+            #if os(macOS)
+            if let monitor = scrollMonitor {
+                NSEvent.removeMonitor(monitor)
+                scrollMonitor = nil
+            }
+            #endif
         }
     }
 
@@ -176,6 +228,7 @@ struct WorkshopMapView: View {
         let newScene = WorkshopScene()
         newScene.size = CGSize(width: 3500, height: 2500)
         newScene.scaleMode = .aspectFill
+        newScene.apprenticeIsBoy = onboardingState?.apprenticeGender == .boy || onboardingState == nil
 
         // Player position updates
         newScene.onPlayerPositionChanged = { position, isWalking in
@@ -183,47 +236,33 @@ struct WorkshopMapView: View {
             self.playerIsWalking = isWalking
         }
 
-        // Station reached — show bird lesson first, then collection
+        // Station reached — show hint bubble + collection overlay
         newScene.onStationReached = { stationType in
             self.activeStation = stationType
             dismissAllOverlays()
 
             switch stationType {
             case .craftingRoom:
-                // Check if bird lesson needed for crafting room
-                if !workshop.stationsLessonSeen.contains(stationType),
-                   OnboardingContent.lesson(for: stationType) != nil {
-                    pendingLessonStation = stationType
-                    withAnimation(.spring(response: 0.3)) {
-                        showStationLesson = true
-                    }
+                // Transition to interior crafting room
+                if let onEnterInterior = onEnterInterior {
+                    onEnterInterior()
                 } else {
-                    // Transition to interior crafting room
-                    if let onEnterInterior = onEnterInterior {
-                        onEnterInterior()
-                    } else {
-                        withAnimation(.spring(response: 0.3)) {
-                            showWorkbenchOverlay = true
-                        }
+                    withAnimation(.spring(response: 0.3)) {
+                        showWorkbenchOverlay = true
                     }
                 }
+            case .forest:
+                // Navigate to forest scene
+                activeStation = nil
+                onNavigate?(.forest)
             default:
-                // Check if bird lesson needed for this station
-                if !workshop.stationsLessonSeen.contains(stationType),
-                   OnboardingContent.lesson(for: stationType) != nil {
-                    pendingLessonStation = stationType
+                // Show hint bubble + collection overlay
+                withAnimation(.spring(response: 0.3)) {
+                    showHintBubble = true
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                     withAnimation(.spring(response: 0.3)) {
-                        showStationLesson = true
-                    }
-                } else {
-                    // Already seen lesson — show hint bubble + collection
-                    withAnimation(.spring(response: 0.3)) {
-                        showHintBubble = true
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-                        withAnimation(.spring(response: 0.3)) {
-                            showCollectionOverlay = true
-                        }
+                        showCollectionOverlay = true
                     }
                 }
             }
@@ -290,7 +329,7 @@ struct WorkshopMapView: View {
                         .glassButton(shape: Capsule())
                     }
                     Text("Workshop")
-                        .font(.custom("Cinzel-Regular", size: 20))
+                        .font(.custom("EBGaramond-SemiBold", size: 22))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 10)
@@ -363,7 +402,6 @@ struct WorkshopMapView: View {
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(RenaissanceColors.parchment.opacity(0.92))
-                .shadow(color: .black.opacity(0.1), radius: 4, y: -2)
         )
     }
 
@@ -378,7 +416,7 @@ struct WorkshopMapView: View {
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text(station.label)
-                            .font(.custom("Cinzel-Regular", size: 16))
+                            .font(.custom("EBGaramond-SemiBold", size: 18))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         Text(workshop.hintFor(station: station))
@@ -393,7 +431,6 @@ struct WorkshopMapView: View {
             .background(
                 RoundedRectangle(cornerRadius: 12)
                     .fill(RenaissanceColors.parchment.opacity(0.95))
-                    .shadow(color: .black.opacity(0.15), radius: 6, y: 3)
             )
             .padding(.top, 80)
 
@@ -414,7 +451,7 @@ struct WorkshopMapView: View {
 
             VStack(spacing: 12) {
                 Text("Collect from \(station.label)")
-                    .font(.custom("Cinzel-Regular", size: 16))
+                    .font(.custom("EBGaramond-SemiBold", size: 18))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 // Florins display
@@ -424,7 +461,7 @@ struct WorkshopMapView: View {
                             .font(.custom("Mulish-Light", size: 14, relativeTo: .footnote))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("\(vm.goldFlorins) florins")
-                            .font(.custom("Cinzel-Regular", size: 13))
+                            .font(.custom("EBGaramond-Regular", size: 15))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                     .padding(.bottom, 4)
@@ -448,8 +485,22 @@ struct WorkshopMapView: View {
                             if workshop.collectFromStation(station, material: material) {
                                 vm.goldFlorins -= material.cost
                                 scene?.showCollectionEffect(at: station)
+                                scene?.playPlayerCelebrateAnimation()
                                 let total = workshop.totalStockFor(station: station)
                                 scene?.updateStationStock(station, totalCount: total)
+
+                                // Check job completion for collection-only jobs
+                                if workshop.currentJob != nil && workshop.currentJob?.craftTarget == nil {
+                                    if workshop.checkJobCompletion() {
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                            withAnimation(.spring(response: 0.3)) {
+                                                showCollectionOverlay = false
+                                                showHintBubble = false
+                                            }
+                                            completeCurrentJob()
+                                        }
+                                    }
+                                }
                             }
                         } label: {
                             VStack(spacing: 4) {
@@ -500,7 +551,6 @@ struct WorkshopMapView: View {
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .fill(RenaissanceColors.parchment.opacity(0.95))
-                    .shadow(color: .black.opacity(0.15), radius: 8, y: -3)
             )
             .padding(.horizontal, 24)
             .padding(.bottom, 60)
@@ -515,7 +565,7 @@ struct WorkshopMapView: View {
 
             VStack(spacing: 14) {
                 Text("Mixing Workbench")
-                    .font(.custom("Cinzel-Regular", size: 18))
+                    .font(.custom("EBGaramond-SemiBold", size: 20))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 // Recipe hint
@@ -623,7 +673,6 @@ struct WorkshopMapView: View {
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .fill(RenaissanceColors.parchment.opacity(0.95))
-                    .shadow(color: .black.opacity(0.15), radius: 8, y: -3)
             )
             .padding(.horizontal, 24)
             .padding(.bottom, 60)
@@ -658,7 +707,7 @@ struct WorkshopMapView: View {
 
     // MARK: - Layer 7: Furnace Overlay
 
-    private let furnaceOrange = Color(red: 0.9, green: 0.4, blue: 0.1)
+    private let furnaceOrange = RenaissanceColors.furnaceOrange
 
     private var furnaceOverlay: some View {
         VStack {
@@ -666,7 +715,7 @@ struct WorkshopMapView: View {
 
             VStack(spacing: 14) {
                 Text("Furnace")
-                    .font(.custom("Cinzel-Regular", size: 18))
+                    .font(.custom("EBGaramond-SemiBold", size: 20))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 // Furnace contents
@@ -733,7 +782,7 @@ struct WorkshopMapView: View {
                         fireFurnace()
                     } label: {
                         Text("FIRE!")
-                            .font(.custom("Cinzel-Regular", size: 16))
+                            .font(.custom("EBGaramond-SemiBold", size: 18))
                             .foregroundStyle(.white)
                             .padding(.horizontal, 32)
                             .padding(.vertical, 10)
@@ -762,7 +811,6 @@ struct WorkshopMapView: View {
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .fill(RenaissanceColors.parchment.opacity(0.95))
-                    .shadow(color: .black.opacity(0.15), radius: 8, y: -3)
             )
             .padding(.horizontal, 24)
             .padding(.bottom, 60)
@@ -773,7 +821,7 @@ struct WorkshopMapView: View {
 
     private var educationalOverlay: some View {
         ZStack {
-            Color.black.opacity(0.4)
+            RenaissanceColors.overlayDimming
                 .ignoresSafeArea()
 
             VStack(spacing: 20) {
@@ -804,7 +852,6 @@ struct WorkshopMapView: View {
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .fill(RenaissanceColors.parchment)
-                    .shadow(color: .black.opacity(0.2), radius: 12, y: 4)
             )
         }
     }
@@ -813,7 +860,7 @@ struct WorkshopMapView: View {
 
     private var earnFlorinsOverlay: some View {
         ZStack {
-            Color.black.opacity(0.4)
+            RenaissanceColors.overlayDimming
                 .ignoresSafeArea()
                 .onTapGesture {
                     workshop.showEarnFlorinsOverlay = false
@@ -893,12 +940,8 @@ struct WorkshopMapView: View {
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .fill(RenaissanceColors.parchment)
-                    .shadow(color: .black.opacity(0.2), radius: 12, y: 4)
             )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 2)
-            )
+            .borderWorkshop()
         }
     }
 
@@ -915,7 +958,7 @@ struct WorkshopMapView: View {
                     )
 
                 Text(title)
-                    .font(.custom("Cinzel-Regular", size: 14))
+                    .font(.custom("EBGaramond-Regular", size: 16))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 Spacer()
@@ -932,10 +975,7 @@ struct WorkshopMapView: View {
             .background(
                 RoundedRectangle(cornerRadius: 10)
                     .fill(RenaissanceColors.parchment.opacity(0.6))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .strokeBorder(RenaissanceColors.warmBrown.opacity(0.2), lineWidth: 1)
-                    )
+                    .borderWorkshop(radius: 10)
             )
         }
     }
@@ -946,37 +986,416 @@ struct WorkshopMapView: View {
         VStack {
             HStack {
                 Spacer()
-                HStack(spacing: 8) {
-                    Image(systemName: "scroll.fill")
-                        .font(.caption)
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                Button {
+                    jobBoardChoices = workshop.jobChoices()
+                    workshop.showJobBoard = true
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "scroll.fill")
+                            .font(.caption)
+                            .foregroundStyle(RenaissanceColors.warmBrown)
 
-                    Text("Craft \(assignment.targetItem.icon) \(assignment.targetItem.rawValue)")
-                        .font(.custom("Mulish-Medium", size: 13))
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        Text("Bottega Jobs")
+                            .font(.custom("Mulish-Medium", size: 13))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
 
-                    Text("+\(assignment.rewardFlorins)")
-                        .font(.custom("Cinzel-Bold", size: 13))
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 10))
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .background(
+                        Capsule()
+                            .fill(RenaissanceColors.parchment.opacity(0.92))
+                    )
+                    .overlay(
+                        Capsule()
+                            .strokeBorder(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 1)
+                    )
                 }
-                .padding(.horizontal, 14)
-                .padding(.vertical, 8)
-                .background(
-                    Capsule()
-                        .fill(RenaissanceColors.parchment.opacity(0.92))
-                        .shadow(color: .black.opacity(0.1), radius: 3, y: 2)
-                )
-                .overlay(
-                    Capsule()
-                        .strokeBorder(RenaissanceColors.warmBrown.opacity(0.25), lineWidth: 1)
-                )
                 .padding(.trailing, 16)
             }
-            .padding(.top, 70)
+            .padding(.top, 420)
 
             Spacer()
         }
-        .allowsHitTesting(false)
+    }
+
+    // MARK: - Job Progress Card (floating, shows active job progress)
+
+    private func jobProgressCard(job: WorkshopJob) -> some View {
+        VStack {
+            HStack {
+                Spacer()
+                VStack(alignment: .trailing, spacing: 6) {
+                    // Job title + tier badge
+                    HStack(spacing: 6) {
+                        Text(job.tier.icon)
+                            .font(.caption)
+                        Text(job.title)
+                            .font(.custom("Mulish-Medium", size: 13))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                        Text("+\(job.rewardFlorins)")
+                            .font(.custom("Cinzel-Bold", size: 12))
+                            .foregroundStyle(RenaissanceColors.warmBrown)
+                    }
+
+                    // Collection progress indicators
+                    let progress = workshop.jobCollectionProgress()
+                    HStack(spacing: 8) {
+                        ForEach(Array(job.requirements.keys.sorted(by: { $0.rawValue < $1.rawValue })), id: \.self) { material in
+                            let p = progress[material]
+                            let collected = p?.collected ?? 0
+                            let needed = p?.needed ?? job.requirements[material] ?? 0
+                            let done = collected >= needed
+                            HStack(spacing: 2) {
+                                Text(material.icon)
+                                    .font(.caption2)
+                                Text("\(collected)/\(needed)")
+                                    .font(.custom("Mulish-Light", size: 11))
+                                    .foregroundStyle(done ? RenaissanceColors.sageGreen : RenaissanceColors.sepiaInk)
+                            }
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 2)
+                            .background(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(done ? RenaissanceColors.sageGreen.opacity(0.15) : Color.clear)
+                            )
+                        }
+
+                        if let target = job.craftTarget {
+                            HStack(spacing: 2) {
+                                Text(target.icon)
+                                    .font(.caption2)
+                                Text("Craft")
+                                    .font(.custom("Mulish-Light", size: 11))
+                                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+                            }
+                        }
+                    }
+
+                    // Check if collection complete — show "Complete!" or craft reminder
+                    if workshop.isJobCollectionDone() {
+                        if job.craftTarget != nil {
+                            Text("Materials ready! Craft at the workbench.")
+                                .font(.custom("Mulish-Light", size: 11))
+                                .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                        } else {
+                            Button {
+                                completeCurrentJob()
+                            } label: {
+                                Text("Turn In Job")
+                                    .font(.custom("Mulish-Medium", size: 12))
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 14)
+                                    .padding(.vertical, 5)
+                                    .background(
+                                        Capsule()
+                                            .fill(RenaissanceColors.sageGreen)
+                                    )
+                            }
+                        }
+                    }
+
+                    // Abandon button
+                    Button {
+                        workshop.abandonJob()
+                    } label: {
+                        Text("Abandon")
+                            .font(.custom("Mulish-Light", size: 10))
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
+                    }
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(RenaissanceColors.parchment.opacity(0.92))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 1)
+                )
+                .padding(.trailing, 16)
+            }
+            .padding(.top, 420)
+
+            Spacer()
+        }
+    }
+
+    // MARK: - Job Board Overlay (pick from 3 jobs)
+
+    private var jobBoardOverlay: some View {
+        ZStack {
+            RenaissanceColors.overlayDimming
+                .ignoresSafeArea()
+                .onTapGesture {
+                    workshop.showJobBoard = false
+                }
+
+            VStack(spacing: 16) {
+                // Header
+                HStack(spacing: 12) {
+                    Image(systemName: "scroll.fill")
+                        .font(.title2)
+                        .foregroundStyle(RenaissanceColors.warmBrown)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Bottega Job Board")
+                            .font(.custom("Cinzel-Bold", size: 22))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                        Text("Choose a commission from the workshop master")
+                            .font(.custom("Mulish-Light", size: 14))
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
+                    }
+                }
+
+                // Tier + streak info
+                HStack(spacing: 16) {
+                    HStack(spacing: 4) {
+                        Text("Rank:")
+                            .font(.custom("Mulish-Light", size: 13))
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+                        Text("\(workshop.currentJobTier.icon) \(workshop.currentJobTier.italianTitle)")
+                            .font(.custom("EBGaramond-SemiBold", size: 15))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                    }
+                    if workshop.jobStreak > 0 {
+                        HStack(spacing: 4) {
+                            Image(systemName: "flame.fill")
+                                .font(.caption)
+                                .foregroundStyle(RenaissanceColors.furnaceOrange)
+                            Text("Streak: \(workshop.jobStreak)")
+                                .font(.custom("Mulish-Light", size: 13))
+                                .foregroundStyle(RenaissanceColors.sepiaInk)
+                        }
+                    }
+                    HStack(spacing: 4) {
+                        Text("Jobs: \(workshop.totalJobsCompleted)")
+                            .font(.custom("Mulish-Light", size: 13))
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+                    }
+                }
+
+                // Job cards
+                ForEach(jobBoardChoices) { job in
+                    jobCard(job: job)
+                }
+
+                Button("Maybe Later") {
+                    workshop.showJobBoard = false
+                }
+                .font(.custom("Mulish-Light", size: 15))
+                .foregroundStyle(RenaissanceColors.sepiaInk)
+            }
+            .padding(24)
+            .frame(maxWidth: 500)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(RenaissanceColors.parchment)
+            )
+        }
+    }
+
+    private func jobCard(job: WorkshopJob) -> some View {
+        Button {
+            workshop.acceptJob(job)
+        } label: {
+            VStack(alignment: .leading, spacing: 8) {
+                // Title row: tier icon + title + reward
+                HStack {
+                    Text(job.tier.icon)
+                    Text(job.title)
+                        .font(.custom("EBGaramond-SemiBold", size: 17))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                    Spacer()
+                    Text("+\(job.rewardFlorins)")
+                        .font(.custom("Cinzel-Bold", size: 14))
+                        .foregroundStyle(RenaissanceColors.warmBrown)
+                    Image(systemName: "dollarsign.circle.fill")
+                        .font(.caption)
+                        .foregroundStyle(RenaissanceColors.iconOchre)
+                }
+
+                // Trade name + tier
+                HStack(spacing: 8) {
+                    Text(job.tradeName)
+                        .font(.custom("EBGaramond-Italic", size: 14))
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+                    Text("·")
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.3))
+                    Text(job.tier.rawValue)
+                        .font(.custom("Mulish-Light", size: 12))
+                        .foregroundStyle(tierColor(job.tier))
+                }
+
+                // Flavor text
+                Text(job.flavorText)
+                    .font(.custom("Mulish-Light", size: 13))
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                    .fixedSize(horizontal: false, vertical: true)
+
+                // Requirements
+                HStack(spacing: 8) {
+                    ForEach(Array(job.requirements.keys.sorted(by: { $0.rawValue < $1.rawValue })), id: \.self) { material in
+                        HStack(spacing: 2) {
+                            Text(material.icon)
+                                .font(.caption2)
+                            Text("×\(job.requirements[material]!)")
+                                .font(.custom("Mulish-Light", size: 12))
+                                .foregroundStyle(RenaissanceColors.sepiaInk)
+                        }
+                    }
+                    if let target = job.craftTarget {
+                        HStack(spacing: 2) {
+                            Text("→")
+                                .font(.caption2)
+                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
+                            Text(target.icon)
+                                .font(.caption2)
+                            Text(target.rawValue)
+                                .font(.custom("Mulish-Light", size: 12))
+                                .foregroundStyle(RenaissanceColors.sageGreen)
+                        }
+                    }
+                }
+            }
+            .padding(14)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(RenaissanceColors.parchment.opacity(0.6))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .strokeBorder(tierColor(job.tier).opacity(0.4), lineWidth: 1)
+            )
+        }
+    }
+
+    private func tierColor(_ tier: WorkshopJob.JobTier) -> Color {
+        switch tier {
+        case .apprentice: return RenaissanceColors.warmBrown
+        case .journeyman: return RenaissanceColors.renaissanceBlue
+        case .master: return RenaissanceColors.goldSuccess
+        }
+    }
+
+    // MARK: - Job Complete Celebration Overlay
+
+    private func jobCompleteOverlay(job: WorkshopJob) -> some View {
+        ZStack {
+            RenaissanceColors.overlayDimming
+                .ignoresSafeArea()
+
+            VStack(spacing: 20) {
+                Text("Commission Complete!")
+                    .font(.custom("Cinzel-Bold", size: 24))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
+
+                // Trade badge
+                VStack(spacing: 4) {
+                    Text(job.tier.icon)
+                        .font(.largeTitle)
+                    Text(job.tradeName)
+                        .font(.custom("EBGaramond-Italic", size: 20))
+                        .foregroundStyle(RenaissanceColors.warmBrown)
+                    Text(job.tradeDescription)
+                        .font(.custom("Mulish-Light", size: 14))
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
+                        .multilineTextAlignment(.center)
+                }
+
+                // Rewards
+                VStack(spacing: 6) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "dollarsign.circle.fill")
+                            .foregroundStyle(RenaissanceColors.iconOchre)
+                        Text("+\(jobRewardFlorins) florins")
+                            .font(.custom("EBGaramond-SemiBold", size: 18))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                    }
+                    if jobStreakBonus > 0 {
+                        HStack(spacing: 6) {
+                            Image(systemName: "flame.fill")
+                                .foregroundStyle(RenaissanceColors.furnaceOrange)
+                            Text("+\(jobStreakBonus) streak bonus!")
+                                .font(.custom("Mulish-Medium", size: 15))
+                                .foregroundStyle(RenaissanceColors.furnaceOrange)
+                        }
+                    }
+                }
+
+                // History fact
+                VStack(spacing: 6) {
+                    Text("Did You Know?")
+                        .font(.custom("Cinzel-Regular", size: 16))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                    Text(job.historyFact)
+                        .font(.custom("Mulish-Light", size: 15))
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(14)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(RenaissanceColors.warmBrown.opacity(0.08))
+                )
+
+                // Tier progression hint
+                if workshop.totalJobsCompleted == 5 && workshop.currentJobTier == .journeyman {
+                    Text("Promoted to Lavorante (Journeyman)! Harder jobs now available.")
+                        .font(.custom("Mulish-Medium", size: 14))
+                        .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                        .multilineTextAlignment(.center)
+                } else if workshop.totalJobsCompleted == 15 && workshop.currentJobTier == .master {
+                    Text("Promoted to Maestro! You can now take Master commissions.")
+                        .font(.custom("Mulish-Medium", size: 14))
+                        .foregroundStyle(RenaissanceColors.goldSuccess)
+                        .multilineTextAlignment(.center)
+                }
+
+                Button("Next Commission") {
+                    workshop.showJobComplete = false
+                    completedJob = nil
+                    jobBoardChoices = workshop.jobChoices()
+                    workshop.showJobBoard = true
+                }
+                .font(.custom("Mulish-Medium", size: 16))
+                .foregroundStyle(.white)
+                .padding(.horizontal, 28)
+                .padding(.vertical, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(RenaissanceColors.renaissanceBlue)
+                )
+
+                Button("Continue Working") {
+                    workshop.showJobComplete = false
+                    completedJob = nil
+                }
+                .font(.custom("Mulish-Light", size: 14))
+                .foregroundStyle(RenaissanceColors.sepiaInk)
+            }
+            .padding(28)
+            .frame(maxWidth: 480)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(RenaissanceColors.parchment)
+            )
+        }
+    }
+
+    // MARK: - Job Completion Action
+
+    private func completeCurrentJob() {
+        guard let job = workshop.currentJob else { return }
+        completedJob = job
+        let (florins, streak) = workshop.completeJob()
+        jobRewardFlorins = florins
+        jobStreakBonus = streak
+        viewModel?.earnFlorins(florins + streak)
     }
 
     // MARK: - Gestures
@@ -1012,6 +1431,13 @@ struct WorkshopMapView: View {
                 viewModel?.earnFlorins(GameRewards.masterAssignmentFlorins)
                 bonusText = "\n\nMaster's Task complete! +\(GameRewards.masterAssignmentFlorins) bonus florins!"
                 workshop.generateNewAssignment()
+            }
+
+            // Check Bottega job completion for craft-required jobs
+            if workshop.currentJob != nil && workshop.checkJobCompletion(craftedItem: craftedItem) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    self.completeCurrentJob()
+                }
             }
 
             // Append reward info to educational popup

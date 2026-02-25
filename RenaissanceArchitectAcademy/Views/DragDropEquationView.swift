@@ -188,10 +188,7 @@ struct DragDropEquationView: View {
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(RenaissanceColors.ochre.opacity(0.08))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(RenaissanceColors.ochre.opacity(0.2), lineWidth: 1)
-                )
+                .borderCard(radius: 12)
         )
     }
 
@@ -217,18 +214,16 @@ struct DragDropEquationView: View {
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(elementColor(element.color).opacity(0.5), lineWidth: 2)
                 )
-                .shadow(color: elementColor(element.color).opacity(0.2), radius: 4, x: 0, y: 2)
         )
         .draggable(element.symbol) {
             // Drag preview
             Text(element.symbol)
-                .font(.custom("Cinzel-Regular", size: 20))
+                .font(.custom("EBGaramond-SemiBold", size: 22))
                 .foregroundStyle(elementColor(element.color))
                 .padding(12)
                 .background(
                     RoundedRectangle(cornerRadius: 8)
                         .fill(RenaissanceColors.parchment)
-                        .shadow(radius: 8)
                 )
         }
     }

@@ -11,6 +11,9 @@ class WorkshopScene: SKScene {
     private var playerNode: PlayerNode!
     private var resourceNodes: [ResourceStationType: ResourceNode] = [:]
 
+    /// Player gender — set from SwiftUI before scene appears
+    var apprenticeIsBoy: Bool = true
+
     // Camera control
     private var lastPanLocation: CGPoint?
 
@@ -338,7 +341,7 @@ class WorkshopScene: SKScene {
     // MARK: - Player
 
     private func setupPlayer() {
-        playerNode = PlayerNode()
+        playerNode = PlayerNode(isBoy: apprenticeIsBoy)
         playerNode.position = CGPoint(x: 1750, y: 1800)
         playerNode.zPosition = 50
         addChild(playerNode)
@@ -422,21 +425,19 @@ class WorkshopScene: SKScene {
         lastPanLocation = nil
     }
 
-    // Scroll wheel/trackpad on macOS
+    // Scroll wheel/trackpad on macOS — scroll = zoom, Option+scroll = pan
     override func scrollWheel(with event: NSEvent) {
-        // Check if Option key is held for zooming
         if event.modifierFlags.contains(.option) {
-            // Option + scroll = zoom
+            // Option + scroll = pan the map
+            let scale = cameraNode.xScale
+            cameraNode.position.x -= event.deltaX * scale * 2
+            cameraNode.position.y += event.deltaY * scale * 2
+        } else {
+            // Regular scroll = zoom (works with Magic Mouse)
             let zoomFactor: CGFloat = 1.0 - (event.deltaY * 0.05)
             let newScale = cameraNode.xScale * zoomFactor
             let clampedScale = max(0.5, min(3.5, newScale))
             cameraNode.setScale(clampedScale)
-        } else {
-            // Regular scroll = pan the map
-            // Multiply by scale so panning feels consistent at any zoom level
-            let scale = cameraNode.xScale
-            cameraNode.position.x -= event.deltaX * scale * 2
-            cameraNode.position.y += event.deltaY * scale * 2  // Inverted for natural scrolling
         }
         clampCamera()
     }
@@ -613,7 +614,15 @@ class WorkshopScene: SKScene {
             playerNode.setFacingDirection(facingRight)
 
             playerNode.walkTo(destination: targetPos, duration: max(0.3, TimeInterval(directDistance / 467))) { [weak self] in
-                self?.onStationReached?(stationNode.stationType)
+                guard let self = self else { return }
+                // Play collecting animation before notifying SwiftUI (skip for crafting room entrance)
+                if stationNode.stationType.isCraftingStation {
+                    self.onStationReached?(stationNode.stationType)
+                } else {
+                    self.playerNode.playCollectAnimation {
+                        self.onStationReached?(stationNode.stationType)
+                    }
+                }
             }
             return
         }
@@ -630,7 +639,14 @@ class WorkshopScene: SKScene {
             let facingRight = targetPos.x > playerPos.x
             playerNode.setFacingDirection(facingRight)
             playerNode.walkTo(destination: targetPos, duration: max(0.5, TimeInterval(directDistance / 467))) { [weak self] in
-                self?.onStationReached?(stationNode.stationType)
+                guard let self = self else { return }
+                if stationNode.stationType.isCraftingStation {
+                    self.onStationReached?(stationNode.stationType)
+                } else {
+                    self.playerNode.playCollectAnimation {
+                        self.onStationReached?(stationNode.stationType)
+                    }
+                }
             }
             return
         }
@@ -642,7 +658,14 @@ class WorkshopScene: SKScene {
 
         // Walk along the path
         playerNode.walkPath(path, speed: 467) { [weak self] in
-            self?.onStationReached?(stationNode.stationType)
+            guard let self = self else { return }
+            if stationNode.stationType.isCraftingStation {
+                self.onStationReached?(stationNode.stationType)
+            } else {
+                self.playerNode.playCollectAnimation {
+                    self.onStationReached?(stationNode.stationType)
+                }
+            }
         }
     }
 
@@ -699,6 +722,16 @@ class WorkshopScene: SKScene {
         clampCamera()
     }
 
+    /// Zoom via scroll delta (Magic Mouse swipe / scroll wheel)
+    func handleScrollZoom(deltaY: CGFloat) {
+        guard cameraNode != nil else { return }
+        let zoomFactor: CGFloat = 1.0 - (deltaY * 0.05)
+        let newScale = cameraNode.xScale * zoomFactor
+        let clampedScale = max(0.5, min(3.5, newScale))
+        cameraNode.setScale(clampedScale)
+        clampCamera()
+    }
+
     // MARK: - Public Methods
 
     /// Update stock display on a resource node
@@ -709,6 +742,16 @@ class WorkshopScene: SKScene {
     /// Show collection burst on a station
     func showCollectionEffect(at stationType: ResourceStationType) {
         resourceNodes[stationType]?.showCollectionBurst()
+    }
+
+    /// Play collecting animation on the player (bend down + sparkles)
+    func playPlayerCollectAnimation(completion: (() -> Void)? = nil) {
+        playerNode.playCollectAnimation(completion: completion)
+    }
+
+    /// Play celebrating animation on the player (jump + star burst)
+    func playPlayerCelebrateAnimation(completion: (() -> Void)? = nil) {
+        playerNode.playCelebrateAnimation(completion: completion)
     }
 
     /// Get current player position

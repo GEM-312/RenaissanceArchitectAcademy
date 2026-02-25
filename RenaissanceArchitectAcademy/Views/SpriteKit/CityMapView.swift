@@ -82,6 +82,9 @@ struct CityMapView: View {
     /// Reference to the SpriteKit scene (so we can call methods on it)
     @State private var scene: CityScene?
 
+    /// NSEvent monitor for Magic Mouse scroll-to-zoom
+    @State private var scrollMonitor: Any?
+
     /// Environment for navigation
     @Environment(\.dismiss) private var dismiss
 
@@ -215,7 +218,7 @@ struct CityMapView: View {
             // Environment Picker (Card 2: Explore Environments)
             if showEnvironmentPicker {
                 ZStack {
-                    Color.black.opacity(0.5)
+                    RenaissanceColors.overlayDimming
                         .ignoresSafeArea()
                         .onTapGesture {
                             withAnimation {
@@ -233,7 +236,7 @@ struct CityMapView: View {
 
                         VStack(spacing: 16) {
                             Text("Where to next?")
-                                .font(.custom("Cinzel-Regular", size: 22))
+                                .font(.custom("EBGaramond-SemiBold", size: 24))
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
                             environmentButton(icon: "hammer.fill", title: "Workshop", subtitle: "Collect raw materials", color: RenaissanceColors.warmBrown) {
@@ -304,7 +307,7 @@ struct CityMapView: View {
             // Locked building message
             if showLockedMessage {
                 ZStack {
-                    Color.black.opacity(0.5)
+                    RenaissanceColors.overlayDimming
                         .ignoresSafeArea()
                         .onTapGesture {
                             withAnimation {
@@ -325,11 +328,11 @@ struct CityMapView: View {
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
                             Text("Not Yet Unlocked")
-                                .font(.custom("Cinzel-Regular", size: 22))
+                                .font(.custom("EBGaramond-SemiBold", size: 24))
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
                             Text(lockedMessage)
-                                .font(.custom("Mulish-Light", size: 17, relativeTo: .body))
+                                .font(.custom("EBGaramond-Regular", size: 18, relativeTo: .body))
                                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
                                 .multilineTextAlignment(.center)
                                 .lineSpacing(4)
@@ -380,7 +383,7 @@ struct CityMapView: View {
             // Workshop prompt (after quiz from "I don't know" path)
             if showWorkshopPrompt {
                 ZStack {
-                    Color.black.opacity(0.5)
+                    RenaissanceColors.overlayDimming
                         .ignoresSafeArea()
                         .onTapGesture {
                             withAnimation {
@@ -398,11 +401,11 @@ struct CityMapView: View {
 
                         VStack(spacing: 16) {
                             Text("Nice work on the quiz!")
-                                .font(.custom("Cinzel-Regular", size: 22))
+                                .font(.custom("EBGaramond-SemiBold", size: 24))
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
                             Text("Now head to the Workshop to collect raw materials and craft what you need to build.")
-                                .font(.custom("Mulish-Light", size: 17, relativeTo: .body))
+                                .font(.custom("EBGaramond-Regular", size: 18, relativeTo: .body))
                                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
                                 .multilineTextAlignment(.center)
                                 .lineSpacing(4)
@@ -468,6 +471,22 @@ struct CityMapView: View {
                 showBuildingLesson = true
                 returnToLessonPlotId = nil
             }
+            #if os(macOS)
+            scrollMonitor = NSEvent.addLocalMonitorForEvents(matching: .scrollWheel) { [self] event in
+                if !showMascotDialogue && !showBuildingLesson && !showChallenge && !showLockedMessage && !showBuildingChecklist {
+                    scene?.handleScrollZoom(deltaY: event.deltaY)
+                }
+                return event
+            }
+            #endif
+        }
+        .onDisappear {
+            #if os(macOS)
+            if let monitor = scrollMonitor {
+                NSEvent.removeMonitor(monitor)
+                scrollMonitor = nil
+            }
+            #endif
         }
         .sheet(isPresented: $showChallenge) {
             if let plot = selectedPlot,
@@ -507,7 +526,7 @@ struct CityMapView: View {
             } else {
                 // Fallback if no challenge exists yet
                 Text("Challenge coming soon!")
-                    .font(.custom("Cinzel-Regular", size: 24))
+                    .font(.custom("EBGaramond-Regular", size: 24))
                     .foregroundColor(RenaissanceColors.sepiaInk)
             }
         }
@@ -532,7 +551,7 @@ struct CityMapView: View {
                 )
             } else {
                 Text("Sketching challenge coming soon!")
-                    .font(.custom("Cinzel-Regular", size: 24))
+                    .font(.custom("EBGaramond-Regular", size: 24))
                     .foregroundColor(RenaissanceColors.sepiaInk)
             }
         }
@@ -673,7 +692,6 @@ struct CityMapView: View {
             .background(
                 Capsule()
                     .fill(RenaissanceColors.parchment.opacity(0.9))
-                    .shadow(color: .black.opacity(0.1), radius: 2, y: 1)
             )
     }
 
@@ -690,7 +708,7 @@ struct CityMapView: View {
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(.custom("Cinzel-Regular", size: 16))
+                        .font(.custom("EBGaramond-SemiBold", size: 18))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text(subtitle)
                         .font(.custom("Mulish-Light", size: 13))
@@ -708,7 +726,6 @@ struct CityMapView: View {
             .background(
                 RoundedRectangle(cornerRadius: 12)
                     .fill(RenaissanceColors.parchment)
-                    .shadow(color: color.opacity(0.15), radius: 4, y: 2)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 12)

@@ -86,22 +86,34 @@ struct ContentView: View {
             let manager = PersistenceManager(modelContext: modelContext)
             persistenceManager = manager
 
+            // One-time database reset to clear corrupted saves from pre-fix sessions
+            let resetKey = "didResetCorruptedSaves_v1"
+            if !UserDefaults.standard.bool(forKey: resetKey) {
+                manager.resetAllData()
+                UserDefaults.standard.set(true, forKey: resetKey)
+            }
+
+            // Clean up stale empty-name saves from previous sessions
+            manager.deleteEmptyNameSaves()
+
             // Try to load the most recent player's data
             if let recentName = manager.loadMostRecentPlayer() {
                 manager.currentPlayerName = recentName
             }
 
             cityViewModel.persistenceManager = manager
-            cityViewModel.loadFromPersistence()
             workshopState.persistenceManager = manager
-            workshopState.loadFromPersistence()
             onboardingState.loadFromSwiftData(manager: manager)
+
+            // Only load game data if we have a real player (not empty-name placeholder)
+            if !manager.currentPlayerName.isEmpty {
+                cityViewModel.loadFromPersistence()
+                workshopState.loadFromPersistence()
+                notebookState.switchPlayer(to: manager.currentPlayerName)
+            }
 
             // Seed lesson records into SwiftData on first launch
             LessonSeedService.seedIfNeeded(context: modelContext)
-
-            // Scope notebook to the current player
-            notebookState.switchPlayer(to: manager.currentPlayerName)
 
             // Start tracking play time
             sessionStartDate = Date()

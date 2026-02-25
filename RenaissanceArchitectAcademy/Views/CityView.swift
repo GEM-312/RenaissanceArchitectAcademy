@@ -238,7 +238,7 @@ struct CityProgressBar: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text("City Progress")
-                    .font(.custom("Cinzel-Regular", size: 14, relativeTo: .caption))
+                    .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .caption))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 Spacer()

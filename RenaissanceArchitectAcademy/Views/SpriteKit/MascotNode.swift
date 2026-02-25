@@ -18,8 +18,6 @@ class MascotNode: SKNode {
     private var leftEye: SKShapeNode!
     private var rightEye: SKShapeNode!
     private var smile: SKShapeNode!
-    private var birdBody: SKShapeNode!
-    private var birdWing: SKShapeNode!
 
     // Animation state
     private var isWalking = false
@@ -118,69 +116,29 @@ class MascotNode: SKNode {
         }
     }
 
-    // MARK: - Setup Bird Companion (matching SwiftUI BirdCharacter)
+    // MARK: - Setup Bird Companion (sprite-based, plays fly-to-sit ONCE then stays still)
 
     private func setupBird() {
-        // Bird container - positioned like SwiftUI (to the right of Splash, slightly up)
+        // Bird container - positioned to the right of Splash, slightly up
         let birdContainer = SKNode()
-        birdContainer.position = CGPoint(x: 80, y: 30)  // Right side of Splash
+        birdContainer.position = CGPoint(x: 80, y: 30)
         birdContainer.zPosition = 12
         birdContainer.name = "bird"
         addChild(birdContainer)
 
-        // Bird body (40x35 in SwiftUI)
-        birdBody = SKShapeNode(ellipseOf: CGSize(width: 40, height: 35))
-        birdBody.fillColor = PlatformColor(RenaissanceColors.renaissanceBlue)
-        birdBody.strokeColor = .clear
-        birdContainer.addChild(birdBody)
+        // Load fly-to-sit textures (BirdFlySitFrame00–14)
+        let flySitTextures = (0..<15).map { SKTexture(imageNamed: String(format: "BirdFlySitFrame%02d", $0)) }
 
-        // Bird wing (25x15 in SwiftUI, offset (-8, -5), rotation)
-        birdWing = SKShapeNode(ellipseOf: CGSize(width: 25, height: 15))
-        birdWing.fillColor = PlatformColor(RenaissanceColors.deepTeal)
-        birdWing.strokeColor = .clear
-        birdWing.position = CGPoint(x: -8, y: 5)
-        birdWing.zRotation = 0.35
-        birdContainer.addChild(birdWing)
+        // Bird sprite — starts on first fly frame, sized to match old shape bird
+        let birdSprite = SKSpriteNode(texture: flySitTextures[0], size: CGSize(width: 80, height: 70))
+        birdSprite.name = "birdSprite"
+        birdContainer.addChild(birdSprite)
 
-        // Bird head (25x25 circle in SwiftUI, offset (10, -15))
-        let head = SKShapeNode(circleOfRadius: 12.5)
-        head.fillColor = PlatformColor(RenaissanceColors.renaissanceBlue)
-        head.strokeColor = .clear
-        head.position = CGPoint(x: 10, y: 15)  // Slightly above body
-        birdContainer.addChild(head)
+        // Play fly-to-sit animation ONCE — stops on last frame (sitting)
+        let flySitAnim = SKAction.animate(with: flySitTextures, timePerFrame: 1.0 / 12.0, resize: false, restore: false)
+        birdSprite.run(flySitAnim, withKey: "flySit")
 
-        // Bird eye (6x6 in SwiftUI, offset (15, -18))
-        let eye = SKShapeNode(circleOfRadius: 3)
-        eye.fillColor = PlatformColor(RenaissanceColors.sepiaInk)
-        eye.strokeColor = .clear
-        eye.position = CGPoint(x: 15, y: 18)
-        birdContainer.addChild(eye)
-
-        // Bird beak (12x8 triangle, rotated 90 degrees, offset (25, -15))
-        let beakPath = CGMutablePath()
-        beakPath.move(to: CGPoint(x: 0, y: 4))
-        beakPath.addLine(to: CGPoint(x: 12, y: 0))
-        beakPath.addLine(to: CGPoint(x: 0, y: -4))
-        beakPath.closeSubpath()
-        let beak = SKShapeNode(path: beakPath)
-        beak.fillColor = PlatformColor(RenaissanceColors.ochre)
-        beak.strokeColor = .clear
-        beak.position = CGPoint(x: 22, y: 15)
-        birdContainer.addChild(beak)
-
-        // Bird bobbing animation (matching SwiftUI)
-        let bobAction = SKAction.sequence([
-            SKAction.moveBy(x: 0, y: 10, duration: 0.8),
-            SKAction.moveBy(x: 0, y: -10, duration: 0.8)
-        ])
-        birdContainer.run(SKAction.repeatForever(bobAction))
-
-        // Wing flap animation (matching SwiftUI: -20 to 20 degrees)
-        let flapAction = SKAction.sequence([
-            SKAction.rotate(toAngle: -0.35, duration: 0.15),
-            SKAction.rotate(toAngle: 0.35, duration: 0.15)
-        ])
-        birdWing.run(SKAction.repeatForever(flapAction))
+        // No bobbing. No wing flapping. Bird sits still after landing.
     }
 
     // MARK: - Animations

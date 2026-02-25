@@ -543,21 +543,19 @@ class CityScene: SKScene {
         lastCursorPosition = location
     }
 
-    // Scroll wheel/trackpad on macOS
+    // Scroll wheel/trackpad on macOS — scroll = zoom, Option+scroll = pan
     override func scrollWheel(with event: NSEvent) {
-        // Check if Option key is held for zooming
         if event.modifierFlags.contains(.option) {
-            // Option + scroll = zoom
+            // Option + scroll = pan the map
+            let scale = cameraNode.xScale
+            cameraNode.position.x -= event.deltaX * scale * 2
+            cameraNode.position.y += event.deltaY * scale * 2
+        } else {
+            // Regular scroll = zoom (works with Magic Mouse)
             let zoomFactor: CGFloat = 1.0 - (event.deltaY * 0.05)
             let newScale = cameraNode.xScale * zoomFactor
             let clampedScale = max(0.5, min(3.5, newScale))
             cameraNode.setScale(clampedScale)
-        } else {
-            // Regular scroll = pan the map
-            // Multiply by scale so panning feels consistent at any zoom level
-            let scale = cameraNode.xScale
-            cameraNode.position.x -= event.deltaX * scale * 2
-            cameraNode.position.y += event.deltaY * scale * 2  // Inverted for natural scrolling
         }
         clampCamera()
     }
@@ -663,6 +661,16 @@ class CityScene: SKScene {
 
     func handlePinch(scale: CGFloat) {
         let newScale = cameraNode.xScale / scale
+        let clampedScale = max(0.5, min(3.5, newScale))
+        cameraNode.setScale(clampedScale)
+        clampCamera()
+    }
+
+    /// Zoom via scroll delta (Magic Mouse swipe / scroll wheel)
+    func handleScrollZoom(deltaY: CGFloat) {
+        guard cameraNode != nil else { return }
+        let zoomFactor: CGFloat = 1.0 - (deltaY * 0.05)
+        let newScale = cameraNode.xScale * zoomFactor
         let clampedScale = max(0.5, min(3.5, newScale))
         cameraNode.setScale(clampedScale)
         clampCamera()

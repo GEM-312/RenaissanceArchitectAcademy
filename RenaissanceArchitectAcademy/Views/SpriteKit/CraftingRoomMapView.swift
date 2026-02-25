@@ -23,6 +23,9 @@ struct CraftingRoomMapView: View {
     // Active station overlay
     @State private var activeStation: CraftingStation? = nil
 
+    // Magic Mouse scroll-to-zoom
+    @State private var scrollMonitor: Any?
+
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -61,7 +64,7 @@ struct CraftingRoomMapView: View {
 
                 // Layer 3: Station overlays
                 if let station = activeStation {
-                    Color.black.opacity(0.3)
+                    RenaissanceColors.overlayDimming
                         .ignoresSafeArea()
                         .onTapGesture { dismissOverlay() }
                         .transition(.opacity)
@@ -95,6 +98,22 @@ struct CraftingRoomMapView: View {
             if workshop.currentAssignment == nil {
                 workshop.generateNewAssignment()
             }
+            #if os(macOS)
+            scrollMonitor = NSEvent.addLocalMonitorForEvents(matching: .scrollWheel) { [self] event in
+                if activeStation == nil {
+                    scene?.handleScrollZoom(deltaY: event.deltaY)
+                }
+                return event
+            }
+            #endif
+        }
+        .onDisappear {
+            #if os(macOS)
+            if let monitor = scrollMonitor {
+                NSEvent.removeMonitor(monitor)
+                scrollMonitor = nil
+            }
+            #endif
         }
     }
 
@@ -106,6 +125,7 @@ struct CraftingRoomMapView: View {
         let newScene = CraftingRoomScene()
         newScene.size = CGSize(width: 3500, height: 2500)
         newScene.scaleMode = .aspectFill
+        newScene.apprenticeIsBoy = onboardingState?.apprenticeGender == .boy || onboardingState == nil
 
         newScene.onPlayerPositionChanged = { position, isWalking in
             self.playerPosition = position
@@ -180,11 +200,10 @@ struct CraftingRoomMapView: View {
                         .background(
                             Capsule()
                                 .fill(RenaissanceColors.parchment.opacity(0.95))
-                                .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
                         )
                     }
                     Text("Crafting Room")
-                        .font(.custom("Cinzel-Regular", size: 20))
+                        .font(.custom("EBGaramond-SemiBold", size: 22))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 10)
@@ -256,7 +275,6 @@ struct CraftingRoomMapView: View {
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(RenaissanceColors.parchment.opacity(0.92))
-                .shadow(color: .black.opacity(0.1), radius: 4, y: -2)
         )
     }
 
@@ -275,7 +293,7 @@ struct CraftingRoomMapView: View {
 
                     VStack(alignment: .leading) {
                         Text("Mixing Workbench")
-                            .font(.custom("Cinzel-Regular", size: 18))
+                            .font(.custom("EBGaramond-SemiBold", size: 20))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         if let recipe = workshop.detectedRecipe {
@@ -356,7 +374,7 @@ struct CraftingRoomMapView: View {
                             dismissOverlay()
                         }
                     }
-                    .font(.custom("Cinzel-Regular", size: 15))
+                    .font(.custom("EBGaramond-SemiBold", size: 17))
                     .padding(.horizontal, 24)
                     .padding(.vertical, 8)
                     .background(
@@ -410,7 +428,7 @@ struct CraftingRoomMapView: View {
 
     // MARK: - Furnace Overlay
 
-    private let furnaceOrange = Color(red: 0.9, green: 0.4, blue: 0.1)
+    private let furnaceOrange = RenaissanceColors.furnaceOrange
 
     private var furnaceOverlay: some View {
         VStack {
@@ -425,7 +443,7 @@ struct CraftingRoomMapView: View {
 
                     VStack(alignment: .leading) {
                         Text("Furnace")
-                            .font(.custom("Cinzel-Regular", size: 18))
+                            .font(.custom("EBGaramond-SemiBold", size: 20))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("Set temperature and fire your mixture")
                             .font(.custom("Mulish-Light", size: 14))
@@ -504,7 +522,7 @@ struct CraftingRoomMapView: View {
                         fireFurnace()
                     } label: {
                         Text("FIRE!")
-                            .font(.custom("Cinzel-Regular", size: 16))
+                            .font(.custom("EBGaramond-SemiBold", size: 18))
                             .foregroundStyle(.white)
                             .padding(.horizontal, 32)
                             .padding(.vertical, 10)
@@ -546,7 +564,7 @@ struct CraftingRoomMapView: View {
 
                     VStack(alignment: .leading) {
                         Text("Pigment Table")
-                            .font(.custom("Cinzel-Regular", size: 18))
+                            .font(.custom("EBGaramond-SemiBold", size: 20))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("Collect & grind pigments for fresco painting")
                             .font(.custom("Mulish-Light", size: 14))
@@ -563,14 +581,14 @@ struct CraftingRoomMapView: View {
                             .font(.footnote)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("\(vm.goldFlorins) florins")
-                            .font(.custom("Cinzel-Regular", size: 13))
+                            .font(.custom("EBGaramond-Regular", size: 15))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                 }
 
                 // Collect pigments section
                 Text("Collect Raw Pigments")
-                    .font(.custom("Cinzel-Regular", size: 14))
+                    .font(.custom("EBGaramond-Regular", size: 16))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 HStack(spacing: 16) {
@@ -626,7 +644,7 @@ struct CraftingRoomMapView: View {
 
                 // Pigment recipes reference
                 Text("Pigment Recipes")
-                    .font(.custom("Cinzel-Regular", size: 14))
+                    .font(.custom("EBGaramond-Regular", size: 16))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 VStack(spacing: 8) {
@@ -672,7 +690,7 @@ struct CraftingRoomMapView: View {
                 .frame(width: 24, height: 24)
 
             Text(label)
-                .font(.custom("Cinzel-Regular", size: 14))
+                .font(.custom("EBGaramond-Regular", size: 16))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
             Spacer()
@@ -715,7 +733,7 @@ struct CraftingRoomMapView: View {
 
                     VStack(alignment: .leading) {
                         Text("Storage Shelf")
-                            .font(.custom("Cinzel-Regular", size: 18))
+                            .font(.custom("EBGaramond-SemiBold", size: 20))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("Your collected materials and crafted items")
                             .font(.custom("Mulish-Light", size: 14))
@@ -728,7 +746,7 @@ struct CraftingRoomMapView: View {
                 // Raw materials
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Raw Materials")
-                        .font(.custom("Cinzel-Regular", size: 14))
+                        .font(.custom("EBGaramond-Regular", size: 16))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     let materialsWithStock = Material.allCases.filter { (workshop.rawMaterials[$0] ?? 0) > 0 }
@@ -767,7 +785,7 @@ struct CraftingRoomMapView: View {
                 // Crafted items
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Crafted Items")
-                        .font(.custom("Cinzel-Regular", size: 14))
+                        .font(.custom("EBGaramond-Regular", size: 16))
                         .foregroundStyle(RenaissanceColors.sageGreen)
 
                     let craftedWithStock = CraftedItem.allCases.filter { (workshop.craftedMaterials[$0] ?? 0) > 0 }
@@ -823,7 +841,7 @@ struct CraftingRoomMapView: View {
 
     private var educationalOverlay: some View {
         ZStack {
-            Color.black.opacity(0.4)
+            RenaissanceColors.overlayDimming
                 .ignoresSafeArea()
 
             VStack(spacing: 20) {
@@ -854,7 +872,6 @@ struct CraftingRoomMapView: View {
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .fill(RenaissanceColors.parchment)
-                    .shadow(color: .black.opacity(0.2), radius: 12, y: 4)
             )
         }
     }
@@ -863,7 +880,7 @@ struct CraftingRoomMapView: View {
 
     private var earnFlorinsOverlay: some View {
         ZStack {
-            Color.black.opacity(0.4)
+            RenaissanceColors.overlayDimming
                 .ignoresSafeArea()
                 .onTapGesture {
                     workshop.showEarnFlorinsOverlay = false
@@ -916,12 +933,8 @@ struct CraftingRoomMapView: View {
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .fill(RenaissanceColors.parchment)
-                    .shadow(color: .black.opacity(0.2), radius: 12, y: 4)
             )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 2)
-            )
+            .borderWorkshop()
         }
     }
 
@@ -938,7 +951,7 @@ struct CraftingRoomMapView: View {
                     )
 
                 Text(title)
-                    .font(.custom("Cinzel-Regular", size: 14))
+                    .font(.custom("EBGaramond-Regular", size: 16))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 Spacer()
@@ -955,10 +968,7 @@ struct CraftingRoomMapView: View {
             .background(
                 RoundedRectangle(cornerRadius: 10)
                     .fill(RenaissanceColors.parchment.opacity(0.6))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .strokeBorder(RenaissanceColors.warmBrown.opacity(0.2), lineWidth: 1)
-                    )
+                    .borderWorkshop(radius: 10)
             )
         }
     }
@@ -985,15 +995,14 @@ struct CraftingRoomMapView: View {
                 .background(
                     Capsule()
                         .fill(RenaissanceColors.parchment.opacity(0.92))
-                        .shadow(color: .black.opacity(0.1), radius: 3, y: 2)
                 )
                 .overlay(
                     Capsule()
-                        .strokeBorder(RenaissanceColors.warmBrown.opacity(0.25), lineWidth: 1)
+                        .strokeBorder(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 1)
                 )
                 .padding(.trailing, 16)
             }
-            .padding(.top, 70)
+            .padding(.top, 420)
             Spacer()
         }
         .allowsHitTesting(false)
@@ -1004,7 +1013,6 @@ struct CraftingRoomMapView: View {
     private var overlayBackground: some View {
         RoundedRectangle(cornerRadius: 16)
             .fill(RenaissanceColors.parchment.opacity(0.95))
-            .shadow(color: .black.opacity(0.15), radius: 8, y: -3)
     }
 
     private var pinchGesture: some Gesture {
@@ -1028,6 +1036,7 @@ struct CraftingRoomMapView: View {
             workshop.completeProcessing()
 
             viewModel?.earnFlorins(GameRewards.craftCompleteFlorins)
+            scene?.playPlayerCelebrateAnimation()
             var bonusText = ""
 
             if workshop.checkAssignmentCompletion(craftedItem: craftedItem) {

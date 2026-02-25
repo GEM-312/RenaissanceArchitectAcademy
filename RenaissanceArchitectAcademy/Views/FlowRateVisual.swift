@@ -24,10 +24,7 @@ struct FlowRateVisual: View {
                 RoundedRectangle(cornerRadius: 12)
                     .fill(RenaissanceColors.parchment)
             )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(RenaissanceColors.ochre.opacity(0.25), lineWidth: 1)
-            )
+            .borderCard(radius: 12)
             .clipped()
 
             // Step-specific text below diagram

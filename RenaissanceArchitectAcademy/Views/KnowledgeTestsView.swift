@@ -137,10 +137,7 @@ struct KnowledgeTestsView: View {
             .background(
                 RoundedRectangle(cornerRadius: 12)
                     .fill(RenaissanceColors.parchment)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(RenaissanceColors.ochre.opacity(0.2), lineWidth: 1)
-                    )
+                    .borderCard(radius: 12)
             )
         }
         .buttonStyle(.plain)

@@ -395,11 +395,7 @@ struct PiantaCanvasView: View {
             .background(
                 RoundedRectangle(cornerRadius: 8)
                     .fill(RenaissanceColors.parchment)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1)
-                    )
-                    .shadow(color: .black.opacity(0.08), radius: 3, y: 1)
+                    .borderCard(radius: 8)
             )
             .fixedSize()
     }

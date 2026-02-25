@@ -81,7 +81,7 @@ struct StoryNarrativeView: View {
                     onContinue()
                 } label: {
                     Text("Continue")
-                        .font(.custom("Cinzel-Regular", size: 18))
+                        .font(.custom("EBGaramond-SemiBold", size: 20))
                         .foregroundStyle(.white)
                         .padding(.horizontal, 40)
                         .padding(.vertical, 14)

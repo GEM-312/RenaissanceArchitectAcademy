@@ -1,18 +1,26 @@
 import SpriteKit
 import SwiftUI
 
-/// Apprentice boy player for the Workshop scene
-/// Uses 15-frame sprite animation extracted from Midjourney walking GIF
+/// Apprentice player for the Workshop/CraftingRoom/Forest scenes
+/// Uses 15-frame sprite animation extracted from Midjourney walking videos
+/// Supports boy/girl variants based on player's chosen gender
 class PlayerNode: SKNode {
 
     // MARK: - Properties
 
     private var sprite: SKSpriteNode!
 
-    /// All walk-cycle textures (ApprenticeFrame00–14)
-    private let walkTextures: [SKTexture] = {
-        (0..<15).map { SKTexture(imageNamed: String(format: "ApprenticeFrame%02d", $0)) }
-    }()
+    /// Gender determines which sprite set to use
+    private let isBoy: Bool
+
+    /// All walk-cycle textures (ApprenticeFrame00–14 or ApprenticeGirlFrame00–14)
+    private let walkTextures: [SKTexture]
+
+    /// Collecting textures (CollectBoyFrame00–14 or CollectGirlFrame00–14) — nil until videos are added
+    private let collectTextures: [SKTexture]?
+
+    /// Celebrating textures (CelebrateBoyFrame00–14 or CelebrateGirlFrame00–14) — nil until videos are added
+    private let celebrateTextures: [SKTexture]?
 
     /// Idle texture (first frame)
     private var idleTexture: SKTexture { walkTextures[0] }
@@ -20,15 +28,44 @@ class PlayerNode: SKNode {
     /// Whether the player is currently walking
     private(set) var isWalking = false
 
+    /// Whether the player is performing an action animation (collecting, celebrating)
+    private(set) var isAnimating = false
+
     /// Sprite display size
     private let spriteSize = CGSize(width: 170, height: 170)
 
     // MARK: - Initialization
 
-    override init() {
+    /// Create a player node for the given gender
+    /// - Parameter isBoy: true for boy apprentice, false for girl apprentice
+    init(isBoy: Bool = true) {
+        self.isBoy = isBoy
+        let prefix = isBoy ? "ApprenticeFrame" : "ApprenticeGirlFrame"
+        self.walkTextures = (0..<15).map { SKTexture(imageNamed: String(format: "%@%02d", prefix, $0)) }
+
+        // Load collecting textures if available (CollectBoyFrame00–14 / CollectGirlFrame00–14)
+        let collectPrefix = isBoy ? "CollectBoyFrame" : "CollectGirlFrame"
+        self.collectTextures = Self.loadOptionalTextures(prefix: collectPrefix, count: 15)
+
+        // Load celebrating textures if available (CelebrateBoyFrame00–14 / CelebrateGirlFrame00–14)
+        let celebratePrefix = isBoy ? "CelebrateBoyFrame" : "CelebrateGirlFrame"
+        self.celebrateTextures = Self.loadOptionalTextures(prefix: celebratePrefix, count: 15)
+
         super.init()
         setupSprite()
         startIdleAnimation()
+    }
+
+    /// Load textures only if the first frame exists in the asset catalog
+    private static func loadOptionalTextures(prefix: String, count: Int) -> [SKTexture]? {
+        let testName = String(format: "%@%02d", prefix, 0)
+        // SKTexture always creates a texture object — check if the image actually exists
+        #if os(iOS)
+        guard UIImage(named: testName) != nil else { return nil }
+        #else
+        guard NSImage(named: testName) != nil else { return nil }
+        #endif
+        return (0..<count).map { SKTexture(imageNamed: String(format: "%@%02d", prefix, $0)) }
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -197,5 +234,178 @@ class PlayerNode: SKNode {
     func setFacingDirection(_ right: Bool) {
         // Sprite naturally faces left, so flip when walking right
         xScale = right ? -abs(xScale) : abs(xScale)
+    }
+
+    // MARK: - Collecting Animation
+
+    /// Play collecting animation — apprentice bends down to pick up materials.
+    /// Uses sprite frames if available (CollectBoy/GirlFrame00–14), otherwise falls back
+    /// to a procedural bend-down + sparkle effect. Plays once, then returns to idle.
+    /// - Parameter completion: called after animation finishes
+    func playCollectAnimation(completion: (() -> Void)? = nil) {
+        guard !isAnimating else {
+            completion?()
+            return
+        }
+
+        isAnimating = true
+        sprite.removeAction(forKey: "idle")
+        sprite.removeAction(forKey: "walk")
+        sprite.yScale = 1.0
+
+        let finishAction = SKAction.run { [weak self] in
+            self?.isAnimating = false
+            self?.spawnCollectSparkles()
+            self?.startIdleAnimation()
+            completion?()
+        }
+
+        if let textures = collectTextures {
+            // Sprite-based: play 15 frames once (no loop per project convention)
+            let anim = SKAction.animate(with: textures, timePerFrame: 0.08, resize: false, restore: true)
+            sprite.run(SKAction.sequence([anim, finishAction]), withKey: "collect")
+        } else {
+            // Procedural fallback: bend down (squash + lower), pause, stand back up
+            let bendDown = SKAction.group([
+                SKAction.scaleY(to: 0.7, duration: 0.25),
+                SKAction.moveBy(x: 0, y: -15, duration: 0.25)
+            ])
+            bendDown.timingMode = .easeOut
+
+            let hold = SKAction.wait(forDuration: 0.3)
+
+            let standUp = SKAction.group([
+                SKAction.scaleY(to: 1.0, duration: 0.2),
+                SKAction.moveBy(x: 0, y: 15, duration: 0.2)
+            ])
+            standUp.timingMode = .easeIn
+
+            sprite.run(SKAction.sequence([bendDown, hold, standUp, finishAction]), withKey: "collect")
+        }
+    }
+
+    /// Sparkle particles rising from the player's hands after collecting
+    private func spawnCollectSparkles() {
+        let sparkleCount = 6
+        for i in 0..<sparkleCount {
+            let spark = SKShapeNode(circleOfRadius: 3)
+            spark.fillColor = SKColor(red: 0.85, green: 0.66, blue: 0.41, alpha: 0.9) // ochre sparkle
+            spark.strokeColor = .clear
+            spark.position = CGPoint(
+                x: CGFloat.random(in: -25...25),
+                y: spriteSize.height * 0.4
+            )
+            spark.zPosition = 100
+            addChild(spark)
+
+            let angle = CGFloat.random(in: -0.3...0.3)
+            let rise = SKAction.moveBy(x: sin(angle) * 30, y: CGFloat.random(in: 40...80), duration: 0.6)
+            rise.timingMode = .easeOut
+            let fade = SKAction.fadeOut(withDuration: 0.4)
+            let scale = SKAction.scale(to: 0.3, duration: 0.6)
+            let delay = SKAction.wait(forDuration: Double(i) * 0.05)
+
+            spark.run(SKAction.sequence([
+                delay,
+                SKAction.group([rise, fade, scale]),
+                SKAction.removeFromParent()
+            ]))
+        }
+    }
+
+    // MARK: - Celebrating Animation
+
+    /// Play celebrating animation — apprentice jumps with joy.
+    /// Uses sprite frames if available (CelebrateBoy/GirlFrame00–14), otherwise falls back
+    /// to a procedural jump + star burst. Plays once, then returns to idle.
+    /// - Parameter completion: called after animation finishes
+    func playCelebrateAnimation(completion: (() -> Void)? = nil) {
+        guard !isAnimating else {
+            completion?()
+            return
+        }
+
+        isAnimating = true
+        sprite.removeAction(forKey: "idle")
+        sprite.removeAction(forKey: "walk")
+        sprite.yScale = 1.0
+
+        let finishAction = SKAction.run { [weak self] in
+            self?.isAnimating = false
+            self?.spawnCelebrateStars()
+            self?.startIdleAnimation()
+            completion?()
+        }
+
+        if let textures = celebrateTextures {
+            // Sprite-based: play 15 frames once
+            let anim = SKAction.animate(with: textures, timePerFrame: 0.08, resize: false, restore: true)
+            sprite.run(SKAction.sequence([anim, finishAction]), withKey: "celebrate")
+        } else {
+            // Procedural fallback: jump up, slight squash on landing, arms-up stretch
+            let crouch = SKAction.scaleY(to: 0.85, duration: 0.1)
+            crouch.timingMode = .easeIn
+
+            let jumpUp = SKAction.group([
+                SKAction.scaleY(to: 1.15, duration: 0.25),
+                SKAction.moveBy(x: 0, y: 40, duration: 0.25)
+            ])
+            jumpUp.timingMode = .easeOut
+
+            let hangTime = SKAction.wait(forDuration: 0.1)
+
+            let comeDown = SKAction.group([
+                SKAction.scaleY(to: 0.9, duration: 0.2),
+                SKAction.moveBy(x: 0, y: -40, duration: 0.2)
+            ])
+            comeDown.timingMode = .easeIn
+
+            let recover = SKAction.scaleY(to: 1.0, duration: 0.15)
+            recover.timingMode = .easeOut
+
+            // Spawn stars at the peak of the jump
+            let spawnStars = SKAction.run { [weak self] in
+                self?.spawnCelebrateStars()
+            }
+
+            sprite.run(SKAction.sequence([crouch, jumpUp, spawnStars, hangTime, comeDown, recover, finishAction]), withKey: "celebrate")
+        }
+    }
+
+    /// Star burst around the player during celebration
+    private func spawnCelebrateStars() {
+        let starCount = 8
+        for i in 0..<starCount {
+            let angle = (CGFloat(i) / CGFloat(starCount)) * .pi * 2
+            let star = SKShapeNode(circleOfRadius: 4)
+            star.fillColor = SKColor(red: 0.85, green: 0.65, blue: 0.13, alpha: 1.0) // gold
+            star.strokeColor = SKColor(red: 1.0, green: 0.9, blue: 0.5, alpha: 0.8)
+            star.lineWidth = 1
+            star.position = CGPoint(x: 0, y: spriteSize.height * 0.5)
+            star.zPosition = 100
+            star.setScale(0.3)
+            addChild(star)
+
+            let radius: CGFloat = CGFloat.random(in: 50...90)
+            let outward = SKAction.move(
+                to: CGPoint(
+                    x: cos(angle) * radius,
+                    y: spriteSize.height * 0.5 + sin(angle) * radius
+                ),
+                duration: 0.4
+            )
+            outward.timingMode = .easeOut
+
+            let grow = SKAction.scale(to: 1.0, duration: 0.2)
+            let shrink = SKAction.scale(to: 0.0, duration: 0.3)
+            let fade = SKAction.fadeOut(withDuration: 0.3)
+            let delay = SKAction.wait(forDuration: Double(i) * 0.03)
+
+            star.run(SKAction.sequence([
+                delay,
+                SKAction.group([outward, SKAction.sequence([grow, SKAction.group([shrink, fade])])]),
+                SKAction.removeFromParent()
+            ]))
+        }
     }
 }

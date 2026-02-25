@@ -17,7 +17,7 @@ struct StationLessonOverlay: View {
     var body: some View {
         ZStack {
             // Dimmed backdrop
-            Color.black.opacity(0.45)
+            RenaissanceColors.overlayDimming
                 .ignoresSafeArea()
                 .onTapGesture {
                     // Tap backdrop to skip text or dismiss
@@ -39,7 +39,7 @@ struct StationLessonOverlay: View {
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
 
                         Text(lesson.title)
-                            .font(.custom("Cinzel-Regular", size: 20))
+                            .font(.custom("EBGaramond-SemiBold", size: 22))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                 }
@@ -87,7 +87,7 @@ struct StationLessonOverlay: View {
                     onDismiss()
                 } label: {
                     Text("Continue")
-                        .font(.custom("Cinzel-Regular", size: 16))
+                        .font(.custom("EBGaramond-SemiBold", size: 18))
                         .foregroundStyle(.white)
                         .padding(.horizontal, 32)
                         .padding(.vertical, 10)
@@ -103,7 +103,6 @@ struct StationLessonOverlay: View {
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .fill(RenaissanceColors.parchment)
-                    .shadow(color: .black.opacity(0.2), radius: 12, y: 4)
             )
             .padding(.horizontal, 32)
             .opacity(showContent ? 1 : 0)

@@ -88,6 +88,8 @@
 		069 /* GradientSlopeVisual.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169 /* GradientSlopeVisual.swift */; };
 		070 /* FlowRateVisual.swift in Sources */ = {isa = PBXBuildFile; fileRef = 170 /* FlowRateVisual.swift */; };
 		071 /* MasterAssignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 171 /* MasterAssignment.swift */; };
+		076 /* WorkshopJob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 176 /* WorkshopJob.swift */; };
+		077 /* ScienceCardContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177 /* ScienceCardContent.swift */; };
 		072 /* LessonRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172 /* LessonRecord.swift */; };
 		073 /* MathVisualTemplates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173 /* MathVisualTemplates.swift */; };
 		047 /* BoyAvatarTransition.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 147 /* BoyAvatarTransition.mp4 */; };
@@ -205,6 +207,8 @@
 		169 /* GradientSlopeVisual.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientSlopeVisual.swift; sourceTree = "<group>"; };
 		170 /* FlowRateVisual.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowRateVisual.swift; sourceTree = "<group>"; };
 		171 /* MasterAssignment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterAssignment.swift; sourceTree = "<group>"; };
+		176 /* WorkshopJob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopJob.swift; sourceTree = "<group>"; };
+		177 /* ScienceCardContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScienceCardContent.swift; sourceTree = "<group>"; };
 		172 /* LessonRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonRecord.swift; sourceTree = "<group>"; };
 		173 /* MathVisualTemplates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathVisualTemplates.swift; sourceTree = "<group>"; };
 		544299972F3646ED00F92073 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BuildingNode.swift; path = Views/SpriteKit/BuildingNode.swift; sourceTree = "<group>"; };
@@ -423,6 +427,8 @@
 			166 /* NotebookContentRome.swift */,
 			167 /* NotebookContentRenaissance.swift */,
 		171 /* MasterAssignment.swift */,
+		176 /* WorkshopJob.swift */,
+		177 /* ScienceCardContent.swift */,
 		172 /* LessonRecord.swift */,
 			);
 			path = Models;
@@ -686,6 +692,8 @@
 			069 /* GradientSlopeVisual.swift in Sources */,
 			070 /* FlowRateVisual.swift in Sources */,
 			071 /* MasterAssignment.swift in Sources */,
+			076 /* WorkshopJob.swift in Sources */,
+			077 /* ScienceCardContent.swift in Sources */,
 		072 /* LessonRecord.swift in Sources */,
 		073 /* MathVisualTemplates.swift in Sources */,
 			);

@@ -41,4 +41,7 @@ enum GameRewards {
     static let timberCollectFlorins = 1
     static let craftCompleteFlorins = 5
     static let masterAssignmentFlorins = 15
+    static let jobCompleteFlorins = 10       // Base bonus on top of job.rewardFlorins
+    static let jobStreakBonus = 5             // Extra per consecutive job completed
+    static let scienceCardMatchFlorins = 2   // Per correct keyword match on forest cards
 }

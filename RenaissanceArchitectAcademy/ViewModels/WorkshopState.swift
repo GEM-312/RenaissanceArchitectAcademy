@@ -28,6 +28,23 @@ class WorkshopState {
     /// Stations whose bird lesson has been shown this session (resets each launch)
     var stationsLessonSeen: Set<ResourceStationType> = []
 
+    // MARK: - Bottega Job System
+
+    /// Current active job from the workshop master
+    var currentJob: WorkshopJob?
+    /// Whether the job board overlay is visible
+    var showJobBoard: Bool = false
+    /// Whether the job complete celebration overlay is visible
+    var showJobComplete: Bool = false
+    /// Snapshot of materials at job start — used to track collection progress
+    var jobStartInventory: [Material: Int] = [:]
+    /// Number of consecutive jobs completed (for streak bonus)
+    var jobStreak: Int = 0
+    /// Current job tier the player is working at
+    var currentJobTier: WorkshopJob.JobTier = .apprentice
+    /// Total jobs completed (used for tier progression)
+    var totalJobsCompleted: Int = 0
+
     // MARK: - Station Stocks
 
     /// Stock per station — each station has finite materials that regenerate
@@ -261,5 +278,109 @@ class WorkshopState {
     func checkAssignmentCompletion(craftedItem: CraftedItem) -> Bool {
         guard let assignment = currentAssignment else { return false }
         return assignment.targetItem == craftedItem
+    }
+
+    // MARK: - Bottega Job System
+
+    /// Generate a new job for the current tier
+    func generateNewJob() {
+        currentJob = WorkshopJob.randomJob(tier: currentJobTier)
+        jobStartInventory = rawMaterials
+    }
+
+    /// Generate 3 job choices for the job board
+    func jobChoices() -> [WorkshopJob] {
+        var choices: [WorkshopJob] = []
+        // Always offer current tier
+        choices.append(WorkshopJob.randomJob(tier: currentJobTier))
+        // Offer one tier below if available
+        if currentJobTier != .apprentice {
+            let lowerTier: WorkshopJob.JobTier = currentJobTier == .master ? .journeyman : .apprentice
+            choices.append(WorkshopJob.randomJob(tier: lowerTier))
+        }
+        // Offer one tier above if earned enough, or another at current tier
+        if totalJobsCompleted >= 5 && currentJobTier == .apprentice {
+            choices.append(WorkshopJob.randomJob(tier: .journeyman))
+        } else if totalJobsCompleted >= 15 && currentJobTier == .journeyman {
+            choices.append(WorkshopJob.randomJob(tier: .master))
+        } else {
+            choices.append(WorkshopJob.randomJob(tier: currentJobTier))
+        }
+        return choices
+    }
+
+    /// Accept a specific job from the job board
+    func acceptJob(_ job: WorkshopJob) {
+        currentJob = job
+        jobStartInventory = rawMaterials
+        showJobBoard = false
+    }
+
+    /// Check job collection progress — how many of each material collected since job started
+    func jobCollectionProgress() -> [Material: (collected: Int, needed: Int)] {
+        guard let job = currentJob else { return [:] }
+        var progress: [Material: (Int, Int)] = [:]
+        for (material, needed) in job.requirements {
+            let hadBefore = jobStartInventory[material] ?? 0
+            let haveNow = rawMaterials[material] ?? 0
+            let collected = max(0, haveNow - hadBefore)
+            progress[material] = (min(collected, needed), needed)
+        }
+        return progress
+    }
+
+    /// Check if the current job's collection requirements are met
+    func isJobCollectionDone() -> Bool {
+        guard let job = currentJob else { return false }
+        let progress = jobCollectionProgress()
+        return job.requirements.allSatisfy { (material, needed) in
+            (progress[material]?.collected ?? 0) >= needed
+        }
+    }
+
+    /// Check if the full job is complete (collection + optional crafting)
+    func checkJobCompletion(craftedItem: CraftedItem? = nil) -> Bool {
+        guard let job = currentJob else { return false }
+
+        // Collection must be done
+        guard isJobCollectionDone() else { return false }
+
+        // If job requires crafting, check that too
+        if let target = job.craftTarget {
+            if let crafted = craftedItem, crafted == target {
+                return true
+            }
+            return false
+        }
+
+        // Collection-only job — done!
+        return true
+    }
+
+    /// Complete the current job and award rewards
+    func completeJob() -> (florins: Int, streakBonus: Int) {
+        guard let job = currentJob else { return (0, 0) }
+
+        let baseFlorins = job.rewardFlorins
+        jobStreak += 1
+        let streakBonus = (jobStreak - 1) * GameRewards.jobStreakBonus
+        totalJobsCompleted += 1
+
+        // Auto-promote tier after milestones
+        if totalJobsCompleted >= 15 && currentJobTier == .journeyman {
+            currentJobTier = .master
+        } else if totalJobsCompleted >= 5 && currentJobTier == .apprentice {
+            currentJobTier = .journeyman
+        }
+
+        currentJob = nil
+        showJobComplete = true
+        return (baseFlorins, streakBonus)
+    }
+
+    /// Abandon the current job (resets streak)
+    func abandonJob() {
+        currentJob = nil
+        jobStreak = 0
     }
 }

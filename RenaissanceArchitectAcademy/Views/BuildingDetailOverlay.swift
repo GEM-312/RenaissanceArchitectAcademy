@@ -26,7 +26,7 @@ struct BuildingDetailOverlay: View {
     var body: some View {
         ZStack {
             // Dimmed background with blur
-            Color.black.opacity(0.4)
+            RenaissanceColors.overlayDimming
                 .ignoresSafeArea()
                 .onTapGesture {
                     onDismiss()
@@ -58,7 +58,6 @@ struct BuildingDetailOverlay: View {
                             Circle()
                                 .fill(RenaissanceColors.goldSuccess)
                                 .frame(width: 44, height: 44)
-                                .shadow(color: RenaissanceColors.goldSuccess.opacity(0.4), radius: 8)
 
                             Image(systemName: "checkmark")
                                 .font(.title3.weight(.bold))
@@ -96,7 +95,7 @@ struct BuildingDetailOverlay: View {
                         Image(systemName: "books.vertical.fill")
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("Sciences Required")
-                            .font(.custom("Cinzel-Regular", size: isLargeScreen ? 16 : 14, relativeTo: .caption))
+                            .font(.custom("EBGaramond-SemiBold", size: isLargeScreen ? 17 : 15, relativeTo: .caption))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                     }
 
@@ -113,7 +112,7 @@ struct BuildingDetailOverlay: View {
                         Image(systemName: "scroll.fill")
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("Description")
-                            .font(.custom("Cinzel-Regular", size: isLargeScreen ? 16 : 14, relativeTo: .caption))
+                            .font(.custom("EBGaramond-SemiBold", size: isLargeScreen ? 17 : 15, relativeTo: .caption))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                     }
 
@@ -153,10 +152,9 @@ struct BuildingDetailOverlay: View {
 
                     // Decorative border
                     RoundedRectangle(cornerRadius: isLargeScreen ? 20 : 16)
-                        .stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 2)
+                        .stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1)
                         .padding(4)
                 }
-                .shadow(color: .black.opacity(0.25), radius: isLargeScreen ? 30 : 20, x: 0, y: 10)
             )
             .padding(isLargeScreen ? 60 : 40)
             .scaleEffect(showContent ? 1 : 0.9)

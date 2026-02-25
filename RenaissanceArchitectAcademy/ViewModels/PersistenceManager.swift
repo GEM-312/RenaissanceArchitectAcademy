@@ -92,6 +92,38 @@ final class PersistenceManager {
         return record
     }
 
+    // MARK: - Cleanup
+
+    /// Delete any PlayerSave records with empty apprenticeName (stale placeholder saves)
+    func deleteEmptyNameSaves() {
+        let descriptor = FetchDescriptor<PlayerSave>(
+            predicate: #Predicate { $0.apprenticeName == "" }
+        )
+        guard let stale = try? modelContext.fetch(descriptor), !stale.isEmpty else { return }
+        for save in stale {
+            modelContext.delete(save)
+        }
+        try? modelContext.save()
+    }
+
+    /// Wipe ALL player saves and building progress (full database reset)
+    func resetAllData() {
+        // Delete all PlayerSave records
+        if let allSaves = try? modelContext.fetch(FetchDescriptor<PlayerSave>()) {
+            for save in allSaves {
+                modelContext.delete(save)
+            }
+        }
+        // Delete all BuildingProgressRecords
+        if let allProgress = try? modelContext.fetch(FetchDescriptor<BuildingProgressRecord>()) {
+            for record in allProgress {
+                modelContext.delete(record)
+            }
+        }
+        try? modelContext.save()
+        currentPlayerName = ""
+    }
+
     // MARK: - Save
 
     func save() {

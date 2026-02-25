@@ -16,14 +16,16 @@ struct RenaissanceButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.custom("Cinzel-Regular", size: 18, relativeTo: .body))
+                .font(.custom("EBGaramond-Regular", size: 20, relativeTo: .body))
                 .tracking(2)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 24)
                 .padding(.vertical, 14)
-                .glassButton(shape: RoundedRectangle(cornerRadius: 20))
-                .shadow(color: .clear, radius: 0)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(RenaissanceColors.ochre.opacity(0.25), lineWidth: 1)
+                )
                 .scaleEffect(isPressed ? 0.98 : 1.0)
         }
         .buttonStyle(.plain)

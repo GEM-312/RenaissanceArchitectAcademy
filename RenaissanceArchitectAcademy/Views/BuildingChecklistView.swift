@@ -18,7 +18,7 @@ struct BuildingChecklistView: View {
 
     var body: some View {
         ZStack {
-            Color.black.opacity(0.5)
+            RenaissanceColors.overlayDimming
                 .ignoresSafeArea()
                 .onTapGesture { onDismiss() }
 
@@ -31,11 +31,11 @@ struct BuildingChecklistView: View {
                             .foregroundStyle(RenaissanceColors.sageGreen)
 
                         Text(plot.building.name)
-                            .font(.custom("Cinzel-Regular", size: 24))
+                            .font(.custom("EBGaramond-SemiBold", size: 26))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         Text("Construction Requirements")
-                            .font(.custom("Mulish-Light", size: 15))
+                            .font(.custom("EBGaramond-Regular", size: 17))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
 
@@ -94,7 +94,7 @@ struct BuildingChecklistView: View {
                                 Spacer()
 
                                 Text("\(have)/\(needed)")
-                                    .font(.custom("Cinzel-Regular", size: 13))
+                                    .font(.custom("EBGaramond-Regular", size: 15))
                                     .foregroundStyle(have >= needed ? RenaissanceColors.sageGreen : RenaissanceColors.errorRed)
                             }
                         }
@@ -136,7 +136,7 @@ struct BuildingChecklistView: View {
                                 .tracking(1)
                             if allRequirementsMet {
                                 Text("+\(GameRewards.buildCompleteFlorins)")
-                                    .font(.custom("Cinzel-Regular", size: 14))
+                                    .font(.custom("EBGaramond-Regular", size: 16))
                                     .foregroundStyle(RenaissanceColors.goldSuccess)
                                 Image(systemName: "dollarsign.circle.fill")
                                     .font(.custom("Mulish-Light", size: 14, relativeTo: .footnote))
@@ -169,12 +169,8 @@ struct BuildingChecklistView: View {
                 .background(
                     RoundedRectangle(cornerRadius: 20)
                         .fill(RenaissanceColors.parchment)
-                        .shadow(color: .black.opacity(0.25), radius: 20, y: 10)
                 )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 20)
-                        .stroke(RenaissanceColors.ochre.opacity(0.4), lineWidth: 2)
-                )
+                .borderModal(radius: 20)
                 .padding(.horizontal, 32)
                 .padding(.vertical, 40)
             }
@@ -190,7 +186,7 @@ struct BuildingChecklistView: View {
                     .font(.custom("Mulish-Light", size: 14, relativeTo: .footnote))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                 Text(title)
-                    .font(.custom("Cinzel-Regular", size: 14))
+                    .font(.custom("EBGaramond-Regular", size: 16))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
 
@@ -201,10 +197,7 @@ struct BuildingChecklistView: View {
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(RenaissanceColors.parchment.opacity(0.5))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(RenaissanceColors.ochre.opacity(0.2), lineWidth: 1)
-                )
+                .borderCard(radius: 12)
         )
     }
 

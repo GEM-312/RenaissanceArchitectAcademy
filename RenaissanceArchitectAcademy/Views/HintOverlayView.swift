@@ -50,7 +50,7 @@ struct HintOverlayView: View {
     var body: some View {
         ZStack {
             // Dimmed background
-            Color.black.opacity(0.6)
+            RenaissanceColors.overlayDimming
                 .ignoresSafeArea()
                 .onTapGesture { onDismiss() }
 
@@ -123,16 +123,12 @@ struct HintOverlayView: View {
                         } else {
                             // Number
                             Text("\(step)")
-                                .font(.custom("Cinzel-Regular", size: 13))
+                                .font(.custom("EBGaramond-Regular", size: 15))
                                 .foregroundStyle(
                                     step == activeStep ? .white : RenaissanceColors.sepiaInk.opacity(0.6)
                                 )
                         }
                     }
-                    .shadow(
-                        color: step == activeStep ? RenaissanceColors.goldSuccess.opacity(0.5) : .clear,
-                        radius: 6
-                    )
                     .scaleEffect(step == activeStep ? 1.15 : 1.0)
                     .animation(.spring(response: 0.4, dampingFraction: 0.6), value: activeStep)
 
@@ -197,7 +193,7 @@ struct HintOverlayView: View {
                 Image(systemName: "sparkles")
                     .foregroundStyle(RenaissanceColors.goldSuccess)
                 Text("A Riddle for You...")
-                    .font(.custom("Cinzel-Regular", size: 18))
+                    .font(.custom("EBGaramond-SemiBold", size: 20))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
 
@@ -240,7 +236,7 @@ struct HintOverlayView: View {
     private var chooseMethodCard: some View {
         VStack(spacing: 16) {
             Text("How would you like your hint?")
-                .font(.custom("Cinzel-Regular", size: 18))
+                .font(.custom("EBGaramond-SemiBold", size: 20))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
             // Craft option
@@ -277,11 +273,10 @@ struct HintOverlayView: View {
                 .background(
                     RoundedRectangle(cornerRadius: 12)
                         .fill(totalMaterials >= 2 ? RenaissanceColors.parchment : RenaissanceColors.parchment.opacity(0.5))
-                        .shadow(color: RenaissanceColors.warmBrown.opacity(0.2), radius: 4, y: 2)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
-                        .stroke(RenaissanceColors.ochre.opacity(0.5), lineWidth: 1)
+                        .stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1)
                 )
             }
             .buttonStyle(.plain)
@@ -316,11 +311,10 @@ struct HintOverlayView: View {
                 .background(
                     RoundedRectangle(cornerRadius: 12)
                         .fill(RenaissanceColors.parchment)
-                        .shadow(color: RenaissanceColors.warmBrown.opacity(0.2), radius: 4, y: 2)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
-                        .stroke(RenaissanceColors.ochre.opacity(0.5), lineWidth: 1)
+                        .stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1)
                 )
             }
             .buttonStyle(.plain)
@@ -334,7 +328,7 @@ struct HintOverlayView: View {
     private var craftingCard: some View {
         VStack(spacing: 24) {
             Text("Crafting Hint Scroll...")
-                .font(.custom("Cinzel-Regular", size: 20))
+                .font(.custom("EBGaramond-SemiBold", size: 22))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
             ZStack {
@@ -365,7 +359,7 @@ struct HintOverlayView: View {
     private var trueFalseCard: some View {
         VStack(spacing: 16) {
             Text("Quick Question!")
-                .font(.custom("Cinzel-Regular", size: 18))
+                .font(.custom("EBGaramond-SemiBold", size: 20))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
             if case .trueFalse(let statement, _, let explanation) = hintData.activityType {
@@ -387,7 +381,7 @@ struct HintOverlayView: View {
                                 Text(material.icon)
                                     .font(.custom("Mulish-Light", size: 18, relativeTo: .body))
                                 Text("×\(count)")
-                                    .font(.custom("Cinzel-Regular", size: 13))
+                                    .font(.custom("EBGaramond-Regular", size: 15))
                                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                             }
                         }
@@ -427,7 +421,7 @@ struct HintOverlayView: View {
 
             VStack(spacing: 16) {
                 Text("Hint Scroll")
-                    .font(.custom("Cinzel-Regular", size: 20))
+                    .font(.custom("EBGaramond-SemiBold", size: 22))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 Divider()
@@ -456,7 +450,7 @@ struct HintOverlayView: View {
                                     Text(material.icon)
                                         .font(.custom("Mulish-Light", size: 20, relativeTo: .title3))
                                     Text("×\(count)")
-                                        .font(.custom("Cinzel-Regular", size: 14))
+                                        .font(.custom("EBGaramond-Regular", size: 16))
                                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
                                 }
                             }
@@ -475,7 +469,6 @@ struct HintOverlayView: View {
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .fill(RenaissanceColors.parchment)
-                    .shadow(color: RenaissanceColors.goldSuccess.opacity(0.3), radius: 16, y: 4)
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
                             .stroke(RenaissanceColors.goldSuccess.opacity(0.5), lineWidth: 2)
@@ -508,7 +501,6 @@ struct HintOverlayView: View {
         .background(
             RoundedRectangle(cornerRadius: 10)
                 .fill(RenaissanceColors.parchment)
-                .shadow(color: color.opacity(0.15), radius: 3, y: 1)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 10)
@@ -545,7 +537,7 @@ struct HintOverlayView: View {
             }
         } label: {
             Text(label)
-                .font(.custom("Cinzel-Regular", size: 16))
+                .font(.custom("EBGaramond-SemiBold", size: 18))
                 .foregroundStyle(
                     hasAnswered && wasSelected
                         ? .white
