@@ -109,7 +109,7 @@ struct WorkshopMapView: View {
                 if let status = workshop.statusMessage {
                     VStack {
                         Text(status)
-                            .font(.custom("Mulish-Light", size: 14))
+                            .font(.custom("EBGaramond-Regular", size: 14))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 6)
@@ -322,7 +322,7 @@ struct WorkshopMapView: View {
                             Image(systemName: "chevron.left")
                             Text("Back")
                         }
-                        .font(.custom("Mulish-Light", size: 16))
+                        .font(.custom("EBGaramond-Regular", size: 16))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
@@ -351,7 +351,7 @@ struct WorkshopMapView: View {
                                 Text(material.icon)
                                     .font(.caption)
                                 Text("\(count)")
-                                    .font(.custom("Mulish-Light", size: 12))
+                                    .font(.custom("EBGaramond-Regular", size: 12))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                             .padding(.horizontal, 6)
@@ -379,7 +379,7 @@ struct WorkshopMapView: View {
                                 Text(item.icon)
                                     .font(.caption)
                                 Text("\(count)")
-                                    .font(.custom("Mulish-Light", size: 12))
+                                    .font(.custom("EBGaramond-Regular", size: 12))
                                     .foregroundStyle(RenaissanceColors.sageGreen)
                             }
                             .padding(.horizontal, 6)
@@ -420,7 +420,7 @@ struct WorkshopMapView: View {
                             .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         Text(workshop.hintFor(station: station))
-                            .font(.custom("Mulish-Light", size: 14))
+                            .font(.custom("EBGaramond-Regular", size: 14))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -458,7 +458,7 @@ struct WorkshopMapView: View {
                 if let vm = viewModel {
                     HStack(spacing: 4) {
                         Image(systemName: "dollarsign.circle.fill")
-                            .font(.custom("Mulish-Light", size: 14, relativeTo: .footnote))
+                            .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("\(vm.goldFlorins) florins")
                             .font(.custom("EBGaramond-Regular", size: 15))
@@ -507,18 +507,18 @@ struct WorkshopMapView: View {
                                 Text(material.icon)
                                     .font(.title2)
                                 Text(material.rawValue)
-                                    .font(.custom("Mulish-Light", size: 12))
+                                    .font(.custom("EBGaramond-Regular", size: 12))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                                     .lineLimit(1)
                                 HStack(spacing: 2) {
                                     Text("×\(stock)")
-                                        .font(.custom("Mulish-Light", size: 12))
+                                        .font(.custom("EBGaramond-Regular", size: 12))
                                         .foregroundStyle(stock > 0 ? RenaissanceColors.sageGreen : RenaissanceColors.sepiaInk)
                                     Image(systemName: "dollarsign.circle.fill")
-                                        .font(.custom("Mulish-Light", size: 9, relativeTo: .caption2))
+                                        .font(.custom("EBGaramond-Regular", size: 9, relativeTo: .caption2))
                                         .foregroundStyle(RenaissanceColors.sepiaInk)
                                     Text("\(material.cost)")
-                                        .font(.custom("Mulish-Light", size: 11))
+                                        .font(.custom("EBGaramond-Regular", size: 11))
                                         .foregroundStyle(canAfford ? RenaissanceColors.sepiaInk : RenaissanceColors.errorRed)
                                 }
                             }
@@ -543,7 +543,7 @@ struct WorkshopMapView: View {
                         activeStation = nil
                     }
                 }
-                .font(.custom("Mulish-Light", size: 15))
+                .font(.custom("EBGaramond-Regular", size: 15))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
                 .padding(.top, 4)
             }
@@ -573,7 +573,7 @@ struct WorkshopMapView: View {
                     HStack(spacing: 6) {
                         Text(recipe.output.icon)
                         Text(recipe.output.rawValue)
-                            .font(.custom("Mulish-Light", size: 15))
+                            .font(.custom("EBGaramond-Regular", size: 15))
                             .foregroundStyle(RenaissanceColors.sageGreen)
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundStyle(RenaissanceColors.sageGreen)
@@ -581,7 +581,7 @@ struct WorkshopMapView: View {
                     }
                 } else {
                     Text("Add materials to mix")
-                        .font(.custom("Mulish-Light", size: 14))
+                        .font(.custom("EBGaramond-Regular", size: 14))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
 
@@ -605,7 +605,7 @@ struct WorkshopMapView: View {
                                         Text(material.icon)
                                             .font(.title3)
                                         Text("×\(count)")
-                                            .font(.custom("Mulish-Light", size: 11))
+                                            .font(.custom("EBGaramond-Regular", size: 11))
                                             .foregroundStyle(RenaissanceColors.sepiaInk)
                                     }
                                     .padding(6)
@@ -627,7 +627,7 @@ struct WorkshopMapView: View {
                             workshop.clearWorkbench()
                         }
                     }
-                    .font(.custom("Mulish-Light", size: 15))
+                    .font(.custom("EBGaramond-Regular", size: 15))
                     .padding(.horizontal, 20)
                     .padding(.vertical, 8)
                     .background(
@@ -645,7 +645,7 @@ struct WorkshopMapView: View {
                             workshop.statusMessage = "Mixed! Walk to the Furnace to fire."
                         }
                     }
-                    .font(.custom("Mulish-Light", size: 15))
+                    .font(.custom("EBGaramond-Regular", size: 15))
                     .padding(.horizontal, 24)
                     .padding(.vertical, 8)
                     .background(
@@ -665,7 +665,7 @@ struct WorkshopMapView: View {
                             activeStation = nil
                         }
                     }
-                    .font(.custom("Mulish-Light", size: 15))
+                    .font(.custom("EBGaramond-Regular", size: 15))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
             }
@@ -740,18 +740,18 @@ struct WorkshopMapView: View {
                             HStack(spacing: 4) {
                                 ForEach(Array(input.keys.sorted(by: { $0.rawValue < $1.rawValue })), id: \.self) { material in
                                     Text("\(material.icon)×\(input[material]!)")
-                                        .font(.custom("Mulish-Light", size: 13))
+                                        .font(.custom("EBGaramond-Regular", size: 13))
                                 }
                             }
                             if let recipe = workshop.currentRecipe {
                                 Text("→ \(recipe.output.icon) \(recipe.output.rawValue)")
-                                    .font(.custom("Mulish-Light", size: 13))
+                                    .font(.custom("EBGaramond-Regular", size: 13))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                         }
                     } else {
                         Text("Mix ingredients at the Workbench first")
-                            .font(.custom("Mulish-Light", size: 14))
+                            .font(.custom("EBGaramond-Regular", size: 14))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                 }
@@ -759,7 +759,7 @@ struct WorkshopMapView: View {
                 // Temperature picker
                 VStack(spacing: 4) {
                     Text("Temperature")
-                        .font(.custom("Mulish-Light", size: 13))
+                        .font(.custom("EBGaramond-Regular", size: 13))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     Picker("Temperature", selection: $workshop.furnaceTemperature) {
@@ -803,7 +803,7 @@ struct WorkshopMapView: View {
                             activeStation = nil
                         }
                     }
-                    .font(.custom("Mulish-Light", size: 15))
+                    .font(.custom("EBGaramond-Regular", size: 15))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
             }
@@ -830,7 +830,7 @@ struct WorkshopMapView: View {
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 Text(workshop.educationalText)
-                    .font(.custom("Mulish-Light", size: 17, relativeTo: .body))
+                    .font(.custom("EBGaramond-Regular", size: 17, relativeTo: .body))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
@@ -838,7 +838,7 @@ struct WorkshopMapView: View {
                 Button("Continue") {
                     workshop.showEducationalPopup = false
                 }
-                .font(.custom("Mulish-Light", size: 18))
+                .font(.custom("EBGaramond-Regular", size: 18))
                 .padding(.horizontal, 32)
                 .padding(.vertical, 10)
                 .background(
@@ -876,7 +876,7 @@ struct WorkshopMapView: View {
                             .font(.custom("Cinzel-Bold", size: 22))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("You need more florins! Here's how:")
-                            .font(.custom("Mulish-Light", size: 14))
+                            .font(.custom("EBGaramond-Regular", size: 14))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                     }
                 }
@@ -932,7 +932,7 @@ struct WorkshopMapView: View {
                 Button("Maybe Later") {
                     workshop.showEarnFlorinsOverlay = false
                 }
-                .font(.custom("Mulish-Light", size: 15))
+                .font(.custom("EBGaramond-Regular", size: 15))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
             }
             .padding(24)
@@ -964,7 +964,7 @@ struct WorkshopMapView: View {
                 Spacer()
 
                 Text(reward)
-                    .font(.custom("Mulish-SemiBold", size: 13))
+                    .font(.custom("EBGaramond-SemiBold", size: 13))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 Image(systemName: "chevron.right")
@@ -996,7 +996,7 @@ struct WorkshopMapView: View {
                             .foregroundStyle(RenaissanceColors.warmBrown)
 
                         Text("Bottega Jobs")
-                            .font(.custom("Mulish-Medium", size: 13))
+                            .font(.custom("EBGaramond-Medium", size: 13))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         Image(systemName: "chevron.right")
@@ -1034,7 +1034,7 @@ struct WorkshopMapView: View {
                         Text(job.tier.icon)
                             .font(.caption)
                         Text(job.title)
-                            .font(.custom("Mulish-Medium", size: 13))
+                            .font(.custom("EBGaramond-Medium", size: 13))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("+\(job.rewardFlorins)")
                             .font(.custom("Cinzel-Bold", size: 12))
@@ -1053,7 +1053,7 @@ struct WorkshopMapView: View {
                                 Text(material.icon)
                                     .font(.caption2)
                                 Text("\(collected)/\(needed)")
-                                    .font(.custom("Mulish-Light", size: 11))
+                                    .font(.custom("EBGaramond-Regular", size: 11))
                                     .foregroundStyle(done ? RenaissanceColors.sageGreen : RenaissanceColors.sepiaInk)
                             }
                             .padding(.horizontal, 5)
@@ -1069,7 +1069,7 @@ struct WorkshopMapView: View {
                                 Text(target.icon)
                                     .font(.caption2)
                                 Text("Craft")
-                                    .font(.custom("Mulish-Light", size: 11))
+                                    .font(.custom("EBGaramond-Regular", size: 11))
                                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                             }
                         }
@@ -1079,14 +1079,14 @@ struct WorkshopMapView: View {
                     if workshop.isJobCollectionDone() {
                         if job.craftTarget != nil {
                             Text("Materials ready! Craft at the workbench.")
-                                .font(.custom("Mulish-Light", size: 11))
+                                .font(.custom("EBGaramond-Regular", size: 11))
                                 .foregroundStyle(RenaissanceColors.renaissanceBlue)
                         } else {
                             Button {
                                 completeCurrentJob()
                             } label: {
                                 Text("Turn In Job")
-                                    .font(.custom("Mulish-Medium", size: 12))
+                                    .font(.custom("EBGaramond-Medium", size: 12))
                                     .foregroundStyle(.white)
                                     .padding(.horizontal, 14)
                                     .padding(.vertical, 5)
@@ -1103,7 +1103,7 @@ struct WorkshopMapView: View {
                         workshop.abandonJob()
                     } label: {
                         Text("Abandon")
-                            .font(.custom("Mulish-Light", size: 10))
+                            .font(.custom("EBGaramond-Regular", size: 10))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
                     }
                 }
@@ -1146,7 +1146,7 @@ struct WorkshopMapView: View {
                             .font(.custom("Cinzel-Bold", size: 22))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("Choose a commission from the workshop master")
-                            .font(.custom("Mulish-Light", size: 14))
+                            .font(.custom("EBGaramond-Regular", size: 14))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                     }
                 }
@@ -1155,7 +1155,7 @@ struct WorkshopMapView: View {
                 HStack(spacing: 16) {
                     HStack(spacing: 4) {
                         Text("Rank:")
-                            .font(.custom("Mulish-Light", size: 13))
+                            .font(.custom("EBGaramond-Regular", size: 13))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                         Text("\(workshop.currentJobTier.icon) \(workshop.currentJobTier.italianTitle)")
                             .font(.custom("EBGaramond-SemiBold", size: 15))
@@ -1167,13 +1167,13 @@ struct WorkshopMapView: View {
                                 .font(.caption)
                                 .foregroundStyle(RenaissanceColors.furnaceOrange)
                             Text("Streak: \(workshop.jobStreak)")
-                                .font(.custom("Mulish-Light", size: 13))
+                                .font(.custom("EBGaramond-Regular", size: 13))
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                         }
                     }
                     HStack(spacing: 4) {
                         Text("Jobs: \(workshop.totalJobsCompleted)")
-                            .font(.custom("Mulish-Light", size: 13))
+                            .font(.custom("EBGaramond-Regular", size: 13))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                     }
                 }
@@ -1186,7 +1186,7 @@ struct WorkshopMapView: View {
                 Button("Maybe Later") {
                     workshop.showJobBoard = false
                 }
-                .font(.custom("Mulish-Light", size: 15))
+                .font(.custom("EBGaramond-Regular", size: 15))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
             }
             .padding(24)
@@ -1226,13 +1226,13 @@ struct WorkshopMapView: View {
                     Text("·")
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.3))
                     Text(job.tier.rawValue)
-                        .font(.custom("Mulish-Light", size: 12))
+                        .font(.custom("EBGaramond-Regular", size: 12))
                         .foregroundStyle(tierColor(job.tier))
                 }
 
                 // Flavor text
                 Text(job.flavorText)
-                    .font(.custom("Mulish-Light", size: 13))
+                    .font(.custom("EBGaramond-Regular", size: 13))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
                     .fixedSize(horizontal: false, vertical: true)
 
@@ -1243,7 +1243,7 @@ struct WorkshopMapView: View {
                             Text(material.icon)
                                 .font(.caption2)
                             Text("×\(job.requirements[material]!)")
-                                .font(.custom("Mulish-Light", size: 12))
+                                .font(.custom("EBGaramond-Regular", size: 12))
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                         }
                     }
@@ -1255,7 +1255,7 @@ struct WorkshopMapView: View {
                             Text(target.icon)
                                 .font(.caption2)
                             Text(target.rawValue)
-                                .font(.custom("Mulish-Light", size: 12))
+                                .font(.custom("EBGaramond-Regular", size: 12))
                                 .foregroundStyle(RenaissanceColors.sageGreen)
                         }
                     }
@@ -1301,7 +1301,7 @@ struct WorkshopMapView: View {
                         .font(.custom("EBGaramond-Italic", size: 20))
                         .foregroundStyle(RenaissanceColors.warmBrown)
                     Text(job.tradeDescription)
-                        .font(.custom("Mulish-Light", size: 14))
+                        .font(.custom("EBGaramond-Regular", size: 14))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                         .multilineTextAlignment(.center)
                 }
@@ -1320,7 +1320,7 @@ struct WorkshopMapView: View {
                             Image(systemName: "flame.fill")
                                 .foregroundStyle(RenaissanceColors.furnaceOrange)
                             Text("+\(jobStreakBonus) streak bonus!")
-                                .font(.custom("Mulish-Medium", size: 15))
+                                .font(.custom("EBGaramond-Medium", size: 15))
                                 .foregroundStyle(RenaissanceColors.furnaceOrange)
                         }
                     }
@@ -1332,7 +1332,7 @@ struct WorkshopMapView: View {
                         .font(.custom("Cinzel-Regular", size: 16))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text(job.historyFact)
-                        .font(.custom("Mulish-Light", size: 15))
+                        .font(.custom("EBGaramond-Regular", size: 15))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
@@ -1346,12 +1346,12 @@ struct WorkshopMapView: View {
                 // Tier progression hint
                 if workshop.totalJobsCompleted == 5 && workshop.currentJobTier == .journeyman {
                     Text("Promoted to Lavorante (Journeyman)! Harder jobs now available.")
-                        .font(.custom("Mulish-Medium", size: 14))
+                        .font(.custom("EBGaramond-Medium", size: 14))
                         .foregroundStyle(RenaissanceColors.renaissanceBlue)
                         .multilineTextAlignment(.center)
                 } else if workshop.totalJobsCompleted == 15 && workshop.currentJobTier == .master {
                     Text("Promoted to Maestro! You can now take Master commissions.")
-                        .font(.custom("Mulish-Medium", size: 14))
+                        .font(.custom("EBGaramond-Medium", size: 14))
                         .foregroundStyle(RenaissanceColors.goldSuccess)
                         .multilineTextAlignment(.center)
                 }
@@ -1362,7 +1362,7 @@ struct WorkshopMapView: View {
                     jobBoardChoices = workshop.jobChoices()
                     workshop.showJobBoard = true
                 }
-                .font(.custom("Mulish-Medium", size: 16))
+                .font(.custom("EBGaramond-Medium", size: 16))
                 .foregroundStyle(.white)
                 .padding(.horizontal, 28)
                 .padding(.vertical, 10)
@@ -1375,7 +1375,7 @@ struct WorkshopMapView: View {
                     workshop.showJobComplete = false
                     completedJob = nil
                 }
-                .font(.custom("Mulish-Light", size: 14))
+                .font(.custom("EBGaramond-Regular", size: 14))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
             }
             .padding(28)

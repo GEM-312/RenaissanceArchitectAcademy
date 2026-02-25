@@ -35,7 +35,7 @@ struct StationLessonOverlay: View {
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text(lesson.stationLabel)
-                            .font(.custom("Mulish-Light", size: 14))
+                            .font(.custom("EBGaramond-Regular", size: 14))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
 
                         Text(lesson.title)
@@ -49,7 +49,7 @@ struct StationLessonOverlay: View {
 
                 // Typewriter text
                 Text(revealedText)
-                    .font(.custom("Mulish-Light", size: 17, relativeTo: .body))
+                    .font(.custom("EBGaramond-Regular", size: 17, relativeTo: .body))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
                     .multilineTextAlignment(.leading)
                     .lineSpacing(5)
@@ -69,7 +69,7 @@ struct StationLessonOverlay: View {
                                     .font(.caption2)
                             }
                             Text(science.rawValue)
-                                .font(.custom("Mulish-Light", size: 12))
+                                .font(.custom("EBGaramond-Regular", size: 12))
                         }
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)

@@ -21,8 +21,8 @@ struct ProfileView: View {
     /// Avatar frame prefix based on gender choice
     private var avatarFramePrefix: String {
         switch onboardingState.apprenticeGender {
-        case .boy: return "AvatarBoyFrame"
-        case .girl: return "AvatarGirlFrame"
+        case .boy: return "AvatarBoyCleanFrame"
+        case .girl: return "AvatarGirlCleanFrame"
         }
     }
 
@@ -206,7 +206,7 @@ struct ProfileHeaderRow: View {
                     // Left — Current Rank
                     VStack(spacing: 4) {
                         Text(masteryLevel.icon)
-                            .font(.custom("Mulish-Light", size: 28, relativeTo: .title3))
+                            .font(.custom("EBGaramond-Regular", size: 28, relativeTo: .title3))
                         Text(masteryLevel.rawValue)
                             .font(.custom("EBGaramond-Regular", size: 14))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
@@ -239,7 +239,7 @@ struct ProfileHeaderRow: View {
                                 .fill(RenaissanceColors.goldSuccess)
                                 .frame(width: 36, height: 36)
                             Image(systemName: "dollarsign.circle.fill")
-                                .font(.custom("Mulish-Light", size: 22, relativeTo: .title3))
+                                .font(.custom("EBGaramond-Regular", size: 22, relativeTo: .title3))
                                 .foregroundStyle(.white)
                         }
                         Text("\(goldFlorins)")
@@ -314,15 +314,15 @@ struct MaterialsCard: View {
                 // Raw materials
                 if !rawItems.isEmpty {
                     Text("Raw")
-                        .font(.custom("Mulish-Light", size: 11))
+                        .font(.custom("EBGaramond-Regular", size: 11))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 50))], spacing: 6) {
                         ForEach(rawItems, id: \.0) { mat, count in
                             VStack(spacing: 2) {
                                 Text(mat.icon)
-                                    .font(.custom("Mulish-Light", size: 20, relativeTo: .title3))
+                                    .font(.custom("EBGaramond-Regular", size: 20, relativeTo: .title3))
                                 Text("\(count)")
-                                    .font(.custom("Mulish-Light", size: 11))
+                                    .font(.custom("EBGaramond-Regular", size: 11))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                         }
@@ -332,16 +332,16 @@ struct MaterialsCard: View {
                 // Crafted materials
                 if !craftedItems.isEmpty {
                     Text("Crafted")
-                        .font(.custom("Mulish-Light", size: 11))
+                        .font(.custom("EBGaramond-Regular", size: 11))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                         .padding(.top, 4)
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 50))], spacing: 6) {
                         ForEach(craftedItems, id: \.0) { item, count in
                             VStack(spacing: 2) {
                                 Text(item.icon)
-                                    .font(.custom("Mulish-Light", size: 20, relativeTo: .title3))
+                                    .font(.custom("EBGaramond-Regular", size: 20, relativeTo: .title3))
                                 Text("\(count)")
-                                    .font(.custom("Mulish-Light", size: 11))
+                                    .font(.custom("EBGaramond-Regular", size: 11))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                         }
@@ -349,7 +349,7 @@ struct MaterialsCard: View {
                 }
             } else {
                 Text("Visit the Workshop\nto collect materials!")
-                    .font(.custom("Mulish-Light", size: 12))
+                    .font(.custom("EBGaramond-Regular", size: 12))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
@@ -387,7 +387,7 @@ struct AchievementsSection: View {
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                 Spacer()
                 Text("\(achievements.filter { $0.isUnlocked }.count)/\(achievements.count)")
-                    .font(.custom("Mulish-Light", size: 12))
+                    .font(.custom("EBGaramond-Regular", size: 12))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
             }
 
@@ -432,7 +432,7 @@ struct CategoryChip: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.custom("Mulish-Light", size: 11))
+                .font(.custom("EBGaramond-Regular", size: 11))
                 .fontWeight(isSelected ? .semibold : .regular)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 4)
@@ -468,7 +468,7 @@ struct AchievementBadge: View {
             }
 
             Text(achievement.name)
-                .font(.custom("Mulish-Light", size: 10))
+                .font(.custom("EBGaramond-Regular", size: 10))
                 .foregroundStyle(
                     achievement.isUnlocked
                         ? RenaissanceColors.sepiaInk
@@ -551,7 +551,7 @@ struct ScienceMasteryCard: View {
                     }
                 } else {
                     Image(systemName: mastery.science.sfSymbolName)
-                        .font(.custom("Mulish-Light", size: 32, relativeTo: .title3))
+                        .font(.custom("EBGaramond-Regular", size: 32, relativeTo: .title3))
                         .foregroundStyle(RenaissanceColors.color(for: mastery.science))
                 }
 
@@ -563,7 +563,7 @@ struct ScienceMasteryCard: View {
 
             // Science name
             Text(mastery.science.rawValue)
-                .font(.custom("Mulish-Light", size: 11))
+                .font(.custom("EBGaramond-Regular", size: 11))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
@@ -582,7 +582,7 @@ struct ScienceMasteryCard: View {
                     .rotationEffect(.degrees(-90))
 
                 Text("\(mastery.level)")
-                    .font(.custom("Mulish-Light", size: 10))
+                    .font(.custom("EBGaramond-Regular", size: 10))
                     .fontWeight(.bold)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
@@ -614,14 +614,14 @@ struct StatisticsCard: View {
             // Buildings completed — individual icons
             VStack(alignment: .leading, spacing: 6) {
                 Text("Buildings (\(completedPlots.count)/\(buildingPlots.count))")
-                    .font(.custom("Mulish-Light", size: 12))
+                    .font(.custom("EBGaramond-Regular", size: 12))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
 
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 36))], spacing: 6) {
                     ForEach(buildingPlots) { plot in
                         VStack(spacing: 2) {
                             Image(systemName: plot.building.iconName)
-                                .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
+                                .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
                                 .foregroundStyle(
                                     plot.isCompleted
                                         ? RenaissanceColors.sageGreen
@@ -642,10 +642,10 @@ struct StatisticsCard: View {
             // Play Time
             HStack(spacing: 8) {
                 Image(systemName: "clock.fill")
-                    .font(.custom("Mulish-Light", size: 14, relativeTo: .footnote))
+                    .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
                     .foregroundStyle(RenaissanceColors.ochre)
                 Text("Play Time")
-                    .font(.custom("Mulish-Light", size: 12))
+                    .font(.custom("EBGaramond-Regular", size: 12))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                 Spacer()
                 Text(formatPlayTime(totalPlayTime))
@@ -656,10 +656,10 @@ struct StatisticsCard: View {
             // Exploration
             HStack(spacing: 8) {
                 Image(systemName: "map.fill")
-                    .font(.custom("Mulish-Light", size: 14, relativeTo: .footnote))
+                    .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
                     .foregroundStyle(RenaissanceColors.renaissanceBlue)
                 Text("Exploration")
-                    .font(.custom("Mulish-Light", size: 12))
+                    .font(.custom("EBGaramond-Regular", size: 12))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                 Spacer()
                 let visited = buildingPlots.filter { $0.challengeProgress > 0 || $0.isCompleted }.count
@@ -695,7 +695,7 @@ struct MasteryLevelCard: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text(masteryLevel.icon)
-                    .font(.custom("Mulish-Light", size: 24, relativeTo: .title3))
+                    .font(.custom("EBGaramond-Regular", size: 24, relativeTo: .title3))
                 Text("Mastery Level")
                     .font(.custom("Cinzel-Bold", size: 15))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
@@ -706,7 +706,7 @@ struct MasteryLevelCard: View {
                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
             Text(masteryLevel.description)
-                .font(.custom("Mulish-Light", size: 12))
+                .font(.custom("EBGaramond-Regular", size: 12))
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
 
             // Progress bar
@@ -731,7 +731,7 @@ struct MasteryLevelCard: View {
                 .frame(height: 8)
 
                 Text("\(Int(progress * 100))% Progress")
-                    .font(.custom("Mulish-Light", size: 11))
+                    .font(.custom("EBGaramond-Regular", size: 11))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
             }
 
@@ -788,7 +788,7 @@ struct ProfileNavRow: View {
                     .font(.system(size: 20, weight: .medium))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                 Text(label)
-                    .font(.custom("Mulish-Light", size: 11))
+                    .font(.custom("EBGaramond-Regular", size: 11))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
             }
             .frame(width: 70, height: 52)

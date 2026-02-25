@@ -180,8 +180,10 @@ struct ForestMapView: View {
         flippedCards = []
         flippedOpenCard = nil
         activeCard = nil
+        flipAngles = [:]
         cardsAppeared = false
         floatOffset = 0
+        auroraPhase = false
         matchedPairIDs = []
         selectedKeywordID = nil
         selectedDefinitionID = nil
@@ -190,6 +192,7 @@ struct ForestMapView: View {
 
         for cat in ForestCardCategory.allCases {
             cardPhases[cat] = .faceUp
+            flipAngles[cat] = 0
         }
 
         // Staggered card appearance animation
@@ -206,13 +209,13 @@ struct ForestMapView: View {
     @State private var flippedOpenCard: ForestCardCategory? = nil
     /// Floating bob offset, animated on appear
     @State private var floatOffset: CGFloat = 0
-    /// Rotating aura angle for magical glow on card fronts
-    @State private var auraAngle: Double = 0
+    /// Aurora blob animation phase
+    @State private var auroraPhase = false
 
     private let cardW: CGFloat = 200
     private let cardH: CGFloat = 280  // ~5:7 poker ratio
-    private let flippedW: CGFloat = 400
-    private let flippedH: CGFloat = 560
+    private let flippedW: CGFloat = 560
+    private let flippedH: CGFloat = 780
 
     private func scienceCardsOverlay(poi: ForestScene.ForestPOI) -> some View {
         GeometryReader { geo in
@@ -220,10 +223,15 @@ struct ForestMapView: View {
                 RenaissanceColors.overlayDimming
                     .ignoresSafeArea()
                     .onTapGesture {
-                        if activeCard != nil {
-                            closeActiveCard()
-                        } else if flippedOpenCard != nil {
-                            withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
+                        if let open = flippedOpenCard, cardPhases[open] == .activity {
+                            // Go back to reading from activity
+                            withAnimation(.easeInOut(duration: 0.4)) {
+                                cardPhases[open] = .reading
+                                activeCard = nil
+                            }
+                        } else if let open = flippedOpenCard {
+                            withAnimation(.spring(response: 0.6, dampingFraction: 0.75)) {
+                                flipAngles[open] = 0
                                 flippedOpenCard = nil
                             }
                         } else {
@@ -231,72 +239,53 @@ struct ForestMapView: View {
                         }
                     }
 
-                if let expanded = activeCard,
-                   let cardData = scienceCards.first(where: { $0.category == expanded }) {
-                    // ACTIVITY MODE: keyword matching
-                    activityCardView(cardData: cardData)
-                        .transition(.asymmetric(
-                            insertion: .scale(scale: 0.85).combined(with: .opacity),
-                            removal: .scale(scale: 0.9).combined(with: .opacity)
-                        ))
-                } else {
-                    // Tree header (top)
-                    VStack(spacing: 5) {
-                        Text(poi.name)
-                            .font(.custom("Cinzel-Bold", size: 22))
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
-                        Text(poi.italianName)
-                            .font(.custom("Mulish-Light", size: 14))
-                            .foregroundStyle(RenaissanceColors.warmBrown)
-                        HStack(spacing: 6) {
-                            poiBadge(poi.woodType, color: RenaissanceColors.ochre)
-                            poiBadge(poi.leafType, color: RenaissanceColors.sageGreen)
-                            poiBadge(poi.maxHeight, color: RenaissanceColors.warmBrown)
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.top, 20)
-                    .frame(maxHeight: .infinity, alignment: .top)
+                    // Vertical layout: tree header → cards → bottom bar
+                    VStack(spacing: 0) {
+                        Spacer()
 
-                    // Cards row — spread in center, pile when one flips
-                    cardsRowView(screenSize: geo.size)
-
-                    // Flipped card — rendered at full readable size, centered
-                    if let flipped = flippedOpenCard,
-                       let cardData = scienceCards.first(where: { $0.category == flipped }) {
-                        let isCompleted = completedCards.contains(flipped)
-                        flippedCardBack(cardData: cardData, isCompleted: isCompleted)
-                            .onTapGesture {
-                                if !isCompleted {
-                                    openActivityForCard(flipped)
-                                }
+                        // Tree header — sits just above the cards
+                        VStack(spacing: 5) {
+                            Text(poi.name)
+                                .font(.custom("Cinzel-Bold", size: 26))
+                                .foregroundStyle(RenaissanceColors.sepiaInk)
+                            Text(poi.italianName)
+                                .font(.custom("EBGaramond-Regular", size: 14))
+                                .foregroundStyle(RenaissanceColors.warmBrown)
+                            HStack(spacing: 6) {
+                                poiBadge(poi.woodType, color: RenaissanceColors.ochre)
+                                poiBadge(poi.leafType, color: RenaissanceColors.sageGreen)
+                                poiBadge(poi.maxHeight, color: RenaissanceColors.warmBrown)
                             }
-                            .transition(.scale(scale: 0.5).combined(with: .opacity))
-                            .zIndex(20)
-                    }
+                        }
+                        .padding(.bottom, 20)
 
-                    // Bottom bar: bird + timber button
-                    VStack(spacing: 10) {
-                        birdEncouragement
-                        collectTimberButton(poi: poi)
+                        // Cards row — 3D flip in place, pile when one flips
+                        cardsRowView(screenSize: geo.size)
+
+                        Spacer()
+
+                        // Bottom bar: bird + timber button
+                        VStack(spacing: 10) {
+                            birdEncouragement
+                            collectTimberButton(poi: poi)
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 16)
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 16)
-                    .frame(maxHeight: .infinity, alignment: .bottom)
-                }
             }
         }
         .onAppear {
             withAnimation(.easeInOut(duration: 2.5).repeatForever(autoreverses: true)) {
                 floatOffset = 8
             }
-            withAnimation(.linear(duration: 4.0).repeatForever(autoreverses: false)) {
-                auraAngle = 360
-            }
+            auroraPhase = true
         }
     }
 
-    // MARK: - Cards Row (single row, pile when one is flipped)
+    // MARK: - Cards Row (3D flip in place, pile when one flips)
+
+    /// Tracks the Y-axis flip angle per card for 3D rotation
+    @State private var flipAngles: [ForestCardCategory: Double] = [:]
 
     private func cardsRowView(screenSize: CGSize) -> some View {
         let allCategories = ForestCardCategory.allCases
@@ -316,6 +305,7 @@ struct ForestMapView: View {
                 let isThisFlipped = flippedOpenCard == category
                 let someCardFlipped = flippedOpenCard != nil
                 let isPiled = someCardFlipped && !isThisFlipped
+                let angle = flipAngles[category] ?? 0
 
                 // Spread position: center the row
                 let spreadX = CGFloat(index) * (cardW + spacing) - (totalWidth - cardW) / 2
@@ -323,29 +313,49 @@ struct ForestMapView: View {
                 // Pile position: stack to the left
                 let pileX = -screenSize.width * 0.35 + CGFloat(pileStackIndex(category)) * 8
 
-                cardFront(category: category, isCompleted: isCompleted)
-                    .frame(width: cardW, height: cardH)
-                    .opacity(isThisFlipped ? 0 : 1) // hide front when back is shown centered
-                    .scaleEffect(isPiled ? 0.5 : 1.0)
-                    .offset(
-                        x: someCardFlipped ? (isPiled ? pileX : 0) : spreadX,
-                        y: isPiled ? CGFloat(pileStackIndex(category)) * 5 : floatOffset * (index.isMultiple(of: 2) ? 1 : -1)
-                    )
-                    .rotation3DEffect(.degrees(isPiled ? -5 + Double(pileStackIndex(category)) * 3 : 0), axis: (x: 0, y: 0, z: 1))
-                    .opacity(isPiled ? 0.65 : 1.0)
-                    .zIndex(isThisFlipped ? 10 : Double(isPiled ? pileStackIndex(category) : index))
-                    // Appear animation
-                    .scaleEffect(cardsAppeared ? 1.0 : 0.2)
-                    .opacity(cardsAppeared ? 1.0 : 0)
-                    .animation(
-                        .spring(response: 0.5, dampingFraction: 0.65)
-                            .delay(Double(index) * 0.1),
-                        value: cardsAppeared
-                    )
-                    .animation(.spring(response: 0.55, dampingFraction: 0.75), value: flippedOpenCard)
-                    .onTapGesture {
+                // 3D flippable card — front and back in a ZStack
+                ZStack {
+                    // FRONT face — visible when angle < 90
+                    cardFront(category: category, isCompleted: isCompleted)
+                        .frame(width: cardW, height: cardH)
+                        .opacity(angle < 90 ? 1 : 0)
+
+                    // BACK face — visible when angle >= 90, counter-rotated so text reads correctly
+                    // Scales up from tiny to full size with a spring pop
+                    if let cardData = scienceCards.first(where: { $0.category == category }) {
+                        flippedCardBack(cardData: cardData, isCompleted: isCompleted)
+                            .frame(width: flippedW, height: flippedH)
+                            .scaleEffect(isThisFlipped ? 1.0 : 0.15)
+                            .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
+                            .opacity(angle >= 90 ? 1 : 0)
+                            .animation(.spring(response: 0.5, dampingFraction: 0.7), value: isThisFlipped)
+                    }
+                }
+                .rotation3DEffect(.degrees(angle), axis: (x: 0, y: 1, z: 0), perspective: 0.4)
+                .scaleEffect(isPiled ? 0.5 : 1.0)
+                .offset(
+                    x: someCardFlipped ? (isPiled ? pileX : 0) : spreadX,
+                    y: isPiled ? CGFloat(pileStackIndex(category)) * 5 : floatOffset * (index.isMultiple(of: 2) ? 1 : -1)
+                )
+                .rotation3DEffect(.degrees(isPiled ? -5 + Double(pileStackIndex(category)) * 3 : 0), axis: (x: 0, y: 0, z: 1))
+                .opacity(isPiled ? 0.65 : 1.0)
+                .zIndex(isThisFlipped ? 10 : Double(isPiled ? pileStackIndex(category) : index))
+                // Appear animation
+                .scaleEffect(cardsAppeared ? 1.0 : 0.2)
+                .opacity(cardsAppeared ? 1.0 : 0)
+                .animation(
+                    .spring(response: 0.5, dampingFraction: 0.65)
+                        .delay(Double(index) * 0.1),
+                    value: cardsAppeared
+                )
+                .animation(.spring(response: 0.6, dampingFraction: 0.75), value: flippedOpenCard)
+                .animation(.spring(response: 0.6, dampingFraction: 0.75), value: flipAngles[category])
+                .onTapGesture {
+                    // Only handle tap when showing front face or reading — not during activity
+                    if cardPhases[category] != .activity {
                         handleCardTap(category: category, isCompleted: isCompleted)
                     }
+                }
             }
         }
     }
@@ -356,17 +366,31 @@ struct ForestMapView: View {
         return others.firstIndex(of: category) ?? 0
     }
 
-    /// Handle tap on a card — flip or go to activity
+    /// Handle tap on a card — 3D flip or unflip
     private func handleCardTap(category: ForestCardCategory, isCompleted: Bool) {
-        if isCompleted { return }
+        if isCompleted && flippedOpenCard != category { return }
 
         if flippedOpenCard == category {
-            // Already flipped — go to activity
-            openActivityForCard(category)
+            // Tapping the flipped card — unflip back to front
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.75)) {
+                flipAngles[category] = 0
+                flippedOpenCard = nil
+                if cardPhases[category] == .activity {
+                    activeCard = nil
+                }
+            }
         } else {
-            // Flip this card: it scales up centered, others pile left
-            withAnimation(.spring(response: 0.55, dampingFraction: 0.75)) {
+            // Unflip any currently open card first
+            if let current = flippedOpenCard {
+                flipAngles[current] = 0
+                if cardPhases[current] == .activity {
+                    activeCard = nil
+                }
+            }
+            // Flip this card with 3D rotation, others pile left
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.75)) {
                 flippedOpenCard = category
+                flipAngles[category] = 180
                 flippedCards.insert(category)
                 cardPhases[category] = .reading
             }
@@ -377,27 +401,71 @@ struct ForestMapView: View {
 
     private func cardFront(category: ForestCardCategory, isCompleted: Bool) -> some View {
         ZStack {
-            // Aura glow layer (behind the glass card)
-            if !isCompleted {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(
-                        AngularGradient(
-                            colors: [
-                                category.color.opacity(0.6),
-                                category.color.opacity(0.1),
-                                RenaissanceColors.goldSuccess.opacity(0.4),
-                                category.color.opacity(0.1),
-                                category.color.opacity(0.6),
-                            ],
-                            center: .center,
-                            angle: .degrees(auraAngle)
-                        )
-                    )
-                    .blur(radius: 12)
-                    .frame(width: cardW + 16, height: cardH + 16)
-            }
+            // Layer 1: Glass background + aurora blobs
+            RoundedRectangle(cornerRadius: 14)
+                .fill(
+                    isCompleted
+                    ? RenaissanceColors.sageGreen.opacity(0.06)
+                    : RenaissanceColors.parchmentLight.opacity(0.5)
+                )
+                .overlay(
+                    Group {
+                        if !isCompleted {
+                            RoundedRectangle(cornerRadius: 14)
+                                .fill(.ultraThinMaterial)
+                        }
+                    }
+                )
+                // Aurora blobs on top of glass, below content
+                .overlay(
+                    ZStack {
+                        if !isCompleted {
+                            Ellipse()
+                                .fill(category.color.opacity(0.55))
+                                .frame(width: 180, height: 120)
+                                .blur(radius: 38)
+                                .offset(
+                                    x: auroraPhase ? 40 : -30,
+                                    y: auroraPhase ? 100 : 130
+                                )
+                                .animation(.easeInOut(duration: 4.0).repeatForever(autoreverses: true), value: auroraPhase)
 
-            // Glass card body
+                            Ellipse()
+                                .fill(category.color.opacity(0.4))
+                                .frame(width: 128, height: 165)
+                                .blur(radius: 33)
+                                .offset(
+                                    x: auroraPhase ? -35 : 25,
+                                    y: auroraPhase ? 110 : 140
+                                )
+                                .animation(.easeInOut(duration: 5.5).repeatForever(autoreverses: true), value: auroraPhase)
+
+                            Ellipse()
+                                .fill(RenaissanceColors.goldSuccess.opacity(0.3))
+                                .frame(width: 135, height: 90)
+                                .blur(radius: 36)
+                                .offset(
+                                    x: auroraPhase ? 20 : -40,
+                                    y: auroraPhase ? 105 : 135
+                                )
+                                .animation(.easeInOut(duration: 6.5).repeatForever(autoreverses: true), value: auroraPhase)
+
+                            Circle()
+                                .fill(Color.white.opacity(0.25))
+                                .frame(width: 82, height: 82)
+                                .blur(radius: 27)
+                                .offset(
+                                    x: auroraPhase ? -15 : 30,
+                                    y: auroraPhase ? 115 : 120
+                                )
+                                .animation(.easeInOut(duration: 3.5).repeatForever(autoreverses: true), value: auroraPhase)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                )
+
+            // Layer 2: Content (icon + title) — always in front
             VStack(spacing: 12) {
                 Spacer()
 
@@ -414,7 +482,7 @@ struct ForestMapView: View {
 
                 Text(category.rawValue)
                     .font(.custom("Cinzel-Bold", size: 15))
-                    .foregroundStyle(isCompleted ? RenaissanceColors.sageGreen : RenaissanceColors.sepiaInk)
+                    .foregroundStyle(isCompleted ? RenaissanceColors.sageGreen : category.color)
 
                 if !isCompleted {
                     Image(systemName: "hand.tap.fill")
@@ -424,140 +492,145 @@ struct ForestMapView: View {
 
                 Spacer()
             }
-            .frame(width: cardW, height: cardH)
-            .background(
-                ZStack {
-                    // Frosted glass layers
-                    RoundedRectangle(cornerRadius: 14)
-                        .fill(
-                            isCompleted
-                            ? RenaissanceColors.sageGreen.opacity(0.06)
-                            : RenaissanceColors.parchmentLight.opacity(0.5)
-                        )
-                    RoundedRectangle(cornerRadius: 14)
-                        .fill(.ultraThinMaterial)
-                        .opacity(isCompleted ? 0 : 1)
-                    // Inner shimmer highlight
-                    if !isCompleted {
-                        RoundedRectangle(cornerRadius: 14)
-                            .fill(
-                                LinearGradient(
-                                    colors: [
-                                        Color.white.opacity(0.25),
-                                        Color.white.opacity(0.0),
-                                        Color.white.opacity(0.1),
-                                    ],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-                    }
-                }
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 14)
-                    .stroke(
-                        LinearGradient(
-                            colors: isCompleted
-                                ? [RenaissanceColors.sageGreen.opacity(0.4)]
-                                : [
-                                    category.color.opacity(0.6),
-                                    Color.white.opacity(0.3),
-                                    category.color.opacity(0.4),
-                                ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: isCompleted ? 1.5 : 2
-                    )
-            )
-            .shadow(color: isCompleted ? .clear : category.color.opacity(0.3), radius: 10, y: 4)
         }
+        .frame(width: cardW, height: cardH)
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(
+                    isCompleted
+                    ? RenaissanceColors.sageGreen.opacity(0.4)
+                    : category.color.opacity(0.3),
+                    lineWidth: 1.5
+                )
+        )
+        .shadow(color: isCompleted ? .clear : category.color.opacity(0.5), radius: 20, y: 6)
+        .shadow(color: isCompleted ? .clear : category.color.opacity(0.3), radius: 40, y: 10)
     }
 
-    // MARK: - Flipped Card Back (full-size, centered, with highlighted keywords + visual space)
+    // MARK: - Flipped Card Back (reading ↔ activity fade on same card)
 
     private func flippedCardBack(cardData: ScienceCardData, isCompleted: Bool) -> some View {
-        VStack(spacing: 0) {
-            // Category header
+        let isActivity = cardPhases[cardData.category] == .activity
+
+        return VStack(spacing: 0) {
+            // Category header — always visible
             HStack(spacing: 8) {
                 Image(systemName: cardData.category.icon)
-                    .font(.system(size: 20))
+                    .font(.system(size: 16))
                 Text(cardData.category.rawValue)
-                    .font(.custom("Cinzel-Bold", size: 20))
+                    .font(.custom("Cinzel-Bold", size: 16))
+                Spacer()
+                if isActivity {
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.4)) {
+                            cardPhases[cardData.category] = .reading
+                            activeCard = nil
+                        }
+                    } label: {
+                        HStack(spacing: 3) {
+                            Image(systemName: "arrow.left")
+                                .font(.system(size: 10))
+                            Text("Lesson")
+                                .font(.custom("EBGaramond-Medium", size: 11))
+                        }
+                        .foregroundStyle(cardData.category.color.opacity(0.6))
+                    }
+                }
+                if isCompleted {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 16))
+                        .foregroundStyle(RenaissanceColors.sageGreen)
+                }
             }
             .foregroundStyle(cardData.category.color)
-            .padding(.top, 16)
-            .padding(.bottom, 8)
+            .padding(.top, 12)
+            .padding(.bottom, 6)
+            .padding(.horizontal, 4)
 
             Rectangle()
                 .fill(cardData.category.color.opacity(0.2))
                 .frame(height: 1)
-                .padding(.horizontal, 12)
+                .padding(.horizontal, 8)
 
-            // Visual area — decorative science illustration placeholder
-            HStack(spacing: 12) {
-                ForEach(cardData.keywords.prefix(4)) { pair in
-                    VStack(spacing: 4) {
-                        Circle()
+            // Content area — fades between reading and activity
+            ZStack {
+                // READING content
+                if !isActivity {
+                    VStack(spacing: 0) {
+                        // Keyword circles
+                        HStack(spacing: 10) {
+                            ForEach(cardData.keywords.prefix(4)) { pair in
+                                VStack(spacing: 3) {
+                                    Circle()
+                                        .fill(cardData.category.color.opacity(0.1))
+                                        .frame(width: 36, height: 36)
+                                        .overlay(
+                                            Image(systemName: cardData.category.icon)
+                                                .font(.system(size: 14))
+                                                .foregroundStyle(cardData.category.color.opacity(0.5))
+                                        )
+                                    Text(pair.keyword)
+                                        .font(.custom("EBGaramond-SemiBold", size: 9))
+                                        .foregroundStyle(cardData.category.color)
+                                        .lineLimit(1)
+                                }
+                            }
+                        }
+                        .padding(.vertical, 8)
+
+                        Rectangle()
                             .fill(cardData.category.color.opacity(0.1))
-                            .frame(width: 44, height: 44)
-                            .overlay(
-                                Image(systemName: cardData.category.icon)
-                                    .font(.system(size: 18))
-                                    .foregroundStyle(cardData.category.color.opacity(0.5))
-                            )
-                        Text(pair.keyword)
-                            .font(.custom("Mulish-SemiBold", size: 10))
-                            .foregroundStyle(cardData.category.color)
-                            .lineLimit(1)
+                            .frame(height: 1)
+                            .padding(.horizontal, 8)
+
+                        // Lesson text with highlighted keywords
+                        ScrollView(.vertical, showsIndicators: false) {
+                            highlightedLessonText(cardData: cardData)
+                                .padding(.top, 8)
+                        }
+
+                        Spacer(minLength: 6)
+
+                        if !isCompleted {
+                            Button {
+                                openActivityForCard(cardData.category)
+                            } label: {
+                                Text("Done Reading")
+                                    .font(.custom("EBGaramond-SemiBold", size: 14))
+                                    .foregroundStyle(.white)
+                                    .padding(.vertical, 9)
+                                    .frame(maxWidth: .infinity)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 9)
+                                            .fill(cardData.category.color)
+                                    )
+                            }
+                        }
                     }
+                    .transition(.opacity)
+                }
+
+                // ACTIVITY content (keyword matching)
+                if isActivity {
+                    ScrollView(.vertical, showsIndicators: false) {
+                        activityPhaseView(cardData: cardData)
+                    }
+                    .transition(.opacity)
                 }
             }
-            .padding(.vertical, 12)
-            .padding(.horizontal, 8)
-
-            Rectangle()
-                .fill(cardData.category.color.opacity(0.1))
-                .frame(height: 1)
-                .padding(.horizontal, 12)
-
-            // Lesson text with highlighted keywords
-            ScrollView(.vertical, showsIndicators: false) {
-                highlightedLessonText(cardData: cardData)
-                    .padding(.top, 10)
-            }
-            .padding(.horizontal, 4)
-
-            Spacer(minLength: 8)
-
-            if !isCompleted {
-                Button {
-                    openActivityForCard(cardData.category)
-                } label: {
-                    Text("Done Reading")
-                        .font(.custom("Mulish-SemiBold", size: 16))
-                        .foregroundStyle(.white)
-                        .padding(.vertical, 11)
-                        .frame(maxWidth: .infinity)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(cardData.category.color)
-                        )
-                }
-            }
+            .animation(.easeInOut(duration: 0.4), value: isActivity)
         }
-        .padding(16)
-        .frame(width: flippedW, height: flippedH)
+        .padding(12)
         .background(
-            RoundedRectangle(cornerRadius: 18)
+            RoundedRectangle(cornerRadius: 14)
                 .fill(RenaissanceColors.parchment)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 18)
-                .stroke(cardData.category.color.opacity(0.4), lineWidth: 2.5)
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(cardData.category.color.opacity(0.4), lineWidth: 2)
         )
-        .shadow(color: cardData.category.color.opacity(0.2), radius: 14, y: 5)
+        .shadow(color: cardData.category.color.opacity(0.15), radius: 8, y: 3)
     }
 
     // MARK: - Highlighted Lesson Text (keywords colored by category)
@@ -574,13 +647,11 @@ struct ForestMapView: View {
         while !remaining.isEmpty {
             // Find the earliest keyword match
             var earliestRange: Range<String.Index>? = nil
-            var earliestKeyword = ""
 
             for kw in keywords {
                 if let range = remaining.range(of: kw, options: .caseInsensitive) {
                     if earliestRange == nil || range.lowerBound < earliestRange!.lowerBound {
                         earliestRange = range
-                        earliestKeyword = kw
                     }
                 }
             }
@@ -606,11 +677,11 @@ struct ForestMapView: View {
         for (text, isKeyword) in segments {
             if isKeyword {
                 result = result + Text(text)
-                    .font(.custom("Mulish-SemiBold", size: 15))
+                    .font(.custom("EBGaramond-SemiBold", size: 15))
                     .foregroundColor(color)
             } else {
                 result = result + Text(text)
-                    .font(.custom("Mulish-Light", size: 15))
+                    .font(.custom("EBGaramond-Regular", size: 15))
                     .foregroundColor(RenaissanceColors.sepiaInk)
             }
         }
@@ -618,57 +689,16 @@ struct ForestMapView: View {
         return result
     }
 
-    // MARK: - Activity Card View (keyword matching)
-
-    private func activityCardView(cardData: ScienceCardData) -> some View {
-        VStack(spacing: 14) {
-            HStack {
-                Button {
-                    closeActiveCard()
-                } label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: "chevron.left")
-                        Text("Back to Cards")
-                    }
-                    .font(.custom("Mulish-Medium", size: 14))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
-                }
-                Spacer()
-                Image(systemName: cardData.category.icon)
-                    .font(.system(size: 18))
-                    .foregroundStyle(cardData.category.color)
-                Text(cardData.category.rawValue)
-                    .font(.custom("Cinzel-Bold", size: 16))
-                    .foregroundStyle(cardData.category.color)
-            }
-
-            Divider()
-
-            activityPhaseView(cardData: cardData)
-        }
-        .padding(20)
-        .frame(maxWidth: 420)
-        .background(
-            RoundedRectangle(cornerRadius: 14)
-                .fill(RenaissanceColors.parchmentLight)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .stroke(cardData.category.color.opacity(0.4), lineWidth: 2)
-        )
-        .shadow(color: cardData.category.color.opacity(0.2), radius: 10, y: 4)
-    }
-
     // MARK: - Activity Phase (Keyword Matching)
 
     private func activityPhaseView(cardData: ScienceCardData) -> some View {
-        VStack(spacing: 14) {
+        VStack(spacing: 10) {
             Text("Match each term to its meaning")
-                .font(.custom("Mulish-Medium", size: 13))
+                .font(.custom("EBGaramond-Medium", size: 12))
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
 
             // Keywords column
-            VStack(spacing: 8) {
+            VStack(spacing: 6) {
                 ForEach(cardData.keywords) { pair in
                     let isMatched = matchedPairIDs.contains(pair.id)
                     let isSelected = selectedKeywordID == pair.id
@@ -682,7 +712,7 @@ struct ForestMapView: View {
                                 .foregroundStyle(isMatched ? RenaissanceColors.sageGreen : cardData.category.color.opacity(0.4))
 
                             Text(pair.keyword)
-                                .font(.custom("Mulish-SemiBold", size: 14))
+                                .font(.custom("EBGaramond-SemiBold", size: 14))
                                 .foregroundStyle(
                                     isMatched ? RenaissanceColors.sageGreen
                                     : isSelected ? cardData.category.color
@@ -691,10 +721,10 @@ struct ForestMapView: View {
 
                             Spacer()
                         }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
                         .background(
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: 7)
                                 .fill(
                                     isMatched ? RenaissanceColors.sageGreen.opacity(0.08)
                                     : isSelected ? cardData.category.color.opacity(0.12)
@@ -702,7 +732,7 @@ struct ForestMapView: View {
                                 )
                         )
                         .overlay(
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: 7)
                                 .stroke(
                                     isSelected ? cardData.category.color.opacity(0.6) : Color.clear,
                                     lineWidth: 1.5
@@ -729,7 +759,7 @@ struct ForestMapView: View {
             }
 
             // Definitions column (shuffled)
-            VStack(spacing: 8) {
+            VStack(spacing: 6) {
                 ForEach(shuffledDefinitions) { pair in
                     let isMatched = matchedPairIDs.contains(pair.id)
                     let isSelected = selectedDefinitionID == pair.id
@@ -740,7 +770,7 @@ struct ForestMapView: View {
                     } label: {
                         HStack {
                             Text(pair.definition)
-                                .font(.custom("Mulish-Light", size: 13))
+                                .font(.custom("EBGaramond-Regular", size: 13))
                                 .foregroundStyle(
                                     isWrong ? RenaissanceColors.errorRed
                                     : isMatched ? RenaissanceColors.sageGreen
@@ -757,10 +787,10 @@ struct ForestMapView: View {
                                     .foregroundStyle(RenaissanceColors.sageGreen)
                             }
                         }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
                         .background(
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: 7)
                                 .fill(
                                     isWrong ? RenaissanceColors.errorRed.opacity(0.08)
                                     : isMatched ? RenaissanceColors.sageGreen.opacity(0.08)
@@ -769,7 +799,7 @@ struct ForestMapView: View {
                                 )
                         )
                         .overlay(
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: 7)
                                 .stroke(
                                     isWrong ? RenaissanceColors.errorRed.opacity(0.5)
                                     : isSelected ? cardData.category.color.opacity(0.5)
@@ -866,7 +896,7 @@ struct ForestMapView: View {
 
     // MARK: - Card Actions
 
-    /// User tapped "Done Reading" — open the keyword matching activity
+    /// User tapped "Done Reading" — fade to keyword matching on the same card
     private func openActivityForCard(_ category: ForestCardCategory) {
         if let cardData = scienceCards.first(where: { $0.category == category }) {
             shuffledDefinitions = cardData.keywords.shuffled()
@@ -875,27 +905,35 @@ struct ForestMapView: View {
             selectedDefinitionID = nil
         }
 
-        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+        withAnimation(.easeInOut(duration: 0.4)) {
             activeCard = category
             cardPhases[category] = .activity
         }
     }
 
-    /// Close the activity view and return to the card row
+    /// Close the activity view and return to reading on the same card
     private func closeActiveCard() {
-        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-            activeCard = nil
-            flippedOpenCard = nil
+        if let category = activeCard {
+            withAnimation(.easeInOut(duration: 0.4)) {
+                cardPhases[category] = .reading
+                activeCard = nil
+            }
         }
     }
 
-    /// Mark a card as completed after all keyword pairs are matched
+    /// Mark a card as completed — flip it back to front showing green checkmark
     private func completeCard(_ category: ForestCardCategory) {
         withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
             cardPhases[category] = .completed
             completedCards.insert(category)
             activeCard = nil
-            flippedOpenCard = nil
+        }
+        // Flip the card back to show the completed front face
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.75)) {
+                flipAngles[category] = 0
+                flippedOpenCard = nil
+            }
         }
     }
 
@@ -917,7 +955,7 @@ struct ForestMapView: View {
             Text(count == 0 ? "Tap a card to discover this tree's secrets!"
                  : count < 4 ? "\(4 - count) card\(4 - count == 1 ? "" : "s") left — keep going!"
                  : "All done! Collect your timber!")
-                .font(.custom("Mulish-Light", size: 13))
+                .font(.custom("EBGaramond-Regular", size: 13))
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
         }
         .padding(.horizontal, 12)
@@ -943,7 +981,7 @@ struct ForestMapView: View {
                     Text(allDone
                          ? "Collect Timber (+\(poi.timberYield) 🪵)"
                          : "Complete all cards to collect")
-                        .font(.custom("Mulish-SemiBold", size: 15))
+                        .font(.custom("EBGaramond-SemiBold", size: 15))
                 }
                 .foregroundStyle(.white)
                 .padding(.vertical, 11)
@@ -961,7 +999,7 @@ struct ForestMapView: View {
                 dismissScienceCards()
             } label: {
                 Text("Continue Exploring")
-                    .font(.custom("Mulish-Light", size: 13))
+                    .font(.custom("EBGaramond-Regular", size: 13))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
             }
         }
@@ -971,7 +1009,7 @@ struct ForestMapView: View {
 
     private func poiBadge(_ text: String, color: Color) -> some View {
         Text(text)
-            .font(.custom("Mulish-Medium", size: 11))
+            .font(.custom("EBGaramond-Medium", size: 11))
             .foregroundStyle(RenaissanceColors.sepiaInk)
             .padding(.horizontal, 8)
             .padding(.vertical, 3)
@@ -1005,11 +1043,11 @@ struct ForestMapView: View {
 
                 HStack(spacing: 8) {
                     Text(truffle.italianName)
-                        .font(.custom("Mulish-Light", size: 14))
+                        .font(.custom("EBGaramond-Regular", size: 14))
                         .foregroundStyle(RenaissanceColors.warmBrown)
 
                     Text(truffle.rarity)
-                        .font(.custom("Mulish-SemiBold", size: 11))
+                        .font(.custom("EBGaramond-SemiBold", size: 11))
                         .foregroundStyle(truffle.rarity == "Rare" ? RenaissanceColors.goldSuccess : RenaissanceColors.sepiaInk)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
@@ -1022,7 +1060,7 @@ struct ForestMapView: View {
                 }
 
                 Text(truffle.description)
-                    .font(.custom("Mulish-Light", size: 14))
+                    .font(.custom("EBGaramond-Regular", size: 14))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.75))
                     .multilineTextAlignment(.center)
                     .lineLimit(3)
@@ -1032,7 +1070,7 @@ struct ForestMapView: View {
                         .frame(width: 40, height: 40)
 
                     Text(birdTruffleAdvice(for: truffle))
-                        .font(.custom("Mulish-Light", size: 13))
+                        .font(.custom("EBGaramond-Regular", size: 13))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.75))
                         .lineLimit(3)
                 }
@@ -1049,7 +1087,7 @@ struct ForestMapView: View {
                         Image(systemName: "dollarsign.circle.fill")
                             .font(.body)
                         Text("Sell at Market (+\(truffle.value) florins)")
-                            .font(.custom("Mulish-SemiBold", size: 16))
+                            .font(.custom("EBGaramond-SemiBold", size: 16))
                     }
                     .foregroundStyle(.white)
                     .padding(.vertical, 12)
@@ -1066,7 +1104,7 @@ struct ForestMapView: View {
                     }
                 } label: {
                     Text("Keep Exploring")
-                        .font(.custom("Mulish-Light", size: 14))
+                        .font(.custom("EBGaramond-Regular", size: 14))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                 }
             }
@@ -1174,14 +1212,14 @@ struct ForestMapView: View {
                             Image(systemName: "chevron.left")
                             Text("Workshop")
                         }
-                        .font(.custom("Mulish-Light", size: 16))
+                        .font(.custom("EBGaramond-Regular", size: 16))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
                         .glassButton(shape: Capsule())
                     }
                     Text("Italian Forest")
-                        .font(.custom("Mulish-SemiBold", size: 22))
+                        .font(.custom("EBGaramond-SemiBold", size: 22))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 10)
@@ -1204,7 +1242,7 @@ struct ForestMapView: View {
                                 Text(material.icon)
                                     .font(.caption)
                                 Text("\(count)")
-                                    .font(.custom("Mulish-Light", size: 12))
+                                    .font(.custom("EBGaramond-Regular", size: 12))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                             .padding(.horizontal, 6)
@@ -1231,7 +1269,7 @@ struct ForestMapView: View {
                                 Text(item.icon)
                                     .font(.caption)
                                 Text("\(count)")
-                                    .font(.custom("Mulish-Light", size: 12))
+                                    .font(.custom("EBGaramond-Regular", size: 12))
                                     .foregroundStyle(RenaissanceColors.sageGreen)
                             }
                             .padding(.horizontal, 6)

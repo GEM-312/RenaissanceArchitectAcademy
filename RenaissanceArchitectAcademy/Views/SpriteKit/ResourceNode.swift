@@ -491,7 +491,7 @@ class ResourceNode: SKNode {
 
     private func setupCountLabel() {
         countLabel = SKLabelNode(text: "")
-        countLabel?.fontName = "Mulish-Light"
+        countLabel?.fontName = "EBGaramond-Regular"
         countLabel?.fontSize = 32
         countLabel?.fontColor = PlatformColor(RenaissanceColors.warmBrown)
         countLabel?.position = CGPoint(x: 0, y: -175)

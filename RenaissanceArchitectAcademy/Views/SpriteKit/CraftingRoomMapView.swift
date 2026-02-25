@@ -48,7 +48,7 @@ struct CraftingRoomMapView: View {
                 if let status = workshop.statusMessage {
                     VStack {
                         Text(status)
-                            .font(.custom("Mulish-Light", size: 14))
+                            .font(.custom("EBGaramond-Regular", size: 14))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 6)
@@ -193,7 +193,7 @@ struct CraftingRoomMapView: View {
                             Image(systemName: "arrow.left")
                             Text("Back")
                         }
-                        .font(.custom("Mulish-Light", size: 16))
+                        .font(.custom("EBGaramond-Regular", size: 16))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
@@ -228,7 +228,7 @@ struct CraftingRoomMapView: View {
                             HStack(spacing: 3) {
                                 Text(material.icon).font(.caption)
                                 Text("\(count)")
-                                    .font(.custom("Mulish-Light", size: 12))
+                                    .font(.custom("EBGaramond-Regular", size: 12))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                             .padding(.horizontal, 6)
@@ -252,7 +252,7 @@ struct CraftingRoomMapView: View {
                             HStack(spacing: 3) {
                                 Text(item.icon).font(.caption)
                                 Text("\(count)")
-                                    .font(.custom("Mulish-Light", size: 12))
+                                    .font(.custom("EBGaramond-Regular", size: 12))
                                     .foregroundStyle(RenaissanceColors.sageGreen)
                             }
                             .padding(.horizontal, 6)
@@ -300,7 +300,7 @@ struct CraftingRoomMapView: View {
                             HStack(spacing: 6) {
                                 Text(recipe.output.icon)
                                 Text(recipe.output.rawValue)
-                                    .font(.custom("Mulish-Light", size: 15))
+                                    .font(.custom("EBGaramond-Regular", size: 15))
                                     .foregroundStyle(RenaissanceColors.sageGreen)
                                 Image(systemName: "checkmark.circle.fill")
                                     .foregroundStyle(RenaissanceColors.sageGreen)
@@ -308,7 +308,7 @@ struct CraftingRoomMapView: View {
                             }
                         } else {
                             Text("Add 4 materials to discover a recipe")
-                                .font(.custom("Mulish-Light", size: 14))
+                                .font(.custom("EBGaramond-Regular", size: 14))
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                         }
                     }
@@ -336,10 +336,10 @@ struct CraftingRoomMapView: View {
                                         Text(material.icon)
                                             .font(.title3)
                                         Text(material.rawValue)
-                                            .font(.custom("Mulish-Light", size: 10))
+                                            .font(.custom("EBGaramond-Regular", size: 10))
                                             .foregroundStyle(RenaissanceColors.sepiaInk)
                                         Text("\u{00D7}\(count)")
-                                            .font(.custom("Mulish-Light", size: 11))
+                                            .font(.custom("EBGaramond-Regular", size: 11))
                                             .foregroundStyle(RenaissanceColors.sepiaInk)
                                     }
                                     .padding(6)
@@ -359,7 +359,7 @@ struct CraftingRoomMapView: View {
                     Button("Clear") {
                         withAnimation { workshop.clearWorkbench() }
                     }
-                    .font(.custom("Mulish-Light", size: 15))
+                    .font(.custom("EBGaramond-Regular", size: 15))
                     .padding(.horizontal, 20)
                     .padding(.vertical, 8)
                     .background(
@@ -389,7 +389,7 @@ struct CraftingRoomMapView: View {
                     Spacer()
 
                     Button("Close") { dismissOverlay() }
-                        .font(.custom("Mulish-Light", size: 15))
+                        .font(.custom("EBGaramond-Regular", size: 15))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
             }
@@ -446,7 +446,7 @@ struct CraftingRoomMapView: View {
                             .font(.custom("EBGaramond-SemiBold", size: 20))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("Set temperature and fire your mixture")
-                            .font(.custom("Mulish-Light", size: 14))
+                            .font(.custom("EBGaramond-Regular", size: 14))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                     }
 
@@ -475,7 +475,7 @@ struct CraftingRoomMapView: View {
                             HStack(spacing: 4) {
                                 ForEach(Array(input.keys.sorted(by: { $0.rawValue < $1.rawValue })), id: \.self) { material in
                                     Text("\(material.icon)\u{00D7}\(input[material]!)")
-                                        .font(.custom("Mulish-Light", size: 13))
+                                        .font(.custom("EBGaramond-Regular", size: 13))
                                 }
                             }
                             if let recipe = workshop.currentRecipe {
@@ -484,14 +484,14 @@ struct CraftingRoomMapView: View {
                                         .font(.caption)
                                     Text(recipe.output.icon)
                                     Text(recipe.output.rawValue)
-                                        .font(.custom("Mulish-Light", size: 13))
+                                        .font(.custom("EBGaramond-Regular", size: 13))
                                 }
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                         }
                     } else {
                         Text("Mix ingredients at the Workbench first")
-                            .font(.custom("Mulish-Light", size: 14))
+                            .font(.custom("EBGaramond-Regular", size: 14))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                 }
@@ -499,7 +499,7 @@ struct CraftingRoomMapView: View {
                 // Temperature picker
                 VStack(spacing: 4) {
                     Text("Temperature")
-                        .font(.custom("Mulish-Light", size: 13))
+                        .font(.custom("EBGaramond-Regular", size: 13))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     Picker("Temperature", selection: $workshop.furnaceTemperature) {
@@ -538,7 +538,7 @@ struct CraftingRoomMapView: View {
                     Spacer()
 
                     Button("Close") { dismissOverlay() }
-                        .font(.custom("Mulish-Light", size: 15))
+                        .font(.custom("EBGaramond-Regular", size: 15))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
             }
@@ -567,7 +567,7 @@ struct CraftingRoomMapView: View {
                             .font(.custom("EBGaramond-SemiBold", size: 20))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("Collect & grind pigments for fresco painting")
-                            .font(.custom("Mulish-Light", size: 14))
+                            .font(.custom("EBGaramond-Regular", size: 14))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                     }
 
@@ -611,18 +611,18 @@ struct CraftingRoomMapView: View {
                                 Text(material.icon)
                                     .font(.title2)
                                 Text(material.rawValue)
-                                    .font(.custom("Mulish-Light", size: 11))
+                                    .font(.custom("EBGaramond-Regular", size: 11))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                                     .lineLimit(1)
                                 HStack(spacing: 2) {
                                     Text("×\(stock)")
-                                        .font(.custom("Mulish-Light", size: 12))
+                                        .font(.custom("EBGaramond-Regular", size: 12))
                                         .foregroundStyle(stock > 0 ? RenaissanceColors.sageGreen : RenaissanceColors.sepiaInk)
                                     Image(systemName: "dollarsign.circle.fill")
                                         .font(.system(size: 9))
                                         .foregroundStyle(RenaissanceColors.sepiaInk)
                                     Text("\(material.cost)")
-                                        .font(.custom("Mulish-Light", size: 11))
+                                        .font(.custom("EBGaramond-Regular", size: 11))
                                         .foregroundStyle(canAfford ? RenaissanceColors.sepiaInk : RenaissanceColors.errorRed)
                                 }
                             }
@@ -666,13 +666,13 @@ struct CraftingRoomMapView: View {
                 }
 
                 Text("Collect pigments above, then mix at the Workbench")
-                    .font(.custom("Mulish-Light", size: 12))
+                    .font(.custom("EBGaramond-Regular", size: 12))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 HStack {
                     Spacer()
                     Button("Close") { dismissOverlay() }
-                        .font(.custom("Mulish-Light", size: 15))
+                        .font(.custom("EBGaramond-Regular", size: 15))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
             }
@@ -699,7 +699,7 @@ struct CraftingRoomMapView: View {
                 HStack(spacing: 4) {
                     ForEach(Array(recipe.ingredients.keys.sorted(by: { $0.rawValue < $1.rawValue })), id: \.self) { material in
                         Text("\(material.icon)\u{00D7}\(recipe.ingredients[material]!)")
-                            .font(.custom("Mulish-Light", size: 12))
+                            .font(.custom("EBGaramond-Regular", size: 12))
                     }
                 }
                 .foregroundStyle(RenaissanceColors.sepiaInk)
@@ -736,7 +736,7 @@ struct CraftingRoomMapView: View {
                             .font(.custom("EBGaramond-SemiBold", size: 20))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("Your collected materials and crafted items")
-                            .font(.custom("Mulish-Light", size: 14))
+                            .font(.custom("EBGaramond-Regular", size: 14))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                     }
 
@@ -753,7 +753,7 @@ struct CraftingRoomMapView: View {
 
                     if materialsWithStock.isEmpty {
                         Text("No materials collected yet. Visit the outdoor workshop to gather resources!")
-                            .font(.custom("Mulish-Light", size: 13))
+                            .font(.custom("EBGaramond-Regular", size: 13))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     } else {
                         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 5), spacing: 8) {
@@ -763,11 +763,11 @@ struct CraftingRoomMapView: View {
                                     Text(material.icon)
                                         .font(.title3)
                                     Text(material.rawValue)
-                                        .font(.custom("Mulish-Light", size: 9))
+                                        .font(.custom("EBGaramond-Regular", size: 9))
                                         .foregroundStyle(RenaissanceColors.sepiaInk)
                                         .lineLimit(1)
                                     Text("\u{00D7}\(count)")
-                                        .font(.custom("Mulish-Light", size: 11))
+                                        .font(.custom("EBGaramond-Regular", size: 11))
                                         .foregroundStyle(RenaissanceColors.sepiaInk)
                                 }
                                 .padding(4)
@@ -792,7 +792,7 @@ struct CraftingRoomMapView: View {
 
                     if craftedWithStock.isEmpty {
                         Text("Nothing crafted yet. Mix materials at the Workbench, then fire in the Furnace!")
-                            .font(.custom("Mulish-Light", size: 13))
+                            .font(.custom("EBGaramond-Regular", size: 13))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     } else {
                         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 4), spacing: 8) {
@@ -802,11 +802,11 @@ struct CraftingRoomMapView: View {
                                     Text(item.icon)
                                         .font(.title2)
                                     Text(item.rawValue)
-                                        .font(.custom("Mulish-Light", size: 10))
+                                        .font(.custom("EBGaramond-Regular", size: 10))
                                         .foregroundStyle(RenaissanceColors.sepiaInk)
                                         .lineLimit(1)
                                     Text("\u{00D7}\(count)")
-                                        .font(.custom("Mulish-Light", size: 11))
+                                        .font(.custom("EBGaramond-Regular", size: 11))
                                         .foregroundStyle(RenaissanceColors.sageGreen)
                                 }
                                 .padding(6)
@@ -826,7 +826,7 @@ struct CraftingRoomMapView: View {
                 HStack {
                     Spacer()
                     Button("Close") { dismissOverlay() }
-                        .font(.custom("Mulish-Light", size: 15))
+                        .font(.custom("EBGaramond-Regular", size: 15))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
             }
@@ -850,7 +850,7 @@ struct CraftingRoomMapView: View {
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 Text(workshop.educationalText)
-                    .font(.custom("Mulish-Light", size: 17, relativeTo: .body))
+                    .font(.custom("EBGaramond-Regular", size: 17, relativeTo: .body))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
@@ -858,7 +858,7 @@ struct CraftingRoomMapView: View {
                 Button("Continue") {
                     workshop.showEducationalPopup = false
                 }
-                .font(.custom("Mulish-Light", size: 18))
+                .font(.custom("EBGaramond-Regular", size: 18))
                 .padding(.horizontal, 32)
                 .padding(.vertical, 10)
                 .background(
@@ -896,7 +896,7 @@ struct CraftingRoomMapView: View {
                             .font(.custom("Cinzel-Bold", size: 22))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("Here's how to earn more:")
-                            .font(.custom("Mulish-Light", size: 14))
+                            .font(.custom("EBGaramond-Regular", size: 14))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                     }
                 }
@@ -925,7 +925,7 @@ struct CraftingRoomMapView: View {
                 Button("Maybe Later") {
                     workshop.showEarnFlorinsOverlay = false
                 }
-                .font(.custom("Mulish-Light", size: 15))
+                .font(.custom("EBGaramond-Regular", size: 15))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
             }
             .padding(24)
@@ -957,7 +957,7 @@ struct CraftingRoomMapView: View {
                 Spacer()
 
                 Text(reward)
-                    .font(.custom("Mulish-SemiBold", size: 13))
+                    .font(.custom("EBGaramond-SemiBold", size: 13))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 Image(systemName: "chevron.right")
@@ -984,7 +984,7 @@ struct CraftingRoomMapView: View {
                         .font(.caption)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text("Craft \(assignment.targetItem.icon) \(assignment.targetItem.rawValue)")
-                        .font(.custom("Mulish-Medium", size: 13))
+                        .font(.custom("EBGaramond-Medium", size: 13))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text("+\(assignment.rewardFlorins)")
                         .font(.custom("Cinzel-Bold", size: 13))

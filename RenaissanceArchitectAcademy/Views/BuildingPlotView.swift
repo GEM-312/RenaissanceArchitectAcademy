@@ -44,7 +44,7 @@ struct BuildingPlotView: View {
                                 .fill(RenaissanceColors.terracotta.opacity(0.15))
                                 .frame(width: iconSize + 16, height: iconSize + 16)
                             Image(systemName: plot.building.iconName)
-                                .font(.custom("Mulish-Light", size: iconSize, relativeTo: .body))
+                                .font(.custom("EBGaramond-Regular", size: iconSize, relativeTo: .body))
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                         } else if plot.sketchingProgress.isSketchingComplete {
                             // State 2: Sketched — sepia ink drawing
@@ -52,7 +52,7 @@ struct BuildingPlotView: View {
                                 .fill(RenaissanceColors.ochre.opacity(0.1))
                                 .frame(width: iconSize + 16, height: iconSize + 16)
                             Image(systemName: plot.building.iconName)
-                                .font(.custom("Mulish-Light", size: iconSize, relativeTo: .body))
+                                .font(.custom("EBGaramond-Regular", size: iconSize, relativeTo: .body))
                                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                         } else {
                             // State 1: Blank — dashed placeholder
@@ -69,7 +69,7 @@ struct BuildingPlotView: View {
 
                     // Building name
                     Text(plot.building.name)
-                        .font(.custom("Mulish-Light", size: titleSize, relativeTo: .caption))
+                        .font(.custom("EBGaramond-Regular", size: titleSize, relativeTo: .caption))
                         .tracking(1)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .multilineTextAlignment(.center)
@@ -78,10 +78,10 @@ struct BuildingPlotView: View {
                     // Era badge with wax seal style
                     HStack(spacing: 4) {
                         Image(systemName: plot.building.era == .ancientRome ? "building.columns" : "paintpalette")
-                            .font(.custom("Mulish-Light", size: badgeSize - 2, relativeTo: .body))
+                            .font(.custom("EBGaramond-Regular", size: badgeSize - 2, relativeTo: .body))
 
                         Text(plot.building.era.rawValue)
-                            .font(.custom("Mulish-Light", size: badgeSize, relativeTo: .caption2))
+                            .font(.custom("EBGaramond-Regular", size: badgeSize, relativeTo: .caption2))
                     }
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .padding(.horizontal, isLargeScreen ? 12 : 8)
@@ -96,7 +96,7 @@ struct BuildingPlotView: View {
                         HStack(spacing: 6) {
                             ForEach(Array(plot.building.sciences.prefix(3)), id: \.self) { science in
                                 Image(systemName: science.sfSymbolName)
-                                    .font(.custom("Mulish-Light", size: 12, relativeTo: .caption))
+                                    .font(.custom("EBGaramond-Regular", size: 12, relativeTo: .caption))
                                     .foregroundStyle(RenaissanceColors.color(for: science))
                             }
                             if plot.building.sciences.count > 3 {
@@ -114,7 +114,7 @@ struct BuildingPlotView: View {
                                 Image(systemName: "checkmark.seal.fill")
                                     .font(.caption2)
                                 Text("Completed")
-                                    .font(.custom("Mulish-Light", size: 12, relativeTo: .caption2))
+                                    .font(.custom("EBGaramond-Regular", size: 12, relativeTo: .caption2))
                             }
                             .foregroundStyle(RenaissanceColors.sageGreen)
                         }
@@ -123,12 +123,12 @@ struct BuildingPlotView: View {
                             Image(systemName: "pencil.and.outline")
                                 .font(.caption2)
                             Text(isLargeScreen ? "Sketched — collect materials" : "Sketched")
-                                .font(.custom("Mulish-Light", size: isLargeScreen ? 12 : 10, relativeTo: .caption2))
+                                .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 12 : 10, relativeTo: .caption2))
                         }
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     } else {
                         Text(isLargeScreen ? "Tap to begin sketching" : "Begin")
-                            .font(.custom("Mulish-Light", size: isLargeScreen ? 12 : 10, relativeTo: .caption2))
+                            .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 12 : 10, relativeTo: .caption2))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                     }
                 }

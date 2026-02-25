@@ -27,7 +27,7 @@ struct BuildingChecklistView: View {
                     // Header
                     VStack(spacing: 8) {
                         Image(systemName: "checkmark.shield.fill")
-                            .font(.custom("Mulish-Light", size: 32, relativeTo: .title3))
+                            .font(.custom("EBGaramond-Regular", size: 32, relativeTo: .title3))
                             .foregroundStyle(RenaissanceColors.sageGreen)
 
                         Text(plot.building.name)
@@ -66,10 +66,10 @@ struct BuildingChecklistView: View {
                         } else {
                             HStack(spacing: 8) {
                                 Image(systemName: "minus.circle")
-                                    .font(.custom("Mulish-Light", size: 14, relativeTo: .footnote))
+                                    .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
                                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                                 Text("Not required for this building")
-                                    .font(.custom("Mulish-Light", size: 14))
+                                    .font(.custom("EBGaramond-Regular", size: 14))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                         }
@@ -81,14 +81,14 @@ struct BuildingChecklistView: View {
                             let have = workshopState.craftedMaterials[item] ?? 0
                             HStack(spacing: 10) {
                                 Image(systemName: have >= needed ? "checkmark.circle.fill" : "circle")
-                                    .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
+                                    .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
                                     .foregroundStyle(have >= needed ? RenaissanceColors.sageGreen : RenaissanceColors.sepiaInk.opacity(0.5))
 
                                 Text(item.icon)
-                                    .font(.custom("Mulish-Light", size: 18, relativeTo: .body))
+                                    .font(.custom("EBGaramond-Regular", size: 18, relativeTo: .body))
 
                                 Text(item.rawValue)
-                                    .font(.custom("Mulish-Light", size: 15))
+                                    .font(.custom("EBGaramond-Regular", size: 15))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                                 Spacer()
@@ -112,10 +112,10 @@ struct BuildingChecklistView: View {
                         } else {
                             HStack(spacing: 8) {
                                 Image(systemName: "minus.circle")
-                                    .font(.custom("Mulish-Light", size: 14, relativeTo: .footnote))
+                                    .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
                                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                                 Text("No quiz available yet")
-                                    .font(.custom("Mulish-Light", size: 14))
+                                    .font(.custom("EBGaramond-Regular", size: 14))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                         }
@@ -130,16 +130,16 @@ struct BuildingChecklistView: View {
                     } label: {
                         HStack(spacing: 8) {
                             Image(systemName: allRequirementsMet ? "hammer.fill" : "lock.fill")
-                                .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
+                                .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
                             Text(allRequirementsMet ? "Begin Construction" : "Requirements Not Met")
-                                .font(.custom("Mulish-Light", size: 18))
+                                .font(.custom("EBGaramond-Regular", size: 18))
                                 .tracking(1)
                             if allRequirementsMet {
                                 Text("+\(GameRewards.buildCompleteFlorins)")
                                     .font(.custom("EBGaramond-Regular", size: 16))
                                     .foregroundStyle(RenaissanceColors.goldSuccess)
                                 Image(systemName: "dollarsign.circle.fill")
-                                    .font(.custom("Mulish-Light", size: 14, relativeTo: .footnote))
+                                    .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
                                     .foregroundStyle(RenaissanceColors.goldSuccess)
                             }
                         }
@@ -160,7 +160,7 @@ struct BuildingChecklistView: View {
                         onDismiss()
                     } label: {
                         Text("Close")
-                            .font(.custom("Mulish-Light", size: 16))
+                            .font(.custom("EBGaramond-Regular", size: 16))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                     .buttonStyle(.plain)
@@ -183,7 +183,7 @@ struct BuildingChecklistView: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 6) {
                 Image(systemName: icon)
-                    .font(.custom("Mulish-Light", size: 14, relativeTo: .footnote))
+                    .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                 Text(title)
                     .font(.custom("EBGaramond-Regular", size: 16))
@@ -204,7 +204,7 @@ struct BuildingChecklistView: View {
     private func checklistRow(icon: String, label: String, isMet: Bool, customImage: String? = nil) -> some View {
         HStack(spacing: 10) {
             Image(systemName: isMet ? "checkmark.circle.fill" : "circle")
-                .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
+                .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
                 .foregroundStyle(isMet ? RenaissanceColors.sageGreen : RenaissanceColors.sepiaInk.opacity(0.5))
 
             if let imageName = customImage {
@@ -215,19 +215,19 @@ struct BuildingChecklistView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 4))
             } else {
                 Image(systemName: icon)
-                    .font(.custom("Mulish-Light", size: 14, relativeTo: .footnote))
+                    .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
 
             Text(label)
-                .font(.custom("Mulish-Light", size: 15))
+                .font(.custom("EBGaramond-Regular", size: 15))
                 .foregroundStyle(isMet ? RenaissanceColors.sepiaInk : RenaissanceColors.sepiaInk.opacity(0.6))
 
             Spacer()
 
             if isMet {
                 Image(systemName: "seal.fill")
-                    .font(.custom("Mulish-Light", size: 12, relativeTo: .caption))
+                    .font(.custom("EBGaramond-Regular", size: 12, relativeTo: .caption))
                     .foregroundStyle(RenaissanceColors.goldSuccess)
             }
         }

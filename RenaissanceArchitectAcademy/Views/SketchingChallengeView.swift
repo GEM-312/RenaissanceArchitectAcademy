@@ -63,7 +63,7 @@ struct SketchingChallengeView: View {
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     Text("Sketching Challenge")
-                        .font(.custom("Mulish-Light", size: isLargeScreen ? 20 : 16, relativeTo: .subheadline))
+                        .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 20 : 16, relativeTo: .subheadline))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
 
@@ -83,7 +83,7 @@ struct SketchingChallengeView: View {
 
                 // Introduction text
                 Text(challenge.introduction)
-                    .font(.custom("Mulish-Light", size: isLargeScreen ? 18 : 16, relativeTo: .body))
+                    .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 18 : 16, relativeTo: .body))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
@@ -108,13 +108,13 @@ struct SketchingChallengeView: View {
 
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(phase.title)
-                                    .font(.custom("Mulish-Light", size: 15, relativeTo: .body))
+                                    .font(.custom("EBGaramond-Regular", size: 15, relativeTo: .body))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                                 HStack(spacing: 4) {
                                     ForEach(phase.sciencesFocused, id: \.self) { science in
                                         Image(systemName: science.sfSymbolName)
-                                            .font(.custom("Mulish-Light", size: 10, relativeTo: .caption2))
+                                            .font(.custom("EBGaramond-Regular", size: 10, relativeTo: .caption2))
                                             .foregroundStyle(RenaissanceColors.color(for: science))
                                     }
                                 }
@@ -147,7 +147,7 @@ struct SketchingChallengeView: View {
                     Button("Back") {
                         onDismiss()
                     }
-                    .font(.custom("Mulish-Light", size: 14, relativeTo: .caption))
+                    .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .caption))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .buttonStyle(.plain)
                 }
@@ -221,13 +221,13 @@ struct SketchingChallengeView: View {
                 VStack(spacing: 20) {
                     Spacer()
                     Image(systemName: "hammer.fill")
-                        .font(.custom("Mulish-Light", size: 48, relativeTo: .title3))
+                        .font(.custom("EBGaramond-Regular", size: 48, relativeTo: .title3))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text("Coming Soon")
                         .font(.custom("Cinzel-Regular", size: 24, relativeTo: .title))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text("This drawing phase is under construction.")
-                        .font(.custom("Mulish-Light", size: 16, relativeTo: .body))
+                        .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .body))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Spacer()
                 }
@@ -248,7 +248,7 @@ struct SketchingChallengeView: View {
                         .fill(RenaissanceColors.goldSuccess.opacity(0.15))
                         .frame(width: 100, height: 100)
                     Image(systemName: "checkmark.seal.fill")
-                        .font(.custom("Mulish-Light", size: 48, relativeTo: .title3))
+                        .font(.custom("EBGaramond-Regular", size: 48, relativeTo: .title3))
                         .foregroundStyle(RenaissanceColors.goldSuccess)
                 }
 
@@ -257,7 +257,7 @@ struct SketchingChallengeView: View {
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 Text(challenge.buildingName)
-                    .font(.custom("Mulish-Light", size: 18, relativeTo: .subheadline))
+                    .font(.custom("EBGaramond-Regular", size: 18, relativeTo: .subheadline))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 // Decorative divider
@@ -276,7 +276,7 @@ struct SketchingChallengeView: View {
 
                 // Educational summary
                 Text(challenge.educationalSummary)
-                    .font(.custom("Mulish-Light", size: isLargeScreen ? 17 : 15, relativeTo: .body))
+                    .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 17 : 15, relativeTo: .body))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
@@ -291,7 +291,7 @@ struct SketchingChallengeView: View {
                                 .foregroundStyle(completedPhases.contains(phase.phaseType)
                                                  ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray)
                             Text(phase.phaseType.italianTitle)
-                                .font(.custom("Mulish-Light", size: 12, relativeTo: .caption2))
+                                .font(.custom("EBGaramond-Regular", size: 12, relativeTo: .caption2))
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                         }
                     }

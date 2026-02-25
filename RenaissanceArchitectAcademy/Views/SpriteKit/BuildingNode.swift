@@ -191,7 +191,7 @@ class BuildingNode: SKNode {
 
         // Full name label below the sign
         labelNode = SKLabelNode(text: buildingName)
-        labelNode.fontName = "Mulish-Light"
+        labelNode.fontName = "EBGaramond-Regular"
         labelNode.fontSize = 11
         labelNode.fontColor = PlatformColor(RenaissanceColors.sepiaInk.opacity(isLocked ? 0.35 : 0.6))
         labelNode.position = CGPoint(x: 0, y: -62)

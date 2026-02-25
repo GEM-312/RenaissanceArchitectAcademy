@@ -118,7 +118,7 @@ struct HintOverlayView: View {
                         if step < activeStep {
                             // Completed: checkmark
                             Image(systemName: "checkmark")
-                                .font(.custom("Mulish-Bold", size: 14, relativeTo: .footnote))
+                                .font(.custom("EBGaramond-Bold", size: 14, relativeTo: .footnote))
                                 .foregroundStyle(.white)
                         } else {
                             // Number
@@ -133,7 +133,7 @@ struct HintOverlayView: View {
                     .animation(.spring(response: 0.4, dampingFraction: 0.6), value: activeStep)
 
                     Text(labels[step - 1])
-                        .font(.custom("Mulish-Light", size: 10))
+                        .font(.custom("EBGaramond-Regular", size: 10))
                         .foregroundStyle(
                             step == activeStep
                                 ? RenaissanceColors.goldSuccess
@@ -198,7 +198,7 @@ struct HintOverlayView: View {
             }
 
             Text(hintData.riddle)
-                .font(.custom("Mulish-Light", size: 18))
+                .font(.custom("EBGaramond-Regular", size: 18))
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.9))
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
@@ -252,10 +252,10 @@ struct HintOverlayView: View {
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Craft a Hint Scroll")
-                            .font(.custom("Mulish-Light", size: 17, relativeTo: .body))
+                            .font(.custom("EBGaramond-Regular", size: 17, relativeTo: .body))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("Costs 2 raw materials")
-                            .font(.custom("Mulish-Light", size: 13))
+                            .font(.custom("EBGaramond-Regular", size: 13))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                     }
                     Spacer()
@@ -264,7 +264,7 @@ struct HintOverlayView: View {
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     } else {
                         Text("Not enough")
-                            .font(.custom("Mulish-Light", size: 12))
+                            .font(.custom("EBGaramond-Regular", size: 12))
                             .foregroundStyle(RenaissanceColors.errorRed)
                     }
                 }
@@ -296,10 +296,10 @@ struct HintOverlayView: View {
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Earn by Activity")
-                            .font(.custom("Mulish-Light", size: 17, relativeTo: .body))
+                            .font(.custom("EBGaramond-Regular", size: 17, relativeTo: .body))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("Answer correctly to earn 3 materials")
-                            .font(.custom("Mulish-Light", size: 13))
+                            .font(.custom("EBGaramond-Regular", size: 13))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                     }
                     Spacer()
@@ -334,13 +334,13 @@ struct HintOverlayView: View {
             ZStack {
                 ForEach(Array(craftingMaterials.enumerated()), id: \.offset) { index, item in
                     Text(item.0)
-                        .font(.custom("Mulish-Light", size: 36, relativeTo: .title3))
+                        .font(.custom("EBGaramond-Regular", size: 36, relativeTo: .title3))
                         .offset(y: item.1)
                         .opacity(item.1 < -80 ? 0 : 1)
                 }
 
                 Image(systemName: "scroll.fill")
-                    .font(.custom("Mulish-Light", size: 48, relativeTo: .title3))
+                    .font(.custom("EBGaramond-Regular", size: 48, relativeTo: .title3))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .scaleEffect(showScrollReveal ? 1 : 0)
                     .opacity(showScrollReveal ? 1 : 0)
@@ -364,7 +364,7 @@ struct HintOverlayView: View {
 
             if case .trueFalse(let statement, _, let explanation) = hintData.activityType {
                 Text(statement)
-                    .font(.custom("Mulish-Light", size: 17, relativeTo: .body))
+                    .font(.custom("EBGaramond-Regular", size: 17, relativeTo: .body))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.9))
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
@@ -374,12 +374,12 @@ struct HintOverlayView: View {
                 if !pendingEarnReward.isEmpty {
                     HStack(spacing: 4) {
                         Text("Reward:")
-                            .font(.custom("Mulish-Light", size: 14))
+                            .font(.custom("EBGaramond-Regular", size: 14))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         ForEach(pendingEarnReward, id: \.0) { material, count in
                             HStack(spacing: 2) {
                                 Text(material.icon)
-                                    .font(.custom("Mulish-Light", size: 18, relativeTo: .body))
+                                    .font(.custom("EBGaramond-Regular", size: 18, relativeTo: .body))
                                 Text("×\(count)")
                                     .font(.custom("EBGaramond-Regular", size: 15))
                                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
@@ -397,7 +397,7 @@ struct HintOverlayView: View {
 
                 if let answer = trueFalseAnswer, !isAnswerCorrect(answer) {
                     Text(explanation)
-                        .font(.custom("Mulish-Light", size: 14))
+                        .font(.custom("EBGaramond-Regular", size: 14))
                         .foregroundStyle(RenaissanceColors.errorRed.opacity(0.8))
                         .multilineTextAlignment(.center)
                         .padding(.top, 4)
@@ -414,7 +414,7 @@ struct HintOverlayView: View {
     private var hintScrollCard: some View {
         VStack(spacing: 20) {
             Image(systemName: "scroll.fill")
-                .font(.custom("Mulish-Light", size: 40, relativeTo: .title3))
+                .font(.custom("EBGaramond-Regular", size: 40, relativeTo: .title3))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
                 .scaleEffect(showScrollReveal ? 1 : 0.5)
                 .opacity(showScrollReveal ? 1 : 0)
@@ -428,7 +428,7 @@ struct HintOverlayView: View {
                     .background(RenaissanceColors.ochre.opacity(0.3))
 
                 Text(hintData.detailedHint)
-                    .font(.custom("Mulish-Light", size: 17, relativeTo: .body))
+                    .font(.custom("EBGaramond-Regular", size: 17, relativeTo: .body))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.9))
                     .multilineTextAlignment(.center)
                     .lineSpacing(5)
@@ -441,14 +441,14 @@ struct HintOverlayView: View {
 
                     VStack(spacing: 6) {
                         Text("You spent:")
-                            .font(.custom("Mulish-Light", size: 14))
+                            .font(.custom("EBGaramond-Regular", size: 14))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         HStack(spacing: 12) {
                             ForEach(transactionMaterials, id: \.0) { material, count in
                                 HStack(spacing: 4) {
                                     Text(material.icon)
-                                        .font(.custom("Mulish-Light", size: 20, relativeTo: .title3))
+                                        .font(.custom("EBGaramond-Regular", size: 20, relativeTo: .title3))
                                     Text("×\(count)")
                                         .font(.custom("EBGaramond-Regular", size: 16))
                                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
@@ -489,7 +489,7 @@ struct HintOverlayView: View {
             Image(systemName: icon)
                 .foregroundStyle(color)
             Text(text)
-                .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
+                .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
             Spacer()
             Image(systemName: "chevron.right")

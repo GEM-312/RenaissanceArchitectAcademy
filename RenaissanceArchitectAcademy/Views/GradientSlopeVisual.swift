@@ -97,7 +97,7 @@ struct GradientSlopeVisual: View {
             // Ratio label in center
             let labelCenter = CGPoint(x: w / 2, y: h * 0.2)
             let ratioText = Text("1 : 200")
-                .font(.custom("Mulish-Bold", size: 24))
+                .font(.custom("EBGaramond-Bold", size: 24))
                 .foregroundColor(RenaissanceColors.sepiaInk)
             context.draw(context.resolve(ratioText), at: labelCenter, anchor: .center)
         }
@@ -111,7 +111,7 @@ struct GradientSlopeVisual: View {
         if currentStep >= 5 {
             let checkPos = CGPoint(x: w - pad, y: pad)
             let checkText = Text(Image(systemName: "checkmark.circle.fill"))
-                .font(.custom("Mulish-Light", size: 28, relativeTo: .title3))
+                .font(.custom("EBGaramond-Regular", size: 28, relativeTo: .title3))
                 .foregroundColor(RenaissanceColors.sageGreen)
             context.draw(context.resolve(checkText), at: checkPos, anchor: .center)
         }
@@ -219,7 +219,7 @@ struct GradientSlopeVisual: View {
         // Label
         let mid = CGPoint(x: (start.x + end.x) / 2, y: (start.y + end.y) / 2)
         let labelText = Text(label)
-            .font(.custom("Mulish-SemiBold", size: 13))
+            .font(.custom("EBGaramond-SemiBold", size: 13))
             .foregroundColor(color)
 
         if horizontal {
@@ -271,35 +271,35 @@ struct GradientSlopeVisual: View {
         switch currentStep {
         case 0:
             Text("Tap \"Next Step\" to begin")
-                .font(.custom("Mulish-Light", size: 15))
+                .font(.custom("EBGaramond-Regular", size: 15))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
         case 1:
             Text("A flat aqueduct channel sits on its stone arches.")
-                .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
+                .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
         case 2:
             Text("The channel tilts slightly downhill. The horizontal distance is **200 meters**.")
-                .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
+                .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
         case 3:
             VStack(alignment: .leading, spacing: 4) {
                 Text("The drop is just **1 meter** over that distance.")
-                    .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
+                    .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                 Text("Gradient = drop \u{00F7} distance = 1 : 200")
-                    .font(.custom("Mulish-SemiBold", size: 14))
+                    .font(.custom("EBGaramond-SemiBold", size: 14))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
         case 4:
             Text("Water flows down this gentle slope using only **gravity** -- no pumps needed!")
-                .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
+                .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
         case 5:
             HStack(spacing: 6) {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundStyle(RenaissanceColors.sageGreen)
                 Text("A 1:200 gradient means 1 meter of drop for every 200 meters of length. This tiny tilt kept water flowing across entire countries.")
-                    .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
+                    .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
         default:

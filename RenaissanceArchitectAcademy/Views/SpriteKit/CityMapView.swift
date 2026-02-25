@@ -259,7 +259,7 @@ struct CityMapView: View {
                                 scene?.resetMascot()
                             } label: {
                                 Text("Stay on Map")
-                                    .font(.custom("Mulish-Light", size: 16))
+                                    .font(.custom("EBGaramond-Regular", size: 16))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                             .buttonStyle(.plain)
@@ -324,7 +324,7 @@ struct CityMapView: View {
 
                         VStack(spacing: 16) {
                             Image(systemName: "lock.fill")
-                                .font(.custom("Mulish-Light", size: 32, relativeTo: .title3))
+                                .font(.custom("EBGaramond-Regular", size: 32, relativeTo: .title3))
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
                             Text("Not Yet Unlocked")
@@ -685,7 +685,7 @@ struct CityMapView: View {
         #endif
 
         return Text(hintText)
-            .font(.custom("Mulish-Light", size: 16))
+            .font(.custom("EBGaramond-Regular", size: 16))
             .foregroundColor(RenaissanceColors.sepiaInk.opacity(0.8))
             .padding(.horizontal, 24)
             .padding(.vertical, 12)
@@ -701,7 +701,7 @@ struct CityMapView: View {
         Button(action: action) {
             HStack(spacing: 12) {
                 Image(systemName: icon)
-                    .font(.custom("Mulish-Light", size: 20, relativeTo: .title3))
+                    .font(.custom("EBGaramond-Regular", size: 20, relativeTo: .title3))
                     .foregroundStyle(color)
                     .frame(width: 40, height: 40)
                     .background(Circle().fill(color.opacity(0.12)))
@@ -711,7 +711,7 @@ struct CityMapView: View {
                         .font(.custom("EBGaramond-SemiBold", size: 18))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text(subtitle)
-                        .font(.custom("Mulish-Light", size: 13))
+                        .font(.custom("EBGaramond-Regular", size: 13))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
 

@@ -78,7 +78,7 @@ struct NotebookView: View {
                         }
                     } label: {
                         Image(systemName: isDrawingMode ? "pencil.slash" : "pencil.tip")
-                            .font(.custom("Mulish-SemiBold", size: 22, relativeTo: .title3))
+                            .font(.custom("EBGaramond-SemiBold", size: 22, relativeTo: .title3))
                             .foregroundStyle(.white)
                             .frame(width: 56, height: 56)
                             .background(
@@ -109,7 +109,7 @@ struct NotebookView: View {
                         }
                     } label: {
                         Image(systemName: isDrawingMode ? "pencil.slash" : "pencil.tip")
-                            .font(.custom("Mulish-SemiBold", size: 22, relativeTo: .title3))
+                            .font(.custom("EBGaramond-SemiBold", size: 22, relativeTo: .title3))
                             .foregroundStyle(.white)
                             .frame(width: 56, height: 56)
                             .background(
@@ -145,7 +145,7 @@ struct NotebookView: View {
                         onDismiss()
                     } label: {
                         Image(systemName: "chevron.left")
-                            .font(.custom("Mulish-SemiBold", size: 16, relativeTo: .subheadline))
+                            .font(.custom("EBGaramond-SemiBold", size: 16, relativeTo: .subheadline))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                             .frame(width: 36, height: 36)
                     }
@@ -161,7 +161,7 @@ struct NotebookView: View {
 
                     HStack(spacing: 6) {
                         Text(era.rawValue)
-                            .font(.custom("Mulish-Light", size: 13))
+                            .font(.custom("EBGaramond-Regular", size: 13))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         ForEach(sciences, id: \.self) { science in
@@ -178,11 +178,11 @@ struct NotebookView: View {
 
             HStack(spacing: 6) {
                 Image(systemName: "book.closed.fill")
-                    .font(.custom("Mulish-Light", size: 14, relativeTo: .footnote))
+                    .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                 let count = notebook?.entries.count ?? 0
                 Text("\(count) \(count == 1 ? "entry" : "entries")")
-                    .font(.custom("Mulish-Light", size: 14))
+                    .font(.custom("EBGaramond-Regular", size: 14))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 if isDrawingMode {
@@ -270,7 +270,7 @@ struct NotebookView: View {
                     }
                     Spacer()
                     Text(entry.dateAdded, style: .date)
-                        .font(.custom("Mulish-Light", size: 11))
+                        .font(.custom("EBGaramond-Regular", size: 11))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
 
@@ -321,7 +321,7 @@ struct NotebookView: View {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 8) {
                     Image(systemName: "paperclip")
-                        .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
+                        .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .rotationEffect(.degrees(-30))
                     Text("Fun Fact")
@@ -329,7 +329,7 @@ struct NotebookView: View {
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Spacer()
                     Text(entry.dateAdded, style: .date)
-                        .font(.custom("Mulish-Light", size: 11))
+                        .font(.custom("EBGaramond-Regular", size: 11))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
 
@@ -472,7 +472,7 @@ struct NotebookView: View {
                     macTool = tool
                 } label: {
                     Image(systemName: iconForTool(tool))
-                        .font(.custom(macTool == tool ? "Mulish-Bold" : "Mulish-Light", size: 14, relativeTo: .footnote))
+                        .font(.custom(macTool == tool ? "EBGaramond-Bold" : "EBGaramond-Regular", size: 14, relativeTo: .footnote))
                         .foregroundStyle(macTool == tool ? .white : RenaissanceColors.sepiaInk)
                         .frame(width: 32, height: 32)
                         .background(
@@ -526,13 +526,13 @@ struct NotebookView: View {
         VStack(spacing: 16) {
             Spacer()
             Image(systemName: "book.closed")
-                .font(.custom("Mulish-Light", size: 48, relativeTo: .title3))
+                .font(.custom("EBGaramond-Regular", size: 48, relativeTo: .title3))
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
             Text("No entries yet")
                 .font(.custom("EBGaramond-SemiBold", size: 20))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
             Text("Complete the lesson to fill your notebook with knowledge about \(buildingName).")
-                .font(.custom("Mulish-Light", size: 15))
+                .font(.custom("EBGaramond-Regular", size: 15))
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
@@ -552,11 +552,11 @@ struct NotebookView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 3))
             } else {
                 Image(systemName: science.sfSymbolName)
-                    .font(.custom("Mulish-Light", size: 11, relativeTo: .caption))
+                    .font(.custom("EBGaramond-Regular", size: 11, relativeTo: .caption))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
             Text(science.rawValue)
-                .font(.custom("Mulish-Light", size: 11))
+                .font(.custom("EBGaramond-Regular", size: 11))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
         }
         .padding(.horizontal, 6)

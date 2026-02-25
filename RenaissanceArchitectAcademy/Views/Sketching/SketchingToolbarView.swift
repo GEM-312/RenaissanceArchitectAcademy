@@ -40,7 +40,7 @@ struct SketchingToolbarView: View {
     private func toolContent(_ tool: SketchingTool, isSelected: Bool) -> some View {
         VStack(spacing: 4) {
             Image(systemName: tool.iconName)
-                .font(.custom("Mulish-Light", size: 18, relativeTo: .body))
+                .font(.custom("EBGaramond-Regular", size: 18, relativeTo: .body))
                 .foregroundStyle(isSelected ? RenaissanceColors.renaissanceBlue : RenaissanceColors.sepiaInk.opacity(0.6))
                 .frame(width: 36, height: 36)
                 .background(
@@ -53,7 +53,7 @@ struct SketchingToolbarView: View {
                 )
 
             Text(tool.rawValue)
-                .font(.custom("Mulish-Light", size: 10, relativeTo: .caption2))
+                .font(.custom("EBGaramond-Regular", size: 10, relativeTo: .caption2))
                 .foregroundStyle(isSelected ? RenaissanceColors.renaissanceBlue : RenaissanceColors.sepiaInk.opacity(0.5))
         }
     }

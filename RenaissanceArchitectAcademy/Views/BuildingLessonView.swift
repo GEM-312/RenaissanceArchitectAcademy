@@ -225,7 +225,7 @@ struct BuildingLessonView: View {
                         goBack()
                     } label: {
                         Image(systemName: "chevron.left")
-                            .font(.custom("Mulish-SemiBold", size: 16, relativeTo: .subheadline))
+                            .font(.custom("EBGaramond-SemiBold", size: 16, relativeTo: .subheadline))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                             .frame(width: 36, height: 36)
                     }
@@ -249,7 +249,7 @@ struct BuildingLessonView: View {
                     onDismiss()
                 } label: {
                     Image(systemName: "xmark")
-                        .font(.custom("Mulish-SemiBold", size: 14, relativeTo: .footnote))
+                        .font(.custom("EBGaramond-SemiBold", size: 14, relativeTo: .footnote))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                         .frame(width: 36, height: 36)
                         .background(
@@ -320,7 +320,7 @@ struct BuildingLessonView: View {
                         .fill(completedColor)
                         .frame(width: endpointSize, height: endpointSize)
                     Text("Start")
-                        .font(.custom("Mulish-Light", size: 7))
+                        .font(.custom("EBGaramond-Regular", size: 7))
                         .foregroundStyle(.white)
                 }
                 .position(startPt)
@@ -334,7 +334,7 @@ struct BuildingLessonView: View {
                         .fill(futureColor)
                         .frame(width: endpointSize, height: endpointSize)
                     Text("Finish")
-                        .font(.custom("Mulish-Light", size: 7))
+                        .font(.custom("EBGaramond-Regular", size: 7))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
                 .position(endPt)
@@ -352,11 +352,11 @@ struct BuildingLessonView: View {
                     .frame(width: currentSize, height: currentSize)
                 if clampedIndex == 0 {
                     Text("Start")
-                        .font(.custom("Mulish-Light", size: 8))
+                        .font(.custom("EBGaramond-Regular", size: 8))
                         .foregroundStyle(.white)
                 } else if clampedIndex >= total - 1 {
                     Text("Finish")
-                        .font(.custom("Mulish-Light", size: 8))
+                        .font(.custom("EBGaramond-Regular", size: 8))
                         .foregroundStyle(.white)
                 } else {
                     Text("\(clampedIndex + 1)")
@@ -409,14 +409,14 @@ struct BuildingLessonView: View {
                             )
                             .frame(width: 100, height: 100)
                         Image(systemName: icon)
-                            .font(.custom("Mulish-Light", size: 40, relativeTo: .title3))
+                            .font(.custom("EBGaramond-Regular", size: 40, relativeTo: .title3))
                             .foregroundStyle(RenaissanceColors.ochre.opacity(0.5))
                     }
                     Spacer()
                 }
                 if let caption = reading.caption {
                     Text(caption)
-                        .font(.custom("Mulish-Light", size: 13))
+                        .font(.custom("EBGaramond-Regular", size: 13))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .frame(maxWidth: .infinity)
                         .multilineTextAlignment(.center)
@@ -447,7 +447,7 @@ struct BuildingLessonView: View {
             // Header with paperclip icon
             HStack(spacing: 8) {
                 Image(systemName: "paperclip")
-                    .font(.custom("Mulish-Light", size: 18, relativeTo: .body))
+                    .font(.custom("EBGaramond-Regular", size: 18, relativeTo: .body))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .rotationEffect(.degrees(-30))
                 Text("Fun Fact")
@@ -511,7 +511,7 @@ struct BuildingLessonView: View {
                     }
 
                     Text(question.explanation)
-                        .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
+                        .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
                         .lineSpacing(3)
                 }
@@ -538,9 +538,9 @@ struct BuildingLessonView: View {
             } label: {
                 HStack(spacing: 6) {
                     Image(systemName: "pencil.and.outline")
-                        .font(.custom("Mulish-Light", size: 14, relativeTo: .footnote))
+                        .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
                     Text(showScratchPad ? "Hide Scratch Pad" : "Show Scratch Pad")
-                        .font(.custom("Mulish-Light", size: 15))
+                        .font(.custom("EBGaramond-Regular", size: 15))
                 }
                 .foregroundStyle(RenaissanceColors.sepiaInk)
             }
@@ -559,7 +559,7 @@ struct BuildingLessonView: View {
                     .transition(.move(edge: .top).combined(with: .opacity))
                 #else
                 TextEditor(text: $scratchPadText)
-                    .font(.custom("Mulish-Light", size: 15))
+                    .font(.custom("EBGaramond-Regular", size: 15))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .scrollContentBackground(.hidden)
                     .frame(height: 200)
@@ -576,7 +576,7 @@ struct BuildingLessonView: View {
                     .overlay(alignment: .topLeading, content: {
                         if scratchPadText.isEmpty {
                             Text("Show your work here...")
-                                .font(.custom("Mulish-Light", size: 15))
+                                .font(.custom("EBGaramond-Regular", size: 15))
                                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                                 .padding(.horizontal, 13)
                                 .padding(.vertical, 16)
@@ -602,9 +602,9 @@ struct BuildingLessonView: View {
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: "lightbulb.fill")
-                            .font(.custom("Mulish-Light", size: 13, relativeTo: .footnote))
+                            .font(.custom("EBGaramond-Regular", size: 13, relativeTo: .footnote))
                         Text(hintLevel == 0 ? "Need a hint?" : "Next hint (\(hintLevel)/\(hints.count))")
-                            .font(.custom("Mulish-Light", size: 15))
+                            .font(.custom("EBGaramond-Regular", size: 15))
                     }
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .padding(.horizontal, 14)
@@ -619,9 +619,9 @@ struct BuildingLessonView: View {
             } else if hintLevel > 0 {
                 HStack(spacing: 6) {
                     Image(systemName: "lightbulb.slash")
-                        .font(.custom("Mulish-Light", size: 13, relativeTo: .footnote))
+                        .font(.custom("EBGaramond-Regular", size: 13, relativeTo: .footnote))
                     Text("All hints used")
-                        .font(.custom("Mulish-Light", size: 15))
+                        .font(.custom("EBGaramond-Regular", size: 15))
                 }
                 .foregroundStyle(RenaissanceColors.sepiaInk)
                 .padding(.horizontal, 14)
@@ -632,12 +632,12 @@ struct BuildingLessonView: View {
             ForEach(0..<hintLevel, id: \.self) { index in
                 HStack(alignment: .top, spacing: 8) {
                     Image(systemName: "lightbulb.fill")
-                        .font(.custom("Mulish-Light", size: 12, relativeTo: .caption))
+                        .font(.custom("EBGaramond-Regular", size: 12, relativeTo: .caption))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .padding(.top, 2)
 
                     Text(hints[index])
-                        .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
+                        .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
                         .lineSpacing(3)
                 }
@@ -681,7 +681,7 @@ struct BuildingLessonView: View {
                     )
 
                 Text(text)
-                    .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
+                    .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .multilineTextAlignment(.leading)
 
@@ -689,12 +689,12 @@ struct BuildingLessonView: View {
 
                 if isRevealed && isCorrect {
                     Image(systemName: "checkmark")
-                        .font(.custom("Mulish-Bold", size: 14, relativeTo: .footnote))
+                        .font(.custom("EBGaramond-Bold", size: 14, relativeTo: .footnote))
                         .foregroundStyle(RenaissanceColors.sageGreen)
                 }
                 if isRevealed && isSelected && !isCorrect {
                     Image(systemName: "xmark")
-                        .font(.custom("Mulish-Bold", size: 14, relativeTo: .footnote))
+                        .font(.custom("EBGaramond-Bold", size: 14, relativeTo: .footnote))
                         .foregroundStyle(RenaissanceColors.errorRed)
                 }
             }
@@ -771,7 +771,7 @@ struct BuildingLessonView: View {
                     Image(systemName: correct ? "checkmark.circle.fill" : "arrow.counterclockwise.circle.fill")
                         .foregroundStyle(correct ? RenaissanceColors.sageGreen : RenaissanceColors.sepiaInk)
                     Text(correct ? "All correct!" : "Some answers need fixing — tap a blank to change it")
-                        .font(.custom("Mulish-Light", size: 15, relativeTo: .subheadline))
+                        .font(.custom("EBGaramond-Regular", size: 15, relativeTo: .subheadline))
                         .foregroundStyle(correct ? RenaissanceColors.sageGreen : RenaissanceColors.sepiaInk)
                 }
                 .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -783,7 +783,7 @@ struct BuildingLessonView: View {
                         }
                     } label: {
                         Text("Try Again")
-                            .font(.custom("Mulish-Light", size: 14))
+                            .font(.custom("EBGaramond-Regular", size: 14))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                     .buttonStyle(.plain)
@@ -841,7 +841,7 @@ struct BuildingLessonView: View {
                         placeWord(word, from: activity)
                     } label: {
                         Text(word)
-                            .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
+                            .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
                             .foregroundStyle(isUsed ? RenaissanceColors.sepiaInk.opacity(0.4) : RenaissanceColors.sepiaInk)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 6)
@@ -1081,7 +1081,7 @@ struct BuildingLessonView: View {
             // Header: icon + title + status on one row
             HStack(spacing: 10) {
                 Image(systemName: stateIcon)
-                    .font(.custom("Mulish-Light", size: 22, relativeTo: .title3))
+                    .font(.custom("EBGaramond-Regular", size: 22, relativeTo: .title3))
                     .foregroundStyle(stateColor)
                     .frame(width: 36, height: 36)
                     .background(
@@ -1096,7 +1096,7 @@ struct BuildingLessonView: View {
                         .lineLimit(1)
 
                     Text(statusText)
-                        .font(.custom("Mulish-Medium", size: 13, relativeTo: .caption))
+                        .font(.custom("EBGaramond-Medium", size: 13, relativeTo: .caption))
                         .foregroundStyle(stateColor)
                 }
 
@@ -1105,7 +1105,7 @@ struct BuildingLessonView: View {
 
             // Description (short)
             Text(descriptionText)
-                .font(.custom("Mulish-Light", size: 15, relativeTo: .subheadline))
+                .font(.custom("EBGaramond-Regular", size: 15, relativeTo: .subheadline))
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
                 .lineSpacing(2)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -1123,7 +1123,7 @@ struct BuildingLessonView: View {
                                              : RenaissanceColors.stoneGray.opacity(0.5))
 
                         Text(recipe.item.rawValue)
-                            .font(.custom("Mulish-Medium", size: 13, relativeTo: .caption))
+                            .font(.custom("EBGaramond-Medium", size: 13, relativeTo: .caption))
                             .foregroundStyle(recipe.alreadyCrafted ? RenaissanceColors.sageGreen
                                              : RenaissanceColors.sepiaInk)
 
@@ -1131,7 +1131,7 @@ struct BuildingLessonView: View {
 
                         if recipe.canCraft && !recipe.alreadyCrafted {
                             Text("Ready")
-                                .font(.custom("Mulish-Light", size: 11))
+                                .font(.custom("EBGaramond-Regular", size: 11))
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                         } else if !recipe.alreadyCrafted && !recipe.missingMaterials.isEmpty {
                             let names = recipe.missingMaterials
@@ -1139,7 +1139,7 @@ struct BuildingLessonView: View {
                                 .map { "\($0.value) \($0.key.rawValue)" }
                                 .joined(separator: ", ")
                             Text(names)
-                                .font(.custom("Mulish-Light", size: 11))
+                                .font(.custom("EBGaramond-Regular", size: 11))
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                                 .lineLimit(1)
                         }
@@ -1265,7 +1265,7 @@ struct BuildingLessonView: View {
             } label: {
                 HStack(spacing: 8) {
                     Image(systemName: "questionmark.bubble.fill")
-                        .font(.custom("Mulish-Light", size: 18, relativeTo: .body))
+                        .font(.custom("EBGaramond-Regular", size: 18, relativeTo: .body))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text("Students Also Ask")
                         .font(.custom("EBGaramond-SemiBold", size: 18))
@@ -1293,14 +1293,14 @@ struct BuildingLessonView: View {
                         } label: {
                             HStack(spacing: 10) {
                                 Text(qa.question)
-                                    .font(.custom("Mulish-Medium", size: 16, relativeTo: .subheadline))
+                                    .font(.custom("EBGaramond-Medium", size: 16, relativeTo: .subheadline))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                                     .multilineTextAlignment(.leading)
 
                                 Spacer()
 
                                 Image(systemName: expandedCuriosityIndex == index ? "chevron.up" : "chevron.down")
-                                    .font(.custom("Mulish-SemiBold", size: 12, relativeTo: .caption))
+                                    .font(.custom("EBGaramond-SemiBold", size: 12, relativeTo: .caption))
                                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                             }
                             .padding(.horizontal, 14)
@@ -1371,7 +1371,7 @@ struct BuildingLessonView: View {
                 Spacer(minLength: 20)
 
                 Image(systemName: "star.circle.fill")
-                    .font(.custom("Mulish-Light", size: 60, relativeTo: .title3))
+                    .font(.custom("EBGaramond-Regular", size: 60, relativeTo: .title3))
                     .foregroundStyle(RenaissanceColors.goldSuccess)
 
                 Text("Lesson Complete!")
@@ -1395,11 +1395,11 @@ struct BuildingLessonView: View {
                                         .clipShape(RoundedRectangle(cornerRadius: 6))
                                 } else {
                                     Image(systemName: science.sfSymbolName)
-                                        .font(.custom("Mulish-Light", size: 24, relativeTo: .title3))
+                                        .font(.custom("EBGaramond-Regular", size: 24, relativeTo: .title3))
                                         .foregroundStyle(RenaissanceColors.sepiaInk)
                                 }
                                 Text(science.rawValue)
-                                    .font(.custom("Mulish-Light", size: 11))
+                                    .font(.custom("EBGaramond-Regular", size: 11))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                         }
@@ -1425,7 +1425,7 @@ struct BuildingLessonView: View {
                     } label: {
                         HStack(spacing: 8) {
                             Image(systemName: "book.closed.fill")
-                                .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
+                                .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
                             Text(alreadyRead ? "Done" : "Claim Reward")
                                 .font(.custom("EBGaramond-SemiBold", size: 20))
                             if !alreadyRead {
@@ -1433,7 +1433,7 @@ struct BuildingLessonView: View {
                                     .font(.custom("EBGaramond-SemiBold", size: 18))
                                     .foregroundStyle(RenaissanceColors.goldSuccess)
                                 Image(systemName: "dollarsign.circle.fill")
-                                    .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
+                                    .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
                                     .foregroundStyle(RenaissanceColors.goldSuccess)
                             }
                         }
@@ -1462,11 +1462,11 @@ struct BuildingLessonView: View {
                         HStack(spacing: 4) {
                             ForEach(plot.building.sciences, id: \.self) { _ in
                                 Image(systemName: "seal.fill")
-                                    .font(.custom("Mulish-Light", size: 14, relativeTo: .footnote))
+                                    .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                             Text("\(plot.building.sciences.count) science badges")
-                                .font(.custom("Mulish-Light", size: 13))
+                                .font(.custom("EBGaramond-Regular", size: 13))
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                         }
 
@@ -1478,7 +1478,7 @@ struct BuildingLessonView: View {
                             } label: {
                                 HStack(spacing: 6) {
                                     Image(systemName: "book.closed.fill")
-                                        .font(.custom("Mulish-Light", size: 14, relativeTo: .footnote))
+                                        .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
                                     Text("View in Notebook")
                                         .font(.custom("EBGaramond-Regular", size: 16))
                                 }
@@ -1502,7 +1502,7 @@ struct BuildingLessonView: View {
                     onDismiss()
                 } label: {
                     Text("Return to Map")
-                        .font(.custom("Mulish-Light", size: 16))
+                        .font(.custom("EBGaramond-Regular", size: 16))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
                 .buttonStyle(.plain)
@@ -1596,11 +1596,11 @@ struct BuildingLessonView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 3))
             } else {
                 Image(systemName: science.sfSymbolName)
-                    .font(.custom("Mulish-Light", size: 11, relativeTo: .caption))
+                    .font(.custom("EBGaramond-Regular", size: 11, relativeTo: .caption))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
             Text(science.rawValue)
-                .font(.custom("Mulish-Light", size: 11))
+                .font(.custom("EBGaramond-Regular", size: 11))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
         }
         .padding(.horizontal, 6)
@@ -1617,11 +1617,11 @@ struct BuildingLessonView: View {
         return parts.reduce(Text("")) { result, part in
             if part.isBold {
                 return result + Text(part.text)
-                    .font(.custom("Mulish-Bold", size: 17, relativeTo: .body))
+                    .font(.custom("EBGaramond-Bold", size: 17, relativeTo: .body))
                     .foregroundColor(RenaissanceColors.sepiaInk)
             } else {
                 return result + Text(part.text)
-                    .font(.custom("Mulish-Light", size: 17, relativeTo: .body))
+                    .font(.custom("EBGaramond-Regular", size: 17, relativeTo: .body))
                     .foregroundColor(RenaissanceColors.sepiaInk)
             }
         }
@@ -1697,7 +1697,7 @@ struct WrappingHStack: View {
                     } label: {
                         if let placed = segment.placedWord {
                             Text(placed)
-                                .font(.custom("Mulish-SemiBold", size: 16, relativeTo: .subheadline))
+                                .font(.custom("EBGaramond-SemiBold", size: 16, relativeTo: .subheadline))
                                 .foregroundStyle(
                                     segment.isCorrect ? RenaissanceColors.sageGreen :
                                     segment.isWrong ? RenaissanceColors.errorRed :
@@ -1724,7 +1724,7 @@ struct WrappingHStack: View {
                                 )
                         } else {
                             Text("_______")
-                                .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
+                                .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
                                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 4)
@@ -1747,7 +1747,7 @@ struct WrappingHStack: View {
                 } else {
                     // Plain text
                     Text(segment.text)
-                        .font(.custom("Mulish-Light", size: 17, relativeTo: .body))
+                        .font(.custom("EBGaramond-Regular", size: 17, relativeTo: .body))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .lineSpacing(2)
                 }

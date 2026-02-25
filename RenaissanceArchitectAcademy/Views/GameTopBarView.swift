@@ -32,7 +32,7 @@ struct GameTopBarView: View {
                             // Gold Florins badge
                             HStack(spacing: 4) {
                                 Image(systemName: "dollarsign.circle.fill")
-                                    .font(.custom("Mulish-Light", size: 14, relativeTo: .footnote))
+                                    .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
                                     .foregroundStyle(RenaissanceColors.iconOchre)
                                 Text("\(viewModel.goldFlorins)")
                                     .font(.custom("EBGaramond-Regular", size: 15))
@@ -82,7 +82,7 @@ struct GameTopBarView: View {
                             .font(.system(size: 20, weight: .medium))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                         Text("Lesson")
-                            .font(.custom("Mulish-Light", size: 10, relativeTo: .caption))
+                            .font(.custom("EBGaramond-Regular", size: 10, relativeTo: .caption))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                     }
                     .frame(width: 60, height: 48)
@@ -143,7 +143,7 @@ struct GameTopBarView: View {
                     .font(.system(size: 20, weight: .medium))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                 Text(label)
-                    .font(.custom("Mulish-Light", size: 11, relativeTo: .caption))
+                    .font(.custom("EBGaramond-Regular", size: 11, relativeTo: .caption))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
             }
             .frame(width: 60, height: 48)
@@ -161,7 +161,7 @@ struct GameTopBarView: View {
         Button(action: action) {
             VStack(spacing: 6) {
                 if let state = onboardingState {
-                    let prefix = state.apprenticeGender == .boy ? "AvatarBoyFrame" : "AvatarGirlFrame"
+                    let prefix = state.apprenticeGender == .boy ? "AvatarBoyCleanFrame" : "AvatarGirlCleanFrame"
                     Image("\(prefix)00")
                         .resizable()
                         .scaledToFit()
@@ -218,7 +218,7 @@ struct GameTopBarView: View {
                     .frame(width: 40, height: 34)
 
                 Image(systemName: buildingIcon(for: plot.building.name))
-                    .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
+                    .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
                     .foregroundStyle(
                         isComplete ? RenaissanceColors.sageGreen :
                         isSketched ? RenaissanceColors.ochre :

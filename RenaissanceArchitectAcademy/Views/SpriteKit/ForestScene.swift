@@ -445,7 +445,7 @@ class ForestScene: SKScene {
 
             // Italian name
             let italianLabel = SKLabelNode(text: poi.italianName)
-            italianLabel.fontName = "Mulish-Light"
+            italianLabel.fontName = "EBGaramond-Regular"
             italianLabel.fontSize = 13
             italianLabel.fontColor = PlatformColor(RenaissanceColors.warmBrown)
             italianLabel.position = CGPoint(x: 0, y: -72)

@@ -45,7 +45,7 @@ struct BuildingDetailOverlay: View {
                             Image(systemName: plot.building.era == .ancientRome ? "building.columns" : "paintpalette")
                                 .font(.subheadline)
                             Text(plot.building.era.rawValue)
-                                .font(.custom("Mulish-Light", size: isLargeScreen ? 20 : 16, relativeTo: .subheadline))
+                                .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 20 : 16, relativeTo: .subheadline))
                         }
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                     }
@@ -117,7 +117,7 @@ struct BuildingDetailOverlay: View {
                     }
 
                     Text(plot.building.description)
-                        .font(.custom("Mulish-Light", size: isLargeScreen ? 16 : 14, relativeTo: .body))
+                        .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 16 : 14, relativeTo: .body))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -180,7 +180,7 @@ struct ScienceBadge: View {
                 .foregroundStyle(RenaissanceColors.color(for: science))
 
             Text(science.rawValue)
-                .font(.custom("Mulish-Light", size: isLargeScreen ? 15 : 13, relativeTo: .caption))
+                .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 15 : 13, relativeTo: .caption))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
         }
         .padding(.horizontal, isLargeScreen ? 14 : 10)

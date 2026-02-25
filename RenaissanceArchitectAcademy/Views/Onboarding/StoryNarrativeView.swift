@@ -57,7 +57,7 @@ struct StoryNarrativeView: View {
 
                 // Typewriter text
                 Text(revealedText)
-                    .font(.custom("Mulish-Light", size: 19))
+                    .font(.custom("EBGaramond-Regular", size: 19))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
                     .multilineTextAlignment(.center)
                     .lineSpacing(6)
@@ -65,12 +65,12 @@ struct StoryNarrativeView: View {
                     .padding(.horizontal, 24)
 
                 // Bird companion (only on final story page)
-                if page.showBird {
-                    BirdCharacter()
+                // Conditionally inserted when showBird=true so BirdCharacter's
+                // onAppear fly-in animation plays at the right moment.
+                if page.showBird && showBird {
+                    BirdCharacter(isSitting: false)
                         .frame(width: 180, height: 180)
-                        .opacity(showBird ? 1 : 0)
-                        .scaleEffect(showBird ? 1 : 0.5)
-                        .offset(y: showBird ? 0 : 30)
+                        .transition(.opacity)
                 }
 
                 Spacer()

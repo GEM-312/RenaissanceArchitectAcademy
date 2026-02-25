@@ -15,12 +15,12 @@ struct AtomLabel: View {
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
             Text(atom.symbol)
-                .font(.custom("Mulish-Light", size: atomFontSize))
+                .font(.custom("EBGaramond-Regular", size: atomFontSize))
                 .foregroundColor(RenaissanceColors.sepiaInk)
 
             if let charge = atom.charge {
                 Text(charge)
-                    .font(.custom("Mulish-Light", size: atomFontSize * 0.5))
+                    .font(.custom("EBGaramond-Regular", size: atomFontSize * 0.5))
                     .foregroundColor(RenaissanceColors.sepiaInk)
                     .baselineOffset(atomFontSize * 0.35)
             }
@@ -207,7 +207,7 @@ struct MoleculeView: View {
                 .foregroundColor(RenaissanceColors.sepiaInk)
 
             Text(molecule.name)
-                .font(.custom("Mulish-Light", size: 13))
+                .font(.custom("EBGaramond-Regular", size: 13))
                 .foregroundColor(RenaissanceColors.sepiaInk)
         }
     }

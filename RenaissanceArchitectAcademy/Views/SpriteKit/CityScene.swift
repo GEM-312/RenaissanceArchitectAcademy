@@ -165,7 +165,7 @@ class CityScene: SKScene {
 
                 // "Expansion Area" label
                 let label = SKLabelNode(text: "Expansion Area")
-                label.fontName = "Mulish-Light"
+                label.fontName = "EBGaramond-Regular"
                 label.fontSize = 28
                 label.fontColor = PlatformColor(RenaissanceColors.sepiaInk.opacity(0.25))
                 label.position = CGPoint(x: centerX, y: centerY)
@@ -280,7 +280,7 @@ class CityScene: SKScene {
 
     private func addRiverLabel(_ name: String, at position: CGPoint, rotation: CGFloat) {
         let label = SKLabelNode(text: name)
-        label.fontName = "Mulish-Light"
+        label.fontName = "EBGaramond-Regular"
         label.fontSize = 20
         label.fontColor = PlatformColor(RenaissanceColors.renaissanceBlue.opacity(0.8))
         label.position = position
@@ -467,7 +467,7 @@ class CityScene: SKScene {
 
         // Zone name
         let nameLabel = SKLabelNode(text: name)
-        nameLabel.fontName = "Mulish-Light"
+        nameLabel.fontName = "EBGaramond-Regular"
         nameLabel.fontSize = 18
         nameLabel.fontColor = PlatformColor(RenaissanceColors.sepiaInk.opacity(0.3))
         nameLabel.position = CGPoint(x: 0, y: -10)

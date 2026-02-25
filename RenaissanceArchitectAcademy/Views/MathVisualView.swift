@@ -9,7 +9,7 @@ struct MathVisualView: View {
         VStack(alignment: .leading, spacing: 16) {
             // Title
             Text(visual.title)
-                .font(.custom("Mulish-SemiBold", size: 22))
+                .font(.custom("EBGaramond-SemiBold", size: 22))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
             // Science badge
@@ -22,11 +22,11 @@ struct MathVisualView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 3))
                 } else {
                     Image(systemName: visual.science.sfSymbolName)
-                        .font(.custom("Mulish-Light", size: 11, relativeTo: .caption))
+                        .font(.custom("EBGaramond-Regular", size: 11, relativeTo: .caption))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
                 Text(visual.science.rawValue)
-                    .font(.custom("Mulish-Light", size: 11))
+                    .font(.custom("EBGaramond-Regular", size: 11))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
             .padding(.horizontal, 6)
@@ -41,7 +41,7 @@ struct MathVisualView: View {
 
             // Caption
             Text(visual.caption)
-                .font(.custom("Mulish-Light", size: 14))
+                .font(.custom("EBGaramond-Regular", size: 14))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
                 .lineSpacing(2)
 
@@ -69,9 +69,9 @@ struct MathVisualView: View {
                     } label: {
                         HStack(spacing: 6) {
                             Text("Next Step")
-                                .font(.custom("Mulish-SemiBold", size: 14))
+                                .font(.custom("EBGaramond-SemiBold", size: 14))
                             Image(systemName: "chevron.right")
-                                .font(.custom("Mulish-SemiBold", size: 12, relativeTo: .caption))
+                                .font(.custom("EBGaramond-SemiBold", size: 12, relativeTo: .caption))
                         }
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .padding(.horizontal, 16)
@@ -86,10 +86,10 @@ struct MathVisualView: View {
                 } else {
                     HStack(spacing: 4) {
                         Image(systemName: "checkmark.circle.fill")
-                            .font(.custom("Mulish-Light", size: 14, relativeTo: .footnote))
+                            .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
                             .foregroundStyle(RenaissanceColors.sageGreen)
                         Text("Complete")
-                            .font(.custom("Mulish-SemiBold", size: 14))
+                            .font(.custom("EBGaramond-SemiBold", size: 14))
                             .foregroundStyle(RenaissanceColors.sageGreen)
                     }
                 }

@@ -135,7 +135,7 @@ struct DragDropEquationView: View {
                     .animation(.easeInOut, value: isWrong)
             } else {
                 Text("?")
-                    .font(.custom("Mulish-Light", size: isLargeScreen ? 20 : 16))
+                    .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 20 : 16))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
         }
@@ -174,7 +174,7 @@ struct DragDropEquationView: View {
     private var elementsBank: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Drag elements to complete the equation:")
-                .font(.custom("Mulish-Light", size: isLargeScreen ? 16 : 14))
+                .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 16 : 14))
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
 
             // Draggable elements in a flow layout
@@ -199,7 +199,7 @@ struct DragDropEquationView: View {
                 .foregroundStyle(elementColor(element.color))
 
             Text(element.name)
-                .font(.custom("Mulish-Light", size: isLargeScreen ? 12 : 10))
+                .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 12 : 10))
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                 .lineLimit(2)
                 .multilineTextAlignment(.center)
@@ -253,7 +253,7 @@ struct DragDropEquationView: View {
                     Image(systemName: showHint ? "lightbulb.fill" : "lightbulb")
                         .foregroundStyle(RenaissanceColors.highlightAmber)
                     Text(showHint ? "Hide Hint" : "Show Hint")
-                        .font(.custom("Mulish-Light", size: 14))
+                        .font(.custom("EBGaramond-Regular", size: 14))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                 }
             }
@@ -261,7 +261,7 @@ struct DragDropEquationView: View {
 
             if showHint {
                 Text(hint)
-                    .font(.custom("Mulish-Light", size: isLargeScreen ? 16 : 14))
+                    .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 16 : 14))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .padding()
                     .background(
@@ -289,7 +289,7 @@ struct DragDropEquationView: View {
                 Image(systemName: "checkmark.seal")
                 Text("Check Answer")
             }
-            .font(.custom("Mulish-Light", size: 18))
+            .font(.custom("EBGaramond-Regular", size: 18))
             .tracking(2)
             .foregroundStyle(allFilled ? RenaissanceColors.sepiaInk : RenaissanceColors.stoneGray)
             .padding(.horizontal, 24)

@@ -56,7 +56,7 @@ struct RatioDiagramVisual: View {
             VStack {
                 Spacer()
                 Text(stepLabel)
-                    .font(.custom("Mulish-Light", size: 12))
+                    .font(.custom("EBGaramond-Regular", size: 12))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                     .padding(.bottom, 8)
             }
@@ -132,7 +132,7 @@ struct RatioDiagramVisual: View {
             context.stroke(tick, with: .color(RenaissanceColors.terracotta), lineWidth: 1)
         }
         let dimLabel = Text(config.rightValue)
-            .font(.custom("Mulish-SemiBold", size: 13))
+            .font(.custom("EBGaramond-SemiBold", size: 13))
             .foregroundColor(RenaissanceColors.sepiaInk)
         context.draw(context.resolve(dimLabel), at: CGPoint(x: (leftX + rightX) / 2, y: dimY + 14), anchor: .center)
 
@@ -144,12 +144,12 @@ struct RatioDiagramVisual: View {
         vLine.addLine(to: CGPoint(x: leftX - 10, y: midY + tiltDrop))
         context.stroke(vLine, with: .color(RenaissanceColors.terracotta), lineWidth: 1)
         let vertLabel = Text(config.leftValue)
-            .font(.custom("Mulish-SemiBold", size: 12))
+            .font(.custom("EBGaramond-SemiBold", size: 12))
             .foregroundColor(RenaissanceColors.sepiaInk)
         context.draw(context.resolve(vertLabel), at: CGPoint(x: leftX - 30, y: midY + tiltDrop / 2), anchor: .center)
 
         let ratioLabel = Text(config.ratio)
-            .font(.custom("Mulish-Bold", size: 24))
+            .font(.custom("EBGaramond-Bold", size: 24))
             .foregroundColor(RenaissanceColors.sepiaInk)
         context.draw(context.resolve(ratioLabel), at: CGPoint(x: size.width / 2, y: midY - 25), anchor: .center)
 
@@ -205,7 +205,7 @@ struct ForceArrowVisual: View {
             VStack {
                 Spacer()
                 Text(stepLabel)
-                    .font(.custom("Mulish-Light", size: 12))
+                    .font(.custom("EBGaramond-Regular", size: 12))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                     .padding(.bottom, 8)
             }
@@ -264,7 +264,7 @@ struct ForceArrowVisual: View {
                  to: CGPoint(x: cx, y: cy - 55 + arrowLen),
                  color: RenaissanceColors.errorRed.opacity(0.7), lineWidth: 2)
         let downLabel = Text(config.downForce)
-            .font(.custom("Mulish-SemiBold", size: 11))
+            .font(.custom("EBGaramond-SemiBold", size: 11))
             .foregroundColor(RenaissanceColors.errorRed)
         context.draw(context.resolve(downLabel), at: CGPoint(x: cx, y: cy - 65), anchor: .center)
 
@@ -279,7 +279,7 @@ struct ForceArrowVisual: View {
                  to: CGPoint(x: cx + 70 - sideLen, y: cy + 50),
                  color: RenaissanceColors.renaissanceBlue.opacity(0.7), lineWidth: 1.5)
         let sideLabel = Text(config.sideForces)
-            .font(.custom("Mulish-SemiBold", size: 11))
+            .font(.custom("EBGaramond-SemiBold", size: 11))
             .foregroundColor(RenaissanceColors.sepiaInk)
         context.draw(context.resolve(sideLabel), at: CGPoint(x: cx, y: cy + 85), anchor: .center)
 
@@ -352,7 +352,7 @@ struct FlowCycleVisual: View {
             VStack {
                 Spacer()
                 Text(stepLabel)
-                    .font(.custom("Mulish-Light", size: 12))
+                    .font(.custom("EBGaramond-Regular", size: 12))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                     .padding(.bottom, 8)
             }
@@ -395,7 +395,7 @@ struct FlowCycleVisual: View {
 
         // Center label
         let centerText = Text(config.centerLabel)
-            .font(.custom("Mulish-Bold", size: 16))
+            .font(.custom("EBGaramond-Bold", size: 16))
             .foregroundColor(RenaissanceColors.sepiaInk)
         context.draw(context.resolve(centerText), at: CGPoint(x: cx, y: cy), anchor: .center)
 
@@ -408,7 +408,7 @@ struct FlowCycleVisual: View {
             let ly = cy + (radius + 35) * sin(angle)
             if currentStep >= i + 1 {
                 let stageText = Text(config.stages[i])
-                    .font(.custom("Mulish-SemiBold", size: 11))
+                    .font(.custom("EBGaramond-SemiBold", size: 11))
                     .foregroundColor(RenaissanceColors.sepiaInk)
                 context.draw(context.resolve(stageText), at: CGPoint(x: lx, y: ly), anchor: .center)
             }
@@ -418,7 +418,7 @@ struct FlowCycleVisual: View {
 
         // Input arrow (left)
         let inputText = Text("\u{2192} \(config.inputLabel)")
-            .font(.custom("Mulish-SemiBold", size: 12))
+            .font(.custom("EBGaramond-SemiBold", size: 12))
             .foregroundColor(RenaissanceColors.sepiaInk)
         context.draw(context.resolve(inputText), at: CGPoint(x: cx - radius - 55, y: cy - 15), anchor: .center)
 
@@ -426,7 +426,7 @@ struct FlowCycleVisual: View {
 
         // Output arrow (right)
         let outputText = Text("\(config.outputLabel) \u{2192}")
-            .font(.custom("Mulish-SemiBold", size: 12))
+            .font(.custom("EBGaramond-SemiBold", size: 12))
             .foregroundColor(RenaissanceColors.sageGreen)
         context.draw(context.resolve(outputText), at: CGPoint(x: cx + radius + 55, y: cy + 15), anchor: .center)
 
@@ -487,7 +487,7 @@ struct GraphCurveVisual: View {
             VStack {
                 Spacer()
                 Text(stepLabel)
-                    .font(.custom("Mulish-Light", size: 12))
+                    .font(.custom("EBGaramond-Regular", size: 12))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                     .padding(.bottom, 8)
             }
@@ -534,12 +534,12 @@ struct GraphCurveVisual: View {
 
         // Axis labels
         let xLabelText = Text(config.xLabel)
-            .font(.custom("Mulish-Light", size: 10))
+            .font(.custom("EBGaramond-Regular", size: 10))
             .foregroundColor(RenaissanceColors.sepiaInk.opacity(0.6))
         context.draw(context.resolve(xLabelText), at: CGPoint(x: originX + axisW / 2, y: originY + 15), anchor: .center)
 
         let yLabelText = Text(config.yLabel)
-            .font(.custom("Mulish-Light", size: 10))
+            .font(.custom("EBGaramond-Regular", size: 10))
             .foregroundColor(RenaissanceColors.sepiaInk.opacity(0.6))
         context.draw(context.resolve(yLabelText), at: CGPoint(x: originX - 15, y: originY - axisH / 2), anchor: .center)
 
@@ -547,7 +547,7 @@ struct GraphCurveVisual: View {
 
         // Formula
         let formulaText = Text(config.formulaText)
-            .font(.custom("Mulish-SemiBold", size: 14))
+            .font(.custom("EBGaramond-SemiBold", size: 14))
             .foregroundColor(RenaissanceColors.sepiaInk)
         context.draw(context.resolve(formulaText), at: CGPoint(x: originX + axisW * 0.6, y: originY - axisH - 10), anchor: .center)
 
@@ -597,7 +597,7 @@ struct GraphCurveVisual: View {
         let marker = Path(ellipseIn: CGRect(x: peakX - 5, y: peakY - 5, width: 10, height: 10))
         context.fill(marker, with: .color(RenaissanceColors.goldSuccess))
         let peakText = Text(config.peakLabel)
-            .font(.custom("Mulish-SemiBold", size: 11))
+            .font(.custom("EBGaramond-SemiBold", size: 11))
             .foregroundColor(RenaissanceColors.goldSuccess)
         context.draw(context.resolve(peakText), at: CGPoint(x: peakX, y: peakY - 15), anchor: .center)
 
@@ -634,7 +634,7 @@ struct LayerStackVisual: View {
             VStack {
                 Spacer()
                 Text(stepLabel)
-                    .font(.custom("Mulish-Light", size: 12))
+                    .font(.custom("EBGaramond-Regular", size: 12))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                     .padding(.bottom, 8)
             }
@@ -676,7 +676,7 @@ struct LayerStackVisual: View {
             context.stroke(Path(rect), with: .color(layer.color.opacity(0.6)), lineWidth: 1)
 
             let nameText = Text(layer.name)
-                .font(.custom("Mulish-SemiBold", size: 11))
+                .font(.custom("EBGaramond-SemiBold", size: 11))
                 .foregroundColor(RenaissanceColors.sepiaInk)
             context.draw(context.resolve(nameText), at: CGPoint(x: (leftX + rightX) / 2, y: currentY - layerH / 2), anchor: .center)
 
@@ -692,7 +692,7 @@ struct LayerStackVisual: View {
             context.stroke(dimLine, with: .color(RenaissanceColors.terracotta), lineWidth: 1)
 
             let totalText = Text(config.totalLabel)
-                .font(.custom("Mulish-SemiBold", size: 12))
+                .font(.custom("EBGaramond-SemiBold", size: 12))
                 .foregroundColor(RenaissanceColors.sepiaInk)
             context.draw(context.resolve(totalText), at: CGPoint(x: rightX + 50, y: (bottomY + topY) / 2), anchor: .center)
         }
@@ -743,7 +743,7 @@ struct MechanismVisual: View {
             VStack {
                 Spacer()
                 Text(stepLabel)
-                    .font(.custom("Mulish-Light", size: 12))
+                    .font(.custom("EBGaramond-Regular", size: 12))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                     .padding(.bottom, 8)
             }
@@ -831,19 +831,19 @@ struct MechanismVisual: View {
 
         if currentStep >= 2 {
             let inputText = Text(config.inputLabel)
-                .font(.custom("Mulish-SemiBold", size: 11))
+                .font(.custom("EBGaramond-SemiBold", size: 11))
                 .foregroundColor(RenaissanceColors.sepiaInk)
             context.draw(context.resolve(inputText), at: CGPoint(x: cx - 55, y: cy + r1 + 18), anchor: .center)
         }
         if currentStep >= 3 {
             let advText = Text(config.advantageLabel)
-                .font(.custom("Mulish-Bold", size: 20))
+                .font(.custom("EBGaramond-Bold", size: 20))
                 .foregroundColor(RenaissanceColors.sepiaInk)
             context.draw(context.resolve(advText), at: CGPoint(x: cx, y: cy - r1 - 20), anchor: .center)
         }
         if currentStep >= 4 {
             let outputText = Text(config.outputLabel)
-                .font(.custom("Mulish-SemiBold", size: 11))
+                .font(.custom("EBGaramond-SemiBold", size: 11))
                 .foregroundColor(RenaissanceColors.sepiaInk)
             context.draw(context.resolve(outputText), at: CGPoint(x: cx + 20, y: cy + r2 + 18), anchor: .center)
         }
@@ -869,19 +869,19 @@ struct MechanismVisual: View {
 
         if currentStep >= 2 {
             let inputText = Text("\u{2193} \(config.inputLabel)")
-                .font(.custom("Mulish-SemiBold", size: 11))
+                .font(.custom("EBGaramond-SemiBold", size: 11))
                 .foregroundColor(RenaissanceColors.sepiaInk)
             context.draw(context.resolve(inputText), at: CGPoint(x: cx - 80, y: cy), anchor: .center)
         }
         if currentStep >= 3 {
             let formulaText = Text(config.formulaText)
-                .font(.custom("Mulish-SemiBold", size: 13))
+                .font(.custom("EBGaramond-SemiBold", size: 13))
                 .foregroundColor(RenaissanceColors.sepiaInk)
             context.draw(context.resolve(formulaText), at: CGPoint(x: cx, y: cy - 30), anchor: .center)
         }
         if currentStep >= 4 {
             let outputText = Text("\u{2191} \(config.outputLabel)")
-                .font(.custom("Mulish-SemiBold", size: 11))
+                .font(.custom("EBGaramond-SemiBold", size: 11))
                 .foregroundColor(RenaissanceColors.sageGreen)
             context.draw(context.resolve(outputText), at: CGPoint(x: cx + 60, y: cy), anchor: .center)
         }
@@ -919,19 +919,19 @@ struct MechanismVisual: View {
 
         if currentStep >= 2 {
             let inputText = Text(config.inputLabel)
-                .font(.custom("Mulish-SemiBold", size: 11))
+                .font(.custom("EBGaramond-SemiBold", size: 11))
                 .foregroundColor(RenaissanceColors.sepiaInk)
             context.draw(context.resolve(inputText), at: CGPoint(x: cx - 60, y: cy + 65), anchor: .center)
         }
         if currentStep >= 3 {
             let advText = Text(config.advantageLabel)
-                .font(.custom("Mulish-Bold", size: 18))
+                .font(.custom("EBGaramond-Bold", size: 18))
                 .foregroundColor(RenaissanceColors.sepiaInk)
             context.draw(context.resolve(advText), at: CGPoint(x: cx, y: cy + 80), anchor: .center)
         }
         if currentStep >= 4 {
             let outputText = Text(config.outputLabel)
-                .font(.custom("Mulish-SemiBold", size: 11))
+                .font(.custom("EBGaramond-SemiBold", size: 11))
                 .foregroundColor(RenaissanceColors.sepiaInk)
             context.draw(context.resolve(outputText), at: CGPoint(x: cx + 30, y: cy + 65), anchor: .center)
         }
@@ -961,19 +961,19 @@ struct MechanismVisual: View {
 
         if currentStep >= 2 {
             let inputText = Text(config.inputLabel)
-                .font(.custom("Mulish-SemiBold", size: 11))
+                .font(.custom("EBGaramond-SemiBold", size: 11))
                 .foregroundColor(RenaissanceColors.sepiaInk)
             context.draw(context.resolve(inputText), at: CGPoint(x: cx, y: cy - 75), anchor: .center)
         }
         if currentStep >= 3 {
             let advText = Text(config.advantageLabel)
-                .font(.custom("Mulish-Bold", size: 18))
+                .font(.custom("EBGaramond-Bold", size: 18))
                 .foregroundColor(RenaissanceColors.sepiaInk)
             context.draw(context.resolve(advText), at: CGPoint(x: cx + 70, y: cy), anchor: .center)
         }
         if currentStep >= 4 {
             let outputText = Text(config.outputLabel)
-                .font(.custom("Mulish-SemiBold", size: 11))
+                .font(.custom("EBGaramond-SemiBold", size: 11))
                 .foregroundColor(RenaissanceColors.sepiaInk)
             context.draw(context.resolve(outputText), at: CGPoint(x: cx, y: cy + 55), anchor: .center)
         }
@@ -1016,7 +1016,7 @@ struct GeometryDiagramVisual: View {
             VStack {
                 Spacer()
                 Text(stepLabel)
-                    .font(.custom("Mulish-Light", size: 12))
+                    .font(.custom("EBGaramond-Regular", size: 12))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                     .padding(.bottom, 8)
             }
@@ -1069,7 +1069,7 @@ struct GeometryDiagramVisual: View {
                 radiusLine.addLine(to: CGPoint(x: cx + 70, y: cy + 10))
                 context.stroke(radiusLine, with: .color(RenaissanceColors.terracotta), lineWidth: 1)
                 let rLabel = Text("r")
-                    .font(.custom("Mulish-Bold", size: 14))
+                    .font(.custom("EBGaramond-Bold", size: 14))
                     .foregroundColor(RenaissanceColors.sepiaInk)
                 context.draw(context.resolve(rLabel), at: CGPoint(x: cx + 35, y: cy + 22), anchor: .center)
             }
@@ -1079,7 +1079,7 @@ struct GeometryDiagramVisual: View {
                 heightLine.addLine(to: CGPoint(x: cx, y: cy + 10 - 70))
                 context.stroke(heightLine, with: .color(RenaissanceColors.renaissanceBlue), lineWidth: 1)
                 let hLabel = Text("h = r")
-                    .font(.custom("Mulish-Bold", size: 14))
+                    .font(.custom("EBGaramond-Bold", size: 14))
                     .foregroundColor(RenaissanceColors.sepiaInk)
                 context.draw(context.resolve(hLabel), at: CGPoint(x: cx - 25, y: cy - 30), anchor: .center)
             }
@@ -1139,7 +1139,7 @@ struct GeometryDiagramVisual: View {
         // Formula
         if currentStep >= 3 {
             let formulaText = Text(config.formulaText)
-                .font(.custom("Mulish-SemiBold", size: 14))
+                .font(.custom("EBGaramond-SemiBold", size: 14))
                 .foregroundColor(RenaissanceColors.sepiaInk)
             context.draw(context.resolve(formulaText), at: CGPoint(x: cx, y: size.height * 0.12), anchor: .center)
         }
@@ -1147,7 +1147,7 @@ struct GeometryDiagramVisual: View {
         // Measurements
         if currentStep >= 4, config.measurements.count > 1 {
             let measText = Text("\(config.measurements[1].label) = \(config.measurements[1].value)")
-                .font(.custom("Mulish-SemiBold", size: 12))
+                .font(.custom("EBGaramond-SemiBold", size: 12))
                 .foregroundColor(RenaissanceColors.sepiaInk)
             context.draw(context.resolve(measText), at: CGPoint(x: cx, y: size.height * 0.88), anchor: .center)
         }

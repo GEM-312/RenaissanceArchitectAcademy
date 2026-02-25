@@ -35,7 +35,7 @@ struct CharacterSelectView: View {
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     Text("Florence, 1485")
-                        .font(.custom("Mulish-Light", size: 18))
+                        .font(.custom("EBGaramond-Regular", size: 18))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
 
                     DividerOrnament()
@@ -59,7 +59,7 @@ struct CharacterSelectView: View {
 
                     TextField("Enter your name...", text: $name)
                         .textFieldStyle(.plain)
-                        .font(.custom("Mulish-Light", size: 18))
+                        .font(.custom("EBGaramond-Regular", size: 18))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 12)

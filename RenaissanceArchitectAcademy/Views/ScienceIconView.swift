@@ -66,7 +66,7 @@ struct CityImageView: View {
 #Preview("Science Icons") {
     VStack(spacing: 20) {
         Text("Science Icons")
-            .font(.custom("Mulish-Light", size: 24))
+            .font(.custom("EBGaramond-Regular", size: 24))
 
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 80))], spacing: 16) {
             ForEach(Science.allCases, id: \.self) { science in

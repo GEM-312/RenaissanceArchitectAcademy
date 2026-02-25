@@ -14,6 +14,8 @@ struct MascotDialogueView: View {
     @State private var showMascot = false
     @State private var showDialogue = false
     @State private var showChoices = false
+    @State private var auroraPhase = false
+    @State private var cardFloat: CGFloat = 0
 
     private var progress: BuildingProgress {
         viewModel.buildingProgressMap[plot.id] ?? BuildingProgress()
@@ -26,43 +28,38 @@ struct MascotDialogueView: View {
                 .ignoresSafeArea()
                 .onTapGesture { onDismiss() }
 
-            VStack(spacing: 16) {
+            VStack(spacing: 0) {
                 Spacer()
 
-                // Bird flies in from the map and lands on top of dialogue box
+                // Bird flies in from the map
                 BirdCharacter(isSitting: false)
-                    .frame(width: 180, height: 180)
+                    .frame(width: 140, height: 140)
                     .opacity(showMascot ? 1 : 0)
-                    .padding(.bottom, -30)
+                    .padding(.bottom, -10)
 
-                // Dialogue bubble with cards
-                VStack(spacing: 16) {
-                    // Title
-                    VStack(spacing: 8) {
-                        Text(plot.building.name)
-                            .font(.custom("EBGaramond-SemiBold", size: 24))
-                            .foregroundColor(RenaissanceColors.sepiaInk)
+                // Title above cards (no panel)
+                VStack(spacing: 8) {
+                    Text(plot.building.name)
+                        .font(.custom("Cinzel-Bold", size: 26))
+                        .foregroundColor(RenaissanceColors.sepiaInk)
 
-                        // Science icons row
-                        HStack(spacing: 6) {
-                            ForEach(plot.building.sciences, id: \.self) { science in
-                                if let imageName = science.customImageName {
-                                    Image(imageName)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 28, height: 28)
-                                        .clipShape(RoundedRectangle(cornerRadius: 6))
-                                } else {
-                                    Image(systemName: science.sfSymbolName)
-                                        .font(.custom("Mulish-Light", size: 16, relativeTo: .subheadline))
-                                        .foregroundStyle(RenaissanceColors.sepiaInk)
-                                        .frame(width: 28, height: 28)
-                                }
+                    // Science icons row
+                    HStack(spacing: 6) {
+                        ForEach(plot.building.sciences, id: \.self) { science in
+                            if let imageName = science.customImageName {
+                                Image(imageName)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 28, height: 28)
+                                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                            } else {
+                                Image(systemName: science.sfSymbolName)
+                                    .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
+                                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                                    .frame(width: 28, height: 28)
                             }
                         }
                     }
-                    .opacity(showDialogue ? 1 : 0)
-                    .offset(y: showDialogue ? 0 : 20)
 
                     // Notebook button (if entries exist)
                     if let ns = notebookState, ns.hasEntries(for: plot.id) {
@@ -72,7 +69,7 @@ struct MascotDialogueView: View {
                         } label: {
                             HStack(spacing: 6) {
                                 Image(systemName: "book.closed.fill")
-                                    .font(.custom("Mulish-Light", size: 13, relativeTo: .footnote))
+                                    .font(.custom("EBGaramond-Regular", size: 13, relativeTo: .footnote))
                                 Text("Open Notebook")
                                     .font(.custom("EBGaramond-Regular", size: 14))
                             }
@@ -85,13 +82,23 @@ struct MascotDialogueView: View {
                             )
                         }
                         .buttonStyle(.plain)
-                        .opacity(showDialogue ? 1 : 0)
                     }
+                }
+                .opacity(showDialogue ? 1 : 0)
+                .offset(y: showDialogue ? 0 : 20)
+                .padding(.bottom, 20)
 
-                    // 3 Cards in HStack
-                    HStack(spacing: 12) {
+                // 3 Cards — floating with connection line
+                ZStack {
+                    // Connection line behind cards
+                    Rectangle()
+                        .fill(RenaissanceColors.ochre.opacity(0.2))
+                        .frame(width: 3 * 240 + 2 * 16 - 60, height: 2)
+
+                    HStack(spacing: 16) {
                         ForEach(Array(BuildingCardChoice.allCases.enumerated()), id: \.element) { index, choice in
                             buildingCard(choice: choice, index: index)
+                                .offset(y: cardFloat * (index.isMultiple(of: 2) ? 1 : -1))
                                 .opacity(showChoices ? 1 : 0)
                                 .offset(y: showChoices ? 0 : 30)
                                 .animation(
@@ -102,9 +109,6 @@ struct MascotDialogueView: View {
                         }
                     }
                 }
-                .padding(20)
-                .background(DialogueBubble())
-                .padding(.horizontal, 24)
 
                 Spacer()
             }
@@ -119,6 +123,10 @@ struct MascotDialogueView: View {
             withAnimation(.spring(response: 0.5).delay(0.6)) {
                 showChoices = true
             }
+            auroraPhase = true
+            withAnimation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true)) {
+                cardFloat = 8
+            }
         }
     }
 
@@ -131,39 +139,93 @@ struct MascotDialogueView: View {
                 onChoice(choice)
             }
         } label: {
-            VStack(spacing: 10) {
-                // Icon circle
-                ZStack {
-                    Circle()
-                        .fill(cardColor(for: choice).opacity(0.15))
-                        .frame(width: 50, height: 50)
-                    Image(systemName: choice.icon)
-                        .font(.custom("Mulish-Light", size: 22, relativeTo: .title3))
-                        .foregroundStyle(cardColor(for: choice))
-                }
-
-                // Title
-                Text(choice.rawValue)
-                    .font(.custom("EBGaramond-SemiBold", size: 15))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.8)
-
-                // Card-specific content
-                cardDetail(for: choice)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 14)
-            .padding(.horizontal, 8)
-            .background(
+            let color = cardColor(for: choice)
+            ZStack {
+                // Layer 1: Glass background
                 RoundedRectangle(cornerRadius: 14)
-                    .fill(RenaissanceColors.parchment)
-            )
+                    .fill(RenaissanceColors.parchmentLight.opacity(0.5))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14)
+                            .fill(.ultraThinMaterial)
+                    )
+                    // Aurora blobs — bottom of card
+                    .overlay(
+                        ZStack {
+                            Ellipse()
+                                .fill(color.opacity(0.55))
+                                .frame(width: 180, height: 120)
+                                .blur(radius: 38)
+                                .offset(
+                                    x: auroraPhase ? 40 : -30,
+                                    y: auroraPhase ? 100 : 130
+                                )
+                                .animation(.easeInOut(duration: 4.0).repeatForever(autoreverses: true), value: auroraPhase)
+
+                            Ellipse()
+                                .fill(color.opacity(0.4))
+                                .frame(width: 128, height: 165)
+                                .blur(radius: 33)
+                                .offset(
+                                    x: auroraPhase ? -35 : 25,
+                                    y: auroraPhase ? 110 : 140
+                                )
+                                .animation(.easeInOut(duration: 5.5).repeatForever(autoreverses: true), value: auroraPhase)
+
+                            Ellipse()
+                                .fill(RenaissanceColors.goldSuccess.opacity(0.3))
+                                .frame(width: 135, height: 90)
+                                .blur(radius: 36)
+                                .offset(
+                                    x: auroraPhase ? 20 : -40,
+                                    y: auroraPhase ? 105 : 135
+                                )
+                                .animation(.easeInOut(duration: 6.5).repeatForever(autoreverses: true), value: auroraPhase)
+
+                            Circle()
+                                .fill(Color.white.opacity(0.25))
+                                .frame(width: 82, height: 82)
+                                .blur(radius: 27)
+                                .offset(
+                                    x: auroraPhase ? -15 : 30,
+                                    y: auroraPhase ? 115 : 120
+                                )
+                                .animation(.easeInOut(duration: 3.5).repeatForever(autoreverses: true), value: auroraPhase)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                    )
+
+                // Layer 2: Content
+                VStack(spacing: 10) {
+                    ZStack {
+                        Circle()
+                            .fill(color.opacity(0.15))
+                            .frame(width: 50, height: 50)
+                        Image(systemName: choice.icon)
+                            .font(.custom("EBGaramond-Regular", size: 22, relativeTo: .title3))
+                            .foregroundStyle(color)
+                    }
+
+                    Text(choice.rawValue)
+                        .font(.custom("EBGaramond-SemiBold", size: 15))
+                        .foregroundStyle(color)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.8)
+
+                    cardDetail(for: choice)
+                }
+                .padding(.vertical, 14)
+                .padding(.horizontal, 8)
+            }
+            .frame(width: 240, height: 330)
+            .clipShape(RoundedRectangle(cornerRadius: 14))
             .overlay(
                 RoundedRectangle(cornerRadius: 14)
-                    .stroke(cardColor(for: choice).opacity(0.4), lineWidth: 1.5)
+                    .stroke(color.opacity(0.3), lineWidth: 1.5)
             )
+            .shadow(color: color.opacity(0.5), radius: 20, y: 6)
+            .shadow(color: color.opacity(0.3), radius: 40, y: 10)
         }
         .buttonStyle(.plain)
     }
@@ -175,7 +237,7 @@ struct MascotDialogueView: View {
             // Florins badge
             HStack(spacing: 4) {
                 Image(systemName: "dollarsign.circle.fill")
-                    .font(.custom("Mulish-Light", size: 12, relativeTo: .caption))
+                    .font(.custom("EBGaramond-Regular", size: 12, relativeTo: .caption))
                     .foregroundStyle(RenaissanceColors.goldSuccess)
                 Text("+\(GameRewards.lessonReadFlorins)")
                     .font(.custom("EBGaramond-SemiBold", size: 14))
@@ -190,7 +252,7 @@ struct MascotDialogueView: View {
 
         case .environments:
             Text(choice.subtitle)
-                .font(.custom("Mulish-Light", size: 11))
+                .font(.custom("EBGaramond-Regular", size: 11))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
@@ -201,7 +263,7 @@ struct MascotDialogueView: View {
             let totalReqs = totalRequirements()
             HStack(spacing: 4) {
                 Image(systemName: reqCount == totalReqs ? "checkmark.circle.fill" : "circle")
-                    .font(.custom("Mulish-Light", size: 12, relativeTo: .caption))
+                    .font(.custom("EBGaramond-Regular", size: 12, relativeTo: .caption))
                     .foregroundStyle(reqCount == totalReqs ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray)
                 Text("\(reqCount)/\(totalReqs)")
                     .font(.custom("EBGaramond-SemiBold", size: 14))
@@ -311,10 +373,12 @@ struct BirdCharacter: View {
 
     private static let flySitFrameCount = 15
     private static let sitBlinkFrameCount = 15
-    private static let flyFPS: TimeInterval = 1.0 / 12.0   // ~12fps for smooth landing
+    private static let flyFPS: TimeInterval = 1.0 / 5.0    // ~5fps — slow, graceful fly-in
     private static let blinkFPS: TimeInterval = 1.0 / 8.0   // ~8fps for gentle blink
+    /// Play fly frames once — single fly-in and land
+    private static let totalFlyFrames = flySitFrameCount
     /// Total duration of the fly-in sprite animation
-    private static let flyDuration: TimeInterval = Double(flySitFrameCount) * flyFPS
+    private static let flyDuration: TimeInterval = Double(totalFlyFrames) * flyFPS
 
     @State private var currentFrameName: String = "BirdFlySitFrame00"
     @State private var timer: Timer?
@@ -354,30 +418,31 @@ struct BirdCharacter: View {
             }
     }
 
-    /// Fly in from top-left: animate position + play sprite frames, then sit still
+    /// Fly in from top-left: loop flying frames, swoop down, then land
     private func playFlyIn() {
         timer?.invalidate()
 
         // Reset to start position (off-screen top-left, tilted)
-        flyOffset = CGSize(width: -120, height: -200)
-        flyRotation = 15
+        flyOffset = CGSize(width: -180, height: -280)
+        flyRotation = 20
         currentFrameName = "BirdFlySitFrame00"
 
-        // Animate SwiftUI position — bird swoops down to center
-        withAnimation(.easeOut(duration: Self.flyDuration)) {
+        // Animate SwiftUI position — bird swoops down to center over the full duration
+        withAnimation(.easeInOut(duration: Self.flyDuration)) {
             flyOffset = .zero
             flyRotation = 0
         }
 
-        // Play sprite frames in sync
-        var frame = 0
+        // Play sprite frames: loop flySit frames N times, then hold on last frame
+        var totalFrame = 0
         timer = Timer.scheduledTimer(withTimeInterval: Self.flyFPS, repeats: true) { t in
-            if frame < Self.flySitFrameCount - 1 {
-                frame += 1
-                currentFrameName = String(format: "BirdFlySitFrame%02d", frame)
+            totalFrame += 1
+            if totalFrame < Self.totalFlyFrames {
+                currentFrameName = String(format: "BirdFlySitFrame%02d", totalFrame)
             } else {
+                // Final frame — bird has landed
+                currentFrameName = String(format: "BirdFlySitFrame%02d", Self.flySitFrameCount - 1)
                 t.invalidate()
-                // Stay on last frame (bird sitting still)
             }
         }
     }
