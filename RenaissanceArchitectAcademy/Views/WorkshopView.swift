@@ -17,7 +17,7 @@ struct WorkshopView: View {
     var body: some View {
         ZStack {
             if showInterior {
-                CraftingRoomMapView(workshop: workshop, viewModel: viewModel, onNavigate: onNavigate, onBackToMenu: onBackToMenu, onboardingState: onboardingState, returnToLessonPlotId: $returnToLessonPlotId) {
+                CraftingRoomMapView(workshop: workshop, viewModel: viewModel, onNavigate: onNavigate, onBackToMenu: onBackToMenu, onboardingState: onboardingState, returnToLessonPlotId: $returnToLessonPlotId, notebookState: notebookState) {
                     withAnimation(.easeInOut(duration: 0.4)) {
                         showInterior = false
                     }

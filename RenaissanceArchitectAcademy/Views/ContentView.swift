@@ -107,9 +107,13 @@ struct ContentView: View {
 
             // Only load game data if we have a real player (not empty-name placeholder)
             if !manager.currentPlayerName.isEmpty {
+                print("[INIT] Loading data for recent player: '\(manager.currentPlayerName)'")
                 cityViewModel.loadFromPersistence()
                 workshopState.loadFromPersistence()
                 notebookState.switchPlayer(to: manager.currentPlayerName)
+                print("[INIT] Loaded — florins: \(cityViewModel.goldFlorins), materials: \(workshopState.rawMaterials)")
+            } else {
+                print("[INIT] No recent player found, starting fresh")
             }
 
             // Seed lesson records into SwiftData on first launch
@@ -141,10 +145,26 @@ struct ContentView: View {
     /// Switch all systems to a specific player's save data
     private func switchToPlayer(_ name: String) {
         guard let manager = persistenceManager else { return }
+
+        print("[PLAYER SWITCH] Switching to player: '\(name)' (was: '\(manager.currentPlayerName)')")
+        print("[PLAYER SWITCH] Before reset — florins: \(cityViewModel.goldFlorins), materials: \(workshopState.rawMaterials)")
+
+        // Reset in-memory state BEFORE changing player name
+        // (prevents old data being auto-saved to new player)
+        cityViewModel.goldFlorins = 0
+        cityViewModel.earnedScienceBadges = []
+        cityViewModel.buildingProgressMap = [:]
+        cityViewModel.activeBuildingId = nil
+        workshopState.rawMaterials = [:]
+        workshopState.craftedMaterials = [:]
+
+        // Now switch to the new player and load their data
         manager.currentPlayerName = name
         cityViewModel.loadFromPersistence()
         workshopState.loadFromPersistence()
         notebookState.switchPlayer(to: name)
+
+        print("[PLAYER SWITCH] After load — florins: \(cityViewModel.goldFlorins), materials: \(workshopState.rawMaterials)")
     }
 
     /// Navigate to a destination from any screen

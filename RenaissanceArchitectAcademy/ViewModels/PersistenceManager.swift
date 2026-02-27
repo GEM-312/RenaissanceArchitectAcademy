@@ -18,9 +18,11 @@ final class PersistenceManager {
             predicate: #Predicate { $0.apprenticeName == name }
         )
         if let existing = try? modelContext.fetch(descriptor).first {
+            print("[PERSIST] Found existing save for '\(name)' — florins: \(existing.goldFlorins), apprenticeName: '\(existing.apprenticeName)'")
             return existing
         }
         // No save for this player — create new one
+        print("[PERSIST] No save found for '\(name)' — creating fresh save")
         let save = PlayerSave()
         save.apprenticeName = name
         modelContext.insert(save)

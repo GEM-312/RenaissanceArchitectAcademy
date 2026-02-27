@@ -45,10 +45,10 @@ class CraftingRoomScene: SKScene {
 
     // Furniture positions in 3500x2500 coordinate space
     private let furniturePositions: [CraftingStation: CGPoint] = [
-        .workbench:    CGPoint(x: 875,  y: 1500),
-        .furnace:      CGPoint(x: 2520, y: 1125),
-        .pigmentTable: CGPoint(x: 1680, y: 1625),
-        .shelf:        CGPoint(x: 2975, y: 875),
+        .workbench:    CGPoint(x: 83,  y: 918),
+        .furnace:      CGPoint(x: 1225, y: 1234),
+        .pigmentTable: CGPoint(x: 3432, y: 300),
+        .shelf:        CGPoint(x: 617, y: 1309),
     ]
 
     /// Sprite display size for furniture images (smaller than outdoor — interior perspective)
@@ -57,17 +57,17 @@ class CraftingRoomScene: SKScene {
     // MARK: - Waypoint Graph (simple indoor paths)
 
     private var waypoints: [CGPoint] = [
-        /* 0  */ CGPoint(x: 1750, y: 2200),   // door (player spawn)
-        /* 1  */ CGPoint(x: 1750, y: 1800),   // bottom-center
-        /* 2  */ CGPoint(x: 1300, y: 1550),   // center-left
-        /* 3  */ CGPoint(x: 1750, y: 1400),   // center
-        /* 4  */ CGPoint(x: 2200, y: 1350),   // center-right
+        /* 0  */ CGPoint(x: 1282, y: 890),   // door (player spawn)
+        /* 1  */ CGPoint(x: 1315, y: 500),   // bottom-center
+        /* 2  */ CGPoint(x: 1684, y: 596),   // center-left
+        /* 3  */ CGPoint(x: 2333, y: 341),   // center
+        /* 4  */ CGPoint(x: 1690, y: 412),   // center-right
         /* 5  */ CGPoint(x: 875,  y: 1500),   // workbench
-        /* 6  */ CGPoint(x: 1680, y: 1625),   // pigment table
-        /* 7  */ CGPoint(x: 2520, y: 1125),   // furnace
-        /* 8  */ CGPoint(x: 2975, y: 875),    // shelf
+        /* 6  */ CGPoint(x: 785, y: 485),   // pigment table
+        /* 7  */ CGPoint(x: 905, y: 791),   // furnace
+        /* 8  */ CGPoint(x: 1126, y: 1028),    // shelf
         /* 9  */ CGPoint(x: 2600, y: 1400),   // right connector
-        /* 10 */ CGPoint(x: 1100, y: 1700),   // left connector
+        /* 10 */ CGPoint(x: 1249, y: 978),   // left connector
     ]
 
     private let waypointEdges: [[Int]] = [

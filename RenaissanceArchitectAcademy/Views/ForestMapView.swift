@@ -1,5 +1,6 @@
 import SwiftUI
 import SpriteKit
+import Subsonic
 
 /// SwiftUI wrapper for the ForestScene SpriteKit experience
 /// Layers: SpriteKit scene → bird companion → nav panel + inventory → science cards overlay → truffle overlay
@@ -197,6 +198,7 @@ struct ForestMapView: View {
 
         // Staggered card appearance animation
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            SubsonicController.shared.play(sound: "cards_appear.mp3")
             withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
                 cardsAppeared = true
             }
@@ -372,6 +374,7 @@ struct ForestMapView: View {
 
         if flippedOpenCard == category {
             // Tapping the flipped card — unflip back to front
+            SubsonicController.shared.play(sound: "card_flip.mp3")
             withAnimation(.spring(response: 0.6, dampingFraction: 0.75)) {
                 flipAngles[category] = 0
                 flippedOpenCard = nil
@@ -388,6 +391,7 @@ struct ForestMapView: View {
                 }
             }
             // Flip this card with 3D rotation, others pile left
+            SubsonicController.shared.play(sound: "card_flip.mp3")
             withAnimation(.spring(response: 0.6, dampingFraction: 0.75)) {
                 flippedOpenCard = category
                 flipAngles[category] = 180
@@ -853,6 +857,7 @@ struct ForestMapView: View {
         // Both IDs should refer to the same KeywordPair (keyword tapped = definition tapped)
         if keywordID == definitionID {
             // Correct match!
+            SubsonicController.shared.play(sound: "correct_chime.mp3")
             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                 matchedPairIDs.insert(keywordID)
                 selectedKeywordID = nil
@@ -881,6 +886,7 @@ struct ForestMapView: View {
             }
         } else {
             // Wrong match — flash red
+            SubsonicController.shared.play(sound: "wrong_buzz.mp3")
             withAnimation(.easeOut(duration: 0.15)) {
                 wrongMatchFlash = true
             }
@@ -923,6 +929,7 @@ struct ForestMapView: View {
 
     /// Mark a card as completed — flip it back to front showing green checkmark
     private func completeCard(_ category: ForestCardCategory) {
+        SubsonicController.shared.play(sound: "card_complete.mp3")
         withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
             cardPhases[category] = .completed
             completedCards.insert(category)

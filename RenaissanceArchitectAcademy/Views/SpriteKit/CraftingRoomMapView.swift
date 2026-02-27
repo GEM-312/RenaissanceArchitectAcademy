@@ -1,5 +1,6 @@
 import SwiftUI
 import SpriteKit
+import Subsonic
 
 /// SwiftUI wrapper for the CraftingRoomScene SpriteKit interior
 /// Layers: SpriteKit scene → UI bars → station overlays → educational/earn popups → master task card
@@ -11,6 +12,7 @@ struct CraftingRoomMapView: View {
     var onBackToMenu: (() -> Void)? = nil
     var onboardingState: OnboardingState? = nil
     @Binding var returnToLessonPlotId: Int?
+    var notebookState: NotebookState? = nil
     var onBack: () -> Void
 
     // Scene reference
@@ -22,6 +24,10 @@ struct CraftingRoomMapView: View {
 
     // Active station overlay
     @State private var activeStation: CraftingStation? = nil
+
+    // Knowledge cards at crafting stations
+    @State private var showCraftingKnowledgeCards = false
+    @State private var craftingKnowledgeCards: [KnowledgeCard] = []
 
     // Magic Mouse scroll-to-zoom
     @State private var scrollMonitor: Any?
@@ -62,8 +68,8 @@ struct CraftingRoomMapView: View {
                     .allowsHitTesting(false)
                 }
 
-                // Layer 3: Station overlays
-                if let station = activeStation {
+                // Layer 3: Station overlays (hidden when knowledge cards showing)
+                if let station = activeStation, !showCraftingKnowledgeCards {
                     RenaissanceColors.overlayDimming
                         .ignoresSafeArea()
                         .onTapGesture { dismissOverlay() }
@@ -71,6 +77,29 @@ struct CraftingRoomMapView: View {
 
                     stationOverlay(for: station)
                         .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+
+                // Knowledge cards at crafting stations
+                if showCraftingKnowledgeCards, !craftingKnowledgeCards.isEmpty,
+                   let vm = viewModel, let bid = vm.activeBuildingId {
+                    KnowledgeCardsOverlay(
+                        cards: craftingKnowledgeCards,
+                        buildingId: bid,
+                        viewModel: vm,
+                        notebookState: notebookState,
+                        onDismiss: {
+                            let station = activeStation
+                            withAnimation {
+                                showCraftingKnowledgeCards = false
+                                craftingKnowledgeCards = []
+                            }
+                            // Show normal station overlay after cards
+                            if station != nil {
+                                // activeStation is already set; the overlay will show
+                            }
+                        }
+                    )
+                    .transition(.opacity)
                 }
 
                 // Layer 4: Educational popup
@@ -133,6 +162,23 @@ struct CraftingRoomMapView: View {
         }
 
         newScene.onFurnitureReached = { station in
+            // Check for knowledge cards at this station
+            let stationKey = "\(station)"  // enum case name matches KnowledgeCard stationKey
+            if let buildingName = viewModel?.activeBuildingName {
+                let cards = KnowledgeCardContent.cards(for: buildingName, at: stationKey)
+                let progress = viewModel?.buildingProgressMap[viewModel?.activeBuildingId ?? 0] ?? BuildingProgress()
+                let incomplete = cards.filter { !progress.completedCardIDs.contains($0.id) }
+                if !incomplete.isEmpty {
+                    self.craftingKnowledgeCards = cards
+                    self.activeStation = station  // remember which station for after cards
+                    SubsonicController.shared.play(sound: "cards_appear.mp3")
+                    withAnimation(.spring(response: 0.3)) {
+                        self.showCraftingKnowledgeCards = true
+                    }
+                    return
+                }
+            }
+            // No knowledge cards — show normal station overlay
             withAnimation(.spring(response: 0.3)) {
                 self.activeStation = station
             }

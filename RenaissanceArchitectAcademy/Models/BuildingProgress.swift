@@ -30,6 +30,8 @@ struct BuildingProgress {
     var quizPassed: Bool = false
     var lessonRead: Bool = false
     var lessonSectionIndex: Int = 0  // Bookmark: which section the student is on
+    var constructionSequenceCompleted: Bool = false
+    var completedCardIDs: Set<String> = []    // Knowledge cards completed (deterministic IDs)
 }
 
 /// Reward constants for the game economy
@@ -44,4 +46,5 @@ enum GameRewards {
     static let jobCompleteFlorins = 10       // Base bonus on top of job.rewardFlorins
     static let jobStreakBonus = 5             // Extra per consecutive job completed
     static let scienceCardMatchFlorins = 2   // Per correct keyword match on forest cards
+    static let constructionSequenceFlorins = 20
 }

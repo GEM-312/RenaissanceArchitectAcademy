@@ -8,6 +8,7 @@ class CityViewModel: ObservableObject {
     @Published var earnedScienceBadges: Set<Science> = []
     @Published var buildingProgressMap: [Int: BuildingProgress] = [:]
     @Published var totalPlayTime: TimeInterval = 0
+    @Published var activeBuildingId: Int? = nil  // Which building the player is currently working on
 
     var persistenceManager: PersistenceManager?
 
@@ -57,7 +58,7 @@ class CityViewModel: ObservableObject {
                     era: .ancientRome,
                     sciences: [.geometry, .architecture, .materials],
                     iconName: "circle.circle",
-                    difficultyTier: .architect
+                    difficultyTier: .apprentice
                 ),
                 isCompleted: false
             ),
@@ -238,6 +239,15 @@ class CityViewModel: ObservableObject {
         goldFlorins = save.goldFlorins
         earnedScienceBadges = save.earnedScienceBadges
         totalPlayTime = save.totalPlayTimeSeconds
+
+        // Reset all in-memory state before loading new player's data
+        buildingProgressMap = [:]
+        activeBuildingId = nil
+        for i in buildingPlots.indices {
+            buildingPlots[i].isCompleted = false
+            buildingPlots[i].challengeProgress = 0
+            buildingPlots[i].sketchingProgress.completedPhases = []
+        }
 
         let records = manager.loadAllBuildingProgress()
         for (buildingId, record) in records {
@@ -423,20 +433,86 @@ class CityViewModel: ObservableObject {
         guard let plot = buildingPlots.first(where: { $0.id == plotId }) else { return false }
         let progress = buildingProgressMap[plotId] ?? BuildingProgress()
 
-        // All sciences must be earned
+        // 1. Lesson must be read first
+        let lessonOk = LessonContent.lesson(for: plot.building.name) == nil || progress.lessonRead
+
+        // 2. All sciences must be earned
         let allSciencesBadged = plot.building.sciences.allSatisfy { progress.scienceBadgesEarned.contains($0) }
 
-        // Sketch must be done if sketching content exists
+        // 3. Sketch must be done if sketching content exists
         let sketchOk = SketchingContent.sketchingChallenge(for: plot.building.name) == nil || progress.sketchCompleted
 
-        // Quiz must be passed if quiz content exists
+        // 4. Quiz must be passed if quiz content exists
         let quizOk = ChallengeContent.interactiveChallenge(for: plot.building.name) == nil || progress.quizPassed
 
-        // All required materials
+        // 5. All required materials collected & crafted
         let materialsOk = plot.building.requiredMaterials.allSatisfy { item, needed in
             (workshopState.craftedMaterials[item] ?? 0) >= needed
         }
 
-        return allSciencesBadged && sketchOk && quizOk && materialsOk
+        return lessonOk && allSciencesBadged && sketchOk && quizOk && materialsOk
+    }
+
+    // MARK: - Knowledge Card Tracking
+
+    /// Set the building the player is actively working on
+    func setActiveBuilding(_ plotId: Int?) {
+        activeBuildingId = plotId
+    }
+
+    /// Active building name (for card lookups)
+    var activeBuildingName: String? {
+        guard let id = activeBuildingId else { return nil }
+        return buildingPlots.first(where: { $0.id == id })?.building.name
+    }
+
+    /// Mark a knowledge card as completed and save to notebook
+    func markCardCompleted(for plotId: Int, cardID: String, notebookEntry: NotebookEntry? = nil, notebookState: NotebookState? = nil) {
+        var progress = buildingProgressMap[plotId] ?? BuildingProgress()
+        guard !progress.completedCardIDs.contains(cardID) else { return }
+        progress.completedCardIDs.insert(cardID)
+        buildingProgressMap[plotId] = progress
+        persistBuildingProgress(for: plotId)
+
+        // Save lesson to notebook
+        if let entry = notebookEntry, let ns = notebookState,
+           let buildingName = buildingPlots.first(where: { $0.id == plotId })?.building.name {
+            ns.addEntries([entry], buildingId: plotId, buildingName: buildingName)
+        }
+
+        // Auto-mark lessonRead when all cards for this building are completed
+        let buildingName = buildingPlots.first(where: { $0.id == plotId })?.building.name ?? ""
+        let totalCards = KnowledgeCardContent.cards(for: buildingName)
+        if !totalCards.isEmpty && progress.completedCardIDs.count >= totalCards.count {
+            markLessonRead(for: plotId)
+        }
+    }
+
+    /// Card progress for a building: (completed, total)
+    func cardProgress(for plotId: Int) -> (completed: Int, total: Int) {
+        let progress = buildingProgressMap[plotId] ?? BuildingProgress()
+        let buildingName = buildingPlots.first(where: { $0.id == plotId })?.building.name ?? ""
+        let totalCards = KnowledgeCardContent.cards(for: buildingName)
+        return (progress.completedCardIDs.count, totalCards.count)
+    }
+
+    /// Which environment the bird should suggest next for the active building
+    func nextSuggestedEnvironment(for plotId: Int) -> CardEnvironment? {
+        let progress = buildingProgressMap[plotId] ?? BuildingProgress()
+        let buildingName = buildingPlots.first(where: { $0.id == plotId })?.building.name ?? ""
+        let allCards = KnowledgeCardContent.cards(for: buildingName)
+
+        // Find environment with the most incomplete cards
+        var bestEnv: CardEnvironment?
+        var bestCount = 0
+        for env in CardEnvironment.allCases {
+            let envCards = allCards.filter { $0.environment == env }
+            let incomplete = envCards.filter { !progress.completedCardIDs.contains($0.id) }.count
+            if incomplete > bestCount {
+                bestCount = incomplete
+                bestEnv = env
+            }
+        }
+        return bestEnv
     }
 }

@@ -1,5 +1,6 @@
 import SwiftUI
 import SpriteKit
+import Subsonic
 
 /// SwiftUI wrapper for the SpriteKit city scene
 ///
@@ -66,11 +67,17 @@ struct CityMapView: View {
     /// Controls the building lesson view (Card 1: Read to Earn)
     @State private var showBuildingLesson = false
 
+    /// Controls the knowledge cards overlay (replaces lesson for buildings with cards)
+    @State private var showKnowledgeCards = false
+
     /// Controls the environment picker (Card 2: Explore Environments)
     @State private var showEnvironmentPicker = false
 
     /// Controls the building checklist view (Card 3: Ready to Build)
     @State private var showBuildingChecklist = false
+
+    /// Controls the construction sequence puzzle (shown after checklist)
+    @State private var showConstructionSequence = false
 
     /// Controls the Workshop sheet (opened from post-quiz prompt)
     @State private var showWorkshopSheet = false
@@ -154,10 +161,23 @@ struct CityMapView: View {
                         challengeEntryPath = choice
                         switch choice {
                         case .readToEarn:
-                            // Show building lesson view
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                withAnimation(.spring(response: 0.3)) {
-                                    showBuildingLesson = true
+                            // Check if building has knowledge cards — if so, use card system
+                            let hasCards = !KnowledgeCardContent.cards(for: plot.building.name).isEmpty
+                            if hasCards {
+                                viewModel.setActiveBuilding(plot.id)
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    SubsonicController.shared.play(sound: "cards_appear.mp3")
+                                    withAnimation(.spring(response: 0.3)) {
+                                        showKnowledgeCards = true
+                                    }
+                                }
+                            } else {
+                                // Fallback to old paged lesson
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    SubsonicController.shared.play(sound: "cards_appear.mp3")
+                                    withAnimation(.spring(response: 0.3)) {
+                                        showBuildingLesson = true
+                                    }
                                 }
                             }
                         case .environments:
@@ -210,6 +230,28 @@ struct CityMapView: View {
                             selectedPlot = nil
                         }
                         scene?.resetMascot()
+                    }
+                )
+                .transition(.opacity)
+            }
+
+            // Knowledge Cards (replaces lesson for buildings with cards)
+            if showKnowledgeCards, let plot = selectedPlot {
+                let cityCards = KnowledgeCardContent.cards(for: plot.building.name, in: .cityMap)
+                KnowledgeCardsOverlay(
+                    cards: cityCards,
+                    buildingId: plot.id,
+                    viewModel: viewModel,
+                    notebookState: notebookState,
+                    onDismiss: {
+                        withAnimation {
+                            showKnowledgeCards = false
+                            selectedPlot = nil
+                        }
+                        scene?.resetMascot()
+                    },
+                    onAllComplete: {
+                        // City map cards done — bird suggests next environment
                     }
                 )
                 .transition(.opacity)
@@ -281,21 +323,63 @@ struct CityMapView: View {
                     viewModel: viewModel,
                     workshopState: workshopState,
                     onBeginConstruction: {
-                        // Transition to construction → complete
+                        // If this building has a construction sequence, show it first
+                        if ConstructionSequenceContent.sequence(for: plot.building.name) != nil {
+                            withAnimation(.spring(response: 0.3)) {
+                                showBuildingChecklist = false
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                withAnimation(.spring(response: 0.3)) {
+                                    showConstructionSequence = true
+                                }
+                            }
+                        } else {
+                            // No sequence — complete immediately
+                            viewModel.completeChallenge(for: plot.id)
+                            viewModel.earnFlorins(GameRewards.buildCompleteFlorins)
+                            if let buildingId = buildingIdToPlotId.first(where: { $0.value == plot.id })?.key {
+                                scene?.updateBuildingState(buildingId, state: .complete)
+                            }
+                            withAnimation {
+                                showBuildingChecklist = false
+                                selectedPlot = nil
+                            }
+                            scene?.resetMascot()
+                        }
+                    },
+                    onDismiss: {
+                        withAnimation {
+                            showBuildingChecklist = false
+                            selectedPlot = nil
+                        }
+                        scene?.resetMascot()
+                    }
+                )
+                .transition(.opacity)
+            }
+
+            // Construction Sequence Puzzle (shown after checklist)
+            if showConstructionSequence, let plot = selectedPlot,
+               let sequence = ConstructionSequenceContent.sequence(for: plot.building.name) {
+                ConstructionSequenceView(
+                    sequence: sequence,
+                    onComplete: {
+                        // Puzzle complete — award florins and finish the building
+                        viewModel.buildingProgressMap[plot.id, default: BuildingProgress()].constructionSequenceCompleted = true
                         viewModel.completeChallenge(for: plot.id)
-                        viewModel.earnFlorins(GameRewards.buildCompleteFlorins)
+                        viewModel.earnFlorins(GameRewards.buildCompleteFlorins + GameRewards.constructionSequenceFlorins)
                         if let buildingId = buildingIdToPlotId.first(where: { $0.value == plot.id })?.key {
                             scene?.updateBuildingState(buildingId, state: .complete)
                         }
                         withAnimation {
-                            showBuildingChecklist = false
+                            showConstructionSequence = false
                             selectedPlot = nil
                         }
                         scene?.resetMascot()
                     },
                     onDismiss: {
                         withAnimation {
-                            showBuildingChecklist = false
+                            showConstructionSequence = false
                             selectedPlot = nil
                         }
                         scene?.resetMascot()
@@ -473,7 +557,7 @@ struct CityMapView: View {
             }
             #if os(macOS)
             scrollMonitor = NSEvent.addLocalMonitorForEvents(matching: .scrollWheel) { [self] event in
-                if !showMascotDialogue && !showBuildingLesson && !showChallenge && !showLockedMessage && !showBuildingChecklist {
+                if !showMascotDialogue && !showBuildingLesson && !showKnowledgeCards && !showChallenge && !showLockedMessage && !showBuildingChecklist && !showConstructionSequence {
                     scene?.handleScrollZoom(deltaY: event.deltaY)
                 }
                 return event
@@ -597,6 +681,7 @@ struct CityMapView: View {
             }
 
             // Show the mascot dialogue (new game flow)
+            SubsonicController.shared.play(sound: "building_tap.mp3")
             selectedPlot = plot
             withAnimation(.spring(response: 0.3)) {
                 showMascotDialogue = true

@@ -234,21 +234,39 @@ struct MascotDialogueView: View {
     private func cardDetail(for choice: BuildingCardChoice) -> some View {
         switch choice {
         case .readToEarn:
-            // Florins badge
-            HStack(spacing: 4) {
-                Image(systemName: "dollarsign.circle.fill")
-                    .font(.custom("EBGaramond-Regular", size: 12, relativeTo: .caption))
-                    .foregroundStyle(RenaissanceColors.goldSuccess)
-                Text("+\(GameRewards.lessonReadFlorins)")
-                    .font(.custom("EBGaramond-SemiBold", size: 14))
-                    .foregroundStyle(RenaissanceColors.goldSuccess)
+            // Show card progress if building has knowledge cards, otherwise florins badge
+            let cardInfo = viewModel.cardProgress(for: plot.id)
+            if cardInfo.total > 0 {
+                HStack(spacing: 4) {
+                    Image(systemName: "square.stack.fill")
+                        .font(.custom("EBGaramond-Regular", size: 12, relativeTo: .caption))
+                        .foregroundStyle(cardInfo.completed == cardInfo.total ? RenaissanceColors.sageGreen : RenaissanceColors.ochre)
+                    Text("\(cardInfo.completed)/\(cardInfo.total)")
+                        .font(.custom("EBGaramond-SemiBold", size: 14))
+                        .foregroundStyle(cardInfo.completed == cardInfo.total ? RenaissanceColors.sageGreen : RenaissanceColors.ochre)
+                }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 4)
+                .background(
+                    Capsule()
+                        .fill((cardInfo.completed == cardInfo.total ? RenaissanceColors.sageGreen : RenaissanceColors.ochre).opacity(0.12))
+                )
+            } else {
+                HStack(spacing: 4) {
+                    Image(systemName: "dollarsign.circle.fill")
+                        .font(.custom("EBGaramond-Regular", size: 12, relativeTo: .caption))
+                        .foregroundStyle(RenaissanceColors.goldSuccess)
+                    Text("+\(GameRewards.lessonReadFlorins)")
+                        .font(.custom("EBGaramond-SemiBold", size: 14))
+                        .foregroundStyle(RenaissanceColors.goldSuccess)
+                }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 4)
+                .background(
+                    Capsule()
+                        .fill(RenaissanceColors.goldSuccess.opacity(0.12))
+                )
             }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 4)
-            .background(
-                Capsule()
-                    .fill(RenaissanceColors.goldSuccess.opacity(0.12))
-            )
 
         case .environments:
             Text(choice.subtitle)
@@ -283,13 +301,21 @@ struct MascotDialogueView: View {
     /// Count how many requirements are met for this building
     private func requirementsMet() -> Int {
         var met = 0
+        // 1. Lesson read (via knowledge cards or old paged lesson)
+        let hasLesson = LessonContent.lesson(for: plot.building.name) != nil
+        let hasCards = !KnowledgeCardContent.cards(for: plot.building.name).isEmpty
+        if (!hasLesson && !hasCards) || progress.lessonRead { met += 1 }
+        // 2. Science badges
         let sciences = plot.building.sciences
         let badgesEarned = progress.scienceBadgesEarned
         if sciences.allSatisfy({ badgesEarned.contains($0) }) { met += 1 }
+        // 3. Sketch
         let hasSketchContent = SketchingContent.sketchingChallenge(for: plot.building.name) != nil
         if !hasSketchContent || progress.sketchCompleted { met += 1 }
+        // 4. Quiz
         let hasQuizContent = ChallengeContent.interactiveChallenge(for: plot.building.name) != nil
         if !hasQuizContent || progress.quizPassed { met += 1 }
+        // 5. Materials
         let materialsOk = plot.building.requiredMaterials.allSatisfy { item, needed in
             (workshopState.craftedMaterials[item] ?? 0) >= needed
         }
@@ -298,7 +324,7 @@ struct MascotDialogueView: View {
     }
 
     private func totalRequirements() -> Int {
-        return 4 // sciences, sketch, quiz, materials
+        return 5 // lesson, sciences, sketch, quiz, materials
     }
 }
 

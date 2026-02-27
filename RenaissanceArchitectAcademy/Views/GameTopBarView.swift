@@ -76,23 +76,8 @@ struct GameTopBarView: View {
             }
 
             if let buildingName = returnToLessonBuildingName, let returnAction = onReturnToLesson {
-                Button(action: returnAction) {
-                    VStack(spacing: 2) {
-                        Image(systemName: "book.fill")
-                            .font(.system(size: 20, weight: .medium))
-                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
-                        Text("Lesson")
-                            .font(.custom("EBGaramond-Regular", size: 10, relativeTo: .caption))
-                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
-                    }
-                    .frame(width: 60, height: 48)
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color.white.opacity(0.6))
-                    )
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Back to \(buildingName) lesson")
+                navButton(icon: "book.fill", label: "Lesson", action: returnAction)
+                    .accessibilityLabel("Back to \(buildingName) lesson")
             }
 
             navButton(icon: "map.fill", label: "Map") {
@@ -134,23 +119,20 @@ struct GameTopBarView: View {
         }
     }
 
-    // MARK: - Nav Button — clear background, shadow + blurred border
+    // MARK: - Nav Button — frosted glass card style
 
     private func navButton(icon: String, label: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             VStack(spacing: 2) {
                 Image(systemName: icon)
                     .font(.system(size: 20, weight: .medium))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                    .foregroundStyle(RenaissanceColors.iconOchre.opacity(0.7))
                 Text(label)
-                    .font(.custom("EBGaramond-Regular", size: 11, relativeTo: .caption))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                    .font(.custom("Cinzel-Regular", size: 9, relativeTo: .caption))
+                    .foregroundStyle(RenaissanceColors.iconOchre.opacity(0.8))
             }
             .frame(width: 60, height: 48)
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.white.opacity(0.6))
-            )
+            .glassButton(shape: RoundedRectangle(cornerRadius: 5))
         }
         .buttonStyle(.plain)
     }
@@ -207,14 +189,7 @@ struct GameTopBarView: View {
 
         return VStack(spacing: 0) {
             ZStack {
-                RoundedRectangle(cornerRadius: 5)
-                    .fill(isComplete ? RenaissanceColors.sageGreen.opacity(0.5) :
-                          isSketched ? RenaissanceColors.ochre.opacity(0.4) :
-                          Color.white.opacity(0.6))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 5)
-                            .stroke(RenaissanceColors.ochre.opacity(0.25), lineWidth: 1)
-                    )
+                Color.clear
                     .frame(width: 40, height: 34)
 
                 Image(systemName: buildingIcon(for: plot.building.name))
@@ -222,7 +197,7 @@ struct GameTopBarView: View {
                     .foregroundStyle(
                         isComplete ? RenaissanceColors.sageGreen :
                         isSketched ? RenaissanceColors.ochre :
-                        RenaissanceColors.sepiaInk.opacity(0.5)
+                        RenaissanceColors.iconOchre.opacity(0.5)
                     )
             }
 
@@ -264,13 +239,12 @@ extension View {
     func glassButton<S: Shape>(shape: S) -> some View {
         self
             .background(
-                shape
-                    .fill(RenaissanceColors.parchment.opacity(0.8))
+                shape.fill(RenaissanceColors.parchment.opacity(0.5))
             )
             .overlay(
                 shape
-                    .stroke(RenaissanceColors.iconOchre.opacity(0.2), lineWidth: 1)
-                    .blur(radius: 0.5)
+                    .stroke(RenaissanceColors.iconOchre.opacity(0.3), lineWidth: 0.1)
             )
+            .shadow(color: RenaissanceColors.sepiaInk.opacity(0.3), radius: 3, y: 2)
     }
 }

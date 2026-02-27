@@ -1,5 +1,6 @@
 import SwiftUI
 import SpriteKit
+import Subsonic
 
 /// SwiftUI wrapper for the WorkshopScene SpriteKit mini-game
 /// Layers: SpriteKit scene → companion overlay → UI bars → hint/collection/crafting overlays
@@ -33,6 +34,10 @@ struct WorkshopMapView: View {
     @State private var showCollectionOverlay = false
     @State private var showWorkbenchOverlay = false
     @State private var showFurnaceOverlay = false
+
+    // Knowledge cards at workshop stations
+    @State private var showStationKnowledgeCards = false
+    @State private var stationKnowledgeCards: [KnowledgeCard] = []
 
     // Job system states
     @State private var jobBoardChoices: [WorkshopJob] = []
@@ -147,6 +152,32 @@ struct WorkshopMapView: View {
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
 
+                // Layer 8: Knowledge cards at workshop stations
+                if showStationKnowledgeCards, !stationKnowledgeCards.isEmpty, let vm = viewModel, let bid = vm.activeBuildingId {
+                    KnowledgeCardsOverlay(
+                        cards: stationKnowledgeCards,
+                        buildingId: bid,
+                        viewModel: vm,
+                        notebookState: notebookState,
+                        onDismiss: {
+                            withAnimation {
+                                showStationKnowledgeCards = false
+                                stationKnowledgeCards = []
+                            }
+                            // After dismissing cards, show normal collection overlay
+                            withAnimation(.spring(response: 0.3)) {
+                                showHintBubble = true
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                                withAnimation(.spring(response: 0.3)) {
+                                    showCollectionOverlay = true
+                                }
+                            }
+                        }
+                    )
+                    .transition(.opacity)
+                }
+
                 // Educational popup
                 if workshop.showEducationalPopup {
                     educationalOverlay
@@ -256,7 +287,22 @@ struct WorkshopMapView: View {
                 activeStation = nil
                 onNavigate?(.forest)
             default:
-                // Show hint bubble + collection overlay
+                // Check for knowledge cards at this station for the active building
+                let stationKey = "\(stationType)"  // enum case name matches KnowledgeCard stationKey
+                if let buildingName = viewModel?.activeBuildingName {
+                    let cards = KnowledgeCardContent.cards(for: buildingName, at: stationKey)
+                    let progress = viewModel?.buildingProgressMap[viewModel?.activeBuildingId ?? 0] ?? BuildingProgress()
+                    let incompleteCards = cards.filter { !progress.completedCardIDs.contains($0.id) }
+                    if !incompleteCards.isEmpty {
+                        stationKnowledgeCards = cards
+                        SubsonicController.shared.play(sound: "cards_appear.mp3")
+                        withAnimation(.spring(response: 0.3)) {
+                            showStationKnowledgeCards = true
+                        }
+                        return
+                    }
+                }
+                // No knowledge cards — show normal hint bubble + collection overlay
                 withAnimation(.spring(response: 0.3)) {
                     showHintBubble = true
                 }

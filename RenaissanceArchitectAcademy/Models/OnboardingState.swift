@@ -56,6 +56,10 @@ class OnboardingState {
 
     private func persistToSwiftData() {
         guard !isLoading, let manager = persistenceManager else { return }
+        // Switch to the new player name FIRST so we don't overwrite the old player's save
+        if !apprenticeName.isEmpty && manager.currentPlayerName != apprenticeName {
+            manager.currentPlayerName = apprenticeName
+        }
         let save = manager.loadPlayerSave()
         save.hasCompletedOnboarding = hasCompletedOnboarding
         save.gender = apprenticeGender

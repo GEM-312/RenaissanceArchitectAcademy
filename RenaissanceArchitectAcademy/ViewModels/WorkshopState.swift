@@ -247,6 +247,13 @@ class WorkshopState {
     func loadFromPersistence() {
         guard let manager = persistenceManager else { return }
         let save = manager.loadPlayerSave()
+        // Reset in-memory state before loading
+        rawMaterials = [:]
+        craftedMaterials = [:]
+        currentJob = nil
+        jobStreak = 0
+        totalJobsCompleted = 0
+        // Load from save
         rawMaterials = save.rawMaterials
         craftedMaterials = save.craftedMaterials
     }

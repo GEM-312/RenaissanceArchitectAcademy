@@ -118,7 +118,7 @@ struct ProfileView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "dollarsign.circle.fill")
                             .font(.system(size: 14))
-                            .foregroundStyle(RenaissanceColors.goldSuccess)
+                            .foregroundStyle(RenaissanceColors.iconOchre)
                         Text("\(viewModel.goldFlorins)")
                             .font(.custom("EBGaramond-Regular", size: 16))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
@@ -236,7 +236,7 @@ struct ProfileHeaderRow: View {
                     VStack(spacing: 4) {
                         ZStack {
                             Circle()
-                                .fill(RenaissanceColors.goldSuccess)
+                                .fill(RenaissanceColors.iconOchre)
                                 .frame(width: 36, height: 36)
                             Image(systemName: "dollarsign.circle.fill")
                                 .font(.custom("EBGaramond-Regular", size: 22, relativeTo: .title3))
@@ -304,7 +304,7 @@ struct MaterialsCard: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Image(systemName: "shippingbox.fill")
-                    .foregroundStyle(RenaissanceColors.warmBrown)
+                    .foregroundStyle(RenaissanceColors.iconOchre)
                 Text("Materials")
                     .font(.custom("Cinzel-Bold", size: 15))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
@@ -381,7 +381,7 @@ struct AchievementsSection: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Image(systemName: "seal.fill")
-                    .foregroundStyle(RenaissanceColors.goldSuccess)
+                    .foregroundStyle(RenaissanceColors.iconOchre)
                 Text("Achievements")
                     .font(.custom("Cinzel-Bold", size: 15))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
@@ -455,7 +455,7 @@ struct AchievementBadge: View {
                 Circle()
                     .fill(
                         achievement.isUnlocked
-                            ? RenaissanceColors.goldSuccess
+                            ? RenaissanceColors.iconOchre
                             : RenaissanceColors.stoneGray.opacity(0.5)
                     )
                     .frame(width: 44, height: 44)
@@ -495,7 +495,7 @@ struct SciencesRow: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Image(systemName: "books.vertical.fill")
-                    .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                    .foregroundStyle(RenaissanceColors.iconOchre)
                 Text("Sciences")
                     .font(.custom("Cinzel-Bold", size: 15))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
@@ -605,7 +605,7 @@ struct StatisticsCard: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Image(systemName: "chart.bar.fill")
-                    .foregroundStyle(RenaissanceColors.terracotta)
+                    .foregroundStyle(RenaissanceColors.iconOchre)
                 Text("Statistics")
                     .font(.custom("Cinzel-Bold", size: 15))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
@@ -643,7 +643,7 @@ struct StatisticsCard: View {
             HStack(spacing: 8) {
                 Image(systemName: "clock.fill")
                     .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
-                    .foregroundStyle(RenaissanceColors.ochre)
+                    .foregroundStyle(RenaissanceColors.iconOchre)
                 Text("Play Time")
                     .font(.custom("EBGaramond-Regular", size: 12))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
@@ -657,7 +657,7 @@ struct StatisticsCard: View {
             HStack(spacing: 8) {
                 Image(systemName: "map.fill")
                     .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
-                    .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                    .foregroundStyle(RenaissanceColors.iconOchre)
                 Text("Exploration")
                     .font(.custom("EBGaramond-Regular", size: 12))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
@@ -786,10 +786,10 @@ struct ProfileNavRow: View {
             VStack(spacing: 4) {
                 Image(systemName: icon)
                     .font(.system(size: 20, weight: .medium))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                    .foregroundStyle(RenaissanceColors.iconOchre.opacity(0.7))
                 Text(label)
-                    .font(.custom("EBGaramond-Regular", size: 11))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                    .font(.custom("Cinzel-Regular", size: 9))
+                    .foregroundStyle(RenaissanceColors.iconOchre.opacity(0.65))
             }
             .frame(width: 70, height: 52)
             .glassButton(shape: RoundedRectangle(cornerRadius: 12))

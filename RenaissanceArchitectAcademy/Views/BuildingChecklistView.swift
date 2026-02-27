@@ -42,6 +42,27 @@ struct BuildingChecklistView: View {
                     Divider()
                         .overlay(RenaissanceColors.ochre.opacity(0.3))
 
+                    // Lesson section — must learn first!
+                    let hasLesson = LessonContent.lesson(for: plot.building.name) != nil
+                    requirementSection(title: "Read to Earn", icon: "book.fill") {
+                        if hasLesson {
+                            checklistRow(
+                                icon: "book.fill",
+                                label: "Complete Lesson",
+                                isMet: progress.lessonRead
+                            )
+                        } else {
+                            HStack(spacing: 8) {
+                                Image(systemName: "minus.circle")
+                                    .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
+                                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                                Text("No lesson available yet")
+                                    .font(.custom("EBGaramond-Regular", size: 14))
+                                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                            }
+                        }
+                    }
+
                     // Science badges section
                     requirementSection(title: "Science Knowledge", icon: "books.vertical.fill") {
                         ForEach(plot.building.sciences, id: \.self) { science in
@@ -135,7 +156,8 @@ struct BuildingChecklistView: View {
                                 .font(.custom("EBGaramond-Regular", size: 18))
                                 .tracking(1)
                             if allRequirementsMet {
-                                Text("+\(GameRewards.buildCompleteFlorins)")
+                                let totalReward = GameRewards.buildCompleteFlorins + (ConstructionSequenceContent.sequence(for: plot.building.name) != nil ? GameRewards.constructionSequenceFlorins : 0)
+                                Text("+\(totalReward)")
                                     .font(.custom("EBGaramond-Regular", size: 16))
                                     .foregroundStyle(RenaissanceColors.goldSuccess)
                                 Image(systemName: "dollarsign.circle.fill")
