@@ -84,7 +84,14 @@
 		078 /* ConstructionPhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 178 /* ConstructionPhase.swift */; };
 		079 /* ConstructionSequenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179 /* ConstructionSequenceView.swift */; };
 		080 /* KnowledgeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180 /* KnowledgeCard.swift */; };
-		081 /* KnowledgeCardsOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 181 /* KnowledgeCardsOverlay.swift */; };
+		081 /* GameSpriteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 181 /* GameSpriteView.swift */; };
+		092 /* KnowledgeCardsOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192 /* KnowledgeCardsOverlay.swift */; };
+		093 /* GameSceneKitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193 /* GameSceneKitView.swift */; };
+		094 /* ActivityScene3D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194 /* ActivityScene3D.swift */; };
+		095 /* SceneKitActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195 /* SceneKitActivityView.swift */; };
+		096 /* Tool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 196 /* Tool.swift */; };
+		097 /* ToolRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197 /* ToolRecipe.swift */; };
+		098 /* PigmentRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 198 /* PigmentRecipe.swift */; };
 		082 /* GirlIntroAudio.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 182 /* GirlIntroAudio.m4a */; };
 		083 /* card_flip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 183 /* card_flip.mp3 */; };
 		084 /* correct_chime.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 184 /* correct_chime.mp3 */; };
@@ -231,7 +238,14 @@
 		178 /* ConstructionPhase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConstructionPhase.swift; sourceTree = "<group>"; };
 		179 /* ConstructionSequenceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConstructionSequenceView.swift; sourceTree = "<group>"; };
 		180 /* KnowledgeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnowledgeCard.swift; sourceTree = "<group>"; };
-		181 /* KnowledgeCardsOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnowledgeCardsOverlay.swift; sourceTree = "<group>"; };
+		181 /* GameSpriteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSpriteView.swift; sourceTree = "<group>"; };
+		192 /* KnowledgeCardsOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnowledgeCardsOverlay.swift; sourceTree = "<group>"; };
+		193 /* GameSceneKitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSceneKitView.swift; sourceTree = "<group>"; };
+		194 /* ActivityScene3D.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ActivityScene3D.swift; path = Views/SceneKit/ActivityScene3D.swift; sourceTree = "<group>"; };
+		195 /* SceneKitActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SceneKitActivityView.swift; path = Views/SceneKit/SceneKitActivityView.swift; sourceTree = "<group>"; };
+		196 /* Tool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tool.swift; sourceTree = "<group>"; };
+		197 /* ToolRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolRecipe.swift; sourceTree = "<group>"; };
+		198 /* PigmentRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PigmentRecipe.swift; sourceTree = "<group>"; };
 		182 /* GirlIntroAudio.m4a */ = {isa = PBXFileReference; lastKnownFileType = audio.mpeg4; path = GirlIntroAudio.m4a; sourceTree = "<group>"; };
 		183 /* card_flip.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = card_flip.mp3; sourceTree = "<group>"; };
 		184 /* correct_chime.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = correct_chime.mp3; sourceTree = "<group>"; };
@@ -329,6 +343,8 @@
 				149 /* ForestScene.swift */,
 				174 /* CraftingRoomScene.swift */,
 				175 /* CraftingRoomMapView.swift */,
+				194 /* ActivityScene3D.swift */,
+				195 /* SceneKitActivityView.swift */,
 				544299A52F369AB700F92073 /* MascotDialogueView.swift */,
 				544299A62F369AB700F92073 /* MaterialPuzzleView.swift */,
 				544299972F3646ED00F92073 /* BuildingNode.swift */,
@@ -402,7 +418,7 @@
 				170 /* FlowRateVisual.swift */,
 				173 /* MathVisualTemplates.swift */,
 				179 /* ConstructionSequenceView.swift */,
-				181 /* KnowledgeCardsOverlay.swift */,
+				192 /* KnowledgeCardsOverlay.swift */,
 				141 /* OnboardingView.swift */,
 				308 /* Sketching */,
 				309 /* Onboarding */,
@@ -451,6 +467,9 @@
 				172 /* LessonRecord.swift */,
 				178 /* ConstructionPhase.swift */,
 				180 /* KnowledgeCard.swift */,
+				196 /* Tool.swift */,
+				197 /* ToolRecipe.swift */,
+				198 /* PigmentRecipe.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -460,6 +479,8 @@
 			children = (
 				109 /* RenaissanceColors.swift */,
 				110 /* RenaissanceButton.swift */,
+				181 /* GameSpriteView.swift */,
+				193 /* GameSceneKitView.swift */,
 			);
 			path = Styles;
 			sourceTree = "<group>";
@@ -751,7 +772,14 @@
 				078 /* ConstructionPhase.swift in Sources */,
 				079 /* ConstructionSequenceView.swift in Sources */,
 				080 /* KnowledgeCard.swift in Sources */,
-				081 /* KnowledgeCardsOverlay.swift in Sources */,
+				081 /* GameSpriteView.swift in Sources */,
+				092 /* KnowledgeCardsOverlay.swift in Sources */,
+				093 /* GameSceneKitView.swift in Sources */,
+				094 /* ActivityScene3D.swift in Sources */,
+				095 /* SceneKitActivityView.swift in Sources */,
+				096 /* Tool.swift in Sources */,
+				097 /* ToolRecipe.swift in Sources */,
+				098 /* PigmentRecipe.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

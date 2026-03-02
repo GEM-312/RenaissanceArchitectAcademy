@@ -6,6 +6,7 @@ import SwiftUI
 class WorkshopState {
     // Player inventory — starts at zero, must collect from stations
     var rawMaterials: [Material: Int] = [:]
+    var tools: [Tool: Int] = [:]
 
     var persistenceManager: PersistenceManager?
 
@@ -19,6 +20,12 @@ class WorkshopState {
     var showEducationalPopup: Bool = false
     var educationalText: String = ""
     var statusMessage: String? = nil
+
+    // MARK: - Pigment Grinding (Mortar & Pestle at Pigment Table)
+    var mortarSlots: [Material?] = [nil, nil]
+    var isGrinding: Bool = false
+    var grindProgress: Double = 0.0
+    var currentPigmentRecipe: PigmentRecipe? = nil
 
     /// Master assignment — current crafting task from the workshop master
     var currentAssignment: MasterAssignment?
@@ -52,12 +59,11 @@ class WorkshopState {
         var stocks: [ResourceStationType: [Material: Int]] = [:]
         stocks[.quarry]       = [.limestone: 8, .marbleDust: 4, .marble: 6]
         stocks[.river]        = [.water: 12, .sand: 10]
-        stocks[.volcano]      = [.volcanicAsh: 6]
-        stocks[.clayPit]      = [.clay: 10]
-        stocks[.mine]         = [.ironOre: 6, .lead: 5]
-        stocks[.pigmentTable] = [.redOchre: 5, .lapisBlue: 3, .verdigrisGreen: 4]
-        stocks[.forest]       = [.timber: 12]
-        stocks[.market]       = [.silk: 4, .lead: 3, .marble: 3]
+        stocks[.volcano]      = [.volcanicAsh: 6, .cinnabar: 3]
+        stocks[.clayPit]      = [.clay: 10, .redOchre: 4]
+        stocks[.mine]         = [.ironOre: 6, .lead: 5, .verdigrisGreen: 3]
+        stocks[.forest]       = [.timber: 12, .saffron: 2]
+        stocks[.market]       = [.silk: 4, .lead: 3, .marble: 3, .lapisBlue: 2]
         return stocks
     }()
 
@@ -65,11 +71,41 @@ class WorkshopState {
     let stationRespawnTime: TimeInterval = 15.0
     private var respawnTimer: Timer?
 
+    // MARK: - Tool System
+
+    /// Check whether the player has the tool required for a station
+    func hasTool(for station: ResourceStationType) -> Bool {
+        // Market never requires a tool (bootstrap — buy first tool here)
+        guard let required = Tool.requiredFor(station: station) else { return true }
+        return (tools[required] ?? 0) > 0
+    }
+
+    /// Buy a tool at the market for florins (returns false if already owned)
+    func buyTool(_ tool: Tool) -> Bool {
+        guard (tools[tool] ?? 0) == 0 else { return false }
+        tools[tool] = 1
+        persistInventory()
+        return true
+    }
+
+    /// Craft a tool at the workbench (returns false if already owned)
+    func craftTool(_ tool: Tool) -> Bool {
+        guard (tools[tool] ?? 0) == 0 else { return false }
+        tools[tool] = 1
+        persistInventory()
+        return true
+    }
+
     // MARK: - Station Management
 
     /// Collect one unit of a material from a station
     @discardableResult
     func collectFromStation(_ station: ResourceStationType, material: Material) -> Bool {
+        // Tool check (Market is exempt)
+        if let required = Tool.requiredFor(station: station), (tools[required] ?? 0) == 0 {
+            statusMessage = "You need \(required.icon) \(required.displayName) to collect here!"
+            return false
+        }
         guard var stock = stationStocks[station],
               let count = stock[material], count > 0 else {
             statusMessage = "No \(material.rawValue) left here!"
@@ -104,7 +140,7 @@ class WorkshopState {
         case .mine:
             return "Collect iron ore and lead. Iron crafts into bronze fittings, timber beams, and carved wood. Lead makes waterproof sheeting and stained glass. The Colosseum, Aqueduct, and Printing Press all need these metals."
         case .pigmentTable:
-            return "Collect red ochre, lapis lazuli, and verdigris. Grind them into fresco pigments at the workbench — the Duomo needs red fresco, the Vatican Observatory needs blue. These colors are worth more than gold!"
+            return "Raw pigments now come from nature — red ochre from the Clay Pit, lapis from the Market, verdigris from the Mine, cinnabar from the Volcano, saffron from the Forest. Bring them here with water to grind into fine pigment powder!"
         case .forest:
             return "Collect timber for beams and carved wood. Timber beams support roofs in the Roman Baths, Harbor, Arsenal, and Workshop. Carved walnut builds the Anatomy Theater and Printing Press."
         case .market:
@@ -138,12 +174,11 @@ class WorkshopState {
         let defaults: [ResourceStationType: [Material: Int]] = [
             .quarry:       [.limestone: 8, .marbleDust: 4, .marble: 6],
             .river:        [.water: 12, .sand: 10],
-            .volcano:      [.volcanicAsh: 6],
-            .clayPit:      [.clay: 10],
-            .mine:         [.ironOre: 6, .lead: 5],
-            .pigmentTable: [.redOchre: 5, .lapisBlue: 3, .verdigrisGreen: 4],
-            .forest:       [.timber: 12],
-            .market:       [.silk: 4, .lead: 3, .marble: 3],
+            .volcano:      [.volcanicAsh: 6, .cinnabar: 3],
+            .clayPit:      [.clay: 10, .redOchre: 4],
+            .mine:         [.ironOre: 6, .lead: 5, .verdigrisGreen: 3],
+            .forest:       [.timber: 12, .saffron: 2],
+            .market:       [.silk: 4, .lead: 3, .marble: 3, .lapisBlue: 2],
         ]
 
         for (station, maxStock) in defaults {
@@ -160,6 +195,77 @@ class WorkshopState {
                 stationStocks[station] = currentStock
             }
         }
+    }
+
+    // MARK: - Pigment Grinding (Mortar & Pestle)
+
+    /// Tally of materials currently in the mortar
+    var mortarIngredients: [Material: Int] {
+        var result: [Material: Int] = [:]
+        for material in mortarSlots.compactMap({ $0 }) {
+            result[material, default: 0] += 1
+        }
+        return result
+    }
+
+    /// Recipe that matches the current mortar contents, if any
+    var detectedPigmentRecipe: PigmentRecipe? {
+        PigmentRecipe.detectRecipe(from: mortarIngredients)
+    }
+
+    /// Add a material to the first empty mortar slot
+    func addToMortar(_ material: Material) -> Bool {
+        guard let emptyIndex = mortarSlots.firstIndex(where: { $0 == nil }) else {
+            statusMessage = "Mortar full!"
+            return false
+        }
+        guard (rawMaterials[material] ?? 0) > 0 else {
+            statusMessage = "No \(material.rawValue) left!"
+            return false
+        }
+        rawMaterials[material]! -= 1
+        mortarSlots[emptyIndex] = material
+        statusMessage = nil
+        return true
+    }
+
+    /// Return all mortar materials back to inventory
+    func clearMortar() {
+        for material in mortarSlots.compactMap({ $0 }) {
+            rawMaterials[material, default: 0] += 1
+        }
+        mortarSlots = [nil, nil]
+        statusMessage = nil
+    }
+
+    /// Begin grinding (requires mortar & pestle tool)
+    func startGrinding() {
+        guard (tools[.mortarAndPestle] ?? 0) > 0 else {
+            statusMessage = "You need a Mortar & Pestle! Craft one at the Workbench."
+            return
+        }
+        guard let recipe = detectedPigmentRecipe else {
+            statusMessage = "No matching pigment recipe!"
+            return
+        }
+        currentPigmentRecipe = recipe
+        isGrinding = true
+        grindProgress = 0.0
+        statusMessage = "Grinding..."
+    }
+
+    /// Finish grinding and output the ground pigment
+    func completeGrinding() {
+        guard let recipe = currentPigmentRecipe else { return }
+        rawMaterials[recipe.output, default: 0] += 1
+        educationalText = recipe.educationalText
+        showEducationalPopup = true
+        mortarSlots = [nil, nil]
+        currentPigmentRecipe = nil
+        isGrinding = false
+        grindProgress = 0.0
+        statusMessage = "Created \(recipe.output.rawValue)!"
+        persistInventory()
     }
 
     // MARK: - Existing Crafting Logic (unchanged)
@@ -250,12 +356,14 @@ class WorkshopState {
         // Reset in-memory state before loading
         rawMaterials = [:]
         craftedMaterials = [:]
+        tools = [:]
         currentJob = nil
         jobStreak = 0
         totalJobsCompleted = 0
         // Load from save
         rawMaterials = save.rawMaterials
         craftedMaterials = save.craftedMaterials
+        tools = save.tools
     }
 
     func addRawMaterials(_ materials: [Material: Int]) {
@@ -270,6 +378,7 @@ class WorkshopState {
         let save = manager.loadPlayerSave()
         save.rawMaterials = rawMaterials
         save.craftedMaterials = craftedMaterials
+        save.tools = tools
         save.lastSaved = Date()
         manager.save()
     }

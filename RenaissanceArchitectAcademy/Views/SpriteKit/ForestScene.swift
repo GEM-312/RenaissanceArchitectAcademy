@@ -3,7 +3,7 @@ import SwiftUI
 
 /// SpriteKit scene for the Italian Forest — biology & environment education
 /// Player walks forest trails between 5 Renaissance timber trees, each with unique silhouette
-class ForestScene: SKScene {
+class ForestScene: SKScene, ScrollZoomable {
 
     // MARK: - Properties
 
@@ -758,6 +758,25 @@ class ForestScene: SKScene {
         guard cameraNode != nil else { return }
         let zoomFactor: CGFloat = 1.0 - (deltaY * 0.05)
         let newScale = cameraNode.xScale * zoomFactor
+        let clampedScale = max(0.5, min(3.5, newScale))
+        cameraNode.setScale(clampedScale)
+        clampCamera()
+    }
+
+    /// Pan camera via scroll deltas (called from SwiftUI event monitor)
+    func handleScrollPan(deltaX: CGFloat, deltaY: CGFloat) {
+        guard cameraNode != nil else { return }
+        let scale = cameraNode.xScale
+        cameraNode.position.x -= deltaX * scale * 2
+        cameraNode.position.y += deltaY * scale * 2
+        clampCamera()
+    }
+
+    /// Zoom via trackpad magnify gesture (called from SwiftUI event monitor)
+    func handleMagnify(magnification: CGFloat) {
+        guard cameraNode != nil else { return }
+        let zoomFactor: CGFloat = 1.0 + magnification
+        let newScale = cameraNode.xScale / zoomFactor
         let clampedScale = max(0.5, min(3.5, newScale))
         cameraNode.setScale(clampedScale)
         clampCamera()

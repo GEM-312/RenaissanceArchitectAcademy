@@ -140,8 +140,11 @@ RenaissanceArchitectAcademy/
 ### City Map (CityScene + CityMapView)
 - SpriteKit tile-based terrain (3500x2500 base, expandable via `terrainTiles` array)
 - Rivers: Tiber, Arno, Grand Canal. Zone labels I-VI
+- Player (PlayerNode) walks to tapped buildings, camera follows + zooms in
+- Terrain blur (SKEffectNode + CIGaussianBlur) activates during walking, persists while zoomed in
+- All overlays auto-dismiss on any user interaction (walk, scroll, pinch, drag)
 - Mascot (Bird) rendered as SwiftUI overlay on top of SpriteKit (position tracked via callback)
-- Tap building → mascot walks there → MascotDialogueView with 3 choices:
+- Tap building → player walks there → camera zooms to 0.7 → MascotDialogueView with 3 choices:
   - "I need materials" → MaterialPuzzleView (match-3)
   - "I don't know" → Quiz challenge
   - "I need to sketch it" → Sketching challenge
@@ -229,9 +232,9 @@ Mathematics, Physics, Chemistry, Geometry, Engineering, Astronomy, Biology, Geol
 
 ### Custom Fonts (registered via CoreText in App.swift)
 - **Cinzel-Bold** (titles), **Cinzel-Regular** (labels, section headers)
-- **Mulish-Light** (body text, buttons), **Mulish-Medium/SemiBold/Bold** (emphasis)
+- **EBGaramond-Regular** (body text, buttons), **EBGaramond-Italic** (emphasis)
 - **LibreBaskerville** (serif body alternative), **LibreFranklin** (sans-serif alternative)
-- **EBGaramond-Regular/Italic** (legacy body — being replaced by Mulish)
+- **Mulish** (7 weights available, previously used for body — replaced by EBGaramond Feb 2026)
 - **PetitFormalScript-Regular** (tagline), **Delius-Regular** (handwritten accent)
 
 ### Resizing New Midjourney Assets
@@ -257,29 +260,33 @@ Styles/[name]_frames/clean/    # Photoshop exports (no bg)
 
 ## Next Steps
 
-### PRIORITY 1: Forest Scene (next session)
-- [ ] Build out ForestScene.swift — Italian tree biodiversity, biology & environment education
-- [ ] ForestScene.swift and ForestMapView.swift already exist as stubs — need full implementation
-- [ ] Forest terrain image needed (ForestTerrain.png) — or use Forest1-4 assets already in xcassets
-- [ ] Tree stations: oak, pine, cypress, chestnut, olive — each with educational content
-- [ ] Timber collection mechanics (connects to building `requiredMaterials` needing `.timberBeams`)
-- [ ] Lesson environment prompts already link to `.forest` — need ForestScene to handle arrival
-- [ ] Biology/ecology lessons per tree species (growth patterns, wood properties, uses in construction)
-- [ ] Apprentice walks between tree stations (same Dijkstra pattern as Workshop/CraftingRoom)
+### PRIORITY 1: Terrain & Camera Polish (next session)
+- [ ] Improve terrain art for City Map, Workshop, Forest (higher quality Midjourney terrains)
+- [ ] Create station micro-environments — detail sprites/objects that appear when zoomed in near stations
+- [ ] Camera polish — smooth zoom transitions, better clamp behavior at map edges
+- [ ] Terrain blur is implemented (CityScene + WorkshopScene) — see terrain-blur-system.md in memory
 
-### PRIORITY 2: Crafting Room Scene Polish (next session)
-- [ ] Tune furniture positions and waypoints using editor mode (press E)
-- [ ] Test all 4 station overlays end-to-end (workbench → furnace → educational popup)
-- [ ] Verify crafting room terrain/background looks right at 3500×2500
-- [ ] Consider adding door entrance animation when transitioning from outdoor
+### PRIORITY 2: Station Micro-Environments / LOD Detail (next session)
+- [ ] Add LOD (Level of Detail) system — detail sprites appear when camera zooms in near stations
+- [ ] Each station gets a `detailGroup` (SKNode) with 5-8 small props (tools, barrels, crates, flames, vegetation, etc.)
+- [ ] Detail nodes start at `alpha = 0`, fade in based on camera distance + zoom level in `update()` loop
+- [ ] Trigger: `distToCamera < 600 && scale < 0.8` — nearby + zoomed in
+- [ ] Prototype on WorkshopScene first, then extend to CityScene buildings and ForestScene trees
+- [ ] Props per station type: Quarry (pickaxes, stone piles), River (buckets, reeds), Volcano (embers, sulfur), Mine (lanterns, cart), Clay Pit (pottery, clay mounds), Market (crates, fabric), Crafting Room (smoke, tools by door)
+- [ ] Use Midjourney sprites or hand-drawn SKShapeNode props (same watercolor aesthetic)
+- [ ] Smooth fade transition: `SKAction.fadeAlpha` over 0.3s, not instant toggle
 
-### PRIORITY 3: App-Wide Style Consistency (next session)
-- [ ] Audit font usage across all views — standardize on Cinzel (titles) + Mulish (body/buttons)
-- [ ] Remove remaining EBGaramond references, replace with Mulish-Light
-- [ ] Consistent overlay styling (background opacity, corner radius, shadow, padding)
-- [ ] Consistent button styling across scenes (glass buttons vs filled vs outlined)
-- [ ] Color palette audit — ensure all views use RenaissanceColors consistently
-- [ ] Spacing and padding consistency (16pt standard margins, 12pt inner padding)
+### PRIORITY 3: Knowledge Cards Across Environments (next session)
+- [ ] Spread knowledge cards across all environments to complete the game loop
+- [ ] Extract card UI from ForestMapView into reusable `KnowledgeCardsOverlay.swift`
+- [ ] Integrate into CityMapView, WorkshopMapView, CraftingRoomMapView, ForestMapView
+- [ ] Author cards for remaining 16 buildings (Pantheon prototype has 14 cards)
+- [ ] Bird guidance hints across all environments
+
+### PRIORITY 4: Game Tools System (next session)
+- [ ] Implement tools that player can acquire and use across environments
+- [ ] Tools tied to crafting system — craft tools at workbench
+- [ ] Tool usage in building construction, resource collection, sketching
 
 ### Game Flow & Progression
 - [ ] Prompt user to explore cities/buildings after workshop play (bird nudge system)

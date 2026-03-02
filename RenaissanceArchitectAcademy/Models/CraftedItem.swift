@@ -15,6 +15,9 @@ enum CraftedItem: String, CaseIterable, Identifiable, Codable {
     case leadSheeting = "Lead Sheeting"
     case silkFabric = "Silk Fabric"
     case carvedWood = "Carved Wood"
+    case cinnabarFrescoPigment = "Cinnabar Fresco Pigment"
+    case saffronIllumination = "Saffron Illumination"
+    case greenFrescoPigment = "Green Fresco Pigment"
 
     var id: String { rawValue }
 
@@ -33,6 +36,9 @@ enum CraftedItem: String, CaseIterable, Identifiable, Codable {
         case .leadSheeting: return "📄"
         case .silkFabric: return "🧶"
         case .carvedWood: return "🪑"
+        case .cinnabarFrescoPigment: return "🖼️"
+        case .saffronIllumination: return "📜"
+        case .greenFrescoPigment: return "🎨"
         }
     }
 }

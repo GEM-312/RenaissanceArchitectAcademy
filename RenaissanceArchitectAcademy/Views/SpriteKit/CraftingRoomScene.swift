@@ -22,7 +22,7 @@ enum CraftingStation: String, CaseIterable, Hashable {
 
 /// SpriteKit scene for the Crafting Room interior
 /// Apprentice walks between furniture stations: Workbench, Furnace, Pigment Table, Shelf
-class CraftingRoomScene: SKScene {
+class CraftingRoomScene: SKScene, ScrollZoomable {
 
     // MARK: - Properties
 
@@ -585,15 +585,36 @@ class CraftingRoomScene: SKScene {
         clampCamera()
     }
 
+    /// Pan camera via scroll deltas (called from SwiftUI event monitor)
+    func handleScrollPan(deltaX: CGFloat, deltaY: CGFloat) {
+        guard cameraNode != nil else { return }
+        let scale = cameraNode.xScale
+        cameraNode.position.x -= deltaX * scale * 2
+        cameraNode.position.y += deltaY * scale * 2
+        clampCamera()
+    }
+
+    /// Zoom via trackpad magnify gesture (called from SwiftUI event monitor)
+    func handleMagnify(magnification: CGFloat) {
+        guard cameraNode != nil else { return }
+        let zoomFactor: CGFloat = 1.0 + magnification
+        let newScale = cameraNode.xScale / zoomFactor
+        let clampedScale = max(0.5, min(3.5, newScale))
+        cameraNode.setScale(clampedScale)
+        clampCamera()
+    }
+
     // MARK: - Public Animation Methods
 
     /// Play collecting animation on the player (bend down + sparkles)
     func playPlayerCollectAnimation(completion: (() -> Void)? = nil) {
+        guard playerNode != nil else { completion?(); return }
         playerNode.playCollectAnimation(completion: completion)
     }
 
     /// Play celebrating animation on the player (jump + star burst)
     func playPlayerCelebrateAnimation(completion: (() -> Void)? = nil) {
+        guard playerNode != nil else { completion?(); return }
         playerNode.playCelebrateAnimation(completion: completion)
     }
 

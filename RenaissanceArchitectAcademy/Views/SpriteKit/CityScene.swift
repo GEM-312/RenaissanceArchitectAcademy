@@ -270,8 +270,8 @@ class CityScene: SKScene, ScrollZoomable {
         // Fade terrain when zoomed in — reveal clean parchment background
         if let effectNode = terrainEffectNode, let cam = cameraNode {
             let scale = cam.xScale
-            // Full opacity at scale >= 1.0, fade to 0.35 at scale 0.5
-            let alpha = min(1.0, max(0.35, (scale - 0.5) / 0.5))
+            // Full opacity at scale >= 1.0, fade to 0.65 at scale 0.5
+            let alpha = min(1.0, max(0.65, (scale - 0.5) / 0.5 * 0.35 + 0.65))
             effectNode.alpha = alpha
 
             // Turn off blur once user zooms out to full map (but not while walking — camera is still zooming in)

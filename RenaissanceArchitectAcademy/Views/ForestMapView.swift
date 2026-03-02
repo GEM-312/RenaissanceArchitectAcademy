@@ -14,7 +14,9 @@ struct ForestMapView: View {
     var onboardingState: OnboardingState? = nil
     @Binding var returnToLessonPlotId: Int?
 
-    @State private var scene: ForestScene?
+    // Scene reference — stored in a class box so it survives body re-evaluation
+    // without triggering re-renders (unlike @State which causes infinite loops)
+    @State private var sceneHolder = SceneHolder<ForestScene>()
     @State private var playerPosition: CGPoint = CGPoint(x: 0.5, y: 0.5)
     @State private var playerIsWalking = false
 
@@ -50,16 +52,13 @@ struct ForestMapView: View {
     @State private var showTruffleSaleFloat = false
     @State private var truffleSaleFlorins = 0
 
-    // Magic Mouse scroll-to-zoom
-    @State private var scrollMonitor: Any?
 
     var body: some View {
         GeometryReader { geometry in
             ZStack {
                 // Layer 1: SpriteKit scene
-                SpriteView(scene: makeScene(), options: [.allowsTransparency])
+                GameSpriteView(scene: makeScene(), options: [.allowsTransparency])
                     .ignoresSafeArea()
-                    .gesture(pinchGesture)
 
                 // Layer 2: Bird companion overlay
                 BirdCharacter(isSitting: !playerIsWalking)
@@ -82,7 +81,7 @@ struct ForestMapView: View {
 
                 // Layer 4: Science Cards overlay (replaces old poiInfoOverlay)
                 if let poiIndex = selectedPOIIndex,
-                   let poi = scene?.getPOI(at: poiIndex) {
+                   let poi = sceneHolder.scene?.getPOI(at: poiIndex) {
                     scienceCardsOverlay(poi: poi)
                         .transition(.opacity.combined(with: .scale(scale: 0.9)))
                 }
@@ -136,7 +135,7 @@ struct ForestMapView: View {
             .onChange(of: selectedPOIIndex) { _, newValue in
                 if newValue != nil {
                     // Initialize science cards for the new POI
-                    if let poi = scene?.getPOI(at: newValue!) {
+                    if let poi = sceneHolder.scene?.getPOI(at: newValue!) {
                         setupScienceCards(for: poi)
                     }
                 } else {
@@ -150,24 +149,6 @@ struct ForestMapView: View {
                         }
                     }
                 }
-            }
-            .onAppear {
-                #if os(macOS)
-                scrollMonitor = NSEvent.addLocalMonitorForEvents(matching: .scrollWheel) { [self] event in
-                    if selectedPOIIndex == nil && discoveredTruffle == nil {
-                        scene?.handleScrollZoom(deltaY: event.deltaY)
-                    }
-                    return event
-                }
-                #endif
-            }
-            .onDisappear {
-                #if os(macOS)
-                if let monitor = scrollMonitor {
-                    NSEvent.removeMonitor(monitor)
-                    scrollMonitor = nil
-                }
-                #endif
             }
         }
     }
@@ -977,29 +958,37 @@ struct ForestMapView: View {
 
     private func collectTimberButton(poi: ForestScene.ForestPOI) -> some View {
         let allDone = completedCards.count == 4
+        let hasAxe = workshop.hasTool(for: .forest)
 
         return VStack(spacing: 6) {
             Button {
-                if allDone { collectTimber(from: poi) }
+                if allDone && hasAxe { collectTimber(from: poi) }
             } label: {
                 HStack(spacing: 8) {
-                    Image(systemName: allDone ? "leaf.fill" : "lock.fill")
-                        .font(.body)
-                    Text(allDone
-                         ? "Collect Timber (+\(poi.timberYield) 🪵)"
-                         : "Complete all cards to collect")
-                        .font(.custom("EBGaramond-SemiBold", size: 15))
+                    if !hasAxe {
+                        Text("🪓")
+                            .font(.body)
+                        Text("Need an Axe to collect timber")
+                            .font(.custom("EBGaramond-SemiBold", size: 15))
+                    } else {
+                        Image(systemName: allDone ? "leaf.fill" : "lock.fill")
+                            .font(.body)
+                        Text(allDone
+                             ? "Collect Timber (+\(poi.timberYield) 🪵)"
+                             : "Complete all cards to collect")
+                            .font(.custom("EBGaramond-SemiBold", size: 15))
+                    }
                 }
                 .foregroundStyle(.white)
                 .padding(.vertical, 11)
                 .frame(maxWidth: .infinity)
                 .background(
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(allDone ? RenaissanceColors.ochre : RenaissanceColors.stoneGray.opacity(0.5))
+                        .fill(allDone && hasAxe ? RenaissanceColors.ochre : RenaissanceColors.stoneGray.opacity(0.5))
                 )
             }
-            .disabled(!allDone)
-            .scaleEffect(allDone ? 1.0 : 0.97)
+            .disabled(!allDone || !hasAxe)
+            .scaleEffect(allDone && hasAxe ? 1.0 : 0.97)
             .animation(.easeInOut(duration: 0.3), value: allDone)
 
             Button {
@@ -1138,7 +1127,7 @@ struct ForestMapView: View {
 
     private func sellTruffle(_ truffle: ForestScene.TruffleFind) {
         viewModel?.earnFlorins(truffle.value)
-        scene?.playPlayerCelebrateAnimation()
+        sceneHolder.scene?.playPlayerCelebrateAnimation()
 
         withAnimation(.easeOut(duration: 0.2)) {
             discoveredTruffle = nil
@@ -1168,7 +1157,7 @@ struct ForestMapView: View {
         let florinsEarned = collected * GameRewards.timberCollectFlorins
         if florinsEarned > 0 {
             viewModel?.earnFlorins(florinsEarned)
-            scene?.playPlayerCelebrateAnimation()
+            sceneHolder.scene?.playPlayerCelebrateAnimation()
         }
 
         withAnimation(.easeOut(duration: 0.2)) {
@@ -1240,6 +1229,33 @@ struct ForestMapView: View {
 
     private var inventoryBar: some View {
         HStack(spacing: 0) {
+            // Tools (ochre badges)
+            let ownedTools = Tool.allCases.filter { (workshop.tools[$0] ?? 0) > 0 }
+            if !ownedTools.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 6) {
+                        ForEach(ownedTools) { tool in
+                            Text(tool.icon)
+                                .font(.caption)
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 4)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 6)
+                                        .fill(RenaissanceColors.ochre.opacity(0.15))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 6)
+                                                .strokeBorder(RenaissanceColors.ochre.opacity(0.4), lineWidth: 1)
+                                        )
+                                )
+                        }
+                    }
+                }
+
+                Divider()
+                    .frame(height: 30)
+                    .padding(.horizontal, 6)
+            }
+
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     ForEach(Material.allCases) { material in
@@ -1305,11 +1321,11 @@ struct ForestMapView: View {
     // MARK: - Scene Setup
 
     private func makeScene() -> ForestScene {
-        if let existing = scene { return existing }
+        if let existing = sceneHolder.scene { return existing }
 
         let newScene = ForestScene()
         newScene.size = CGSize(width: 3500, height: 2500)
-        newScene.scaleMode = .aspectFill
+        newScene.scaleMode = .resizeFill
         newScene.apprenticeIsBoy = onboardingState?.apprenticeGender == .boy || onboardingState == nil
 
         newScene.onPlayerPositionChanged = { position, isWalking in
@@ -1331,21 +1347,11 @@ struct ForestMapView: View {
             pendingTruffle = truffle
         }
 
-        DispatchQueue.main.async {
-            scene = newScene
-        }
+        sceneHolder.scene = newScene
 
         return newScene
     }
 
-    // MARK: - Gestures
-
-    private var pinchGesture: some Gesture {
-        MagnificationGesture()
-            .onChanged { value in
-                scene?.handlePinch(scale: value)
-            }
-    }
 }
 
 #Preview {

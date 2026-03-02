@@ -10,6 +10,7 @@ final class PlayerSave {
     var earnedScienceBadgesRaw: [String] = []
     var rawMaterialsJSON: Data? = nil
     var craftedMaterialsJSON: Data? = nil
+    var toolsJSON: Data? = nil
     var totalPlayTimeSeconds: Double = 0
     var lastSaved: Date = Date()
 
@@ -55,6 +56,22 @@ final class PlayerSave {
         set {
             let dict = Dictionary(uniqueKeysWithValues: newValue.map { ($0.key.rawValue, $0.value) })
             craftedMaterialsJSON = try? JSONEncoder().encode(dict)
+        }
+    }
+
+    var tools: [Tool: Int] {
+        get {
+            guard let data = toolsJSON,
+                  let dict = try? JSONDecoder().decode([String: Int].self, from: data) else { return [:] }
+            var result: [Tool: Int] = [:]
+            for (key, value) in dict {
+                if let tool = Tool(rawValue: key) { result[tool] = value }
+            }
+            return result
+        }
+        set {
+            let dict = Dictionary(uniqueKeysWithValues: newValue.map { ($0.key.rawValue, $0.value) })
+            toolsJSON = try? JSONEncoder().encode(dict)
         }
     }
 

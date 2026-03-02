@@ -404,7 +404,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
         // Fade terrain when zoomed in + auto-remove blur when zoomed out
         if let effectNode = terrainEffectNode, let cam = cameraNode {
             let scale = cam.xScale
-            let alpha = min(1.0, max(0.35, (scale - 0.5) / 0.5))
+            let alpha = min(1.0, max(0.65, (scale - 0.5) / 0.5 * 0.35 + 0.65))
             effectNode.alpha = alpha
 
             if effectNode.shouldEnableEffects && scale >= 1.0 && !isPlayerWalking && !isFollowingPlayer {
@@ -651,6 +651,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
     }
 
     private func walkPlayerToStation(_ stationNode: ResourceNode) {
+        guard playerNode != nil else { return }
         stationNode.animateTap()
 
         // Cancel any current walk
@@ -905,16 +906,25 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
     /// Play collecting animation on the player (bend down + sparkles)
     func playPlayerCollectAnimation(completion: (() -> Void)? = nil) {
+        guard playerNode != nil else { completion?(); return }
         playerNode.playCollectAnimation(completion: completion)
     }
 
     /// Play celebrating animation on the player (jump + star burst)
     func playPlayerCelebrateAnimation(completion: (() -> Void)? = nil) {
+        guard playerNode != nil else { completion?(); return }
         playerNode.playCelebrateAnimation(completion: completion)
+    }
+
+    /// Walk the player to a station programmatically (called from SwiftUI)
+    func walkToStation(_ stationType: ResourceStationType) {
+        guard playerNode != nil, let node = resourceNodes[stationType] else { return }
+        walkPlayerToStation(node)
     }
 
     /// Get current player position
     func getPlayerPosition() -> CGPoint {
+        guard playerNode != nil else { return .zero }
         return playerNode.position
     }
 

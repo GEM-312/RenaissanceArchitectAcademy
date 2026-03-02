@@ -16,6 +16,13 @@ enum Material: String, CaseIterable, Identifiable, Codable {
     case lead = "Lead"
     case marble = "Marble"
     case silk = "Silk"
+    case cinnabar = "Cinnabar"
+    case saffron = "Saffron"
+    case groundRedOchre = "Ground Red Ochre"
+    case groundLapisBlue = "Ground Lapis Blue"
+    case groundVerdigris = "Ground Verdigris"
+    case groundCinnabar = "Ground Cinnabar"
+    case groundSaffron = "Ground Saffron"
 
     var id: String { rawValue }
 
@@ -29,6 +36,11 @@ enum Material: String, CaseIterable, Identifiable, Codable {
         case .redOchre, .verdigrisGreen:       return 5   // Pigments
         case .lapisBlue:                       return 8   // Rare pigment
         case .silk:                            return 6   // Imported luxury
+        case .cinnabar:                        return 6   // Volcanic mineral pigment
+        case .saffron:                         return 4   // Crocus meadow flowers
+        case .groundRedOchre, .groundVerdigris,
+             .groundCinnabar, .groundSaffron:  return 0   // Output of grinding
+        case .groundLapisBlue:                 return 0   // Output of grinding
         }
     }
 
@@ -48,6 +60,33 @@ enum Material: String, CaseIterable, Identifiable, Codable {
         case .lead: return "🔩"
         case .marble: return "🏛️"
         case .silk: return "🧵"
+        case .cinnabar: return "🔻"
+        case .saffron: return "🌸"
+        case .groundRedOchre: return "🟠"
+        case .groundLapisBlue: return "💎"
+        case .groundVerdigris: return "🫒"
+        case .groundCinnabar: return "❤️"
+        case .groundSaffron: return "🌕"
+        }
+    }
+
+    /// Whether this is a raw pigment that can be ground at the Pigment Table
+    var isRawPigment: Bool {
+        switch self {
+        case .redOchre, .lapisBlue, .verdigrisGreen, .cinnabar, .saffron:
+            return true
+        default:
+            return false
+        }
+    }
+
+    /// Whether this is a ground pigment (output of grinding)
+    var isGroundPigment: Bool {
+        switch self {
+        case .groundRedOchre, .groundLapisBlue, .groundVerdigris, .groundCinnabar, .groundSaffron:
+            return true
+        default:
+            return false
         }
     }
 }

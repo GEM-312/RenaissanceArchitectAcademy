@@ -45,6 +45,12 @@ struct MasterAssignment {
             return "Leonardo's flying machine needs wings. Weave Silk Fabric!"
         case .carvedWood:
             return "The Anatomy Theater needs more seating. Carve some walnut wood!"
+        case .cinnabarFrescoPigment:
+            return "A cardinal's portrait needs vivid red. Prepare Cinnabar Fresco Pigment!"
+        case .saffronIllumination:
+            return "The scriptorium needs golden ink. Create Saffron Illumination pigment!"
+        case .greenFrescoPigment:
+            return "Botticelli's garden scene needs emerald leaves. Mix Green Fresco Pigment!"
         }
     }
 }

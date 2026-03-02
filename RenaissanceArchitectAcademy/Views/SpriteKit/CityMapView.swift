@@ -92,8 +92,9 @@ struct CityMapView: View {
     @State private var showLockedMessage = false
     @State private var lockedMessage = ""
 
-    /// Reference to the SpriteKit scene (so we can call methods on it)
-    @State private var scene: CityScene?
+    /// Reference to the SpriteKit scene — stored in a class box so it survives body
+    /// re-evaluation without triggering re-renders (unlike @State which causes infinite loops)
+    @State private var sceneHolder = SceneHolder<CityScene>()
 
 
     /// Environment for navigation
@@ -192,7 +193,7 @@ struct CityMapView: View {
                                             showBuildingPrompt = false
                                             selectedPlot = nil
                                         }
-                                        scene?.resetMascot()
+                                        sceneHolder.scene?.resetMascot()
                                     } label: {
                                         Text("Not this one")
                                             .font(.custom("EBGaramond-Regular", size: 13))
@@ -239,7 +240,7 @@ struct CityMapView: View {
                             showMascotDialogue = false
                             selectedPlot = nil
                         }
-                        scene?.resetMascot()
+                        sceneHolder.scene?.resetMascot()
                         onNavigate?(.notebook(buildingId))
                     },
                     onChoice: { choice in
@@ -289,7 +290,7 @@ struct CityMapView: View {
                             showMascotDialogue = false
                             selectedPlot = nil
                         }
-                        scene?.resetMascot()
+                        sceneHolder.scene?.resetMascot()
                     }
                 )
                 .transition(.opacity)
@@ -309,7 +310,7 @@ struct CityMapView: View {
                             showBuildingLesson = false
                             selectedPlot = nil
                         }
-                        scene?.resetMascot()
+                        sceneHolder.scene?.resetMascot()
                         onNavigate?(destination)
                     },
                     onDismiss: {
@@ -317,7 +318,7 @@ struct CityMapView: View {
                             showBuildingLesson = false
                             selectedPlot = nil
                         }
-                        scene?.resetMascot()
+                        sceneHolder.scene?.resetMascot()
                     }
                 )
                 .transition(.opacity)
@@ -336,7 +337,7 @@ struct CityMapView: View {
                             showKnowledgeCards = false
                             selectedPlot = nil
                         }
-                        scene?.resetMascot()
+                        sceneHolder.scene?.resetMascot()
                     },
                     onAllComplete: {
                         // City map cards done — bird suggests next environment
@@ -355,7 +356,7 @@ struct CityMapView: View {
                                 showEnvironmentPicker = false
                                 selectedPlot = nil
                             }
-                            scene?.resetMascot()
+                            sceneHolder.scene?.resetMascot()
                         }
 
                     VStack(spacing: 20) {
@@ -371,13 +372,13 @@ struct CityMapView: View {
 
                             environmentButton(icon: "hammer.fill", title: "Workshop", subtitle: "Collect raw materials", color: RenaissanceColors.warmBrown) {
                                 withAnimation { showEnvironmentPicker = false; selectedPlot = nil }
-                                scene?.resetMascot()
+                                sceneHolder.scene?.resetMascot()
                                 onNavigate?(.workshop)
                             }
 
                             environmentButton(icon: "tree.fill", title: "Forest", subtitle: "Gather timber & explore", color: RenaissanceColors.sageGreen) {
                                 withAnimation { showEnvironmentPicker = false; selectedPlot = nil }
-                                scene?.resetMascot()
+                                sceneHolder.scene?.resetMascot()
                                 onNavigate?(.forest)
                             }
 
@@ -386,7 +387,7 @@ struct CityMapView: View {
                                     showEnvironmentPicker = false
                                     selectedPlot = nil
                                 }
-                                scene?.resetMascot()
+                                sceneHolder.scene?.resetMascot()
                             } label: {
                                 Text("Stay on Map")
                                     .font(.custom("EBGaramond-Regular", size: 16))
@@ -426,13 +427,13 @@ struct CityMapView: View {
                             viewModel.completeChallenge(for: plot.id)
                             viewModel.earnFlorins(GameRewards.buildCompleteFlorins)
                             if let buildingId = buildingIdToPlotId.first(where: { $0.value == plot.id })?.key {
-                                scene?.updateBuildingState(buildingId, state: .complete)
+                                sceneHolder.scene?.updateBuildingState(buildingId, state: .complete)
                             }
                             withAnimation {
                                 showBuildingChecklist = false
                                 selectedPlot = nil
                             }
-                            scene?.resetMascot()
+                            sceneHolder.scene?.resetMascot()
                         }
                     },
                     onDismiss: {
@@ -440,7 +441,7 @@ struct CityMapView: View {
                             showBuildingChecklist = false
                             selectedPlot = nil
                         }
-                        scene?.resetMascot()
+                        sceneHolder.scene?.resetMascot()
                     }
                 )
                 .transition(.opacity)
@@ -457,20 +458,20 @@ struct CityMapView: View {
                         viewModel.completeChallenge(for: plot.id)
                         viewModel.earnFlorins(GameRewards.buildCompleteFlorins + GameRewards.constructionSequenceFlorins)
                         if let buildingId = buildingIdToPlotId.first(where: { $0.value == plot.id })?.key {
-                            scene?.updateBuildingState(buildingId, state: .complete)
+                            sceneHolder.scene?.updateBuildingState(buildingId, state: .complete)
                         }
                         withAnimation {
                             showConstructionSequence = false
                             selectedPlot = nil
                         }
-                        scene?.resetMascot()
+                        sceneHolder.scene?.resetMascot()
                     },
                     onDismiss: {
                         withAnimation {
                             showConstructionSequence = false
                             selectedPlot = nil
                         }
-                        scene?.resetMascot()
+                        sceneHolder.scene?.resetMascot()
                     }
                 )
                 .transition(.opacity)
@@ -485,7 +486,7 @@ struct CityMapView: View {
                             withAnimation {
                                 showLockedMessage = false
                             }
-                            scene?.resetMascot()
+                            sceneHolder.scene?.resetMascot()
                         }
 
                     VStack(spacing: 20) {
@@ -513,7 +514,7 @@ struct CityMapView: View {
                                 withAnimation {
                                     showLockedMessage = false
                                 }
-                                scene?.resetMascot()
+                                sceneHolder.scene?.resetMascot()
                             }
                         }
                         .padding(28)
@@ -537,7 +538,7 @@ struct CityMapView: View {
                             showMaterialPuzzle = false
                         }
                         // Reset mascot and show challenge
-                        scene?.resetMascot()
+                        sceneHolder.scene?.resetMascot()
                         showChallenge = true
                     },
                     onDismiss: {
@@ -546,7 +547,7 @@ struct CityMapView: View {
                             selectedPlot = nil
                         }
                         // Reset mascot position
-                        scene?.resetMascot()
+                        sceneHolder.scene?.resetMascot()
                     }
                 )
                 .transition(.move(edge: .trailing))  // Slide in from right
@@ -562,7 +563,7 @@ struct CityMapView: View {
                                 showWorkshopPrompt = false
                                 selectedPlot = nil
                             }
-                            scene?.resetMascot()
+                            sceneHolder.scene?.resetMascot()
                         }
 
                     VStack(spacing: 20) {
@@ -588,7 +589,7 @@ struct CityMapView: View {
                                         showWorkshopPrompt = false
                                         selectedPlot = nil
                                     }
-                                    scene?.resetMascot()
+                                    sceneHolder.scene?.resetMascot()
                                     showWorkshopSheet = true
                                 }
 
@@ -597,7 +598,7 @@ struct CityMapView: View {
                                         showWorkshopPrompt = false
                                         selectedPlot = nil
                                     }
-                                    scene?.resetMascot()
+                                    sceneHolder.scene?.resetMascot()
                                 }
                             }
                         }
@@ -633,7 +634,7 @@ struct CityMapView: View {
         } // end GeometryReader
         .onAppear {
             // Sync completion states when view appears (e.g., after completing in Era view)
-            if let currentScene = scene {
+            if let currentScene = sceneHolder.scene {
                 syncCompletionStates(in: currentScene)
             }
             // Auto-open lesson if returning from workshop/forest
@@ -657,7 +658,7 @@ struct CityMapView: View {
                             viewModel.completeChallenge(for: plot.id)
                             // Update the SpriteKit building state
                             if let buildingId = buildingIdToPlotId.first(where: { $0.value == plot.id })?.key {
-                                scene?.updateBuildingState(buildingId, state: .complete)
+                                sceneHolder.scene?.updateBuildingState(buildingId, state: .complete)
                             }
                         }
                         // Close the challenge sheet
@@ -695,7 +696,7 @@ struct CityMapView: View {
                         viewModel.completeSketchingPhase(for: plot.id, phases: completedPhases)
                         // Update the SpriteKit building state
                         if let buildingId = buildingIdToPlotId.first(where: { $0.value == plot.id })?.key {
-                            scene?.updateBuildingState(buildingId, state: .sketched)
+                            sceneHolder.scene?.updateBuildingState(buildingId, state: .sketched)
                         }
                         showSketching = false
                         selectedPlot = nil
@@ -724,7 +725,7 @@ struct CityMapView: View {
     /// Creates the SpriteKit scene (only once)
     private func makeScene() -> CityScene {
         // Return existing scene if we already have one
-        if let existingScene = scene {
+        if let existingScene = sceneHolder.scene {
             // Sync completion states in case they changed
             syncCompletionStates(in: existingScene)
             return existingScene
@@ -792,8 +793,7 @@ struct CityMapView: View {
             // Now handled by onMascotReachedBuilding
         }
 
-        // Store reference immediately
-        scene = newScene
+        sceneHolder.scene = newScene
 
         // Sync initial completion states from ViewModel
         // This runs after scene is set up, so we delay slightly

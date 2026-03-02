@@ -39,14 +39,14 @@ struct Recipe: Identifiable {
         ),
         Recipe(
             output: .redFrescoPigment,
-            ingredients: [.redOchre: 2, .water: 1, .limestone: 1],
+            ingredients: [.groundRedOchre: 2, .limestone: 1],
             temperature: .low,
             processingTime: 3.0,
-            educationalText: "Fresco means 'fresh' — pigments applied to wet lime plaster. The lime crystallizes around pigment, making colors last centuries!"
+            educationalText: "Fresco means 'fresh' — ground pigments applied to wet lime plaster. The lime crystallizes around pigment, making colors last centuries!"
         ),
         Recipe(
             output: .blueFrescoPigment,
-            ingredients: [.lapisBlue: 2, .water: 1, .limestone: 1],
+            ingredients: [.groundLapisBlue: 2, .limestone: 1],
             temperature: .low,
             processingTime: 3.0,
             educationalText: "Lapis lazuli was more expensive than gold! Renaissance painters reserved ultramarine blue for the Virgin Mary's robes."
@@ -106,7 +106,28 @@ struct Recipe: Identifiable {
             temperature: .low,
             processingTime: 4.0,
             educationalText: "Walnut was the wood of choice for fine carving. The Padua Anatomy Theater is entirely carved walnut — six steep tiers where 300 students stood to watch dissections."
-        )
+        ),
+        Recipe(
+            output: .cinnabarFrescoPigment,
+            ingredients: [.groundCinnabar: 2, .limestone: 1],
+            temperature: .low,
+            processingTime: 3.0,
+            educationalText: "Cinnabar red was the color of power. Cardinals' robes, papal seals, illuminated capitals — all cinnabar. Pompeii's Villa of Mysteries still blazes with it after 2,000 years under ash."
+        ),
+        Recipe(
+            output: .saffronIllumination,
+            ingredients: [.groundSaffron: 2, .limestone: 1],
+            temperature: .low,
+            processingTime: 3.0,
+            educationalText: "Manuscript illuminators mixed saffron with egg white to paint golden halos. Unlike gold leaf, saffron absorbed candlelight and re-emitted it warm. Monks called it 'poor man's gold' — but it was anything but cheap."
+        ),
+        Recipe(
+            output: .greenFrescoPigment,
+            ingredients: [.groundVerdigris: 2, .limestone: 1],
+            temperature: .low,
+            processingTime: 3.0,
+            educationalText: "Verdigris green gave Renaissance frescoes their lush landscapes. But painters worked fast — mixed with lime plaster, verdigris had hours before it darkened. Botticelli's Primavera preserves the original emerald because it was painted on panel, not wall."
+        ),
     ]
 
     /// Detect a matching recipe from the given ingredient counts

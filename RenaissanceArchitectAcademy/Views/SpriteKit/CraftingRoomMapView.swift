@@ -15,8 +15,9 @@ struct CraftingRoomMapView: View {
     var notebookState: NotebookState? = nil
     var onBack: () -> Void
 
-    // Scene reference
-    @State private var scene: CraftingRoomScene?
+    // Scene reference — stored in a class box so it survives body re-evaluation
+    // without triggering re-renders (unlike @State which causes infinite loops)
+    @State private var sceneHolder = SceneHolder<CraftingRoomScene>()
 
     // Player tracking
     @State private var playerPosition: CGPoint = CGPoint(x: 0.5, y: 0.5)
@@ -29,16 +30,13 @@ struct CraftingRoomMapView: View {
     @State private var showCraftingKnowledgeCards = false
     @State private var craftingKnowledgeCards: [KnowledgeCard] = []
 
-    // Magic Mouse scroll-to-zoom
-    @State private var scrollMonitor: Any?
 
     var body: some View {
         GeometryReader { geometry in
             ZStack {
                 // Layer 1: SpriteKit scene
-                SpriteView(scene: makeScene(), options: [.allowsTransparency])
+                GameSpriteView(scene: makeScene(), options: [.allowsTransparency])
                     .ignoresSafeArea()
-                    .gesture(pinchGesture)
 
                 // Layer 2: Nav + inventory
                 VStack(spacing: 0) {
@@ -127,33 +125,17 @@ struct CraftingRoomMapView: View {
             if workshop.currentAssignment == nil {
                 workshop.generateNewAssignment()
             }
-            #if os(macOS)
-            scrollMonitor = NSEvent.addLocalMonitorForEvents(matching: .scrollWheel) { [self] event in
-                if activeStation == nil {
-                    scene?.handleScrollZoom(deltaY: event.deltaY)
-                }
-                return event
-            }
-            #endif
-        }
-        .onDisappear {
-            #if os(macOS)
-            if let monitor = scrollMonitor {
-                NSEvent.removeMonitor(monitor)
-                scrollMonitor = nil
-            }
-            #endif
         }
     }
 
     // MARK: - Scene Creation
 
     private func makeScene() -> CraftingRoomScene {
-        if let existing = scene { return existing }
+        if let existing = sceneHolder.scene { return existing }
 
         let newScene = CraftingRoomScene()
         newScene.size = CGSize(width: 3500, height: 2500)
-        newScene.scaleMode = .aspectFill
+        newScene.scaleMode = .resizeFill
         newScene.apprenticeIsBoy = onboardingState?.apprenticeGender == .boy || onboardingState == nil
 
         newScene.onPlayerPositionChanged = { position, isWalking in
@@ -184,7 +166,7 @@ struct CraftingRoomMapView: View {
             }
         }
 
-        scene = newScene
+        sceneHolder.scene = newScene
         return newScene
     }
 
@@ -266,6 +248,31 @@ struct CraftingRoomMapView: View {
 
     private var inventoryBar: some View {
         HStack(spacing: 0) {
+            // Tools (ochre badges)
+            let ownedTools = Tool.allCases.filter { (workshop.tools[$0] ?? 0) > 0 }
+            if !ownedTools.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 6) {
+                        ForEach(ownedTools) { tool in
+                            Text(tool.icon)
+                                .font(.caption)
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 4)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 6)
+                                        .fill(RenaissanceColors.ochre.opacity(0.15))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 6)
+                                                .strokeBorder(RenaissanceColors.ochre.opacity(0.4), lineWidth: 1)
+                                        )
+                                )
+                        }
+                    }
+                }
+
+                Divider().frame(height: 30).padding(.horizontal, 6)
+            }
+
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     ForEach(Material.allCases) { material in
@@ -342,7 +349,24 @@ struct CraftingRoomMapView: View {
                             .font(.custom("EBGaramond-SemiBold", size: 20))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
 
-                        if let recipe = workshop.detectedRecipe {
+                        if let toolRecipe = ToolRecipe.detectRecipe(from: workshop.workbenchIngredients) {
+                            let owned = (workshop.tools[toolRecipe.output] ?? 0) > 0
+                            HStack(spacing: 6) {
+                                Text(toolRecipe.output.icon)
+                                Text(toolRecipe.output.displayName)
+                                    .font(.custom("EBGaramond-Regular", size: 15))
+                                    .foregroundStyle(owned ? RenaissanceColors.stoneGray : RenaissanceColors.ochre)
+                                if owned {
+                                    Text("(owned)")
+                                        .font(.custom("EBGaramond-Regular", size: 12))
+                                        .foregroundStyle(RenaissanceColors.sageGreen)
+                                } else {
+                                    Image(systemName: "hammer.fill")
+                                        .foregroundStyle(RenaissanceColors.ochre)
+                                        .font(.caption)
+                                }
+                            }
+                        } else if let recipe = workshop.detectedRecipe {
                             HStack(spacing: 6) {
                                 Text(recipe.output.icon)
                                 Text(recipe.output.rawValue)
@@ -353,7 +377,7 @@ struct CraftingRoomMapView: View {
                                     .font(.caption)
                             }
                         } else {
-                            Text("Add 4 materials to discover a recipe")
+                            Text("Add materials to discover a recipe")
                                 .font(.custom("EBGaramond-Regular", size: 14))
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                         }
@@ -414,23 +438,57 @@ struct CraftingRoomMapView: View {
                     )
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
-                    Button("Mix!") {
-                        if workshop.mixIngredients() {
-                            workshop.statusMessage = "Mixed! Now tap the Furnace to fire it."
-                            dismissOverlay()
+                    // Tool recipe: "Forge Tool" button (skips furnace)
+                    if let toolRecipe = ToolRecipe.detectRecipe(from: workshop.workbenchIngredients) {
+                        let alreadyOwned = (workshop.tools[toolRecipe.output] ?? 0) > 0
+                        Button {
+                            guard !alreadyOwned else { return }
+                            // Consume ingredients from workbench
+                            workshop.workbenchSlots = [nil, nil, nil, nil]
+                            if workshop.craftTool(toolRecipe.output) {
+                                viewModel?.earnFlorins(GameRewards.toolCraftFlorins)
+                                sceneHolder.scene?.playPlayerCelebrateAnimation()
+                                workshop.educationalText = toolRecipe.educationalText
+                                workshop.showEducationalPopup = true
+                                workshop.statusMessage = "Forged \(toolRecipe.output.icon) \(toolRecipe.output.displayName)!"
+                                dismissOverlay()
+                            }
+                        } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: "hammer.fill")
+                                    .font(.caption)
+                                Text(alreadyOwned ? "Already Owned" : "Forge Tool!")
+                                    .font(.custom("EBGaramond-SemiBold", size: 17))
+                            }
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(alreadyOwned ? RenaissanceColors.stoneGray.opacity(0.3) : RenaissanceColors.ochre)
+                            )
+                            .foregroundStyle(alreadyOwned ? RenaissanceColors.sepiaInk : .white)
                         }
+                        .disabled(alreadyOwned)
+                    } else {
+                        // Normal recipe: "Mix!" button
+                        Button("Mix!") {
+                            if workshop.mixIngredients() {
+                                workshop.statusMessage = "Mixed! Now tap the Furnace to fire it."
+                                dismissOverlay()
+                            }
+                        }
+                        .font(.custom("EBGaramond-SemiBold", size: 17))
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 8)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(workshop.detectedRecipe != nil
+                                      ? RenaissanceColors.renaissanceBlue
+                                      : RenaissanceColors.stoneGray.opacity(0.3))
+                        )
+                        .foregroundStyle(workshop.detectedRecipe != nil ? .white : RenaissanceColors.sepiaInk)
+                        .disabled(workshop.detectedRecipe == nil)
                     }
-                    .font(.custom("EBGaramond-SemiBold", size: 17))
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 8)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(workshop.detectedRecipe != nil
-                                  ? RenaissanceColors.renaissanceBlue
-                                  : RenaissanceColors.stoneGray.opacity(0.3))
-                    )
-                    .foregroundStyle(workshop.detectedRecipe != nil ? .white : RenaissanceColors.sepiaInk)
-                    .disabled(workshop.detectedRecipe == nil)
 
                     Spacer()
 
@@ -601,166 +659,301 @@ struct CraftingRoomMapView: View {
         VStack {
             Spacer()
 
-            VStack(spacing: 14) {
-                HStack {
-                    Image("InteriorPigmentTable")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 80)
+            ScrollView {
+                VStack(spacing: 14) {
+                    // Header
+                    HStack {
+                        Image("InteriorPigmentTable")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 80)
 
-                    VStack(alignment: .leading) {
-                        Text("Pigment Table")
-                            .font(.custom("EBGaramond-SemiBold", size: 20))
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
-                        Text("Collect & grind pigments for fresco painting")
-                            .font(.custom("EBGaramond-Regular", size: 14))
-                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
+                        VStack(alignment: .leading) {
+                            Text("Pigment Grinding Table")
+                                .font(.custom("EBGaramond-SemiBold", size: 20))
+                                .foregroundStyle(RenaissanceColors.sepiaInk)
+                            Text("il Mortaio del Colore")
+                                .font(.custom("EBGaramond-Italic", size: 14))
+                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
+                        }
+
+                        Spacer()
                     }
 
-                    Spacer()
-                }
-
-                // Florins display
-                if let vm = viewModel {
-                    HStack(spacing: 4) {
-                        Image(systemName: "dollarsign.circle.fill")
-                            .font(.footnote)
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
-                        Text("\(vm.goldFlorins) florins")
-                            .font(.custom("EBGaramond-Regular", size: 15))
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                    // Tool check
+                    let hasMortar = (workshop.tools[.mortarAndPestle] ?? 0) > 0
+                    if !hasMortar {
+                        HStack(spacing: 8) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundStyle(RenaissanceColors.ochre)
+                            Text("You need a Mortar & Pestle. Craft one at the Workbench.")
+                                .font(.custom("EBGaramond-Regular", size: 14))
+                                .foregroundStyle(RenaissanceColors.sepiaInk)
+                        }
+                        .padding(10)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(RenaissanceColors.ochre.opacity(0.1))
+                        )
                     }
-                }
 
-                // Collect pigments section
-                Text("Collect Raw Pigments")
-                    .font(.custom("EBGaramond-Regular", size: 16))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    // Mortar slots
+                    Text("Mortar")
+                        .font(.custom("EBGaramond-Regular", size: 16))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
 
-                HStack(spacing: 16) {
-                    let pigmentMaterials: [Material] = [.redOchre, .lapisBlue, .verdigrisGreen]
-                    ForEach(pigmentMaterials, id: \.self) { material in
-                        let stock = workshop.stationStocks[.pigmentTable]?[material] ?? 0
-                        let canAfford = (viewModel?.goldFlorins ?? 0) >= material.cost
-                        Button {
-                            guard let vm = viewModel else { return }
-                            guard vm.goldFlorins >= material.cost else {
-                                workshop.showEarnFlorinsOverlay = true
-                                dismissOverlay()
-                                return
-                            }
-                            if workshop.collectFromStation(.pigmentTable, material: material) {
-                                vm.goldFlorins -= material.cost
-                            }
-                        } label: {
+                    HStack(spacing: 20) {
+                        ForEach(0..<2, id: \.self) { index in
+                            mortarSlotView(index: index, enabled: hasMortar)
+                        }
+
+                        // Arrow
+                        Image(systemName: "arrow.right")
+                            .font(.title3)
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+
+                        // Output preview
+                        if let recipe = workshop.detectedPigmentRecipe {
                             VStack(spacing: 4) {
-                                Text(material.icon)
+                                Text(recipe.output.icon)
                                     .font(.title2)
-                                Text(material.rawValue)
-                                    .font(.custom("EBGaramond-Regular", size: 11))
+                                Text(recipe.italianName)
+                                    .font(.custom("EBGaramond-Italic", size: 12))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
-                                    .lineLimit(1)
-                                HStack(spacing: 2) {
-                                    Text("×\(stock)")
-                                        .font(.custom("EBGaramond-Regular", size: 12))
-                                        .foregroundStyle(stock > 0 ? RenaissanceColors.sageGreen : RenaissanceColors.sepiaInk)
-                                    Image(systemName: "dollarsign.circle.fill")
-                                        .font(.system(size: 9))
-                                        .foregroundStyle(RenaissanceColors.sepiaInk)
-                                    Text("\(material.cost)")
-                                        .font(.custom("EBGaramond-Regular", size: 11))
-                                        .foregroundStyle(canAfford ? RenaissanceColors.sepiaInk : RenaissanceColors.errorRed)
-                                }
                             }
                             .padding(10)
                             .background(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .fill(stock > 0 ? RenaissanceColors.parchment : RenaissanceColors.stoneGray.opacity(0.15))
+                                    .fill(RenaissanceColors.sageGreen.opacity(0.15))
                             )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(stock > 0 ? RenaissanceColors.renaissanceBlue : RenaissanceColors.stoneGray.opacity(0.3), lineWidth: 1)
+                                    .strokeBorder(RenaissanceColors.sageGreen, lineWidth: 1.5)
+                            )
+                        } else {
+                            VStack(spacing: 4) {
+                                Text("?")
+                                    .font(.title2)
+                                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.3))
+                                Text("Output")
+                                    .font(.custom("EBGaramond-Regular", size: 12))
+                                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
+                            }
+                            .padding(10)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(RenaissanceColors.stoneGray.opacity(0.1))
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .strokeBorder(RenaissanceColors.stoneGray.opacity(0.3), lineWidth: 1)
                             )
                         }
-                        .disabled(stock <= 0)
+                    }
+
+                    // Material picker — raw pigments + water from inventory
+                    let availableMaterials = Material.allCases.filter {
+                        ($0.isRawPigment || $0 == .water) && (workshop.rawMaterials[$0] ?? 0) > 0
+                    }
+                    if !availableMaterials.isEmpty {
+                        Text("Add from Inventory")
+                            .font(.custom("EBGaramond-Regular", size: 14))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
+
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 10) {
+                                ForEach(availableMaterials, id: \.self) { material in
+                                    let count = workshop.rawMaterials[material] ?? 0
+                                    Button {
+                                        _ = workshop.addToMortar(material)
+                                    } label: {
+                                        VStack(spacing: 2) {
+                                            Text(material.icon)
+                                                .font(.body)
+                                            Text("\(count)")
+                                                .font(.custom("EBGaramond-Regular", size: 11))
+                                                .foregroundStyle(RenaissanceColors.sepiaInk)
+                                        }
+                                        .padding(8)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 6)
+                                                .fill(RenaissanceColors.parchment)
+                                        )
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 6)
+                                                .strokeBorder(RenaissanceColors.renaissanceBlue.opacity(0.5), lineWidth: 1)
+                                        )
+                                    }
+                                    .disabled(!hasMortar || workshop.isGrinding)
+                                }
+                            }
+                        }
+                    } else if hasMortar {
+                        Text("No raw pigments or water in inventory. Collect from outdoor stations.")
+                            .font(.custom("EBGaramond-Regular", size: 13))
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+                    }
+
+                    // Grind / Clear buttons
+                    HStack(spacing: 12) {
+                        Button {
+                            workshop.clearMortar()
+                        } label: {
+                            Text("Clear")
+                                .font(.custom("EBGaramond-Regular", size: 15))
+                                .foregroundStyle(RenaissanceColors.sepiaInk)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .strokeBorder(RenaissanceColors.sepiaInk.opacity(0.3), lineWidth: 1)
+                                )
+                        }
+                        .disabled(workshop.mortarSlots.allSatisfy { $0 == nil } || workshop.isGrinding)
+
+                        if workshop.isGrinding {
+                            // Grinding progress bar
+                            VStack(spacing: 4) {
+                                ProgressView(value: workshop.grindProgress)
+                                    .tint(RenaissanceColors.ochre)
+                                Text("Grinding...")
+                                    .font(.custom("EBGaramond-Italic", size: 12))
+                                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                            }
+                            .frame(maxWidth: .infinity)
+                        } else {
+                            Button {
+                                workshop.startGrinding()
+                                guard workshop.isGrinding else { return }
+                                // Animate progress
+                                let duration = workshop.currentPigmentRecipe?.grindingTime ?? 3.0
+                                let steps = 20
+                                let interval = duration / Double(steps)
+                                for step in 1...steps {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + interval * Double(step)) {
+                                        workshop.grindProgress = Double(step) / Double(steps)
+                                        if step == steps {
+                                            workshop.completeGrinding()
+                                        }
+                                    }
+                                }
+                            } label: {
+                                HStack(spacing: 6) {
+                                    Text("Grind!")
+                                        .font(.custom("EBGaramond-SemiBold", size: 16))
+                                    Text("⚗️")
+                                }
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 10)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(workshop.detectedPigmentRecipe != nil ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray)
+                                )
+                            }
+                            .disabled(workshop.detectedPigmentRecipe == nil || !hasMortar)
+                        }
+                    }
+
+                    Divider()
+
+                    // Recipe reference
+                    Text("Grinding Recipes")
+                        .font(.custom("EBGaramond-Regular", size: 16))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+
+                    VStack(spacing: 6) {
+                        ForEach(PigmentRecipe.allRecipes) { recipe in
+                            grindingRecipeRow(recipe: recipe)
+                        }
+                    }
+
+                    HStack {
+                        Spacer()
+                        Button("Close") { dismissOverlay() }
+                            .font(.custom("EBGaramond-Regular", size: 15))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                 }
-
-                Divider()
-
-                // Pigment recipes reference
-                Text("Pigment Recipes")
-                    .font(.custom("EBGaramond-Regular", size: 16))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
-
-                VStack(spacing: 8) {
-                    pigmentRecipeRow(
-                        recipe: Recipe.allRecipes.first(where: { $0.output == .redFrescoPigment }),
-                        label: "Red Fresco",
-                        color: RenaissanceColors.errorRed
-                    )
-                    pigmentRecipeRow(
-                        recipe: Recipe.allRecipes.first(where: { $0.output == .blueFrescoPigment }),
-                        label: "Blue Fresco",
-                        color: RenaissanceColors.renaissanceBlue
-                    )
-                    pigmentRecipeRow(
-                        recipe: Recipe.allRecipes.first(where: { $0.output == .stainedGlass }),
-                        label: "Stained Glass",
-                        color: RenaissanceColors.deepTeal
-                    )
-                }
-
-                Text("Collect pigments above, then mix at the Workbench")
-                    .font(.custom("EBGaramond-Regular", size: 12))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
-
-                HStack {
-                    Spacer()
-                    Button("Close") { dismissOverlay() }
-                        .font(.custom("EBGaramond-Regular", size: 15))
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
-                }
+                .padding(20)
             }
-            .padding(20)
+            .frame(maxHeight: 520)
             .background(overlayBackground)
             .padding(.horizontal, 24)
             .padding(.bottom, 40)
         }
     }
 
-    private func pigmentRecipeRow(recipe: Recipe?, label: String, color: Color) -> some View {
-        HStack(spacing: 8) {
-            Circle()
-                .fill(color.opacity(0.6))
-                .frame(width: 24, height: 24)
+    @ViewBuilder
+    private func mortarSlotView(index: Int, enabled: Bool) -> some View {
+        let material = workshop.mortarSlots[index]
+        Button {
+            // Tap filled slot to remove material back to inventory
+            if let mat = material {
+                workshop.mortarSlots[index] = nil
+                workshop.rawMaterials[mat, default: 0] += 1
+            }
+        } label: {
+            VStack(spacing: 2) {
+                if let mat = material {
+                    Text(mat.icon)
+                        .font(.title2)
+                    Text(mat.rawValue)
+                        .font(.custom("EBGaramond-Regular", size: 10))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                } else {
+                    Image(systemName: "plus.circle.dashed")
+                        .font(.title2)
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.3))
+                    Text("Empty")
+                        .font(.custom("EBGaramond-Regular", size: 10))
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
+                }
+            }
+            .frame(width: 64, height: 64)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(material != nil ? RenaissanceColors.parchment : RenaissanceColors.stoneGray.opacity(0.1))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .strokeBorder(material != nil ? RenaissanceColors.renaissanceBlue : RenaissanceColors.stoneGray.opacity(0.3), lineWidth: 1.5)
+            )
+        }
+        .disabled(material == nil || workshop.isGrinding)
+    }
 
-            Text(label)
-                .font(.custom("EBGaramond-Regular", size: 16))
+    private func grindingRecipeRow(recipe: PigmentRecipe) -> some View {
+        HStack(spacing: 8) {
+            Text(recipe.output.icon)
+                .font(.body)
+
+            Text(recipe.italianName)
+                .font(.custom("EBGaramond-Italic", size: 14))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
             Spacer()
 
-            if let recipe = recipe {
-                HStack(spacing: 4) {
-                    ForEach(Array(recipe.ingredients.keys.sorted(by: { $0.rawValue < $1.rawValue })), id: \.self) { material in
-                        Text("\(material.icon)\u{00D7}\(recipe.ingredients[material]!)")
-                            .font(.custom("EBGaramond-Regular", size: 12))
-                    }
+            HStack(spacing: 4) {
+                ForEach(Array(recipe.ingredients.keys.sorted(by: { $0.rawValue < $1.rawValue })), id: \.self) { material in
+                    Text("\(material.icon)\u{00D7}\(recipe.ingredients[material]!)")
+                        .font(.custom("EBGaramond-Regular", size: 12))
                 }
-                .foregroundStyle(RenaissanceColors.sepiaInk)
-
-                let hasAll = recipe.ingredients.allSatisfy { (workshop.rawMaterials[$0.key] ?? 0) >= $0.value }
-                Image(systemName: hasAll ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(hasAll ? RenaissanceColors.sageGreen : RenaissanceColors.sepiaInk.opacity(0.4))
-                    .font(.caption)
             }
+            .foregroundStyle(RenaissanceColors.sepiaInk)
+
+            let hasAll = recipe.ingredients.allSatisfy { (workshop.rawMaterials[$0.key] ?? 0) >= $0.value }
+            Image(systemName: hasAll ? "checkmark.circle.fill" : "circle")
+                .foregroundStyle(hasAll ? RenaissanceColors.sageGreen : RenaissanceColors.sepiaInk.opacity(0.4))
+                .font(.caption)
         }
         .padding(.horizontal, 12)
-        .padding(.vertical, 8)
+        .padding(.vertical, 6)
         .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(color.opacity(0.08))
+            RoundedRectangle(cornerRadius: 6)
+                .fill(RenaissanceColors.warmBrown.opacity(0.06))
         )
     }
 
@@ -1061,13 +1254,6 @@ struct CraftingRoomMapView: View {
             .fill(RenaissanceColors.parchment.opacity(0.95))
     }
 
-    private var pinchGesture: some Gesture {
-        MagnificationGesture()
-            .onChanged { value in
-                scene?.handlePinch(scale: value)
-            }
-    }
-
     private func fireFurnace() {
         workshop.startProcessing()
         guard workshop.isProcessing,
@@ -1082,7 +1268,7 @@ struct CraftingRoomMapView: View {
             workshop.completeProcessing()
 
             viewModel?.earnFlorins(GameRewards.craftCompleteFlorins)
-            scene?.playPlayerCelebrateAnimation()
+            sceneHolder.scene?.playPlayerCelebrateAnimation()
             var bonusText = ""
 
             if workshop.checkAssignmentCompletion(craftedItem: craftedItem) {

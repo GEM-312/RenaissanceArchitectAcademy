@@ -20,12 +20,12 @@ enum ResourceStationType: String, CaseIterable, Hashable {
         switch self {
         case .quarry:       return [.limestone, .marbleDust, .marble]
         case .river:        return [.water, .sand]
-        case .volcano:      return [.volcanicAsh]
-        case .clayPit:      return [.clay]
-        case .mine:         return [.ironOre, .lead]
-        case .pigmentTable: return [.redOchre, .lapisBlue, .verdigrisGreen]
-        case .forest:       return [.timber]
-        case .market:       return [.silk, .lead, .marble]
+        case .volcano:      return [.volcanicAsh, .cinnabar]
+        case .clayPit:      return [.clay, .redOchre]
+        case .mine:         return [.ironOre, .lead, .verdigrisGreen]
+        case .pigmentTable: return []   // grinding station (indoor)
+        case .forest:       return [.timber, .saffron]
+        case .market:       return [.silk, .lead, .marble, .lapisBlue]
         case .workbench:    return []   // crafting station
         case .furnace:      return []   // processing station
         case .craftingRoom: return []   // enters interior
@@ -50,6 +50,11 @@ enum ResourceStationType: String, CaseIterable, Hashable {
         case .craftingRoom: return "StationCraftingRoom"
         default:            return nil  // pigmentTable, workbench, furnace use shapes
         }
+    }
+
+    /// Tool required to collect from this station (nil = always accessible)
+    var requiredTool: Tool? {
+        Tool.requiredFor(station: self)
     }
 
     /// Label shown on the map
