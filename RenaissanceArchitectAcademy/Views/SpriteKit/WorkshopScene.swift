@@ -3,7 +3,7 @@ import SwiftUI
 
 /// SpriteKit scene for Leonardo's Workshop mini-game
 /// Player walks between resource stations to collect materials, then crafts at workbench/furnace
-class WorkshopScene: SKScene {
+class WorkshopScene: SKScene, ScrollZoomable {
 
     // MARK: - Properties
 
@@ -19,6 +19,15 @@ class WorkshopScene: SKScene {
 
     // Map size — matches city's 3500×2500 so terrain renders at same density
     private let mapSize = CGSize(width: 3500, height: 2500)
+
+    /// Terrain sprite reference for blur effect
+    private var terrainSprite: SKSpriteNode?
+
+    /// Effect node wrapping terrain for Gaussian blur during walking
+    private var terrainEffectNode: SKEffectNode?
+
+    /// Whether the player is currently walking
+    private(set) var isPlayerWalking = false
 
     #if DEBUG
     private lazy var editorMode = SceneEditorMode(scene: self)
@@ -195,10 +204,19 @@ class WorkshopScene: SKScene {
         .craftingRoom: [0, 47, 48],
     ]
 
+    // MARK: - Camera Follow
+
+    /// When true, camera smoothly tracks the player while walking
+    private var isFollowingPlayer = false
+
     // MARK: - Callbacks to SwiftUI
 
     var onPlayerPositionChanged: ((CGPoint, Bool) -> Void)?
     var onStationReached: ((ResourceStationType) -> Void)?
+
+    /// Callback when player starts walking (dismiss any open dialogs/overlays)
+    var onPlayerStartedWalking: (() -> Void)?
+
 
     // MARK: - Scene Setup
 
@@ -251,11 +269,21 @@ class WorkshopScene: SKScene {
     private func setupBackground() {
         // Workshop-specific terrain — full image visible at default zoom
         let terrainTexture = SKTexture(imageNamed: "WorkshopTerrain")
+        terrainTexture.filteringMode = .linear
         let terrain = SKSpriteNode(texture: terrainTexture)
         terrain.size = mapSize
-        terrain.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
-        terrain.zPosition = -100
-        addChild(terrain)
+
+        // Wrap terrain in SKEffectNode for blur during walking
+        let effectNode = SKEffectNode()
+        effectNode.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
+        effectNode.zPosition = -100
+        effectNode.shouldEnableEffects = false
+        effectNode.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": 12.0])
+        effectNode.shouldRasterize = true
+        effectNode.addChild(terrain)
+        addChild(effectNode)
+        terrainSprite = terrain
+        terrainEffectNode = effectNode
     }
 
     // MARK: - Grid Lines (notebook style)
@@ -361,6 +389,28 @@ class WorkshopScene: SKScene {
 
     override func update(_ currentTime: TimeInterval) {
         updatePlayerScreenPosition()
+
+        // Smoothly follow the player while walking to a station
+        if isFollowingPlayer {
+            let target = playerNode.position
+            let current = cameraNode.position
+            let lerpFactor: CGFloat = 0.08
+            cameraNode.position = CGPoint(
+                x: current.x + (target.x - current.x) * lerpFactor,
+                y: current.y + (target.y - current.y) * lerpFactor
+            )
+        }
+
+        // Fade terrain when zoomed in + auto-remove blur when zoomed out
+        if let effectNode = terrainEffectNode, let cam = cameraNode {
+            let scale = cam.xScale
+            let alpha = min(1.0, max(0.35, (scale - 0.5) / 0.5))
+            effectNode.alpha = alpha
+
+            if effectNode.shouldEnableEffects && scale >= 1.0 && !isPlayerWalking && !isFollowingPlayer {
+                stopWalkingTerrainEffects()
+            }
+        }
     }
 
     // MARK: - Input Handling
@@ -395,6 +445,7 @@ class WorkshopScene: SKScene {
         if editorMode.handleRelease() { /* fall through */ }
         #endif
         lastPanLocation = nil
+        hasFiredDragCallback = false
     }
     #else
     override func mouseDown(with event: NSEvent) {
@@ -423,10 +474,12 @@ class WorkshopScene: SKScene {
         if editorMode.handleRelease() { /* fall through */ }
         #endif
         lastPanLocation = nil
+        hasFiredDragCallback = false
     }
 
     // Scroll wheel/trackpad on macOS — scroll = zoom, Option+scroll = pan
     override func scrollWheel(with event: NSEvent) {
+        dismissOverlaysOnInteraction()
         if event.modifierFlags.contains(.option) {
             // Option + scroll = pan the map
             let scale = cameraNode.xScale
@@ -444,6 +497,7 @@ class WorkshopScene: SKScene {
 
     // Pinch-to-zoom on trackpad
     override func magnify(with event: NSEvent) {
+        dismissOverlaysOnInteraction()
         let zoomFactor: CGFloat = 1.0 + event.magnification
         let newScale = cameraNode.xScale / zoomFactor
         let clampedScale = max(0.5, min(3.5, newScale))
@@ -599,9 +653,21 @@ class WorkshopScene: SKScene {
     private func walkPlayerToStation(_ stationNode: ResourceNode) {
         stationNode.animateTap()
 
+        // Cancel any current walk
+        playerNode.removeAction(forKey: "walkTo")
+
+        // Dismiss any open overlays immediately
+        onPlayerStartedWalking?()
+
         let stationPos = stationNode.position
         let targetPos = CGPoint(x: stationPos.x - 140, y: stationPos.y - 75)
         let playerPos = playerNode.position
+
+        isPlayerWalking = true
+
+        // Stage 1: Zoom in to follow the player while walking (0.4x)
+        startFollowingPlayer()
+        startWalkingTerrainEffects()
 
         #if DEBUG
         syncWaypointsFromNodes()  // pick up any dragged waypoint positions
@@ -614,15 +680,7 @@ class WorkshopScene: SKScene {
             playerNode.setFacingDirection(facingRight)
 
             playerNode.walkTo(destination: targetPos, duration: max(0.3, TimeInterval(directDistance / 467))) { [weak self] in
-                guard let self = self else { return }
-                // Play collecting animation before notifying SwiftUI (skip for crafting room entrance)
-                if stationNode.stationType.isCraftingStation {
-                    self.onStationReached?(stationNode.stationType)
-                } else {
-                    self.playerNode.playCollectAnimation {
-                        self.onStationReached?(stationNode.stationType)
-                    }
-                }
+                self?.playerArrivedAtStation(stationNode)
             }
             return
         }
@@ -639,14 +697,7 @@ class WorkshopScene: SKScene {
             let facingRight = targetPos.x > playerPos.x
             playerNode.setFacingDirection(facingRight)
             playerNode.walkTo(destination: targetPos, duration: max(0.5, TimeInterval(directDistance / 467))) { [weak self] in
-                guard let self = self else { return }
-                if stationNode.stationType.isCraftingStation {
-                    self.onStationReached?(stationNode.stationType)
-                } else {
-                    self.playerNode.playCollectAnimation {
-                        self.onStationReached?(stationNode.stationType)
-                    }
-                }
+                self?.playerArrivedAtStation(stationNode)
             }
             return
         }
@@ -658,18 +709,100 @@ class WorkshopScene: SKScene {
 
         // Walk along the path
         playerNode.walkPath(path, speed: 467) { [weak self] in
-            guard let self = self else { return }
-            if stationNode.stationType.isCraftingStation {
-                self.onStationReached?(stationNode.stationType)
-            } else {
-                self.playerNode.playCollectAnimation {
-                    self.onStationReached?(stationNode.stationType)
-                }
+            self?.playerArrivedAtStation(stationNode)
+        }
+    }
+
+    /// Called when player finishes walking to a station — Stage 2: zoom to station, then notify SwiftUI
+    private func playerArrivedAtStation(_ stationNode: ResourceNode) {
+        isPlayerWalking = false
+        isFollowingPlayer = false
+
+        // Keep blur while zoomed in at station
+
+        // Face forward
+        playerNode.faceForward()
+
+        // Zoom camera to station
+        zoomCameraToStation(stationNode.position)
+
+        // Play collecting animation (skip for crafting room entrance), then notify SwiftUI
+        if stationNode.stationType.isCraftingStation {
+            onStationReached?(stationNode.stationType)
+        } else {
+            playerNode.playCollectAnimation { [weak self] in
+                self?.onStationReached?(stationNode.stationType)
             }
         }
     }
 
+    // MARK: - Terrain Effects (blur during walking)
+
+    private func startWalkingTerrainEffects() {
+        terrainEffectNode?.shouldRasterize = false
+        terrainEffectNode?.shouldEnableEffects = true
+    }
+
+    private func stopWalkingTerrainEffects() {
+        terrainEffectNode?.shouldEnableEffects = false
+        terrainEffectNode?.shouldRasterize = true
+    }
+
+    // MARK: - Station Camera Zoom
+
+    /// Stage 1: Zoom in close and follow the player while walking
+    private func startFollowingPlayer() {
+        guard let cameraNode = cameraNode else { return }
+        isFollowingPlayer = true
+
+        // Zoom to 0.4x (close follow) — camera position tracks player in update()
+        let zoomAction = SKAction.scale(to: 0.4, duration: 0.5)
+        zoomAction.timingMode = .easeInEaseOut
+        cameraNode.run(zoomAction, withKey: "cameraZoom")
+    }
+
+    /// Stage 2: Settle camera on the station after player arrives
+    private func zoomCameraToStation(_ stationPos: CGPoint) {
+        guard let cameraNode = cameraNode else { return }
+
+        // Ease out to station zoom level, center on station
+        let moveAction = SKAction.move(to: stationPos, duration: 0.5)
+        moveAction.timingMode = .easeInEaseOut
+
+        let zoomAction = SKAction.scale(to: 0.7, duration: 0.5)
+        zoomAction.timingMode = .easeInEaseOut
+
+        cameraNode.run(SKAction.group([moveAction, zoomAction]), withKey: "cameraZoom")
+    }
+
+    /// Zoom back out to show the full map (call when overlay dismisses)
+    func zoomCameraOut() {
+        guard let cameraNode = cameraNode else { return }
+        isFollowingPlayer = false
+
+        stopWalkingTerrainEffects()
+
+        let mapCenter = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
+        let fitScale = max(mapSize.width / self.size.width, mapSize.height / self.size.height)
+
+        let moveAction = SKAction.move(to: mapCenter, duration: 0.6)
+        moveAction.timingMode = .easeInEaseOut
+
+        let zoomAction = SKAction.scale(to: fitScale, duration: 0.6)
+        zoomAction.timingMode = .easeInEaseOut
+
+        cameraNode.run(SKAction.group([moveAction, zoomAction]), withKey: "cameraZoom")
+    }
+
+    private var hasFiredDragCallback = false
+
     private func handleDragTo(_ location: CGPoint, from lastLocation: CGPoint) {
+        // Dismiss overlays on first drag movement only
+        if !hasFiredDragCallback {
+            hasFiredDragCallback = true
+            onPlayerStartedWalking?()
+        }
+
         // Pan camera
         let deltaX = location.x - lastLocation.x
         let deltaY = location.y - lastLocation.y
@@ -730,6 +863,32 @@ class WorkshopScene: SKScene {
         let clampedScale = max(0.5, min(3.5, newScale))
         cameraNode.setScale(clampedScale)
         clampCamera()
+    }
+
+    /// Pan camera via scroll deltas (called from SwiftUI event monitor)
+    func handleScrollPan(deltaX: CGFloat, deltaY: CGFloat) {
+        guard cameraNode != nil else { return }
+        dismissOverlaysOnInteraction()
+        let scale = cameraNode.xScale
+        cameraNode.position.x -= deltaX * scale * 2
+        cameraNode.position.y += deltaY * scale * 2
+        clampCamera()
+    }
+
+    /// Zoom via trackpad magnify gesture (called from SwiftUI event monitor)
+    func handleMagnify(magnification: CGFloat) {
+        guard cameraNode != nil else { return }
+        dismissOverlaysOnInteraction()
+        let zoomFactor: CGFloat = 1.0 + magnification
+        let newScale = cameraNode.xScale / zoomFactor
+        let clampedScale = max(0.5, min(3.5, newScale))
+        cameraNode.setScale(clampedScale)
+        clampCamera()
+    }
+
+    /// Dismiss SwiftUI overlays on any map interaction (scroll, pan, zoom, drag)
+    private func dismissOverlaysOnInteraction() {
+        onPlayerStartedWalking?()
     }
 
     // MARK: - Public Methods

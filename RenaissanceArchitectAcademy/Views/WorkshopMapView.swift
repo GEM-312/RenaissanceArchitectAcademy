@@ -45,16 +45,13 @@ struct WorkshopMapView: View {
     @State private var jobRewardFlorins: Int = 0
     @State private var jobStreakBonus: Int = 0
 
-    // Magic Mouse scroll-to-zoom
-    @State private var scrollMonitor: Any?
 
     var body: some View {
         GeometryReader { geometry in
             ZStack {
                 // Layer 1: SpriteKit scene
-                SpriteView(scene: makeScene(), options: [.allowsTransparency])
+                GameSpriteView(scene: makeScene(), options: [.allowsTransparency])
                     .ignoresSafeArea()
-                    .gesture(pinchGesture)
 
                 // Layer 2: Station lesson overlay (bird teaches before first collection)
                 if showStationLesson, let station = pendingLessonStation,
@@ -232,22 +229,12 @@ struct WorkshopMapView: View {
             if workshop.currentAssignment == nil {
                 workshop.generateNewAssignment()
             }
-            #if os(macOS)
-            scrollMonitor = NSEvent.addLocalMonitorForEvents(matching: .scrollWheel) { [self] event in
-                if !showCollectionOverlay && !showHintBubble && !showWorkbenchOverlay && !showFurnaceOverlay && !workshop.showEducationalPopup && !workshop.showJobBoard && !workshop.showJobComplete {
-                    scene?.handleScrollZoom(deltaY: event.deltaY)
-                }
-                return event
-            }
-            #endif
         }
-        .onDisappear {
-            #if os(macOS)
-            if let monitor = scrollMonitor {
-                NSEvent.removeMonitor(monitor)
-                scrollMonitor = nil
+        .onChange(of: activeStation) { oldValue, newValue in
+            if oldValue != nil && newValue == nil {
+                // Station overlay dismissed — zoom camera back out
+                scene?.zoomCameraOut()
             }
-            #endif
         }
     }
 
@@ -258,7 +245,7 @@ struct WorkshopMapView: View {
 
         let newScene = WorkshopScene()
         newScene.size = CGSize(width: 3500, height: 2500)
-        newScene.scaleMode = .aspectFill
+        newScene.scaleMode = .resizeFill
         newScene.apprenticeIsBoy = onboardingState?.apprenticeGender == .boy || onboardingState == nil
 
         // Player position updates
@@ -266,6 +253,16 @@ struct WorkshopMapView: View {
             self.playerPosition = position
             self.playerIsWalking = isWalking
         }
+
+        // Dismiss all overlays when player starts walking to a new station
+        newScene.onPlayerStartedWalking = {
+            withAnimation(.easeOut(duration: 0.2)) {
+                dismissAllOverlays()
+                showStationKnowledgeCards = false
+                stationKnowledgeCards = []
+            }
+        }
+
 
         // Station reached — show hint bubble + collection overlay
         newScene.onStationReached = { stationType in
@@ -1442,15 +1439,6 @@ struct WorkshopMapView: View {
         jobRewardFlorins = florins
         jobStreakBonus = streak
         viewModel?.earnFlorins(florins + streak)
-    }
-
-    // MARK: - Gestures
-
-    private var pinchGesture: some Gesture {
-        MagnificationGesture()
-            .onChanged { value in
-                scene?.handlePinch(scale: value)
-            }
     }
 
     // MARK: - Actions

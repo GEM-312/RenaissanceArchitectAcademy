@@ -11,29 +11,55 @@ typealias PlatformColor = NSColor
 
 /// Main SpriteKit scene for the isometric city map
 /// Based on level_design_sketch.JPG layout
-class CityScene: SKScene {
+class CityScene: SKScene, ScrollZoomable {
 
     // MARK: - Properties
 
     private var cameraNode: SKCameraNode!
     private(set) var buildingNodes: [String: BuildingNode] = [:]
+    private var playerNode: PlayerNode!
+
+    /// Player gender — set from SwiftUI before scene appears
+    var apprenticeIsBoy: Bool = true
 
     private var lastCursorPosition: CGPoint?
 
     // Callback when a building is tapped
     var onBuildingSelected: ((String) -> Void)?
 
-    // Callback when mascot reaches building (for dialogue)
+    // Callback when player reaches building: (buildingId, screenPosition)
     var onMascotReachedBuilding: ((String) -> Void)?
+
+    /// Callback with building's screen-space position (normalized 0–1) — updated every frame
+    var onBuildingScreenPosition: ((CGPoint) -> Void)?
+
+    /// The building currently showing a dialog — tracked every frame for position updates
+    private var dialogBuildingNode: BuildingNode?
+
+    /// Callback when player starts walking (dismiss any open dialogs)
+    var onPlayerStartedWalking: (() -> Void)?
 
     // Callback when mascot walks off to puzzle
     var onMascotExitToPuzzle: (() -> Void)?
 
-    // (Bird overlay removed — mascot position tracking no longer needed)
+    /// Whether the player is currently walking to a building
+    private(set) var isPlayerWalking = false
+
+    /// Camera follows player while walking
+    private var isFollowingPlayer = false
 
     // Camera control
     private var lastPanLocation: CGPoint?
     private var initialCameraScale: CGFloat = 1.0
+
+    /// Terrain sprite reference — fades when zoomed in to reveal clean parchment
+    private var terrainSprite: SKSpriteNode?
+
+    /// Effect node wrapping terrain for Gaussian blur during walking
+    private var terrainEffectNode: SKEffectNode?
+
+    /// Alternate terrain shown while player walks (e.g. "TerrainWalking" asset)
+    private var walkingTerrainSprite: SKSpriteNode?
 
     #if DEBUG
     private lazy var editorMode = SceneEditorMode(scene: self)
@@ -72,6 +98,127 @@ class CityScene: SKScene {
         return CGSize(width: max(3500, maxX), height: max(2500, maxY))
     }()
 
+    // MARK: - Waypoint Graph (road network for pathfinding)
+
+    /// 40 road junctions connecting the 17 buildings across the 3500×2500 map
+    private var waypoints: [CGPoint] = [
+        // --- Ancient Rome side (left) ---
+        /* 0  */ CGPoint(x: 200,  y: 1800),  // near aqueduct-colosseum
+        /* 1  */ CGPoint(x: 400,  y: 2100),  // near aqueduct
+        /* 2  */ CGPoint(x: 400,  y: 1600),  // W mid
+        /* 3  */ CGPoint(x: 300,  y: 1250),  // near roman baths
+        /* 4  */ CGPoint(x: 550,  y: 1500),  // rome crossroads
+        /* 5  */ CGPoint(x: 500,  y: 1050),  // between baths-pantheon
+        /* 6  */ CGPoint(x: 700,  y: 1200),  // near pantheon
+        /* 7  */ CGPoint(x: 400,  y: 750),   // near roman roads
+        /* 8  */ CGPoint(x: 250,  y: 550),   // near harbor
+        /* 9  */ CGPoint(x: 500,  y: 550),   // S rome
+        /* 10 */ CGPoint(x: 600,  y: 400),   // near siege workshop
+        /* 11 */ CGPoint(x: 750,  y: 650),   // near insula
+        /* 12 */ CGPoint(x: 700,  y: 900),   // rome south junction
+
+        // --- Center spine ---
+        /* 13 */ CGPoint(x: 1000, y: 2000),  // upper center-left
+        /* 14 */ CGPoint(x: 1100, y: 1500),  // center-left mid
+        /* 15 */ CGPoint(x: 1000, y: 1100),  // center-left lower
+        /* 16 */ CGPoint(x: 1100, y: 700),   // center-left south
+        /* 17 */ CGPoint(x: 1400, y: 1800),  // center
+        /* 18 */ CGPoint(x: 1400, y: 1300),  // center mid
+        /* 19 */ CGPoint(x: 1400, y: 900),   // center south
+
+        // --- Milan area ---
+        /* 20 */ CGPoint(x: 1700, y: 2100),  // near leonardo's workshop
+        /* 21 */ CGPoint(x: 1600, y: 1700),  // near flying machine
+        /* 22 */ CGPoint(x: 1800, y: 1500),  // milan junction
+
+        // --- Padua ---
+        /* 23 */ CGPoint(x: 2100, y: 1500),  // near anatomy theater
+        /* 24 */ CGPoint(x: 2000, y: 1200),  // padua south
+
+        // --- Florence area ---
+        /* 25 */ CGPoint(x: 2300, y: 2200),  // near duomo
+        /* 26 */ CGPoint(x: 2500, y: 2000),  // florence junction
+        /* 27 */ CGPoint(x: 2700, y: 1900),  // near botanical garden
+        /* 28 */ CGPoint(x: 2600, y: 1700),  // florence south
+
+        // --- Venice area ---
+        /* 29 */ CGPoint(x: 3000, y: 1800),  // venice north
+        /* 30 */ CGPoint(x: 3100, y: 1500),  // near glassworks
+        /* 31 */ CGPoint(x: 2900, y: 1350),  // near arsenal
+        /* 32 */ CGPoint(x: 2800, y: 1100),  // venice south
+
+        // --- Renaissance Rome area ---
+        /* 33 */ CGPoint(x: 2200, y: 900),   // between padua-renRome
+        /* 34 */ CGPoint(x: 2500, y: 1000),  // near vatican observatory
+        /* 35 */ CGPoint(x: 2100, y: 600),   // near printing press
+        /* 36 */ CGPoint(x: 2500, y: 700),   // ren rome south
+        /* 37 */ CGPoint(x: 1800, y: 800),   // center-south junction
+
+        // --- Extra connectors ---
+        /* 38 */ CGPoint(x: 1800, y: 2000),  // upper center
+        /* 39 */ CGPoint(x: 2200, y: 1800),  // between padua-florence
+    ]
+
+    /// Bidirectional edges: each pair [a, b] means a↔b
+    private let waypointEdges: [[Int]] = [
+        // Ancient Rome chain
+        [1, 0], [0, 2], [2, 4], [2, 3], [3, 5], [4, 5], [4, 6],
+        [5, 6], [5, 7], [7, 8], [7, 9], [8, 9], [9, 10], [10, 11],
+        [11, 12], [12, 7], [6, 12],
+
+        // Rome to center
+        [0, 13], [4, 14], [6, 15], [12, 16], [14, 15], [15, 16],
+        [13, 17], [14, 18], [16, 19],
+
+        // Center spine
+        [17, 18], [18, 19], [17, 21], [18, 22], [19, 37],
+
+        // Milan
+        [13, 20], [20, 38], [38, 17], [17, 21], [21, 22],
+
+        // Padua
+        [22, 23], [23, 24], [24, 33],
+
+        // Florence
+        [20, 25], [25, 26], [26, 27], [26, 28], [27, 28],
+        [38, 26], [39, 28],
+
+        // Venice
+        [28, 29], [29, 30], [30, 31], [31, 32], [27, 29],
+
+        // Renaissance Rome
+        [24, 34], [33, 34], [33, 35], [34, 36], [35, 36],
+        [19, 35], [37, 35], [32, 34],
+
+        // Cross-links
+        [21, 39], [23, 39], [39, 23], [22, 24], [37, 19],
+    ]
+
+    /// Which waypoints each building connects to (nearest road junctions)
+    private let buildingWaypoints: [String: [Int]] = [
+        "aqueduct":          [1, 0],
+        "colosseum":         [0, 4],
+        "romanBaths":        [3, 5],
+        "pantheon":          [6, 5],
+        "romanRoads":        [7, 12],
+        "harbor":            [8, 9],
+        "siegeWorkshop":     [10, 9],
+        "insula":            [11, 12],
+        "duomo":             [25, 26],
+        "botanicalGarden":   [27, 28],
+        "glassworks":        [30, 29],
+        "arsenal":           [31, 32],
+        "anatomyTheater":    [23, 24],
+        "leonardoWorkshop":  [20, 38],
+        "flyingMachine":     [21, 17],
+        "vaticanObservatory": [34, 36],
+        "printingPress":     [35, 33],
+    ]
+
+    // Walk speed and constants (same as Workshop)
+    private let walkSpeed: CGFloat = 467
+    private let directWalkThreshold: CGFloat = 350
+
     // MARK: - Scene Setup
 
     override func didMove(to view: SKView) {
@@ -81,6 +228,7 @@ class CityScene: SKScene {
         setupTerrain()
         setupBuildings()
         setupDecorations()
+        setupPlayer()
 
         // Enable touch and tracking
         isUserInteractionEnabled = true
@@ -95,12 +243,59 @@ class CityScene: SKScene {
         #endif
     }
 
-    // MARK: - (Mascot removed from city map)
+    // MARK: - Player Setup
+
+    private func setupPlayer() {
+        playerNode = PlayerNode(isBoy: apprenticeIsBoy)
+        // Spawn near the center of the map
+        playerNode.position = CGPoint(x: 1400, y: 1300)
+        playerNode.zPosition = 50
+        addChild(playerNode)
+    }
 
     // MARK: - Update Loop
 
     override func update(_ currentTime: TimeInterval) {
-        // No-op (bird overlay removed)
+        // Smoothly follow the player while walking to a building
+        if isFollowingPlayer {
+            let target = playerNode.position
+            let current = cameraNode.position
+            let lerpFactor: CGFloat = 0.08
+            cameraNode.position = CGPoint(
+                x: current.x + (target.x - current.x) * lerpFactor,
+                y: current.y + (target.y - current.y) * lerpFactor
+            )
+        }
+
+        // Fade terrain when zoomed in — reveal clean parchment background
+        if let effectNode = terrainEffectNode, let cam = cameraNode {
+            let scale = cam.xScale
+            // Full opacity at scale >= 1.0, fade to 0.35 at scale 0.5
+            let alpha = min(1.0, max(0.35, (scale - 0.5) / 0.5))
+            effectNode.alpha = alpha
+
+            // Turn off blur once user zooms out to full map (but not while walking — camera is still zooming in)
+            if effectNode.shouldEnableEffects && scale >= 1.0 && !isPlayerWalking && !isFollowingPlayer {
+                stopWalkingTerrainEffects()
+            }
+        }
+
+        // Continuously update dialog position so it tracks the building when map pans/zooms
+        if let buildingNode = dialogBuildingNode, let view = self.view {
+            let viewPoint = convertPoint(toView: buildingNode.position)
+            let viewSize = view.bounds.size
+            // macOS NSView has Y-up (0 at bottom), SwiftUI has Y-down (0 at top) → flip Y
+            #if os(iOS)
+            let normalizedY = viewPoint.y / viewSize.height
+            #else
+            let normalizedY = 1.0 - (viewPoint.y / viewSize.height)
+            #endif
+            let normalized = CGPoint(
+                x: viewPoint.x / viewSize.width,
+                y: normalizedY
+            )
+            onBuildingScreenPosition?(normalized)
+        }
     }
 
     private func setupCamera() {
@@ -138,13 +333,36 @@ class CityScene: SKScene {
             let centerY = tile.origin.y + tile.size.height / 2
 
             if let imageName = tile.imageName {
-                // Tile with art
+                // Tile with art — use linear filtering for smooth zoom-in
                 let texture = SKTexture(imageNamed: imageName)
+                texture.filteringMode = .linear
                 let sprite = SKSpriteNode(texture: texture)
                 sprite.size = tile.size
-                sprite.position = CGPoint(x: centerX, y: centerY)
-                sprite.zPosition = -100
-                addChild(sprite)
+
+                // Wrap terrain in SKEffectNode for blur during walking
+                let effectNode = SKEffectNode()
+                effectNode.position = CGPoint(x: centerX, y: centerY)
+                effectNode.zPosition = -100
+                effectNode.shouldEnableEffects = false
+                effectNode.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": 12.0])
+                effectNode.shouldRasterize = true
+                effectNode.addChild(sprite)
+                addChild(effectNode)
+                terrainSprite = sprite
+                terrainEffectNode = effectNode
+
+                // Walking terrain — hidden by default, fades in when player walks
+                if Self.imageExists(named: "TerrainWalking") {
+                    let walkTexture = SKTexture(imageNamed: "TerrainWalking")
+                    walkTexture.filteringMode = .linear
+                    let walkSprite = SKSpriteNode(texture: walkTexture)
+                    walkSprite.size = tile.size
+                    walkSprite.position = CGPoint(x: centerX, y: centerY)
+                    walkSprite.zPosition = -99
+                    walkSprite.alpha = 0
+                    addChild(walkSprite)
+                    walkingTerrainSprite = walkSprite
+                }
             } else {
                 // Placeholder tile — parchment rectangle with dashed border
                 let placeholder = SKSpriteNode(color: PlatformColor(red: 0.96, green: 0.90, blue: 0.83, alpha: 1.0), size: tile.size)
@@ -508,6 +726,7 @@ class CityScene: SKScene {
         if editorMode.handleRelease() { /* fall through to also clear pan */ }
         #endif
         lastPanLocation = nil
+        hasFiredDragCallback = false
     }
     #else
     override func mouseDown(with event: NSEvent) {
@@ -536,6 +755,7 @@ class CityScene: SKScene {
         if editorMode.handleRelease() { /* fall through to also clear pan */ }
         #endif
         lastPanLocation = nil
+        hasFiredDragCallback = false
     }
 
     override func mouseMoved(with event: NSEvent) {
@@ -545,6 +765,7 @@ class CityScene: SKScene {
 
     // Scroll wheel/trackpad on macOS — scroll = zoom, Option+scroll = pan
     override func scrollWheel(with event: NSEvent) {
+        dismissOverlaysOnInteraction()
         if event.modifierFlags.contains(.option) {
             // Option + scroll = pan the map
             let scale = cameraNode.xScale
@@ -562,6 +783,7 @@ class CityScene: SKScene {
 
     // Pinch-to-zoom on trackpad
     override func magnify(with event: NSEvent) {
+        dismissOverlaysOnInteraction()
         let zoomFactor: CGFloat = 1.0 + event.magnification
         let newScale = cameraNode.xScale / zoomFactor
         let clampedScale = max(0.5, min(3.5, newScale))
@@ -583,13 +805,12 @@ class CityScene: SKScene {
         let tappedNodes = nodes(at: location)
         for node in tappedNodes {
             if let buildingNode = node as? BuildingNode {
-                // Have mascot walk to building first
-                walkMascotToBuilding(buildingNode)
+                walkPlayerToBuilding(buildingNode)
                 return
             }
             // Also check parent (in case we tapped a child node)
             if let buildingNode = node.parent as? BuildingNode {
-                walkMascotToBuilding(buildingNode)
+                walkPlayerToBuilding(buildingNode)
                 return
             }
         }
@@ -598,21 +819,271 @@ class CityScene: SKScene {
         lastPanLocation = location
     }
 
-    /// Tap building → animate tap → immediately trigger dialogue
-    private func walkMascotToBuilding(_ buildingNode: BuildingNode) {
-        // Animate the building tap
+    // MARK: - Pathfinding (Dijkstra on waypoint graph)
+
+    /// Build adjacency list from edge pairs
+    private func buildAdjacency() -> [[Int]] {
+        var adj = [[Int]](repeating: [], count: waypoints.count)
+        for edge in waypointEdges {
+            adj[edge[0]].append(edge[1])
+            adj[edge[1]].append(edge[0])
+        }
+        return adj
+    }
+
+    /// Find the 2 nearest waypoints to a given position
+    private func nearestWaypoints(to point: CGPoint, count: Int = 2) -> [Int] {
+        let indexed = waypoints.enumerated().map { (index: $0.offset, dist: hypot($0.element.x - point.x, $0.element.y - point.y)) }
+        let sorted = indexed.sorted { $0.dist < $1.dist }
+        return Array(sorted.prefix(count).map { $0.index })
+    }
+
+    /// Dijkstra shortest path on waypoint graph with virtual start/end nodes
+    private func findPath(from start: CGPoint, to end: CGPoint, startWaypoints: [Int], endWaypoints: [Int]) -> [CGPoint] {
+        let n = waypoints.count
+        let startVirtual = n
+        let endVirtual = n + 1
+        let totalNodes = n + 2
+
+        var adj = [[(node: Int, dist: CGFloat)]](repeating: [], count: totalNodes)
+
+        // Real waypoint edges
+        let baseAdj = buildAdjacency()
+        for i in 0..<n {
+            for j in baseAdj[i] {
+                let d = hypot(waypoints[i].x - waypoints[j].x, waypoints[i].y - waypoints[j].y)
+                adj[i].append((j, d))
+            }
+        }
+
+        // Connect start virtual node
+        for wp in startWaypoints {
+            let d = hypot(start.x - waypoints[wp].x, start.y - waypoints[wp].y)
+            adj[startVirtual].append((wp, d))
+            adj[wp].append((startVirtual, d))
+        }
+
+        // Connect end virtual node
+        for wp in endWaypoints {
+            let d = hypot(end.x - waypoints[wp].x, end.y - waypoints[wp].y)
+            adj[endVirtual].append((wp, d))
+            adj[wp].append((endVirtual, d))
+        }
+
+        // Dijkstra
+        var dist = [CGFloat](repeating: .infinity, count: totalNodes)
+        var prev = [Int](repeating: -1, count: totalNodes)
+        var visited = [Bool](repeating: false, count: totalNodes)
+        dist[startVirtual] = 0
+
+        for _ in 0..<totalNodes {
+            var u = -1
+            var bestDist: CGFloat = .infinity
+            for v in 0..<totalNodes {
+                if !visited[v] && dist[v] < bestDist {
+                    bestDist = dist[v]
+                    u = v
+                }
+            }
+            guard u >= 0 else { break }
+            visited[u] = true
+            if u == endVirtual { break }
+
+            for (v, w) in adj[u] {
+                let newDist = dist[u] + w
+                if newDist < dist[v] {
+                    dist[v] = newDist
+                    prev[v] = u
+                }
+            }
+        }
+
+        guard dist[endVirtual] < .infinity else { return [end] }
+
+        var path: [Int] = []
+        var cur = endVirtual
+        while cur != -1 {
+            path.append(cur)
+            cur = prev[cur]
+        }
+        path.reverse()
+
+        var result: [CGPoint] = []
+        for nodeIdx in path {
+            if nodeIdx == startVirtual { continue }
+            if nodeIdx == endVirtual {
+                result.append(end)
+            } else {
+                result.append(waypoints[nodeIdx])
+            }
+        }
+        return result
+    }
+
+    // MARK: - Walk Player to Building
+
+    /// Tap building → player walks there via waypoints → camera follows → callback when arrived
+    private func walkPlayerToBuilding(_ buildingNode: BuildingNode) {
         buildingNode.animateTap()
 
-        // Trigger dialogue immediately (no walk delay)
+        // Cancel any current walk
+        playerNode.removeAction(forKey: "walkTo")
+
+        // Stop tracking previous building position
+        dialogBuildingNode = nil
+
+        // Dismiss any open dialogs immediately
+        onPlayerStartedWalking?()
+
+        let buildingPos = buildingNode.position
+        let targetPos = CGPoint(x: buildingPos.x - 140, y: buildingPos.y - 75)
+        let playerPos = playerNode.position
+
+        isPlayerWalking = true
+
+        // Start camera follow + terrain blur/swap
+        startFollowingPlayer()
+        startWalkingTerrainEffects()
+
+        let directDistance = hypot(targetPos.x - playerPos.x, targetPos.y - playerPos.y)
+
+        // If very close, walk directly
+        if directDistance < directWalkThreshold {
+            let facingRight = targetPos.x > playerPos.x
+            playerNode.setFacingDirection(facingRight)
+            playerNode.walkTo(destination: targetPos, duration: max(0.3, TimeInterval(directDistance / walkSpeed))) { [weak self] in
+                self?.playerArrivedAtBuilding(buildingNode)
+            }
+            return
+        }
+
+        // Get waypoints for start and end
+        let startWPs = nearestWaypoints(to: playerPos)
+        let endWPs = buildingWaypoints[buildingNode.buildingId] ?? nearestWaypoints(to: targetPos)
+
+        let path = findPath(from: playerPos, to: targetPos, startWaypoints: startWPs, endWaypoints: endWPs)
+
+        guard !path.isEmpty else {
+            let facingRight = targetPos.x > playerPos.x
+            playerNode.setFacingDirection(facingRight)
+            playerNode.walkTo(destination: targetPos, duration: max(0.5, TimeInterval(directDistance / walkSpeed))) { [weak self] in
+                self?.playerArrivedAtBuilding(buildingNode)
+            }
+            return
+        }
+
+        let firstTarget = path[0]
+        playerNode.setFacingDirection(firstTarget.x > playerPos.x)
+
+        playerNode.walkPath(path, speed: walkSpeed) { [weak self] in
+            self?.playerArrivedAtBuilding(buildingNode)
+        }
+    }
+
+    /// Called when player finishes walking to a building
+    private func playerArrivedAtBuilding(_ buildingNode: BuildingNode) {
+        isPlayerWalking = false
+        isFollowingPlayer = false
+
+        // Keep blur active while zoomed in near the building
+
+        // Face forward (toward camera) now that she's arrived
+        playerNode.faceForward()
+
+        // Zoom camera to the building
+        zoomCameraToBuilding(buildingNode.position)
+
+        // Start tracking this building's screen position every frame
+        dialogBuildingNode = buildingNode
+
+        // Notify SwiftUI — bird dialogue appears
         onMascotReachedBuilding?(buildingNode.buildingId)
     }
 
-    /// Reset mascot state (no-op now that bird is removed from map)
-    func resetMascot() {
-        // No-op — kept for compatibility with CityMapView calls
+    // MARK: - Terrain Effects (blur + walking background swap)
+
+    /// Enable terrain blur and crossfade to walking background
+    private func startWalkingTerrainEffects() {
+        // Turn on Gaussian blur
+        terrainEffectNode?.shouldRasterize = false
+        terrainEffectNode?.shouldEnableEffects = true
+
+        // Crossfade to the walking terrain image
+        walkingTerrainSprite?.run(SKAction.fadeAlpha(to: 1.0, duration: 0.6), withKey: "walkTerrainFade")
     }
 
+    /// Disable terrain blur and crossfade back to normal terrain
+    private func stopWalkingTerrainEffects() {
+        // Turn off blur
+        terrainEffectNode?.shouldEnableEffects = false
+        terrainEffectNode?.shouldRasterize = true
+
+        // Fade out walking terrain
+        walkingTerrainSprite?.run(SKAction.fadeAlpha(to: 0.0, duration: 0.4), withKey: "walkTerrainFade")
+    }
+
+    // MARK: - Camera Follow & Zoom
+
+    /// Zoom in close and follow the player while walking
+    private func startFollowingPlayer() {
+        guard let cameraNode = cameraNode else { return }
+        isFollowingPlayer = true
+
+        let zoomAction = SKAction.scale(to: 0.5, duration: 0.5)
+        zoomAction.timingMode = .easeInEaseOut
+        cameraNode.run(zoomAction, withKey: "cameraZoom")
+    }
+
+    /// Settle camera on the building after player arrives
+    private func zoomCameraToBuilding(_ buildingPos: CGPoint) {
+        guard let cameraNode = cameraNode else { return }
+
+        let moveAction = SKAction.move(to: buildingPos, duration: 0.5)
+        moveAction.timingMode = .easeInEaseOut
+
+        let zoomAction = SKAction.scale(to: 0.7, duration: 0.5)
+        zoomAction.timingMode = .easeInEaseOut
+
+        cameraNode.run(SKAction.group([moveAction, zoomAction]), withKey: "cameraZoom")
+    }
+
+    /// Zoom back out to show the full map (call when overlay/dialogue dismisses)
+    func zoomCameraOut() {
+        guard let cameraNode = cameraNode else { return }
+        isFollowingPlayer = false
+        dialogBuildingNode = nil
+
+        // Remove blur + walking terrain when zooming back out
+        stopWalkingTerrainEffects()
+
+        let mapCenter = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
+        let fitScale = max(mapSize.width / self.size.width, mapSize.height / self.size.height)
+
+        let moveAction = SKAction.move(to: mapCenter, duration: 0.6)
+        moveAction.timingMode = .easeInEaseOut
+
+        let zoomAction = SKAction.scale(to: fitScale, duration: 0.6)
+        zoomAction.timingMode = .easeInEaseOut
+
+        cameraNode.run(SKAction.group([moveAction, zoomAction]), withKey: "cameraZoom")
+    }
+
+    /// Reset state — zoom camera out (replaces old resetMascot)
+    func resetMascot() {
+        zoomCameraOut()
+    }
+
+    private var hasFiredDragCallback = false
+
     private func handleDragTo(_ location: CGPoint, from lastLocation: CGPoint) {
+        // Dismiss all dialogs when user drags the map
+        if !hasFiredDragCallback {
+            hasFiredDragCallback = true
+            dialogBuildingNode = nil
+            onPlayerStartedWalking?()
+        }
+
+
         // Pan camera
         let deltaX = location.x - lastLocation.x
         let deltaY = location.y - lastLocation.y
@@ -669,11 +1140,39 @@ class CityScene: SKScene {
     /// Zoom via scroll delta (Magic Mouse swipe / scroll wheel)
     func handleScrollZoom(deltaY: CGFloat) {
         guard cameraNode != nil else { return }
+        dismissOverlaysOnInteraction()
         let zoomFactor: CGFloat = 1.0 - (deltaY * 0.05)
         let newScale = cameraNode.xScale * zoomFactor
         let clampedScale = max(0.5, min(3.5, newScale))
         cameraNode.setScale(clampedScale)
         clampCamera()
+    }
+
+    /// Pan camera via scroll deltas (called from SwiftUI event monitor)
+    func handleScrollPan(deltaX: CGFloat, deltaY: CGFloat) {
+        guard cameraNode != nil else { return }
+        dismissOverlaysOnInteraction()
+        let scale = cameraNode.xScale
+        cameraNode.position.x -= deltaX * scale * 2
+        cameraNode.position.y += deltaY * scale * 2
+        clampCamera()
+    }
+
+    /// Zoom via trackpad magnify gesture (called from SwiftUI event monitor)
+    func handleMagnify(magnification: CGFloat) {
+        guard cameraNode != nil else { return }
+        dismissOverlaysOnInteraction()
+        let zoomFactor: CGFloat = 1.0 + magnification
+        let newScale = cameraNode.xScale / zoomFactor
+        let clampedScale = max(0.5, min(3.5, newScale))
+        cameraNode.setScale(clampedScale)
+        clampCamera()
+    }
+
+    /// Dismiss SwiftUI overlays on any map interaction (scroll, pan, zoom, drag)
+    private func dismissOverlaysOnInteraction() {
+        dialogBuildingNode = nil
+        onPlayerStartedWalking?()
     }
 
     // MARK: - Public Methods
@@ -693,6 +1192,18 @@ class CityScene: SKScene {
     func updateBuildingState(_ buildingId: String, state: BuildingState) {
         buildingNodes[buildingId]?.updateState(state)
     }
+
+    // MARK: - Helpers
+
+    /// Check if a named image exists in the asset catalog (platform-safe)
+    private static func imageExists(named name: String) -> Bool {
+        #if os(iOS)
+        return UIImage(named: name) != nil
+        #else
+        return NSImage(named: name) != nil
+        #endif
+    }
+
 
     // MARK: - Editor Mode (DEBUG only)
 

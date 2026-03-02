@@ -110,8 +110,8 @@ class PlayerNode: SKNode {
         sprite.removeAction(forKey: "idle")
         sprite.yScale = 1.0 // reset breathing scale
 
-        // 1.3x faster than original GIF pace (0.347 / 1.3 ≈ 0.267s per frame)
-        let walkAction = SKAction.animate(with: walkTextures, timePerFrame: 0.18, resize: false, restore: false)
+        // 15 frames at 0.12s each = ~1.8s per cycle — natural walking pace
+        let walkAction = SKAction.animate(with: walkTextures, timePerFrame: 0.12, resize: false, restore: false)
         sprite.run(SKAction.repeatForever(walkAction), withKey: "walk")
 
         startFootstepSound()
@@ -137,43 +137,29 @@ class PlayerNode: SKNode {
         removeAction(forKey: "footsteps")
     }
 
-    // MARK: - Walk To Destination (30-step lerp, same as CityScene)
+    // MARK: - Walk To Destination
 
     func walkTo(destination: CGPoint, duration: TimeInterval = 1.0, completion: (() -> Void)? = nil) {
         isWalking = true
         startWalkAnimation()
 
-        let steps = 30
-        let stepDuration = duration / Double(steps)
-        let startPos = position
-        let dx = (destination.x - startPos.x) / CGFloat(steps)
-        let dy = (destination.y - startPos.y) / CGFloat(steps)
+        // Smooth continuous movement (no discrete steps)
+        let moveAction = SKAction.move(to: destination, duration: duration)
+        moveAction.timingMode = .easeInEaseOut
 
-        var actions: [SKAction] = []
-        for i in 1...steps {
-            let step = SKAction.run { [weak self] in
-                self?.position = CGPoint(
-                    x: startPos.x + dx * CGFloat(i),
-                    y: startPos.y + dy * CGFloat(i)
-                )
-            }
-            actions.append(step)
-            actions.append(SKAction.wait(forDuration: stepDuration))
-        }
-
-        actions.append(SKAction.run { [weak self] in
+        let finishAction = SKAction.run { [weak self] in
             self?.isWalking = false
             self?.stopWalkAnimation()
             completion?()
-        })
+        }
 
-        run(SKAction.sequence(actions), withKey: "walkTo")
+        run(SKAction.sequence([moveAction, finishAction]), withKey: "walkTo")
     }
 
     // MARK: - Walk Along Waypoint Path
 
     /// Walk through a sequence of waypoints, turning at each corner.
-    /// Uses the same 30-step lerp per segment as `walkTo`.
+    /// Uses smooth SKAction.move per segment for clean close-up animation.
     func walkPath(_ waypoints: [CGPoint], speed: CGFloat = 200, completion: (() -> Void)? = nil) {
         guard !waypoints.isEmpty else {
             completion?()
@@ -187,35 +173,26 @@ class PlayerNode: SKNode {
         var currentPos = position
 
         for waypoint in waypoints {
-            let segStart = currentPos
-            let dx = waypoint.x - segStart.x
-            let dy = waypoint.y - segStart.y
+            let dx = waypoint.x - currentPos.x
+            let dy = waypoint.y - currentPos.y
             let distance = hypot(dx, dy)
             guard distance > 1 else { continue }
 
             let duration = max(0.15, TimeInterval(distance / speed))
-            let steps = max(5, Int(duration / 0.033))  // ~30fps steps
-            let stepDuration = duration / Double(steps)
-            let stepDx = dx / CGFloat(steps)
-            let stepDy = dy / CGFloat(steps)
 
-            // Face new direction at the start of each segment
-            let facingRight = dx > 0
-            let turnAction = SKAction.run { [weak self] in
-                self?.setFacingDirection(facingRight)
-            }
-            allActions.append(turnAction)
-
-            for i in 1...steps {
-                let step = SKAction.run { [weak self] in
-                    self?.position = CGPoint(
-                        x: segStart.x + stepDx * CGFloat(i),
-                        y: segStart.y + stepDy * CGFloat(i)
-                    )
+            // Only change facing when there's meaningful horizontal movement
+            if abs(dx) > 20 {
+                let facingRight = dx > 0
+                let turnAction = SKAction.run { [weak self] in
+                    self?.setFacingDirection(facingRight)
                 }
-                allActions.append(step)
-                allActions.append(SKAction.wait(forDuration: stepDuration))
+                allActions.append(turnAction)
             }
+
+            // Smooth continuous move for this segment
+            let moveAction = SKAction.move(to: waypoint, duration: duration)
+            moveAction.timingMode = .linear
+            allActions.append(moveAction)
 
             currentPos = waypoint
         }
@@ -231,9 +208,20 @@ class PlayerNode: SKNode {
 
     // MARK: - Facing Direction
 
+    /// Track current facing to avoid unnecessary flips mid-walk
+    private var isFacingRight = false
+
     func setFacingDirection(_ right: Bool) {
+        guard right != isFacingRight else { return }
+        isFacingRight = right
         // Sprite naturally faces left, so flip when walking right
         xScale = right ? -abs(xScale) : abs(xScale)
+    }
+
+    /// Face forward (toward camera) — call when arriving at a destination
+    func faceForward() {
+        isFacingRight = false
+        xScale = abs(xScale)
     }
 
     // MARK: - Collecting Animation

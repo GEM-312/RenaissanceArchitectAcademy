@@ -79,6 +79,12 @@ struct CityMapView: View {
     /// Controls the construction sequence puzzle (shown after checklist)
     @State private var showConstructionSequence = false
 
+    /// Controls the "build this building?" bird prompt (shown when player walks to building)
+    @State private var showBuildingPrompt = false
+
+    /// Building's screen position (normalized 0–1) for positioning the dialog bubble
+    @State private var buildingScreenPos: CGPoint = CGPoint(x: 0.5, y: 0.5)
+
     /// Controls the Workshop sheet (opened from post-quiz prompt)
     @State private var showWorkshopSheet = false
 
@@ -89,8 +95,6 @@ struct CityMapView: View {
     /// Reference to the SpriteKit scene (so we can call methods on it)
     @State private var scene: CityScene?
 
-    /// NSEvent monitor for Magic Mouse scroll-to-zoom
-    @State private var scrollMonitor: Any?
 
     /// Environment for navigation
     @Environment(\.dismiss) private var dismiss
@@ -125,9 +129,8 @@ struct CityMapView: View {
         GeometryReader { geometry in
             ZStack {
                 // The SpriteKit scene (the actual game map — fills full width)
-                SpriteView(scene: makeScene(), options: [.allowsTransparency])
+                GameSpriteView(scene: makeScene(), options: [.allowsTransparency])
                     .ignoresSafeArea()
-                    .gesture(pinchGesture)
 
                 // Nav (left) + Buildings (right) with margins
                 VStack(spacing: 0) {
@@ -138,6 +141,91 @@ struct CityMapView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(16)
+
+            // Bird prompt — positioned above the building on the map
+            if showBuildingPrompt, let plot = selectedPlot {
+                GeometryReader { geo in
+                    let bx = buildingScreenPos.x * geo.size.width
+                    let by = buildingScreenPos.y * geo.size.height
+
+                    VStack(spacing: 0) {
+                        HStack(alignment: .top, spacing: 10) {
+                            // Bird on the left
+                            BirdCharacter(isSitting: true)
+                                .frame(width: 55, height: 55)
+                                .offset(x: -4, y: -8)
+
+                            VStack(alignment: .leading, spacing: 7) {
+                                Text(plot.building.name)
+                                    .font(.custom("Cinzel-Bold", size: 17))
+                                    .foregroundStyle(RenaissanceColors.sepiaInk)
+
+                                Text("Work on this building?")
+                                    .font(.custom("EBGaramond-Regular", size: 14))
+                                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
+
+                                HStack(spacing: 12) {
+                                    Button {
+                                        withAnimation {
+                                            showBuildingPrompt = false
+                                        }
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                            withAnimation(.spring(response: 0.3)) {
+                                                showMascotDialogue = true
+                                            }
+                                        }
+                                    } label: {
+                                        Text("Yes, let's build!")
+                                            .font(.custom("EBGaramond-SemiBold", size: 14))
+                                            .foregroundStyle(.white)
+                                            .padding(.horizontal, 14)
+                                            .padding(.vertical, 7)
+                                            .background(
+                                                Capsule()
+                                                    .fill(RenaissanceColors.warmBrown)
+                                            )
+                                    }
+                                    .buttonStyle(.plain)
+
+                                    Button {
+                                        withAnimation {
+                                            showBuildingPrompt = false
+                                            selectedPlot = nil
+                                        }
+                                        scene?.resetMascot()
+                                    } label: {
+                                        Text("Not this one")
+                                            .font(.custom("EBGaramond-Regular", size: 13))
+                                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
+                        }
+                        .padding(14)
+                        .background(
+                            RoundedRectangle(cornerRadius: 14)
+                                .fill(RenaissanceColors.parchment)
+                                .shadow(color: .black.opacity(0.2), radius: 6, y: 3)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14)
+                                .stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1)
+                        )
+
+                        // Triangle pointing down toward the building
+                        Triangle()
+                            .fill(RenaissanceColors.parchment)
+                            .frame(width: 18, height: 11)
+                            .rotationEffect(.degrees(180))
+                            .offset(y: -1)
+                    }
+                    .frame(width: 286)
+                    .position(x: bx, y: by - 170)
+                }
+                .allowsHitTesting(true)
+                .transition(.scale(scale: 0.8).combined(with: .opacity))
+            }
 
             // Mascot dialogue — 3 game-loop cards
             if showMascotDialogue, let plot = selectedPlot {
@@ -555,22 +643,6 @@ struct CityMapView: View {
                 showBuildingLesson = true
                 returnToLessonPlotId = nil
             }
-            #if os(macOS)
-            scrollMonitor = NSEvent.addLocalMonitorForEvents(matching: .scrollWheel) { [self] event in
-                if !showMascotDialogue && !showBuildingLesson && !showKnowledgeCards && !showChallenge && !showLockedMessage && !showBuildingChecklist && !showConstructionSequence {
-                    scene?.handleScrollZoom(deltaY: event.deltaY)
-                }
-                return event
-            }
-            #endif
-        }
-        .onDisappear {
-            #if os(macOS)
-            if let monitor = scrollMonitor {
-                NSEvent.removeMonitor(monitor)
-                scrollMonitor = nil
-            }
-            #endif
         }
         .sheet(isPresented: $showChallenge) {
             if let plot = selectedPlot,
@@ -661,9 +733,14 @@ struct CityMapView: View {
         // Create new scene
         let newScene = CityScene()
         newScene.size = CGSize(width: 3500, height: 2500)
-        newScene.scaleMode = .aspectFill
+        newScene.scaleMode = .resizeFill
 
-        // When mascot reaches building, show dialogue (or locked message)
+        // Set player gender before scene setup
+        if let gender = onboardingState?.apprenticeGender {
+            newScene.apprenticeIsBoy = (gender == .boy)
+        }
+
+        // When player walks to building, show "build this?" prompt (or locked message)
         newScene.onMascotReachedBuilding = { [self] buildingId in
             // Convert SpriteKit ID ("duomo") to ViewModel ID (4)
             guard let plotId = buildingIdToPlotId[buildingId],
@@ -680,11 +757,26 @@ struct CityMapView: View {
                 return
             }
 
-            // Show the mascot dialogue (new game flow)
+            // Show "build this or check another?" prompt
             SubsonicController.shared.play(sound: "building_tap.mp3")
             selectedPlot = plot
             withAnimation(.spring(response: 0.3)) {
-                showMascotDialogue = true
+                showBuildingPrompt = true
+            }
+        }
+
+        // Receive building screen position for dialog placement
+        newScene.onBuildingScreenPosition = { [self] normalizedPos in
+            buildingScreenPos = normalizedPos
+        }
+
+        // Dismiss all dialogs when player starts walking to a new building
+        newScene.onPlayerStartedWalking = { [self] in
+            withAnimation {
+                showBuildingPrompt = false
+                showLockedMessage = false
+                showMascotDialogue = false
+                selectedPlot = nil
             }
         }
 
@@ -737,16 +829,6 @@ struct CityMapView: View {
         }
     }
 
-    // MARK: - Gestures
-
-    /// Pinch-to-zoom gesture
-    private var pinchGesture: some Gesture {
-        MagnificationGesture()
-            .onChanged { value in
-                scene?.handlePinch(scale: value)
-            }
-    }
-
     // MARK: - UI Components
 
     /// Right-side floating navigation panel
@@ -766,7 +848,7 @@ struct CityMapView: View {
         #if os(iOS)
         let hintText = "Tap a building to begin  •  Pinch to zoom  •  Drag to explore"
         #else
-        let hintText = "Click a building to begin  •  Scroll to pan  •  Pinch or ⌥+scroll to zoom"
+        let hintText = "Click a building to begin  •  Scroll to pan  •  Pinch or Option+scroll to zoom"
         #endif
 
         return Text(hintText)
