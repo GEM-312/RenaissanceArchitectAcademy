@@ -332,26 +332,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
     // MARK: - Walking Paths (dotted lines connecting stations to crafting area)
 
     private func setupWalkingPaths() {
-        let pathNode = SKNode()
-        pathNode.zPosition = -50
-
-        let craftingCenter = stationPositions[.craftingRoom] ?? CGPoint(x: 1750, y: 1225)
-
-        for (stationType, pos) in stationPositions {
-            if stationType.isCraftingStation { continue }
-
-            let linePath = CGMutablePath()
-            linePath.move(to: pos)
-            linePath.addLine(to: craftingCenter)
-
-            let dottedLine = SKShapeNode(path: linePath)
-            dottedLine.strokeColor = PlatformColor(RenaissanceColors.ochre.opacity(0.25))
-            dottedLine.lineWidth = 2
-            dottedLine.path = linePath.copy(dashingWithPhase: 0, lengths: [12, 8])
-            pathNode.addChild(dottedLine)
-        }
-
-        addChild(pathNode)
+        // Removed — dashed path lines cluttered the terrain
     }
 
     // MARK: - Stations

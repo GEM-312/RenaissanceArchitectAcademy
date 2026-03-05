@@ -303,13 +303,14 @@ class CityScene: SKScene, ScrollZoomable {
         cameraNode.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
         addChild(cameraNode)
         camera = cameraNode
-        fitCameraToMap()
+        cameraNode.setScale(1.7)
     }
 
     /// Recalculate camera scale when view resizes (.resizeFill updates scene.size)
     override func didChangeSize(_ oldSize: CGSize) {
         super.didChangeSize(oldSize)
-        fitCameraToMap()
+        // Don't override the initial 0.3 zoom — only re-fit if the user has zoomed out past fitScale
+        // (i.e. this is a real window resize, not the initial SpriteKit sizing)
     }
 
     /// Set camera scale so the full map is visible
@@ -614,20 +615,6 @@ class CityScene: SKScene, ScrollZoomable {
     }
 
     private func addEraDivider() {
-        // A subtle dotted line separating Ancient Rome from Renaissance Italy
-        let path = CGMutablePath()
-        path.move(to: CGPoint(x: 1000, y: 0))
-        path.addLine(to: CGPoint(x: 1200, y: mapSize.height))
-
-        let divider = SKShapeNode(path: path)
-        divider.strokeColor = PlatformColor(RenaissanceColors.ochre.opacity(0.3))
-        divider.lineWidth = 3
-        divider.lineCap = .round
-        // Make it dashed
-        divider.path = path.copy(dashingWithPhase: 0, lengths: [20, 15])
-        divider.zPosition = -40
-        addChild(divider)
-
         // Era labels at the top
         let romeLabel = SKLabelNode(text: "ANCIENT ROME")
         romeLabel.fontName = "Cinzel-Regular"
