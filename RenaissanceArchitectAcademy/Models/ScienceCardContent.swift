@@ -23,8 +23,8 @@ enum ForestCardCategory: String, CaseIterable, Identifiable {
     var color: Color {
         switch self {
         case .architecture: return RenaissanceColors.ochre
-        case .furniture: return RenaissanceColors.warmBrown
-        case .modernUse: return RenaissanceColors.renaissanceBlue
+        case .furniture: return RenaissanceColors.ochre
+        case .modernUse: return RenaissanceColors.sageGreen
         case .biology: return RenaissanceColors.sageGreen
         }
     }

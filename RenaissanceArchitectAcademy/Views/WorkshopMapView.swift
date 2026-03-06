@@ -106,15 +106,15 @@ struct WorkshopMapView: View {
                     inventoryBar
                 }
                 .frame(maxWidth: .infinity)
-                .padding(16)
+                .padding(Spacing.md)
 
                 // Status message overlay
                 if let status = workshop.statusMessage {
                     VStack {
                         Text(status)
-                            .font(.custom("EBGaramond-Regular", size: 14))
+                            .font(RenaissanceFont.dialogSubtitle)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
-                            .padding(.horizontal, 12)
+                            .padding(.horizontal, Spacing.sm)
                             .padding(.vertical, 6)
                             .background(
                                 Capsule()
@@ -122,7 +122,7 @@ struct WorkshopMapView: View {
                             )
                         Spacer()
                     }
-                    .padding(.top, 8)
+                    .padding(.top, Spacing.xs)
                     .allowsHitTesting(false)
                 }
 
@@ -369,14 +369,14 @@ struct WorkshopMapView: View {
                         }
                         .font(.custom("EBGaramond-Regular", size: 16))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
+                        .padding(.horizontal, Spacing.md)
+                        .padding(.vertical, Spacing.xs)
                         .glassButton(shape: Capsule())
                     }
                     Text("Workshop")
-                        .font(.custom("EBGaramond-SemiBold", size: 22))
+                        .font(RenaissanceFont.dialogTitle)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
-                        .padding(.horizontal, 20)
+                        .padding(.horizontal, Spacing.lg)
                         .padding(.vertical, 10)
                         .glassButton(shape: Capsule())
                 }
@@ -395,7 +395,7 @@ struct WorkshopMapView: View {
                             Text(tool.icon)
                                 .font(.caption)
                                 .padding(.horizontal, 5)
-                                .padding(.vertical, 4)
+                                .padding(.vertical, Spacing.xxs)
                                 .background(
                                     RoundedRectangle(cornerRadius: 6)
                                         .fill(RenaissanceColors.ochre.opacity(0.15))
@@ -427,7 +427,7 @@ struct WorkshopMapView: View {
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                             .padding(.horizontal, 6)
-                            .padding(.vertical, 4)
+                            .padding(.vertical, Spacing.xxs)
                             .background(
                                 RoundedRectangle(cornerRadius: 6)
                                     .fill(RenaissanceColors.parchment.opacity(0.8))
@@ -439,7 +439,7 @@ struct WorkshopMapView: View {
 
             Divider()
                 .frame(height: 30)
-                .padding(.horizontal, 8)
+                .padding(.horizontal, Spacing.xs)
 
             // Crafted items
             ScrollView(.horizontal, showsIndicators: false) {
@@ -455,7 +455,7 @@ struct WorkshopMapView: View {
                                     .foregroundStyle(RenaissanceColors.sageGreen)
                             }
                             .padding(.horizontal, 6)
-                            .padding(.vertical, 4)
+                            .padding(.vertical, Spacing.xxs)
                             .background(
                                 RoundedRectangle(cornerRadius: 6)
                                     .fill(RenaissanceColors.goldSuccess.opacity(0.1))
@@ -469,10 +469,10 @@ struct WorkshopMapView: View {
                 }
             }
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
+        .padding(.horizontal, Spacing.sm)
+        .padding(.vertical, Spacing.xs)
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: CornerRadius.md)
                 .fill(RenaissanceColors.parchment.opacity(0.92))
         )
     }
@@ -488,20 +488,20 @@ struct WorkshopMapView: View {
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text(station.label)
-                            .font(.custom("EBGaramond-SemiBold", size: 18))
+                            .font(RenaissanceFont.button)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         Text(workshop.hintFor(station: station))
-                            .font(.custom("EBGaramond-Regular", size: 14))
+                            .font(RenaissanceFont.dialogSubtitle)
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }
             }
-            .padding(16)
+            .padding(Spacing.md)
             .frame(maxWidth: 360)
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: CornerRadius.md)
                     .fill(RenaissanceColors.parchment.opacity(0.95))
             )
             .padding(.top, 80)
@@ -530,12 +530,12 @@ struct WorkshopMapView: View {
                     collectionMaterialsView(for: station)
                 }
             }
-            .padding(20)
+            .padding(Spacing.lg)
             .background(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: CornerRadius.lg)
                     .fill(RenaissanceColors.parchment.opacity(0.95))
             )
-            .padding(.horizontal, 24)
+            .padding(.horizontal, Spacing.xl)
             .padding(.bottom, 60)
         }
     }
@@ -551,11 +551,11 @@ struct WorkshopMapView: View {
                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
             Text(tool.italianName)
-                .font(.custom("EBGaramond-Italic", size: 15))
+                .font(RenaissanceFont.italicSmall)
                 .foregroundStyle(RenaissanceColors.warmBrown)
 
             Text(tool.educationalText)
-                .font(.custom("EBGaramond-Regular", size: 13))
+                .font(RenaissanceFont.caption)
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                 .multilineTextAlignment(.center)
                 .lineLimit(3)
@@ -564,7 +564,7 @@ struct WorkshopMapView: View {
                 BirdCharacter(isSitting: true)
                     .frame(width: 40, height: 40)
                 Text("Buy tools at the Market, or craft them at the Workbench for less!")
-                    .font(.custom("EBGaramond-Regular", size: 13))
+                    .font(RenaissanceFont.caption)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.75))
             }
             .padding(10)
@@ -591,13 +591,13 @@ struct WorkshopMapView: View {
                         Text("🏪")
                             .font(.body)
                         Text("Go to Market")
-                            .font(.custom("EBGaramond-SemiBold", size: 15))
+                            .font(RenaissanceFont.buttonSmall)
                     }
                     .foregroundStyle(.white)
-                    .padding(.horizontal, 16)
+                    .padding(.horizontal, Spacing.md)
                     .padding(.vertical, 10)
                     .background(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: CornerRadius.sm)
                             .fill(RenaissanceColors.ochre)
                     )
                 }
@@ -618,13 +618,13 @@ struct WorkshopMapView: View {
                         Text("🔨")
                             .font(.body)
                         Text("Go to Crafting Room")
-                            .font(.custom("EBGaramond-SemiBold", size: 15))
+                            .font(RenaissanceFont.buttonSmall)
                     }
                     .foregroundStyle(.white)
-                    .padding(.horizontal, 16)
+                    .padding(.horizontal, Spacing.md)
                     .padding(.vertical, 10)
                     .background(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: CornerRadius.sm)
                             .fill(RenaissanceColors.warmBrown)
                     )
                 }
@@ -638,7 +638,7 @@ struct WorkshopMapView: View {
                 }
             } label: {
                 Text("Close")
-                    .font(.custom("EBGaramond-Regular", size: 13))
+                    .font(RenaissanceFont.caption)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
             }
         }
@@ -652,17 +652,17 @@ struct WorkshopMapView: View {
                 marketOverlayContent
             } else {
                 Text("Collect from \(station.label)")
-                    .font(.custom("EBGaramond-SemiBold", size: 18))
+                    .font(RenaissanceFont.button)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 // Florins display
                 if let vm = viewModel {
                     HStack(spacing: 4) {
                         Image(systemName: "dollarsign.circle.fill")
-                            .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
+                            .font(RenaissanceFont.dialogSubtitle)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("\(vm.goldFlorins) florins")
-                            .font(.custom("EBGaramond-Regular", size: 15))
+                            .font(RenaissanceFont.bodySmall)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                     .padding(.bottom, 4)
@@ -719,17 +719,17 @@ struct WorkshopMapView: View {
                                         .font(.custom("EBGaramond-Regular", size: 9, relativeTo: .caption2))
                                         .foregroundStyle(RenaissanceColors.sepiaInk)
                                     Text("\(material.cost)")
-                                        .font(.custom("EBGaramond-Regular", size: 11))
+                                        .font(RenaissanceFont.captionSmall)
                                         .foregroundStyle(canAfford ? RenaissanceColors.sepiaInk : RenaissanceColors.errorRed)
                                 }
                             }
                             .padding(10)
                             .background(
-                                RoundedRectangle(cornerRadius: 8)
+                                RoundedRectangle(cornerRadius: CornerRadius.sm)
                                     .fill(stock > 0 && canAfford ? RenaissanceColors.parchment : RenaissanceColors.stoneGray.opacity(0.15))
                             )
                             .overlay(
-                                RoundedRectangle(cornerRadius: 8)
+                                RoundedRectangle(cornerRadius: CornerRadius.sm)
                                     .strokeBorder(stock > 0 && canAfford ? RenaissanceColors.renaissanceBlue : RenaissanceColors.stoneGray.opacity(0.3), lineWidth: 1)
                             )
                         }
@@ -744,7 +744,7 @@ struct WorkshopMapView: View {
                         activeStation = nil
                     }
                 }
-                .font(.custom("EBGaramond-Regular", size: 15))
+                .font(RenaissanceFont.bodySmall)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
                 .padding(.top, 4)
             }
@@ -763,17 +763,17 @@ struct WorkshopMapView: View {
     private var marketOverlayContent: some View {
         VStack(spacing: 12) {
             Text("Market")
-                .font(.custom("EBGaramond-SemiBold", size: 18))
+                .font(RenaissanceFont.button)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
             // Florins display
             if let vm = viewModel {
                 HStack(spacing: 4) {
                     Image(systemName: "dollarsign.circle.fill")
-                        .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
+                        .font(RenaissanceFont.dialogSubtitle)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text("\(vm.goldFlorins) florins")
-                        .font(.custom("EBGaramond-Regular", size: 15))
+                        .font(RenaissanceFont.bodySmall)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
             }
@@ -787,10 +787,10 @@ struct WorkshopMapView: View {
                         Text(tab.rawValue)
                             .font(.custom("EBGaramond-SemiBold", size: 14))
                             .foregroundStyle(marketTab == tab ? .white : RenaissanceColors.sepiaInk)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 8)
+                            .padding(.horizontal, Spacing.lg)
+                            .padding(.vertical, Spacing.xs)
                             .background(
-                                RoundedRectangle(cornerRadius: 8)
+                                RoundedRectangle(cornerRadius: CornerRadius.sm)
                                     .fill(marketTab == tab ? RenaissanceColors.ochre : Color.clear)
                             )
                     }
@@ -815,7 +815,7 @@ struct WorkshopMapView: View {
                     activeStation = nil
                 }
             }
-            .font(.custom("EBGaramond-Regular", size: 15))
+            .font(RenaissanceFont.bodySmall)
             .foregroundStyle(RenaissanceColors.sepiaInk)
             .padding(.top, 4)
         }
@@ -859,17 +859,17 @@ struct WorkshopMapView: View {
                                 .font(.custom("EBGaramond-Regular", size: 9, relativeTo: .caption2))
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                             Text("\(material.cost)")
-                                .font(.custom("EBGaramond-Regular", size: 11))
+                                .font(RenaissanceFont.captionSmall)
                                 .foregroundStyle(canAfford ? RenaissanceColors.sepiaInk : RenaissanceColors.errorRed)
                         }
                     }
                     .padding(10)
                     .background(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: CornerRadius.sm)
                             .fill(stock > 0 && canAfford ? RenaissanceColors.parchment : RenaissanceColors.stoneGray.opacity(0.15))
                     )
                     .overlay(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: CornerRadius.sm)
                             .strokeBorder(stock > 0 && canAfford ? RenaissanceColors.renaissanceBlue : RenaissanceColors.stoneGray.opacity(0.3), lineWidth: 1)
                     )
                 }
@@ -907,7 +907,7 @@ struct WorkshopMapView: View {
                                 .font(.title2)
 
                             Text(tool.displayName)
-                                .font(.custom("EBGaramond-Regular", size: 11))
+                                .font(RenaissanceFont.captionSmall)
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                                 .lineLimit(1)
 
@@ -926,19 +926,19 @@ struct WorkshopMapView: View {
                                         .font(.custom("EBGaramond-Regular", size: 9, relativeTo: .caption2))
                                         .foregroundStyle(RenaissanceColors.sepiaInk)
                                     Text("\(cost)")
-                                        .font(.custom("EBGaramond-Regular", size: 11))
+                                        .font(RenaissanceFont.captionSmall)
                                         .foregroundStyle(canAfford ? RenaissanceColors.sepiaInk : RenaissanceColors.errorRed)
                                 }
                             }
                         }
-                        .padding(8)
+                        .padding(Spacing.xs)
                         .frame(width: 80)
                         .background(
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: CornerRadius.sm)
                                 .fill(owned ? RenaissanceColors.sageGreen.opacity(0.08) : (canAfford ? RenaissanceColors.parchment : RenaissanceColors.stoneGray.opacity(0.15)))
                         )
                         .overlay(
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: CornerRadius.sm)
                                 .strokeBorder(owned ? RenaissanceColors.sageGreen.opacity(0.4) : (canAfford ? RenaissanceColors.ochre.opacity(0.4) : RenaissanceColors.stoneGray.opacity(0.3)), lineWidth: 1)
                         )
                     }
@@ -964,7 +964,7 @@ struct WorkshopMapView: View {
                     HStack(spacing: 6) {
                         Text(recipe.output.icon)
                         Text(recipe.output.rawValue)
-                            .font(.custom("EBGaramond-Regular", size: 15))
+                            .font(RenaissanceFont.bodySmall)
                             .foregroundStyle(RenaissanceColors.sageGreen)
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundStyle(RenaissanceColors.sageGreen)
@@ -972,7 +972,7 @@ struct WorkshopMapView: View {
                     }
                 } else {
                     Text("Add materials to mix")
-                        .font(.custom("EBGaramond-Regular", size: 14))
+                        .font(RenaissanceFont.dialogSubtitle)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
 
@@ -996,7 +996,7 @@ struct WorkshopMapView: View {
                                         Text(material.icon)
                                             .font(.title3)
                                         Text("×\(count)")
-                                            .font(.custom("EBGaramond-Regular", size: 11))
+                                            .font(RenaissanceFont.captionSmall)
                                             .foregroundStyle(RenaissanceColors.sepiaInk)
                                     }
                                     .padding(6)
@@ -1018,11 +1018,11 @@ struct WorkshopMapView: View {
                             workshop.clearWorkbench()
                         }
                     }
-                    .font(.custom("EBGaramond-Regular", size: 15))
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 8)
+                    .font(RenaissanceFont.bodySmall)
+                    .padding(.horizontal, Spacing.lg)
+                    .padding(.vertical, Spacing.xs)
                     .background(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: CornerRadius.sm)
                             .fill(RenaissanceColors.stoneGray.opacity(0.3))
                     )
                     .foregroundStyle(RenaissanceColors.sepiaInk)
@@ -1036,11 +1036,11 @@ struct WorkshopMapView: View {
                             workshop.statusMessage = "Mixed! Walk to the Furnace to fire."
                         }
                     }
-                    .font(.custom("EBGaramond-Regular", size: 15))
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 8)
+                    .font(RenaissanceFont.bodySmall)
+                    .padding(.horizontal, Spacing.xl)
+                    .padding(.vertical, Spacing.xs)
                     .background(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: CornerRadius.sm)
                             .fill(workshop.detectedRecipe != nil
                                   ? RenaissanceColors.renaissanceBlue
                                   : RenaissanceColors.stoneGray.opacity(0.3))
@@ -1056,16 +1056,16 @@ struct WorkshopMapView: View {
                             activeStation = nil
                         }
                     }
-                    .font(.custom("EBGaramond-Regular", size: 15))
+                    .font(RenaissanceFont.bodySmall)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
             }
-            .padding(20)
+            .padding(Spacing.lg)
             .background(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: CornerRadius.lg)
                     .fill(RenaissanceColors.parchment.opacity(0.95))
             )
-            .padding(.horizontal, 24)
+            .padding(.horizontal, Spacing.xl)
             .padding(.bottom, 60)
         }
     }
@@ -1111,16 +1111,16 @@ struct WorkshopMapView: View {
 
                 // Furnace contents
                 ZStack {
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: CornerRadius.md)
                         .fill(RenaissanceColors.terracotta.opacity(0.3))
                         .frame(height: 80)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: CornerRadius.md)
                                 .strokeBorder(RenaissanceColors.terracotta, lineWidth: 2)
                         )
 
                     if workshop.isProcessing {
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: CornerRadius.md)
                             .fill(furnaceOrange.opacity(0.25))
                             .frame(height: 80)
                             .blur(radius: 8)
@@ -1131,18 +1131,18 @@ struct WorkshopMapView: View {
                             HStack(spacing: 4) {
                                 ForEach(Array(input.keys.sorted(by: { $0.rawValue < $1.rawValue })), id: \.self) { material in
                                     Text("\(material.icon)×\(input[material]!)")
-                                        .font(.custom("EBGaramond-Regular", size: 13))
+                                        .font(RenaissanceFont.caption)
                                 }
                             }
                             if let recipe = workshop.currentRecipe {
                                 Text("→ \(recipe.output.icon) \(recipe.output.rawValue)")
-                                    .font(.custom("EBGaramond-Regular", size: 13))
+                                    .font(RenaissanceFont.caption)
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                         }
                     } else {
                         Text("Mix ingredients at the Workbench first")
-                            .font(.custom("EBGaramond-Regular", size: 14))
+                            .font(RenaissanceFont.dialogSubtitle)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                 }
@@ -1150,7 +1150,7 @@ struct WorkshopMapView: View {
                 // Temperature picker
                 VStack(spacing: 4) {
                     Text("Temperature")
-                        .font(.custom("EBGaramond-Regular", size: 13))
+                        .font(RenaissanceFont.caption)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     Picker("Temperature", selection: $workshop.furnaceTemperature) {
@@ -1173,12 +1173,12 @@ struct WorkshopMapView: View {
                         fireFurnace()
                     } label: {
                         Text("FIRE!")
-                            .font(.custom("EBGaramond-SemiBold", size: 18))
+                            .font(RenaissanceFont.button)
                             .foregroundStyle(.white)
-                            .padding(.horizontal, 32)
+                            .padding(.horizontal, Spacing.xxl)
                             .padding(.vertical, 10)
                             .background(
-                                RoundedRectangle(cornerRadius: 8)
+                                RoundedRectangle(cornerRadius: CornerRadius.sm)
                                     .fill(workshop.furnaceInput != nil && !workshop.isProcessing
                                           ? furnaceOrange
                                           : RenaissanceColors.stoneGray.opacity(0.4))
@@ -1194,16 +1194,16 @@ struct WorkshopMapView: View {
                             activeStation = nil
                         }
                     }
-                    .font(.custom("EBGaramond-Regular", size: 15))
+                    .font(RenaissanceFont.bodySmall)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
             }
-            .padding(20)
+            .padding(Spacing.lg)
             .background(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: CornerRadius.lg)
                     .fill(RenaissanceColors.parchment.opacity(0.95))
             )
-            .padding(.horizontal, 24)
+            .padding(.horizontal, Spacing.xl)
             .padding(.bottom, 60)
         }
     }
@@ -1221,7 +1221,7 @@ struct WorkshopMapView: View {
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 Text(workshop.educationalText)
-                    .font(.custom("EBGaramond-Regular", size: 17, relativeTo: .body))
+                    .font(RenaissanceFont.body)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
@@ -1230,18 +1230,18 @@ struct WorkshopMapView: View {
                     workshop.showEducationalPopup = false
                 }
                 .font(.custom("EBGaramond-Regular", size: 18))
-                .padding(.horizontal, 32)
+                .padding(.horizontal, Spacing.xxl)
                 .padding(.vertical, 10)
                 .background(
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: CornerRadius.sm)
                         .fill(RenaissanceColors.renaissanceBlue)
                 )
                 .foregroundStyle(.white)
             }
-            .padding(32)
+            .padding(Spacing.xxl)
             .frame(maxWidth: 500)
             .background(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: CornerRadius.lg)
                     .fill(RenaissanceColors.parchment)
             )
         }
@@ -1267,7 +1267,7 @@ struct WorkshopMapView: View {
                             .font(.custom("Cinzel-Bold", size: 22))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("You need more florins! Here's how:")
-                            .font(.custom("EBGaramond-Regular", size: 14))
+                            .font(RenaissanceFont.dialogSubtitle)
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                     }
                 }
@@ -1323,13 +1323,13 @@ struct WorkshopMapView: View {
                 Button("Maybe Later") {
                     workshop.showEarnFlorinsOverlay = false
                 }
-                .font(.custom("EBGaramond-Regular", size: 15))
+                .font(RenaissanceFont.bodySmall)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
             }
-            .padding(24)
+            .padding(Spacing.xl)
             .frame(maxWidth: 400)
             .background(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: CornerRadius.lg)
                     .fill(RenaissanceColors.parchment)
             )
             .borderWorkshop()
@@ -1344,7 +1344,7 @@ struct WorkshopMapView: View {
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .frame(width: 32, height: 32)
                     .background(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: CornerRadius.sm)
                             .fill(RenaissanceColors.warmBrown.opacity(0.1))
                     )
 
@@ -1362,7 +1362,7 @@ struct WorkshopMapView: View {
                     .font(.caption)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
-            .padding(12)
+            .padding(Spacing.sm)
             .background(
                 RoundedRectangle(cornerRadius: 10)
                     .fill(RenaissanceColors.parchment.opacity(0.6))
@@ -1395,7 +1395,7 @@ struct WorkshopMapView: View {
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                     }
                     .padding(.horizontal, 14)
-                    .padding(.vertical, 8)
+                    .padding(.vertical, Spacing.xs)
                     .background(
                         Capsule()
                             .fill(RenaissanceColors.parchment.opacity(0.92))
@@ -1444,7 +1444,7 @@ struct WorkshopMapView: View {
                                 Text(material.icon)
                                     .font(.caption2)
                                 Text("\(collected)/\(needed)")
-                                    .font(.custom("EBGaramond-Regular", size: 11))
+                                    .font(RenaissanceFont.captionSmall)
                                     .foregroundStyle(done ? RenaissanceColors.sageGreen : RenaissanceColors.sepiaInk)
                             }
                             .padding(.horizontal, 5)
@@ -1460,7 +1460,7 @@ struct WorkshopMapView: View {
                                 Text(target.icon)
                                     .font(.caption2)
                                 Text("Craft")
-                                    .font(.custom("EBGaramond-Regular", size: 11))
+                                    .font(RenaissanceFont.captionSmall)
                                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                             }
                         }
@@ -1470,7 +1470,7 @@ struct WorkshopMapView: View {
                     if workshop.isJobCollectionDone() {
                         if job.craftTarget != nil {
                             Text("Materials ready! Craft at the workbench.")
-                                .font(.custom("EBGaramond-Regular", size: 11))
+                                .font(RenaissanceFont.captionSmall)
                                 .foregroundStyle(RenaissanceColors.renaissanceBlue)
                         } else {
                             Button {
@@ -1501,11 +1501,11 @@ struct WorkshopMapView: View {
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
                 .background(
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: CornerRadius.md)
                         .fill(RenaissanceColors.parchment.opacity(0.92))
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: CornerRadius.md)
                         .strokeBorder(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 1)
                 )
                 .padding(.trailing, 16)
@@ -1537,7 +1537,7 @@ struct WorkshopMapView: View {
                             .font(.custom("Cinzel-Bold", size: 22))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("Choose a commission from the workshop master")
-                            .font(.custom("EBGaramond-Regular", size: 14))
+                            .font(RenaissanceFont.dialogSubtitle)
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                     }
                 }
@@ -1546,10 +1546,10 @@ struct WorkshopMapView: View {
                 HStack(spacing: 16) {
                     HStack(spacing: 4) {
                         Text("Rank:")
-                            .font(.custom("EBGaramond-Regular", size: 13))
+                            .font(RenaissanceFont.caption)
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                         Text("\(workshop.currentJobTier.icon) \(workshop.currentJobTier.italianTitle)")
-                            .font(.custom("EBGaramond-SemiBold", size: 15))
+                            .font(RenaissanceFont.buttonSmall)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                     if workshop.jobStreak > 0 {
@@ -1558,13 +1558,13 @@ struct WorkshopMapView: View {
                                 .font(.caption)
                                 .foregroundStyle(RenaissanceColors.furnaceOrange)
                             Text("Streak: \(workshop.jobStreak)")
-                                .font(.custom("EBGaramond-Regular", size: 13))
+                                .font(RenaissanceFont.caption)
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                         }
                     }
                     HStack(spacing: 4) {
                         Text("Jobs: \(workshop.totalJobsCompleted)")
-                            .font(.custom("EBGaramond-Regular", size: 13))
+                            .font(RenaissanceFont.caption)
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                     }
                 }
@@ -1577,13 +1577,13 @@ struct WorkshopMapView: View {
                 Button("Maybe Later") {
                     workshop.showJobBoard = false
                 }
-                .font(.custom("EBGaramond-Regular", size: 15))
+                .font(RenaissanceFont.bodySmall)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
             }
-            .padding(24)
+            .padding(Spacing.xl)
             .frame(maxWidth: 500)
             .background(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: CornerRadius.lg)
                     .fill(RenaissanceColors.parchment)
             )
         }
@@ -1598,7 +1598,7 @@ struct WorkshopMapView: View {
                 HStack {
                     Text(job.tier.icon)
                     Text(job.title)
-                        .font(.custom("EBGaramond-SemiBold", size: 17))
+                        .font(RenaissanceFont.bodySemibold)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Spacer()
                     Text("+\(job.rewardFlorins)")
@@ -1623,7 +1623,7 @@ struct WorkshopMapView: View {
 
                 // Flavor text
                 Text(job.flavorText)
-                    .font(.custom("EBGaramond-Regular", size: 13))
+                    .font(RenaissanceFont.caption)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
                     .fixedSize(horizontal: false, vertical: true)
 
@@ -1654,11 +1654,11 @@ struct WorkshopMapView: View {
             }
             .padding(14)
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: CornerRadius.md)
                     .fill(RenaissanceColors.parchment.opacity(0.6))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: CornerRadius.md)
                     .strokeBorder(tierColor(job.tier).opacity(0.4), lineWidth: 1)
             )
         }
@@ -1692,7 +1692,7 @@ struct WorkshopMapView: View {
                         .font(.custom("EBGaramond-Italic", size: 20))
                         .foregroundStyle(RenaissanceColors.warmBrown)
                     Text(job.tradeDescription)
-                        .font(.custom("EBGaramond-Regular", size: 14))
+                        .font(RenaissanceFont.dialogSubtitle)
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                         .multilineTextAlignment(.center)
                 }
@@ -1703,7 +1703,7 @@ struct WorkshopMapView: View {
                         Image(systemName: "dollarsign.circle.fill")
                             .foregroundStyle(RenaissanceColors.iconOchre)
                         Text("+\(jobRewardFlorins) florins")
-                            .font(.custom("EBGaramond-SemiBold", size: 18))
+                            .font(RenaissanceFont.button)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                     if jobStreakBonus > 0 {
@@ -1723,7 +1723,7 @@ struct WorkshopMapView: View {
                         .font(.custom("Cinzel-Regular", size: 16))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text(job.historyFact)
-                        .font(.custom("EBGaramond-Regular", size: 15))
+                        .font(RenaissanceFont.bodySmall)
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
@@ -1766,13 +1766,13 @@ struct WorkshopMapView: View {
                     workshop.showJobComplete = false
                     completedJob = nil
                 }
-                .font(.custom("EBGaramond-Regular", size: 14))
+                .font(RenaissanceFont.dialogSubtitle)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
             }
             .padding(28)
             .frame(maxWidth: 480)
             .background(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: CornerRadius.lg)
                     .fill(RenaissanceColors.parchment)
             )
         }

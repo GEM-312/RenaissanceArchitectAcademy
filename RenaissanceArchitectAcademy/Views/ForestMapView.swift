@@ -77,7 +77,7 @@ struct ForestMapView: View {
                     inventoryBar
                 }
                 .frame(maxWidth: .infinity)
-                .padding(16)
+                .padding(Spacing.md)
 
                 // Layer 4: Science Cards overlay (replaces old poiInfoOverlay)
                 if let poiIndex = selectedPOIIndex,
@@ -222,29 +222,33 @@ struct ForestMapView: View {
                         }
                     }
 
-                    // Vertical layout: tree header → cards → bottom bar
+                    // Vertical layout: tree header + cards grouped, bottom bar
                     VStack(spacing: 0) {
                         Spacer()
 
-                        // Tree header — sits just above the cards
-                        VStack(spacing: 5) {
+                        // Tree header + cards as one unit (same as building overlay)
+                        VStack(spacing: Spacing.xs) {
                             Text(poi.name)
-                                .font(.custom("Cinzel-Bold", size: 26))
-                                .foregroundStyle(RenaissanceColors.sepiaInk)
+                                .font(RenaissanceFont.title)
+                                .tracking(Tracking.label)
+                                .foregroundStyle(RenaissanceColors.ochre)
+                                .shadow(color: .black.opacity(0.6), radius: 4, y: 2)
                             Text(poi.italianName)
-                                .font(.custom("EBGaramond-Regular", size: 14))
-                                .foregroundStyle(RenaissanceColors.warmBrown)
+                                .font(RenaissanceFont.dialogSubtitle)
+                                .foregroundStyle(RenaissanceColors.ochre.opacity(0.7))
+                                .shadow(color: .black.opacity(0.4), radius: 3, y: 1)
                             HStack(spacing: 6) {
                                 poiBadge(poi.woodType, color: RenaissanceColors.ochre)
                                 poiBadge(poi.leafType, color: RenaissanceColors.sageGreen)
                                 poiBadge(poi.maxHeight, color: RenaissanceColors.warmBrown)
                             }
                         }
-                        .padding(.bottom, 20)
+                        .padding(.bottom, Spacing.lg)
 
                         // Cards row — 3D flip in place, pile when one flips
                         cardsRowView(screenSize: geo.size)
 
+                        Spacer()
                         Spacer()
 
                         // Bottom bar: bird + timber button
@@ -466,7 +470,8 @@ struct ForestMapView: View {
                 }
 
                 Text(category.rawValue)
-                    .font(.custom("Cinzel-Bold", size: 15))
+                    .font(RenaissanceFont.cardTitle)
+                    .tracking(Tracking.label)
                     .foregroundStyle(isCompleted ? RenaissanceColors.sageGreen : category.color)
 
                 if !isCompleted {
@@ -517,7 +522,7 @@ struct ForestMapView: View {
                             Image(systemName: "arrow.left")
                                 .font(.system(size: 10))
                             Text("Lesson")
-                                .font(.custom("EBGaramond-Medium", size: 11))
+                                .font(RenaissanceFont.caption)
                         }
                         .foregroundStyle(cardData.category.color.opacity(0.6))
                     }
@@ -529,14 +534,14 @@ struct ForestMapView: View {
                 }
             }
             .foregroundStyle(cardData.category.color)
-            .padding(.top, 12)
+            .padding(.top, Spacing.sm)
             .padding(.bottom, 6)
             .padding(.horizontal, 4)
 
             Rectangle()
                 .fill(cardData.category.color.opacity(0.2))
                 .frame(height: 1)
-                .padding(.horizontal, 8)
+                .padding(.horizontal, Spacing.xs)
 
             // Content area — fades between reading and activity
             ZStack {
@@ -562,17 +567,17 @@ struct ForestMapView: View {
                                 }
                             }
                         }
-                        .padding(.vertical, 8)
+                        .padding(.vertical, Spacing.xs)
 
                         Rectangle()
                             .fill(cardData.category.color.opacity(0.1))
                             .frame(height: 1)
-                            .padding(.horizontal, 8)
+                            .padding(.horizontal, Spacing.xs)
 
                         // Lesson text with highlighted keywords
                         ScrollView(.vertical, showsIndicators: false) {
                             highlightedLessonText(cardData: cardData)
-                                .padding(.top, 8)
+                                .padding(.top, Spacing.xs)
                         }
 
                         Spacer(minLength: 6)
@@ -582,9 +587,9 @@ struct ForestMapView: View {
                                 openActivityForCard(cardData.category)
                             } label: {
                                 Text("Done Reading")
-                                    .font(.custom("EBGaramond-SemiBold", size: 14))
+                                    .font(RenaissanceFont.buttonSmall)
                                     .foregroundStyle(.white)
-                                    .padding(.vertical, 9)
+                                    .padding(.vertical, Spacing.sm)
                                     .frame(maxWidth: .infinity)
                                     .background(
                                         RoundedRectangle(cornerRadius: 9)
@@ -606,7 +611,7 @@ struct ForestMapView: View {
             }
             .animation(.easeInOut(duration: 0.4), value: isActivity)
         }
-        .padding(12)
+        .padding(Spacing.sm)
         .background(
             RoundedRectangle(cornerRadius: 14)
                 .fill(RenaissanceColors.parchment)
@@ -662,11 +667,11 @@ struct ForestMapView: View {
         for (text, isKeyword) in segments {
             if isKeyword {
                 result = result + Text(text)
-                    .font(.custom("EBGaramond-SemiBold", size: 15))
+                    .font(RenaissanceFont.buttonSmall)
                     .foregroundColor(color)
             } else {
                 result = result + Text(text)
-                    .font(.custom("EBGaramond-Regular", size: 15))
+                    .font(RenaissanceFont.bodySmall)
                     .foregroundColor(RenaissanceColors.sepiaInk)
             }
         }
@@ -693,11 +698,11 @@ struct ForestMapView: View {
                     } label: {
                         HStack {
                             Image(systemName: isMatched ? "checkmark.circle.fill" : "circle")
-                                .font(.system(size: 14))
+                                .font(.system(size: 16))
                                 .foregroundStyle(isMatched ? RenaissanceColors.sageGreen : cardData.category.color.opacity(0.4))
 
                             Text(pair.keyword)
-                                .font(.custom("EBGaramond-SemiBold", size: 14))
+                                .font(RenaissanceFont.buttonSmall)
                                 .foregroundStyle(
                                     isMatched ? RenaissanceColors.sageGreen
                                     : isSelected ? cardData.category.color
@@ -706,10 +711,10 @@ struct ForestMapView: View {
 
                             Spacer()
                         }
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
+                        .padding(.horizontal, Spacing.sm)
+                        .padding(.vertical, Spacing.sm)
                         .background(
-                            RoundedRectangle(cornerRadius: 7)
+                            RoundedRectangle(cornerRadius: CornerRadius.sm)
                                 .fill(
                                     isMatched ? RenaissanceColors.sageGreen.opacity(0.08)
                                     : isSelected ? cardData.category.color.opacity(0.12)
@@ -717,7 +722,7 @@ struct ForestMapView: View {
                                 )
                         )
                         .overlay(
-                            RoundedRectangle(cornerRadius: 7)
+                            RoundedRectangle(cornerRadius: CornerRadius.sm)
                                 .stroke(
                                     isSelected ? cardData.category.color.opacity(0.6) : Color.clear,
                                     lineWidth: 1.5
@@ -755,7 +760,7 @@ struct ForestMapView: View {
                     } label: {
                         HStack {
                             Text(pair.definition)
-                                .font(.custom("EBGaramond-Regular", size: 13))
+                                .font(RenaissanceFont.dialogSubtitle)
                                 .foregroundStyle(
                                     isWrong ? RenaissanceColors.errorRed
                                     : isMatched ? RenaissanceColors.sageGreen
@@ -768,14 +773,14 @@ struct ForestMapView: View {
 
                             if isMatched {
                                 Image(systemName: "checkmark")
-                                    .font(.system(size: 12, weight: .bold))
+                                    .font(.system(size: 13, weight: .bold))
                                     .foregroundStyle(RenaissanceColors.sageGreen)
                             }
                         }
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
+                        .padding(.horizontal, Spacing.sm)
+                        .padding(.vertical, Spacing.sm)
                         .background(
-                            RoundedRectangle(cornerRadius: 7)
+                            RoundedRectangle(cornerRadius: CornerRadius.sm)
                                 .fill(
                                     isWrong ? RenaissanceColors.errorRed.opacity(0.08)
                                     : isMatched ? RenaissanceColors.sageGreen.opacity(0.08)
@@ -784,7 +789,7 @@ struct ForestMapView: View {
                                 )
                         )
                         .overlay(
-                            RoundedRectangle(cornerRadius: 7)
+                            RoundedRectangle(cornerRadius: CornerRadius.sm)
                                 .stroke(
                                     isWrong ? RenaissanceColors.errorRed.opacity(0.5)
                                     : isSelected ? cardData.category.color.opacity(0.5)
@@ -943,11 +948,11 @@ struct ForestMapView: View {
             Text(count == 0 ? "Tap a card to discover this tree's secrets!"
                  : count < 4 ? "\(4 - count) card\(4 - count == 1 ? "" : "s") left — keep going!"
                  : "All done! Collect your timber!")
-                .font(.custom("EBGaramond-Regular", size: 13))
+                .font(RenaissanceFont.caption)
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
+        .padding(.horizontal, Spacing.sm)
+        .padding(.vertical, Spacing.xs)
         .background(
             RoundedRectangle(cornerRadius: 10)
                 .fill(RenaissanceColors.ochre.opacity(0.06))
@@ -969,14 +974,14 @@ struct ForestMapView: View {
                         Text("🪓")
                             .font(.body)
                         Text("Need an Axe to collect timber")
-                            .font(.custom("EBGaramond-SemiBold", size: 15))
+                            .font(RenaissanceFont.buttonSmall)
                     } else {
                         Image(systemName: allDone ? "leaf.fill" : "lock.fill")
                             .font(.body)
                         Text(allDone
                              ? "Collect Timber (+\(poi.timberYield) 🪵)"
                              : "Complete all cards to collect")
-                            .font(.custom("EBGaramond-SemiBold", size: 15))
+                            .font(RenaissanceFont.buttonSmall)
                     }
                 }
                 .foregroundStyle(.white)
@@ -995,7 +1000,7 @@ struct ForestMapView: View {
                 dismissScienceCards()
             } label: {
                 Text("Continue Exploring")
-                    .font(.custom("EBGaramond-Regular", size: 13))
+                    .font(RenaissanceFont.caption)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
             }
         }
@@ -1007,7 +1012,7 @@ struct ForestMapView: View {
         Text(text)
             .font(.custom("EBGaramond-Medium", size: 11))
             .foregroundStyle(RenaissanceColors.sepiaInk)
-            .padding(.horizontal, 8)
+            .padding(.horizontal, Spacing.xs)
             .padding(.vertical, 3)
             .background(
                 Capsule()
@@ -1031,7 +1036,7 @@ struct ForestMapView: View {
                 Text("You found something!")
                     .font(.custom("Cinzel-Bold", size: 13))
                     .foregroundStyle(RenaissanceColors.ochre)
-                    .tracking(2)
+                    .tracking(Tracking.button)
 
                 Text(truffle.name)
                     .font(.custom("Cinzel-Bold", size: 22))
@@ -1039,13 +1044,13 @@ struct ForestMapView: View {
 
                 HStack(spacing: 8) {
                     Text(truffle.italianName)
-                        .font(.custom("EBGaramond-Regular", size: 14))
+                        .font(RenaissanceFont.dialogSubtitle)
                         .foregroundStyle(RenaissanceColors.warmBrown)
 
                     Text(truffle.rarity)
                         .font(.custom("EBGaramond-SemiBold", size: 11))
                         .foregroundStyle(truffle.rarity == "Rare" ? RenaissanceColors.goldSuccess : RenaissanceColors.sepiaInk)
-                        .padding(.horizontal, 8)
+                        .padding(.horizontal, Spacing.xs)
                         .padding(.vertical, 3)
                         .background(
                             Capsule()
@@ -1056,7 +1061,7 @@ struct ForestMapView: View {
                 }
 
                 Text(truffle.description)
-                    .font(.custom("EBGaramond-Regular", size: 14))
+                    .font(RenaissanceFont.dialogSubtitle)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.75))
                     .multilineTextAlignment(.center)
                     .lineLimit(3)
@@ -1066,7 +1071,7 @@ struct ForestMapView: View {
                         .frame(width: 40, height: 40)
 
                     Text(birdTruffleAdvice(for: truffle))
-                        .font(.custom("EBGaramond-Regular", size: 13))
+                        .font(RenaissanceFont.caption)
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.75))
                         .lineLimit(3)
                 }
@@ -1086,7 +1091,7 @@ struct ForestMapView: View {
                             .font(.custom("EBGaramond-SemiBold", size: 16))
                     }
                     .foregroundStyle(.white)
-                    .padding(.vertical, 12)
+                    .padding(.vertical, Spacing.sm)
                     .frame(maxWidth: .infinity)
                     .background(
                         RoundedRectangle(cornerRadius: 10)
@@ -1100,14 +1105,14 @@ struct ForestMapView: View {
                     }
                 } label: {
                     Text("Keep Exploring")
-                        .font(.custom("EBGaramond-Regular", size: 14))
+                        .font(RenaissanceFont.dialogSubtitle)
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                 }
             }
-            .padding(20)
+            .padding(Spacing.lg)
             .frame(maxWidth: 380)
             .background(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: CornerRadius.lg)
                     .fill(RenaissanceColors.parchment)
             )
             .borderAccent(radius: 16)
@@ -1210,12 +1215,12 @@ struct ForestMapView: View {
                         }
                         .font(.custom("EBGaramond-Regular", size: 16))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
+                        .padding(.horizontal, Spacing.md)
+                        .padding(.vertical, Spacing.xs)
                         .glassButton(shape: Capsule())
                     }
                     Text("Italian Forest")
-                        .font(.custom("EBGaramond-SemiBold", size: 22))
+                        .font(RenaissanceFont.dialogTitle)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 10)
@@ -1281,7 +1286,7 @@ struct ForestMapView: View {
 
             Divider()
                 .frame(height: 30)
-                .padding(.horizontal, 8)
+                .padding(.horizontal, Spacing.xs)
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
@@ -1310,10 +1315,10 @@ struct ForestMapView: View {
                 }
             }
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
+        .padding(.horizontal, Spacing.sm)
+        .padding(.vertical, Spacing.xs)
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: CornerRadius.md)
                 .fill(RenaissanceColors.parchment.opacity(0.92))
         )
     }

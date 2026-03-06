@@ -323,13 +323,14 @@ struct KnowledgeCardsOverlay: View {
                 }
 
                 Text(card.title)
-                    .font(.custom("Cinzel-Bold", size: 14))
+                    .font(RenaissanceFont.cardTitle)
+                    .tracking(Tracking.label)
                     .foregroundStyle(isCompleted ? RenaissanceColors.sageGreen : color)
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
 
                 Text(card.science.rawValue)
-                    .font(.custom("EBGaramond-Regular", size: 11))
+                    .font(RenaissanceFont.captionSmall)
                     .foregroundStyle(color.opacity(0.7))
 
                 if !isCompleted {
@@ -373,10 +374,10 @@ struct KnowledgeCardsOverlay: View {
                     } label: {
                         HStack(spacing: 4) {
                             Image(systemName: "arrow.left").font(.system(size: 12))
-                            Text("Lesson").font(.custom("EBGaramond-Medium", size: 13))
+                            Text("Lesson").font(RenaissanceFont.caption)
                         }
                         .foregroundStyle(color.opacity(0.6))
-                        .padding(.horizontal, 8)
+                        .padding(.horizontal, Spacing.xs)
                         .padding(.vertical, 6)
                         .contentShape(Rectangle())
                     }
@@ -389,14 +390,14 @@ struct KnowledgeCardsOverlay: View {
                 }
             }
             .foregroundStyle(color)
-            .padding(.top, 12)
+            .padding(.top, Spacing.sm)
             .padding(.bottom, 6)
-            .padding(.horizontal, 4)
+            .padding(.horizontal, Spacing.xxs)
 
             Rectangle()
                 .fill(color.opacity(0.2))
                 .frame(height: 1)
-                .padding(.horizontal, 8)
+                .padding(.horizontal, Spacing.xs)
 
             // Content
             ZStack {
@@ -413,7 +414,7 @@ struct KnowledgeCardsOverlay: View {
             }
             .animation(.easeInOut(duration: 0.4), value: isActivity)
         }
-        .padding(12)
+        .padding(Spacing.sm)
         .background(
             RoundedRectangle(cornerRadius: 14).fill(RenaissanceColors.parchment)
         )
@@ -446,17 +447,17 @@ struct KnowledgeCardsOverlay: View {
                     }
                 }
             }
-            .padding(.vertical, 8)
+            .padding(.vertical, Spacing.xs)
 
             Rectangle()
                 .fill(card.color.opacity(0.1))
                 .frame(height: 1)
-                .padding(.horizontal, 8)
+                .padding(.horizontal, Spacing.xs)
 
             // Lesson text
             ScrollView(.vertical, showsIndicators: false) {
                 highlightedLessonText(card: card)
-                    .padding(.top, 8)
+                    .padding(.top, Spacing.xs)
             }
 
             Spacer(minLength: 6)
@@ -466,9 +467,9 @@ struct KnowledgeCardsOverlay: View {
                     openActivity(for: card)
                 } label: {
                     Text("Done Reading")
-                        .font(.custom("EBGaramond-SemiBold", size: 16))
+                        .font(RenaissanceFont.buttonSmall)
                         .foregroundStyle(.white)
-                        .padding(.vertical, 14)
+                        .padding(.vertical, Spacing.sm)
                         .frame(maxWidth: .infinity)
                         .background(
                             RoundedRectangle(cornerRadius: 9).fill(card.color)
@@ -513,11 +514,11 @@ struct KnowledgeCardsOverlay: View {
         for (text, isKeyword) in segments {
             if isKeyword {
                 result = result + Text(text)
-                    .font(.custom("EBGaramond-SemiBold", size: 15))
+                    .font(RenaissanceFont.buttonSmall)
                     .foregroundColor(color)
             } else {
                 result = result + Text(text)
-                    .font(.custom("EBGaramond-Regular", size: 15))
+                    .font(RenaissanceFont.bodySmall)
                     .foregroundColor(RenaissanceColors.sepiaInk)
             }
         }
@@ -568,7 +569,7 @@ struct KnowledgeCardsOverlay: View {
                                 .font(.system(size: 16))
                                 .foregroundStyle(isMatched ? RenaissanceColors.sageGreen : card.color.opacity(0.4))
                             Text(pair.keyword)
-                                .font(.custom("EBGaramond-SemiBold", size: 15))
+                                .font(RenaissanceFont.buttonSmall)
                                 .foregroundStyle(
                                     isMatched ? RenaissanceColors.sageGreen
                                     : isSelected ? card.color
@@ -576,10 +577,10 @@ struct KnowledgeCardsOverlay: View {
                                 )
                             Spacer()
                         }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 12)
+                        .padding(.horizontal, Spacing.sm)
+                        .padding(.vertical, Spacing.sm)
                         .background(
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: CornerRadius.sm)
                                 .fill(
                                     isMatched ? RenaissanceColors.sageGreen.opacity(0.08)
                                     : isSelected ? card.color.opacity(0.12)
@@ -587,7 +588,7 @@ struct KnowledgeCardsOverlay: View {
                                 )
                         )
                         .overlay(
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: CornerRadius.sm)
                                 .stroke(isSelected ? card.color.opacity(0.6) : Color.clear, lineWidth: 1.5)
                         )
                     }
@@ -618,7 +619,7 @@ struct KnowledgeCardsOverlay: View {
                     } label: {
                         HStack {
                             Text(pair.definition)
-                                .font(.custom("EBGaramond-Regular", size: 14))
+                                .font(RenaissanceFont.dialogSubtitle)
                                 .foregroundStyle(
                                     isWrong ? RenaissanceColors.errorRed
                                     : isMatched ? RenaissanceColors.sageGreen
@@ -633,10 +634,10 @@ struct KnowledgeCardsOverlay: View {
                                     .foregroundStyle(RenaissanceColors.sageGreen)
                             }
                         }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 12)
+                        .padding(.horizontal, Spacing.sm)
+                        .padding(.vertical, Spacing.sm)
                         .background(
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: CornerRadius.sm)
                                 .fill(
                                     isWrong ? RenaissanceColors.errorRed.opacity(0.08)
                                     : isMatched ? RenaissanceColors.sageGreen.opacity(0.08)
@@ -645,7 +646,7 @@ struct KnowledgeCardsOverlay: View {
                                 )
                         )
                         .overlay(
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: CornerRadius.sm)
                                 .stroke(
                                     isWrong ? RenaissanceColors.errorRed.opacity(0.5)
                                     : isSelected ? card.color.opacity(0.5)
@@ -670,10 +671,10 @@ struct KnowledgeCardsOverlay: View {
     private func multipleChoiceView(card: KnowledgeCard, question: String, options: [String], correctIndex: Int) -> some View {
         VStack(spacing: 12) {
             Text(question)
-                .font(.custom("EBGaramond-SemiBold", size: 15))
+                .font(RenaissanceFont.buttonSmall)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
                 .multilineTextAlignment(.center)
-                .padding(.top, 8)
+                .padding(.top, Spacing.xs)
 
             ForEach(Array(options.enumerated()), id: \.offset) { index, option in
                 let isCorrect = index == correctIndex
@@ -696,7 +697,7 @@ struct KnowledgeCardsOverlay: View {
                 } label: {
                     HStack {
                         Text(option)
-                            .font(.custom("EBGaramond-Regular", size: 15))
+                            .font(RenaissanceFont.bodySmall)
                             .foregroundStyle(
                                 showResult && isCorrect ? RenaissanceColors.sageGreen
                                 : showResult && isSelected && !isCorrect ? RenaissanceColors.errorRed
@@ -714,7 +715,7 @@ struct KnowledgeCardsOverlay: View {
                     .padding(.horizontal, 14)
                     .padding(.vertical, 14)
                     .background(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: CornerRadius.sm)
                             .fill(
                                 showResult && isCorrect ? RenaissanceColors.sageGreen.opacity(0.1)
                                 : showResult && isSelected && !isCorrect ? RenaissanceColors.errorRed.opacity(0.1)
@@ -722,7 +723,7 @@ struct KnowledgeCardsOverlay: View {
                             )
                     )
                     .overlay(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: CornerRadius.sm)
                             .stroke(
                                 showResult && isCorrect ? RenaissanceColors.sageGreen.opacity(0.5)
                                 : showResult && isSelected && !isCorrect ? RenaissanceColors.errorRed.opacity(0.5)
@@ -741,16 +742,16 @@ struct KnowledgeCardsOverlay: View {
                     selectedMCIndex = nil
                 } label: {
                     Text("Try Again")
-                        .font(.custom("EBGaramond-SemiBold", size: 15))
+                        .font(RenaissanceFont.buttonSmall)
                         .foregroundStyle(card.color)
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 12)
+                        .padding(.horizontal, Spacing.xl)
+                        .padding(.vertical, Spacing.sm)
                         .background(
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: CornerRadius.sm)
                                 .fill(card.color.opacity(0.08))
                         )
                         .overlay(
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: CornerRadius.sm)
                                 .stroke(card.color.opacity(0.3), lineWidth: 1)
                         )
                 }
@@ -765,10 +766,10 @@ struct KnowledgeCardsOverlay: View {
     private func trueFalseView(card: KnowledgeCard, statement: String, isTrue: Bool) -> some View {
         VStack(spacing: 16) {
             Text(statement)
-                .font(.custom("EBGaramond-Regular", size: 15))
+                .font(RenaissanceFont.bodySmall)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
                 .multilineTextAlignment(.center)
-                .padding(.top, 8)
+                .padding(.top, Spacing.xs)
 
             HStack(spacing: 16) {
                 ForEach([true, false], id: \.self) { value in
@@ -829,16 +830,16 @@ struct KnowledgeCardsOverlay: View {
                     tfSelected = nil
                 } label: {
                     Text("Try Again")
-                        .font(.custom("EBGaramond-SemiBold", size: 15))
+                        .font(RenaissanceFont.buttonSmall)
                         .foregroundStyle(card.color)
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 12)
+                        .padding(.horizontal, Spacing.xl)
+                        .padding(.vertical, Spacing.sm)
                         .background(
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: CornerRadius.sm)
                                 .fill(card.color.opacity(0.08))
                         )
                         .overlay(
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: CornerRadius.sm)
                                 .stroke(card.color.opacity(0.3), lineWidth: 1)
                         )
                 }
@@ -856,10 +857,10 @@ struct KnowledgeCardsOverlay: View {
         return VStack(spacing: 14) {
             // Hint
             Text(hint)
-                .font(.custom("EBGaramond-Regular", size: 14))
+                .font(RenaissanceFont.dialogSubtitle)
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                 .multilineTextAlignment(.center)
-                .padding(.top, 4)
+                .padding(.top, Spacing.xxs)
 
             // Dashes showing progress
             HStack(spacing: 6) {
@@ -890,11 +891,11 @@ struct KnowledgeCardsOverlay: View {
                             .frame(width: 48, height: 48)
                             .contentShape(Rectangle())
                             .background(
-                                RoundedRectangle(cornerRadius: 8)
+                                RoundedRectangle(cornerRadius: CornerRadius.sm)
                                     .fill(scrambleWrongFlash ? RenaissanceColors.errorRed.opacity(0.12) : color.opacity(0.08))
                             )
                             .overlay(
-                                RoundedRectangle(cornerRadius: 8)
+                                RoundedRectangle(cornerRadius: CornerRadius.sm)
                                     .stroke(scrambleWrongFlash ? RenaissanceColors.errorRed.opacity(0.4) : color.opacity(0.3), lineWidth: 1.5)
                             )
                     }
@@ -916,11 +917,11 @@ struct KnowledgeCardsOverlay: View {
                             .font(.custom("EBGaramond-SemiBold", size: 14))
                     }
                     .foregroundStyle(color.opacity(0.6))
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, Spacing.md)
+                    .padding(.vertical, Spacing.xs)
                     .contentShape(Rectangle())
                     .background(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: CornerRadius.sm)
                             .fill(color.opacity(0.06))
                     )
                 }
@@ -967,15 +968,15 @@ struct KnowledgeCardsOverlay: View {
         return VStack(spacing: 12) {
             // Question
             Text(question)
-                .font(.custom("EBGaramond-SemiBold", size: 15))
+                .font(RenaissanceFont.buttonSmall)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
                 .multilineTextAlignment(.center)
-                .padding(.top, 4)
+                .padding(.top, Spacing.xxs)
 
             // Answer blank
             HStack(spacing: 4) {
                 Text("Answer:")
-                    .font(.custom("EBGaramond-Regular", size: 14))
+                    .font(RenaissanceFont.dialogSubtitle)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                 if fishingAnswered {
                     Text("\(correctAnswer)")
@@ -1088,7 +1089,7 @@ struct KnowledgeCardsOverlay: View {
         return VStack(spacing: 10) {
             // Hint
             Text(hint)
-                .font(.custom("EBGaramond-Regular", size: 13))
+                .font(RenaissanceFont.caption)
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                 .multilineTextAlignment(.center)
 
@@ -1180,16 +1181,16 @@ struct KnowledgeCardsOverlay: View {
                     hangmanWon = false
                 } label: {
                     Text("Try Again")
-                        .font(.custom("EBGaramond-SemiBold", size: 15))
+                        .font(RenaissanceFont.buttonSmall)
                         .foregroundStyle(color)
-                        .padding(.horizontal, 24)
+                        .padding(.horizontal, Spacing.xl)
                         .padding(.vertical, 10)
                         .background(
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: CornerRadius.sm)
                                 .fill(color.opacity(0.08))
                         )
                         .overlay(
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: CornerRadius.sm)
                                 .stroke(color.opacity(0.3), lineWidth: 1)
                         )
                 }
@@ -1488,11 +1489,11 @@ struct KnowledgeCardsOverlay: View {
             Text(done == 0 ? "Tap a card to start learning!"
                  : done < total ? "\(total - done) card\(total - done == 1 ? "" : "s") left — keep going!"
                  : "All done here! Check other environments for more.")
-                .font(.custom("EBGaramond-Regular", size: 13))
+                .font(RenaissanceFont.caption)
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
+        .padding(.horizontal, Spacing.sm)
+        .padding(.vertical, Spacing.xs)
         .background(
             RoundedRectangle(cornerRadius: 10)
                 .fill(RenaissanceColors.ochre.opacity(0.06))
@@ -1556,13 +1557,13 @@ struct KnowledgeCardsOverlay: View {
                         .font(.system(size: 14))
                         .foregroundStyle(RenaissanceColors.renaissanceBlue)
                     Text("More cards at the \(envName)!")
-                        .font(.custom("EBGaramond-Regular", size: 14))
+                        .font(RenaissanceFont.dialogSubtitle)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
-                .padding(.horizontal, 16)
+                .padding(.horizontal, Spacing.md)
                 .padding(.vertical, 10)
                 .background(
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: CornerRadius.md)
                         .fill(RenaissanceColors.renaissanceBlue.opacity(0.08))
                 )
             }

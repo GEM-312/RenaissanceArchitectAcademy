@@ -141,7 +141,7 @@ struct CityMapView: View {
                     bottomHint
                 }
                 .frame(maxWidth: .infinity)
-                .padding(16)
+                .padding(Spacing.md)
 
             // Bird prompt — positioned above the building on the map
             if showBuildingPrompt, let plot = selectedPlot {
@@ -162,7 +162,7 @@ struct CityMapView: View {
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                                 Text("Work on this building?")
-                                    .font(.custom("EBGaramond-Regular", size: 14))
+                                    .font(RenaissanceFont.dialogSubtitle)
                                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
 
                                 HStack(spacing: 12) {
@@ -196,7 +196,7 @@ struct CityMapView: View {
                                         sceneHolder.scene?.resetMascot()
                                     } label: {
                                         Text("Not this one")
-                                            .font(.custom("EBGaramond-Regular", size: 13))
+                                            .font(RenaissanceFont.caption)
                                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                                     }
                                     .buttonStyle(.plain)
@@ -397,7 +397,7 @@ struct CityMapView: View {
                         }
                         .padding(24)
                         .background(DialogueBubble())
-                        .padding(.horizontal, 40)
+                        .padding(.horizontal, Spacing.xxxl)
 
                         Spacer()
                     }
@@ -519,7 +519,7 @@ struct CityMapView: View {
                         }
                         .padding(28)
                         .background(DialogueBubble())
-                        .padding(.horizontal, 40)
+                        .padding(.horizontal, Spacing.xxxl)
 
                         Spacer()
                     }
@@ -604,7 +604,7 @@ struct CityMapView: View {
                         }
                         .padding(28)
                         .background(DialogueBubble())
-                        .padding(.horizontal, 40)
+                        .padding(.horizontal, Spacing.xxxl)
 
                         Spacer()
                     }
@@ -854,8 +854,8 @@ struct CityMapView: View {
         return Text(hintText)
             .font(.custom("EBGaramond-Regular", size: 16))
             .foregroundColor(RenaissanceColors.sepiaInk.opacity(0.8))
-            .padding(.horizontal, 24)
-            .padding(.vertical, 12)
+            .padding(.horizontal, Spacing.xl)
+            .padding(.vertical, Spacing.sm)
             .background(
                 Capsule()
                     .fill(RenaissanceColors.parchment.opacity(0.9))
@@ -875,10 +875,10 @@ struct CityMapView: View {
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(.custom("EBGaramond-SemiBold", size: 18))
+                        .font(RenaissanceFont.button)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text(subtitle)
-                        .font(.custom("EBGaramond-Regular", size: 13))
+                        .font(RenaissanceFont.caption)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
 
@@ -888,14 +888,14 @@ struct CityMapView: View {
                     .font(.caption)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
+            .padding(.horizontal, Spacing.md)
+            .padding(.vertical, Spacing.sm)
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: CornerRadius.md)
                     .fill(RenaissanceColors.parchment)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: CornerRadius.md)
                     .stroke(color.opacity(0.3), lineWidth: 1)
             )
         }

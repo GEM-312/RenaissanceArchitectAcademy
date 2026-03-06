@@ -40,8 +40,10 @@ struct MascotDialogueView: View {
                 // Title above cards (no panel)
                 VStack(spacing: 8) {
                     Text(plot.building.name)
-                        .font(.custom("Cinzel-Bold", size: 26))
-                        .foregroundColor(RenaissanceColors.sepiaInk)
+                        .font(RenaissanceFont.title)
+                        .tracking(Tracking.label)
+                        .foregroundColor(RenaissanceColors.ochre)
+                        .shadow(color: .black.opacity(0.6), radius: 4, y: 2)
 
                     // Science icons row
                     HStack(spacing: 6) {
@@ -54,8 +56,9 @@ struct MascotDialogueView: View {
                                     .clipShape(RoundedRectangle(cornerRadius: 6))
                             } else {
                                 Image(systemName: science.sfSymbolName)
-                                    .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
-                                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                                    .font(RenaissanceFont.bodySmall)
+                                    .foregroundStyle(RenaissanceColors.ochre)
+                                    .shadow(color: .black.opacity(0.4), radius: 3, y: 1)
                                     .frame(width: 28, height: 28)
                             }
                         }
@@ -69,16 +72,17 @@ struct MascotDialogueView: View {
                         } label: {
                             HStack(spacing: 6) {
                                 Image(systemName: "book.closed.fill")
-                                    .font(.custom("EBGaramond-Regular", size: 13, relativeTo: .footnote))
+                                    .font(RenaissanceFont.caption)
                                 Text("Open Notebook")
-                                    .font(.custom("EBGaramond-Regular", size: 14))
+                                    .font(RenaissanceFont.bodySmall)
                             }
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 7)
+                            .foregroundStyle(RenaissanceColors.ochre)
+                            .shadow(color: .black.opacity(0.4), radius: 3, y: 1)
+                            .padding(.horizontal, Spacing.md)
+                            .padding(.vertical, Spacing.xs)
                             .background(
                                 Capsule()
-                                    .fill(RenaissanceColors.renaissanceBlue.opacity(0.1))
+                                    .fill(Color.black.opacity(0.25))
                             )
                         }
                         .buttonStyle(.plain)
@@ -93,9 +97,9 @@ struct MascotDialogueView: View {
                     // Connection line behind cards
                     Rectangle()
                         .fill(RenaissanceColors.ochre.opacity(0.2))
-                        .frame(width: 3 * 240 + 2 * 16 - 60, height: 2)
+                        .frame(width: 3 * 200 + 2 * Spacing.md - 60, height: 2)
 
-                    HStack(spacing: 16) {
+                    HStack(spacing: Spacing.md) {
                         ForEach(Array(BuildingCardChoice.allCases.enumerated()), id: \.element) { index, choice in
                             buildingCard(choice: choice, index: index)
                                 .offset(y: cardFloat * (index.isMultiple(of: 2) ? 1 : -1))
@@ -141,14 +145,13 @@ struct MascotDialogueView: View {
         } label: {
             let color = cardColor(for: choice)
             ZStack {
-                // Layer 1: Glass background
+                // Layer 1: Glass background + aurora blobs (matches Forest/Knowledge cards)
                 RoundedRectangle(cornerRadius: 14)
                     .fill(RenaissanceColors.parchmentLight.opacity(0.5))
                     .overlay(
                         RoundedRectangle(cornerRadius: 14)
                             .fill(.ultraThinMaterial)
                     )
-                    // Aurora blobs — bottom of card
                     .overlay(
                         ZStack {
                             Ellipse()
@@ -195,30 +198,34 @@ struct MascotDialogueView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                     )
 
-                // Layer 2: Content
-                VStack(spacing: 10) {
+                // Layer 2: Content (matches Forest/Knowledge card layout)
+                VStack(spacing: Spacing.sm) {
+                    Spacer()
+
                     ZStack {
                         Circle()
                             .fill(color.opacity(0.15))
-                            .frame(width: 50, height: 50)
+                            .frame(width: 70, height: 70)
                         Image(systemName: choice.icon)
-                            .font(.custom("EBGaramond-Regular", size: 22, relativeTo: .title3))
+                            .font(.system(size: 36))
                             .foregroundStyle(color)
+                            .shadow(color: color.opacity(0.5), radius: 6)
                     }
 
                     Text(choice.rawValue)
-                        .font(.custom("EBGaramond-SemiBold", size: 15))
+                        .font(RenaissanceFont.cardTitle)
+                        .tracking(Tracking.label)
                         .foregroundStyle(color)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
                         .minimumScaleFactor(0.8)
 
                     cardDetail(for: choice)
+
+                    Spacer()
                 }
-                .padding(.vertical, 14)
-                .padding(.horizontal, 8)
             }
-            .frame(width: 240, height: 330)
+            .frame(width: 200, height: 280)
             .clipShape(RoundedRectangle(cornerRadius: 14))
             .overlay(
                 RoundedRectangle(cornerRadius: 14)
@@ -239,14 +246,14 @@ struct MascotDialogueView: View {
             if cardInfo.total > 0 {
                 HStack(spacing: 4) {
                     Image(systemName: "square.stack.fill")
-                        .font(.custom("EBGaramond-Regular", size: 12, relativeTo: .caption))
+                        .font(RenaissanceFont.captionSmall)
                         .foregroundStyle(cardInfo.completed == cardInfo.total ? RenaissanceColors.sageGreen : RenaissanceColors.ochre)
                     Text("\(cardInfo.completed)/\(cardInfo.total)")
-                        .font(.custom("EBGaramond-SemiBold", size: 14))
+                        .font(RenaissanceFont.bodySmall)
                         .foregroundStyle(cardInfo.completed == cardInfo.total ? RenaissanceColors.sageGreen : RenaissanceColors.ochre)
                 }
-                .padding(.horizontal, 10)
-                .padding(.vertical, 4)
+                .padding(.horizontal, Spacing.sm)
+                .padding(.vertical, Spacing.xxs)
                 .background(
                     Capsule()
                         .fill((cardInfo.completed == cardInfo.total ? RenaissanceColors.sageGreen : RenaissanceColors.ochre).opacity(0.12))
@@ -254,14 +261,14 @@ struct MascotDialogueView: View {
             } else {
                 HStack(spacing: 4) {
                     Image(systemName: "dollarsign.circle.fill")
-                        .font(.custom("EBGaramond-Regular", size: 12, relativeTo: .caption))
+                        .font(RenaissanceFont.captionSmall)
                         .foregroundStyle(RenaissanceColors.goldSuccess)
                     Text("+\(GameRewards.lessonReadFlorins)")
-                        .font(.custom("EBGaramond-SemiBold", size: 14))
+                        .font(RenaissanceFont.bodySmall)
                         .foregroundStyle(RenaissanceColors.goldSuccess)
                 }
-                .padding(.horizontal, 10)
-                .padding(.vertical, 4)
+                .padding(.horizontal, Spacing.sm)
+                .padding(.vertical, Spacing.xxs)
                 .background(
                     Capsule()
                         .fill(RenaissanceColors.goldSuccess.opacity(0.12))
@@ -270,7 +277,7 @@ struct MascotDialogueView: View {
 
         case .environments:
             Text(choice.subtitle)
-                .font(.custom("EBGaramond-Regular", size: 11))
+                .font(RenaissanceFont.captionSmall)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
@@ -281,10 +288,10 @@ struct MascotDialogueView: View {
             let totalReqs = totalRequirements()
             HStack(spacing: 4) {
                 Image(systemName: reqCount == totalReqs ? "checkmark.circle.fill" : "circle")
-                    .font(.custom("EBGaramond-Regular", size: 12, relativeTo: .caption))
+                    .font(RenaissanceFont.captionSmall)
                     .foregroundStyle(reqCount == totalReqs ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray)
                 Text("\(reqCount)/\(totalReqs)")
-                    .font(.custom("EBGaramond-SemiBold", size: 14))
+                    .font(RenaissanceFont.bodySmall)
                     .foregroundStyle(reqCount == totalReqs ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray)
             }
         }

@@ -17,6 +17,7 @@
 		008 /* Building.swift in Sources */ = {isa = PBXBuildFile; fileRef = 108 /* Building.swift */; };
 		009 /* RenaissanceColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 109 /* RenaissanceColors.swift */; };
 		010 /* RenaissanceButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 110 /* RenaissanceButton.swift */; };
+		099 /* RenaissanceTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 199 /* RenaissanceTheme.swift */; };
 		011 /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 111 /* SidebarView.swift */; };
 		015 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 115 /* SoundManager.swift */; };
 		016 /* BloomEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 116 /* BloomEffectView.swift */; };
@@ -171,6 +172,7 @@
 		108 /* Building.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Building.swift; sourceTree = "<group>"; };
 		109 /* RenaissanceColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenaissanceColors.swift; sourceTree = "<group>"; };
 		110 /* RenaissanceButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenaissanceButton.swift; sourceTree = "<group>"; };
+		199 /* RenaissanceTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenaissanceTheme.swift; sourceTree = "<group>"; };
 		111 /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
 		115 /* SoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
 		116 /* BloomEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BloomEffectView.swift; sourceTree = "<group>"; };
@@ -479,6 +481,7 @@
 			children = (
 				109 /* RenaissanceColors.swift */,
 				110 /* RenaissanceButton.swift */,
+				199 /* RenaissanceTheme.swift */,
 				181 /* GameSpriteView.swift */,
 				193 /* GameSceneKitView.swift */,
 			);
@@ -698,6 +701,7 @@
 				009 /* RenaissanceColors.swift in Sources */,
 				544299AE2F36A8D000F92073 /* MascotNode.swift in Sources */,
 				010 /* RenaissanceButton.swift in Sources */,
+				099 /* RenaissanceTheme.swift in Sources */,
 				011 /* SidebarView.swift in Sources */,
 				015 /* SoundManager.swift in Sources */,
 				016 /* BloomEffectView.swift in Sources */,

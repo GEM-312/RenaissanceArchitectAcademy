@@ -163,15 +163,15 @@ struct BuildingLessonView: View {
                                         }
                                     }
                                 }
-                                .padding(.horizontal, 24)
-                                .padding(.top, 20)
-                                .padding(.bottom, 12)
+                                .padding(.horizontal, Spacing.xl)
+                                .padding(.top, Spacing.lg)
+                                .padding(.bottom, Spacing.sm)
 
                                 Spacer(minLength: 16)
 
                                 // Continue / Next button pinned to bottom
                                 continueButton
-                                    .padding(.horizontal, 24)
+                                    .padding(.horizontal, Spacing.xl)
                                     .padding(.bottom, 24)
                             }
                             .frame(minHeight: scrollGeo.size.height)
@@ -183,12 +183,12 @@ struct BuildingLessonView: View {
                 }
             }
             .background(
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: CornerRadius.xl)
                     .fill(RenaissanceColors.parchment)
             )
             .borderModal(radius: 20)
-            .padding(.horizontal, 24)
-            .padding(.vertical, 20)
+            .padding(.horizontal, Spacing.xl)
+            .padding(.vertical, Spacing.lg)
         }
         .animation(.spring(response: 0.3), value: currentIndex)
         .animation(.spring(response: 0.3), value: showExplanation)
@@ -238,7 +238,7 @@ struct BuildingLessonView: View {
 
                 // Title
                 Text(lesson?.title ?? plot.building.name)
-                    .font(.custom("EBGaramond-SemiBold", size: 17))
+                    .font(RenaissanceFont.bodySemibold)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .lineLimit(1)
 
@@ -263,8 +263,8 @@ struct BuildingLessonView: View {
             // Circle progress indicator
             progressCircles
         }
-        .padding(.horizontal, 20)
-        .padding(.top, 20)
+        .padding(.horizontal, Spacing.lg)
+        .padding(.top, Spacing.lg)
         .padding(.bottom, 10)
     }
 
@@ -360,7 +360,7 @@ struct BuildingLessonView: View {
                         .foregroundStyle(.white)
                 } else {
                     Text("\(clampedIndex + 1)")
-                        .font(.custom("EBGaramond-Regular", size: 15))
+                        .font(RenaissanceFont.bodySmall)
                         .foregroundStyle(.white)
                 }
             }
@@ -401,10 +401,10 @@ struct BuildingLessonView: View {
                 HStack {
                     Spacer()
                     ZStack {
-                        RoundedRectangle(cornerRadius: 16)
+                        RoundedRectangle(cornerRadius: CornerRadius.lg)
                             .fill(Color.white.opacity(0.6))
                             .overlay(
-                                RoundedRectangle(cornerRadius: 16)
+                                RoundedRectangle(cornerRadius: CornerRadius.lg)
                                     .stroke(RenaissanceColors.ochre.opacity(0.25), lineWidth: 1)
                             )
                             .frame(width: 100, height: 100)
@@ -416,7 +416,7 @@ struct BuildingLessonView: View {
                 }
                 if let caption = reading.caption {
                     Text(caption)
-                        .font(.custom("EBGaramond-Regular", size: 13))
+                        .font(RenaissanceFont.caption)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .frame(maxWidth: .infinity)
                         .multilineTextAlignment(.center)
@@ -451,15 +451,15 @@ struct BuildingLessonView: View {
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .rotationEffect(.degrees(-30))
                 Text("Fun Fact")
-                    .font(.custom("EBGaramond-SemiBold", size: 18))
+                    .font(RenaissanceFont.button)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
 
             markdownText(fact.text)
         }
-        .padding(20)
+        .padding(Spacing.lg)
         .background(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: CornerRadius.lg)
                 .fill(RenaissanceColors.parchment)
         )
         .borderAccent(radius: 16)
@@ -476,7 +476,7 @@ struct BuildingLessonView: View {
             Text(question.question)
                 .font(.custom("EBGaramond-SemiBold", size: 20))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
-                .lineSpacing(2)
+                .lineSpacing(LineHeight.tight)
 
             // Scratch Pad (only for math questions with hints)
             if question.hints != nil {
@@ -506,18 +506,18 @@ struct BuildingLessonView: View {
                         Image(systemName: selectedAnswer == question.correctIndex ? "checkmark.circle.fill" : "xmark.circle.fill")
                             .foregroundStyle(selectedAnswer == question.correctIndex ? RenaissanceColors.sageGreen : RenaissanceColors.errorRed)
                         Text(selectedAnswer == question.correctIndex ? "Correct!" : "Not quite")
-                            .font(.custom("EBGaramond-SemiBold", size: 17))
+                            .font(RenaissanceFont.bodySemibold)
                             .foregroundStyle(selectedAnswer == question.correctIndex ? RenaissanceColors.sageGreen : RenaissanceColors.errorRed)
                     }
 
                     Text(question.explanation)
                         .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
-                        .lineSpacing(3)
+                        .lineSpacing(LineHeight.normal)
                 }
                 .padding(14)
                 .background(
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: CornerRadius.md)
                         .fill(selectedAnswer == question.correctIndex
                               ? RenaissanceColors.sageGreen.opacity(0.08)
                               : RenaissanceColors.errorRed.opacity(0.08))
@@ -538,9 +538,9 @@ struct BuildingLessonView: View {
             } label: {
                 HStack(spacing: 6) {
                     Image(systemName: "pencil.and.outline")
-                        .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
+                        .font(RenaissanceFont.dialogSubtitle)
                     Text(showScratchPad ? "Hide Scratch Pad" : "Show Scratch Pad")
-                        .font(.custom("EBGaramond-Regular", size: 15))
+                        .font(RenaissanceFont.bodySmall)
                 }
                 .foregroundStyle(RenaissanceColors.sepiaInk)
             }
@@ -550,36 +550,36 @@ struct BuildingLessonView: View {
                 #if os(iOS)
                 MathScratchPadCanvas()
                     .frame(height: 200)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .clipShape(RoundedRectangle(cornerRadius: CornerRadius.md))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: CornerRadius.md)
                             .strokeBorder(style: StrokeStyle(lineWidth: 1.5, dash: [6, 4]))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
                     )
                     .transition(.move(edge: .top).combined(with: .opacity))
                 #else
                 TextEditor(text: $scratchPadText)
-                    .font(.custom("EBGaramond-Regular", size: 15))
+                    .font(RenaissanceFont.bodySmall)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .scrollContentBackground(.hidden)
                     .frame(height: 200)
-                    .padding(8)
+                    .padding(Spacing.xs)
                     .background(
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: CornerRadius.md)
                             .fill(RenaissanceColors.parchment)
                     )
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: CornerRadius.md)
                             .strokeBorder(style: StrokeStyle(lineWidth: 1.5, dash: [6, 4]))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
                     )
                     .overlay(alignment: .topLeading, content: {
                         if scratchPadText.isEmpty {
                             Text("Show your work here...")
-                                .font(.custom("EBGaramond-Regular", size: 15))
+                                .font(RenaissanceFont.bodySmall)
                                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                                 .padding(.horizontal, 13)
-                                .padding(.vertical, 16)
+                                .padding(.vertical, Spacing.md)
                                 .allowsHitTesting(false)
                         }
                     })
@@ -602,13 +602,13 @@ struct BuildingLessonView: View {
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: "lightbulb.fill")
-                            .font(.custom("EBGaramond-Regular", size: 13, relativeTo: .footnote))
+                            .font(RenaissanceFont.caption)
                         Text(hintLevel == 0 ? "Need a hint?" : "Next hint (\(hintLevel)/\(hints.count))")
-                            .font(.custom("EBGaramond-Regular", size: 15))
+                            .font(RenaissanceFont.bodySmall)
                     }
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .padding(.horizontal, 14)
-                    .padding(.vertical, 8)
+                    .padding(.vertical, Spacing.xs)
                     .background(
                         RoundedRectangle(cornerRadius: 10)
                             .fill(RenaissanceColors.ochre.opacity(0.1))
@@ -619,13 +619,13 @@ struct BuildingLessonView: View {
             } else if hintLevel > 0 {
                 HStack(spacing: 6) {
                     Image(systemName: "lightbulb.slash")
-                        .font(.custom("EBGaramond-Regular", size: 13, relativeTo: .footnote))
+                        .font(RenaissanceFont.caption)
                     Text("All hints used")
-                        .font(.custom("EBGaramond-Regular", size: 15))
+                        .font(RenaissanceFont.bodySmall)
                 }
                 .foregroundStyle(RenaissanceColors.sepiaInk)
                 .padding(.horizontal, 14)
-                .padding(.vertical, 8)
+                .padding(.vertical, Spacing.xs)
             }
 
             // Revealed hint cards
@@ -639,9 +639,9 @@ struct BuildingLessonView: View {
                     Text(hints[index])
                         .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
-                        .lineSpacing(3)
+                        .lineSpacing(LineHeight.normal)
                 }
-                .padding(12)
+                .padding(Spacing.sm)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(
                     RoundedRectangle(cornerRadius: 10)
@@ -699,9 +699,9 @@ struct BuildingLessonView: View {
                 }
             }
             .padding(.horizontal, 14)
-            .padding(.vertical, 12)
+            .padding(.vertical, Spacing.sm)
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: CornerRadius.md)
                     .fill(isRevealed && isCorrect
                           ? RenaissanceColors.sageGreen.opacity(0.1)
                           : isRevealed && isSelected && !isCorrect
@@ -711,7 +711,7 @@ struct BuildingLessonView: View {
                           : RenaissanceColors.parchment)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: CornerRadius.md)
                     .stroke(isRevealed && isCorrect
                             ? RenaissanceColors.sageGreen.opacity(0.5)
                             : isRevealed && isSelected && !isCorrect
@@ -752,12 +752,12 @@ struct BuildingLessonView: View {
                     }
                 } label: {
                     Text("Check Answers")
-                        .font(.custom("EBGaramond-SemiBold", size: 18))
+                        .font(RenaissanceFont.button)
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
+                        .padding(.vertical, Spacing.sm)
                         .background(
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: CornerRadius.md)
                                 .fill(RenaissanceColors.renaissanceBlue)
                         )
                 }
@@ -771,7 +771,7 @@ struct BuildingLessonView: View {
                     Image(systemName: correct ? "checkmark.circle.fill" : "arrow.counterclockwise.circle.fill")
                         .foregroundStyle(correct ? RenaissanceColors.sageGreen : RenaissanceColors.sepiaInk)
                     Text(correct ? "All correct!" : "Some answers need fixing — tap a blank to change it")
-                        .font(.custom("EBGaramond-Regular", size: 15, relativeTo: .subheadline))
+                        .font(RenaissanceFont.bodySmall)
                         .foregroundStyle(correct ? RenaissanceColors.sageGreen : RenaissanceColors.sepiaInk)
                 }
                 .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -783,7 +783,7 @@ struct BuildingLessonView: View {
                         }
                     } label: {
                         Text("Try Again")
-                            .font(.custom("EBGaramond-Regular", size: 14))
+                            .font(RenaissanceFont.dialogSubtitle)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                     .buttonStyle(.plain)
@@ -830,7 +830,7 @@ struct BuildingLessonView: View {
 
         return VStack(alignment: .leading, spacing: 8) {
             Text("Word Bank")
-                .font(.custom("EBGaramond-Regular", size: 15))
+                .font(RenaissanceFont.bodySmall)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
             LessonFlowLayout(spacing: 8) {
@@ -843,14 +843,14 @@ struct BuildingLessonView: View {
                         Text(word)
                             .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
                             .foregroundStyle(isUsed ? RenaissanceColors.sepiaInk.opacity(0.4) : RenaissanceColors.sepiaInk)
-                            .padding(.horizontal, 12)
+                            .padding(.horizontal, Spacing.sm)
                             .padding(.vertical, 6)
                             .background(
-                                RoundedRectangle(cornerRadius: 8)
+                                RoundedRectangle(cornerRadius: CornerRadius.sm)
                                     .fill(isUsed ? RenaissanceColors.sepiaInk.opacity(0.08) : RenaissanceColors.ochre.opacity(0.12))
                             )
                             .overlay(
-                                RoundedRectangle(cornerRadius: 8)
+                                RoundedRectangle(cornerRadius: CornerRadius.sm)
                                     .stroke(isUsed ? Color.clear : RenaissanceColors.ochre.opacity(0.3), lineWidth: 1)
                             )
                     }
@@ -862,7 +862,7 @@ struct BuildingLessonView: View {
         }
         .padding(14)
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: CornerRadius.md)
                 .fill(RenaissanceColors.sepiaInk.opacity(0.03))
         )
     }
@@ -1091,7 +1091,7 @@ struct BuildingLessonView: View {
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(prompt.title)
-                        .font(.custom("EBGaramond-SemiBold", size: 18))
+                        .font(RenaissanceFont.button)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .lineLimit(1)
 
@@ -1105,9 +1105,9 @@ struct BuildingLessonView: View {
 
             // Description (short)
             Text(descriptionText)
-                .font(.custom("EBGaramond-Regular", size: 15, relativeTo: .subheadline))
+                .font(RenaissanceFont.bodySmall)
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
-                .lineSpacing(2)
+                .lineSpacing(LineHeight.tight)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             // Compact recipe checklist
@@ -1131,7 +1131,7 @@ struct BuildingLessonView: View {
 
                         if recipe.canCraft && !recipe.alreadyCrafted {
                             Text("Ready")
-                                .font(.custom("EBGaramond-Regular", size: 11))
+                                .font(RenaissanceFont.captionSmall)
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                         } else if !recipe.alreadyCrafted && !recipe.missingMaterials.isEmpty {
                             let names = recipe.missingMaterials
@@ -1139,18 +1139,18 @@ struct BuildingLessonView: View {
                                 .map { "\($0.value) \($0.key.rawValue)" }
                                 .joined(separator: ", ")
                             Text(names)
-                                .font(.custom("EBGaramond-Regular", size: 11))
+                                .font(RenaissanceFont.captionSmall)
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                                 .lineLimit(1)
                         }
                     }
-                    .padding(.horizontal, 8)
+                    .padding(.horizontal, Spacing.xs)
                     .padding(.vertical, 4)
                 }
             }
             .padding(.vertical, 4)
             .background(
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: CornerRadius.sm)
                     .fill(RenaissanceColors.sepiaInk.opacity(0.02))
             )
 
@@ -1172,8 +1172,8 @@ struct BuildingLessonView: View {
                             .font(.custom("EBGaramond-Regular", size: 16))
                     }
                     .foregroundStyle(.white)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, Spacing.md)
+                    .padding(.vertical, Spacing.xs)
                     .background(
                         RoundedRectangle(cornerRadius: 10)
                             .fill(destColor)
@@ -1192,8 +1192,8 @@ struct BuildingLessonView: View {
                                 .font(.custom("EBGaramond-Regular", size: 16))
                         }
                         .foregroundStyle(.white)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
+                        .padding(.horizontal, Spacing.md)
+                        .padding(.vertical, Spacing.xs)
                         .background(
                             RoundedRectangle(cornerRadius: 10)
                                 .fill(RenaissanceColors.goldSuccess)
@@ -1204,13 +1204,13 @@ struct BuildingLessonView: View {
             }
 
         }
-        .padding(12)
+        .padding(Spacing.sm)
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: CornerRadius.md)
                 .fill(destColor.opacity(0.04))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: CornerRadius.md)
                 .stroke(destColor.opacity(0.15), lineWidth: 1)
         )
     }
@@ -1268,7 +1268,7 @@ struct BuildingLessonView: View {
                         .font(.custom("EBGaramond-Regular", size: 18, relativeTo: .body))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text("Students Also Ask")
-                        .font(.custom("EBGaramond-SemiBold", size: 18))
+                        .font(RenaissanceFont.button)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Spacer()
                     Image(systemName: curiosityExpanded ? "chevron.up" : "chevron.down")
@@ -1304,7 +1304,7 @@ struct BuildingLessonView: View {
                                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                             }
                             .padding(.horizontal, 14)
-                            .padding(.vertical, 12)
+                            .padding(.vertical, Spacing.sm)
                         }
                         .buttonStyle(.plain)
 
@@ -1316,24 +1316,24 @@ struct BuildingLessonView: View {
                         }
                     }
                     .background(
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: CornerRadius.md)
                             .fill(RenaissanceColors.renaissanceBlue.opacity(0.04))
                     )
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: CornerRadius.md)
                             .stroke(RenaissanceColors.renaissanceBlue.opacity(0.15), lineWidth: 1)
                     )
                 }
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
-        .padding(12)
+        .padding(Spacing.sm)
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: CornerRadius.md)
                 .fill(RenaissanceColors.renaissanceBlue.opacity(0.03))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: CornerRadius.md)
                 .stroke(RenaissanceColors.renaissanceBlue.opacity(0.12), lineWidth: 1)
         )
     }
@@ -1347,12 +1347,12 @@ struct BuildingLessonView: View {
                     advance()
                 } label: {
                     Text(currentIndex < pages.count - 1 ? "Continue" : "Finish Lesson")
-                        .font(.custom("EBGaramond-SemiBold", size: 18))
+                        .font(RenaissanceFont.button)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
                         .background(
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: CornerRadius.md)
                                 .fill(RenaissanceColors.ochre.opacity(0.2))
                         )
                         .borderAccent(radius: 12)
@@ -1399,7 +1399,7 @@ struct BuildingLessonView: View {
                                         .foregroundStyle(RenaissanceColors.sepiaInk)
                                 }
                                 Text(science.rawValue)
-                                    .font(.custom("EBGaramond-Regular", size: 11))
+                                    .font(RenaissanceFont.captionSmall)
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                         }
@@ -1430,7 +1430,7 @@ struct BuildingLessonView: View {
                                 .font(.custom("EBGaramond-SemiBold", size: 20))
                             if !alreadyRead {
                                 Text("+\(GameRewards.lessonReadFlorins)")
-                                    .font(.custom("EBGaramond-SemiBold", size: 18))
+                                    .font(RenaissanceFont.button)
                                     .foregroundStyle(RenaissanceColors.goldSuccess)
                                 Image(systemName: "dollarsign.circle.fill")
                                     .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
@@ -1439,7 +1439,7 @@ struct BuildingLessonView: View {
                         }
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
+                        .padding(.vertical, Spacing.md)
                         .background(
                             RoundedRectangle(cornerRadius: 14)
                                 .fill(RenaissanceColors.ochre.opacity(0.2))
@@ -1455,18 +1455,18 @@ struct BuildingLessonView: View {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundStyle(RenaissanceColors.sageGreen)
                             Text("Knowledge earned!")
-                                .font(.custom("EBGaramond-SemiBold", size: 18))
+                                .font(RenaissanceFont.button)
                                 .foregroundStyle(RenaissanceColors.sageGreen)
                         }
 
                         HStack(spacing: 4) {
                             ForEach(plot.building.sciences, id: \.self) { _ in
                                 Image(systemName: "seal.fill")
-                                    .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
+                                    .font(RenaissanceFont.dialogSubtitle)
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                             Text("\(plot.building.sciences.count) science badges")
-                                .font(.custom("EBGaramond-Regular", size: 13))
+                                .font(RenaissanceFont.caption)
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                         }
 
@@ -1478,13 +1478,13 @@ struct BuildingLessonView: View {
                             } label: {
                                 HStack(spacing: 6) {
                                     Image(systemName: "book.closed.fill")
-                                        .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
+                                        .font(RenaissanceFont.dialogSubtitle)
                                     Text("View in Notebook")
                                         .font(.custom("EBGaramond-Regular", size: 16))
                                 }
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 8)
+                                .padding(.horizontal, Spacing.md)
+                                .padding(.vertical, Spacing.xs)
                                 .background(
                                     RoundedRectangle(cornerRadius: 10)
                                         .fill(RenaissanceColors.renaissanceBlue.opacity(0.1))
@@ -1506,11 +1506,11 @@ struct BuildingLessonView: View {
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
                 .buttonStyle(.plain)
-                .padding(.top, 8)
+                .padding(.top, Spacing.xs)
 
                 Spacer(minLength: 20)
             }
-            .padding(.horizontal, 24)
+            .padding(.horizontal, Spacing.xl)
         }
     }
 
@@ -1596,11 +1596,11 @@ struct BuildingLessonView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 3))
             } else {
                 Image(systemName: science.sfSymbolName)
-                    .font(.custom("EBGaramond-Regular", size: 11, relativeTo: .caption))
+                    .font(RenaissanceFont.captionSmall)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
             Text(science.rawValue)
-                .font(.custom("EBGaramond-Regular", size: 11))
+                .font(RenaissanceFont.captionSmall)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
         }
         .padding(.horizontal, 6)
@@ -1621,12 +1621,12 @@ struct BuildingLessonView: View {
                     .foregroundColor(RenaissanceColors.sepiaInk)
             } else {
                 return result + Text(part.text)
-                    .font(.custom("EBGaramond-Regular", size: 17, relativeTo: .body))
+                    .font(RenaissanceFont.body)
                     .foregroundColor(RenaissanceColors.sepiaInk)
             }
         }
-        .tracking(0.15)
-        .lineSpacing(2)
+        .tracking(Tracking.body)
+        .lineSpacing(LineHeight.tight)
         .multilineTextAlignment(.leading)
     }
 
@@ -1747,9 +1747,9 @@ struct WrappingHStack: View {
                 } else {
                     // Plain text
                     Text(segment.text)
-                        .font(.custom("EBGaramond-Regular", size: 17, relativeTo: .body))
+                        .font(RenaissanceFont.body)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
-                        .lineSpacing(2)
+                        .lineSpacing(LineHeight.tight)
                 }
             }
         }
