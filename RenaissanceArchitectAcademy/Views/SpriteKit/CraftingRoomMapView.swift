@@ -135,7 +135,7 @@ struct CraftingRoomMapView: View {
 
         let newScene = CraftingRoomScene()
         newScene.size = CGSize(width: 3500, height: 2500)
-        newScene.scaleMode = .resizeFill
+        newScene.scaleMode = .aspectFill
         newScene.apprenticeIsBoy = onboardingState?.apprenticeGender == .boy || onboardingState == nil
 
         newScene.onPlayerPositionChanged = { position, isWalking in

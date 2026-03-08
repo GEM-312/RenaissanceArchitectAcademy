@@ -642,7 +642,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
         onPlayerStartedWalking?()
 
         let stationPos = stationNode.position
-        let targetPos = CGPoint(x: stationPos.x - 140, y: stationPos.y - 75)
+        let targetPos = CGPoint(x: stationPos.x - 250, y: stationPos.y - 75)
         let playerPos = playerNode.position
 
         isPlayerWalking = true
@@ -751,7 +751,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
         let moveAction = SKAction.move(to: stationPos, duration: 0.5)
         moveAction.timingMode = .easeInEaseOut
 
-        let zoomAction = SKAction.scale(to: 0.7, duration: 0.5)
+        let zoomAction = SKAction.scale(to: 0.55, duration: 0.5)
         zoomAction.timingMode = .easeInEaseOut
 
         cameraNode.run(SKAction.group([moveAction, zoomAction]), withKey: "cameraZoom")
@@ -874,11 +874,6 @@ class WorkshopScene: SKScene, ScrollZoomable {
     }
 
     // MARK: - Public Methods
-
-    /// Update stock display on a resource node
-    func updateStationStock(_ stationType: ResourceStationType, totalCount: Int) {
-        resourceNodes[stationType]?.updateStock(totalCount)
-    }
 
     /// Show collection burst on a station
     func showCollectionEffect(at stationType: ResourceStationType) {

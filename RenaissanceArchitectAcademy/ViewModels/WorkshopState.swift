@@ -52,25 +52,6 @@ class WorkshopState {
     /// Total jobs completed (used for tier progression)
     var totalJobsCompleted: Int = 0
 
-    // MARK: - Station Stocks
-
-    /// Stock per station — each station has finite materials that regenerate
-    var stationStocks: [ResourceStationType: [Material: Int]] = {
-        var stocks: [ResourceStationType: [Material: Int]] = [:]
-        stocks[.quarry]       = [.limestone: 8, .marbleDust: 4, .marble: 6]
-        stocks[.river]        = [.water: 12, .sand: 10]
-        stocks[.volcano]      = [.volcanicAsh: 6, .cinnabar: 3]
-        stocks[.clayPit]      = [.clay: 10, .redOchre: 4]
-        stocks[.mine]         = [.ironOre: 6, .lead: 5, .verdigrisGreen: 3]
-        stocks[.forest]       = [.timber: 12, .saffron: 2]
-        stocks[.market]       = [.silk: 4, .lead: 3, .marble: 3, .lapisBlue: 2]
-        return stocks
-    }()
-
-    /// Respawn interval (seconds) for depleted stations
-    let stationRespawnTime: TimeInterval = 15.0
-    private var respawnTimer: Timer?
-
     // MARK: - Tool System
 
     /// Check whether the player has the tool required for a station
@@ -98,7 +79,7 @@ class WorkshopState {
 
     // MARK: - Station Management
 
-    /// Collect one unit of a material from a station
+    /// Collect one unit of a material from a station (unlimited supply)
     @discardableResult
     func collectFromStation(_ station: ResourceStationType, material: Material) -> Bool {
         // Tool check (Market is exempt)
@@ -106,23 +87,10 @@ class WorkshopState {
             statusMessage = "You need \(required.icon) \(required.displayName) to collect here!"
             return false
         }
-        guard var stock = stationStocks[station],
-              let count = stock[material], count > 0 else {
-            statusMessage = "No \(material.rawValue) left here!"
-            return false
-        }
-        stock[material] = count - 1
-        stationStocks[station] = stock
         rawMaterials[material, default: 0] += 1
         statusMessage = "Collected \(material.rawValue)!"
         persistInventory()
         return true
-    }
-
-    /// Total stock for all materials at a station
-    func totalStockFor(station: ResourceStationType) -> Int {
-        guard let stock = stationStocks[station] else { return 0 }
-        return stock.values.reduce(0, +)
     }
 
     /// Educational hint text shown by the bird at each station
@@ -154,48 +122,6 @@ class WorkshopState {
         }
     }
 
-    // MARK: - Respawn Timer
-
-    func startRespawnTimer() {
-        respawnTimer = Timer.scheduledTimer(withTimeInterval: stationRespawnTime, repeats: true) { [weak self] _ in
-            Task { @MainActor in
-                self?.respawnStations()
-            }
-        }
-    }
-
-    func stopRespawnTimer() {
-        respawnTimer?.invalidate()
-        respawnTimer = nil
-    }
-
-    private func respawnStations() {
-        // Replenish depleted stations with 1 unit of each material
-        let defaults: [ResourceStationType: [Material: Int]] = [
-            .quarry:       [.limestone: 8, .marbleDust: 4, .marble: 6],
-            .river:        [.water: 12, .sand: 10],
-            .volcano:      [.volcanicAsh: 6, .cinnabar: 3],
-            .clayPit:      [.clay: 10, .redOchre: 4],
-            .mine:         [.ironOre: 6, .lead: 5, .verdigrisGreen: 3],
-            .forest:       [.timber: 12, .saffron: 2],
-            .market:       [.silk: 4, .lead: 3, .marble: 3, .lapisBlue: 2],
-        ]
-
-        for (station, maxStock) in defaults {
-            guard var currentStock = stationStocks[station] else { continue }
-            var anyDepleted = false
-            for (material, maxCount) in maxStock {
-                let current = currentStock[material] ?? 0
-                if current < maxCount {
-                    currentStock[material] = min(current + 1, maxCount)
-                    anyDepleted = true
-                }
-            }
-            if anyDepleted {
-                stationStocks[station] = currentStock
-            }
-        }
-    }
 
     // MARK: - Pigment Grinding (Mortar & Pestle)
 

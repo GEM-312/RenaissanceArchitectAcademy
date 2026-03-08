@@ -147,10 +147,10 @@ struct MascotDialogueView: View {
             ZStack {
                 // Layer 1: Glass background + aurora blobs (matches Forest/Knowledge cards)
                 RoundedRectangle(cornerRadius: 14)
-                    .fill(RenaissanceColors.parchmentLight.opacity(0.5))
+                    .fill(Color.clear)
                     .overlay(
                         RoundedRectangle(cornerRadius: 14)
-                            .fill(.ultraThinMaterial)
+                            .fill(RenaissanceColors.sepiaInk)
                     )
                     .overlay(
                         ZStack {

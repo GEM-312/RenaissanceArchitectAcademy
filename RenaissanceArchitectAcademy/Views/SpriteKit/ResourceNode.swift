@@ -71,8 +71,6 @@ class ResourceNode: SKNode {
     private var bodyShape: SKShapeNode!
     private var spriteNode: SKSpriteNode?
     private var labelNode: SKLabelNode!
-    private var countLabel: SKLabelNode?
-    private var isDepleted = false
 
     /// Size for station sprite images (points)
     private let spriteSize: CGFloat = 420
@@ -88,7 +86,6 @@ class ResourceNode: SKNode {
         setupVisual()
         setupLabel()
         if !stationType.isCraftingStation || stationType == .craftingRoom {
-            if stationType != .craftingRoom { setupCountLabel() }
             addPulseAnimation()
         }
     }
@@ -483,46 +480,15 @@ class ResourceNode: SKNode {
     // MARK: - Label
 
     private func setupLabel() {
-        labelNode = SKLabelNode(text: stationType.label)
-        labelNode.fontName = "Cinzel-Regular"
-        labelNode.fontSize = 36
-        labelNode.fontColor = strokeColor
-        labelNode.position = CGPoint(x: 0, y: -140)
-        labelNode.zPosition = 10
-        addChild(labelNode)
-    }
+        let pill = SKNode.makePillLabel(
+            text: stationType.label,
+            fontSize: 28,
+            position: CGPoint(x: 0, y: -140),
+            zPosition: 9
+        )
+        addChild(pill)
 
-    // MARK: - Count Label
-
-    private func setupCountLabel() {
-        countLabel = SKLabelNode(text: "")
-        countLabel?.fontName = "EBGaramond-Regular"
-        countLabel?.fontSize = 32
-        countLabel?.fontColor = PlatformColor(RenaissanceColors.warmBrown)
-        countLabel?.position = CGPoint(x: 0, y: -175)
-        countLabel?.zPosition = 10
-        if let label = countLabel {
-            addChild(label)
-        }
-    }
-
-    // MARK: - Stock Updates
-
-    func updateStock(_ totalCount: Int) {
-        countLabel?.text = totalCount > 0 ? "Stock: \(totalCount)" : "Depleted"
-
-        let newDepleted = totalCount <= 0
-        if newDepleted != isDepleted {
-            isDepleted = newDepleted
-            let target: SKNode = spriteNode ?? bodyShape
-            if isDepleted {
-                target.alpha = 0.4
-                target.removeAction(forKey: "pulse")
-            } else {
-                target.alpha = 1.0
-                addPulseAnimation()
-            }
-        }
+        labelNode = pill.children.compactMap { $0 as? SKLabelNode }.first ?? SKLabelNode()
     }
 
     // MARK: - Animations
@@ -549,7 +515,7 @@ class ResourceNode: SKNode {
 
         target.run(bounce) { [weak self] in
             guard let self = self else { return }
-            if !self.isDepleted && (!self.stationType.isCraftingStation || self.stationType == .craftingRoom) {
+            if !self.stationType.isCraftingStation || self.stationType == .craftingRoom {
                 self.addPulseAnimation()
             }
         }
@@ -575,5 +541,56 @@ class ResourceNode: SKNode {
 
             particle.run(SKAction.sequence([group, SKAction.removeFromParent()]))
         }
+    }
+}
+
+// MARK: - Pill Label Extension (shared across all SpriteKit scenes)
+
+extension SKNode {
+
+    /// Creates a pill-shaped label matching the Bottega Jobs button style:
+    /// parchment capsule background, warmBrown border, EBGaramond text, sepiaInk color.
+    static func makePillLabel(
+        text: String,
+        fontSize: CGFloat = 28,
+        position: CGPoint = .zero,
+        zPosition: CGFloat = 9
+    ) -> SKNode {
+        let container = SKNode()
+        container.position = position
+        container.zPosition = zPosition
+
+        // Measure text width to size the pill
+        let label = SKLabelNode(text: text)
+        label.fontName = "EBGaramond-Medium"
+        label.fontSize = fontSize
+        label.fontColor = PlatformColor(RenaissanceColors.sepiaInk)
+        label.verticalAlignmentMode = .center
+        label.horizontalAlignmentMode = .center
+        label.position = CGPoint(x: 0, y: -1)
+        label.zPosition = 2
+
+        let textWidth = label.frame.width
+        let hPad: CGFloat = fontSize * 0.7
+        let pillWidth = textWidth + hPad * 2
+        let pillHeight = fontSize * 1.6
+        let cornerRadius = pillHeight / 2
+
+        // Parchment capsule background
+        let pillPath = CGPath(roundedRect: CGRect(
+            x: -pillWidth / 2, y: -pillHeight / 2,
+            width: pillWidth, height: pillHeight
+        ), cornerWidth: cornerRadius, cornerHeight: cornerRadius, transform: nil)
+
+        let bg = SKShapeNode(path: pillPath)
+        bg.fillColor = PlatformColor(RenaissanceColors.parchment.opacity(0.92))
+        bg.strokeColor = PlatformColor(RenaissanceColors.warmBrown.opacity(0.3))
+        bg.lineWidth = 1.5
+        bg.zPosition = 1
+        container.addChild(bg)
+
+        container.addChild(label)
+
+        return container
     }
 }

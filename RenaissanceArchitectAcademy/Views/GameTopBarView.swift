@@ -26,22 +26,48 @@ struct GameTopBarView: View {
                                 .font(.custom("EBGaramond-SemiBold", size: 18))
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                                 .padding(.horizontal, 14)
-                                .padding(.vertical, 6)
-                                .glassButton(shape: Capsule())
+                                .padding(.vertical, Spacing.xs)
+                                .background(
+                                    Capsule()
+                                        .fill(RenaissanceColors.parchment.opacity(0.92))
+                                )
+                                .overlay(
+                                    Capsule()
+                                        .strokeBorder(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 0.5)
+                    .blur(radius: 0.2)
+                                )
+                                .padding(6)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 24)
+                                        .fill(RenaissanceColors.parchment.opacity(0.3))
+                                )
 
                             // Gold Florins badge
                             HStack(spacing: 4) {
                                 Image(systemName: "dollarsign.circle.fill")
-                                    .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
-                                    .foregroundStyle(RenaissanceColors.iconOchre)
+                                    .font(.caption)
+                                    .foregroundStyle(RenaissanceColors.warmBrown)
                                 Text("\(viewModel.goldFlorins)")
-                                    .font(.custom("EBGaramond-Regular", size: 15))
+                                    .font(.custom("EBGaramond-Medium", size: 15))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 6)
-                            .glassButton(shape: Capsule())
-                        }
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, Spacing.xs)
+                            .background(
+                                Capsule()
+                                    .fill(RenaissanceColors.parchment.opacity(0.92))
+                            )
+                            .overlay(
+                                Capsule()
+                                    .strokeBorder(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 0.5)
+                    .blur(radius: 0.2)
+                            )
+                            .padding(6)
+                            .background(
+                                RoundedRectangle(cornerRadius: 24)
+                                    .fill(RenaissanceColors.parchment.opacity(0.3))
+                            )
+                                                    }
                         .padding(.bottom, 4)
 
                         navColumn
@@ -119,21 +145,38 @@ struct GameTopBarView: View {
         }
     }
 
-    // MARK: - Nav Button — frosted glass card style
+    // MARK: - Nav Button — Bottega Jobs capsule style with glass backing
 
     private func navButton(icon: String, label: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            VStack(spacing: 2) {
+            HStack(spacing: 8) {
                 Image(systemName: icon)
-                    .font(.system(size: 20, weight: .medium))
-                    .foregroundStyle(RenaissanceColors.iconOchre.opacity(0.7))
+                    .font(.caption)
+                    .foregroundStyle(RenaissanceColors.warmBrown)
                 Text(label)
-                    .font(.custom("Cinzel-Regular", size: 9, relativeTo: .caption))
-                    .foregroundStyle(RenaissanceColors.iconOchre.opacity(0.8))
+                    .font(.custom("EBGaramond-Medium", size: 13))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 10))
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
             }
-            .frame(width: 60, height: 48)
-            .glassButton(shape: RoundedRectangle(cornerRadius: 5))
-        }
+            .padding(.horizontal, 14)
+            .padding(.vertical, Spacing.xs)
+            .background(
+                Capsule()
+                    .fill(RenaissanceColors.parchment.opacity(0.92))
+            )
+            .overlay(
+                Capsule()
+                    .strokeBorder(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 0.5)
+                    .blur(radius: 0.2)
+            )
+            .padding(6)
+            .background(
+                RoundedRectangle(cornerRadius: 24)
+                    .fill(RenaissanceColors.parchment.opacity(0.3))
+            )
+                    }
         .buttonStyle(.plain)
     }
 
@@ -165,7 +208,15 @@ struct GameTopBarView: View {
             }
             .padding(8)
             .frame(width: 160)
-            .glassButton(shape: RoundedRectangle(cornerRadius: 16))
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(RenaissanceColors.parchment.opacity(0.92))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 0.5)
+                    .blur(radius: 0.2)
+            )
         }
         .buttonStyle(.plain)
     }
@@ -245,6 +296,5 @@ extension View {
                 shape
                     .stroke(RenaissanceColors.iconOchre.opacity(0.3), lineWidth: 0.1)
             )
-            .shadow(color: RenaissanceColors.sepiaInk.opacity(0.3), radius: 3, y: 2)
-    }
+                }
 }

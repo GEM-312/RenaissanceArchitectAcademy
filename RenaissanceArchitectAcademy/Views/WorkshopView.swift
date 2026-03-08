@@ -41,8 +41,6 @@ struct WorkshopView: View {
                 .transition(.move(edge: .leading))
             }
         }
-        .onAppear { workshop.startRespawnTimer() }
-        .onDisappear { workshop.stopRespawnTimer() }
     }
 }
 

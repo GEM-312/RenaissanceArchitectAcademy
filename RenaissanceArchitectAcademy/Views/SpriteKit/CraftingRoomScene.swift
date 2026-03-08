@@ -212,14 +212,15 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
             addChild(sprite)
             furnitureNodes[station] = sprite
 
-            // Label below furniture
-            let label = SKLabelNode(text: station.displayName)
-            label.fontName = "Cinzel-Regular"
-            label.fontSize = 36
-            label.fontColor = PlatformColor(RenaissanceColors.sepiaInk)
-            label.position = CGPoint(x: 0, y: -(furnitureSpriteSize.height / 2) - 50)
-            label.zPosition = 11
-            sprite.addChild(label)
+            // Pill label below furniture
+            let labelY = -(furnitureSpriteSize.height / 2) - 40
+            let pill = SKNode.makePillLabel(
+                text: station.displayName,
+                fontSize: 28,
+                position: CGPoint(x: 0, y: labelY),
+                zPosition: 10
+            )
+            sprite.addChild(pill)
 
             // Subtle pulse animation
             let scaleUp = SKAction.scale(to: 1.03, duration: 1.5)

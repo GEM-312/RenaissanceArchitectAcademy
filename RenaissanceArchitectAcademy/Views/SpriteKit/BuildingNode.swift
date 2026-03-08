@@ -189,14 +189,8 @@ class BuildingNode: SKNode {
             visualContainer.addChild(lockLabel)
         }
 
-        // Full name label below the sign
-        labelNode = SKLabelNode(text: buildingName)
-        labelNode.fontName = "EBGaramond-Regular"
-        labelNode.fontSize = 11
-        labelNode.fontColor = PlatformColor(RenaissanceColors.sepiaInk.opacity(isLocked ? 0.35 : 0.6))
-        labelNode.position = CGPoint(x: 0, y: -62)
-        labelNode.zPosition = 10
-        addChild(labelNode)
+        // Building name already shown on signpost plank — no extra label needed
+        labelNode = SKLabelNode()
     }
 
     /// Short name that fits on the signpost plank

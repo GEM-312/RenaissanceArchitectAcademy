@@ -268,11 +268,11 @@ struct KnowledgeCardsOverlay: View {
         let color = card.color
         return ZStack {
             RoundedRectangle(cornerRadius: 14)
-                .fill(isCompleted ? RenaissanceColors.sageGreen.opacity(0.06) : RenaissanceColors.parchmentLight.opacity(0.5))
+                .fill(isCompleted ? RenaissanceColors.sageGreen.opacity(0.06) : Color.clear)
                 .overlay(
                     Group {
                         if !isCompleted {
-                            RoundedRectangle(cornerRadius: 14).fill(.ultraThinMaterial)
+                            RoundedRectangle(cornerRadius: 14).fill(RenaissanceColors.sepiaInk)
                         }
                     }
                 )

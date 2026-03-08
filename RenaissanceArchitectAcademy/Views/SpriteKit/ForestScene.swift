@@ -434,23 +434,15 @@ class ForestScene: SKScene, ScrollZoomable {
             scaleDown.timingMode = .easeInEaseOut
             glow.run(SKAction.repeatForever(SKAction.sequence([scaleUp, scaleDown])))
 
-            // Tree name label
-            let label = SKLabelNode(text: poi.name)
-            label.fontName = "Cinzel-Regular"
-            label.fontSize = 15
-            label.fontColor = PlatformColor(RenaissanceColors.ochre)
-            label.position = CGPoint(x: 0, y: -55)
-            label.zPosition = 11
-            container.addChild(label)
-
-            // Italian name
-            let italianLabel = SKLabelNode(text: poi.italianName)
-            italianLabel.fontName = "EBGaramond-Regular"
-            italianLabel.fontSize = 13
-            italianLabel.fontColor = PlatformColor(RenaissanceColors.warmBrown)
-            italianLabel.position = CGPoint(x: 0, y: -72)
-            italianLabel.zPosition = 11
-            container.addChild(italianLabel)
+            // Pill label with tree name + italian name
+            let displayText = "\(poi.name) · \(poi.italianName)"
+            let pill = SKNode.makePillLabel(
+                text: displayText,
+                fontSize: 13,
+                position: CGPoint(x: 0, y: -60),
+                zPosition: 10
+            )
+            container.addChild(pill)
 
             addChild(container)
             poiNodes.append(container)

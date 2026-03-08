@@ -16,15 +16,15 @@ enum ForestCardCategory: String, CaseIterable, Identifiable {
         case .architecture: return "building.columns.fill"
         case .furniture: return "chair.lounge.fill"
         case .modernUse: return "hammer.fill"
-        case .biology: return "leaf.circle.fill"
+        case .biology: return "leaf.fill"
         }
     }
 
     var color: Color {
         switch self {
         case .architecture: return RenaissanceColors.ochre
-        case .furniture: return RenaissanceColors.ochre
-        case .modernUse: return RenaissanceColors.sageGreen
+        case .furniture: return RenaissanceColors.terracotta
+        case .modernUse: return RenaissanceColors.renaissanceBlue
         case .biology: return RenaissanceColors.sageGreen
         }
     }

@@ -395,13 +395,13 @@ struct ForestMapView: View {
                 .fill(
                     isCompleted
                     ? RenaissanceColors.sageGreen.opacity(0.06)
-                    : RenaissanceColors.parchmentLight.opacity(0.5)
+                    : Color.clear
                 )
                 .overlay(
                     Group {
                         if !isCompleted {
                             RoundedRectangle(cornerRadius: 14)
-                                .fill(.ultraThinMaterial)
+                                .fill(RenaissanceColors.sepiaInk)
                         }
                     }
                 )
@@ -1330,7 +1330,7 @@ struct ForestMapView: View {
 
         let newScene = ForestScene()
         newScene.size = CGSize(width: 3500, height: 2500)
-        newScene.scaleMode = .resizeFill
+        newScene.scaleMode = .aspectFill
         newScene.apprenticeIsBoy = onboardingState?.apprenticeGender == .boy || onboardingState == nil
 
         newScene.onPlayerPositionChanged = { position, isWalking in

@@ -84,15 +84,8 @@ struct WorkshopMapView: View {
                                 onEnterInterior()
                             }
                         } else {
-                            // Normal flow: show hint bubble with bird, then collection
-                            withAnimation(.spring(response: 0.3)) {
-                                showHintBubble = true
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-                                withAnimation(.spring(response: 0.3)) {
-                                    showCollectionOverlay = true
-                                }
-                            }
+                            // Single overlay: tool requirement OR hint+collection
+                            showSingleStationOverlay()
                         }
                     }
                     .transition(.opacity)
@@ -162,15 +155,8 @@ struct WorkshopMapView: View {
                                 showStationKnowledgeCards = false
                                 stationKnowledgeCards = []
                             }
-                            // After dismissing cards, show normal collection overlay
-                            withAnimation(.spring(response: 0.3)) {
-                                showHintBubble = true
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-                                withAnimation(.spring(response: 0.3)) {
-                                    showCollectionOverlay = true
-                                }
-                            }
+                            // After dismissing cards, show single station overlay
+                            showSingleStationOverlay()
                         }
                     )
                     .transition(.opacity)
@@ -192,6 +178,7 @@ struct WorkshopMapView: View {
                 if let job = workshop.currentJob,
                    !workshop.showEarnFlorinsOverlay,
                    !showCollectionOverlay,
+                   !showHintBubble,
                    !showWorkbenchOverlay,
                    !showFurnaceOverlay,
                    !workshop.showEducationalPopup,
@@ -205,6 +192,7 @@ struct WorkshopMapView: View {
                    let assignment = workshop.currentAssignment,
                    !workshop.showEarnFlorinsOverlay,
                    !showCollectionOverlay,
+                   !showHintBubble,
                    !showWorkbenchOverlay,
                    !showFurnaceOverlay,
                    !workshop.showEducationalPopup,
@@ -246,7 +234,7 @@ struct WorkshopMapView: View {
 
         let newScene = WorkshopScene()
         newScene.size = CGSize(width: 3500, height: 2500)
-        newScene.scaleMode = .resizeFill
+        newScene.scaleMode = .aspectFill
         newScene.apprenticeIsBoy = onboardingState?.apprenticeGender == .boy || onboardingState == nil
 
         // Player position updates
@@ -300,21 +288,9 @@ struct WorkshopMapView: View {
                         return
                     }
                 }
-                // No knowledge cards — show normal hint bubble + collection overlay
-                withAnimation(.spring(response: 0.3)) {
-                    showHintBubble = true
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-                    withAnimation(.spring(response: 0.3)) {
-                        showCollectionOverlay = true
-                    }
-                }
+                // No knowledge cards — show single station overlay
+                showSingleStationOverlay()
             }
-        }
-
-        // Sync initial stock displays
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            syncAllStationStocks(in: newScene)
         }
 
         // @State cannot be set during body — defer to next runloop
@@ -322,12 +298,6 @@ struct WorkshopMapView: View {
         return newScene
     }
 
-    private func syncAllStationStocks(in scene: WorkshopScene) {
-        for stationType in ResourceStationType.allCases where !stationType.isCraftingStation {
-            let total = workshop.totalStockFor(station: stationType)
-            scene.updateStationStock(stationType, totalCount: total)
-        }
-    }
 
     private func dismissAllOverlays() {
         showHintBubble = false
@@ -335,6 +305,22 @@ struct WorkshopMapView: View {
         showWorkbenchOverlay = false
         showFurnaceOverlay = false
         showStationLesson = false
+    }
+
+    /// Show a single overlay based on tool ownership:
+    /// - No tool → tool requirement dialog (collectionOverlay)
+    /// - Has tool → enhanced hint bubble with collection buttons built in
+    private func showSingleStationOverlay() {
+        guard let station = activeStation else { return }
+        if workshop.hasTool(for: station) {
+            withAnimation(.spring(response: 0.3)) {
+                showHintBubble = true
+            }
+        } else {
+            withAnimation(.spring(response: 0.3)) {
+                showCollectionOverlay = true
+            }
+        }
     }
 
     // MARK: - Layer 3: Navigation Panel + Inventory
@@ -480,122 +466,102 @@ struct WorkshopMapView: View {
     // MARK: - Layer 4: Hint Bubble
 
     private func hintBubbleOverlay(for station: ResourceStationType) -> some View {
-        VStack {
-            VStack(spacing: 8) {
+        HStack {
+            Spacer()
+
+            VStack(spacing: 10) {
+                // Bird + station name
                 HStack(spacing: 8) {
-                    BirdCharacter()
-                        .frame(width: 80, height: 80)
+                    BirdCharacter(isSitting: true)
+                        .frame(width: 44, height: 44)
 
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(station.label)
-                            .font(RenaissanceFont.button)
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
-
-                        Text(workshop.hintFor(station: station))
-                            .font(RenaissanceFont.dialogSubtitle)
-                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
+                    Text(station.label)
+                        .font(RenaissanceFont.button)
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
+
+                // Collection buttons built into the hint bubble
+                collectionMaterialsView(for: station)
             }
             .padding(Spacing.md)
-            .frame(maxWidth: 360)
+            .frame(width: 280)
             .background(
-                RoundedRectangle(cornerRadius: CornerRadius.md)
+                RoundedRectangle(cornerRadius: CornerRadius.lg)
                     .fill(RenaissanceColors.parchment.opacity(0.95))
             )
-            .padding(.top, 80)
-
-            Spacer()
-        }
-        .onTapGesture {
-            withAnimation(.easeOut(duration: 0.2)) {
-                showHintBubble = false
-            }
+            .padding(.trailing, Spacing.md)
         }
     }
 
     // MARK: - Layer 5: Collection Overlay
 
     private func collectionOverlay(for station: ResourceStationType) -> some View {
-        VStack {
+        HStack {
             Spacer()
 
-            VStack(spacing: 12) {
-                // Tool check — show "need tool" if player doesn't have the required tool
-                if let requiredTool = Tool.requiredFor(station: station),
-                   !workshop.hasTool(for: station) {
+            VStack(spacing: 10) {
+                // Only shown when player lacks the required tool
+                if let requiredTool = Tool.requiredFor(station: station) {
                     toolRequirementView(tool: requiredTool, station: station)
                 } else {
+                    // Fallback (station has no tool requirement) — show collection
                     collectionMaterialsView(for: station)
                 }
             }
-            .padding(Spacing.lg)
+            .padding(Spacing.md)
+            .frame(width: 280)
             .background(
                 RoundedRectangle(cornerRadius: CornerRadius.lg)
                     .fill(RenaissanceColors.parchment.opacity(0.95))
             )
-            .padding(.horizontal, Spacing.xl)
-            .padding(.bottom, 60)
+            .padding(.trailing, Spacing.md)
         }
     }
 
-    /// Shows when player lacks the tool for a station — bird offers choices to go buy/craft
+    /// Shows when player lacks the tool for a station — compact right-side card
     private func toolRequirementView(tool: Tool, station: ResourceStationType) -> some View {
-        VStack(spacing: 14) {
-            Text(tool.icon)
-                .font(.system(size: 48))
-
-            Text("You need \(tool.displayName)")
-                .font(.custom("Cinzel-Bold", size: 18))
-                .foregroundStyle(RenaissanceColors.sepiaInk)
-
-            Text(tool.italianName)
-                .font(RenaissanceFont.italicSmall)
-                .foregroundStyle(RenaissanceColors.warmBrown)
+        VStack(spacing: 10) {
+            HStack(spacing: 8) {
+                Text(tool.icon)
+                    .font(.system(size: 32))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("You need \(tool.displayName)")
+                        .font(.custom("Cinzel-Bold", size: 14))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                    Text(tool.italianName)
+                        .font(RenaissanceFont.italicSmall)
+                        .foregroundStyle(RenaissanceColors.warmBrown)
+                }
+            }
 
             Text(tool.educationalText)
-                .font(RenaissanceFont.caption)
+                .font(RenaissanceFont.captionSmall)
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                 .multilineTextAlignment(.center)
-                .lineLimit(3)
-
-            HStack(alignment: .top, spacing: 10) {
-                BirdCharacter(isSitting: true)
-                    .frame(width: 40, height: 40)
-                Text("Buy tools at the Market, or craft them at the Workbench for less!")
-                    .font(RenaissanceFont.caption)
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.75))
-            }
-            .padding(10)
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(RenaissanceColors.ochre.opacity(0.06))
-            )
+                .lineLimit(2)
 
             // Choice buttons — walk player to Market or Crafting Room
-            HStack(spacing: 12) {
+            VStack(spacing: 8) {
                 Button {
                     withAnimation(.spring(response: 0.3)) {
                         showCollectionOverlay = false
                         showHintBubble = false
                         activeStation = nil
                     }
-                    // Delay walk until overlay dismiss + zoomCameraOut settle
                     let capturedScene = sceneHolder.scene
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
                         capturedScene?.walkToStation(.market)
                     }
                 } label: {
-                    HStack(spacing: 6) {
+                    HStack(spacing: 4) {
                         Text("🏪")
-                            .font(.body)
+                            .font(.caption)
                         Text("Go to Market")
                             .font(RenaissanceFont.buttonSmall)
                     }
                     .foregroundStyle(.white)
-                    .padding(.horizontal, Spacing.md)
-                    .padding(.vertical, 10)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
                     .background(
                         RoundedRectangle(cornerRadius: CornerRadius.sm)
                             .fill(RenaissanceColors.ochre)
@@ -608,72 +574,66 @@ struct WorkshopMapView: View {
                         showHintBubble = false
                         activeStation = nil
                     }
-                    // Delay walk until overlay dismiss + zoomCameraOut settle
                     let capturedScene2 = sceneHolder.scene
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
                         capturedScene2?.walkToStation(.craftingRoom)
                     }
                 } label: {
-                    HStack(spacing: 6) {
+                    HStack(spacing: 4) {
                         Text("🔨")
-                            .font(.body)
-                        Text("Go to Crafting Room")
+                            .font(.caption)
+                        Text("Craft at Workbench")
                             .font(RenaissanceFont.buttonSmall)
                     }
                     .foregroundStyle(.white)
-                    .padding(.horizontal, Spacing.md)
-                    .padding(.vertical, 10)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
                     .background(
                         RoundedRectangle(cornerRadius: CornerRadius.sm)
                             .fill(RenaissanceColors.warmBrown)
                     )
                 }
-            }
 
-            Button {
-                withAnimation(.spring(response: 0.3)) {
-                    showCollectionOverlay = false
-                    showHintBubble = false
-                    activeStation = nil
+                Button {
+                    withAnimation(.spring(response: 0.3)) {
+                        showCollectionOverlay = false
+                        showHintBubble = false
+                        activeStation = nil
+                    }
+                } label: {
+                    Text("Close")
+                        .font(RenaissanceFont.captionSmall)
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
                 }
-            } label: {
-                Text("Close")
-                    .font(RenaissanceFont.caption)
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
             }
         }
     }
 
     /// The normal material collection buttons (shown when player has the tool)
     private func collectionMaterialsView(for station: ResourceStationType) -> some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 8) {
             // Market gets a segmented control: Materials | Tools
             if station == .market {
                 marketOverlayContent
             } else {
-                Text("Collect from \(station.label)")
-                    .font(RenaissanceFont.button)
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
-
                 // Florins display
                 if let vm = viewModel {
                     HStack(spacing: 4) {
                         Image(systemName: "dollarsign.circle.fill")
-                            .font(RenaissanceFont.dialogSubtitle)
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
-                        Text("\(vm.goldFlorins) florins")
-                            .font(RenaissanceFont.bodySmall)
+                            .font(.caption)
+                            .foregroundStyle(RenaissanceColors.ochre)
+                        Text("\(vm.goldFlorins)")
+                            .font(.custom("EBGaramond-Regular", size: 13))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
-                    .padding(.bottom, 4)
                 }
 
-                HStack(spacing: 16) {
+                // Material buttons — use flexible grid for narrow card
+                let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: min(station.materials.count, 3))
+                LazyVGrid(columns: columns, spacing: 6) {
                     ForEach(station.materials, id: \.self) { material in
-                        let stock = workshop.stationStocks[station]?[material] ?? 0
                         let canAfford = (viewModel?.goldFlorins ?? 0) >= material.cost
                         Button {
-                            // Check florins before collecting
                             guard let vm = viewModel else { return }
                             guard vm.goldFlorins >= material.cost else {
                                 withAnimation(.spring(response: 0.3)) {
@@ -687,10 +647,7 @@ struct WorkshopMapView: View {
                                 vm.goldFlorins -= material.cost
                                 sceneHolder.scene?.showCollectionEffect(at: station)
                                 sceneHolder.scene?.playPlayerCelebrateAnimation()
-                                let total = workshop.totalStockFor(station: station)
-                                sceneHolder.scene?.updateStationStock(station, totalCount: total)
 
-                                // Check job completion for collection-only jobs
                                 if workshop.currentJob != nil && workshop.currentJob?.craftTarget == nil {
                                     if workshop.checkJobCompletion() {
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -704,36 +661,34 @@ struct WorkshopMapView: View {
                                 }
                             }
                         } label: {
-                            VStack(spacing: 4) {
+                            VStack(spacing: 2) {
                                 Text(material.icon)
-                                    .font(.title2)
+                                    .font(.body)
                                 Text(material.rawValue)
-                                    .font(.custom("EBGaramond-Regular", size: 12))
+                                    .font(.custom("EBGaramond-Regular", size: 10))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                                     .lineLimit(1)
-                                HStack(spacing: 2) {
-                                    Text("×\(stock)")
-                                        .font(.custom("EBGaramond-Regular", size: 12))
-                                        .foregroundStyle(stock > 0 ? RenaissanceColors.sageGreen : RenaissanceColors.sepiaInk)
+                                    .minimumScaleFactor(0.8)
+                                HStack(spacing: 1) {
                                     Image(systemName: "dollarsign.circle.fill")
-                                        .font(.custom("EBGaramond-Regular", size: 9, relativeTo: .caption2))
+                                        .font(.system(size: 8))
                                         .foregroundStyle(RenaissanceColors.sepiaInk)
                                     Text("\(material.cost)")
-                                        .font(RenaissanceFont.captionSmall)
+                                        .font(.custom("EBGaramond-Regular", size: 10))
                                         .foregroundStyle(canAfford ? RenaissanceColors.sepiaInk : RenaissanceColors.errorRed)
                                 }
                             }
-                            .padding(10)
+                            .padding(6)
+                            .frame(maxWidth: .infinity)
                             .background(
                                 RoundedRectangle(cornerRadius: CornerRadius.sm)
-                                    .fill(stock > 0 && canAfford ? RenaissanceColors.parchment : RenaissanceColors.stoneGray.opacity(0.15))
+                                    .fill(canAfford ? RenaissanceColors.parchment : RenaissanceColors.stoneGray.opacity(0.15))
                             )
                             .overlay(
                                 RoundedRectangle(cornerRadius: CornerRadius.sm)
-                                    .strokeBorder(stock > 0 && canAfford ? RenaissanceColors.renaissanceBlue : RenaissanceColors.stoneGray.opacity(0.3), lineWidth: 1)
+                                    .strokeBorder(canAfford ? RenaissanceColors.renaissanceBlue : RenaissanceColors.stoneGray.opacity(0.3), lineWidth: 1)
                             )
                         }
-                        .disabled(stock <= 0)
                     }
                 }
 
@@ -744,9 +699,8 @@ struct WorkshopMapView: View {
                         activeStation = nil
                     }
                 }
-                .font(RenaissanceFont.bodySmall)
-                .foregroundStyle(RenaissanceColors.sepiaInk)
-                .padding(.top, 4)
+                .font(RenaissanceFont.captionSmall)
+                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
             }
         }
     }
@@ -761,19 +715,15 @@ struct WorkshopMapView: View {
     }
 
     private var marketOverlayContent: some View {
-        VStack(spacing: 12) {
-            Text("Market")
-                .font(RenaissanceFont.button)
-                .foregroundStyle(RenaissanceColors.sepiaInk)
-
+        VStack(spacing: 8) {
             // Florins display
             if let vm = viewModel {
                 HStack(spacing: 4) {
                     Image(systemName: "dollarsign.circle.fill")
-                        .font(RenaissanceFont.dialogSubtitle)
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
-                    Text("\(vm.goldFlorins) florins")
-                        .font(RenaissanceFont.bodySmall)
+                        .font(.caption)
+                        .foregroundStyle(RenaissanceColors.ochre)
+                    Text("\(vm.goldFlorins)")
+                        .font(.custom("EBGaramond-Regular", size: 13))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
             }
@@ -785,10 +735,10 @@ struct WorkshopMapView: View {
                         withAnimation(.easeInOut(duration: 0.2)) { marketTab = tab }
                     } label: {
                         Text(tab.rawValue)
-                            .font(.custom("EBGaramond-SemiBold", size: 14))
+                            .font(.custom("EBGaramond-SemiBold", size: 12))
                             .foregroundStyle(marketTab == tab ? .white : RenaissanceColors.sepiaInk)
-                            .padding(.horizontal, Spacing.lg)
-                            .padding(.vertical, Spacing.xs)
+                            .padding(.horizontal, Spacing.md)
+                            .padding(.vertical, 4)
                             .background(
                                 RoundedRectangle(cornerRadius: CornerRadius.sm)
                                     .fill(marketTab == tab ? RenaissanceColors.ochre : Color.clear)
@@ -796,9 +746,9 @@ struct WorkshopMapView: View {
                     }
                 }
             }
-            .padding(3)
+            .padding(2)
             .background(
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: 8)
                     .fill(RenaissanceColors.stoneGray.opacity(0.12))
             )
 
@@ -815,16 +765,14 @@ struct WorkshopMapView: View {
                     activeStation = nil
                 }
             }
-            .font(RenaissanceFont.bodySmall)
-            .foregroundStyle(RenaissanceColors.sepiaInk)
-            .padding(.top, 4)
+            .font(RenaissanceFont.captionSmall)
+            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
         }
     }
 
     private var marketMaterialsGrid: some View {
-        HStack(spacing: 16) {
+        LazyVGrid(columns: [GridItem(.flexible(), spacing: 6), GridItem(.flexible(), spacing: 6)], spacing: 6) {
             ForEach(ResourceStationType.market.materials, id: \.self) { material in
-                let stock = workshop.stationStocks[.market]?[material] ?? 0
                 let canAfford = (viewModel?.goldFlorins ?? 0) >= material.cost
                 Button {
                     guard let vm = viewModel else { return }
@@ -840,40 +788,36 @@ struct WorkshopMapView: View {
                         vm.goldFlorins -= material.cost
                         sceneHolder.scene?.showCollectionEffect(at: .market)
                         sceneHolder.scene?.playPlayerCelebrateAnimation()
-                        let total = workshop.totalStockFor(station: .market)
-                        sceneHolder.scene?.updateStationStock(.market, totalCount: total)
                     }
                 } label: {
-                    VStack(spacing: 4) {
+                    VStack(spacing: 2) {
                         Text(material.icon)
-                            .font(.title2)
+                            .font(.body)
                         Text(material.rawValue)
-                            .font(.custom("EBGaramond-Regular", size: 12))
+                            .font(.custom("EBGaramond-Regular", size: 10))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                             .lineLimit(1)
-                        HStack(spacing: 2) {
-                            Text("\u{00D7}\(stock)")
-                                .font(.custom("EBGaramond-Regular", size: 12))
-                                .foregroundStyle(stock > 0 ? RenaissanceColors.sageGreen : RenaissanceColors.sepiaInk)
+                            .minimumScaleFactor(0.8)
+                        HStack(spacing: 1) {
                             Image(systemName: "dollarsign.circle.fill")
-                                .font(.custom("EBGaramond-Regular", size: 9, relativeTo: .caption2))
+                                .font(.system(size: 8))
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                             Text("\(material.cost)")
-                                .font(RenaissanceFont.captionSmall)
+                                .font(.custom("EBGaramond-Regular", size: 10))
                                 .foregroundStyle(canAfford ? RenaissanceColors.sepiaInk : RenaissanceColors.errorRed)
                         }
                     }
-                    .padding(10)
+                    .padding(6)
+                    .frame(maxWidth: .infinity)
                     .background(
                         RoundedRectangle(cornerRadius: CornerRadius.sm)
-                            .fill(stock > 0 && canAfford ? RenaissanceColors.parchment : RenaissanceColors.stoneGray.opacity(0.15))
+                            .fill(canAfford ? RenaissanceColors.parchment : RenaissanceColors.stoneGray.opacity(0.15))
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: CornerRadius.sm)
-                            .strokeBorder(stock > 0 && canAfford ? RenaissanceColors.renaissanceBlue : RenaissanceColors.stoneGray.opacity(0.3), lineWidth: 1)
+                            .strokeBorder(canAfford ? RenaissanceColors.renaissanceBlue : RenaissanceColors.stoneGray.opacity(0.3), lineWidth: 1)
                     )
                 }
-                .disabled(stock <= 0)
             }
         }
     }
@@ -1402,7 +1346,13 @@ struct WorkshopMapView: View {
                     )
                     .overlay(
                         Capsule()
-                            .strokeBorder(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 1)
+                            .strokeBorder(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 0.5)
+                    .blur(radius: 0.2)
+                    )
+                    .padding(6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 24)
+                            .fill(RenaissanceColors.parchment.opacity(0.3))
                     )
                 }
                 .padding(.trailing, 16)
@@ -1506,7 +1456,8 @@ struct WorkshopMapView: View {
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: CornerRadius.md)
-                        .strokeBorder(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 1)
+                        .strokeBorder(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 0.5)
+                    .blur(radius: 0.2)
                 )
                 .padding(.trailing, 16)
             }
