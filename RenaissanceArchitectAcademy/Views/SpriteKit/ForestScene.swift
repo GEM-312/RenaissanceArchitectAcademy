@@ -133,6 +133,9 @@ class ForestScene: SKScene, ScrollZoomable {
         /* 21 */ CGPoint(x: 2400, y: 1800),  // NE upper
         /* 22 */ CGPoint(x: 1100, y: 650),   // SW lower
         /* 23 */ CGPoint(x: 2400, y: 650),   // SE lower
+
+        // --- Home: avatar box (bottom-left corner) ---
+        /* 24 */ CGPoint(x: 200,  y: 200),   // avatar box spawn
     ]
 
     /// Bidirectional edges: each pair [a, b] means a↔b
@@ -158,6 +161,9 @@ class ForestScene: SKScene, ScrollZoomable {
         // Diagonal shortcuts
         [20, 4], [21, 8], [22, 10], [23, 13],
         [1, 4], [1, 10], [2, 7], [2, 12],
+
+        // Avatar box (home) connections
+        [24, 22], [24, 9], [24, 17],
     ]
 
     /// Which waypoints each POI connects to (nearest trail junctions)
@@ -239,6 +245,11 @@ class ForestScene: SKScene, ScrollZoomable {
     var onPOISelected: ((Int) -> Void)?
     /// Called when the player discovers a truffle while exploring
     var onTruffleFound: ((TruffleFind) -> Void)?
+    /// Called when player starts walking (dismiss overlays)
+    var onPlayerStartedWalking: (() -> Void)?
+
+    /// Pending POI walk — stored when player taps while still in the avatar box
+    private var pendingPOIWalk: SKNode?
 
     // MARK: - Scene Setup
 
@@ -594,11 +605,25 @@ class ForestScene: SKScene, ScrollZoomable {
 
     private func setupPlayer() {
         playerNode = PlayerNode(isBoy: apprenticeIsBoy)
-        // Spawn at north entry (coming from workshop)
-        playerNode.position = CGPoint(x: 1750, y: 2100)
         playerNode.zPosition = 50
         addChild(playerNode)
+        // Start at the avatar box waypoint (bottom-left of map)
+        playerNode.position = waypoints[24]
         updatePlayerScreenPosition()
+    }
+
+    /// Move the player back to the avatar box waypoint (bottom-left of map)
+    func positionPlayerAtAvatarBox() {
+        playerNode.position = waypoints[24]
+        updatePlayerScreenPosition()
+    }
+
+    func showPlayer() {
+        // Player is already visible at box position
+    }
+
+    func hidePlayer() {
+        positionPlayerAtAvatarBox()
     }
 
     // MARK: - Position Tracking
@@ -718,6 +743,7 @@ class ForestScene: SKScene, ScrollZoomable {
         let tappedNodes = nodes(at: location)
         for node in tappedNodes {
             if let poiNode = findPOIAncestor(node) {
+                onPlayerStartedWalking?()
                 walkPlayerToPOI(poiNode)
                 return
             }
@@ -891,15 +917,19 @@ class ForestScene: SKScene, ScrollZoomable {
               let idx = Int(name.replacingOccurrences(of: "poi_", with: "")),
               idx < pointsOfInterest.count else { return }
 
-        let targetPos = CGPoint(x: poiNode.position.x - 60, y: poiNode.position.y - 50)
+        let targetPos = CGPoint(x: poiNode.position.x - 200, y: poiNode.position.y - 65)
         let playerPos = playerNode.position
 
         let directDistance = hypot(targetPos.x - playerPos.x, targetPos.y - playerPos.y)
 
         let treeName = pointsOfInterest[idx].name
 
-        // Completion: show POI overlay, then maybe discover a truffle
+        // Completion: face the tree, then show POI overlay + maybe discover a truffle
+        let poiPosition = poiNode.position
         let onArrival: () -> Void = { [weak self] in
+            // Face toward the tree
+            let faceRight = poiPosition.x > (self?.playerNode.position.x ?? 0)
+            self?.playerNode.setFacingDirection(faceRight)
             self?.playerNode.playCollectAnimation {
                 self?.onPOISelected?(idx)
                 // Roll for truffle discovery near this tree (delayed so POI overlay shows first)

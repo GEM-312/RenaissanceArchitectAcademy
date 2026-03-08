@@ -40,6 +40,9 @@ struct WorkshopMapView: View {
     @State private var showStationKnowledgeCards = false
     @State private var stationKnowledgeCards: [KnowledgeCard] = []
 
+    // Avatar box: portrait visible only when player hasn't moved yet
+    @State private var avatarInBox = true
+
     // Job system states
     @State private var jobBoardChoices: [WorkshopJob] = []
     @State private var completedJob: WorkshopJob?
@@ -119,17 +122,7 @@ struct WorkshopMapView: View {
                     .allowsHitTesting(false)
                 }
 
-                // Layer 4: Hint bubble (Splash shows text at resource nodes)
-                if showHintBubble, let station = activeStation {
-                    hintBubbleOverlay(for: station)
-                        .transition(.opacity.combined(with: .scale(scale: 0.9)))
-                }
-
-                // Layer 5: Collection overlay (tap to collect materials)
-                if showCollectionOverlay, let station = activeStation {
-                    collectionOverlay(for: station)
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
-                }
+                // (dialog is now inside GameTopBarView's avatar card)
 
                 // Layer 6: Workbench overlay (mixing slots + recipe)
                 if showWorkbenchOverlay {
@@ -223,6 +216,15 @@ struct WorkshopMapView: View {
             if oldValue != nil && newValue == nil {
                 // Station overlay dismissed — zoom camera back out
                 sceneHolder.scene?.zoomCameraOut()
+                // Player walks back to box position
+                sceneHolder.scene?.hidePlayer()
+                avatarInBox = true
+            }
+        }
+        .onChange(of: playerIsWalking) { _, isWalking in
+            if isWalking && avatarInBox {
+                // Hide the SwiftUI sprite image — SpriteKit player walks from same spot
+                avatarInBox = false
             }
         }
     }
@@ -343,7 +345,10 @@ struct WorkshopMapView: View {
                     },
                     onReturnToLesson: returnToLessonPlotId != nil ? {
                         onNavigate?(.cityMap)
-                    } : nil
+                    } : nil,
+                    currentDestination: .workshop,
+                    hideAvatarImage: !avatarInBox,
+                    avatarDialogContent: workshopDialogContent
                 )
             } else {
                 // Fallback if no viewModel
@@ -465,57 +470,141 @@ struct WorkshopMapView: View {
 
     // MARK: - Layer 4: Hint Bubble
 
-    private func hintBubbleOverlay(for station: ResourceStationType) -> some View {
-        HStack {
-            Spacer()
+    // MARK: - Workshop Dialog Content (passed into GameTopBarView avatar card)
 
-            VStack(spacing: 10) {
-                // Bird + station name
-                HStack(spacing: 8) {
-                    BirdCharacter(isSitting: true)
-                        .frame(width: 44, height: 44)
-
-                    Text(station.label)
-                        .font(RenaissanceFont.button)
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
-                }
-
-                // Collection buttons built into the hint bubble
-                collectionMaterialsView(for: station)
-            }
-            .padding(Spacing.md)
-            .frame(width: 280)
-            .background(
-                RoundedRectangle(cornerRadius: CornerRadius.lg)
-                    .fill(RenaissanceColors.parchment.opacity(0.95))
-            )
-            .padding(.trailing, Spacing.md)
+    /// Returns dialog content to embed in the avatar card, or nil when no dialog
+    private var workshopDialogContent: AnyView? {
+        guard (showHintBubble || showCollectionOverlay), let station = activeStation else {
+            return nil
         }
+        return AnyView(
+            VStack(alignment: .leading, spacing: 6) {
+                if showCollectionOverlay {
+                    if let requiredTool = Tool.requiredFor(station: station),
+                       !workshop.hasTool(for: station) {
+                        toolRequirementCompact(tool: requiredTool, station: station)
+                    } else {
+                        collectionMaterialsView(for: station)
+                    }
+                } else if showHintBubble {
+                    HStack(spacing: 8) {
+                        BirdCharacter(isSitting: true)
+                            .frame(width: 32, height: 32)
+                        Text(station.label)
+                            .font(.custom("EBGaramond-SemiBold", size: 16))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                    }
+                    collectionMaterialsView(for: station)
+                }
+            }
+        )
+    }
+
+    /// Compact tool requirement for the integrated avatar card
+    private func toolRequirementCompact(tool: Tool, station: ResourceStationType) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Text(tool.icon)
+                    .font(.system(size: 28))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Need \(tool.displayName)")
+                        .font(.custom("Cinzel-Bold", size: 15))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                    Text(tool.italianName)
+                        .font(.custom("EBGaramond-Italic", size: 14))
+                        .foregroundStyle(RenaissanceColors.warmBrown)
+                }
+            }
+
+            Text(tool.educationalText)
+                .font(.custom("EBGaramond-Regular", size: 14))
+                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                .fixedSize(horizontal: false, vertical: true)
+
+            Button {
+                withAnimation(.spring(response: 0.3)) {
+                    showCollectionOverlay = false
+                    showHintBubble = false
+                    activeStation = nil
+                }
+                let capturedScene = sceneHolder.scene
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                    capturedScene?.walkToStation(.market)
+                }
+            } label: {
+                HStack(spacing: 5) {
+                    Text("🏪")
+                        .font(.subheadline)
+                    Text("Go to Market")
+                        .font(.custom("EBGaramond-SemiBold", size: 15))
+                }
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: CornerRadius.sm)
+                        .fill(RenaissanceColors.ochre)
+                )
+            }
+
+            Button {
+                withAnimation(.spring(response: 0.3)) {
+                    showCollectionOverlay = false
+                    showHintBubble = false
+                    activeStation = nil
+                }
+            } label: {
+                Text("Close")
+                    .font(.custom("EBGaramond-Regular", size: 13))
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
+                    .frame(maxWidth: .infinity)
+            }
+        }
+    }
+
+    private func hintBubbleOverlay(for station: ResourceStationType) -> some View {
+        VStack(spacing: 10) {
+            // Bird + station name
+            HStack(spacing: 8) {
+                BirdCharacter(isSitting: true)
+                    .frame(width: 44, height: 44)
+
+                Text(station.label)
+                    .font(RenaissanceFont.button)
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
+            }
+
+            // Collection buttons built into the hint bubble
+            collectionMaterialsView(for: station)
+        }
+        .padding(Spacing.md)
+        .frame(width: 280)
+        .background(
+            RoundedRectangle(cornerRadius: CornerRadius.lg)
+                .fill(RenaissanceColors.parchment.opacity(0.95))
+        )
+        .padding(.trailing, Spacing.md)
     }
 
     // MARK: - Layer 5: Collection Overlay
 
     private func collectionOverlay(for station: ResourceStationType) -> some View {
-        HStack {
-            Spacer()
-
-            VStack(spacing: 10) {
-                // Only shown when player lacks the required tool
-                if let requiredTool = Tool.requiredFor(station: station) {
-                    toolRequirementView(tool: requiredTool, station: station)
-                } else {
-                    // Fallback (station has no tool requirement) — show collection
-                    collectionMaterialsView(for: station)
-                }
+        VStack(spacing: 10) {
+            // Only shown when player lacks the required tool
+            if let requiredTool = Tool.requiredFor(station: station) {
+                toolRequirementView(tool: requiredTool, station: station)
+            } else {
+                // Fallback (station has no tool requirement) — show collection
+                collectionMaterialsView(for: station)
             }
-            .padding(Spacing.md)
-            .frame(width: 280)
-            .background(
-                RoundedRectangle(cornerRadius: CornerRadius.lg)
-                    .fill(RenaissanceColors.parchment.opacity(0.95))
-            )
-            .padding(.trailing, Spacing.md)
         }
+        .padding(Spacing.md)
+        .frame(width: 280)
+        .background(
+            RoundedRectangle(cornerRadius: CornerRadius.lg)
+                .fill(RenaissanceColors.parchment.opacity(0.95))
+        )
+        .padding(.trailing, Spacing.md)
     }
 
     /// Shows when player lacks the tool for a station — compact right-side card
@@ -574,32 +663,6 @@ struct WorkshopMapView: View {
                         showHintBubble = false
                         activeStation = nil
                     }
-                    let capturedScene2 = sceneHolder.scene
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                        capturedScene2?.walkToStation(.craftingRoom)
-                    }
-                } label: {
-                    HStack(spacing: 4) {
-                        Text("🔨")
-                            .font(.caption)
-                        Text("Craft at Workbench")
-                            .font(RenaissanceFont.buttonSmall)
-                    }
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 8)
-                    .background(
-                        RoundedRectangle(cornerRadius: CornerRadius.sm)
-                            .fill(RenaissanceColors.warmBrown)
-                    )
-                }
-
-                Button {
-                    withAnimation(.spring(response: 0.3)) {
-                        showCollectionOverlay = false
-                        showHintBubble = false
-                        activeStation = nil
-                    }
                 } label: {
                     Text("Close")
                         .font(RenaissanceFont.captionSmall)
@@ -623,7 +686,7 @@ struct WorkshopMapView: View {
                             .font(.caption)
                             .foregroundStyle(RenaissanceColors.ochre)
                         Text("\(vm.goldFlorins)")
-                            .font(.custom("EBGaramond-Regular", size: 13))
+                            .font(.custom("EBGaramond-Regular", size: 15))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                 }
@@ -665,16 +728,16 @@ struct WorkshopMapView: View {
                                 Text(material.icon)
                                     .font(.body)
                                 Text(material.rawValue)
-                                    .font(.custom("EBGaramond-Regular", size: 10))
+                                    .font(.custom("EBGaramond-Regular", size: 13))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                                     .lineLimit(1)
                                     .minimumScaleFactor(0.8)
-                                HStack(spacing: 1) {
+                                HStack(spacing: 2) {
                                     Image(systemName: "dollarsign.circle.fill")
-                                        .font(.system(size: 8))
+                                        .font(.system(size: 9))
                                         .foregroundStyle(RenaissanceColors.sepiaInk)
                                     Text("\(material.cost)")
-                                        .font(.custom("EBGaramond-Regular", size: 10))
+                                        .font(.custom("EBGaramond-Regular", size: 12))
                                         .foregroundStyle(canAfford ? RenaissanceColors.sepiaInk : RenaissanceColors.errorRed)
                                 }
                             }

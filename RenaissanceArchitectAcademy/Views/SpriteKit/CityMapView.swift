@@ -840,7 +840,8 @@ struct CityMapView: View {
                 onNavigate?(destination)
             },
             onBackToMenu: onBackToMenu,
-            onboardingState: onboardingState
+            onboardingState: onboardingState,
+            currentDestination: .cityMap
         )
     }
 

@@ -68,6 +68,9 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
         /* 8  */ CGPoint(x: 1126, y: 1028),    // shelf
         /* 9  */ CGPoint(x: 2600, y: 1400),   // right connector
         /* 10 */ CGPoint(x: 1249, y: 978),   // left connector
+
+        // --- Home: avatar box (bottom-left corner) ---
+        /* 11 */ CGPoint(x: 200,  y: 200),   // avatar box spawn
     ]
 
     private let waypointEdges: [[Int]] = [
@@ -86,6 +89,8 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
         [10, 5], [10, 6],
         // Cross links
         [6, 3], [5, 10],
+        // Avatar box (home) connections
+        [11, 0], [11, 1], [11, 6],
     ]
 
     /// Which waypoints each station connects to
@@ -100,6 +105,10 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
 
     var onFurnitureReached: ((CraftingStation) -> Void)?
     var onPlayerPositionChanged: ((CGPoint, Bool) -> Void)?
+    var onPlayerStartedWalking: (() -> Void)?
+
+    /// Pending station walk — stored when player taps while still in the avatar box
+    private var pendingStationWalk: CraftingStation?
 
     // MARK: - Scene Setup
 
@@ -235,14 +244,28 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
 
     private func setupPlayer() {
         playerNode = PlayerNode(isBoy: apprenticeIsBoy)
-        // Spawn at door position (bottom center)
-        playerNode.position = waypoints[0]
         playerNode.zPosition = 50
         // Scale up for interior scene — player is 170pt in outdoor maps,
         // needs to be ~2.5x larger to look right in this close-up room
         playerNode.setScale(5.0)
         addChild(playerNode)
+        // Start at the avatar box waypoint (bottom-left of map)
+        playerNode.position = waypoints[11]
         updatePlayerScreenPosition()
+    }
+
+    /// Move the player back to the avatar box waypoint (bottom-left of map)
+    func positionPlayerAtAvatarBox() {
+        playerNode.position = waypoints[11]
+        updatePlayerScreenPosition()
+    }
+
+    func showPlayer() {
+        // Player already visible at box position
+    }
+
+    func hidePlayer() {
+        positionPlayerAtAvatarBox()
     }
 
     // MARK: - Position Tracking
@@ -361,6 +384,7 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
         let tappedNodes = nodes(at: location)
         for node in tappedNodes {
             if let station = stationFor(node: node) {
+                onPlayerStartedWalking?()
                 walkPlayerToStation(station)
                 return
             }
@@ -495,17 +519,22 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
         }
 
         let stationPos = sprite.position
-        let targetPos = CGPoint(x: stationPos.x - 140, y: stationPos.y - 75)
+        let targetPos = CGPoint(x: stationPos.x - 200, y: stationPos.y - 65)
         let playerPos = playerNode.position
+
+        let onArrival: () -> Void = { [weak self] in
+            // Face toward the station
+            let faceRight = stationPos.x > (self?.playerNode.position.x ?? 0)
+            self?.playerNode.setFacingDirection(faceRight)
+            self?.onFurnitureReached?(station)
+        }
 
         // If very close, walk directly
         let directDistance = hypot(targetPos.x - playerPos.x, targetPos.y - playerPos.y)
         if directDistance < 350 {
             let facingRight = targetPos.x > playerPos.x
             playerNode.setFacingDirection(facingRight)
-            playerNode.walkTo(destination: targetPos, duration: max(0.3, TimeInterval(directDistance / 467))) { [weak self] in
-                self?.onFurnitureReached?(station)
-            }
+            playerNode.walkTo(destination: targetPos, duration: max(0.3, TimeInterval(directDistance / 467)), completion: onArrival)
             return
         }
 
@@ -517,9 +546,7 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
         guard !path.isEmpty else {
             let facingRight = targetPos.x > playerPos.x
             playerNode.setFacingDirection(facingRight)
-            playerNode.walkTo(destination: targetPos, duration: max(0.5, TimeInterval(directDistance / 467))) { [weak self] in
-                self?.onFurnitureReached?(station)
-            }
+            playerNode.walkTo(destination: targetPos, duration: max(0.5, TimeInterval(directDistance / 467)), completion: onArrival)
             return
         }
 
@@ -527,9 +554,7 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
         let facingRight = firstTarget.x > playerPos.x
         playerNode.setFacingDirection(facingRight)
 
-        playerNode.walkPath(path, speed: 467) { [weak self] in
-            self?.onFurnitureReached?(station)
-        }
+        playerNode.walkPath(path, speed: 467, completion: onArrival)
     }
 
     private func handleDragTo(_ location: CGPoint, from lastLocation: CGPoint) {

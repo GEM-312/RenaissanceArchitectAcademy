@@ -140,6 +140,9 @@ class WorkshopScene: SKScene, ScrollZoomable {
         /* 61 */ CGPoint(x: 3267, y: 1375),  // far east
         /* 62 */ CGPoint(x: 2917, y: 625),   // near pigment table
         /* 63 */ CGPoint(x: 3150, y: 800),   // far SE
+
+        // --- Home: avatar box (bottom-left corner) ---
+        /* 64 */ CGPoint(x: 200,  y: 200),   // avatar box spawn
     ]
 
     /// Bidirectional edges: each pair [a, b] means a↔b (~100 edges)
@@ -190,6 +193,9 @@ class WorkshopScene: SKScene, ScrollZoomable {
         // ── Diagonal cross-links (shortcuts) ──
         [0, 1], [0, 2], [1, 4], [25, 9], [25, 8],
         [12, 13], [31, 14], [60, 12],
+
+        // ── Avatar box (home) connections ──
+        [64, 55], [64, 50], [64, 28],
     ]
 
     /// Which waypoints each station connects to (nearest 3 road junctions)
@@ -351,10 +357,28 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
     private func setupPlayer() {
         playerNode = PlayerNode(isBoy: apprenticeIsBoy)
-        playerNode.position = CGPoint(x: 1750, y: 1800)
         playerNode.zPosition = 50
         addChild(playerNode)
+        // Start at the avatar box waypoint (bottom-left of map)
+        playerNode.position = waypoints[64]
         updatePlayerScreenPosition()
+    }
+
+    /// Move the player back to the avatar box waypoint (bottom-left of map)
+    func positionPlayerAtAvatarBox() {
+        playerNode.position = waypoints[64]
+        updatePlayerScreenPosition()
+    }
+
+    /// Show the player sprite on the map — no repositioning needed, already visible
+    func showPlayer() {
+        // Player is already visible at the box. Nothing to do.
+    }
+
+    /// Hide the player sprite (called when avatar returns to the profile box)
+    func hidePlayer() {
+        // Move player back to box position
+        positionPlayerAtAvatarBox()
     }
 
     // MARK: - Position Tracking
@@ -470,7 +494,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
             // Regular scroll = zoom (works with Magic Mouse)
             let zoomFactor: CGFloat = 1.0 - (event.deltaY * 0.05)
             let newScale = cameraNode.xScale * zoomFactor
-            let clampedScale = max(0.5, min(3.5, newScale))
+            let clampedScale = max(0.3, min(3.5, newScale))
             cameraNode.setScale(clampedScale)
         }
         clampCamera()
@@ -481,7 +505,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
         dismissOverlaysOnInteraction()
         let zoomFactor: CGFloat = 1.0 + event.magnification
         let newScale = cameraNode.xScale / zoomFactor
-        let clampedScale = max(0.5, min(3.5, newScale))
+        let clampedScale = max(0.3, min(3.5, newScale))
         cameraNode.setScale(clampedScale)
         clampCamera()
     }
@@ -500,16 +524,11 @@ class WorkshopScene: SKScene, ScrollZoomable {
         // Check if a station was tapped
         let tappedNodes = nodes(at: location)
         for node in tappedNodes {
-            if let resourceNode = node as? ResourceNode {
-                walkPlayerToStation(resourceNode)
-                return
-            }
-            if let resourceNode = node.parent as? ResourceNode {
-                walkPlayerToStation(resourceNode)
-                return
-            }
-            // Check grandparent too (for pigment table sub-nodes)
-            if let resourceNode = node.parent?.parent as? ResourceNode {
+            let resourceNode = (node as? ResourceNode)
+                ?? (node.parent as? ResourceNode)
+                ?? (node.parent?.parent as? ResourceNode)
+            if let resourceNode {
+                onPlayerStartedWalking?()
                 walkPlayerToStation(resourceNode)
                 return
             }
@@ -628,6 +647,25 @@ class WorkshopScene: SKScene, ScrollZoomable {
             }
         }
 
+        // Trim backtracking: once we get close to the target, skip waypoints that move away
+        if result.count > 2 {
+            let target = result.last!
+            var trimmed: [CGPoint] = []
+            var minDistSoFar: CGFloat = .infinity
+            for (i, pt) in result.enumerated() {
+                let distToTarget = hypot(pt.x - target.x, pt.y - target.y)
+                if i == result.count - 1 {
+                    // Always include the final target
+                    trimmed.append(pt)
+                } else if distToTarget <= minDistSoFar || trimmed.isEmpty {
+                    trimmed.append(pt)
+                    minDistSoFar = min(minDistSoFar, distToTarget)
+                }
+                // Skip waypoints that move farther from target after we got close
+            }
+            result = trimmed
+        }
+
         return result
     }
 
@@ -642,7 +680,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
         onPlayerStartedWalking?()
 
         let stationPos = stationNode.position
-        let targetPos = CGPoint(x: stationPos.x - 250, y: stationPos.y - 75)
+        let targetPos = CGPoint(x: stationPos.x - 200, y: stationPos.y - 65)
         let playerPos = playerNode.position
 
         isPlayerWalking = true
@@ -702,8 +740,9 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
         // Keep blur while zoomed in at station
 
-        // Face forward
-        playerNode.faceForward()
+        // Face toward the station (player is to the left, so face right)
+        let faceRight = stationNode.position.x > playerNode.position.x
+        playerNode.setFacingDirection(faceRight)
 
         // Zoom camera to station
         zoomCameraToStation(stationNode.position)
@@ -751,7 +790,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
         let moveAction = SKAction.move(to: stationPos, duration: 0.5)
         moveAction.timingMode = .easeInEaseOut
 
-        let zoomAction = SKAction.scale(to: 0.55, duration: 0.5)
+        let zoomAction = SKAction.scale(to: 0.4, duration: 0.5)
         zoomAction.timingMode = .easeInEaseOut
 
         cameraNode.run(SKAction.group([moveAction, zoomAction]), withKey: "cameraZoom")
@@ -832,7 +871,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
     func handlePinch(scale: CGFloat) {
         let newScale = cameraNode.xScale / scale
-        let clampedScale = max(0.5, min(3.5, newScale))
+        let clampedScale = max(0.3, min(3.5, newScale))
         cameraNode.setScale(clampedScale)
         clampCamera()
     }
@@ -842,7 +881,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
         guard cameraNode != nil else { return }
         let zoomFactor: CGFloat = 1.0 - (deltaY * 0.05)
         let newScale = cameraNode.xScale * zoomFactor
-        let clampedScale = max(0.5, min(3.5, newScale))
+        let clampedScale = max(0.3, min(3.5, newScale))
         cameraNode.setScale(clampedScale)
         clampCamera()
     }
@@ -863,7 +902,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
         dismissOverlaysOnInteraction()
         let zoomFactor: CGFloat = 1.0 + magnification
         let newScale = cameraNode.xScale / zoomFactor
-        let clampedScale = max(0.5, min(3.5, newScale))
+        let clampedScale = max(0.3, min(3.5, newScale))
         cameraNode.setScale(clampedScale)
         clampCamera()
     }

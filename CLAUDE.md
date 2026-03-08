@@ -347,6 +347,10 @@ Styles/[name]_frames/clean/    # Photoshop exports (no bg)
 2. Select iPad simulator or "My Mac"
 3. Press Cmd+R to build and run
 
+## MANDATORY Rules
+- **ALWAYS read the FULL file before editing it.** Never edit a file based on memory, summaries, or assumptions. Use the Read tool on every file you are about to modify, every single time, no exceptions. If the file is large, read it in chunks until you have seen all relevant sections. Failure to do this causes wrong edits, missed context, and broken code.
+- **ALWAYS read related files before making cross-file changes.** If a change touches callbacks, state, or UI across multiple files (e.g. a Scene + its MapView wrapper), read ALL of them first.
+
 ## Notes
 - Marina prefers direct fixes over long explanations
 - Teach concepts as you go when making changes

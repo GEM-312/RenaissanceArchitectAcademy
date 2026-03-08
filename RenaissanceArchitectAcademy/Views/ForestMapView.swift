@@ -52,6 +52,12 @@ struct ForestMapView: View {
     @State private var showTruffleSaleFloat = false
     @State private var truffleSaleFlorins = 0
 
+    // Avatar box: sprite visible only when player hasn't moved yet
+    @State private var avatarInBox = true
+
+    // Tool requirement dialog (shown when player reaches POI without axe)
+    @State private var showToolDialog = false
+
 
     var body: some View {
         GeometryReader { geometry in
@@ -132,14 +138,16 @@ struct ForestMapView: View {
                         .allowsHitTesting(false)
                 }
             }
-            .onChange(of: selectedPOIIndex) { _, newValue in
+            .onChange(of: selectedPOIIndex) { oldValue, newValue in
                 if newValue != nil {
-                    // Initialize science cards for the new POI
                     if let poi = sceneHolder.scene?.getPOI(at: newValue!) {
                         setupScienceCards(for: poi)
                     }
-                } else {
-                    // When POI overlay is dismissed, show any pending truffle
+                } else if oldValue != nil {
+                    // POI dismissed — player walks back to box
+                    sceneHolder.scene?.hidePlayer()
+                    showToolDialog = false
+                    avatarInBox = true
                     if let truffle = pendingTruffle {
                         pendingTruffle = nil
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -148,6 +156,11 @@ struct ForestMapView: View {
                             }
                         }
                     }
+                }
+            }
+            .onChange(of: playerIsWalking) { _, isWalking in
+                if isWalking && avatarInBox {
+                    avatarInBox = false
                 }
             }
         }
@@ -1204,7 +1217,10 @@ struct ForestMapView: View {
                     },
                     onReturnToLesson: returnToLessonPlotId != nil ? {
                         onNavigate?(.cityMap)
-                    } : nil
+                    } : nil,
+                    currentDestination: .forest,
+                    hideAvatarImage: !avatarInBox,
+                    avatarDialogContent: forestDialogContent
                 )
             } else {
                 VStack(spacing: 8) {
@@ -1228,6 +1244,74 @@ struct ForestMapView: View {
                 }
             }
         }
+    }
+
+    // MARK: - Forest Dialog Content (passed into GameTopBarView avatar card)
+
+    private var forestDialogContent: AnyView? {
+        guard showToolDialog else { return nil }
+        let hasAxe = workshop.hasTool(for: .forest)
+        guard !hasAxe else {
+            // Has axe — no dialog needed, science cards overlay handles it
+            return nil
+        }
+        return AnyView(
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 8) {
+                    Text("🪓")
+                        .font(.system(size: 28))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Need Axe")
+                            .font(.custom("Cinzel-Bold", size: 15))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                        Text("l'Ascia")
+                            .font(.custom("EBGaramond-Italic", size: 14))
+                            .foregroundStyle(RenaissanceColors.warmBrown)
+                    }
+                }
+
+                Text("Renaissance woodcutters used broad-headed axes forged by local blacksmiths. Each tree species required a different cutting angle.")
+                    .font(.custom("EBGaramond-Regular", size: 14))
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Button {
+                    dismissToolDialog()
+                    onBackToWorkshop?()
+                } label: {
+                    HStack(spacing: 5) {
+                        Text("🏪")
+                            .font(.subheadline)
+                        Text("Go to Market")
+                            .font(.custom("EBGaramond-SemiBold", size: 15))
+                    }
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .background(
+                        RoundedRectangle(cornerRadius: CornerRadius.sm)
+                            .fill(RenaissanceColors.ochre)
+                    )
+                }
+
+                Button {
+                    dismissToolDialog()
+                } label: {
+                    Text("Close")
+                        .font(.custom("EBGaramond-Regular", size: 13))
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
+                        .frame(maxWidth: .infinity)
+                }
+            }
+        )
+    }
+
+    private func dismissToolDialog() {
+        withAnimation(.spring(response: 0.3)) {
+            showToolDialog = false
+        }
+        sceneHolder.scene?.hidePlayer()
+        avatarInBox = true
     }
 
     // MARK: - Inventory Bar
@@ -1342,9 +1426,25 @@ struct ForestMapView: View {
             onBackToWorkshop?()
         }
 
+        newScene.onPlayerStartedWalking = {
+            withAnimation(.easeOut(duration: 0.2)) {
+                selectedPOIIndex = nil
+                showToolDialog = false
+            }
+        }
+
         newScene.onPOISelected = { index in
-            withAnimation(.easeOut(duration: 0.25)) {
-                selectedPOIIndex = index
+            let hasAxe = workshop.hasTool(for: .forest)
+            if !hasAxe {
+                // No axe — ONLY show tool requirement dialog, no science cards
+                withAnimation(.spring(response: 0.3)) {
+                    showToolDialog = true
+                }
+            } else {
+                // Has axe — show science cards overlay
+                withAnimation(.easeOut(duration: 0.25)) {
+                    selectedPOIIndex = index
+                }
             }
         }
 

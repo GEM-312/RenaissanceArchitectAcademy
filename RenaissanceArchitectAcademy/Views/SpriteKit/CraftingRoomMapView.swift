@@ -30,6 +30,9 @@ struct CraftingRoomMapView: View {
     @State private var showCraftingKnowledgeCards = false
     @State private var craftingKnowledgeCards: [KnowledgeCard] = []
 
+    // Avatar box: sprite visible only when player hasn't moved yet
+    @State private var avatarInBox = true
+
 
     var body: some View {
         GeometryReader { geometry in
@@ -126,6 +129,17 @@ struct CraftingRoomMapView: View {
                 workshop.generateNewAssignment()
             }
         }
+        .onChange(of: activeStation) { oldValue, newValue in
+            if oldValue != nil && newValue == nil {
+                sceneHolder.scene?.hidePlayer()
+                avatarInBox = true
+            }
+        }
+        .onChange(of: playerIsWalking) { _, isWalking in
+            if isWalking && avatarInBox {
+                avatarInBox = false
+            }
+        }
     }
 
     // MARK: - Scene Creation
@@ -141,6 +155,12 @@ struct CraftingRoomMapView: View {
         newScene.onPlayerPositionChanged = { position, isWalking in
             self.playerPosition = position
             self.playerIsWalking = isWalking
+        }
+
+        newScene.onPlayerStartedWalking = {
+            withAnimation(.easeOut(duration: 0.2)) {
+                self.activeStation = nil
+            }
         }
 
         newScene.onFurnitureReached = { station in
@@ -212,7 +232,9 @@ struct CraftingRoomMapView: View {
                     },
                     onReturnToLesson: returnToLessonPlotId != nil ? {
                         onNavigate?(.cityMap)
-                    } : nil
+                    } : nil,
+                    currentDestination: .workshop,
+                    hideAvatarImage: !avatarInBox
                 )
             } else {
                 VStack(spacing: 8) {
