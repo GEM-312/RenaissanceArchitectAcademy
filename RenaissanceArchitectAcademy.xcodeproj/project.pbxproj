@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		081 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 181 /* ChatMessage.swift */; };
+		082 /* ClaudeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 182 /* ClaudeService.swift */; };
+		083 /* BirdChatOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183 /* BirdChatOverlay.swift */; };
 		001 /* RenaissanceArchitectAcademyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 101 /* RenaissanceArchitectAcademyApp.swift */; };
 		002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 102 /* ContentView.swift */; };
 		003 /* MainMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 103 /* MainMenuView.swift */; };
@@ -162,6 +165,9 @@
 
 /* Begin PBXFileReference section */
 		100 /* RenaissanceArchitectAcademy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RenaissanceArchitectAcademy.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		181 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
+		182 /* ClaudeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeService.swift; sourceTree = "<group>"; };
+		183 /* BirdChatOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdChatOverlay.swift; sourceTree = "<group>"; };
 		101 /* RenaissanceArchitectAcademyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenaissanceArchitectAcademyApp.swift; sourceTree = "<group>"; };
 		102 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		103 /* MainMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenuView.swift; sourceTree = "<group>"; };
@@ -392,6 +398,7 @@
 			children = (
 				102 /* ContentView.swift */,
 				103 /* MainMenuView.swift */,
+				183 /* BirdChatOverlay.swift */,
 				104 /* CityView.swift */,
 				105 /* BuildingPlotView.swift */,
 				106 /* BuildingDetailOverlay.swift */,
@@ -443,6 +450,7 @@
 			isa = PBXGroup;
 			children = (
 				108 /* Building.swift */,
+				181 /* ChatMessage.swift */,
 				118 /* StudentProfile.swift */,
 				120 /* Challenge.swift */,
 				125 /* Material.swift */,
@@ -492,6 +500,7 @@
 			isa = PBXGroup;
 			children = (
 				115 /* SoundManager.swift */,
+				182 /* ClaudeService.swift */,
 				306 /* Styles */,
 			);
 			path = Services;
@@ -690,6 +699,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				081 /* ChatMessage.swift in Sources */,
+				082 /* ClaudeService.swift in Sources */,
+				083 /* BirdChatOverlay.swift in Sources */,
 				001 /* RenaissanceArchitectAcademyApp.swift in Sources */,
 				002 /* ContentView.swift in Sources */,
 				003 /* MainMenuView.swift in Sources */,
