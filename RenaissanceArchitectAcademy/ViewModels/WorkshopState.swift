@@ -102,23 +102,27 @@ class WorkshopState {
         case .river:
             return "Collect sand and water — the two most versatile materials! You'll need them for mortar, concrete, glass, terracotta, and pigments. Almost every recipe at the workbench requires water or sand."
         case .volcano:
-            return "Collect volcanic ash — the secret ingredient for Roman concrete! Mix it with limestone, water, and sand at the workbench. Buildings like the Pantheon, Aqueduct, and Harbor all need concrete."
+            return "Collect volcanic ash, cinnabar, and sulfur here. Volcanic ash is the secret ingredient for Roman concrete. Sulfur was used by goldsmiths to engrave silver and by Florentines to fumigate during the Black Death — fumigations so intense that sparrows fell from rooftops!"
         case .clayPit:
             return "Collect clay to craft terracotta tiles and bronze fittings. The Duomo's herringbone dome, the Insula's roof, and the Glassworks all need terracotta. Clay molds are also used for casting bronze!"
         case .mine:
-            return "Collect iron ore and lead. Iron crafts into bronze fittings, timber beams, and carved wood. Lead makes waterproof sheeting and stained glass. The Colosseum, Aqueduct, and Printing Press all need these metals."
+            return "Collect iron ore, lead, and copper. Copper is the key ingredient for bronze — 88% copper, 12% tin. Goldsmiths in Santa Croce melted copper in clay crucibles to cast everything from door handles to church bells. Lead was used for waterproof sheeting and silver engraving."
         case .pigmentTable:
             return "Raw pigments now come from nature — red ochre from the Clay Pit, lapis from the Market, verdigris from the Mine, cinnabar from the Volcano, saffron from the Forest. Bring them here with water to grind into fine pigment powder!"
         case .forest:
             return "Collect timber for beams and carved wood. Timber beams support roofs in the Roman Baths, Harbor, Arsenal, and Workshop. Carved walnut builds the Anatomy Theater and Printing Press."
         case .market:
-            return "Collect silk, lead, and marble from merchants. Silk crafts into fabric for the Colosseum's velarium and Leonardo's Flying Machine. Lead and marble are used across many buildings."
+            return "Collect silk, lead, marble, and gold from merchants. Gold is the most precious material — goldsmiths hammered a single ounce into 300 square feet of leaf for gilding bronzes and altarpieces. Silk crafts into fabric for the Colosseum's velarium and Leonardo's Flying Machine."
         case .workbench:
             return "Combine raw materials here to create building supplies."
         case .furnace:
             return "Set the right temperature and fire your mixture!"
         case .craftingRoom:
             return "Enter the Crafting Room to mix materials at the workbench, grind pigments, and fire recipes in the furnace. This is where raw materials become building supplies!"
+        case .farm:
+            return "Collect letame, charred ox horn, beeswax, and eggs from La Fattoria. Goldsmiths mixed letame and charred ox horn into casting molds — the organic fibers prevent cracking when hot metal is poured in. Beeswax is essential for lost-wax casting, and egg yolk binds tempera paint!"
+        case .goldsmithWorkshop:
+            return "Enter the Bottega di Benincasa Lotti — the master goldsmith's workshop in Santa Croce. Here Brunelleschi learned to engrave silver, cast bronze, mount gems, and study the science of weights, wheels, and gears. The same workshop that trained Donatello, Verrocchio, and Leonardo."
         }
     }
 

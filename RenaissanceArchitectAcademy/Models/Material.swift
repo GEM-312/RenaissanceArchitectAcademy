@@ -23,6 +23,14 @@ enum Material: String, CaseIterable, Identifiable, Codable {
     case groundVerdigris = "Ground Verdigris"
     case groundCinnabar = "Ground Cinnabar"
     case groundSaffron = "Ground Saffron"
+    case sulfur = "Sulfur"
+    case copper = "Copper"
+    case gold = "Gold"
+    case herbs = "Medicinal Herbs"
+    case letame = "Letame"
+    case charredOxHorn = "Charred Ox Horn"
+    case beeswax = "Beeswax"
+    case eggs = "Eggs"
 
     var id: String { rawValue }
 
@@ -41,6 +49,14 @@ enum Material: String, CaseIterable, Identifiable, Codable {
         case .groundRedOchre, .groundVerdigris,
              .groundCinnabar, .groundSaffron:  return 0   // Output of grinding
         case .groundLapisBlue:                 return 0   // Output of grinding
+        case .sulfur:                          return 4   // Volcanic mineral
+        case .copper:                          return 5   // Mined metal
+        case .gold:                            return 10  // Luxury import
+        case .herbs:                           return 3   // Forest medicinal plants
+        case .letame:                          return 2   // Farm — cheap and plentiful
+        case .charredOxHorn:                   return 3   // Farm — burned keratin for molds
+        case .beeswax:                         return 4   // Farm — for lost-wax casting
+        case .eggs:                            return 2   // Farm — for tempera paint binding
         }
     }
 
@@ -67,6 +83,14 @@ enum Material: String, CaseIterable, Identifiable, Codable {
         case .groundVerdigris: return "🫒"
         case .groundCinnabar: return "❤️"
         case .groundSaffron: return "🌕"
+        case .sulfur: return "🔥"
+        case .copper: return "🪙"
+        case .gold: return "👑"
+        case .herbs: return "🌿"
+        case .letame: return "💩"
+        case .charredOxHorn: return "🦴"
+        case .beeswax: return "🐝"
+        case .eggs: return "🥚"
         }
     }
 

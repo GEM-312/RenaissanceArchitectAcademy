@@ -51,6 +51,22 @@ struct MasterAssignment {
             return "The scriptorium needs golden ink. Create Saffron Illumination pigment!"
         case .greenFrescoPigment:
             return "Botticelli's garden scene needs emerald leaves. Mix Green Fresco Pigment!"
+        case .rawBronze:
+            return "Master Lotti's goldsmith workshop needs raw bronze ingots. Smelt copper and iron!"
+        case .goldLeaf:
+            return "The altarpiece needs gilding. Hammer Gold Leaf from pure gold!"
+        case .fumigationIncense:
+            return "Plague is spreading in Santa Croce. Burn herbs and sulfur to fumigate the district!"
+        case .castingMold:
+            return "Master Lotti needs casting molds for a bronze commission. Mix clay with letame and charred ox horn!"
+        case .temperaPaint:
+            return "The fresco painter needs tempera. Crack eggs and grind pigment — Botticelli used the same recipe!"
+        case .apprenticeSeal:
+            return "Every apprentice needs a mark. Melt beeswax and press your seal — you belong to the guild now!"
+        case .architectSeal:
+            return "You've earned a copper seal. Cast it yourself — stamp your authority on every blueprint and contract!"
+        case .masterSeal:
+            return "Only a master carries gold. Forge your seal — the same mark Brunelleschi pressed on the Duomo orders!"
         }
     }
 }

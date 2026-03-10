@@ -10,6 +10,7 @@ enum Tool: String, CaseIterable, Identifiable, Codable {
     case axe = "Axe"
     case tradePurse = "Trade Purse"
     case mortarAndPestle = "Mortar & Pestle"
+    case pitchfork = "Pitchfork"
 
     var id: String { rawValue }
 
@@ -23,6 +24,7 @@ enum Tool: String, CaseIterable, Identifiable, Codable {
         case .axe:            return "🪓"
         case .tradePurse:     return "👛"
         case .mortarAndPestle: return "⚗️"
+        case .pitchfork:      return "🔱"
         }
     }
 
@@ -38,6 +40,7 @@ enum Tool: String, CaseIterable, Identifiable, Codable {
         case .axe:            return "l'Ascia"
         case .tradePurse:     return "la Borsa"
         case .mortarAndPestle: return "il Mortaio"
+        case .pitchfork:      return "il Forcone"
         }
     }
 
@@ -59,6 +62,8 @@ enum Tool: String, CaseIterable, Identifiable, Codable {
             return "Florentine merchants carried silk purses stamped with their guild mark. The Medici banking family invented double-entry bookkeeping to track trade across Europe."
         case .mortarAndPestle:
             return "Apothecaries and painters ground pigments in marble mortars. Lapis lazuli required weeks of grinding and washing to extract pure ultramarine blue — worth more than gold."
+        case .pitchfork:
+            return "For 10,000 years, humans have built with manure. Adobe bricks, kiln fuel, insulating plaster. Florentine founders mixed letame into bronze casting molds — the organic fibers create micro-channels that let steam escape when 1100°C molten metal is poured in."
         }
     }
 
@@ -73,6 +78,7 @@ enum Tool: String, CaseIterable, Identifiable, Codable {
         case .axe:            return .forest
         case .tradePurse:     return .market
         case .mortarAndPestle: return .pigmentTable
+        case .pitchfork:      return .farm
         }
     }
 

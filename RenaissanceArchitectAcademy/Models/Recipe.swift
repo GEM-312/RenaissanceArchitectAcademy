@@ -53,10 +53,10 @@ struct Recipe: Identifiable {
         ),
         Recipe(
             output: .bronzeFittings,
-            ingredients: [.ironOre: 2, .clay: 1],
+            ingredients: [.copper: 1, .ironOre: 1, .clay: 1],
             temperature: .high,
             processingTime: 5.0,
-            educationalText: "Bronze casting requires extreme heat to melt metal into clay molds. Renaissance craftsmen created elaborate door handles and decorations this way."
+            educationalText: "Bronze fittings required copper melted with iron ore in clay molds. Goldsmiths in Santa Croce cast door handles, hinges, and decorative hardware — the same workshops where Brunelleschi and Donatello first learned their craft."
         ),
         Recipe(
             output: .timberBeams,
@@ -127,6 +127,62 @@ struct Recipe: Identifiable {
             temperature: .low,
             processingTime: 3.0,
             educationalText: "Verdigris green gave Renaissance frescoes their lush landscapes. But painters worked fast — mixed with lime plaster, verdigris had hours before it darkened. Botticelli's Primavera preserves the original emerald because it was painted on panel, not wall."
+        ),
+        Recipe(
+            output: .rawBronze,
+            ingredients: [.copper: 2, .ironOre: 1],
+            temperature: .high,
+            processingTime: 5.0,
+            educationalText: "Bronze is roughly 88% copper and 12% tin. Florentine founders melted copper in clay crucibles, adding tin to lower the melting point from 1085°C to 950°C. The resulting alloy was harder than either metal alone — perfect for bells, cannons, and Ghiberti's Gates of Paradise."
+        ),
+        Recipe(
+            output: .goldLeaf,
+            ingredients: [.gold: 1, .lead: 1],
+            temperature: .medium,
+            processingTime: 4.0,
+            educationalText: "A single ounce of gold can be hammered into 300 square feet of leaf — thinner than a human hair. Goldbeaters placed gold between sheets of ox-gut membrane and struck with heavy hammers for hours. Lead backing sheets protected the delicate leaf during transport."
+        ),
+        Recipe(
+            output: .fumigationIncense,
+            ingredients: [.herbs: 2, .sulfur: 1],
+            temperature: .low,
+            processingTime: 3.0,
+            educationalText: "During the Black Death of 1400, Florentines burned wormwood, juniper, and lavender in every hearth. When that failed, they added sulfur — the fumigations so intense that sparrows fell dead from rooftops. The chemistry was real: sulfur dioxide kills bacteria. They had the right molecule, wrong delivery method."
+        ),
+        Recipe(
+            output: .castingMold,
+            ingredients: [.clay: 2, .letame: 1, .charredOxHorn: 1],
+            temperature: .medium,
+            processingTime: 4.0,
+            educationalText: "Florentine founders mixed clay with letame and charred ox horn to make casting molds. The organic fibers create micro-channels that let steam escape — without them, molten bronze at 1100°C would shatter the mold on contact. One civilization's waste is another's engineering breakthrough."
+        ),
+        Recipe(
+            output: .temperaPaint,
+            ingredients: [.eggs: 2, .groundRedOchre: 1],
+            temperature: .low,
+            processingTime: 3.0,
+            educationalText: "Before oil paint, every Renaissance masterpiece was egg tempera. Painters cracked an egg, separated the yolk, mixed it with ground pigment, and painted in thin translucent layers. Botticelli's Birth of Venus? Egg tempera. It dries in minutes, lasts for centuries."
+        ),
+        Recipe(
+            output: .apprenticeSeal,
+            ingredients: [.beeswax: 2, .clay: 1],
+            temperature: .low,
+            processingTime: 3.0,
+            educationalText: "Every guild apprentice received a wax seal — your mark on contracts, letters, and finished work. The clay stamp was carved by your master, the beeswax melted and pressed. Simple materials, but it meant something: you belonged to a trade. Brunelleschi's first seal bore the goldsmith's compass."
+        ),
+        Recipe(
+            output: .architectSeal,
+            ingredients: [.beeswax: 2, .copper: 1, .clay: 1],
+            temperature: .medium,
+            processingTime: 4.0,
+            educationalText: "An architect's seal was cast in copper — harder to forge, impossible to ignore. Brunelleschi stamped his on the Duomo construction documents. Every load of marble, every payment to stonemasons, every engineering change — sealed. The copper die outlasted the wax it pressed."
+        ),
+        Recipe(
+            output: .masterSeal,
+            ingredients: [.beeswax: 1, .gold: 1, .lead: 1],
+            temperature: .medium,
+            processingTime: 5.0,
+            educationalText: "A master's seal was gold — the ultimate proof of authority. Goldbeaters hammered the die from a single ingot, engraved with the master's personal device. When Brunelleschi sealed the final Duomo capstone order, he used a gold seal bearing his ox-head emblem. Only 12 master seals existed in all of Florence."
         ),
     ]
 

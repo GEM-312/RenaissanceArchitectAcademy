@@ -329,10 +329,10 @@ struct WorkshopJob: Identifiable {
             tradeName: "Maestro Fonditore",
             tradeDescription: "Master founder — cast bronze statues, bells, and hardware",
             station: nil,
-            requirements: [.ironOre: 2, .clay: 1],
+            requirements: [.copper: 1, .ironOre: 1, .clay: 1],
             craftTarget: .bronzeFittings,
             rewardFlorins: 24,
-            flavorText: "The Arsenal doors need hardware! Mine ore, dig clay for molds, then cast bronze.",
+            flavorText: "The Arsenal doors need hardware! Mine copper and iron, dig clay for molds, then cast bronze.",
             historyFact: "Lorenzo Ghiberti spent 27 years casting the Florence Baptistery doors — Michelangelo called them 'The Gates of Paradise.' The lost-wax casting technique required wax models, clay molds, and furnaces reaching 1100°C."
         ),
     ]

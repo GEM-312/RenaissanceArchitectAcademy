@@ -12,6 +12,7 @@ struct WorkshopMapView: View {
     var onNavigate: ((SidebarDestination) -> Void)? = nil
     var onBackToMenu: (() -> Void)? = nil
     var onEnterInterior: (() -> Void)? = nil
+    var onEnterGoldsmith: (() -> Void)? = nil
     var onboardingState: OnboardingState? = nil
     @Binding var returnToLessonPlotId: Int?
 
@@ -269,6 +270,11 @@ struct WorkshopMapView: View {
                     withAnimation(.spring(response: 0.3)) {
                         showWorkbenchOverlay = true
                     }
+                }
+            case .goldsmithWorkshop:
+                // Transition to goldsmith workshop interior
+                if let onEnterGoldsmith = onEnterGoldsmith {
+                    onEnterGoldsmith()
                 }
             case .forest:
                 // Navigate to forest scene

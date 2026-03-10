@@ -44,6 +44,8 @@ class WorkshopScene: SKScene, ScrollZoomable {
         .forest:       CGPoint(x: 293,  y: 679),
         .market:       CGPoint(x: 1397, y: 594),
         .craftingRoom: CGPoint(x: 1636, y: 1144),
+        .farm:         CGPoint(x: 2450, y: 1450),
+        .goldsmithWorkshop: CGPoint(x: 2100, y: 1550),
     ]
 
     // MARK: - Waypoint Graph (road network for pathfinding)
@@ -208,6 +210,8 @@ class WorkshopScene: SKScene, ScrollZoomable {
         .forest:       [45, 7, 24],
         .market:       [28, 55, 51],
         .craftingRoom: [0, 47, 48],
+        .farm:         [20, 43, 6],
+        .goldsmithWorkshop: [19, 42, 5],
     ]
 
     // MARK: - Camera Follow

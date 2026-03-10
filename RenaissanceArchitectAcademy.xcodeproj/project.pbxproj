@@ -106,6 +106,8 @@
 		089 /* water_plop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 189 /* water_plop.mp3 */; };
 		090 /* building_tap.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 190 /* building_tap.mp3 */; };
 		091 /* cards_appear.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 191 /* cards_appear.mp3 */; };
+		0A0 /* GoldsmithScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0 /* GoldsmithScene.swift */; };
+		0A1 /* GoldsmithMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1 /* GoldsmithMapView.swift */; };
 		544299832F32E0F700F92073 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = 544299822F32E0F700F92073 /* Pow */; };
 		544299862F32E11600F92073 /* Subsonic in Frameworks */ = {isa = PBXBuildFile; productRef = 544299852F32E11600F92073 /* Subsonic */; };
 		544299892F32E14D00F92073 /* Vortex in Frameworks */ = {isa = PBXBuildFile; productRef = 544299882F32E14D00F92073 /* Vortex */; };
@@ -264,6 +266,8 @@
 		189 /* water_plop.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = water_plop.mp3; sourceTree = "<group>"; };
 		190 /* building_tap.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = building_tap.mp3; sourceTree = "<group>"; };
 		191 /* cards_appear.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = cards_appear.mp3; sourceTree = "<group>"; };
+		1A0 /* GoldsmithScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GoldsmithScene.swift; path = Views/SpriteKit/GoldsmithScene.swift; sourceTree = "<group>"; };
+		1A1 /* GoldsmithMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GoldsmithMapView.swift; path = Views/SpriteKit/GoldsmithMapView.swift; sourceTree = "<group>"; };
 		544299972F3646ED00F92073 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BuildingNode.swift; path = Views/SpriteKit/BuildingNode.swift; sourceTree = "<group>"; };
 		544299982F3646ED00F92073 /* CityMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityMapView.swift; path = Views/SpriteKit/CityMapView.swift; sourceTree = "<group>"; };
 		544299992F3646ED00F92073 /* CityScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityScene.swift; path = Views/SpriteKit/CityScene.swift; sourceTree = "<group>"; };
@@ -353,6 +357,8 @@
 				175 /* CraftingRoomMapView.swift */,
 				194 /* ActivityScene3D.swift */,
 				195 /* SceneKitActivityView.swift */,
+				1A0 /* GoldsmithScene.swift */,
+				1A1 /* GoldsmithMapView.swift */,
 				544299A52F369AB700F92073 /* MascotDialogueView.swift */,
 				544299A62F369AB700F92073 /* MaterialPuzzleView.swift */,
 				544299972F3646ED00F92073 /* BuildingNode.swift */,
@@ -796,6 +802,8 @@
 				096 /* Tool.swift in Sources */,
 				097 /* ToolRecipe.swift in Sources */,
 				098 /* PigmentRecipe.swift in Sources */,
+				0A0 /* GoldsmithScene.swift in Sources */,
+				0A1 /* GoldsmithMapView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

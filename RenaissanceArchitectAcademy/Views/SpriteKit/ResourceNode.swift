@@ -14,27 +14,31 @@ enum ResourceStationType: String, CaseIterable, Hashable {
     case workbench = "Workbench"
     case furnace = "Furnace"
     case craftingRoom = "Crafting Room"
+    case farm = "Farm"
+    case goldsmithWorkshop = "Goldsmith"
 
     /// Materials available at this station
     var materials: [Material] {
         switch self {
         case .quarry:       return [.limestone, .marbleDust, .marble]
         case .river:        return [.water, .sand]
-        case .volcano:      return [.volcanicAsh, .cinnabar]
+        case .volcano:      return [.volcanicAsh, .cinnabar, .sulfur]
         case .clayPit:      return [.clay, .redOchre]
-        case .mine:         return [.ironOre, .lead, .verdigrisGreen]
+        case .mine:         return [.ironOre, .lead, .verdigrisGreen, .copper]
         case .pigmentTable: return []   // grinding station (indoor)
         case .forest:       return [.timber, .saffron]
-        case .market:       return [.silk, .lead, .marble, .lapisBlue]
+        case .market:       return [.silk, .lead, .marble, .lapisBlue, .gold]
         case .workbench:    return []   // crafting station
         case .furnace:      return []   // processing station
         case .craftingRoom: return []   // enters interior
+        case .farm:         return [.letame, .charredOxHorn, .beeswax, .eggs]
+        case .goldsmithWorkshop: return []   // enters goldsmith interior
         }
     }
 
     /// Whether this is a crafting/processing station (not a resource)
     var isCraftingStation: Bool {
-        self == .workbench || self == .furnace || self == .craftingRoom
+        self == .workbench || self == .furnace || self == .craftingRoom || self == .goldsmithWorkshop
     }
 
     /// Image asset name for this station (nil = use shape fallback)
@@ -48,6 +52,8 @@ enum ResourceStationType: String, CaseIterable, Hashable {
         case .forest:       return "StationForest"
         case .market:       return "StationMarket"
         case .craftingRoom: return "StationCraftingRoom"
+        case .farm:         return nil  // shape fallback until Midjourney asset
+        case .goldsmithWorkshop: return nil  // shape fallback until Midjourney asset
         default:            return nil  // pigmentTable, workbench, furnace use shapes
         }
     }
@@ -139,6 +145,10 @@ class ResourceNode: SKNode {
             bodyShape = createFurnace()
         case .craftingRoom:
             bodyShape = createCraftingRoom()
+        case .farm:
+            bodyShape = createFarm()
+        case .goldsmithWorkshop:
+            bodyShape = createGoldsmithWorkshop()
         }
 
         bodyShape.zPosition = 1
@@ -472,6 +482,105 @@ class ResourceNode: SKNode {
 
         let shape = SKShapeNode(path: path)
         shape.fillColor = PlatformColor(RenaissanceColors.warmBrown.opacity(0.25))
+        shape.strokeColor = strokeColor
+        shape.lineWidth = sketchLineWidth
+        return shape
+    }
+
+    /// Farm with barn roof, fence, and animal pen
+    private func createFarm() -> SKShapeNode {
+        let container = SKShapeNode()
+        container.strokeColor = .clear
+
+        // Barn body
+        let barnPath = CGMutablePath()
+        barnPath.addRect(CGRect(x: -120, y: -60, width: 240, height: 140))
+        // Barn roof (gambrel shape)
+        barnPath.move(to: CGPoint(x: -140, y: 80))
+        barnPath.addLine(to: CGPoint(x: -80, y: 140))
+        barnPath.addLine(to: CGPoint(x: 0, y: 160))
+        barnPath.addLine(to: CGPoint(x: 80, y: 140))
+        barnPath.addLine(to: CGPoint(x: 140, y: 80))
+        // Barn door
+        barnPath.addRect(CGRect(x: -40, y: -60, width: 80, height: 100))
+
+        let barn = SKShapeNode(path: barnPath)
+        barn.fillColor = PlatformColor(RenaissanceColors.warmBrown.opacity(0.3))
+        barn.strokeColor = strokeColor
+        barn.lineWidth = sketchLineWidth
+        container.addChild(barn)
+
+        // Fence posts (wooden pen)
+        let fencePath = CGMutablePath()
+        // Horizontal rails
+        fencePath.move(to: CGPoint(x: -160, y: -80))
+        fencePath.addLine(to: CGPoint(x: -160, y: -40))
+        fencePath.move(to: CGPoint(x: -160, y: -60))
+        fencePath.addLine(to: CGPoint(x: 160, y: -60))
+        fencePath.move(to: CGPoint(x: -160, y: -80))
+        fencePath.addLine(to: CGPoint(x: 160, y: -80))
+        // Vertical posts
+        for xPos in stride(from: -160, through: 160, by: 64) {
+            fencePath.move(to: CGPoint(x: CGFloat(xPos), y: -90))
+            fencePath.addLine(to: CGPoint(x: CGFloat(xPos), y: -40))
+        }
+
+        let fence = SKShapeNode(path: fencePath)
+        fence.strokeColor = PlatformColor(RenaissanceColors.warmBrown.opacity(0.6))
+        fence.lineWidth = 3
+        container.addChild(fence)
+
+        // Hay bale (circle)
+        let hay = SKShapeNode(circleOfRadius: 24)
+        hay.fillColor = PlatformColor(RenaissanceColors.ochre.opacity(0.4))
+        hay.strokeColor = strokeColor
+        hay.lineWidth = 3
+        hay.position = CGPoint(x: -100, y: -70)
+        container.addChild(hay)
+
+        return container
+    }
+
+    /// Goldsmith workshop building with anvil and chimney smoke
+    private func createGoldsmithWorkshop() -> SKShapeNode {
+        let path = CGMutablePath()
+        // Building body (wider than crafting room — goldsmith district workshop)
+        path.addRect(CGRect(x: -180, y: -100, width: 360, height: 220))
+        // Roof (triangle with steeper pitch)
+        path.move(to: CGPoint(x: -200, y: 120))
+        path.addLine(to: CGPoint(x: 0, y: 220))
+        path.addLine(to: CGPoint(x: 200, y: 120))
+        path.closeSubpath()
+        // Arched door (larger — workshop entrance)
+        path.move(to: CGPoint(x: -60, y: -100))
+        path.addLine(to: CGPoint(x: -60, y: 30))
+        path.addCurve(to: CGPoint(x: 60, y: 30),
+                      control1: CGPoint(x: -60, y: 100),
+                      control2: CGPoint(x: 60, y: 100))
+        path.addLine(to: CGPoint(x: 60, y: -100))
+        // Large chimney (goldsmith furnaces burned day and night)
+        path.addRect(CGRect(x: 100, y: 120, width: 56, height: 80))
+        // Smoke spirals from chimney
+        path.move(to: CGPoint(x: 128, y: 200))
+        path.addCurve(to: CGPoint(x: 148, y: 260),
+                      control1: CGPoint(x: 148, y: 220),
+                      control2: CGPoint(x: 108, y: 240))
+        path.addCurve(to: CGPoint(x: 128, y: 300),
+                      control1: CGPoint(x: 168, y: 280),
+                      control2: CGPoint(x: 128, y: 300))
+        // Anvil symbol by door
+        path.move(to: CGPoint(x: -140, y: -80))
+        path.addLine(to: CGPoint(x: -100, y: -80))
+        path.addLine(to: CGPoint(x: -100, y: -50))
+        path.addLine(to: CGPoint(x: -80, y: -40))
+        path.addLine(to: CGPoint(x: -160, y: -40))
+        path.addLine(to: CGPoint(x: -140, y: -50))
+        path.addLine(to: CGPoint(x: -140, y: -80))
+        // Sign: "LOTTI" text area (small rect above door)
+        path.addRect(CGRect(x: -50, y: 60, width: 100, height: 30))
+
+        let shape = SKShapeNode(path: path)
+        shape.fillColor = PlatformColor(RenaissanceColors.ochre.opacity(0.3))
         shape.strokeColor = strokeColor
         shape.lineWidth = sketchLineWidth
         return shape

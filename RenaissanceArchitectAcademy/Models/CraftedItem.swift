@@ -18,6 +18,14 @@ enum CraftedItem: String, CaseIterable, Identifiable, Codable {
     case cinnabarFrescoPigment = "Cinnabar Fresco Pigment"
     case saffronIllumination = "Saffron Illumination"
     case greenFrescoPigment = "Green Fresco Pigment"
+    case rawBronze = "Raw Bronze"
+    case goldLeaf = "Gold Leaf"
+    case fumigationIncense = "Fumigation Incense"
+    case castingMold = "Casting Mold"
+    case temperaPaint = "Tempera Paint"
+    case apprenticeSeal = "Apprentice Seal"
+    case architectSeal = "Architect Seal"
+    case masterSeal = "Master Seal"
 
     var id: String { rawValue }
 
@@ -39,6 +47,14 @@ enum CraftedItem: String, CaseIterable, Identifiable, Codable {
         case .cinnabarFrescoPigment: return "🖼️"
         case .saffronIllumination: return "📜"
         case .greenFrescoPigment: return "🎨"
+        case .rawBronze: return "🥉"
+        case .goldLeaf: return "✨"
+        case .fumigationIncense: return "🪔"
+        case .castingMold: return "🫕"
+        case .temperaPaint: return "🎭"
+        case .apprenticeSeal: return "🔰"
+        case .architectSeal: return "🏛️"
+        case .masterSeal: return "🏆"
         }
     }
 }
