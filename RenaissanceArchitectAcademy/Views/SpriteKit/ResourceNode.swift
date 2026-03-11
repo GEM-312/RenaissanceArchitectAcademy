@@ -600,6 +600,41 @@ class ResourceNode: SKNode {
         labelNode = pill.children.compactMap { $0 as? SKLabelNode }.first ?? SKLabelNode()
     }
 
+    // MARK: - Theme Update
+
+    /// Updates the pill label colors when dark/light mode changes at runtime.
+    func updateLabelTheme(isDark: Bool) {
+        // Find the pill container (it's the SKNode added in setupLabel)
+        for child in children {
+            // The pill container has an SKLabelNode + SKShapeNode (bg)
+            guard child.zPosition == 9 else { continue }
+            let label = child.children.compactMap { $0 as? SKLabelNode }.first
+            let bg = child.children.compactMap { $0 as? SKShapeNode }.first
+
+            if let label = label {
+                let textColor: PlatformColor = isDark
+                    ? PlatformColor(RenaissanceColors.ochre)
+                    : PlatformColor(RenaissanceColors.sepiaInk)
+                let kern: CGFloat = label.fontSize * 0.15
+                let currentText = label.attributedText?.string ?? label.text ?? stationType.label
+                label.attributedText = NSAttributedString(
+                    string: currentText.uppercased(),
+                    attributes: [
+                        .font: PlatformFont(name: "Cinzel-Bold", size: label.fontSize) ?? PlatformFont.systemFont(ofSize: label.fontSize),
+                        .foregroundColor: textColor,
+                        .kern: kern
+                    ]
+                )
+            }
+
+            if let bg = bg {
+                bg.fillColor = isDark
+                    ? PlatformColor(red: 0.18, green: 0.16, blue: 0.13, alpha: 0.65)
+                    : PlatformColor(red: 0.961, green: 0.902, blue: 0.827, alpha: 0.65)
+            }
+        }
+    }
+
     // MARK: - Animations
 
     private func addPulseAnimation() {
@@ -657,48 +692,95 @@ class ResourceNode: SKNode {
 
 extension SKNode {
 
-    /// Creates a pill-shaped label matching the Bottega Jobs button style:
-    /// parchment capsule background, warmBrown border, EBGaramond text, sepiaInk color.
-    static func makePillLabel(
+    /// Updates all pill labels under this node tree for the current theme.
+    /// Call on any parent node that contains makePillLabel children at zPosition 9 or 10.
+    @MainActor func updatePillLabelsTheme(isDark: Bool) {
+        enumerateChildNodes(withName: "//pillLabel") { node, _ in
+            let textColor: PlatformColor = isDark
+                ? PlatformColor(RenaissanceColors.ochre)
+                : PlatformColor(RenaissanceColors.sepiaInk)
+
+            if let label = node.children.compactMap({ $0 as? SKLabelNode }).first,
+               let bg = node.children.compactMap({ $0 as? SKShapeNode }).first {
+                let kern: CGFloat = label.fontSize * 0.15
+                let currentText = label.attributedText?.string ?? label.text ?? ""
+                label.attributedText = NSAttributedString(
+                    string: currentText.uppercased(),
+                    attributes: [
+                        .font: PlatformFont(name: "Cinzel-Bold", size: label.fontSize) ?? PlatformFont.systemFont(ofSize: label.fontSize),
+                        .foregroundColor: textColor,
+                        .kern: kern
+                    ]
+                )
+                bg.fillColor = isDark
+                    ? PlatformColor(red: 0.18, green: 0.16, blue: 0.13, alpha: 0.65)
+                    : PlatformColor(red: 0.961, green: 0.902, blue: 0.827, alpha: 0.65)
+            }
+        }
+    }
+
+    /// Creates a station label — theme-aware capsule background with letter-spaced text.
+    /// Dark mode: dark pill + golden text. Light mode: parchment pill + brown text.
+    /// Reads theme from GameSettings.shared (singleton accessible from SpriteKit).
+    @MainActor static func makePillLabel(
         text: String,
         fontSize: CGFloat = 28,
         position: CGPoint = .zero,
         zPosition: CGFloat = 9
     ) -> SKNode {
+        let dark = GameSettings.shared.isDarkMode
         let container = SKNode()
+        container.name = "pillLabel"
         container.position = position
         container.zPosition = zPosition
 
-        // Measure text width to size the pill
-        let label = SKLabelNode(text: text)
-        label.fontName = "EBGaramond-Medium"
+        let kern: CGFloat = fontSize * 0.15
+
+        let textColor: PlatformColor = dark
+            ? PlatformColor(RenaissanceColors.ochre)
+            : PlatformColor(RenaissanceColors.sepiaInk)
+
+        let bgColor: PlatformColor = dark
+            ? PlatformColor(red: 0.18, green: 0.16, blue: 0.13, alpha: 0.65)
+            : PlatformColor(red: 0.961, green: 0.902, blue: 0.827, alpha: 0.65)
+
+        // Text label
+        let label = SKLabelNode()
+        label.fontName = "Cinzel-Bold"
         label.fontSize = fontSize
-        label.fontColor = PlatformColor(RenaissanceColors.sepiaInk)
+        label.fontColor = textColor
         label.verticalAlignmentMode = .center
         label.horizontalAlignmentMode = .center
         label.position = CGPoint(x: 0, y: -1)
         label.zPosition = 2
+        label.attributedText = NSAttributedString(
+            string: text.uppercased(),
+            attributes: [
+                .font: PlatformFont(name: "Cinzel-Bold", size: fontSize) ?? PlatformFont.systemFont(ofSize: fontSize),
+                .foregroundColor: textColor,
+                .kern: kern
+            ]
+        )
+        container.addChild(label)
 
+        // Capsule background — no border
         let textWidth = label.frame.width
         let hPad: CGFloat = fontSize * 0.7
         let pillWidth = textWidth + hPad * 2
         let pillHeight = fontSize * 1.6
         let cornerRadius = pillHeight / 2
 
-        // Parchment capsule background
         let pillPath = CGPath(roundedRect: CGRect(
             x: -pillWidth / 2, y: -pillHeight / 2,
             width: pillWidth, height: pillHeight
         ), cornerWidth: cornerRadius, cornerHeight: cornerRadius, transform: nil)
 
         let bg = SKShapeNode(path: pillPath)
-        bg.fillColor = PlatformColor(RenaissanceColors.parchment.opacity(0.92))
-        bg.strokeColor = PlatformColor(RenaissanceColors.warmBrown.opacity(0.3))
-        bg.lineWidth = 1.5
+        bg.fillColor = bgColor
+        bg.strokeColor = .clear
+        bg.lineWidth = 0
         bg.zPosition = 1
         container.addChild(bg)
-
-        container.addChild(label)
 
         return container
     }

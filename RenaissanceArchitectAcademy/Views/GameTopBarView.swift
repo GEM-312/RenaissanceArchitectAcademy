@@ -21,7 +21,9 @@ struct GameTopBarView: View {
     /// Optional dialog content shown to the right of the sprite inside the same card
     var avatarDialogContent: AnyView? = nil
 
+    @Environment(\.gameSettings) private var settings
     @State private var isNavExpanded = false
+    @State private var showSettings = false
 
     var body: some View {
         ZStack(alignment: .bottomLeading) {
@@ -41,27 +43,21 @@ struct GameTopBarView: View {
                                 HStack(spacing: 6) {
                                     Text(title)
                                         .font(.custom("EBGaramond-SemiBold", size: 18))
-                                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                                        .foregroundStyle(settings.pillTextColor)
                                     Image(systemName: "chevron.down")
                                         .font(.system(size: 11, weight: .semibold))
-                                        .foregroundStyle(RenaissanceColors.warmBrown)
+                                        .foregroundStyle(settings.pillSecondaryColor)
                                         .rotationEffect(.degrees(isNavExpanded ? 180 : 0))
                                 }
                                 .padding(.horizontal, 14)
                                 .padding(.vertical, Spacing.xs)
                                 .background(
                                     Capsule()
-                                        .fill(RenaissanceColors.parchment.opacity(0.92))
+                                        .fill(settings.pillBackground)
                                 )
                                 .overlay(
                                     Capsule()
-                                        .strokeBorder(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 0.5)
-                                        .blur(radius: 0.2)
-                                )
-                                .padding(6)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 24)
-                                        .fill(RenaissanceColors.parchment.opacity(0.3))
+                                        .strokeBorder(settings.pillBorderColor, lineWidth: 1)
                                 )
                             }
                             .buttonStyle(.plain)
@@ -70,26 +66,20 @@ struct GameTopBarView: View {
                             HStack(spacing: 4) {
                                 Image(systemName: "dollarsign.circle.fill")
                                     .font(.caption)
-                                    .foregroundStyle(RenaissanceColors.warmBrown)
+                                    .foregroundStyle(settings.pillTextColor)
                                 Text("\(viewModel.goldFlorins)")
                                     .font(.custom("EBGaramond-Medium", size: 15))
-                                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                                    .foregroundStyle(settings.pillTextColor)
                             }
                             .padding(.horizontal, 14)
                             .padding(.vertical, Spacing.xs)
                             .background(
                                 Capsule()
-                                    .fill(RenaissanceColors.parchment.opacity(0.92))
+                                    .fill(settings.pillBackground)
                             )
                             .overlay(
                                 Capsule()
-                                    .strokeBorder(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 0.5)
-                                    .blur(radius: 0.2)
-                            )
-                            .padding(6)
-                            .background(
-                                RoundedRectangle(cornerRadius: 24)
-                                    .fill(RenaissanceColors.parchment.opacity(0.3))
+                                    .strokeBorder(settings.pillBorderColor, lineWidth: 1)
                             )
                         }
                         .padding(.bottom, 4)
@@ -111,13 +101,34 @@ struct GameTopBarView: View {
                 Spacer()
             }
 
-            // Bottom-left: Avatar profile card
-            if !hideAvatarCard {
-                avatarProfileCard {
-                    onNavigate(.profile)
+            // Bottom-left: Dialog content (no avatar card — profile is in nav menu)
+            if let dialog = avatarDialogContent {
+                dialog
+                    .frame(minWidth: 200, maxWidth: 400)
+                    .padding(12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(settings.cardBackground)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .strokeBorder(settings.cardBorderColor, lineWidth: 0.5)
+                            .blur(radius: 0.2)
+                    )
+                    .padding(.leading, 8)
+                    .padding(.bottom, 8)
+                    .transition(.move(edge: .leading).combined(with: .opacity))
+            }
+
+            // Settings overlay
+            if showSettings {
+                SettingsView(settings: settings) {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        showSettings = false
+                    }
                 }
-                .padding(.leading, 8)
-                .padding(.bottom, 8)
+                .transition(.opacity)
+                .zIndex(100)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -188,6 +199,22 @@ struct GameTopBarView: View {
 
         items.append(contentsOf: allItems.filter { !isCurrentDestination($0.destination) })
 
+        // Profile button
+        items.append(NavItem(icon: "person.fill", label: "Profile", destination: .profile) { [onNavigate] in
+            onNavigate(.profile)
+            withAnimation(.spring(response: 0.45, dampingFraction: 0.65)) {
+                isNavExpanded = false
+            }
+        })
+
+        // Settings button — always last before Home
+        items.append(NavItem(icon: "gearshape.fill", label: "Settings", destination: nil, action: {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                showSettings = true
+                isNavExpanded = false
+            }
+        }))
+
         if let onBackToMenu = onBackToMenu {
             items.append(NavItem(icon: "house.fill", label: "Home", destination: nil, action: onBackToMenu))
         }
@@ -195,38 +222,32 @@ struct GameTopBarView: View {
         return items
     }
 
-    // MARK: - Nav Button — Bottega Jobs capsule style with glass backing
+    // MARK: - Nav Button — theme-aware capsule style
 
     private func navButton(icon: String, label: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack(spacing: 8) {
                 Image(systemName: icon)
                     .font(.caption)
-                    .foregroundStyle(RenaissanceColors.warmBrown)
+                    .foregroundStyle(settings.pillTextColor)
                 Text(label)
                     .font(.custom("EBGaramond-Medium", size: 13))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .foregroundStyle(settings.pillTextColor)
                 Image(systemName: "chevron.right")
                     .font(.system(size: 10))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                    .foregroundStyle(settings.pillSecondaryColor)
             }
             .padding(.horizontal, 14)
             .padding(.vertical, Spacing.xs)
             .background(
                 Capsule()
-                    .fill(RenaissanceColors.parchment.opacity(0.92))
+                    .fill(settings.pillBackground)
             )
             .overlay(
                 Capsule()
-                    .strokeBorder(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 0.5)
-                    .blur(radius: 0.2)
+                    .strokeBorder(settings.pillBorderColor, lineWidth: 1)
             )
-            .padding(6)
-            .background(
-                RoundedRectangle(cornerRadius: 24)
-                    .fill(RenaissanceColors.parchment.opacity(0.3))
-            )
-                    }
+        }
         .buttonStyle(.plain)
     }
 
@@ -256,7 +277,7 @@ struct GameTopBarView: View {
 
                         Text(name)
                             .font(.custom("EBGaramond-SemiBold", size: 16))
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                            .foregroundStyle(settings.cardTextColor)
                             .lineLimit(1)
                     }
                     .frame(width: 144)
@@ -275,11 +296,11 @@ struct GameTopBarView: View {
             .padding(8)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(RenaissanceColors.parchment.opacity(0.92))
+                    .fill(settings.cardBackground)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 0.5)
+                    .strokeBorder(settings.cardBorderColor, lineWidth: 0.5)
                     .blur(radius: 0.2)
             )
             .animation(.spring(response: 0.35, dampingFraction: 0.8), value: hasDialog)

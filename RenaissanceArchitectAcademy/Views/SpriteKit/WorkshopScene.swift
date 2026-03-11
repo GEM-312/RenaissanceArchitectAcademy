@@ -14,6 +14,9 @@ class WorkshopScene: SKScene, ScrollZoomable {
     /// Player gender — set from SwiftUI before scene appears
     var apprenticeIsBoy: Bool = true
 
+    /// Tracks last known theme to detect changes in update()
+    private var lastKnownDarkMode: Bool?
+
     // Camera control
     private var lastPanLocation: CGPoint?
 
@@ -218,6 +221,8 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
     /// When true, camera smoothly tracks the player while walking
     private var isFollowingPlayer = false
+    /// The station position the player is walking toward (for gradual zoom)
+    private var walkTargetPosition: CGPoint?
 
     // MARK: - Callbacks to SwiftUI
 
@@ -241,11 +246,61 @@ class WorkshopScene: SKScene, ScrollZoomable {
         setupStations()
         setupPlayer()
 
+        // Dark tint node — toggled by theme
+        let tint = SKSpriteNode(color: .black, size: mapSize)
+        tint.name = "darkTint"
+        tint.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
+        tint.zPosition = 12
+        tint.alpha = 0.3
+        addChild(tint)
+
+        // Dark mode glow (warm ochre)
+        for (_, pos) in stationPositions {
+            let glow = Self.makeRadialGlow(radius: 200, color: PlatformColor(red: 0.85, green: 0.66, blue: 0.37, alpha: 1.0))
+            glow.name = "darkGlow"
+            glow.position = pos
+            glow.zPosition = 13
+            glow.alpha = 0.5
+            glow.blendMode = .add
+            addChild(glow)
+        }
+
+        // Light mode glow (subtle sepia)
+        for (_, pos) in stationPositions {
+            let glow = Self.makeRadialGlow(radius: 180, color: PlatformColor(red: 0.55, green: 0.44, blue: 0.28, alpha: 1.0))
+            glow.name = "lightGlow"
+            glow.position = pos
+            glow.zPosition = 13
+            glow.alpha = 0.25
+            glow.blendMode = .add
+            addChild(glow)
+        }
+
+        // Apply initial theme
+        applyTheme()
+
         isUserInteractionEnabled = true
 
         #if DEBUG
         registerEditorNodes()
         #endif
+    }
+
+    // MARK: - Theme
+
+    private func applyTheme() {
+        let dark = GameSettings.shared.isDarkMode
+
+        // Toggle tint + glow visibility
+        enumerateChildNodes(withName: "darkTint") { node, _ in node.isHidden = !dark }
+        enumerateChildNodes(withName: "darkGlow") { node, _ in node.isHidden = !dark }
+        enumerateChildNodes(withName: "lightGlow") { node, _ in node.isHidden = dark }
+
+        // Update station label colors
+        for child in children {
+            guard let resourceNode = child as? ResourceNode else { continue }
+            resourceNode.updateLabelTheme(isDark: dark)
+        }
     }
 
     // MARK: - Camera
@@ -282,13 +337,12 @@ class WorkshopScene: SKScene, ScrollZoomable {
         terrainTexture.filteringMode = .linear
         let terrain = SKSpriteNode(texture: terrainTexture)
         terrain.size = mapSize
-
-        // Wrap terrain in SKEffectNode for blur during walking
+        // Wrap terrain in SKEffectNode — base blur always on, walking increases
         let effectNode = SKEffectNode()
         effectNode.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
         effectNode.zPosition = -100
-        effectNode.shouldEnableEffects = false
-        effectNode.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": 12.0])
+        effectNode.shouldEnableEffects = true
+        effectNode.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": 1.0])
         effectNode.shouldRasterize = true
         effectNode.addChild(terrain)
         addChild(effectNode)
@@ -397,6 +451,13 @@ class WorkshopScene: SKScene, ScrollZoomable {
     }
 
     override func update(_ currentTime: TimeInterval) {
+        // Check for theme change
+        let currentDark = GameSettings.shared.isDarkMode
+        if lastKnownDarkMode != currentDark {
+            lastKnownDarkMode = currentDark
+            applyTheme()
+        }
+
         updatePlayerScreenPosition()
 
         // Smoothly follow the player while walking to a station
@@ -408,16 +469,38 @@ class WorkshopScene: SKScene, ScrollZoomable {
                 x: current.x + (target.x - current.x) * lerpFactor,
                 y: current.y + (target.y - current.y) * lerpFactor
             )
+
+            // Gradual zoom: ease from overview → close-up during approach
+            if let dest = walkTargetPosition {
+                let totalDist = hypot(dest.x - cameraNode.position.x, dest.y - cameraNode.position.y)
+                let closeZoom: CGFloat = 0.45
+                let farZoom: CGFloat = 0.65
+                let zoomStartDist: CGFloat = 700
+
+                if totalDist < zoomStartDist {
+                    let progress = 1.0 - (totalDist / zoomStartDist)
+                    let targetScale = farZoom - (farZoom - closeZoom) * progress
+                    let currentScale = cameraNode.xScale
+                    cameraNode.setScale(currentScale + (targetScale - currentScale) * 0.06)
+                }
+            }
+
+            clampCamera()
         }
 
-        // Fade terrain when zoomed in + auto-remove blur when zoomed out
-        if let effectNode = terrainEffectNode, let cam = cameraNode {
+        // Zoom-based terrain blur — more blur when zoomed in (not during walking, which has its own blur)
+        if let cam = cameraNode, !isPlayerWalking, !isFollowingPlayer {
             let scale = cam.xScale
-            let alpha = min(1.0, max(0.65, (scale - 0.5) / 0.5 * 0.35 + 0.65))
-            effectNode.alpha = alpha
-
-            if effectNode.shouldEnableEffects && scale >= 1.0 && !isPlayerWalking && !isFollowingPlayer {
-                stopWalkingTerrainEffects()
+            if scale >= 1.0 {
+                // Zoomed out to full map — base blur
+                terrainEffectNode?.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": 1.0])
+                terrainEffectNode?.shouldRasterize = true
+            } else {
+                // Zoomed in — interpolate blur from 1.0 (at scale 1.0) to 6.0 (at scale 0.5)
+                let t = 1.0 - max(0, min(1, (scale - 0.5) / 0.5))  // 0 at scale 1.0, 1 at scale 0.5
+                let blurRadius = 1.0 + t * 5.0
+                terrainEffectNode?.shouldRasterize = false
+                terrainEffectNode?.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": blurRadius])
             }
         }
     }
@@ -689,8 +772,8 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
         isPlayerWalking = true
 
-        // Stage 1: Zoom in to follow the player while walking (0.4x)
-        startFollowingPlayer()
+        // Stage 1: Gentle zoom + follow player — gradual approach in update()
+        startFollowingPlayer(toward: stationPos)
         startWalkingTerrainEffects()
 
         #if DEBUG
@@ -741,6 +824,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
     private func playerArrivedAtStation(_ stationNode: ResourceNode) {
         isPlayerWalking = false
         isFollowingPlayer = false
+        walkTargetPosition = nil
 
         // Keep blur while zoomed in at station
 
@@ -765,23 +849,24 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
     private func startWalkingTerrainEffects() {
         terrainEffectNode?.shouldRasterize = false
-        terrainEffectNode?.shouldEnableEffects = true
+        terrainEffectNode?.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": 8.0])
     }
 
     private func stopWalkingTerrainEffects() {
-        terrainEffectNode?.shouldEnableEffects = false
+        terrainEffectNode?.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": 1.0])
         terrainEffectNode?.shouldRasterize = true
     }
 
     // MARK: - Station Camera Zoom
 
-    /// Stage 1: Zoom in close and follow the player while walking
-    private func startFollowingPlayer() {
+    /// Stage 1: Start following player — gentle initial zoom, gradual approach in update()
+    private func startFollowingPlayer(toward target: CGPoint) {
         guard let cameraNode = cameraNode else { return }
         isFollowingPlayer = true
+        walkTargetPosition = target
 
-        // Zoom to 0.4x (close follow) — camera position tracks player in update()
-        let zoomAction = SKAction.scale(to: 0.4, duration: 0.5)
+        // Zoom to 0.65x (gentle start) — gradual zoom to 0.45 happens in update()
+        let zoomAction = SKAction.scale(to: 0.65, duration: 0.5)
         zoomAction.timingMode = .easeInEaseOut
         cameraNode.run(zoomAction, withKey: "cameraZoom")
     }
@@ -790,11 +875,10 @@ class WorkshopScene: SKScene, ScrollZoomable {
     private func zoomCameraToStation(_ stationPos: CGPoint) {
         guard let cameraNode = cameraNode else { return }
 
-        // Ease out to station zoom level, center on station
         let moveAction = SKAction.move(to: stationPos, duration: 0.5)
         moveAction.timingMode = .easeInEaseOut
 
-        let zoomAction = SKAction.scale(to: 0.4, duration: 0.5)
+        let zoomAction = SKAction.scale(to: 0.45, duration: 0.5)
         zoomAction.timingMode = .easeInEaseOut
 
         cameraNode.run(SKAction.group([moveAction, zoomAction]), withKey: "cameraZoom")
@@ -804,6 +888,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
     func zoomCameraOut() {
         guard let cameraNode = cameraNode else { return }
         isFollowingPlayer = false
+        walkTargetPosition = nil
 
         stopWalkingTerrainEffects()
 
@@ -1121,4 +1206,82 @@ class WorkshopScene: SKScene, ScrollZoomable {
         print("// ================================\n")
     }
     #endif
+
+    // MARK: - Radial Glow Helper
+
+    /// Creates a soft radial glow sprite — bright center fading to transparent
+    static func makeRadialGlow(radius: CGFloat, color: PlatformColor) -> SKSpriteNode {
+        let diameter = Int(radius * 2)
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        color.getRed(&r, green: &g, blue: &b, alpha: &a)
+        let colors = [
+            PlatformColor(red: r, green: g, blue: b, alpha: 0.6).cgColor,
+            PlatformColor(red: r, green: g, blue: b, alpha: 0.0).cgColor
+        ] as CFArray
+        let locations: [CGFloat] = [0.0, 1.0]
+
+        guard let ctx = CGContext(data: nil, width: diameter, height: diameter,
+                                   bitsPerComponent: 8, bytesPerRow: 0,
+                                   space: colorSpace,
+                                   bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue),
+              let gradient = CGGradient(colorsSpace: colorSpace, colors: colors, locations: locations) else {
+            return SKSpriteNode()
+        }
+
+        let center = CGPoint(x: CGFloat(diameter) / 2, y: CGFloat(diameter) / 2)
+        ctx.drawRadialGradient(gradient, startCenter: center, startRadius: 0,
+                               endCenter: center, endRadius: radius, options: [])
+
+        guard let image = ctx.makeImage() else { return SKSpriteNode() }
+        let texture = SKTexture(cgImage: image)
+        let sprite = SKSpriteNode(texture: texture, size: CGSize(width: diameter, height: diameter))
+        return sprite
+    }
+
+    /// Creates a mask texture: white everywhere with soft radial fade-to-clear holes at given positions.
+    /// Used with SKCropNode — white = show dark overlay, clear = reveal terrain underneath.
+    /// Creates a mask texture: white everywhere with blurred clear holes at given positions.
+    /// Hard clear circles are punched first, then the entire image is Gaussian-blurred
+    /// so the edges feather naturally. Used with SKCropNode.
+    static func makeCutoutMask(mapSize: CGSize, holePositions: [CGPoint], holeRadius: CGFloat, blurRadius: CGFloat = 40) -> SKTexture {
+        let w = Int(mapSize.width)
+        let h = Int(mapSize.height)
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+
+        guard let ctx = CGContext(data: nil, width: w, height: h,
+                                   bitsPerComponent: 8, bytesPerRow: 0,
+                                   space: colorSpace,
+                                   bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else {
+            return SKTexture()
+        }
+
+        // Fill entire mask white (opaque = dark overlay visible)
+        ctx.setFillColor(PlatformColor.white.cgColor)
+        ctx.fill(CGRect(x: 0, y: 0, width: w, height: h))
+
+        // Punch hard clear circles at each position
+        ctx.setBlendMode(.copy)
+        ctx.setFillColor(PlatformColor(white: 1.0, alpha: 0.0).cgColor)
+        for pos in holePositions {
+            ctx.fillEllipse(in: CGRect(x: pos.x - holeRadius, y: pos.y - holeRadius,
+                                        width: holeRadius * 2, height: holeRadius * 2))
+        }
+
+        guard let hardImage = ctx.makeImage() else { return SKTexture() }
+
+        // Apply Gaussian blur to the whole mask — softens circle edges
+        let ciImage = CIImage(cgImage: hardImage)
+        let blur = CIFilter(name: "CIGaussianBlur", parameters: [
+            kCIInputImageKey: ciImage,
+            "inputRadius": blurRadius
+        ])
+        let ciContext = CIContext()
+        guard let output = blur?.outputImage,
+              let blurredImage = ciContext.createCGImage(output, from: ciImage.extent) else {
+            return SKTexture(cgImage: hardImage)
+        }
+
+        return SKTexture(cgImage: blurredImage)
+    }
 }

@@ -58,7 +58,6 @@ struct ForestMapView: View {
     // Tool requirement dialog (shown when player reaches POI without axe)
     @State private var showToolDialog = false
 
-
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -144,7 +143,8 @@ struct ForestMapView: View {
                         setupScienceCards(for: poi)
                     }
                 } else if oldValue != nil {
-                    // POI dismissed — player walks back to box
+                    // POI dismissed — zoom out and player walks back to box
+                    sceneHolder.scene?.zoomCameraOut()
                     sceneHolder.scene?.hidePlayer()
                     showToolDialog = false
                     avatarInBox = true
@@ -948,6 +948,7 @@ struct ForestMapView: View {
             selectedPOIIndex = nil
             cardsAppeared = false
         }
+        sceneHolder.scene?.zoomCameraOut()
     }
 
     // MARK: - Bird Encouragement
@@ -1182,6 +1183,7 @@ struct ForestMapView: View {
             selectedPOIIndex = nil
             cardsAppeared = false
         }
+        sceneHolder.scene?.zoomCameraOut()
 
         if collected > 0 {
             timberFloatAmount = collected
@@ -1310,6 +1312,7 @@ struct ForestMapView: View {
         withAnimation(.spring(response: 0.3)) {
             showToolDialog = false
         }
+        sceneHolder.scene?.zoomCameraOut()
         sceneHolder.scene?.hidePlayer()
         avatarInBox = true
     }
@@ -1431,6 +1434,7 @@ struct ForestMapView: View {
                 selectedPOIIndex = nil
                 showToolDialog = false
             }
+            // Camera zoom out is handled by the scene itself (startFollowingPlayer resets)
         }
 
         newScene.onPOISelected = { index in

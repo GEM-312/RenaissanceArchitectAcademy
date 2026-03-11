@@ -17,6 +17,7 @@ struct WorkshopMapView: View {
     @Binding var returnToLessonPlotId: Int?
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.gameSettings) private var settings
 
     // Scene reference — stored in a class box so it survives body re-evaluation
     // without triggering re-renders (unlike @State which causes infinite loops)
@@ -49,7 +50,6 @@ struct WorkshopMapView: View {
     @State private var completedJob: WorkshopJob?
     @State private var jobRewardFlorins: Int = 0
     @State private var jobStreakBonus: Int = 0
-
 
     var body: some View {
         GeometryReader { geometry in
@@ -421,13 +421,13 @@ struct WorkshopMapView: View {
                                     .font(.caption)
                                 Text("\(count)")
                                     .font(.custom("EBGaramond-Regular", size: 12))
-                                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                                    .foregroundStyle(settings.cardTextColor)
                             }
                             .padding(.horizontal, 6)
                             .padding(.vertical, Spacing.xxs)
                             .background(
                                 RoundedRectangle(cornerRadius: 6)
-                                    .fill(RenaissanceColors.parchment.opacity(0.8))
+                                    .fill(settings.itemBadgeBackground)
                             )
                         }
                     }
@@ -469,8 +469,40 @@ struct WorkshopMapView: View {
         .padding(.horizontal, Spacing.sm)
         .padding(.vertical, Spacing.xs)
         .background(
+            ZStack {
+                // Wood plank texture — warm brown gradient with grain lines
+                RoundedRectangle(cornerRadius: CornerRadius.md)
+                    .fill(
+                        settings.isDarkMode
+                            ? Color(red: 0.18, green: 0.16, blue: 0.13).opacity(0.65)
+                            : Color(red: 0.58, green: 0.44, blue: 0.30).opacity(0.25)
+                    )
+
+                // Subtle horizontal grain lines
+                VStack(spacing: 0) {
+                    ForEach(0..<3, id: \.self) { _ in
+                        Spacer()
+                        Rectangle()
+                            .fill(
+                                settings.isDarkMode
+                                    ? RenaissanceColors.ochre.opacity(0.08)
+                                    : RenaissanceColors.warmBrown.opacity(0.08)
+                            )
+                            .frame(height: 0.5)
+                    }
+                    Spacer()
+                }
+                .clipShape(RoundedRectangle(cornerRadius: CornerRadius.md))
+            }
+        )
+        .overlay(
             RoundedRectangle(cornerRadius: CornerRadius.md)
-                .fill(RenaissanceColors.parchment.opacity(0.92))
+                .strokeBorder(
+                    settings.isDarkMode
+                        ? RenaissanceColors.ochre.opacity(0.2)
+                        : RenaissanceColors.warmBrown.opacity(0.2),
+                    lineWidth: 1
+                )
         )
     }
 
@@ -498,7 +530,7 @@ struct WorkshopMapView: View {
                             .frame(width: 32, height: 32)
                         Text(station.label)
                             .font(.custom("EBGaramond-SemiBold", size: 16))
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                            .foregroundStyle(settings.cardTextColor)
                     }
                     collectionMaterialsView(for: station)
                 }
@@ -515,16 +547,16 @@ struct WorkshopMapView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Need \(tool.displayName)")
                         .font(.custom("Cinzel-Bold", size: 15))
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .foregroundStyle(settings.cardTextColor)
                     Text(tool.italianName)
                         .font(.custom("EBGaramond-Italic", size: 14))
-                        .foregroundStyle(RenaissanceColors.warmBrown)
+                        .foregroundStyle(settings.pillSecondaryColor)
                 }
             }
 
             Text(tool.educationalText)
                 .font(.custom("EBGaramond-Regular", size: 14))
-                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                .foregroundStyle(settings.cardTextColor.opacity(0.8))
                 .fixedSize(horizontal: false, vertical: true)
 
             Button {
@@ -562,7 +594,7 @@ struct WorkshopMapView: View {
             } label: {
                 Text("Close")
                     .font(.custom("EBGaramond-Regular", size: 13))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
+                    .foregroundStyle(settings.cardTextColor.opacity(0.4))
                     .frame(maxWidth: .infinity)
             }
         }
@@ -577,7 +609,7 @@ struct WorkshopMapView: View {
 
                 Text(station.label)
                     .font(RenaissanceFont.button)
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .foregroundStyle(settings.cardTextColor)
             }
 
             // Collection buttons built into the hint bubble
@@ -587,7 +619,7 @@ struct WorkshopMapView: View {
         .frame(width: 280)
         .background(
             RoundedRectangle(cornerRadius: CornerRadius.lg)
-                .fill(RenaissanceColors.parchment.opacity(0.95))
+                .fill(settings.cardBackground)
         )
         .padding(.trailing, Spacing.md)
     }
@@ -608,7 +640,7 @@ struct WorkshopMapView: View {
         .frame(width: 280)
         .background(
             RoundedRectangle(cornerRadius: CornerRadius.lg)
-                .fill(RenaissanceColors.parchment.opacity(0.95))
+                .fill(settings.cardBackground)
         )
         .padding(.trailing, Spacing.md)
     }
@@ -690,10 +722,10 @@ struct WorkshopMapView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "dollarsign.circle.fill")
                             .font(.caption)
-                            .foregroundStyle(RenaissanceColors.ochre)
+                            .foregroundStyle(settings.pillTextColor)
                         Text("\(vm.goldFlorins)")
                             .font(.custom("EBGaramond-Regular", size: 15))
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                            .foregroundStyle(settings.cardTextColor)
                     }
                 }
 
@@ -735,27 +767,27 @@ struct WorkshopMapView: View {
                                     .font(.body)
                                 Text(material.rawValue)
                                     .font(.custom("EBGaramond-Regular", size: 13))
-                                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                                    .foregroundStyle(settings.cardTextColor)
                                     .lineLimit(1)
                                     .minimumScaleFactor(0.8)
                                 HStack(spacing: 2) {
                                     Image(systemName: "dollarsign.circle.fill")
                                         .font(.system(size: 9))
-                                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                                        .foregroundStyle(settings.cardTextColor)
                                     Text("\(material.cost)")
                                         .font(.custom("EBGaramond-Regular", size: 12))
-                                        .foregroundStyle(canAfford ? RenaissanceColors.sepiaInk : RenaissanceColors.errorRed)
+                                        .foregroundStyle(canAfford ? settings.cardTextColor : RenaissanceColors.errorRed)
                                 }
                             }
                             .padding(6)
                             .frame(maxWidth: .infinity)
                             .background(
                                 RoundedRectangle(cornerRadius: CornerRadius.sm)
-                                    .fill(canAfford ? RenaissanceColors.parchment : RenaissanceColors.stoneGray.opacity(0.15))
+                                    .fill(canAfford ? settings.itemBadgeBackground : RenaissanceColors.stoneGray.opacity(0.15))
                             )
                             .overlay(
                                 RoundedRectangle(cornerRadius: CornerRadius.sm)
-                                    .strokeBorder(canAfford ? RenaissanceColors.renaissanceBlue : RenaissanceColors.stoneGray.opacity(0.3), lineWidth: 1)
+                                    .strokeBorder(canAfford ? settings.cardBorderColor : RenaissanceColors.stoneGray.opacity(0.3), lineWidth: 1)
                             )
                         }
                     }
@@ -769,7 +801,7 @@ struct WorkshopMapView: View {
                     }
                 }
                 .font(RenaissanceFont.captionSmall)
-                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                .foregroundStyle(settings.cardTextColor.opacity(0.5))
             }
         }
     }
@@ -790,10 +822,10 @@ struct WorkshopMapView: View {
                 HStack(spacing: 4) {
                     Image(systemName: "dollarsign.circle.fill")
                         .font(.caption)
-                        .foregroundStyle(RenaissanceColors.ochre)
+                        .foregroundStyle(settings.pillTextColor)
                     Text("\(vm.goldFlorins)")
                         .font(.custom("EBGaramond-Regular", size: 13))
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .foregroundStyle(settings.cardTextColor)
                 }
             }
 
@@ -805,7 +837,7 @@ struct WorkshopMapView: View {
                     } label: {
                         Text(tab.rawValue)
                             .font(.custom("EBGaramond-SemiBold", size: 12))
-                            .foregroundStyle(marketTab == tab ? .white : RenaissanceColors.sepiaInk)
+                            .foregroundStyle(marketTab == tab ? .white : settings.cardTextColor)
                             .padding(.horizontal, Spacing.md)
                             .padding(.vertical, 4)
                             .background(
@@ -818,7 +850,7 @@ struct WorkshopMapView: View {
             .padding(2)
             .background(
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(RenaissanceColors.stoneGray.opacity(0.12))
+                    .fill(settings.pillBackground)
             )
 
             if marketTab == .materials {
@@ -835,7 +867,7 @@ struct WorkshopMapView: View {
                 }
             }
             .font(RenaissanceFont.captionSmall)
-            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+            .foregroundStyle(settings.cardTextColor.opacity(0.5))
         }
     }
 
@@ -864,27 +896,27 @@ struct WorkshopMapView: View {
                             .font(.body)
                         Text(material.rawValue)
                             .font(.custom("EBGaramond-Regular", size: 10))
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                            .foregroundStyle(settings.cardTextColor)
                             .lineLimit(1)
                             .minimumScaleFactor(0.8)
                         HStack(spacing: 1) {
                             Image(systemName: "dollarsign.circle.fill")
                                 .font(.system(size: 8))
-                                .foregroundStyle(RenaissanceColors.sepiaInk)
+                                .foregroundStyle(settings.cardTextColor)
                             Text("\(material.cost)")
                                 .font(.custom("EBGaramond-Regular", size: 10))
-                                .foregroundStyle(canAfford ? RenaissanceColors.sepiaInk : RenaissanceColors.errorRed)
+                                .foregroundStyle(canAfford ? settings.cardTextColor : RenaissanceColors.errorRed)
                         }
                     }
                     .padding(6)
                     .frame(maxWidth: .infinity)
                     .background(
                         RoundedRectangle(cornerRadius: CornerRadius.sm)
-                            .fill(canAfford ? RenaissanceColors.parchment : RenaissanceColors.stoneGray.opacity(0.15))
+                            .fill(canAfford ? settings.itemBadgeBackground : RenaissanceColors.stoneGray.opacity(0.15))
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: CornerRadius.sm)
-                            .strokeBorder(canAfford ? RenaissanceColors.renaissanceBlue : RenaissanceColors.stoneGray.opacity(0.3), lineWidth: 1)
+                            .strokeBorder(canAfford ? settings.cardBorderColor : RenaissanceColors.stoneGray.opacity(0.3), lineWidth: 1)
                     )
                 }
             }
@@ -921,12 +953,12 @@ struct WorkshopMapView: View {
 
                             Text(tool.displayName)
                                 .font(RenaissanceFont.captionSmall)
-                                .foregroundStyle(RenaissanceColors.sepiaInk)
+                                .foregroundStyle(settings.cardTextColor)
                                 .lineLimit(1)
 
                             Text(tool.italianName)
                                 .font(.custom("EBGaramond-Italic", size: 9))
-                                .foregroundStyle(RenaissanceColors.warmBrown)
+                                .foregroundStyle(settings.pillSecondaryColor)
                                 .lineLimit(1)
 
                             if owned {
@@ -937,10 +969,10 @@ struct WorkshopMapView: View {
                                 HStack(spacing: 2) {
                                     Image(systemName: "dollarsign.circle.fill")
                                         .font(.custom("EBGaramond-Regular", size: 9, relativeTo: .caption2))
-                                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                                        .foregroundStyle(settings.cardTextColor)
                                     Text("\(cost)")
                                         .font(RenaissanceFont.captionSmall)
-                                        .foregroundStyle(canAfford ? RenaissanceColors.sepiaInk : RenaissanceColors.errorRed)
+                                        .foregroundStyle(canAfford ? settings.cardTextColor : RenaissanceColors.errorRed)
                                 }
                             }
                         }
@@ -948,11 +980,11 @@ struct WorkshopMapView: View {
                         .frame(width: 80)
                         .background(
                             RoundedRectangle(cornerRadius: CornerRadius.sm)
-                                .fill(owned ? RenaissanceColors.sageGreen.opacity(0.08) : (canAfford ? RenaissanceColors.parchment : RenaissanceColors.stoneGray.opacity(0.15)))
+                                .fill(owned ? RenaissanceColors.sageGreen.opacity(0.08) : (canAfford ? settings.itemBadgeBackground : RenaissanceColors.stoneGray.opacity(0.15)))
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: CornerRadius.sm)
-                                .strokeBorder(owned ? RenaissanceColors.sageGreen.opacity(0.4) : (canAfford ? RenaissanceColors.ochre.opacity(0.4) : RenaissanceColors.stoneGray.opacity(0.3)), lineWidth: 1)
+                                .strokeBorder(owned ? RenaissanceColors.sageGreen.opacity(0.4) : (canAfford ? settings.cardBorderColor : RenaissanceColors.stoneGray.opacity(0.3)), lineWidth: 1)
                         )
                     }
                     .disabled(owned)
@@ -1397,33 +1429,28 @@ struct WorkshopMapView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "scroll.fill")
                             .font(.caption)
-                            .foregroundStyle(RenaissanceColors.warmBrown)
+                            .foregroundStyle(settings.pillTextColor)
 
                         Text("Bottega Jobs")
                             .font(.custom("EBGaramond-Medium", size: 13))
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                            .foregroundStyle(settings.pillTextColor)
 
                         Image(systemName: "chevron.right")
                             .font(.system(size: 10))
-                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                            .foregroundStyle(settings.pillSecondaryColor)
                     }
                     .padding(.horizontal, 14)
                     .padding(.vertical, Spacing.xs)
                     .background(
                         Capsule()
-                            .fill(RenaissanceColors.parchment.opacity(0.92))
+                            .fill(settings.pillBackground)
                     )
                     .overlay(
                         Capsule()
-                            .strokeBorder(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 0.5)
-                    .blur(radius: 0.2)
-                    )
-                    .padding(6)
-                    .background(
-                        RoundedRectangle(cornerRadius: 24)
-                            .fill(RenaissanceColors.parchment.opacity(0.3))
+                            .strokeBorder(settings.pillBorderColor, lineWidth: 1)
                     )
                 }
+                .buttonStyle(.plain)
                 .padding(.trailing, 16)
             }
             .padding(.top, 420)

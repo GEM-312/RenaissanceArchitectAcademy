@@ -13,9 +13,22 @@ class ForestScene: SKScene, ScrollZoomable {
     /// Player gender — set from SwiftUI before scene appears
     var apprenticeIsBoy: Bool = true
 
+    /// Tracks last known theme to detect changes in update()
+    private var lastKnownDarkMode: Bool?
+
     // Camera control (pan + zoom like workshop/city)
     private var lastPanLocation: CGPoint?
     private var initialCameraScale: CGFloat = 1.0
+
+    /// When true, camera smoothly tracks the player while walking
+    private var isFollowingPlayer = false
+    /// Whether the player is currently walking to a POI
+    private var isPlayerWalking = false
+    /// The POI position the player is walking toward (for gradual zoom)
+    private var walkTargetPosition: CGPoint?
+
+    /// Terrain blur effect node — base blur 5.0 always on, walking increases to 12.0
+    private var terrainEffectNode: SKEffectNode?
 
     // Map size — standard 3500×2500 coordinate space
     private let mapSize = CGSize(width: 3500, height: 2500)
@@ -264,11 +277,58 @@ class ForestScene: SKScene, ScrollZoomable {
         setupPOIs()
         setupPlayer()
 
+        // Dark tint node — toggled by theme
+        let tint = SKSpriteNode(color: .black, size: mapSize)
+        tint.name = "darkTint"
+        tint.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
+        tint.zPosition = 12
+        tint.alpha = 0.3
+        addChild(tint)
+
+        // Dark mode glow (forest green)
+        for poi in pointsOfInterest {
+            let glow = WorkshopScene.makeRadialGlow(radius: 200, color: PlatformColor(red: 0.55, green: 0.75, blue: 0.45, alpha: 1.0))
+            glow.name = "darkGlow"
+            glow.position = poi.position
+            glow.zPosition = 13
+            glow.alpha = 0.45
+            glow.blendMode = .add
+            addChild(glow)
+        }
+
+        // Light mode glow (subtle green)
+        for poi in pointsOfInterest {
+            let glow = WorkshopScene.makeRadialGlow(radius: 180, color: PlatformColor(red: 0.35, green: 0.50, blue: 0.30, alpha: 1.0))
+            glow.name = "lightGlow"
+            glow.position = poi.position
+            glow.zPosition = 13
+            glow.alpha = 0.2
+            glow.blendMode = .add
+            addChild(glow)
+        }
+
+        // Apply initial theme
+        applyTheme()
+
         isUserInteractionEnabled = true
 
         #if DEBUG
         registerEditorNodes()
         #endif
+    }
+
+    // MARK: - Theme
+
+    private func applyTheme() {
+        let dark = GameSettings.shared.isDarkMode
+
+        // Toggle tint + glow visibility
+        enumerateChildNodes(withName: "darkTint") { node, _ in node.isHidden = !dark }
+        enumerateChildNodes(withName: "darkGlow") { node, _ in node.isHidden = !dark }
+        enumerateChildNodes(withName: "lightGlow") { node, _ in node.isHidden = dark }
+
+        // Update tree pill labels
+        updatePillLabelsTheme(isDark: dark)
     }
 
     // MARK: - Camera
@@ -324,15 +384,93 @@ class ForestScene: SKScene, ScrollZoomable {
         }
     }
 
+    // MARK: - Camera Follow & Zoom
+
+    /// Stage 1: Start following player — zoom in to walking level
+    private func startFollowingPlayer(toward target: CGPoint) {
+        guard let cameraNode = cameraNode else { return }
+        isFollowingPlayer = true
+        isPlayerWalking = true
+        walkTargetPosition = target
+
+        // Zoom to 0.65x (start of approach) — gradual zoom to 0.45 happens in update()
+        let zoomAction = SKAction.scale(to: 0.65, duration: 0.5)
+        zoomAction.timingMode = .easeInEaseOut
+        cameraNode.run(zoomAction, withKey: "cameraZoom")
+
+        // Increase terrain blur while walking
+        startWalkingTerrainEffects()
+    }
+
+    /// Stage 2: Settle camera on the POI after player arrives
+    private func zoomCameraToPOI(_ poiPos: CGPoint) {
+        guard let cameraNode = cameraNode else { return }
+
+        let moveAction = SKAction.move(to: poiPos, duration: 0.5)
+        moveAction.timingMode = .easeInEaseOut
+
+        let zoomAction = SKAction.scale(to: 0.45, duration: 0.5)
+        zoomAction.timingMode = .easeInEaseOut
+
+        cameraNode.run(SKAction.group([moveAction, zoomAction]), withKey: "cameraZoom")
+
+        // Return to base blur when arrived
+        stopWalkingTerrainEffects()
+    }
+
+    /// Zoom back out to show the full map (called from SwiftUI when overlay dismisses)
+    func zoomCameraOut() {
+        guard let cameraNode = cameraNode else { return }
+        isFollowingPlayer = false
+        isPlayerWalking = false
+        walkTargetPosition = nil
+
+        let mapCenter = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
+        let fitScale = max(mapSize.width / self.size.width, mapSize.height / self.size.height)
+
+        let moveAction = SKAction.move(to: mapCenter, duration: 0.6)
+        moveAction.timingMode = .easeInEaseOut
+
+        let zoomAction = SKAction.scale(to: fitScale, duration: 0.6)
+        zoomAction.timingMode = .easeInEaseOut
+
+        cameraNode.run(SKAction.group([moveAction, zoomAction]), withKey: "cameraZoom")
+
+        // Return to base blur when zooming out
+        stopWalkingTerrainEffects()
+    }
+
+    // MARK: - Terrain Effects (blur)
+
+    /// Increase terrain blur while walking
+    private func startWalkingTerrainEffects() {
+        terrainEffectNode?.shouldRasterize = false
+        terrainEffectNode?.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": 8.0])
+    }
+
+    /// Return terrain blur to base level
+    private func stopWalkingTerrainEffects() {
+        terrainEffectNode?.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": 1.0])
+        terrainEffectNode?.shouldRasterize = true
+    }
+
     // MARK: - Background (stretched to mapSize per standard)
 
     private func setupBackground() {
         let terrainTexture = SKTexture(imageNamed: "Forest1")
+        terrainTexture.filteringMode = .linear
         let terrain = SKSpriteNode(texture: terrainTexture)
         terrain.size = mapSize  // Stretch to fill map coordinate space
-        terrain.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
-        terrain.zPosition = -100
-        addChild(terrain)
+        // Wrap terrain in SKEffectNode — base blur always on, walking increases
+        let effectNode = SKEffectNode()
+        effectNode.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
+        effectNode.zPosition = -100
+        effectNode.shouldEnableEffects = true
+        effectNode.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": 1.0])
+        effectNode.shouldRasterize = true
+        effectNode.addChild(terrain)
+        addChild(effectNode)
+        terrainEffectNode = effectNode
     }
 
     // MARK: - Grid Lines (notebook style)
@@ -638,7 +776,56 @@ class ForestScene: SKScene, ScrollZoomable {
     }
 
     override func update(_ currentTime: TimeInterval) {
+        // Check for theme change
+        let currentDark = GameSettings.shared.isDarkMode
+        if lastKnownDarkMode != currentDark {
+            lastKnownDarkMode = currentDark
+            applyTheme()
+        }
+
         updatePlayerScreenPosition()
+
+        // Smoothly follow the player while walking to a POI
+        if isFollowingPlayer {
+            let target = playerNode.position
+            let current = cameraNode.position
+            let lerpFactor: CGFloat = 0.08
+            cameraNode.position = CGPoint(
+                x: current.x + (target.x - current.x) * lerpFactor,
+                y: current.y + (target.y - current.y) * lerpFactor
+            )
+
+            // Gradual zoom: ease from overview → close-up during the last 30% of walk
+            if let dest = walkTargetPosition {
+                let totalDist = hypot(dest.x - cameraNode.position.x, dest.y - cameraNode.position.y)
+                let closeZoom: CGFloat = 0.45
+                let farZoom: CGFloat = 0.65
+                let zoomStartDist: CGFloat = 700  // start zooming when this close
+
+                if totalDist < zoomStartDist {
+                    let progress = 1.0 - (totalDist / zoomStartDist)  // 0→1 as we approach
+                    let targetScale = farZoom - (farZoom - closeZoom) * progress
+                    let currentScale = cameraNode.xScale
+                    cameraNode.setScale(currentScale + (targetScale - currentScale) * 0.06)
+                }
+            }
+
+            clampCamera()
+        }
+
+        // Zoom-based terrain blur — more blur when zoomed in (not during walking, which has its own blur)
+        if let cam = cameraNode, !isPlayerWalking, !isFollowingPlayer {
+            let scale = cam.xScale
+            if scale >= 1.0 {
+                terrainEffectNode?.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": 1.0])
+                terrainEffectNode?.shouldRasterize = true
+            } else {
+                let t = 1.0 - max(0, min(1, (scale - 0.5) / 0.5))
+                let blurRadius = 1.0 + t * 5.0
+                terrainEffectNode?.shouldRasterize = false
+                terrainEffectNode?.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": blurRadius])
+            }
+        }
     }
 
     // MARK: - Input Handling
@@ -917,6 +1104,9 @@ class ForestScene: SKScene, ScrollZoomable {
               let idx = Int(name.replacingOccurrences(of: "poi_", with: "")),
               idx < pointsOfInterest.count else { return }
 
+        // Cancel any current walk
+        playerNode.removeAction(forKey: "walkTo")
+
         let targetPos = CGPoint(x: poiNode.position.x - 200, y: poiNode.position.y - 65)
         let playerPos = playerNode.position
 
@@ -924,12 +1114,23 @@ class ForestScene: SKScene, ScrollZoomable {
 
         let treeName = pointsOfInterest[idx].name
 
-        // Completion: face the tree, then show POI overlay + maybe discover a truffle
+        // Stage 1: Start camera follow + zoom in
+        startFollowingPlayer(toward: poiNode.position)
+
+        // Completion: stop following, settle camera on POI, then show overlay
         let poiPosition = poiNode.position
         let onArrival: () -> Void = { [weak self] in
+            self?.isPlayerWalking = false
+            self?.isFollowingPlayer = false
+            self?.walkTargetPosition = nil
+
             // Face toward the tree
             let faceRight = poiPosition.x > (self?.playerNode.position.x ?? 0)
             self?.playerNode.setFacingDirection(faceRight)
+
+            // Stage 2: Settle camera on the POI
+            self?.zoomCameraToPOI(poiPosition)
+
             self?.playerNode.playCollectAnimation {
                 self?.onPOISelected?(idx)
                 // Roll for truffle discovery near this tree (delayed so POI overlay shows first)

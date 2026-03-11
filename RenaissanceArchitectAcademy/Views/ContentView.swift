@@ -30,6 +30,9 @@ struct ContentView: View {
     // Lesson return — stores plot ID when student navigates to workshop/forest from a lesson
     @State private var returnToLessonPlotId: Int? = nil
 
+    // Game settings — theme, volume, persisted via UserDefaults (shared singleton for SpriteKit access)
+    @State private var gameSettings = GameSettings.shared
+
     // Play time tracking
     @State private var sessionStartDate: Date? = nil
 
@@ -80,6 +83,7 @@ struct ContentView: View {
                 detailView
             }
         }
+        .environment(\.gameSettings, gameSettings)
         .onAppear {
             guard !hasLoadedPersistence else { return }
             hasLoadedPersistence = true

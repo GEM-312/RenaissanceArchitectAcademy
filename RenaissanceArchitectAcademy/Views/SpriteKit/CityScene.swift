@@ -22,6 +22,9 @@ class CityScene: SKScene, ScrollZoomable {
     /// Player gender — set from SwiftUI before scene appears
     var apprenticeIsBoy: Bool = true
 
+    /// Tracks last known theme to detect changes in update()
+    private var lastKnownDarkMode: Bool?
+
     private var lastCursorPosition: CGPoint?
 
     // Callback when a building is tapped
@@ -47,6 +50,8 @@ class CityScene: SKScene, ScrollZoomable {
 
     /// Camera follows player while walking
     private var isFollowingPlayer = false
+    /// The building position the player is walking toward (for gradual zoom)
+    private var walkTargetPosition: CGPoint?
 
     // Camera control
     private var lastPanLocation: CGPoint?
@@ -230,6 +235,39 @@ class CityScene: SKScene, ScrollZoomable {
         setupDecorations()
         setupPlayer()
 
+        // Dark tint node — toggled by theme
+        let tint = SKSpriteNode(color: .black, size: mapSize)
+        tint.name = "darkTint"
+        tint.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
+        tint.zPosition = 12
+        tint.alpha = 0.3
+        addChild(tint)
+
+        // Dark mode glow (warm ochre)
+        for (_, node) in buildingNodes {
+            let glow = WorkshopScene.makeRadialGlow(radius: 180, color: PlatformColor(red: 0.85, green: 0.66, blue: 0.37, alpha: 1.0))
+            glow.name = "darkGlow"
+            glow.position = node.position
+            glow.zPosition = 13
+            glow.alpha = 0.5
+            glow.blendMode = .add
+            addChild(glow)
+        }
+
+        // Light mode glow (subtle sepia)
+        for (_, node) in buildingNodes {
+            let glow = WorkshopScene.makeRadialGlow(radius: 160, color: PlatformColor(red: 0.55, green: 0.44, blue: 0.28, alpha: 1.0))
+            glow.name = "lightGlow"
+            glow.position = node.position
+            glow.zPosition = 13
+            glow.alpha = 0.25
+            glow.blendMode = .add
+            addChild(glow)
+        }
+
+        // Apply initial theme
+        applyTheme()
+
         // Enable touch and tracking
         isUserInteractionEnabled = true
 
@@ -253,9 +291,27 @@ class CityScene: SKScene, ScrollZoomable {
         addChild(playerNode)
     }
 
+    // MARK: - Theme
+
+    private func applyTheme() {
+        let dark = GameSettings.shared.isDarkMode
+
+        // Toggle tint + glow visibility
+        enumerateChildNodes(withName: "darkTint") { node, _ in node.isHidden = !dark }
+        enumerateChildNodes(withName: "darkGlow") { node, _ in node.isHidden = !dark }
+        enumerateChildNodes(withName: "lightGlow") { node, _ in node.isHidden = dark }
+    }
+
     // MARK: - Update Loop
 
     override func update(_ currentTime: TimeInterval) {
+        // Check for theme change
+        let currentDark = GameSettings.shared.isDarkMode
+        if lastKnownDarkMode != currentDark {
+            lastKnownDarkMode = currentDark
+            applyTheme()
+        }
+
         // Smoothly follow the player while walking to a building
         if isFollowingPlayer {
             let target = playerNode.position
@@ -265,18 +321,36 @@ class CityScene: SKScene, ScrollZoomable {
                 x: current.x + (target.x - current.x) * lerpFactor,
                 y: current.y + (target.y - current.y) * lerpFactor
             )
+
+            // Gradual zoom: ease from overview → close-up during approach
+            if let dest = walkTargetPosition {
+                let totalDist = hypot(dest.x - cameraNode.position.x, dest.y - cameraNode.position.y)
+                let closeZoom: CGFloat = 0.55
+                let farZoom: CGFloat = 0.8
+                let zoomStartDist: CGFloat = 800  // city map is bigger, start zooming earlier
+
+                if totalDist < zoomStartDist {
+                    let progress = 1.0 - (totalDist / zoomStartDist)
+                    let targetScale = farZoom - (farZoom - closeZoom) * progress
+                    let currentScale = cameraNode.xScale
+                    cameraNode.setScale(currentScale + (targetScale - currentScale) * 0.06)
+                }
+            }
+
+            clampCamera()
         }
 
-        // Fade terrain when zoomed in — reveal clean parchment background
-        if let effectNode = terrainEffectNode, let cam = cameraNode {
+        // Zoom-based terrain blur — more blur when zoomed in (not during walking, which has its own blur)
+        if let cam = cameraNode, !isPlayerWalking, !isFollowingPlayer {
             let scale = cam.xScale
-            // Full opacity at scale >= 1.0, fade to 0.65 at scale 0.5
-            let alpha = min(1.0, max(0.65, (scale - 0.5) / 0.5 * 0.35 + 0.65))
-            effectNode.alpha = alpha
-
-            // Turn off blur once user zooms out to full map (but not while walking — camera is still zooming in)
-            if effectNode.shouldEnableEffects && scale >= 1.0 && !isPlayerWalking && !isFollowingPlayer {
-                stopWalkingTerrainEffects()
+            if scale >= 1.0 {
+                terrainEffectNode?.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": 1.0])
+                terrainEffectNode?.shouldRasterize = true
+            } else {
+                let t = 1.0 - max(0, min(1, (scale - 0.5) / 0.5))
+                let blurRadius = 1.0 + t * 5.0
+                terrainEffectNode?.shouldRasterize = false
+                terrainEffectNode?.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": blurRadius])
             }
         }
 
@@ -339,13 +413,12 @@ class CityScene: SKScene, ScrollZoomable {
                 texture.filteringMode = .linear
                 let sprite = SKSpriteNode(texture: texture)
                 sprite.size = tile.size
-
-                // Wrap terrain in SKEffectNode for blur during walking
+                // Wrap terrain in SKEffectNode — base blur always on, walking increases
                 let effectNode = SKEffectNode()
                 effectNode.position = CGPoint(x: centerX, y: centerY)
                 effectNode.zPosition = -100
-                effectNode.shouldEnableEffects = false
-                effectNode.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": 12.0])
+                effectNode.shouldEnableEffects = true
+                effectNode.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": 1.0])
                 effectNode.shouldRasterize = true
                 effectNode.addChild(sprite)
                 addChild(effectNode)
@@ -928,8 +1001,8 @@ class CityScene: SKScene, ScrollZoomable {
 
         isPlayerWalking = true
 
-        // Start camera follow + terrain blur/swap
-        startFollowingPlayer()
+        // Start camera follow — gentle zoom + gradual approach in update()
+        startFollowingPlayer(toward: buildingPos)
         startWalkingTerrainEffects()
 
         let directDistance = hypot(targetPos.x - playerPos.x, targetPos.y - playerPos.y)
@@ -971,6 +1044,7 @@ class CityScene: SKScene, ScrollZoomable {
     private func playerArrivedAtBuilding(_ buildingNode: BuildingNode) {
         isPlayerWalking = false
         isFollowingPlayer = false
+        walkTargetPosition = nil
 
         // Keep blur active while zoomed in near the building
 
@@ -989,34 +1063,30 @@ class CityScene: SKScene, ScrollZoomable {
 
     // MARK: - Terrain Effects (blur + walking background swap)
 
-    /// Enable terrain blur and crossfade to walking background
+    /// Increase terrain blur for walking and crossfade to walking background
     private func startWalkingTerrainEffects() {
-        // Turn on Gaussian blur
+        // Increase blur from base 5.0 to walking 12.0
         terrainEffectNode?.shouldRasterize = false
-        terrainEffectNode?.shouldEnableEffects = true
-
-        // Crossfade to the walking terrain image
-        walkingTerrainSprite?.run(SKAction.fadeAlpha(to: 1.0, duration: 0.6), withKey: "walkTerrainFade")
+        terrainEffectNode?.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": 8.0])
     }
 
-    /// Disable terrain blur and crossfade back to normal terrain
+    /// Reduce terrain blur back to base and crossfade back to normal terrain
     private func stopWalkingTerrainEffects() {
-        // Turn off blur
-        terrainEffectNode?.shouldEnableEffects = false
+        // Return to base blur 5.0
+        terrainEffectNode?.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": 1.0])
         terrainEffectNode?.shouldRasterize = true
-
-        // Fade out walking terrain
-        walkingTerrainSprite?.run(SKAction.fadeAlpha(to: 0.0, duration: 0.4), withKey: "walkTerrainFade")
     }
 
     // MARK: - Camera Follow & Zoom
 
-    /// Zoom in close and follow the player while walking
-    private func startFollowingPlayer() {
+    /// Start following player — gentle initial zoom, gradual approach in update()
+    private func startFollowingPlayer(toward target: CGPoint) {
         guard let cameraNode = cameraNode else { return }
         isFollowingPlayer = true
+        walkTargetPosition = target
 
-        let zoomAction = SKAction.scale(to: 0.5, duration: 0.5)
+        // Zoom to 0.8x (gentle start) — gradual zoom to 0.55 happens in update()
+        let zoomAction = SKAction.scale(to: 0.8, duration: 0.5)
         zoomAction.timingMode = .easeInEaseOut
         cameraNode.run(zoomAction, withKey: "cameraZoom")
     }
@@ -1028,7 +1098,7 @@ class CityScene: SKScene, ScrollZoomable {
         let moveAction = SKAction.move(to: buildingPos, duration: 0.5)
         moveAction.timingMode = .easeInEaseOut
 
-        let zoomAction = SKAction.scale(to: 0.7, duration: 0.5)
+        let zoomAction = SKAction.scale(to: 0.6, duration: 0.5)
         zoomAction.timingMode = .easeInEaseOut
 
         cameraNode.run(SKAction.group([moveAction, zoomAction]), withKey: "cameraZoom")
@@ -1038,6 +1108,7 @@ class CityScene: SKScene, ScrollZoomable {
     func zoomCameraOut() {
         guard let cameraNode = cameraNode else { return }
         isFollowingPlayer = false
+        walkTargetPosition = nil
         dialogBuildingNode = nil
 
         // Remove blur + walking terrain when zooming back out
