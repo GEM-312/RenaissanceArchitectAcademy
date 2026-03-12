@@ -1,32 +1,30 @@
 import Foundation
 
-/// Service for communicating with the Claude API via a backend proxy.
+/// Service for communicating with the Claude API.
 ///
-/// Architecture:
-/// - iOS app sends requests to YOUR backend proxy (never directly to Anthropic)
-/// - Backend proxy adds the API key and forwards to Claude API
-/// - This keeps the API key out of the app binary
+/// HOW TO SET UP:
+/// 1. Go to https://console.anthropic.com → API Keys → Create Key
+/// 2. Paste your key below where it says "YOUR_API_KEY_HERE"
+/// 3. Set `useLocalMock = false` to enable real API calls
 ///
-/// For development/testing, set `useLocalMock = true` to get instant responses
-/// without any network calls.
+/// Cost: ~$0.05 per 100 bird questions using Haiku 4.5
 @MainActor
 class ClaudeService: ObservableObject {
 
-    // MARK: - Configuration
+    // API key loaded from APIKeys.swift (not committed to repo)
+    static let apiKey = APIKeys.claude
 
-    /// Your backend proxy URL (Cloudflare Worker, Firebase Function, etc.)
-    /// In production, this should be your deployed proxy endpoint.
-    /// Example: "https://bird-chat-proxy.yourname.workers.dev/v1/messages"
-    static var proxyBaseURL: String = ""
-
-    /// Use local mock responses instead of real API calls (for development)
-    static var useLocalMock: Bool = true
+    // Set to false once you've added your API key above
+    static var useLocalMock: Bool = false
 
     /// Max messages per card session (prevents runaway costs)
     static let maxMessagesPerSession = 6
 
-    /// Model to use (Haiku for speed + cost, Sonnet for quality)
+    /// Model to use (Haiku for speed + cost)
     static let model = "claude-haiku-4-5-20251001"
+
+    /// Anthropic API endpoint
+    private static let apiURL = "https://api.anthropic.com/v1/messages"
 
     // MARK: - State
 
@@ -115,7 +113,7 @@ class ClaudeService: ObservableObject {
             if Self.useLocalMock {
                 response = await mockResponse(for: text, context: context)
             } else {
-                response = try await callAPI(context: context)
+                response = try await callClaudeAPI(context: context)
             }
 
             let assistantMessage = ChatMessage(role: .assistant, content: response)
@@ -136,15 +134,15 @@ class ClaudeService: ObservableObject {
         isLoading = false
     }
 
-    // MARK: - API Call
+    // MARK: - Claude API Call (Direct to Anthropic)
 
-    /// Call the Claude API through the backend proxy
-    private func callAPI(context: BirdContext) async throws -> String {
-        guard !Self.proxyBaseURL.isEmpty else {
-            throw ClaudeError.noProxyConfigured
+    /// Call the Claude API directly at api.anthropic.com
+    private func callClaudeAPI(context: BirdContext) async throws -> String {
+        guard Self.apiKey != "YOUR_API_KEY_HERE" else {
+            throw ClaudeError.noAPIKey
         }
 
-        guard let url = URL(string: Self.proxyBaseURL) else {
+        guard let url = URL(string: Self.apiURL) else {
             throw ClaudeError.invalidURL
         }
 
@@ -157,7 +155,7 @@ class ClaudeService: ObservableObject {
             case .assistant:
                 apiMessages.append(["role": "assistant", "content": msg.content])
             case .system:
-                break // System prompt goes in the system field
+                break
             }
         }
 
@@ -170,14 +168,21 @@ class ClaudeService: ObservableObject {
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "content-type")
+        request.setValue(Self.apiKey, forHTTPHeaderField: "x-api-key")
+        request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
         request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
         request.timeoutInterval = 15
 
         let (data, httpResponse) = try await URLSession.shared.data(for: request)
 
-        guard let response = httpResponse as? HTTPURLResponse,
-              (200...299).contains(response.statusCode) else {
+        guard let response = httpResponse as? HTTPURLResponse else {
+            throw ClaudeError.apiError
+        }
+
+        guard (200...299).contains(response.statusCode) else {
+            let body = String(data: data, encoding: .utf8) ?? "unknown"
+            print("[ClaudeService] API error \(response.statusCode): \(body)")
             throw ClaudeError.apiError
         }
 
@@ -201,7 +206,6 @@ class ClaudeService: ObservableObject {
 
         let q = question.lowercased()
 
-        // Context-aware mock responses
         if q.contains("why") || q.contains("how come") {
             return "Ah, wonderful question! The \(context.buildingName) was built this way because the Romans understood something we often forget — the simplest solution is usually the strongest. They tested everything by building small models first. Science through practice, not just theory!"
         }
@@ -218,24 +222,23 @@ class ClaudeService: ObservableObject {
             return "Right?! The \(context.buildingName) is one of the most incredible buildings ever constructed. And here's the amazing part — it's still standing after nearly 2,000 years. Modern buildings are designed to last maybe 100. What do you think the Romans knew that we've forgotten?"
         }
 
-        // Default contextual response
         return "That's a great observation about the \(context.buildingName)! The \(context.cardTitle) teaches us something important about \(context.sciences.joined(separator: " and ")). The ancient builders were scientists — they just didn't call themselves that. What else are you curious about?"
     }
 
     // MARK: - Errors
 
     enum ClaudeError: LocalizedError {
-        case noProxyConfigured
+        case noAPIKey
         case invalidURL
         case apiError
         case parseError
 
         var errorDescription: String? {
             switch self {
-            case .noProxyConfigured:
-                return "Backend proxy URL not configured. Set ClaudeService.proxyBaseURL."
+            case .noAPIKey:
+                return "No API key. Open ClaudeService.swift and paste your key from console.anthropic.com"
             case .invalidURL:
-                return "Invalid proxy URL."
+                return "Invalid API URL."
             case .apiError:
                 return "The bird couldn't reach the library. Check your connection."
             case .parseError:

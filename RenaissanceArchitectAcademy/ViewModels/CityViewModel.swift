@@ -9,6 +9,7 @@ class CityViewModel: ObservableObject {
     @Published var buildingProgressMap: [Int: BuildingProgress] = [:]
     @Published var totalPlayTime: TimeInterval = 0
     @Published var activeBuildingId: Int? = nil  // Which building the player is currently working on
+    @Published var lastCardEnvironment: CardEnvironment? = nil  // Cooldown: blocks same-env cards until player travels
 
     var persistenceManager: PersistenceManager?
 
@@ -242,7 +243,7 @@ class CityViewModel: ObservableObject {
 
         // Reset all in-memory state before loading new player's data
         buildingProgressMap = [:]
-        activeBuildingId = nil
+        activeBuildingId = save.activeBuildingId
         for i in buildingPlots.indices {
             buildingPlots[i].isCompleted = false
             buildingPlots[i].challengeProgress = 0
@@ -265,6 +266,7 @@ class CityViewModel: ObservableObject {
         let save = manager.loadPlayerSave()
         save.goldFlorins = goldFlorins
         save.earnedScienceBadges = earnedScienceBadges
+        save.activeBuildingId = activeBuildingId
         save.lastSaved = Date()
         manager.save()
     }
@@ -458,6 +460,7 @@ class CityViewModel: ObservableObject {
     /// Set the building the player is actively working on
     func setActiveBuilding(_ plotId: Int?) {
         activeBuildingId = plotId
+        persistPlayerSave()
     }
 
     /// Active building name (for card lookups)
@@ -494,6 +497,34 @@ class CityViewModel: ObservableObject {
         let buildingName = buildingPlots.first(where: { $0.id == plotId })?.building.name ?? ""
         let totalCards = KnowledgeCardContent.cards(for: buildingName)
         return (progress.completedCardIDs.count, totalCards.count)
+    }
+
+    /// Next uncompleted card at a specific station for the active building (1-at-a-time discovery)
+    /// Returns nil if this environment is on cooldown (player just completed a card here)
+    func nextUncompletedCard(for plotId: Int, at stationKey: String) -> KnowledgeCard? {
+        let progress = buildingProgressMap[plotId] ?? BuildingProgress()
+        let buildingName = buildingPlots.first(where: { $0.id == plotId })?.building.name ?? ""
+        let stationCards = KnowledgeCardContent.cards(for: buildingName, at: stationKey)
+        guard let card = stationCards.first(where: { !progress.completedCardIDs.contains($0.id) }) else { return nil }
+        // Cooldown: block if player just completed a card in this same environment
+        if let cooldown = lastCardEnvironment, card.environment == cooldown { return nil }
+        return card
+    }
+
+    /// Next uncompleted card in a specific environment for the active building
+    /// Returns nil if this environment is on cooldown (player just completed a card here)
+    func nextUncompletedCard(for plotId: Int, in environment: CardEnvironment) -> KnowledgeCard? {
+        // Cooldown: block if player just completed a card in this same environment
+        if let cooldown = lastCardEnvironment, environment == cooldown { return nil }
+        let progress = buildingProgressMap[plotId] ?? BuildingProgress()
+        let buildingName = buildingPlots.first(where: { $0.id == plotId })?.building.name ?? ""
+        let envCards = KnowledgeCardContent.cards(for: buildingName, in: environment)
+        return envCards.first { !progress.completedCardIDs.contains($0.id) }
+    }
+
+    /// Set the environment cooldown after completing a card (forces travel to a different environment)
+    func setLastCardEnvironment(_ env: CardEnvironment) {
+        lastCardEnvironment = env
     }
 
     /// Which environment the bird should suggest next for the active building

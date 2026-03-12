@@ -1,6 +1,26 @@
 import SwiftUI
 import Subsonic
 
+// MARK: - Falling Florin Model
+
+struct FallingFlorin: Identifiable {
+    let id = UUID()
+    let burstX: CGFloat       // horizontal burst offset from center
+    let burstY: CGFloat       // vertical burst offset (upward)
+    let finalX: CGFloat       // where it lands horizontally
+    let size: CGFloat         // coin size
+    let spinSpeed: Double     // rotation per phase
+    var phase: FlorinPhase = .atCard   // animation state
+
+    enum FlorinPhase {
+        case atCard     // at card center
+        case burst      // flew outward from card
+        case falling    // gravity pulling down
+        case landed     // on the ground
+        case collected  // shrunk into counter
+    }
+}
+
 // MARK: - Fishing Bubble Model
 
 struct ScrambleTile: Identifiable {
@@ -30,6 +50,10 @@ struct KnowledgeCardsOverlay: View {
     let onDismiss: () -> Void
     /// Called when all cards in this set are complete
     var onAllComplete: (() -> Void)? = nil
+    /// Navigate to another environment (for bird guidance)
+    var onNavigate: ((SidebarDestination) -> Void)? = nil
+    /// Player name for bird chat
+    var playerName: String = "Apprentice"
 
     // MARK: - Card Layout
 
@@ -80,6 +104,22 @@ struct KnowledgeCardsOverlay: View {
     @State private var hangmanRevealed = false
     @State private var hangmanWon = false
 
+    // Card crack → florin burst animation
+    @State private var crackingCardID: String? = nil
+    @State private var cardCrackPhase: Int = 0          // 0=none, 1=shake, 2=crack, 3=burst
+    @State private var shakeOffset: CGFloat = 0
+    @State private var fallingFlorins: [FallingFlorin] = []
+    @State private var showFlorinTotal = false
+
+    // Guidance bubble (replaces bird chat auto-popup)
+    @State private var showGuidanceBubble = false
+    @State private var guidanceBubbleCard: KnowledgeCard? = nil
+
+    // Bird chat (manual "Ask the Bird" only)
+    @StateObject private var claudeService = ClaudeService()
+    @State private var showBirdChat = false
+    @State private var birdChatCard: KnowledgeCard? = nil
+
     var body: some View {
         GeometryReader { geo in
             ZStack {
@@ -110,12 +150,27 @@ struct KnowledgeCardsOverlay: View {
                             .transition(.move(edge: .bottom).combined(with: .opacity))
                     }
 
-                    // Next environment hint
-                    if completedCardIDs.count == cards.count && !cards.isEmpty {
-                        nextEnvironmentHint
+                    // Guidance bubble after card completion
+                    if showGuidanceBubble, let guideCard = guidanceBubbleCard {
+                        guidanceBubbleView(card: guideCard)
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
                     }
 
                     Spacer()
+                }
+
+                // Bird chat overlay (manual "Ask the Bird" only)
+                if showBirdChat, let chatCard = birdChatCard {
+                    BirdChatOverlay(
+                        card: chatCard,
+                        playerName: playerName,
+                        claudeService: claudeService,
+                        onDismiss: {
+                            showBirdChat = false
+                            birdChatCard = nil
+                        }
+                    )
+                    .transition(.opacity)
                 }
             }
         }
@@ -196,12 +251,12 @@ struct KnowledgeCardsOverlay: View {
                     }
                 }
                 .scaleEffect(isPiled ? 0.5 : 1.0)
+                .opacity(isPiled ? 0.65 : 1.0)
                 .offset(
                     x: someCardFlipped ? (isPiled ? pileX : 0) : spreadX,
                     y: isPiled ? CGFloat(pileStackIndex(card.id)) * 5 : floatOffset * (index.isMultiple(of: 2) ? 1 : -1)
                 )
                 .rotation3DEffect(.degrees(isPiled ? -5 + Double(pileStackIndex(card.id)) * 3 : 0), axis: (x: 0, y: 0, z: 1))
-                .opacity(isPiled ? 0.65 : 1.0)
                 .zIndex(isThisFlipped ? 10 : Double(isPiled ? pileStackIndex(card.id) : index))
                 .scaleEffect(cardsAppeared ? 1.0 : 0.2)
                 .opacity(cardsAppeared ? 1.0 : 0)
@@ -333,7 +388,30 @@ struct KnowledgeCardsOverlay: View {
                     .font(RenaissanceFont.captionSmall)
                     .foregroundStyle(color.opacity(0.7))
 
-                if !isCompleted {
+                if isCompleted {
+                    // "Ask the Bird" button on completed cards
+                    Button {
+                        birdChatCard = card
+                        withAnimation(.spring(response: 0.3)) {
+                            showBirdChat = true
+                        }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "bird.fill")
+                                .font(.system(size: 11))
+                            Text("Ask the Bird")
+                                .font(.custom("EBGaramond-Regular", size: 12))
+                        }
+                        .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(
+                            Capsule()
+                                .fill(RenaissanceColors.renaissanceBlue.opacity(0.1))
+                        )
+                    }
+                    .buttonStyle(.plain)
+                } else {
                     Image(systemName: "hand.tap.fill")
                         .font(.system(size: 13))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.3))
@@ -456,8 +534,12 @@ struct KnowledgeCardsOverlay: View {
 
             // Lesson text
             ScrollView(.vertical, showsIndicators: false) {
-                highlightedLessonText(card: card)
-                    .padding(.top, Spacing.xs)
+                VStack(spacing: Spacing.sm) {
+                    highlightedLessonText(card: card)
+                        .padding(.top, Spacing.xs)
+
+                    // (Geometry diagrams moved to activity/back side of card)
+                }
             }
 
             Spacer(minLength: 6)
@@ -478,6 +560,15 @@ struct KnowledgeCardsOverlay: View {
                 .buttonStyle(.plain)
             }
         }
+    }
+
+    // MARK: - Wolfram Geometry Helper
+
+    /// Returns geometry data only for cards specifically about geometry/math concepts
+    private func geometryForCard(_ card: KnowledgeCard) -> BuildingGeometry? {
+        // Only show geometry diagrams on cards with .geometry or .mathematics science
+        guard card.science == .geometry || card.science == .mathematics else { return nil }
+        return BuildingGeometryContent.geometry(for: card.buildingName)
     }
 
     // MARK: - Highlighted Lesson Text
@@ -529,21 +620,30 @@ struct KnowledgeCardsOverlay: View {
 
     @ViewBuilder
     private func activityContent(card: KnowledgeCard) -> some View {
-        switch card.activity {
-        case .keywordMatch:
-            keywordMatchView(card: card)
-        case .multipleChoice(let question, let options, let correctIndex):
-            multipleChoiceView(card: card, question: question, options: options, correctIndex: correctIndex)
-        case .trueFalse(let statement, let isTrue):
-            trueFalseView(card: card, statement: statement, isTrue: isTrue)
-        case .fillInBlanks:
-            keywordMatchView(card: card)
-        case .wordScramble(let word, let hint):
-            wordScrambleView(card: card, word: word, hint: hint)
-        case .numberFishing(let question, let correct, let decoys):
-            numberFishingView(card: card, question: question, correctAnswer: correct, decoys: decoys)
-        case .hangman(let word, let hint):
-            hangmanView(card: card, word: word, hint: hint)
+        VStack(spacing: Spacing.sm) {
+            // Wolfram geometry explorer for geometry/math cards
+            if let geo = geometryForCard(card) {
+                WolframGeometryView(geometry: geo, compact: true)
+                    .padding(.bottom, Spacing.xs)
+            }
+
+            // Standard activity
+            switch card.activity {
+            case .keywordMatch:
+                keywordMatchView(card: card)
+            case .multipleChoice(let question, let options, let correctIndex):
+                multipleChoiceView(card: card, question: question, options: options, correctIndex: correctIndex)
+            case .trueFalse(let statement, let isTrue):
+                trueFalseView(card: card, statement: statement, isTrue: isTrue)
+            case .fillInBlanks:
+                keywordMatchView(card: card)
+            case .wordScramble(let word, let hint):
+                wordScrambleView(card: card, word: word, hint: hint)
+            case .numberFishing(let question, let correct, let decoys):
+                numberFishingView(card: card, question: question, correctAnswer: correct, decoys: decoys)
+            case .hangman(let word, let hint):
+                hangmanView(card: card, word: word, hint: hint)
+            }
         }
     }
 
@@ -1420,9 +1520,6 @@ struct KnowledgeCardsOverlay: View {
     }
 
     private func completeCard(_ card: KnowledgeCard) {
-        SubsonicController.shared.play(sound: "card_complete.mp3")
-        completedCardIDs.insert(card.id)
-
         // Save to ViewModel + notebook
         let entry = NotebookEntry(
             buildingId: buildingId,
@@ -1438,23 +1535,178 @@ struct KnowledgeCardsOverlay: View {
             notebookState: notebookState
         )
 
-        // Flip card back to front showing green checkmark
-        withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-            cardPhases[card.id] = .completed
+        // Set environment cooldown so player must travel
+        viewModel.setLastCardEnvironment(card.environment)
+
+        // Mark card as completed with simple flip-back animation
+        SubsonicController.shared.play(sound: "correct_chime.mp3")
+        withAnimation(.easeOut(duration: 0.4)) {
+            flippedOpenCard = nil
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.75)) {
-                flipAngles[card.id] = 0
-                flippedOpenCard = nil
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            completedCardIDs.insert(card.id)
+            cardPhases[card.id] = .completed
+            flipAngles[card.id] = 0
+        }
+
+        // Show guidance bubble after completion
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+            let progress = viewModel.cardProgress(for: buildingId)
+            if progress.completed < progress.total {
+                guidanceBubbleCard = card
+                withAnimation(.spring(response: 0.4)) {
+                    showGuidanceBubble = true
+                }
             }
         }
 
         // Check if all cards in this set complete
-        if completedCardIDs.count == cards.count {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+        if Set(completedCardIDs).union([card.id]).count == cards.count {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
                 onAllComplete?()
             }
         }
+    }
+
+    /// Create florin coins with pre-computed positions for each phase
+    private func spawnFlorins() {
+        fallingFlorins = (0..<10).map { _ in
+            FallingFlorin(
+                burstX: CGFloat.random(in: -140...140),
+                burstY: CGFloat.random(in: -160 ... -60),    // burst UPWARD
+                finalX: CGFloat.random(in: -100...100),
+                size: CGFloat.random(in: 20...32),
+                spinSpeed: Double.random(in: 120...360)
+            )
+        }
+    }
+
+    // MARK: - Florin Burst Layer
+
+    private func florinBurstLayer(screenSize: CGSize) -> some View {
+        ZStack {
+            ForEach(fallingFlorins) { florin in
+                let pos = florinPosition(florin, screenHeight: screenSize.height)
+
+                florinCoinView(size: florin.size)
+                    .offset(x: pos.x, y: pos.y)
+                    .rotationEffect(.degrees(florinRotation(florin)))
+                    .scaleEffect(florin.phase == .collected ? 0.1 : 1.0)
+                    .opacity(florin.phase == .collected ? 0 : 1)
+            }
+
+            // "+X florins" counter when coins land
+            if showFlorinTotal {
+                VStack(spacing: 4) {
+                    if let florins = earnedFlorinsFloat {
+                        Text("+\(florins)")
+                            .font(.custom("Cinzel-Bold", size: 32))
+                            .foregroundStyle(RenaissanceColors.goldSuccess)
+                            .shadow(color: RenaissanceColors.goldSuccess.opacity(0.6), radius: 10)
+                    }
+                    Text("florins")
+                        .font(.custom("EBGaramond-SemiBold", size: 18))
+                        .foregroundStyle(RenaissanceColors.goldSuccess.opacity(0.8))
+                }
+                .offset(y: screenSize.height * 0.28)
+                .transition(.scale.combined(with: .opacity))
+            }
+        }
+    }
+
+    /// Compute position for each florin based on its current phase
+    private func florinPosition(_ florin: FallingFlorin, screenHeight: CGFloat) -> CGPoint {
+        switch florin.phase {
+        case .atCard:
+            return .zero  // at screen center (where card was)
+        case .burst:
+            return CGPoint(x: florin.burstX, y: florin.burstY)  // burst upward + outward
+        case .falling:
+            return CGPoint(x: florin.finalX, y: screenHeight * 0.3)  // fall to lower area
+        case .landed:
+            return CGPoint(x: florin.finalX, y: screenHeight * 0.25)  // slight bounce up
+        case .collected:
+            return CGPoint(x: 0, y: screenHeight * 0.25)  // converge to center
+        }
+    }
+
+    private func florinRotation(_ florin: FallingFlorin) -> Double {
+        switch florin.phase {
+        case .atCard: return 0
+        case .burst: return florin.spinSpeed * 0.5
+        case .falling: return florin.spinSpeed
+        case .landed: return florin.spinSpeed + 15
+        case .collected: return florin.spinSpeed + 30
+        }
+    }
+
+    /// Single gold florin coin with Florentine fleur-de-lis
+    private func florinCoinView(size: CGFloat) -> some View {
+        ZStack {
+            Circle()
+                .fill(
+                    RadialGradient(
+                        colors: [
+                            Color(red: 1.0, green: 0.85, blue: 0.3),
+                            RenaissanceColors.goldSuccess,
+                            Color(red: 0.75, green: 0.55, blue: 0.1)
+                        ],
+                        center: .topLeading,
+                        startRadius: 0,
+                        endRadius: size
+                    )
+                )
+                .frame(width: size, height: size)
+            Circle()
+                .stroke(Color(red: 0.65, green: 0.5, blue: 0.1), lineWidth: 1.5)
+                .frame(width: size, height: size)
+            Text("⚜")
+                .font(.system(size: size * 0.45))
+                .foregroundStyle(Color(red: 0.65, green: 0.5, blue: 0.1).opacity(0.7))
+        }
+        .shadow(color: RenaissanceColors.goldSuccess.opacity(0.5), radius: 4, y: 2)
+    }
+
+    /// Build a contextual guidance message based on progress
+    private func buildGuidanceMessage(card: KnowledgeCard, progress: (completed: Int, total: Int), nextEnv: CardEnvironment?) -> String {
+        let buildingName = card.buildingName
+        let remaining = progress.total - progress.completed
+
+        if remaining == 0 {
+            return "Magnifico! You've collected all \(progress.total) cards for the \(buildingName)! You truly understand how this building works — from the raw materials to the finished structure. Time to put that knowledge to work!"
+        }
+
+        let envHint: String
+        if let env = nextEnv {
+            switch env {
+            case .workshop:
+                let stationHint = nextStationHint(for: card.buildingId, in: .workshop)
+                envHint = "Head to the Workshop\(stationHint) — there's a card waiting for you there about the materials used in the \(buildingName)."
+            case .forest:
+                envHint = "Try the Forest next — the timber used in the \(buildingName) has a fascinating story."
+            case .craftingRoom:
+                envHint = "Visit the Crafting Room — learn how the raw materials were transformed for the \(buildingName)."
+            case .cityMap:
+                envHint = "Go back to the City Map and tap the \(buildingName) — more to discover about its design."
+            }
+        } else {
+            envHint = "Keep exploring to find more cards!"
+        }
+
+        return "Well done! You just learned about \(card.title.lowercased()). That's \(progress.completed) of \(progress.total) cards for the \(buildingName). \(envHint)"
+    }
+
+    /// Hint about which specific station has the next card
+    private func nextStationHint(for buildingId: Int, in environment: CardEnvironment) -> String {
+        let buildingName = viewModel.buildingPlots.first(where: { $0.id == buildingId })?.building.name ?? ""
+        let envCards = KnowledgeCardContent.cards(for: buildingName, in: environment)
+        let progress = viewModel.buildingProgressMap[buildingId] ?? BuildingProgress()
+        if let nextCard = envCards.first(where: { !progress.completedCardIDs.contains($0.id) }) {
+            let stationName = nextCard.stationKey
+            return " (\(stationName) station)"
+        }
+        return ""
     }
 
     private func awardFlorins(_ amount: Int) {
@@ -1486,9 +1738,11 @@ struct KnowledgeCardsOverlay: View {
 
             let done = completedCardIDs.count
             let total = cards.count
-            Text(done == 0 ? "Tap a card to start learning!"
+            let overallProgress = viewModel.cardProgress(for: buildingId)
+            Text(done == 0 ? (total == 1 ? "Tap the card to discover something new!" : "Tap a card to start learning!")
                  : done < total ? "\(total - done) card\(total - done == 1 ? "" : "s") left — keep going!"
-                 : "All done here! Check other environments for more.")
+                 : overallProgress.completed < overallProgress.total ? "Card complete! Explore other environments for more."
+                 : "All cards collected! You've mastered this building.")
                 .font(RenaissanceFont.caption)
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
         }
@@ -1514,12 +1768,14 @@ struct KnowledgeCardsOverlay: View {
                 .font(.custom("EBGaramond-SemiBold", size: 13))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
-            // Env breakdown
-            Text("·")
-                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.3))
-            Text("Here: \(completedCardIDs.count)/\(cards.count)")
-                .font(.custom("EBGaramond-Regular", size: 12))
-                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+            // Env breakdown (only show when multiple cards)
+            if cards.count > 1 {
+                Text("·")
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.3))
+                Text("Here: \(completedCardIDs.count)/\(cards.count)")
+                    .font(.custom("EBGaramond-Regular", size: 12))
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+            }
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 6)
@@ -1528,47 +1784,106 @@ struct KnowledgeCardsOverlay: View {
         )
     }
 
-    // MARK: - Next Environment Hint
+    // MARK: - Guidance Bubble (after card completion)
 
-    private var nextEnvironmentHint: some View {
-        Group {
-            if let env = viewModel.nextSuggestedEnvironment(for: buildingId) {
-                let envName: String = {
-                    switch env {
-                    case .workshop: return "Workshop"
-                    case .forest: return "Forest"
-                    case .craftingRoom: return "Crafting Room"
-                    case .cityMap: return "City Map"
-                    }
-                }()
-                let envIcon: String = {
-                    switch env {
-                    case .workshop: return "hammer.fill"
-                    case .forest: return "tree.fill"
-                    case .craftingRoom: return "wrench.and.screwdriver.fill"
-                    case .cityMap: return "building.columns.fill"
-                    }
-                }()
+    private func guidanceBubbleView(card: KnowledgeCard) -> some View {
+        let progress = viewModel.cardProgress(for: buildingId)
+        let nextEnv = viewModel.nextSuggestedEnvironment(for: buildingId)
+        let message = buildGuidanceMessage(card: card, progress: progress, nextEnv: nextEnv)
 
-                HStack(spacing: 8) {
-                    BirdCharacter(isSitting: true)
-                        .frame(width: 36, height: 36)
-                    Image(systemName: envIcon)
-                        .font(.system(size: 14))
-                        .foregroundStyle(RenaissanceColors.renaissanceBlue)
-                    Text("More cards at the \(envName)!")
-                        .font(RenaissanceFont.dialogSubtitle)
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
+        let envName: String = {
+            guard let env = nextEnv else { return "" }
+            switch env {
+            case .workshop: return "Workshop"
+            case .forest: return "Forest"
+            case .craftingRoom: return "Crafting Room"
+            case .cityMap: return "City Map"
+            }
+        }()
+        let envIcon: String = {
+            guard let env = nextEnv else { return "arrow.right" }
+            switch env {
+            case .workshop: return "hammer.fill"
+            case .forest: return "tree.fill"
+            case .craftingRoom: return "wrench.and.screwdriver.fill"
+            case .cityMap: return "building.columns.fill"
+            }
+        }()
+
+        return VStack(spacing: 12) {
+            HStack(alignment: .top, spacing: 10) {
+                BirdCharacter(isSitting: true)
+                    .frame(width: 44, height: 44)
+
+                Text(message)
+                    .font(RenaissanceFont.dialogSubtitle)
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            HStack(spacing: 14) {
+                if nextEnv != nil, onNavigate != nil {
+                    Button {
+                        navigateToEnvironment(nextEnv!)
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: envIcon)
+                                .font(.system(size: 14))
+                            Text("Go to \(envName)!")
+                                .font(.custom("EBGaramond-SemiBold", size: 15))
+                        }
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 18)
+                        .padding(.vertical, 9)
+                        .background(Capsule().fill(RenaissanceColors.renaissanceBlue))
+                    }
+                    .buttonStyle(.plain)
                 }
-                .padding(.horizontal, Spacing.md)
-                .padding(.vertical, 10)
-                .background(
-                    RoundedRectangle(cornerRadius: CornerRadius.md)
-                        .fill(RenaissanceColors.renaissanceBlue.opacity(0.08))
-                )
+
+                Button {
+                    withAnimation(.easeOut(duration: 0.3)) {
+                        showGuidanceBubble = false
+                        guidanceBubbleCard = nil
+                    }
+                } label: {
+                    Text("Later")
+                        .font(RenaissanceFont.caption)
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                        .underline()
+                }
+                .buttonStyle(.plain)
             }
         }
+        .padding(Spacing.md)
+        .frame(maxWidth: 420)
+        .background(
+            RoundedRectangle(cornerRadius: CornerRadius.md)
+                .fill(RenaissanceColors.parchment)
+                .shadow(color: .black.opacity(0.12), radius: 8, y: 3)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: CornerRadius.md)
+                .stroke(RenaissanceColors.renaissanceBlue.opacity(0.2), lineWidth: 1)
+        )
     }
+
+    private func navigateToEnvironment(_ env: CardEnvironment) {
+        let destination: SidebarDestination = {
+            switch env {
+            case .workshop: return .workshop
+            case .forest: return .forest
+            case .craftingRoom: return .workshop  // crafting room is inside workshop
+            case .cityMap: return .cityMap
+            }
+        }()
+        withAnimation(.easeOut(duration: 0.2)) {
+            showGuidanceBubble = false
+            guidanceBubbleCard = nil
+        }
+        onNavigate?(destination)
+    }
+
 }
 
 // MARK: - CardPhase (shared with ForestMapView)

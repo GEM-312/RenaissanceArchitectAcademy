@@ -143,6 +143,27 @@ enum DialogWidth {
     static let full: CGFloat     = 600
 }
 
+// MARK: - Adaptive Width (iPhone vs iPad/Mac)
+
+/// On compact (iPhone), dialog cards expand to fill available width.
+/// On regular (iPad/Mac), they stay at a fixed max width.
+struct AdaptiveWidthModifier: ViewModifier {
+    let regularWidth: CGFloat
+    let compactWidth: CGFloat
+    @Environment(\.horizontalSizeClass) private var sizeClass
+
+    func body(content: Content) -> some View {
+        content.frame(maxWidth: sizeClass == .compact ? compactWidth : regularWidth)
+    }
+}
+
+extension View {
+    /// Adaptive maxWidth — `.infinity` on iPhone, fixed on iPad/Mac
+    func adaptiveWidth(_ regularWidth: CGFloat, compact: CGFloat = .infinity) -> some View {
+        modifier(AdaptiveWidthModifier(regularWidth: regularWidth, compactWidth: compact))
+    }
+}
+
 // MARK: - 9. Card Background ViewModifiers
 
 struct ParchmentCardModifier: ViewModifier {

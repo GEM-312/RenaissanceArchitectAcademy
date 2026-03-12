@@ -42,8 +42,20 @@ struct WorkshopMapView: View {
     @State private var showStationKnowledgeCards = false
     @State private var stationKnowledgeCards: [KnowledgeCard] = []
 
+    // Station mini-games
+    @State private var showQuarryMiniGame = false
+    @State private var showVolcanoMiniGame = false
+    @State private var showRiverMiniGame = false
+    @State private var showClayPitMiniGame = false
+    @State private var showFarmMiniGame = false
+
     // Avatar box: portrait visible only when player hasn't moved yet
     @State private var avatarInBox = true
+
+    // Bird guidance — tells player where to go next
+    @State private var showArrivalGuidance = false
+    @State private var guidanceMessage: String = ""
+    @State private var guidanceDestination: SidebarDestination? = nil  // nil = stay in workshop
 
     // Job system states
     @State private var jobBoardChoices: [WorkshopJob] = []
@@ -123,6 +135,72 @@ struct WorkshopMapView: View {
                     .allowsHitTesting(false)
                 }
 
+                // Bird guidance — tells player where to go next
+                if showArrivalGuidance {
+                    VStack {
+                        Spacer()
+                        HStack(alignment: .top, spacing: 10) {
+                            BirdCharacter(isSitting: true)
+                                .frame(width: 44, height: 44)
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(guidanceMessage)
+                                    .font(.custom("Cinzel-Bold", size: 14))
+                                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                if let vm = viewModel, let bid = vm.activeBuildingId {
+                                    let progress = vm.cardProgress(for: bid)
+                                    Text("\(progress.completed)/\(progress.total) cards collected")
+                                        .font(RenaissanceFont.caption)
+                                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                                }
+
+                                // "Go!" button if guidance points to another environment
+                                if let dest = guidanceDestination, onNavigate != nil {
+                                    Button {
+                                        withAnimation(.easeOut(duration: 0.2)) { showArrivalGuidance = false }
+                                        onNavigate?(dest)
+                                    } label: {
+                                        HStack(spacing: 5) {
+                                            Image(systemName: dest == .forest ? "tree.fill" : dest == .cityMap ? "building.columns.fill" : "hammer.fill")
+                                                .font(.system(size: 12))
+                                            Text("Go!")
+                                                .font(.custom("EBGaramond-SemiBold", size: 14))
+                                        }
+                                        .foregroundStyle(.white)
+                                        .padding(.horizontal, 14)
+                                        .padding(.vertical, 6)
+                                        .background(Capsule().fill(RenaissanceColors.renaissanceBlue))
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
+                            Spacer()
+                            Button {
+                                withAnimation(.easeOut(duration: 0.3)) { showArrivalGuidance = false }
+                            } label: {
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 12, weight: .bold))
+                                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
+                                    .padding(6)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        .padding(Spacing.md)
+                        .background(
+                            RoundedRectangle(cornerRadius: CornerRadius.md)
+                                .fill(RenaissanceColors.parchment.opacity(0.95))
+                                .shadow(color: .black.opacity(0.1), radius: 6, y: 2)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: CornerRadius.md)
+                                .stroke(RenaissanceColors.renaissanceBlue.opacity(0.2), lineWidth: 1)
+                        )
+                        .padding(.horizontal, Spacing.lg)
+                        .padding(.bottom, 90) // above inventory bar
+                    }
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+
                 // (dialog is now inside GameTopBarView's avatar card)
 
                 // Layer 6: Workbench overlay (mixing slots + recipe)
@@ -148,9 +226,219 @@ struct WorkshopMapView: View {
                             withAnimation {
                                 showStationKnowledgeCards = false
                                 stationKnowledgeCards = []
+                                activeStation = nil
                             }
-                            // After dismissing cards, show single station overlay
-                            showSingleStationOverlay()
+                        },
+                        onNavigate: { destination in
+                            withAnimation {
+                                showStationKnowledgeCards = false
+                                stationKnowledgeCards = []
+                                activeStation = nil
+                            }
+                            onNavigate?(destination)
+                        },
+                        playerName: onboardingState?.apprenticeName ?? "Apprentice"
+                    )
+                    .transition(.opacity)
+                }
+
+                // Layer 9: Quarry mini-game
+                if showQuarryMiniGame {
+                    QuarryMiniGameView(
+                        onComplete: { material, bonusFlorins in
+                            // Award material + florins
+                            workshop.rawMaterials[material, default: 0] += 1
+                            viewModel?.goldFlorins += bonusFlorins
+                            sceneHolder.scene?.playPlayerCelebrateAnimation()
+                            sceneHolder.scene?.showCollectionEffect(at: .quarry)
+
+                            // Check job completion
+                            if workshop.currentJob != nil && workshop.currentJob?.craftTarget == nil {
+                                if workshop.checkJobCompletion() {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                        withAnimation(.spring(response: 0.3)) {
+                                            showQuarryMiniGame = false
+                                            activeStation = nil
+                                        }
+                                        completeCurrentJob()
+                                    }
+                                    return
+                                }
+                            }
+
+                            withAnimation {
+                                showQuarryMiniGame = false
+                                activeStation = nil
+                            }
+                        },
+                        onDismiss: {
+                            withAnimation {
+                                showQuarryMiniGame = false
+                                activeStation = nil
+                            }
+                        },
+                        onNudgeCamera: {
+                            sceneHolder.scene?.nudgeCameraUp(by: 0.2)
+                        }
+                    )
+                    .transition(.opacity)
+                }
+
+                // Layer 10: Volcano mini-game
+                if showVolcanoMiniGame {
+                    VolcanoMiniGameView(
+                        onComplete: { material, bonusFlorins in
+                            workshop.rawMaterials[material, default: 0] += 1
+                            viewModel?.goldFlorins += bonusFlorins
+                            sceneHolder.scene?.playPlayerCelebrateAnimation()
+                            sceneHolder.scene?.showCollectionEffect(at: .volcano)
+
+                            if workshop.currentJob != nil && workshop.currentJob?.craftTarget == nil {
+                                if workshop.checkJobCompletion() {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                        withAnimation(.spring(response: 0.3)) {
+                                            showVolcanoMiniGame = false
+                                            activeStation = nil
+                                        }
+                                        completeCurrentJob()
+                                    }
+                                    return
+                                }
+                            }
+
+                            withAnimation {
+                                showVolcanoMiniGame = false
+                                activeStation = nil
+                            }
+                        },
+                        onDismiss: {
+                            withAnimation {
+                                showVolcanoMiniGame = false
+                                activeStation = nil
+                            }
+                        },
+                        onNudgeCamera: {
+                            sceneHolder.scene?.nudgeCameraUp(by: 0.2)
+                        }
+                    )
+                    .transition(.opacity)
+                }
+
+                // Layer 11: River mini-game
+                if showRiverMiniGame {
+                    RiverMiniGameView(
+                        onComplete: { material, bonusFlorins in
+                            workshop.rawMaterials[material, default: 0] += 1
+                            viewModel?.goldFlorins += bonusFlorins
+                            sceneHolder.scene?.playPlayerCelebrateAnimation()
+                            sceneHolder.scene?.showCollectionEffect(at: .river)
+
+                            if workshop.currentJob != nil && workshop.currentJob?.craftTarget == nil {
+                                if workshop.checkJobCompletion() {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                        withAnimation(.spring(response: 0.3)) {
+                                            showRiverMiniGame = false
+                                            activeStation = nil
+                                        }
+                                        completeCurrentJob()
+                                    }
+                                    return
+                                }
+                            }
+
+                            withAnimation {
+                                showRiverMiniGame = false
+                                activeStation = nil
+                            }
+                        },
+                        onDismiss: {
+                            withAnimation {
+                                showRiverMiniGame = false
+                                activeStation = nil
+                            }
+                        },
+                        onNudgeCamera: {
+                            sceneHolder.scene?.nudgeCameraUp(by: 0.2)
+                        }
+                    )
+                    .transition(.opacity)
+                }
+
+                // Layer 12: Clay Pit mini-game
+                if showClayPitMiniGame {
+                    ClayPitMiniGameView(
+                        onComplete: { material, bonusFlorins in
+                            workshop.rawMaterials[material, default: 0] += 1
+                            viewModel?.goldFlorins += bonusFlorins
+                            sceneHolder.scene?.playPlayerCelebrateAnimation()
+                            sceneHolder.scene?.showCollectionEffect(at: .clayPit)
+
+                            if workshop.currentJob != nil && workshop.currentJob?.craftTarget == nil {
+                                if workshop.checkJobCompletion() {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                        withAnimation(.spring(response: 0.3)) {
+                                            showClayPitMiniGame = false
+                                            activeStation = nil
+                                        }
+                                        completeCurrentJob()
+                                    }
+                                    return
+                                }
+                            }
+
+                            withAnimation {
+                                showClayPitMiniGame = false
+                                activeStation = nil
+                            }
+                        },
+                        onDismiss: {
+                            withAnimation {
+                                showClayPitMiniGame = false
+                                activeStation = nil
+                            }
+                        },
+                        onNudgeCamera: {
+                            sceneHolder.scene?.nudgeCameraUp(by: 0.2)
+                        }
+                    )
+                    .transition(.opacity)
+                }
+
+                // Layer 13: Farm mini-game
+                if showFarmMiniGame {
+                    FarmMiniGameView(
+                        onComplete: { material, bonusFlorins in
+                            workshop.rawMaterials[material, default: 0] += 1
+                            viewModel?.goldFlorins += bonusFlorins
+                            sceneHolder.scene?.playPlayerCelebrateAnimation()
+                            sceneHolder.scene?.showCollectionEffect(at: .farm)
+
+                            if workshop.currentJob != nil && workshop.currentJob?.craftTarget == nil {
+                                if workshop.checkJobCompletion() {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                        withAnimation(.spring(response: 0.3)) {
+                                            showFarmMiniGame = false
+                                            activeStation = nil
+                                        }
+                                        completeCurrentJob()
+                                    }
+                                    return
+                                }
+                            }
+
+                            withAnimation {
+                                showFarmMiniGame = false
+                                activeStation = nil
+                            }
+                        },
+                        onDismiss: {
+                            withAnimation {
+                                showFarmMiniGame = false
+                                activeStation = nil
+                            }
+                        },
+                        onNudgeCamera: {
+                            sceneHolder.scene?.nudgeCameraUp(by: 0.2)
                         }
                     )
                     .transition(.opacity)
@@ -212,6 +500,8 @@ struct WorkshopMapView: View {
             if workshop.currentAssignment == nil {
                 workshop.generateNewAssignment()
             }
+            // Show bird guidance if player has an active building with workshop cards
+            checkArrivalGuidance()
         }
         .onChange(of: activeStation) { oldValue, newValue in
             if oldValue != nil && newValue == nil {
@@ -220,12 +510,21 @@ struct WorkshopMapView: View {
                 // Player walks back to box position
                 sceneHolder.scene?.hidePlayer()
                 avatarInBox = true
+                // After mini-game, check if there's a knowledge card at this station
+                if let station = oldValue {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        showKnowledgeCardIfAvailable(at: station)
+                    }
+                }
             }
         }
         .onChange(of: playerIsWalking) { _, isWalking in
             if isWalking && avatarInBox {
                 // Hide the SwiftUI sprite image — SpriteKit player walks from same spot
                 avatarInBox = false
+            }
+            if isWalking && showArrivalGuidance {
+                withAnimation(.easeOut(duration: 0.2)) { showArrivalGuidance = false }
             }
         }
     }
@@ -281,22 +580,8 @@ struct WorkshopMapView: View {
                 activeStation = nil
                 onNavigate?(.forest)
             default:
-                // Check for knowledge cards at this station for the active building
-                let stationKey = "\(stationType)"  // enum case name matches KnowledgeCard stationKey
-                if let buildingName = viewModel?.activeBuildingName {
-                    let cards = KnowledgeCardContent.cards(for: buildingName, at: stationKey)
-                    let progress = viewModel?.buildingProgressMap[viewModel?.activeBuildingId ?? 0] ?? BuildingProgress()
-                    let incompleteCards = cards.filter { !progress.completedCardIDs.contains($0.id) }
-                    if !incompleteCards.isEmpty {
-                        stationKnowledgeCards = cards
-                        SubsonicController.shared.play(sound: "cards_appear.mp3")
-                        withAnimation(.spring(response: 0.3)) {
-                            showStationKnowledgeCards = true
-                        }
-                        return
-                    }
-                }
-                // No knowledge cards — show single station overlay
+                // Always show the station mini-game/overlay first — let the player PLAY
+                // Knowledge cards are shown AFTER the mini-game completes (not instead of it)
                 showSingleStationOverlay()
             }
         }
@@ -307,19 +592,112 @@ struct WorkshopMapView: View {
     }
 
 
+    /// Show bird guidance about what to do next
+    private func showNextGuidance() {
+        guard let vm = viewModel else { return }
+        // Don't show if another overlay is active
+        guard !showCollectionOverlay && !showHintBubble && !showWorkbenchOverlay
+                && !showFurnaceOverlay && !showStationKnowledgeCards else { return }
+
+        // 1. Check if player needs tools — suggest Market if they have enough florins
+        let stationsNeedingTools: [ResourceStationType] = [.quarry, .volcano, .river, .clayPit, .mine, .forest, .farm]
+        let missingToolStations = stationsNeedingTools.filter { !workshop.hasTool(for: $0) }
+        if !missingToolStations.isEmpty && vm.goldFlorins >= GameRewards.toolBuyBaseCost {
+            let stationName = "\(missingToolStations.first!)"
+            guidanceMessage = "You have enough florins! Visit the Market to buy tools for the \(stationName)."
+            guidanceDestination = nil
+        }
+        // 2. Default: suggest exploring
+        else {
+            guidanceMessage = "Explore the workshop — collect materials at stations and play mini-games!"
+            guidanceDestination = nil
+        }
+
+        withAnimation(.spring(response: 0.4)) {
+            showArrivalGuidance = true
+        }
+    }
+
+    /// After a mini-game completes at a station, offer the knowledge card (if available)
+    private func showKnowledgeCardIfAvailable(at station: ResourceStationType) {
+        guard let vm = viewModel, let bid = vm.activeBuildingId else { return }
+        let stationKey = "\(station)"
+        if let nextCard = vm.nextUncompletedCard(for: bid, at: stationKey) {
+            stationKnowledgeCards = [nextCard]
+            SubsonicController.shared.play(sound: "cards_appear.mp3")
+            withAnimation(.spring(response: 0.3)) {
+                showStationKnowledgeCards = true
+            }
+        }
+    }
+
+    /// Check for guidance on initial appear (called from onAppear)
+    private func checkArrivalGuidance() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+            showNextGuidance()
+        }
+    }
+
     private func dismissAllOverlays() {
         showHintBubble = false
         showCollectionOverlay = false
         showWorkbenchOverlay = false
         showFurnaceOverlay = false
         showStationLesson = false
+        showQuarryMiniGame = false
+        showVolcanoMiniGame = false
+        showRiverMiniGame = false
+        showClayPitMiniGame = false
+        showFarmMiniGame = false
     }
 
     /// Show a single overlay based on tool ownership:
     /// - No tool → tool requirement dialog (collectionOverlay)
-    /// - Has tool → enhanced hint bubble with collection buttons built in
+    /// - Has tool → station mini-game (if available) or hint bubble with collection buttons
     private func showSingleStationOverlay() {
         guard let station = activeStation else { return }
+
+        // Station mini-games (replace simple collection for specific stations)
+        if station == .quarry && workshop.hasTool(for: station) {
+            sceneHolder.scene?.nudgeCameraUp(by: 0.2)
+            withAnimation(.spring(response: 0.3)) {
+                showQuarryMiniGame = true
+            }
+            return
+        }
+
+        if station == .volcano && workshop.hasTool(for: station) {
+            sceneHolder.scene?.nudgeCameraUp(by: 0.2)
+            withAnimation(.spring(response: 0.3)) {
+                showVolcanoMiniGame = true
+            }
+            return
+        }
+
+        if station == .river && workshop.hasTool(for: station) {
+            sceneHolder.scene?.nudgeCameraUp(by: 0.2)
+            withAnimation(.spring(response: 0.3)) {
+                showRiverMiniGame = true
+            }
+            return
+        }
+
+        if station == .clayPit && workshop.hasTool(for: station) {
+            sceneHolder.scene?.nudgeCameraUp(by: 0.2)
+            withAnimation(.spring(response: 0.3)) {
+                showClayPitMiniGame = true
+            }
+            return
+        }
+
+        if station == .farm && workshop.hasTool(for: station) {
+            sceneHolder.scene?.nudgeCameraUp(by: 0.2)
+            withAnimation(.spring(response: 0.3)) {
+                showFarmMiniGame = true
+            }
+            return
+        }
+
         if workshop.hasTool(for: station) {
             withAnimation(.spring(response: 0.3)) {
                 showHintBubble = true
@@ -389,8 +767,7 @@ struct WorkshopMapView: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 6) {
                         ForEach(ownedTools) { tool in
-                            Text(tool.icon)
-                                .font(.caption)
+                            ToolIconView(tool: tool, size: 56)
                                 .padding(.horizontal, 5)
                                 .padding(.vertical, Spacing.xxs)
                                 .background(
@@ -542,8 +919,7 @@ struct WorkshopMapView: View {
     private func toolRequirementCompact(tool: Tool, station: ResourceStationType) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
-                Text(tool.icon)
-                    .font(.system(size: 28))
+                ToolIconView(tool: tool, size: 108)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Need \(tool.displayName)")
                         .font(.custom("Cinzel-Bold", size: 15))
@@ -649,8 +1025,7 @@ struct WorkshopMapView: View {
     private func toolRequirementView(tool: Tool, station: ResourceStationType) -> some View {
         VStack(spacing: 10) {
             HStack(spacing: 8) {
-                Text(tool.icon)
-                    .font(.system(size: 32))
+                ToolIconView(tool: tool, size: 120)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("You need \(tool.displayName)")
                         .font(.custom("Cinzel-Bold", size: 14))
@@ -948,8 +1323,7 @@ struct WorkshopMapView: View {
                         }
                     } label: {
                         VStack(spacing: 4) {
-                            Text(tool.icon)
-                                .font(.title2)
+                            ToolIconView(tool: tool, size: 96)
 
                             Text(tool.displayName)
                                 .font(RenaissanceFont.captionSmall)
@@ -1284,7 +1658,7 @@ struct WorkshopMapView: View {
                 .foregroundStyle(.white)
             }
             .padding(Spacing.xxl)
-            .frame(maxWidth: 500)
+            .adaptiveWidth(500)
             .background(
                 RoundedRectangle(cornerRadius: CornerRadius.lg)
                     .fill(RenaissanceColors.parchment)
@@ -1372,7 +1746,7 @@ struct WorkshopMapView: View {
                 .foregroundStyle(RenaissanceColors.sepiaInk)
             }
             .padding(Spacing.xl)
-            .frame(maxWidth: 400)
+            .adaptiveWidth(400)
             .background(
                 RoundedRectangle(cornerRadius: CornerRadius.lg)
                     .fill(RenaissanceColors.parchment)
@@ -1628,7 +2002,7 @@ struct WorkshopMapView: View {
                 .foregroundStyle(RenaissanceColors.sepiaInk)
             }
             .padding(Spacing.xl)
-            .frame(maxWidth: 500)
+            .adaptiveWidth(500)
             .background(
                 RoundedRectangle(cornerRadius: CornerRadius.lg)
                     .fill(RenaissanceColors.parchment)
@@ -1817,7 +2191,7 @@ struct WorkshopMapView: View {
                 .foregroundStyle(RenaissanceColors.sepiaInk)
             }
             .padding(28)
-            .frame(maxWidth: 480)
+            .adaptiveWidth(480)
             .background(
                 RoundedRectangle(cornerRadius: CornerRadius.lg)
                     .fill(RenaissanceColors.parchment)

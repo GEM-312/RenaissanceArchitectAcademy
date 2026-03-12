@@ -12,6 +12,7 @@ final class PlayerSave {
     var craftedMaterialsJSON: Data? = nil
     var toolsJSON: Data? = nil
     var totalPlayTimeSeconds: Double = 0
+    var activeBuildingIdValue: Int = -1  // -1 means no active building
     var lastSaved: Date = Date()
 
     init() {}
@@ -73,6 +74,11 @@ final class PlayerSave {
             let dict = Dictionary(uniqueKeysWithValues: newValue.map { ($0.key.rawValue, $0.value) })
             toolsJSON = try? JSONEncoder().encode(dict)
         }
+    }
+
+    var activeBuildingId: Int? {
+        get { activeBuildingIdValue >= 0 ? activeBuildingIdValue : nil }
+        set { activeBuildingIdValue = newValue ?? -1 }
     }
 
     var gender: ApprenticeGender {

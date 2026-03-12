@@ -33,6 +33,11 @@ struct CraftingRoomMapView: View {
     // Avatar box: sprite visible only when player hasn't moved yet
     @State private var avatarInBox = true
 
+    // Bird guidance state
+    @State private var showGuidance = false
+    @State private var guidanceMessage: String = ""
+    @State private var guidanceDestination: SidebarDestination? = nil
+
 
     var body: some View {
         GeometryReader { geometry in
@@ -89,18 +94,84 @@ struct CraftingRoomMapView: View {
                         viewModel: vm,
                         notebookState: notebookState,
                         onDismiss: {
-                            let station = activeStation
                             withAnimation {
                                 showCraftingKnowledgeCards = false
                                 craftingKnowledgeCards = []
                             }
-                            // Show normal station overlay after cards
-                            if station != nil {
-                                // activeStation is already set; the overlay will show
+                            // activeStation is already set; the normal overlay will show
+                        },
+                        onNavigate: { destination in
+                            withAnimation {
+                                showCraftingKnowledgeCards = false
+                                craftingKnowledgeCards = []
+                                activeStation = nil
                             }
-                        }
+                            onNavigate?(destination)
+                        },
+                        playerName: onboardingState?.apprenticeName ?? "Apprentice"
                     )
                     .transition(.opacity)
+                }
+
+                // Bird guidance — tells player where to go next
+                if showGuidance {
+                    VStack {
+                        Spacer()
+                        HStack(alignment: .top, spacing: 10) {
+                            BirdCharacter(isSitting: true)
+                                .frame(width: 44, height: 44)
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(guidanceMessage)
+                                    .font(.custom("Cinzel-Bold", size: 14))
+                                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                if let vm = viewModel, let bid = vm.activeBuildingId {
+                                    let progress = vm.cardProgress(for: bid)
+                                    Text("\(progress.completed)/\(progress.total) cards collected")
+                                        .font(RenaissanceFont.caption)
+                                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                                }
+                                if let dest = guidanceDestination, onNavigate != nil {
+                                    Button {
+                                        withAnimation(.easeOut(duration: 0.2)) { showGuidance = false }
+                                        onNavigate?(dest)
+                                    } label: {
+                                        HStack(spacing: 5) {
+                                            Image(systemName: dest == .forest ? "tree.fill" : dest == .workshop ? "hammer.fill" : "building.columns.fill")
+                                                .font(.system(size: 12))
+                                            Text("Go!")
+                                                .font(.custom("EBGaramond-SemiBold", size: 14))
+                                        }
+                                        .foregroundStyle(.white)
+                                        .padding(.horizontal, 14)
+                                        .padding(.vertical, 6)
+                                        .background(Capsule().fill(RenaissanceColors.renaissanceBlue))
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
+                            Spacer()
+                            Button {
+                                withAnimation(.easeOut(duration: 0.3)) { showGuidance = false }
+                            } label: {
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 12, weight: .bold))
+                                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
+                                    .padding(6)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        .padding(Spacing.md)
+                        .background(
+                            RoundedRectangle(cornerRadius: CornerRadius.lg)
+                                .fill(RenaissanceColors.parchment.opacity(0.95))
+                        )
+                        .borderWorkshop()
+                        .padding(.horizontal, Spacing.lg)
+                        .padding(.bottom, Spacing.xl)
+                    }
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .zIndex(50)
                 }
 
                 // Layer 4: Educational popup
@@ -128,6 +199,10 @@ struct CraftingRoomMapView: View {
             if workshop.currentAssignment == nil {
                 workshop.generateNewAssignment()
             }
+            // Show bird guidance after short delay
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                showCraftingGuidance()
+            }
         }
         .onChange(of: activeStation) { oldValue, newValue in
             if oldValue != nil && newValue == nil {
@@ -138,6 +213,9 @@ struct CraftingRoomMapView: View {
         .onChange(of: playerIsWalking) { _, isWalking in
             if isWalking && avatarInBox {
                 avatarInBox = false
+            }
+            if isWalking && showGuidance {
+                withAnimation(.easeOut(duration: 0.2)) { showGuidance = false }
             }
         }
     }
@@ -164,21 +242,17 @@ struct CraftingRoomMapView: View {
         }
 
         newScene.onFurnitureReached = { station in
-            // Check for knowledge cards at this station
+            // Check for next uncompleted knowledge card at this station
             let stationKey = "\(station)"  // enum case name matches KnowledgeCard stationKey
-            if let buildingName = viewModel?.activeBuildingName {
-                let cards = KnowledgeCardContent.cards(for: buildingName, at: stationKey)
-                let progress = viewModel?.buildingProgressMap[viewModel?.activeBuildingId ?? 0] ?? BuildingProgress()
-                let incomplete = cards.filter { !progress.completedCardIDs.contains($0.id) }
-                if !incomplete.isEmpty {
-                    self.craftingKnowledgeCards = cards
-                    self.activeStation = station  // remember which station for after cards
-                    SubsonicController.shared.play(sound: "cards_appear.mp3")
-                    withAnimation(.spring(response: 0.3)) {
-                        self.showCraftingKnowledgeCards = true
-                    }
-                    return
+            if let vm = viewModel, let bid = vm.activeBuildingId,
+               let nextCard = vm.nextUncompletedCard(for: bid, at: stationKey) {
+                self.craftingKnowledgeCards = [nextCard]
+                self.activeStation = station  // remember which station for after cards
+                SubsonicController.shared.play(sound: "cards_appear.mp3")
+                withAnimation(.spring(response: 0.3)) {
+                    self.showCraftingKnowledgeCards = true
                 }
+                return
             }
             // No knowledge cards — show normal station overlay
             withAnimation(.spring(response: 0.3)) {
@@ -193,6 +267,70 @@ struct CraftingRoomMapView: View {
     private func dismissOverlay() {
         withAnimation(.spring(response: 0.3)) {
             activeStation = nil
+        }
+    }
+
+    // MARK: - Bird Guidance
+
+    private func showCraftingGuidance() {
+        guard let vm = viewModel, let bid = vm.activeBuildingId else { return }
+        guard !showCraftingKnowledgeCards && activeStation == nil
+                && !workshop.showEducationalPopup && !workshop.showEarnFlorinsOverlay else { return }
+
+        let buildingName = vm.buildingPlots.first(where: { $0.id == bid })?.building.name ?? ""
+        let progress = vm.buildingProgressMap[bid] ?? BuildingProgress()
+
+        // 1. Check for uncompleted crafting room cards (respecting cooldown)
+        let craftingCards = KnowledgeCardContent.cards(for: buildingName, in: .craftingRoom)
+        let nextCraftingCard = craftingCards.first { !progress.completedCardIDs.contains($0.id) }
+        let craftingBlocked = vm.lastCardEnvironment == .craftingRoom
+
+        if let card = nextCraftingCard, !craftingBlocked {
+            let stationName: String
+            switch card.stationKey {
+            case "workbench": stationName = "Workbench"
+            case "furnace": stationName = "Furnace"
+            case "pigmentTable": stationName = "Pigment Table"
+            case "shelf": stationName = "Storage Shelf"
+            default: stationName = card.stationKey
+            }
+            guidanceMessage = "Walk to the \(stationName) — a knowledge card awaits!"
+            guidanceDestination = nil
+        }
+        // 2. Suggest other environments
+        else if let nextEnv = vm.nextSuggestedEnvironment(for: bid) {
+            switch nextEnv {
+            case .workshop:
+                guidanceMessage = "Head back to the Workshop — more cards at the outdoor stations!"
+                guidanceDestination = .workshop
+            case .forest:
+                guidanceMessage = "Time for the Forest! Discover more about \(buildingName)."
+                guidanceDestination = .forest
+            case .cityMap:
+                guidanceMessage = "Back to the City Map! More \(buildingName) cards await."
+                guidanceDestination = .cityMap
+            case .craftingRoom:
+                if craftingBlocked {
+                    guidanceMessage = "Explore another environment first, then come back!"
+                    guidanceDestination = .workshop
+                } else {
+                    return
+                }
+            }
+        }
+        // 3. All cards done
+        else {
+            let total = KnowledgeCardContent.cards(for: buildingName)
+            if !total.isEmpty && progress.completedCardIDs.count >= total.count {
+                guidanceMessage = "All cards collected for \(buildingName)! Head back to build!"
+                guidanceDestination = .cityMap
+            } else {
+                return
+            }
+        }
+
+        withAnimation(.spring(response: 0.4)) {
+            showGuidance = true
         }
     }
 
@@ -276,8 +414,7 @@ struct CraftingRoomMapView: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 6) {
                         ForEach(ownedTools) { tool in
-                            Text(tool.icon)
-                                .font(.caption)
+                            ToolIconView(tool: tool, size: 56)
                                 .padding(.horizontal, 5)
                                 .padding(.vertical, Spacing.xxs)
                                 .background(
@@ -1129,7 +1266,7 @@ struct CraftingRoomMapView: View {
                 .foregroundStyle(.white)
             }
             .padding(Spacing.xxl)
-            .frame(maxWidth: 500)
+            .adaptiveWidth(500)
             .background(
                 RoundedRectangle(cornerRadius: CornerRadius.lg)
                     .fill(RenaissanceColors.parchment)
@@ -1190,7 +1327,7 @@ struct CraftingRoomMapView: View {
                 .foregroundStyle(RenaissanceColors.sepiaInk)
             }
             .padding(24)
-            .frame(maxWidth: 400)
+            .adaptiveWidth(400)
             .background(
                 RoundedRectangle(cornerRadius: CornerRadius.lg)
                     .fill(RenaissanceColors.parchment)

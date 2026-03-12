@@ -884,6 +884,20 @@ class WorkshopScene: SKScene, ScrollZoomable {
         cameraNode.run(SKAction.group([moveAction, zoomAction]), withKey: "cameraZoom")
     }
 
+    /// Nudge camera upward so the station appears in the top third of the screen.
+    /// Called when a bottom-anchored overlay (e.g. quarry mini-game) needs room.
+    func nudgeCameraUp(by screenFraction: CGFloat = 0.25) {
+        guard let cameraNode = cameraNode else { return }
+        // In SpriteKit, camera Y+ = up, so moving camera down shows content higher on screen
+        let visibleHeight = self.size.height * cameraNode.xScale
+        let offset = visibleHeight * screenFraction
+        let newY = cameraNode.position.y - offset
+
+        let moveAction = SKAction.moveTo(y: newY, duration: 0.4)
+        moveAction.timingMode = .easeInEaseOut
+        cameraNode.run(moveAction, withKey: "cameraNudge")
+    }
+
     /// Zoom back out to show the full map (call when overlay dismisses)
     func zoomCameraOut() {
         guard let cameraNode = cameraNode else { return }

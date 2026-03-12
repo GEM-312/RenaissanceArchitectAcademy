@@ -92,6 +92,11 @@ struct CityMapView: View {
     @State private var showLockedMessage = false
     @State private var lockedMessage = ""
 
+    /// Bird guidance state
+    @State private var showGuidance = false
+    @State private var guidanceMessage: String = ""
+    @State private var guidanceDestination: SidebarDestination? = nil
+
     /// Reference to the SpriteKit scene — stored in a class box so it survives body
     /// re-evaluation without triggering re-renders (unlike @State which causes infinite loops)
     @State private var sceneHolder = SceneHolder<CityScene>()
@@ -250,18 +255,25 @@ struct CityMapView: View {
                         challengeEntryPath = choice
                         switch choice {
                         case .readToEarn:
-                            // Check if building has knowledge cards — if so, use card system
-                            let hasCards = !KnowledgeCardContent.cards(for: plot.building.name).isEmpty
-                            if hasCards {
-                                viewModel.setActiveBuilding(plot.id)
+                            // Check if building has an uncompleted city-map knowledge card
+                            viewModel.setActiveBuilding(plot.id)
+                            let nextCityCard = viewModel.nextUncompletedCard(for: plot.id, in: .cityMap)
+                            if nextCityCard != nil {
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                                     SubsonicController.shared.play(sound: "cards_appear.mp3")
                                     withAnimation(.spring(response: 0.3)) {
                                         showKnowledgeCards = true
                                     }
                                 }
+                            } else if !KnowledgeCardContent.cards(for: plot.building.name).isEmpty {
+                                // All city cards done — bird suggests next environment
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    withAnimation(.spring(response: 0.3)) {
+                                        showEnvironmentPicker = true
+                                    }
+                                }
                             } else {
-                                // Fallback to old paged lesson
+                                // Fallback to old paged lesson (buildings without cards)
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                                     SubsonicController.shared.play(sound: "cards_appear.mp3")
                                     withAnimation(.spring(response: 0.3)) {
@@ -324,11 +336,11 @@ struct CityMapView: View {
                 .transition(.opacity)
             }
 
-            // Knowledge Cards (replaces lesson for buildings with cards)
-            if showKnowledgeCards, let plot = selectedPlot {
-                let cityCards = KnowledgeCardContent.cards(for: plot.building.name, in: .cityMap)
+            // Knowledge Card (1 at a time — next uncompleted city card)
+            if showKnowledgeCards, let plot = selectedPlot,
+               let nextCard = viewModel.nextUncompletedCard(for: plot.id, in: .cityMap) {
                 KnowledgeCardsOverlay(
-                    cards: cityCards,
+                    cards: [nextCard],
                     buildingId: plot.id,
                     viewModel: viewModel,
                     notebookState: notebookState,
@@ -340,10 +352,80 @@ struct CityMapView: View {
                         sceneHolder.scene?.resetMascot()
                     },
                     onAllComplete: {
-                        // City map cards done — bird suggests next environment
-                    }
+                        // Single card done — overlay stays showing bird guidance hint
+                    },
+                    onNavigate: { destination in
+                        withAnimation {
+                            showKnowledgeCards = false
+                            selectedPlot = nil
+                        }
+                        sceneHolder.scene?.resetMascot()
+                        onNavigate?(destination)
+                    },
+                    playerName: onboardingState?.apprenticeName ?? "Apprentice"
                 )
                 .transition(.opacity)
+            }
+
+            // Bird guidance — tells player where to go next
+            if showGuidance {
+                VStack {
+                    Spacer()
+                    HStack(alignment: .top, spacing: 10) {
+                        BirdCharacter(isSitting: true)
+                            .frame(width: 44, height: 44)
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(guidanceMessage)
+                                .font(.custom("Cinzel-Bold", size: 14))
+                                .foregroundStyle(RenaissanceColors.sepiaInk)
+                                .fixedSize(horizontal: false, vertical: true)
+                            if let bid = viewModel.activeBuildingId {
+                                let progress = viewModel.cardProgress(for: bid)
+                                Text("\(progress.completed)/\(progress.total) cards collected")
+                                    .font(RenaissanceFont.caption)
+                                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                            }
+                            if let dest = guidanceDestination, onNavigate != nil {
+                                Button {
+                                    withAnimation(.easeOut(duration: 0.2)) { showGuidance = false }
+                                    onNavigate?(dest)
+                                } label: {
+                                    HStack(spacing: 5) {
+                                        Image(systemName: dest == .forest ? "tree.fill" : dest == .workshop ? "hammer.fill" : "building.columns.fill")
+                                            .font(.system(size: 12))
+                                        Text("Go!")
+                                            .font(.custom("EBGaramond-SemiBold", size: 14))
+                                    }
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 14)
+                                    .padding(.vertical, 6)
+                                    .background(Capsule().fill(RenaissanceColors.renaissanceBlue))
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                        Spacer()
+                        Button {
+                            withAnimation(.easeOut(duration: 0.3)) { showGuidance = false }
+                        } label: {
+                            Image(systemName: "xmark")
+                                .font(.system(size: 12, weight: .bold))
+                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
+                                .padding(6)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(Spacing.md)
+                    .background(
+                        RoundedRectangle(cornerRadius: CornerRadius.lg)
+                            .fill(RenaissanceColors.parchment.opacity(0.95))
+                    )
+                    .borderWorkshop()
+                    .padding(.horizontal, Spacing.lg)
+                    .padding(.bottom, Spacing.xl)
+                }
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+                .zIndex(50)
             }
 
             // Environment Picker (Card 2: Explore Environments)
@@ -644,6 +726,13 @@ struct CityMapView: View {
                 showBuildingLesson = true
                 returnToLessonPlotId = nil
             }
+            // Show bird guidance after short delay
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                showCityGuidance()
+            }
+        }
+        .onChange(of: showKnowledgeCards) { _, _ in
+            // Knowledge cards dismissed — player can freely explore
         }
         .sheet(isPresented: $showChallenge) {
             if let plot = selectedPlot,
@@ -777,6 +866,7 @@ struct CityMapView: View {
                 showBuildingPrompt = false
                 showLockedMessage = false
                 showMascotDialogue = false
+                showGuidance = false
                 selectedPlot = nil
             }
         }
@@ -802,6 +892,63 @@ struct CityMapView: View {
         }
 
         return newScene
+    }
+
+    // MARK: - Bird Guidance
+
+    private func showCityGuidance() {
+        guard let bid = viewModel.activeBuildingId else { return }
+        // Don't show if other overlays are active
+        guard !showKnowledgeCards && !showMascotDialogue && !showBuildingLesson
+                && !showBuildingChecklist && !showConstructionSequence && !showEnvironmentPicker else { return }
+
+        let buildingName = viewModel.buildingPlots.first(where: { $0.id == bid })?.building.name ?? ""
+        let progress = viewModel.buildingProgressMap[bid] ?? BuildingProgress()
+
+        // 1. Check for uncompleted city cards (respecting cooldown)
+        let cityCards = KnowledgeCardContent.cards(for: buildingName, in: .cityMap)
+        let nextCityCard = cityCards.first { !progress.completedCardIDs.contains($0.id) }
+        let cityBlocked = viewModel.lastCardEnvironment == .cityMap
+
+        if nextCityCard != nil, !cityBlocked {
+            guidanceMessage = "Tap a building to discover its next knowledge card!"
+            guidanceDestination = nil
+        }
+        // 2. Suggest other environments
+        else if let nextEnv = viewModel.nextSuggestedEnvironment(for: bid) {
+            switch nextEnv {
+            case .workshop:
+                guidanceMessage = "Head to the Workshop — collect materials and discover cards!"
+                guidanceDestination = .workshop
+            case .forest:
+                guidanceMessage = "Time for the Forest! More to discover about \(buildingName)."
+                guidanceDestination = .forest
+            case .craftingRoom:
+                guidanceMessage = "Visit the Crafting Room — learn how \(buildingName) materials were transformed."
+                guidanceDestination = .workshop
+            case .cityMap:
+                if cityBlocked {
+                    guidanceMessage = "Explore another environment first, then come back!"
+                    guidanceDestination = .workshop
+                } else {
+                    return
+                }
+            }
+        }
+        // 3. All cards done
+        else {
+            let total = KnowledgeCardContent.cards(for: buildingName)
+            if !total.isEmpty && progress.completedCardIDs.count >= total.count {
+                guidanceMessage = "All cards collected for \(buildingName)! Ready to build!"
+                guidanceDestination = nil
+            } else {
+                return
+            }
+        }
+
+        withAnimation(.spring(response: 0.4)) {
+            showGuidance = true
+        }
     }
 
     /// Sync building completion states from ViewModel to SpriteKit scene

@@ -148,7 +148,7 @@ struct GoldsmithMapView: View {
             .background(Capsule().fill(RenaissanceColors.warmBrown))
         }
         .padding(24)
-        .frame(maxWidth: 420)
+        .adaptiveWidth(420)
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(RenaissanceColors.parchment)

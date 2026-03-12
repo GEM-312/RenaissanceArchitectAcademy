@@ -61,7 +61,7 @@ struct StoryNarrativeView: View {
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
                     .multilineTextAlignment(.center)
                     .lineSpacing(6)
-                    .frame(maxWidth: 520)
+                    .adaptiveWidth(520)
                     .padding(.horizontal, 24)
 
                 // Bird companion (only on final story page)

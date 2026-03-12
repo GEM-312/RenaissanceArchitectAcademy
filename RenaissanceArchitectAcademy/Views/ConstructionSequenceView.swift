@@ -87,7 +87,7 @@ struct ConstructionSequenceView: View {
             }
         }
         .padding(30)
-        .frame(maxWidth: 500)
+        .adaptiveWidth(500)
         .background(
             RoundedRectangle(cornerRadius: 20)
                 .fill(RenaissanceColors.parchment)
@@ -202,7 +202,8 @@ struct ConstructionSequenceView: View {
             .padding(.bottom, 20)
             .padding(.top, 8)
         }
-        .frame(maxWidth: 650, maxHeight: 700)
+        .adaptiveWidth(650)
+        .frame(maxHeight: 700)
         .background(
             RoundedRectangle(cornerRadius: 20)
                 .fill(RenaissanceColors.parchment)
@@ -383,7 +384,7 @@ struct ConstructionSequenceView: View {
             }
         }
         .padding(30)
-        .frame(maxWidth: 500)
+        .adaptiveWidth(500)
         .background(
             RoundedRectangle(cornerRadius: 20)
                 .fill(RenaissanceColors.parchment)

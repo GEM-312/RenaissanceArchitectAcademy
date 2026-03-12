@@ -99,7 +99,7 @@ struct StationLessonOverlay: View {
                 .opacity(showButton ? 1 : 0)
             }
             .padding(24)
-            .frame(maxWidth: 480)
+            .adaptiveWidth(480)
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .fill(RenaissanceColors.parchment)

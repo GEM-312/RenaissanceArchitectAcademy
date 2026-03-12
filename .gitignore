@@ -89,3 +89,9 @@ RenaissanceArchitectAcademy/Styles/bird_turn_frames/
 RenaissanceArchitectAcademy/Styles/*.mp4
 RenaissanceArchitectAcademy/*.gif
 Styles/
+
+# API keys (secrets)
+RenaissanceArchitectAcademy/Services/APIKeys.swift
+
+# Raw video files
+RenaissanceArchitectAcademy/*.mp4

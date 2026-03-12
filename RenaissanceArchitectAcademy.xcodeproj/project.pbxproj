@@ -97,8 +97,6 @@
 		091 /* cards_appear.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 191 /* cards_appear.mp3 */; };
 		092 /* KnowledgeCardsOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192 /* KnowledgeCardsOverlay.swift */; };
 		093 /* GameSceneKitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193 /* GameSceneKitView.swift */; };
-		094 /* ActivityScene3D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194 /* ActivityScene3D.swift */; };
-		095 /* SceneKitActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195 /* SceneKitActivityView.swift */; };
 		096 /* Tool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 196 /* Tool.swift */; };
 		097 /* ToolRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197 /* ToolRecipe.swift */; };
 		098 /* PigmentRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 198 /* PigmentRecipe.swift */; };
@@ -107,6 +105,21 @@
 		0A1 /* GoldsmithMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1 /* GoldsmithMapView.swift */; };
 		0A2 /* GameSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2 /* GameSettings.swift */; };
 		0A3 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A3 /* SettingsView.swift */; };
+		0B0 /* QuarryMiniGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B0 /* QuarryMiniGameView.swift */; };
+		0B1 /* VolcanoMiniGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B1 /* VolcanoMiniGameView.swift */; };
+		0B2 /* RiverMiniGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2 /* RiverMiniGameView.swift */; };
+		0B3 /* ClayPitMiniGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B3 /* ClayPitMiniGameView.swift */; };
+		0B4 /* FarmMiniGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4 /* FarmMiniGameView.swift */; };
+		0C0 /* ClaudeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0 /* ClaudeService.swift */; };
+		0C1 /* BirdChatOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C1 /* BirdChatOverlay.swift */; };
+		0C2 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C2 /* ChatMessage.swift */; };
+		0D0 /* PubChemService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D0 /* PubChemService.swift */; };
+		0D1 /* PubChemMoleculeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D1 /* PubChemMoleculeView.swift */; };
+		0D2 /* StationCompounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D2 /* StationCompounds.swift */; };
+		0D3 /* APIKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D3 /* APIKeys.swift */; };
+		0D4 /* WolframService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D4 /* WolframService.swift */; };
+		0D5 /* WolframGeometryHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D5 /* WolframGeometryHelper.swift */; };
+		0D6 /* WolframGeometryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D6 /* WolframGeometryView.swift */; };
 		543AD36B2F60C199001895ED /* card_flip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 183 /* card_flip.mp3 */; };
 		543AD36C2F60C199001895ED /* GirlIntroAudio.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 182 /* GirlIntroAudio.m4a */; };
 		544299832F32E0F700F92073 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = 544299822F32E0F700F92073 /* Pow */; };
@@ -258,8 +271,6 @@
 		191 /* cards_appear.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = cards_appear.mp3; sourceTree = "<group>"; };
 		192 /* KnowledgeCardsOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnowledgeCardsOverlay.swift; sourceTree = "<group>"; };
 		193 /* GameSceneKitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSceneKitView.swift; sourceTree = "<group>"; };
-		194 /* ActivityScene3D.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ActivityScene3D.swift; path = Views/SceneKit/ActivityScene3D.swift; sourceTree = "<group>"; };
-		195 /* SceneKitActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SceneKitActivityView.swift; path = Views/SceneKit/SceneKitActivityView.swift; sourceTree = "<group>"; };
 		196 /* Tool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tool.swift; sourceTree = "<group>"; };
 		197 /* ToolRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolRecipe.swift; sourceTree = "<group>"; };
 		198 /* PigmentRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PigmentRecipe.swift; sourceTree = "<group>"; };
@@ -268,6 +279,21 @@
 		1A1 /* GoldsmithMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GoldsmithMapView.swift; path = Views/SpriteKit/GoldsmithMapView.swift; sourceTree = "<group>"; };
 		1A2 /* GameSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSettings.swift; sourceTree = "<group>"; };
 		1A3 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		1B0 /* QuarryMiniGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuarryMiniGameView.swift; sourceTree = "<group>"; };
+		1B1 /* VolcanoMiniGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolcanoMiniGameView.swift; sourceTree = "<group>"; };
+		1B2 /* RiverMiniGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RiverMiniGameView.swift; sourceTree = "<group>"; };
+		1B3 /* ClayPitMiniGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClayPitMiniGameView.swift; sourceTree = "<group>"; };
+		1B4 /* FarmMiniGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FarmMiniGameView.swift; sourceTree = "<group>"; };
+		1C0 /* ClaudeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeService.swift; sourceTree = "<group>"; };
+		1C1 /* BirdChatOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdChatOverlay.swift; sourceTree = "<group>"; };
+		1C2 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
+		1D0 /* PubChemService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PubChemService.swift; sourceTree = "<group>"; };
+		1D1 /* PubChemMoleculeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PubChemMoleculeView.swift; sourceTree = "<group>"; };
+		1D2 /* StationCompounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationCompounds.swift; sourceTree = "<group>"; };
+		1D3 /* APIKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeys.swift; sourceTree = "<group>"; };
+		1D4 /* WolframService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WolframService.swift; sourceTree = "<group>"; };
+		1D5 /* WolframGeometryHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WolframGeometryHelper.swift; sourceTree = "<group>"; };
+		1D6 /* WolframGeometryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WolframGeometryView.swift; sourceTree = "<group>"; };
 		544299972F3646ED00F92073 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BuildingNode.swift; path = Views/SpriteKit/BuildingNode.swift; sourceTree = "<group>"; };
 		544299982F3646ED00F92073 /* CityMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityMapView.swift; path = Views/SpriteKit/CityMapView.swift; sourceTree = "<group>"; };
 		544299992F3646ED00F92073 /* CityScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityScene.swift; path = Views/SpriteKit/CityScene.swift; sourceTree = "<group>"; };
@@ -355,8 +381,6 @@
 				149 /* ForestScene.swift */,
 				174 /* CraftingRoomScene.swift */,
 				175 /* CraftingRoomMapView.swift */,
-				194 /* ActivityScene3D.swift */,
-				195 /* SceneKitActivityView.swift */,
 				1A0 /* GoldsmithScene.swift */,
 				1A1 /* GoldsmithMapView.swift */,
 				544299A52F369AB700F92073 /* MascotDialogueView.swift */,
@@ -433,10 +457,14 @@
 				173 /* MathVisualTemplates.swift */,
 				179 /* ConstructionSequenceView.swift */,
 				192 /* KnowledgeCardsOverlay.swift */,
+				1C1 /* BirdChatOverlay.swift */,
+				1D1 /* PubChemMoleculeView.swift */,
+				1D6 /* WolframGeometryView.swift */,
 				141 /* OnboardingView.swift */,
 				1A3 /* SettingsView.swift */,
 				308 /* Sketching */,
 				309 /* Onboarding */,
+				310 /* StationMiniGames */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -486,6 +514,8 @@
 				197 /* ToolRecipe.swift */,
 				198 /* PigmentRecipe.swift */,
 				1A2 /* GameSettings.swift */,
+				1C2 /* ChatMessage.swift */,
+				1D2 /* StationCompounds.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -506,6 +536,11 @@
 			isa = PBXGroup;
 			children = (
 				115 /* SoundManager.swift */,
+				1C0 /* ClaudeService.swift */,
+				1D0 /* PubChemService.swift */,
+				1D3 /* APIKeys.swift */,
+				1D4 /* WolframService.swift */,
+				1D5 /* WolframGeometryHelper.swift */,
 				306 /* Styles */,
 			);
 			path = Services;
@@ -529,6 +564,18 @@
 				146 /* AvatarTransitionView.swift */,
 			);
 			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		310 /* StationMiniGames */ = {
+			isa = PBXGroup;
+			children = (
+				1B0 /* QuarryMiniGameView.swift */,
+				1B1 /* VolcanoMiniGameView.swift */,
+				1B2 /* RiverMiniGameView.swift */,
+				1B3 /* ClayPitMiniGameView.swift */,
+				1B4 /* FarmMiniGameView.swift */,
+			);
+			path = StationMiniGames;
 			sourceTree = "<group>";
 		};
 		54477B162F313B22007D8C64 /* Fonts */ = {
@@ -796,8 +843,6 @@
 				081 /* GameSpriteView.swift in Sources */,
 				092 /* KnowledgeCardsOverlay.swift in Sources */,
 				093 /* GameSceneKitView.swift in Sources */,
-				094 /* ActivityScene3D.swift in Sources */,
-				095 /* SceneKitActivityView.swift in Sources */,
 				096 /* Tool.swift in Sources */,
 				097 /* ToolRecipe.swift in Sources */,
 				098 /* PigmentRecipe.swift in Sources */,
@@ -805,6 +850,21 @@
 				0A1 /* GoldsmithMapView.swift in Sources */,
 				0A2 /* GameSettings.swift in Sources */,
 				0A3 /* SettingsView.swift in Sources */,
+				0B0 /* QuarryMiniGameView.swift in Sources */,
+				0B1 /* VolcanoMiniGameView.swift in Sources */,
+				0B2 /* RiverMiniGameView.swift in Sources */,
+				0B3 /* ClayPitMiniGameView.swift in Sources */,
+				0B4 /* FarmMiniGameView.swift in Sources */,
+				0C0 /* ClaudeService.swift in Sources */,
+				0C1 /* BirdChatOverlay.swift in Sources */,
+				0C2 /* ChatMessage.swift in Sources */,
+				0D0 /* PubChemService.swift in Sources */,
+				0D1 /* PubChemMoleculeView.swift in Sources */,
+				0D2 /* StationCompounds.swift in Sources */,
+				0D3 /* APIKeys.swift in Sources */,
+				0D4 /* WolframService.swift in Sources */,
+				0D5 /* WolframGeometryHelper.swift in Sources */,
+				0D6 /* WolframGeometryView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -945,6 +1005,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -959,7 +1020,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -979,6 +1040,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -993,7 +1055,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

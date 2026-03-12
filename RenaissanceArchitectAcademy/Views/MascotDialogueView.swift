@@ -11,11 +11,18 @@ struct MascotDialogueView: View {
     let onChoice: (BuildingCardChoice) -> Void
     let onDismiss: () -> Void
 
+    @Environment(\.horizontalSizeClass) private var sizeClass
+
     @State private var showMascot = false
     @State private var showDialogue = false
     @State private var showChoices = false
     @State private var auroraPhase = false
     @State private var cardFloat: CGFloat = 0
+
+    /// Card dimensions — smaller on iPhone
+    private var cardWidth: CGFloat { sizeClass == .compact ? 110 : 200 }
+    private var cardHeight: CGFloat { sizeClass == .compact ? 160 : 280 }
+    private var isCompact: Bool { sizeClass == .compact }
 
     private var progress: BuildingProgress {
         viewModel.buildingProgressMap[plot.id] ?? BuildingProgress()
@@ -33,33 +40,34 @@ struct MascotDialogueView: View {
 
                 // Bird flies in from the map
                 BirdCharacter(isSitting: false)
-                    .frame(width: 140, height: 140)
+                    .frame(width: isCompact ? 80 : 140, height: isCompact ? 80 : 140)
                     .opacity(showMascot ? 1 : 0)
-                    .padding(.bottom, -10)
+                    .padding(.bottom, isCompact ? -4 : -10)
 
                 // Title above cards (no panel)
-                VStack(spacing: 8) {
+                VStack(spacing: isCompact ? 4 : 8) {
                     Text(plot.building.name)
-                        .font(RenaissanceFont.title)
+                        .font(isCompact ? RenaissanceFont.title3 : RenaissanceFont.title)
                         .tracking(Tracking.label)
                         .foregroundColor(RenaissanceColors.ochre)
                         .shadow(color: .black.opacity(0.6), radius: 4, y: 2)
 
                     // Science icons row
-                    HStack(spacing: 6) {
+                    HStack(spacing: isCompact ? 4 : 6) {
                         ForEach(plot.building.sciences, id: \.self) { science in
+                            let iconSize: CGFloat = isCompact ? 20 : 28
                             if let imageName = science.customImageName {
                                 Image(imageName)
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(width: 28, height: 28)
+                                    .frame(width: iconSize, height: iconSize)
                                     .clipShape(RoundedRectangle(cornerRadius: 6))
                             } else {
                                 Image(systemName: science.sfSymbolName)
-                                    .font(RenaissanceFont.bodySmall)
+                                    .font(isCompact ? RenaissanceFont.caption : RenaissanceFont.bodySmall)
                                     .foregroundStyle(RenaissanceColors.ochre)
                                     .shadow(color: .black.opacity(0.4), radius: 3, y: 1)
-                                    .frame(width: 28, height: 28)
+                                    .frame(width: iconSize, height: iconSize)
                             }
                         }
                     }
@@ -97,9 +105,9 @@ struct MascotDialogueView: View {
                     // Connection line behind cards
                     Rectangle()
                         .fill(RenaissanceColors.ochre.opacity(0.2))
-                        .frame(width: 3 * 200 + 2 * Spacing.md - 60, height: 2)
+                        .frame(width: 3 * cardWidth + 2 * (isCompact ? Spacing.xs : Spacing.md) - 60, height: 2)
 
-                    HStack(spacing: Spacing.md) {
+                    HStack(spacing: isCompact ? Spacing.xs : Spacing.md) {
                         ForEach(Array(BuildingCardChoice.allCases.enumerated()), id: \.element) { index, choice in
                             buildingCard(choice: choice, index: index)
                                 .offset(y: cardFloat * (index.isMultiple(of: 2) ? 1 : -1))
@@ -199,33 +207,35 @@ struct MascotDialogueView: View {
                     )
 
                 // Layer 2: Content (matches Forest/Knowledge card layout)
-                VStack(spacing: Spacing.sm) {
+                VStack(spacing: isCompact ? Spacing.xxs : Spacing.sm) {
                     Spacer()
 
                     ZStack {
                         Circle()
                             .fill(color.opacity(0.15))
-                            .frame(width: 70, height: 70)
+                            .frame(width: isCompact ? 40 : 70, height: isCompact ? 40 : 70)
                         Image(systemName: choice.icon)
-                            .font(.system(size: 36))
+                            .font(.system(size: isCompact ? 20 : 36))
                             .foregroundStyle(color)
                             .shadow(color: color.opacity(0.5), radius: 6)
                     }
 
                     Text(choice.rawValue)
-                        .font(RenaissanceFont.cardTitle)
-                        .tracking(Tracking.label)
+                        .font(isCompact ? RenaissanceFont.captionSmall : RenaissanceFont.cardTitle)
+                        .tracking(isCompact ? 0.5 : Tracking.label)
                         .foregroundStyle(color)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
-                        .minimumScaleFactor(0.8)
+                        .minimumScaleFactor(0.7)
 
-                    cardDetail(for: choice)
+                    if !isCompact {
+                        cardDetail(for: choice)
+                    }
 
                     Spacer()
                 }
             }
-            .frame(width: 200, height: 280)
+            .frame(width: cardWidth, height: cardHeight)
             .clipShape(RoundedRectangle(cornerRadius: 14))
             .overlay(
                 RoundedRectangle(cornerRadius: 14)

@@ -104,7 +104,7 @@ struct GameTopBarView: View {
             // Bottom-left: Dialog content (no avatar card — profile is in nav menu)
             if let dialog = avatarDialogContent {
                 dialog
-                    .frame(minWidth: 200, maxWidth: 400)
+                    .adaptiveWidth(400, compact: 300)
                     .padding(12)
                     .background(
                         RoundedRectangle(cornerRadius: 16)
@@ -287,7 +287,7 @@ struct GameTopBarView: View {
                 // Right: dialog content expanding into the card
                 if let dialog = avatarDialogContent {
                     dialog
-                        .frame(minWidth: 200, maxWidth: 400)
+                        .adaptiveWidth(400, compact: 300)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 10)
                         .transition(.move(edge: .leading).combined(with: .opacity))

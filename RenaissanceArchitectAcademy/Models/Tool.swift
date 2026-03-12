@@ -14,6 +14,21 @@ enum Tool: String, CaseIterable, Identifiable, Codable {
 
     var id: String { rawValue }
 
+    /// Asset catalog image name (nil = use emoji fallback)
+    var imageName: String? {
+        switch self {
+        case .pickaxe:         return "ToolPickaxe"
+        case .bucket:          return "ToolBucket"
+        case .ashRake:         return "ToolAshRake"
+        case .shovel:          return "ToolShovel"
+        case .miningHammer:    return "ToolMiningHammer"
+        case .axe:             return "ToolAxe"
+        case .mortarAndPestle: return "ToolMortarAndPestle"
+        case .pitchfork:       return "ToolPitchfork"
+        case .tradePurse:      return "ToolTradePurse"
+        }
+    }
+
     var icon: String {
         switch self {
         case .pickaxe:        return "⛏️"
@@ -87,5 +102,27 @@ enum Tool: String, CaseIterable, Identifiable, Codable {
         // Market never requires a tool (bootstrap — player needs to buy first tool here)
         if station == .market { return nil }
         return allCases.first(where: { $0.requiredAtStation == station })
+    }
+}
+
+// MARK: - Tool Icon View
+
+import SwiftUI
+
+/// Displays a tool's Midjourney image if available, or falls back to emoji
+struct ToolIconView: View {
+    let tool: Tool
+    var size: CGFloat = 32
+
+    var body: some View {
+        if let imageName = tool.imageName {
+            Image(imageName)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: size, height: size)
+        } else {
+            Text(tool.icon)
+                .font(.system(size: size * 0.75))
+        }
     }
 }

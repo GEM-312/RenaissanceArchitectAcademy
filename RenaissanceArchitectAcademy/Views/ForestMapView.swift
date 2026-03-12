@@ -58,6 +58,11 @@ struct ForestMapView: View {
     // Tool requirement dialog (shown when player reaches POI without axe)
     @State private var showToolDialog = false
 
+    // Bird guidance state
+    @State private var showGuidance = false
+    @State private var guidanceMessage: String = ""
+    @State private var guidanceDestination: SidebarDestination? = nil
+
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -136,6 +141,67 @@ struct ForestMapView: View {
                         .offset(y: -40)
                         .allowsHitTesting(false)
                 }
+
+                // Bird guidance — tells player where to go next
+                if showGuidance {
+                    VStack {
+                        Spacer()
+                        HStack(alignment: .top, spacing: 10) {
+                            BirdCharacter(isSitting: true)
+                                .frame(width: 44, height: 44)
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(guidanceMessage)
+                                    .font(.custom("Cinzel-Bold", size: 14))
+                                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                if let vm = viewModel, let bid = vm.activeBuildingId {
+                                    let progress = vm.cardProgress(for: bid)
+                                    Text("\(progress.completed)/\(progress.total) cards collected")
+                                        .font(RenaissanceFont.caption)
+                                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                                }
+                                if let dest = guidanceDestination, onNavigate != nil {
+                                    Button {
+                                        withAnimation(.easeOut(duration: 0.2)) { showGuidance = false }
+                                        onNavigate?(dest)
+                                    } label: {
+                                        HStack(spacing: 5) {
+                                            Image(systemName: dest == .workshop ? "hammer.fill" : "building.columns.fill")
+                                                .font(.system(size: 12))
+                                            Text("Go!")
+                                                .font(.custom("EBGaramond-SemiBold", size: 14))
+                                        }
+                                        .foregroundStyle(.white)
+                                        .padding(.horizontal, 14)
+                                        .padding(.vertical, 6)
+                                        .background(Capsule().fill(RenaissanceColors.renaissanceBlue))
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
+                            Spacer()
+                            Button {
+                                withAnimation(.easeOut(duration: 0.3)) { showGuidance = false }
+                            } label: {
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 12, weight: .bold))
+                                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
+                                    .padding(6)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        .padding(Spacing.md)
+                        .background(
+                            RoundedRectangle(cornerRadius: CornerRadius.lg)
+                                .fill(RenaissanceColors.parchment.opacity(0.95))
+                        )
+                        .borderWorkshop()
+                        .padding(.horizontal, Spacing.lg)
+                        .padding(.bottom, Spacing.xl)
+                    }
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .zIndex(50)
+                }
             }
             .onChange(of: selectedPOIIndex) { oldValue, newValue in
                 if newValue != nil {
@@ -156,17 +222,76 @@ struct ForestMapView: View {
                             }
                         }
                     }
+                    // POI dismissed — player continues exploring freely
                 }
             }
             .onChange(of: playerIsWalking) { _, isWalking in
                 if isWalking && avatarInBox {
                     avatarInBox = false
                 }
+                if isWalking && showGuidance {
+                    withAnimation(.easeOut(duration: 0.2)) { showGuidance = false }
+                }
             }
         }
     }
 
     // MARK: - Science Cards Setup
+
+    // MARK: - Bird Guidance
+
+    private func showForestGuidance() {
+        guard let vm = viewModel, let bid = vm.activeBuildingId else { return }
+        guard selectedPOIIndex == nil && discoveredTruffle == nil else { return }
+
+        let buildingName = vm.buildingPlots.first(where: { $0.id == bid })?.building.name ?? ""
+        let progress = vm.buildingProgressMap[bid] ?? BuildingProgress()
+
+        // 1. Check for uncompleted forest cards (respecting cooldown)
+        let forestCards = KnowledgeCardContent.cards(for: buildingName, in: .forest)
+        let nextForestCard = forestCards.first { !progress.completedCardIDs.contains($0.id) }
+        let forestBlocked = vm.lastCardEnvironment == .forest
+
+        if nextForestCard != nil, !forestBlocked {
+            guidanceMessage = "Tap a tree to discover knowledge cards! Each tree hides science."
+            guidanceDestination = nil
+        }
+        // 2. Suggest other environments
+        else if let nextEnv = vm.nextSuggestedEnvironment(for: bid) {
+            switch nextEnv {
+            case .workshop:
+                guidanceMessage = "Head to the Workshop — more cards about \(buildingName) await!"
+                guidanceDestination = .workshop
+            case .craftingRoom:
+                guidanceMessage = "Visit the Crafting Room to learn how materials were transformed."
+                guidanceDestination = .workshop
+            case .cityMap:
+                guidanceMessage = "Back to the City Map! More \(buildingName) cards await."
+                guidanceDestination = .cityMap
+            case .forest:
+                if forestBlocked {
+                    guidanceMessage = "Explore another environment first, then come back!"
+                    guidanceDestination = .workshop
+                } else {
+                    return
+                }
+            }
+        }
+        // 3. All cards done
+        else {
+            let total = KnowledgeCardContent.cards(for: buildingName)
+            if !total.isEmpty && progress.completedCardIDs.count >= total.count {
+                guidanceMessage = "All cards collected for \(buildingName)! Ready to build!"
+                guidanceDestination = .cityMap
+            } else {
+                return
+            }
+        }
+
+        withAnimation(.spring(response: 0.4)) {
+            showGuidance = true
+        }
+    }
 
     private func setupScienceCards(for poi: ForestScene.ForestPOI) {
         scienceCards = ScienceCardContent.cards(for: poi.name)
@@ -279,6 +404,10 @@ struct ForestMapView: View {
                 floatOffset = 8
             }
             auroraPhase = true
+            // Show bird guidance after short delay
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                showForestGuidance()
+            }
         }
     }
 
@@ -1327,8 +1456,7 @@ struct ForestMapView: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 6) {
                         ForEach(ownedTools) { tool in
-                            Text(tool.icon)
-                                .font(.caption)
+                            ToolIconView(tool: tool, size: 56)
                                 .padding(.horizontal, 5)
                                 .padding(.vertical, 4)
                                 .background(

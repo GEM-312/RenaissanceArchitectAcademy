@@ -4,9 +4,11 @@ import SwiftUI
 #if os(iOS)
 import UIKit
 typealias PlatformColor = UIColor
+typealias PlatformFont = UIFont
 #else
 import AppKit
 typealias PlatformColor = NSColor
+typealias PlatformFont = NSFont
 #endif
 
 /// Main SpriteKit scene for the isometric city map
