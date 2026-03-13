@@ -180,22 +180,19 @@ struct CraftingRoomMapView: View {
                         .transition(.opacity.combined(with: .scale(scale: 0.9)))
                 }
 
-                // Layer 4b: Earn Florins overlay
-                if workshop.showEarnFlorinsOverlay {
-                    earnFlorinsOverlay
-                        .transition(.opacity.combined(with: .scale(scale: 0.9)))
-                }
+                // (Earn Florins overlay removed — bird guidance handles this now)
 
                 // Layer 4c: Master task card
                 if let assignment = workshop.currentAssignment,
                    activeStation == nil,
-                   !workshop.showEducationalPopup,
-                   !workshop.showEarnFlorinsOverlay {
+                   !workshop.showEducationalPopup {
                     masterTaskCard(assignment: assignment)
                 }
             }
         }
         .onAppear {
+            // Clear cooldown — player traveled to crafting room
+            viewModel?.clearCooldownIfDifferent(.craftingRoom)
             if workshop.currentAssignment == nil {
                 workshop.generateNewAssignment()
             }
@@ -275,7 +272,7 @@ struct CraftingRoomMapView: View {
     private func showCraftingGuidance() {
         guard let vm = viewModel, let bid = vm.activeBuildingId else { return }
         guard !showCraftingKnowledgeCards && activeStation == nil
-                && !workshop.showEducationalPopup && !workshop.showEarnFlorinsOverlay else { return }
+                && !workshop.showEducationalPopup else { return }
 
         let buildingName = vm.buildingPlots.first(where: { $0.id == bid })?.building.name ?? ""
         let progress = vm.buildingProgressMap[bid] ?? BuildingProgress()

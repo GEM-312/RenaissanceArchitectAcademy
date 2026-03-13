@@ -527,6 +527,13 @@ class CityViewModel: ObservableObject {
         lastCardEnvironment = env
     }
 
+    /// Clear the cooldown when player enters a different environment
+    func clearCooldownIfDifferent(_ currentEnv: CardEnvironment) {
+        if lastCardEnvironment != currentEnv {
+            lastCardEnvironment = nil
+        }
+    }
+
     /// Which environment the bird should suggest next for the active building
     func nextSuggestedEnvironment(for plotId: Int) -> CardEnvironment? {
         let progress = buildingProgressMap[plotId] ?? BuildingProgress()

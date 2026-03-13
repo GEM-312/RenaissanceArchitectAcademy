@@ -400,6 +400,8 @@ struct ForestMapView: View {
             }
         }
         .onAppear {
+            // Clear cooldown — player traveled to forest
+            viewModel?.clearCooldownIfDifferent(.forest)
             withAnimation(.easeInOut(duration: 2.5).repeatForever(autoreverses: true)) {
                 floatOffset = 8
             }

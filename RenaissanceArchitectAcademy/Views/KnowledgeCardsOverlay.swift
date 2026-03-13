@@ -54,6 +54,10 @@ struct KnowledgeCardsOverlay: View {
     var onNavigate: ((SidebarDestination) -> Void)? = nil
     /// Player name for bird chat
     var playerName: String = "Apprentice"
+    /// Workshop state for game-loop-aware guidance (tools, materials, etc.)
+    var workshopState: WorkshopState? = nil
+    /// Current station type (when shown from workshop)
+    var currentStation: ResourceStationType? = nil
 
     // MARK: - Card Layout
 
@@ -1668,33 +1672,62 @@ struct KnowledgeCardsOverlay: View {
         .shadow(color: RenaissanceColors.goldSuccess.opacity(0.5), radius: 4, y: 2)
     }
 
-    /// Build a contextual guidance message based on progress
+    /// Build a contextual guidance message following the full game loop:
+    /// card → tools → minigame → materials → crafting → next environment → build
     private func buildGuidanceMessage(card: KnowledgeCard, progress: (completed: Int, total: Int), nextEnv: CardEnvironment?) -> String {
         let buildingName = card.buildingName
-        let remaining = progress.total - progress.completed
 
-        if remaining == 0 {
-            return "Magnifico! You've collected all \(progress.total) cards for the \(buildingName)! You truly understand how this building works — from the raw materials to the finished structure. Time to put that knowledge to work!"
+        // All cards done → guide to building
+        if progress.completed >= progress.total {
+            return "Magnifico! All \(progress.total) cards collected for the \(buildingName)! Head to the City Map — you're ready to build!"
         }
 
-        let envHint: String
-        if let env = nextEnv {
-            switch env {
-            case .workshop:
-                let stationHint = nextStationHint(for: card.buildingId, in: .workshop)
-                envHint = "Head to the Workshop\(stationHint) — there's a card waiting for you there about the materials used in the \(buildingName)."
-            case .forest:
-                envHint = "Try the Forest next — the timber used in the \(buildingName) has a fascinating story."
-            case .craftingRoom:
-                envHint = "Visit the Crafting Room — learn how the raw materials were transformed for the \(buildingName)."
-            case .cityMap:
-                envHint = "Go back to the City Map and tap the \(buildingName) — more to discover about its design."
+        // GAME LOOP GUIDANCE — prioritize action over cards
+        // If we're at a workshop station, guide through: tools → minigame → materials → next
+        if let ws = workshopState, let station = currentStation, card.environment == .workshop {
+            // Step 1: Does the player need a tool for this station?
+            if let tool = Tool.requiredFor(station: station), !ws.hasTool(for: station) {
+                return "Well done! Now you need a \(tool.displayName) to collect materials here. Head to the Market to buy one!"
             }
+            // Step 2: Player has tool → minigame is next (will auto-show after dismissal)
+            return "Well done! Now it's time to collect materials! Close this card and play the \(station.label) mini-game."
+        }
+
+        // For other environments, suggest the next game-loop step
+        let envHint: String
+        if let ws = workshopState {
+            // Check if player needs tools first
+            let stationsNeedingTools: [ResourceStationType] = [.quarry, .volcano, .river, .clayPit, .mine, .forest, .farm]
+            let missingTools = stationsNeedingTools.filter { !ws.hasTool(for: $0) }
+
+            if !missingTools.isEmpty && card.environment == .cityMap {
+                // Player is on city map, needs tools → send to workshop/market
+                envHint = "Head to the Workshop and visit the Market to get tools — you'll need them to collect building materials!"
+            } else if let env = nextEnv {
+                envHint = gameLoopHintForEnvironment(env, buildingName: buildingName)
+            } else {
+                envHint = "Keep exploring to find more cards!"
+            }
+        } else if let env = nextEnv {
+            envHint = gameLoopHintForEnvironment(env, buildingName: buildingName)
         } else {
             envHint = "Keep exploring to find more cards!"
         }
 
-        return "Well done! You just learned about \(card.title.lowercased()). That's \(progress.completed) of \(progress.total) cards for the \(buildingName). \(envHint)"
+        return "Well done! That's \(progress.completed) of \(progress.total) cards for the \(buildingName). \(envHint)"
+    }
+
+    private func gameLoopHintForEnvironment(_ env: CardEnvironment, buildingName: String) -> String {
+        switch env {
+        case .workshop:
+            return "Head to the Workshop — learn about materials, buy tools at the Market, and collect resources!"
+        case .forest:
+            return "Try the Forest next — discover the timber used in the \(buildingName) and collect wood!"
+        case .craftingRoom:
+            return "Visit the Crafting Room — mix your collected materials into building components!"
+        case .cityMap:
+            return "Go back to the City Map — tap the \(buildingName) to continue learning!"
+        }
     }
 
     /// Hint about which specific station has the next card
@@ -1791,24 +1824,8 @@ struct KnowledgeCardsOverlay: View {
         let nextEnv = viewModel.nextSuggestedEnvironment(for: buildingId)
         let message = buildGuidanceMessage(card: card, progress: progress, nextEnv: nextEnv)
 
-        let envName: String = {
-            guard let env = nextEnv else { return "" }
-            switch env {
-            case .workshop: return "Workshop"
-            case .forest: return "Forest"
-            case .craftingRoom: return "Crafting Room"
-            case .cityMap: return "City Map"
-            }
-        }()
-        let envIcon: String = {
-            guard let env = nextEnv else { return "arrow.right" }
-            switch env {
-            case .workshop: return "hammer.fill"
-            case .forest: return "tree.fill"
-            case .craftingRoom: return "wrench.and.screwdriver.fill"
-            case .cityMap: return "building.columns.fill"
-            }
-        }()
+        // Determine the primary action button based on game loop state
+        let actionInfo = guidanceAction(card: card, nextEnv: nextEnv)
 
         return VStack(spacing: 12) {
             HStack(alignment: .top, spacing: 10) {
@@ -1823,23 +1840,27 @@ struct KnowledgeCardsOverlay: View {
             }
 
             HStack(spacing: 14) {
-                if nextEnv != nil, onNavigate != nil {
-                    Button {
-                        navigateToEnvironment(nextEnv!)
-                    } label: {
-                        HStack(spacing: 6) {
-                            Image(systemName: envIcon)
-                                .font(.system(size: 14))
-                            Text("Go to \(envName)!")
-                                .font(.custom("EBGaramond-SemiBold", size: 15))
-                        }
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 18)
-                        .padding(.vertical, 9)
-                        .background(Capsule().fill(RenaissanceColors.renaissanceBlue))
+                Button {
+                    switch actionInfo.type {
+                    case .dismiss:
+                        // Dismiss overlay → proceed to minigame/tool check
+                        onDismiss()
+                    case .navigate(let env):
+                        navigateToEnvironment(env)
                     }
-                    .buttonStyle(.plain)
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: actionInfo.icon)
+                            .font(.system(size: 14))
+                        Text(actionInfo.label)
+                            .font(.custom("EBGaramond-SemiBold", size: 15))
+                    }
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 9)
+                    .background(Capsule().fill(RenaissanceColors.renaissanceBlue))
                 }
+                .buttonStyle(.plain)
 
                 Button {
                     withAnimation(.easeOut(duration: 0.3)) {
@@ -1884,6 +1905,57 @@ struct KnowledgeCardsOverlay: View {
         onNavigate?(destination)
     }
 
+    // MARK: - Game Loop Guidance Action
+
+    private enum GuidanceActionType {
+        case dismiss  // close overlay → proceed to minigame/tool check at current station
+        case navigate(CardEnvironment)  // go to another environment
+    }
+
+    private struct GuidanceAction {
+        let type: GuidanceActionType
+        let label: String
+        let icon: String
+    }
+
+    /// Determine the primary button action based on full game loop state
+    private func guidanceAction(card: KnowledgeCard, nextEnv: CardEnvironment?) -> GuidanceAction {
+        // At a workshop station → guide through tools/minigame flow
+        if let ws = workshopState, let station = currentStation, card.environment == .workshop {
+            if let tool = Tool.requiredFor(station: station), !ws.hasTool(for: station) {
+                // Needs tool → dismiss overlay, which triggers pendingStationAfterCard → tool dialog → market
+                return GuidanceAction(type: .dismiss, label: "Get \(tool.displayName)!", icon: "cart.fill")
+            }
+            // Has tool → dismiss overlay, which triggers minigame
+            return GuidanceAction(type: .dismiss, label: "Collect Materials!", icon: "pickaxe")
+        }
+
+        // Check if player needs tools (from city map)
+        if let ws = workshopState, card.environment == .cityMap {
+            let stationsNeedingTools: [ResourceStationType] = [.quarry, .volcano, .river, .clayPit, .mine, .forest, .farm]
+            let missingTools = stationsNeedingTools.filter { !ws.hasTool(for: $0) }
+            if !missingTools.isEmpty {
+                return GuidanceAction(type: .navigate(.workshop), label: "Go to Workshop!", icon: "hammer.fill")
+            }
+        }
+
+        // Navigate to suggested environment
+        if let env = nextEnv {
+            switch env {
+            case .workshop:
+                return GuidanceAction(type: .navigate(.workshop), label: "Go to Workshop!", icon: "hammer.fill")
+            case .forest:
+                return GuidanceAction(type: .navigate(.forest), label: "Go to Forest!", icon: "tree.fill")
+            case .craftingRoom:
+                return GuidanceAction(type: .navigate(.craftingRoom), label: "Go to Crafting Room!", icon: "wrench.and.screwdriver.fill")
+            case .cityMap:
+                return GuidanceAction(type: .navigate(.cityMap), label: "Back to City Map!", icon: "building.columns.fill")
+            }
+        }
+
+        // Fallback: dismiss
+        return GuidanceAction(type: .dismiss, label: "Continue!", icon: "arrow.right")
+    }
 }
 
 // MARK: - CardPhase (shared with ForestMapView)

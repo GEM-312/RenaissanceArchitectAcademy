@@ -42,6 +42,13 @@ struct WorkshopMapView: View {
     @State private var showStationKnowledgeCards = false
     @State private var stationKnowledgeCards: [KnowledgeCard] = []
 
+    // After knowledge card dismissed, proceed to tool check / mini-game for this station
+    @State private var pendingStationAfterCard: ResourceStationType?
+    // Skip knowledge card when player is sent to market via "Go to Market" button
+    @State private var skipCardForMarket = false
+    // Track which station sent player to market — so bird guides BACK there after buying tool
+    @State private var returnToStationAfterMarket: ResourceStationType?
+
     // Station mini-games
     @State private var showQuarryMiniGame = false
     @State private var showVolcanoMiniGame = false
@@ -56,6 +63,9 @@ struct WorkshopMapView: View {
     @State private var showArrivalGuidance = false
     @State private var guidanceMessage: String = ""
     @State private var guidanceDestination: SidebarDestination? = nil  // nil = stay in workshop
+    // Stations player has collected from since last non-station activity
+    // Resets when player does a card, navigates to another env, or buys a tool
+    @State private var recentlyCollectedStations: Set<ResourceStationType> = []
 
     // Job system states
     @State private var jobBoardChoices: [WorkshopJob] = []
@@ -226,6 +236,15 @@ struct WorkshopMapView: View {
                             withAnimation {
                                 showStationKnowledgeCards = false
                                 stationKnowledgeCards = []
+                            }
+                            // After card dismissed, proceed to tool check / mini-game
+                            if let pending = pendingStationAfterCard {
+                                pendingStationAfterCard = nil
+                                activeStation = pending
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    showSingleStationOverlay()
+                                }
+                            } else {
                                 activeStation = nil
                             }
                         },
@@ -235,9 +254,12 @@ struct WorkshopMapView: View {
                                 stationKnowledgeCards = []
                                 activeStation = nil
                             }
+                            pendingStationAfterCard = nil
                             onNavigate?(destination)
                         },
-                        playerName: onboardingState?.apprenticeName ?? "Apprentice"
+                        playerName: onboardingState?.apprenticeName ?? "Apprentice",
+                        workshopState: workshop,
+                        currentStation: activeStation
                     )
                     .transition(.opacity)
                 }
@@ -246,13 +268,12 @@ struct WorkshopMapView: View {
                 if showQuarryMiniGame {
                     QuarryMiniGameView(
                         onComplete: { material, bonusFlorins in
-                            // Award material + florins
                             workshop.rawMaterials[material, default: 0] += 1
                             viewModel?.goldFlorins += bonusFlorins
                             sceneHolder.scene?.playPlayerCelebrateAnimation()
                             sceneHolder.scene?.showCollectionEffect(at: .quarry)
+                            recentlyCollectedStations.insert(.quarry)
 
-                            // Check job completion
                             if workshop.currentJob != nil && workshop.currentJob?.craftTarget == nil {
                                 if workshop.checkJobCompletion() {
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -270,11 +291,17 @@ struct WorkshopMapView: View {
                                 showQuarryMiniGame = false
                                 activeStation = nil
                             }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                showNextGuidance(forceRefresh: true)
+                            }
                         },
                         onDismiss: {
                             withAnimation {
                                 showQuarryMiniGame = false
                                 activeStation = nil
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                showNextGuidance(forceRefresh: true)
                             }
                         },
                         onNudgeCamera: {
@@ -292,6 +319,7 @@ struct WorkshopMapView: View {
                             viewModel?.goldFlorins += bonusFlorins
                             sceneHolder.scene?.playPlayerCelebrateAnimation()
                             sceneHolder.scene?.showCollectionEffect(at: .volcano)
+                            recentlyCollectedStations.insert(.volcano)
 
                             if workshop.currentJob != nil && workshop.currentJob?.craftTarget == nil {
                                 if workshop.checkJobCompletion() {
@@ -310,11 +338,17 @@ struct WorkshopMapView: View {
                                 showVolcanoMiniGame = false
                                 activeStation = nil
                             }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                showNextGuidance(forceRefresh: true)
+                            }
                         },
                         onDismiss: {
                             withAnimation {
                                 showVolcanoMiniGame = false
                                 activeStation = nil
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                showNextGuidance(forceRefresh: true)
                             }
                         },
                         onNudgeCamera: {
@@ -332,6 +366,7 @@ struct WorkshopMapView: View {
                             viewModel?.goldFlorins += bonusFlorins
                             sceneHolder.scene?.playPlayerCelebrateAnimation()
                             sceneHolder.scene?.showCollectionEffect(at: .river)
+                            recentlyCollectedStations.insert(.river)
 
                             if workshop.currentJob != nil && workshop.currentJob?.craftTarget == nil {
                                 if workshop.checkJobCompletion() {
@@ -350,11 +385,17 @@ struct WorkshopMapView: View {
                                 showRiverMiniGame = false
                                 activeStation = nil
                             }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                showNextGuidance(forceRefresh: true)
+                            }
                         },
                         onDismiss: {
                             withAnimation {
                                 showRiverMiniGame = false
                                 activeStation = nil
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                showNextGuidance(forceRefresh: true)
                             }
                         },
                         onNudgeCamera: {
@@ -372,6 +413,7 @@ struct WorkshopMapView: View {
                             viewModel?.goldFlorins += bonusFlorins
                             sceneHolder.scene?.playPlayerCelebrateAnimation()
                             sceneHolder.scene?.showCollectionEffect(at: .clayPit)
+                            recentlyCollectedStations.insert(.clayPit)
 
                             if workshop.currentJob != nil && workshop.currentJob?.craftTarget == nil {
                                 if workshop.checkJobCompletion() {
@@ -390,11 +432,17 @@ struct WorkshopMapView: View {
                                 showClayPitMiniGame = false
                                 activeStation = nil
                             }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                showNextGuidance(forceRefresh: true)
+                            }
                         },
                         onDismiss: {
                             withAnimation {
                                 showClayPitMiniGame = false
                                 activeStation = nil
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                showNextGuidance(forceRefresh: true)
                             }
                         },
                         onNudgeCamera: {
@@ -412,6 +460,7 @@ struct WorkshopMapView: View {
                             viewModel?.goldFlorins += bonusFlorins
                             sceneHolder.scene?.playPlayerCelebrateAnimation()
                             sceneHolder.scene?.showCollectionEffect(at: .farm)
+                            recentlyCollectedStations.insert(.farm)
 
                             if workshop.currentJob != nil && workshop.currentJob?.craftTarget == nil {
                                 if workshop.checkJobCompletion() {
@@ -430,11 +479,17 @@ struct WorkshopMapView: View {
                                 showFarmMiniGame = false
                                 activeStation = nil
                             }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                showNextGuidance(forceRefresh: true)
+                            }
                         },
                         onDismiss: {
                             withAnimation {
                                 showFarmMiniGame = false
                                 activeStation = nil
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                showNextGuidance(forceRefresh: true)
                             }
                         },
                         onNudgeCamera: {
@@ -450,15 +505,11 @@ struct WorkshopMapView: View {
                         .transition(.opacity.combined(with: .scale(scale: 0.9)))
                 }
 
-                // Earn Florins overlay (shown when player can't afford materials)
-                if workshop.showEarnFlorinsOverlay {
-                    earnFlorinsOverlay
-                        .transition(.opacity.combined(with: .scale(scale: 0.9)))
-                }
+                // (Earn Florins overlay removed — bird guidance handles this now)
 
                 // Bottega job progress card (replaces master task card when job active)
                 if let job = workshop.currentJob,
-                   !workshop.showEarnFlorinsOverlay,
+
                    !showCollectionOverlay,
                    !showHintBubble,
                    !showWorkbenchOverlay,
@@ -472,7 +523,7 @@ struct WorkshopMapView: View {
                 // Master's Task floating card (only when no active job)
                 if workshop.currentJob == nil,
                    let assignment = workshop.currentAssignment,
-                   !workshop.showEarnFlorinsOverlay,
+
                    !showCollectionOverlay,
                    !showHintBubble,
                    !showWorkbenchOverlay,
@@ -497,6 +548,9 @@ struct WorkshopMapView: View {
             }
         }
         .onAppear {
+            // Clear cooldown — player traveled to workshop
+            viewModel?.clearCooldownIfDifferent(.workshop)
+            recentlyCollectedStations.removeAll()
             if workshop.currentAssignment == nil {
                 workshop.generateNewAssignment()
             }
@@ -510,11 +564,9 @@ struct WorkshopMapView: View {
                 // Player walks back to box position
                 sceneHolder.scene?.hidePlayer()
                 avatarInBox = true
-                // After mini-game, check if there's a knowledge card at this station
-                if let station = oldValue {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                        showKnowledgeCardIfAvailable(at: station)
-                    }
+                // Show bird guidance after mini-game completion
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                    showNextGuidance()
                 }
             }
         }
@@ -555,7 +607,7 @@ struct WorkshopMapView: View {
         }
 
 
-        // Station reached — show hint bubble + collection overlay
+        // Station reached — show knowledge card first, then tool check / mini-game
         newScene.onStationReached = { stationType in
             self.activeStation = stationType
             dismissAllOverlays()
@@ -580,9 +632,22 @@ struct WorkshopMapView: View {
                 activeStation = nil
                 onNavigate?(.forest)
             default:
-                // Always show the station mini-game/overlay first — let the player PLAY
-                // Knowledge cards are shown AFTER the mini-game completes (not instead of it)
-                showSingleStationOverlay()
+                // Skip card if player was sent to market (skip for market) or sent BACK to collect (returnToStation)
+                let sentToCollect = (returnToStationAfterMarket == stationType && workshop.hasTool(for: stationType))
+                if skipCardForMarket && stationType == .market {
+                    skipCardForMarket = false
+                    showSingleStationOverlay()
+                } else if sentToCollect {
+                    // Player was sent back to collect materials — go straight to mini-game
+                    returnToStationAfterMarket = nil
+                    showSingleStationOverlay()
+                } else if hasKnowledgeCard(at: stationType) {
+                    // Show card first, then proceed to tool/minigame after card is dismissed
+                    pendingStationAfterCard = stationType
+                    showKnowledgeCardForStation(stationType)
+                } else {
+                    showSingleStationOverlay()
+                }
             }
         }
 
@@ -592,34 +657,264 @@ struct WorkshopMapView: View {
     }
 
 
-    /// Show bird guidance about what to do next
-    private func showNextGuidance() {
+    /// Show bird guidance following the full game loop.
+    /// forceRefresh: bypasses overlay guards (used after buying tools at market)
+    private func showNextGuidance(forceRefresh: Bool = false) {
         guard let vm = viewModel else { return }
-        // Don't show if another overlay is active
-        guard !showCollectionOverlay && !showHintBubble && !showWorkbenchOverlay
-                && !showFurnaceOverlay && !showStationKnowledgeCards else { return }
-
-        // 1. Check if player needs tools — suggest Market if they have enough florins
-        let stationsNeedingTools: [ResourceStationType] = [.quarry, .volcano, .river, .clayPit, .mine, .forest, .farm]
-        let missingToolStations = stationsNeedingTools.filter { !workshop.hasTool(for: $0) }
-        if !missingToolStations.isEmpty && vm.goldFlorins >= GameRewards.toolBuyBaseCost {
-            let stationName = "\(missingToolStations.first!)"
-            guidanceMessage = "You have enough florins! Visit the Market to buy tools for the \(stationName)."
-            guidanceDestination = nil
-        }
-        // 2. Default: suggest exploring
-        else {
-            guidanceMessage = "Explore the workshop — collect materials at stations and play mini-games!"
-            guidanceDestination = nil
+        // Don't show if another overlay is active (unless force-refreshing after tool purchase)
+        if !forceRefresh {
+            guard !showCollectionOverlay && !showHintBubble && !showWorkbenchOverlay
+                    && !showFurnaceOverlay && !showStationKnowledgeCards else { return }
         }
 
+        let florins = vm.goldFlorins
+        let toolCost = GameRewards.toolBuyBaseCost
+
+        // Get building context
+        let bid = vm.activeBuildingId
+        let buildingName: String = {
+            guard let bid = bid else { return "" }
+            return vm.buildingPlots.first(where: { $0.id == bid })?.building.name ?? ""
+        }()
+        let progress = bid.flatMap { vm.buildingProgressMap[$0] } ?? BuildingProgress()
+        let building = bid.flatMap { id in vm.buildingPlots.first(where: { $0.id == id })?.building }
+
+        // Compute what raw materials the building still needs
+        let neededRaw = rawMaterialsStillNeeded(for: building)
+        // Which stations provide needed materials
+        let stationsWithNeededMaterials = stationsForNeededMaterials(neededRaw)
+
+        // PRIORITY 1: Player just bought a tool — guide them BACK to the station they came from
+        if let returnStation = returnToStationAfterMarket, workshop.hasTool(for: returnStation) {
+            let toolName = Tool.requiredFor(station: returnStation)?.displayName ?? "tool"
+            guidanceMessage = "You got your \(toolName)! Head back to the \(returnStation.label) to collect materials!"
+            guidanceDestination = nil
+            returnToStationAfterMarket = nil
+            withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
+            return
+        }
+
+        // PRIORITY 2: Can craft a recipe the building needs — go to Crafting Room!
+        if let building = building {
+            if let craftable = nextCraftableRecipe(for: building) {
+                guidanceMessage = "You have the materials to craft \(craftable.output.rawValue)! Head to the Crafting Room!"
+                guidanceDestination = nil
+                recentlyCollectedStations.removeAll()
+                withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
+                return
+            }
+        }
+
+        // Categorize stations
+        let allReadyStations = stationsWithNeededMaterials.filter { workshop.hasTool(for: $0) }
+        let freshStations = allReadyStations.filter { !recentlyCollectedStations.contains($0) }
+        let needToolStations = stationsWithNeededMaterials.filter { station in
+            !workshop.hasTool(for: station) && Tool.requiredFor(station: station) != nil
+        }
+
+        // Uncompleted workshop knowledge cards — ONLY at affordable stations
+        let workshopCards: [KnowledgeCard] = {
+            guard !buildingName.isEmpty else { return [] }
+            let cards = KnowledgeCardContent.cards(for: buildingName, in: .workshop)
+            return cards.filter { card in
+                guard !progress.completedCardIDs.contains(card.id) else { return false }
+                if let stationType = stationTypeFromKey(card.stationKey) {
+                    if !workshop.hasTool(for: stationType) && florins < toolCost {
+                        return false
+                    }
+                }
+                return true
+            }
+        }()
+
+        // Uncompleted cards in OTHER environments (no tool gate)
+        let otherEnvWithCards: [CardEnvironment] = {
+            guard !buildingName.isEmpty else { return [] }
+            var envs: [CardEnvironment] = []
+            for env in [CardEnvironment.cityMap, .forest, .craftingRoom] {
+                let envCards = KnowledgeCardContent.cards(for: buildingName, in: env)
+                if envCards.contains(where: { !progress.completedCardIDs.contains($0.id) }) {
+                    envs.append(env)
+                }
+            }
+            return envs
+        }()
+
+        // PRIORITY 3: Fresh station (not recently visited) with needed materials
+        if let station = freshStations.first {
+            let stationMats = station.materials
+            if let needed = stationMats.first(where: { neededRaw[$0, default: 0] > 0 }) {
+                guidanceMessage = "Head to the \(station.label) — you need \(needed.rawValue) for the \(buildingName)!"
+                guidanceDestination = nil
+                withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
+                return
+            }
+        }
+
+        // ── All tool-ready stations visited. Now prioritize EXPANDING to new stations ──
+
+        // PRIORITY 4: Need a tool + can afford — BUY IT before re-cycling old stations!
+        if let station = needToolStations.first, let tool = Tool.requiredFor(station: station), florins >= toolCost {
+            returnToStationAfterMarket = station
+            let stationMats = station.materials
+            let neededMat = stationMats.first(where: { neededRaw[$0, default: 0] > 0 })?.rawValue ?? "materials"
+            guidanceMessage = "Buy a \(tool.displayName) at the Market (\(toolCost) florins) — the \(station.label) has \(neededMat) you need!"
+            guidanceDestination = nil
+            recentlyCollectedStations.removeAll()
+            withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
+            return
+        }
+
+        // PRIORITY 5: Workshop knowledge cards (learn + earn florins toward tools)
+        if let card = workshopCards.first {
+            guidanceMessage = "Head to the \(card.stationKey.capitalized) — discover a knowledge card about the \(buildingName)!"
+            guidanceDestination = nil
+            withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
+            return
+        }
+
+        // PRIORITY 6: Other environments (no tool gate — cards, florins, variety)
+        if let env = otherEnvWithCards.first {
+            let earnHint = needToolStations.isEmpty ? "" : " Earn florins to buy tools!"
+            switch env {
+            case .cityMap:
+                guidanceMessage = "Discover knowledge cards on the City Map!\(earnHint)"
+                guidanceDestination = .cityMap
+            case .forest:
+                guidanceMessage = "Explore the Forest — discover cards and collect timber!\(earnHint)"
+                guidanceDestination = .forest
+            case .craftingRoom:
+                guidanceMessage = "Visit the Crafting Room — learn about \(buildingName) materials!\(earnHint)"
+                guidanceDestination = nil
+            default: break
+            }
+            withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
+            return
+        }
+
+        // PRIORITY 7: Need tools but can't afford — tell player HOW to earn florins
+        if let station = needToolStations.first, let tool = Tool.requiredFor(station: station), florins < toolCost {
+            guidanceMessage = "You need \(toolCost) florins for a \(tool.displayName) (you have \(florins)). Explore the City Map or Forest to earn more!"
+            guidanceDestination = .cityMap
+            withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
+            return
+        }
+
+        // PRIORITY 8: All stations visited, no new tools to buy, no cards — cycle back
+        if !allReadyStations.isEmpty {
+            recentlyCollectedStations.removeAll()
+            if let station = allReadyStations.first {
+                let stationMats = station.materials
+                if let needed = stationMats.first(where: { neededRaw[$0, default: 0] > 0 }) {
+                    guidanceMessage = "Back to the \(station.label) — you still need more \(needed.rawValue) for the \(buildingName)!"
+                    guidanceDestination = nil
+                    withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
+                    return
+                }
+            }
+        }
+
+        // PRIORITY 7: All workshop work done — suggest next environment
+        if let bid = bid, let nextEnv = vm.nextSuggestedEnvironment(for: bid) {
+            switch nextEnv {
+            case .forest:
+                guidanceMessage = "Explore the Forest — discover more about the \(buildingName) and collect timber!"
+                guidanceDestination = .forest
+            case .craftingRoom:
+                guidanceMessage = "Time for the Crafting Room — transform your materials for the \(buildingName)!"
+                guidanceDestination = nil
+            case .cityMap:
+                guidanceMessage = "Head to the City Map — more to discover about the \(buildingName)!"
+                guidanceDestination = .cityMap
+            default: break
+            }
+            withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
+            return
+        }
+
+        // PRIORITY 8: Default
+        guidanceMessage = "Explore the workshop — collect materials and learn about building!"
+        guidanceDestination = nil
         withAnimation(.spring(response: 0.4)) {
             showArrivalGuidance = true
         }
     }
 
-    /// After a mini-game completes at a station, offer the knowledge card (if available)
-    private func showKnowledgeCardIfAvailable(at station: ResourceStationType) {
+    // MARK: - Building-Aware Guidance Helpers
+
+    /// Compute raw materials the active building still needs (accounting for what's already collected and crafted)
+    private func rawMaterialsStillNeeded(for building: Building?) -> [Material: Int] {
+        guard let building = building else { return [:] }
+        var needed: [Material: Int] = [:]
+        for (craftedItem, qty) in building.requiredMaterials {
+            let alreadyCrafted = workshop.craftedMaterials[craftedItem, default: 0]
+            let stillNeed = max(0, qty - alreadyCrafted)
+            guard stillNeed > 0 else { continue }
+            // Find the recipe for this crafted item
+            if let recipe = Recipe.allRecipes.first(where: { $0.output == craftedItem }) {
+                for (mat, count) in recipe.ingredients {
+                    needed[mat, default: 0] += count * stillNeed
+                }
+            }
+        }
+        // Subtract what player already has
+        for (mat, have) in workshop.rawMaterials {
+            if needed[mat] != nil {
+                needed[mat] = max(0, (needed[mat] ?? 0) - have)
+                if needed[mat] == 0 { needed.removeValue(forKey: mat) }
+            }
+        }
+        return needed
+    }
+
+    /// Which stations provide materials the building needs (ordered by priority)
+    private func stationsForNeededMaterials(_ neededRaw: [Material: Int]) -> [ResourceStationType] {
+        let stationOrder: [ResourceStationType] = [.quarry, .volcano, .river, .mine, .clayPit, .farm]
+        return stationOrder.filter { station in
+            station.materials.contains { neededRaw[$0, default: 0] > 0 }
+        }
+    }
+
+    /// Check if any recipe needed by the building can be crafted right now
+    private func nextCraftableRecipe(for building: Building) -> Recipe? {
+        for (craftedItem, qty) in building.requiredMaterials {
+            let alreadyCrafted = workshop.craftedMaterials[craftedItem, default: 0]
+            guard alreadyCrafted < qty else { continue }
+            if let recipe = Recipe.allRecipes.first(where: { $0.output == craftedItem }) {
+                // Check if player has all ingredients
+                let canCraft = recipe.ingredients.allSatisfy { (mat, count) in
+                    (workshop.rawMaterials[mat] ?? 0) >= count
+                }
+                if canCraft { return recipe }
+            }
+        }
+        return nil
+    }
+
+    /// Map a knowledge card stationKey (lowercase) to ResourceStationType
+    private func stationTypeFromKey(_ key: String) -> ResourceStationType? {
+        switch key.lowercased() {
+        case "quarry": return .quarry
+        case "river": return .river
+        case "volcano": return .volcano
+        case "claypit", "clay pit": return .clayPit
+        case "mine": return .mine
+        case "forest": return .forest
+        case "market": return .market
+        case "farm": return .farm
+        case "pigmenttable", "pigment table": return .pigmentTable
+        default: return nil
+        }
+    }
+
+    /// Check if a station has an uncompleted knowledge card
+    private func hasKnowledgeCard(at station: ResourceStationType) -> Bool {
+        guard let vm = viewModel, let bid = vm.activeBuildingId else { return false }
+        return vm.nextUncompletedCard(for: bid, at: "\(station)") != nil
+    }
+
+    /// Show knowledge card overlay for a station
+    private func showKnowledgeCardForStation(_ station: ResourceStationType) {
         guard let vm = viewModel, let bid = vm.activeBuildingId else { return }
         let stationKey = "\(station)"
         if let nextCard = vm.nextUncompletedCard(for: bid, at: stationKey) {
@@ -936,11 +1231,14 @@ struct WorkshopMapView: View {
                 .fixedSize(horizontal: false, vertical: true)
 
             Button {
+                // Remember which station sent us to market so bird guides back
+                returnToStationAfterMarket = activeStation
                 withAnimation(.spring(response: 0.3)) {
                     showCollectionOverlay = false
                     showHintBubble = false
                     activeStation = nil
                 }
+                skipCardForMarket = true
                 let capturedScene = sceneHolder.scene
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
                     capturedScene?.walkToStation(.market)
@@ -1045,11 +1343,14 @@ struct WorkshopMapView: View {
             // Choice buttons — walk player to Market or Crafting Room
             VStack(spacing: 8) {
                 Button {
+                    // Remember which station sent us to market so bird guides back
+                    returnToStationAfterMarket = activeStation
                     withAnimation(.spring(response: 0.3)) {
                         showCollectionOverlay = false
                         showHintBubble = false
                         activeStation = nil
                     }
+                    skipCardForMarket = true
                     let capturedScene = sceneHolder.scene
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
                         capturedScene?.walkToStation(.market)
@@ -1115,14 +1416,17 @@ struct WorkshopMapView: View {
                                 withAnimation(.spring(response: 0.3)) {
                                     showCollectionOverlay = false
                                     showHintBubble = false
+                                    activeStation = nil
                                 }
-                                workshop.showEarnFlorinsOverlay = true
+                                // Guide player to earn florins instead of showing overlay
+                                showNextGuidance(forceRefresh: true)
                                 return
                             }
                             if workshop.collectFromStation(station, material: material) {
                                 vm.goldFlorins -= material.cost
                                 sceneHolder.scene?.showCollectionEffect(at: station)
                                 sceneHolder.scene?.playPlayerCelebrateAnimation()
+                                recentlyCollectedStations.insert(station)
 
                                 if workshop.currentJob != nil && workshop.currentJob?.craftTarget == nil {
                                     if workshop.checkJobCompletion() {
@@ -1133,6 +1437,18 @@ struct WorkshopMapView: View {
                                             }
                                             completeCurrentJob()
                                         }
+                                    }
+                                }
+
+                                // Dismiss and show next guidance after a beat
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                                    withAnimation(.spring(response: 0.3)) {
+                                        showCollectionOverlay = false
+                                        showHintBubble = false
+                                        activeStation = nil
+                                    }
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                        showNextGuidance(forceRefresh: true)
                                     }
                                 }
                             }
@@ -1256,8 +1572,9 @@ struct WorkshopMapView: View {
                         withAnimation(.spring(response: 0.3)) {
                             showCollectionOverlay = false
                             showHintBubble = false
+                            activeStation = nil
                         }
-                        workshop.showEarnFlorinsOverlay = true
+                        showNextGuidance(forceRefresh: true)
                         return
                     }
                     if workshop.collectFromStation(.market, material: material) {
@@ -1312,14 +1629,20 @@ struct WorkshopMapView: View {
                             withAnimation(.spring(response: 0.3)) {
                                 showCollectionOverlay = false
                                 showHintBubble = false
+                                activeStation = nil
                             }
-                            workshop.showEarnFlorinsOverlay = true
+                            showNextGuidance(forceRefresh: true)
                             return
                         }
                         if workshop.buyTool(tool) {
                             vm.goldFlorins -= cost
                             sceneHolder.scene?.playPlayerCelebrateAnimation()
                             workshop.statusMessage = "Bought \(tool.icon) \(tool.displayName)!"
+                            // Refresh bird guidance immediately — guide back to the station
+                            withAnimation(.easeOut(duration: 0.2)) { showArrivalGuidance = false }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                showNextGuidance(forceRefresh: true)
+                            }
                         }
                     } label: {
                         VStack(spacing: 4) {
