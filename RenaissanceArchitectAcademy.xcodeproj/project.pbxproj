@@ -120,6 +120,9 @@
 		0D4 /* WolframService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D4 /* WolframService.swift */; };
 		0D5 /* WolframGeometryHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D5 /* WolframGeometryHelper.swift */; };
 		0D6 /* WolframGeometryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D6 /* WolframGeometryView.swift */; };
+		0E0 /* MuseumSketch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E0 /* MuseumSketch.swift */; };
+		0E1 /* MuseumSketchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E1 /* MuseumSketchService.swift */; };
+		0E2 /* SketchStudyOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2 /* SketchStudyOverlay.swift */; };
 		543AD36B2F60C199001895ED /* card_flip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 183 /* card_flip.mp3 */; };
 		543AD36C2F60C199001895ED /* GirlIntroAudio.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 182 /* GirlIntroAudio.m4a */; };
 		544299832F32E0F700F92073 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = 544299822F32E0F700F92073 /* Pow */; };
@@ -294,6 +297,9 @@
 		1D4 /* WolframService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WolframService.swift; sourceTree = "<group>"; };
 		1D5 /* WolframGeometryHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WolframGeometryHelper.swift; sourceTree = "<group>"; };
 		1D6 /* WolframGeometryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WolframGeometryView.swift; sourceTree = "<group>"; };
+		1E0 /* MuseumSketch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MuseumSketch.swift; sourceTree = "<group>"; };
+		1E1 /* MuseumSketchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MuseumSketchService.swift; sourceTree = "<group>"; };
+		1E2 /* SketchStudyOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchStudyOverlay.swift; sourceTree = "<group>"; };
 		544299972F3646ED00F92073 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BuildingNode.swift; path = Views/SpriteKit/BuildingNode.swift; sourceTree = "<group>"; };
 		544299982F3646ED00F92073 /* CityMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityMapView.swift; path = Views/SpriteKit/CityMapView.swift; sourceTree = "<group>"; };
 		544299992F3646ED00F92073 /* CityScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityScene.swift; path = Views/SpriteKit/CityScene.swift; sourceTree = "<group>"; };
@@ -462,6 +468,7 @@
 				1D6 /* WolframGeometryView.swift */,
 				141 /* OnboardingView.swift */,
 				1A3 /* SettingsView.swift */,
+				1E2 /* SketchStudyOverlay.swift */,
 				308 /* Sketching */,
 				309 /* Onboarding */,
 				310 /* StationMiniGames */,
@@ -476,6 +483,7 @@
 				128 /* WorkshopState.swift */,
 				158 /* NotebookState.swift */,
 				163 /* PersistenceManager.swift */,
+				1E1 /* MuseumSketchService.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -516,6 +524,7 @@
 				1A2 /* GameSettings.swift */,
 				1C2 /* ChatMessage.swift */,
 				1D2 /* StationCompounds.swift */,
+				1E0 /* MuseumSketch.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -865,6 +874,9 @@
 				0D4 /* WolframService.swift in Sources */,
 				0D5 /* WolframGeometryHelper.swift in Sources */,
 				0D6 /* WolframGeometryView.swift in Sources */,
+				0E0 /* MuseumSketch.swift in Sources */,
+				0E1 /* MuseumSketchService.swift in Sources */,
+				0E2 /* SketchStudyOverlay.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

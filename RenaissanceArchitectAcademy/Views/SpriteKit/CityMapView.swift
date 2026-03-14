@@ -99,6 +99,10 @@ struct CityMapView: View {
     @State private var guidanceMessage: String = ""
     @State private var guidanceDestination: SidebarDestination? = nil
 
+    /// Sketch Study overlay state (activity between knowledge cards)
+    @State private var showSketchStudy = false
+    @State private var activeSketch: MuseumSketch? = nil
+
     /// Reference to the SpriteKit scene — stored in a class box so it survives body
     /// re-evaluation without triggering re-renders (unlike @State which causes infinite loops)
     @State private var sceneHolder = SceneHolder<CityScene>()
@@ -178,9 +182,7 @@ struct CityMapView: View {
                                             showBuildingPrompt = false
                                         }
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                            withAnimation(.spring(response: 0.3)) {
-                                                showMascotDialogue = true
-                                            }
+                                            handleBuildingAction(for: plot)
                                         }
                                     } label: {
                                         Text("Yes, let's build!")
@@ -352,19 +354,32 @@ struct CityMapView: View {
                     viewModel: viewModel,
                     notebookState: notebookState,
                     onDismiss: {
+                        let buildingName = plot.building.name
+                        let progress = viewModel.buildingProgressMap[plot.id] ?? BuildingProgress()
                         withAnimation {
                             showKnowledgeCards = false
                             activeKnowledgeCard = nil
-                            selectedPlot = nil
                         }
-                        sceneHolder.scene?.resetMascot()
-                        // Show bird guidance on city map after dismissing card overlay
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            showCityGuidance()
+                        // After card: show a sketch study if one is available and unseen
+                        let sketches = MuseumSketchContent.sketches(for: buildingName)
+                        let nextSketch = sketches.first { !progress.completedSketchStudyIDs.contains($0.id) }
+                        if let sketch = nextSketch {
+                            activeSketch = sketch
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                                withAnimation(.spring(response: 0.4)) {
+                                    showSketchStudy = true
+                                }
+                            }
+                        } else {
+                            selectedPlot = nil
+                            sceneHolder.scene?.resetMascot()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                showCityGuidance()
+                            }
                         }
                     },
                     onAllComplete: {
-                        // Single card done — overlay stays showing bird guidance hint
+                        // Single card done
                     },
                     onNavigate: { destination in
                         withAnimation {
@@ -379,6 +394,43 @@ struct CityMapView: View {
                     workshopState: workshopState
                 )
                 .transition(.opacity)
+            }
+
+            // Sketch Study overlay (activity between knowledge cards)
+            if showSketchStudy, let sketch = activeSketch {
+                SketchStudyOverlay(
+                    sketch: sketch,
+                    onDismiss: {
+                        withAnimation {
+                            showSketchStudy = false
+                            activeSketch = nil
+                            selectedPlot = nil
+                        }
+                        sceneHolder.scene?.resetMascot()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            showCityGuidance()
+                        }
+                    },
+                    onComplete: { florins in
+                        // Mark sketch study as completed
+                        if let bid = viewModel.activeBuildingId {
+                            viewModel.buildingProgressMap[bid, default: BuildingProgress()]
+                                .completedSketchStudyIDs.insert(sketch.id)
+                        }
+                        viewModel.earnFlorins(florins)
+                        withAnimation {
+                            showSketchStudy = false
+                            activeSketch = nil
+                            selectedPlot = nil
+                        }
+                        sceneHolder.scene?.resetMascot()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            showCityGuidance()
+                        }
+                    }
+                )
+                .transition(.opacity)
+                .zIndex(45)
             }
 
             // Bird guidance — tells player where to go next
@@ -729,8 +781,6 @@ struct CityMapView: View {
             } // end ZStack
         } // end GeometryReader
         .onAppear {
-            // Clear cooldown — player traveled to city map
-            viewModel.clearCooldownIfDifferent(.cityMap)
             // Sync completion states when view appears (e.g., after completing in Era view)
             if let currentScene = sceneHolder.scene {
                 syncCompletionStates(in: currentScene)
@@ -863,11 +913,21 @@ struct CityMapView: View {
                 return
             }
 
-            // Show "build this or check another?" prompt
             SubsonicController.shared.play(sound: "building_tap.mp3")
             selectedPlot = plot
-            withAnimation(.spring(response: 0.3)) {
-                showBuildingPrompt = true
+
+            // If this is the active building and player already started cards, skip the prompt
+            // and go straight to the next card/action
+            let progress = viewModel.buildingProgressMap[plotId] ?? BuildingProgress()
+            if viewModel.activeBuildingId == plotId && !progress.completedCardIDs.isEmpty {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    handleBuildingAction(for: plot)
+                }
+            } else {
+                // First time or different building — show "Work on this building?" prompt
+                withAnimation(.spring(response: 0.3)) {
+                    showBuildingPrompt = true
+                }
             }
         }
 
@@ -910,88 +970,139 @@ struct CityMapView: View {
         return newScene
     }
 
+    // MARK: - Phase-Based Building Action
+
+    /// Skip the 3-card menu — go directly to the right action based on current phase
+    private func handleBuildingAction(for plot: BuildingPlot) {
+        viewModel.setActiveBuilding(plot.id)
+        let buildingName = plot.building.name
+        let progress = viewModel.buildingProgressMap[plot.id] ?? BuildingProgress()
+        let phase = progress.currentPhase(for: buildingName, workshopState: workshopState)
+
+        switch phase {
+        case .learn:
+            // Open knowledge card directly (or lesson for buildings without cards)
+            let nextCityCard = viewModel.nextUncompletedCard(for: plot.id, in: .cityMap)
+            if let card = nextCityCard {
+                activeKnowledgeCard = card
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    SubsonicController.shared.play(sound: "cards_appear.mp3")
+                    withAnimation(.spring(response: 0.3)) {
+                        showKnowledgeCards = true
+                    }
+                }
+            } else {
+                // Check sketch studies
+                let sketches = MuseumSketchContent.sketches(for: buildingName)
+                if let sketch = sketches.first(where: { !progress.completedSketchStudyIDs.contains($0.id) }) {
+                    activeSketch = sketch
+                    withAnimation(.spring(response: 0.3)) {
+                        showSketchStudy = true
+                    }
+                } else {
+                    // Learn phase done — fallback to lesson or nudge to workshop
+                    if !KnowledgeCardContent.cards(for: buildingName).isEmpty {
+                        // All city cards + sketches done, nudge to workshop
+                        guidanceMessage = "Well studied! Time to collect materials. Head to the Workshop!"
+                        guidanceDestination = .workshop
+                        withAnimation(.spring(response: 0.4)) { showGuidance = true }
+                    } else if LessonContent.lesson(for: buildingName) != nil {
+                        SubsonicController.shared.play(sound: "cards_appear.mp3")
+                        withAnimation(.spring(response: 0.3)) {
+                            showBuildingLesson = true
+                        }
+                    }
+                }
+            }
+
+        case .collect:
+            onNavigate?(.workshop)
+
+        case .explore:
+            onNavigate?(.forest)
+
+        case .craft:
+            onNavigate?(.workshop)  // Go through workshop to crafting room
+
+        case .build:
+            // Show checklist / construction
+            withAnimation(.spring(response: 0.3)) {
+                showBuildingChecklist = true
+            }
+        }
+    }
+
     // MARK: - Bird Guidance
 
     private func showCityGuidance() {
         // Don't show if other overlays are active
         guard !showKnowledgeCards && !showMascotDialogue && !showBuildingLesson
-                && !showBuildingChecklist && !showConstructionSequence && !showEnvironmentPicker else { return }
+                && !showBuildingChecklist && !showConstructionSequence
+                && !showEnvironmentPicker && !showSketchStudy else { return }
 
-        // No active building yet — brand new player, tell them to tap a building
+        // No active building yet — brand new player
         guard let bid = viewModel.activeBuildingId else {
             guidanceMessage = "Welcome, Apprentice! Tap a building on the map to begin your journey."
-            guidanceDestination = nil
-            withAnimation(.spring(response: 0.4)) {
-                showGuidance = true
-            }
-            return
-        }
-
-        let buildingName = viewModel.buildingPlots.first(where: { $0.id == bid })?.building.name ?? ""
-        let progress = viewModel.buildingProgressMap[bid] ?? BuildingProgress()
-        let building = viewModel.buildingPlots.first(where: { $0.id == bid })?.building
-
-        // Check overall card completion
-        let totalCards = KnowledgeCardContent.cards(for: buildingName)
-        let allCardsDone = !totalCards.isEmpty && progress.completedCardIDs.count >= totalCards.count
-
-        // Check if can start building (all requirements met)
-        if allCardsDone && viewModel.canStartBuilding(for: bid, workshopState: workshopState) {
-            guidanceMessage = "All knowledge collected! Tap the \(buildingName) to begin construction!"
             guidanceDestination = nil
             withAnimation(.spring(response: 0.4)) { showGuidance = true }
             return
         }
 
-        // Check for uncompleted city cards (respecting cooldown)
-        let cityCards = KnowledgeCardContent.cards(for: buildingName, in: .cityMap)
-        let nextCityCard = cityCards.first { !progress.completedCardIDs.contains($0.id) }
-        let cityBlocked = viewModel.lastCardEnvironment == .cityMap
+        let buildingName = viewModel.buildingPlots.first(where: { $0.id == bid })?.building.name ?? ""
+        let progress = viewModel.buildingProgressMap[bid] ?? BuildingProgress()
+        let phase = progress.currentPhase(for: buildingName, workshopState: workshopState)
 
-        // 1. City cards available and not on cooldown
-        if nextCityCard != nil, !cityBlocked {
-            guidanceMessage = "Tap the \(buildingName) to discover its next knowledge card!"
-            guidanceDestination = nil
-        }
-        // 2. All cards done but need materials — direct to Workshop
-        else if allCardsDone, let building = building {
-            let hasMaterials = building.requiredMaterials.allSatisfy { (item, qty) in
-                (workshopState.craftedMaterials[item] ?? 0) >= qty
-            }
-            if !hasMaterials {
-                guidanceMessage = "You've learned everything! Head to the Workshop to collect materials for the \(buildingName)."
-                guidanceDestination = .workshop
+        switch phase {
+
+        // PHASE 1: LEARN — stay on city map, do cards + sketch studies
+        case .learn:
+            let cityCards = KnowledgeCardContent.cards(for: buildingName, in: .cityMap)
+            let nextCard = cityCards.first { !progress.completedCardIDs.contains($0.id) }
+            let sketches = MuseumSketchContent.sketches(for: buildingName)
+            let nextSketch = sketches.first { !progress.completedSketchStudyIDs.contains($0.id) }
+            let cityDone = progress.cardsCompleted(for: buildingName, in: .cityMap)
+
+            if nextCard != nil {
+                if cityDone.done == 0 {
+                    guidanceMessage = "Tap the \(buildingName) to discover your first knowledge card!"
+                } else {
+                    guidanceMessage = "Keep going! Tap the \(buildingName) for card \(cityDone.done + 1) of \(cityDone.total)."
+                }
+                guidanceDestination = nil
+            } else if nextSketch != nil {
+                guidanceMessage = "Tap the \(buildingName) — study a master architect's sketch!"
+                guidanceDestination = nil
             } else {
+                // Learn phase done, nudge to workshop
+                guidanceMessage = "Well studied! Time to collect materials. Head to the Workshop!"
+                guidanceDestination = .workshop
+            }
+
+        // PHASE 2: COLLECT — go to workshop
+        case .collect:
+            guidanceMessage = "Head to the Workshop — collect materials and discover more about the \(buildingName)!"
+            guidanceDestination = .workshop
+
+        // PHASE 3: EXPLORE — go to forest
+        case .explore:
+            guidanceMessage = "Time for the Forest! Discover knowledge cards and collect timber for the \(buildingName)."
+            guidanceDestination = .forest
+
+        // PHASE 4: CRAFT — go to crafting room (through workshop)
+        case .craft:
+            guidanceMessage = "Visit the Crafting Room — transform your materials for the \(buildingName)!"
+            guidanceDestination = .workshop
+
+        // PHASE 5: BUILD — ready to construct
+        case .build:
+            if viewModel.canStartBuilding(for: bid, workshopState: workshopState) {
                 guidanceMessage = "All ready! Tap the \(buildingName) to begin construction!"
                 guidanceDestination = nil
+            } else {
+                // Has all cards but missing materials/sketch/quiz
+                guidanceMessage = "Almost there! Check the \(buildingName) requirements to see what's left."
+                guidanceDestination = nil
             }
-        }
-        // 3. Suggest other environments (cards remaining elsewhere)
-        else if let nextEnv = viewModel.nextSuggestedEnvironment(for: bid) {
-            switch nextEnv {
-            case .workshop:
-                guidanceMessage = "Head to the Workshop — collect materials and discover cards about the \(buildingName)!"
-                guidanceDestination = .workshop
-            case .forest:
-                guidanceMessage = "Time for the Forest! More to discover about the \(buildingName)."
-                guidanceDestination = .forest
-            case .craftingRoom:
-                guidanceMessage = "Visit the Crafting Room — learn how \(buildingName) materials were transformed."
-                guidanceDestination = .workshop  // workshop entry leads to crafting room
-            case .cityMap:
-                if cityBlocked {
-                    guidanceMessage = "Explore another environment first, then come back for more \(buildingName) cards!"
-                    guidanceDestination = .workshop
-                } else {
-                    guidanceMessage = "Tap the \(buildingName) to continue learning!"
-                    guidanceDestination = nil
-                }
-            }
-        }
-        // 4. Fallback
-        else {
-            guidanceMessage = "Tap a building to explore and learn!"
-            guidanceDestination = nil
         }
 
         withAnimation(.spring(response: 0.4)) {

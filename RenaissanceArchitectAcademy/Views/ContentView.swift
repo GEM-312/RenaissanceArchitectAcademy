@@ -90,11 +90,19 @@ struct ContentView: View {
             let manager = PersistenceManager(modelContext: modelContext)
             persistenceManager = manager
 
-            // One-time database reset to clear corrupted saves from pre-fix sessions
+            // One-time reset for corrupted saves (original)
             let resetKey = "didResetCorruptedSaves_v1"
             if !UserDefaults.standard.bool(forKey: resetKey) {
                 manager.resetAllData()
                 UserDefaults.standard.set(true, forKey: resetKey)
+            }
+
+            // Schema migration: clear only building progress (keeps player name, florins, onboarding)
+            let schemaKey = "didMigrateBuildingProgress_v2_cards"
+            if !UserDefaults.standard.bool(forKey: schemaKey) {
+                print("[INIT] Schema migration — clearing building progress records only")
+                manager.resetBuildingProgressOnly()
+                UserDefaults.standard.set(true, forKey: schemaKey)
             }
 
             // Clean up stale empty-name saves from previous sessions

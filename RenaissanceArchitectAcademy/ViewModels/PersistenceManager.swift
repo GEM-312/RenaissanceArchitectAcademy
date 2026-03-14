@@ -126,6 +126,17 @@ final class PersistenceManager {
         currentPlayerName = ""
     }
 
+    /// Reset only BuildingProgressRecords (keeps PlayerSave intact — player name, florins, onboarding)
+    func resetBuildingProgressOnly() {
+        if let allProgress = try? modelContext.fetch(FetchDescriptor<BuildingProgressRecord>()) {
+            print("[PERSIST] Clearing \(allProgress.count) building progress records (schema migration)")
+            for record in allProgress {
+                modelContext.delete(record)
+            }
+        }
+        try? modelContext.save()
+    }
+
     // MARK: - Save
 
     func save() {

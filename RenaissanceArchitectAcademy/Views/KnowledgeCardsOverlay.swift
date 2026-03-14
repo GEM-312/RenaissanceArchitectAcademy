@@ -568,13 +568,6 @@ struct KnowledgeCardsOverlay: View {
 
     // MARK: - Wolfram Geometry Helper
 
-    /// Returns geometry data only for cards specifically about geometry/math concepts
-    private func geometryForCard(_ card: KnowledgeCard) -> BuildingGeometry? {
-        // Only show geometry diagrams on cards with .geometry or .mathematics science
-        guard card.science == .geometry || card.science == .mathematics else { return nil }
-        return BuildingGeometryContent.geometry(for: card.buildingName)
-    }
-
     // MARK: - Highlighted Lesson Text
 
     private func highlightedLessonText(card: KnowledgeCard) -> Text {
@@ -625,12 +618,6 @@ struct KnowledgeCardsOverlay: View {
     @ViewBuilder
     private func activityContent(card: KnowledgeCard) -> some View {
         VStack(spacing: Spacing.sm) {
-            // Wolfram geometry explorer for geometry/math cards
-            if let geo = geometryForCard(card) {
-                WolframGeometryView(geometry: geo, compact: true)
-                    .padding(.bottom, Spacing.xs)
-            }
-
             // Standard activity
             switch card.activity {
             case .keywordMatch:
@@ -1539,9 +1526,6 @@ struct KnowledgeCardsOverlay: View {
             notebookState: notebookState
         )
 
-        // Set environment cooldown so player must travel
-        viewModel.setLastCardEnvironment(card.environment)
-
         // Mark card as completed with simple flip-back animation
         SubsonicController.shared.play(sound: "correct_chime.mp3")
         withAnimation(.easeOut(duration: 0.4)) {
@@ -1554,10 +1538,19 @@ struct KnowledgeCardsOverlay: View {
             flipAngles[card.id] = 0
         }
 
-        // Show guidance bubble after completion
+        // Show guidance bubble only when current environment's cards are all done (phase transition)
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
             let progress = viewModel.cardProgress(for: buildingId)
-            if progress.completed < progress.total {
+            guard progress.completed < progress.total else { return }
+
+            // Check if all cards for THIS environment are now done
+            let buildingName = viewModel.buildingPlots.first(where: { $0.id == buildingId })?.building.name ?? ""
+            let envCards = KnowledgeCardContent.cards(for: buildingName, in: card.environment)
+            let buildingProgress = viewModel.buildingProgressMap[buildingId] ?? BuildingProgress()
+            let allEnvDone = envCards.allSatisfy { buildingProgress.completedCardIDs.contains($0.id) }
+
+            if allEnvDone {
+                // Environment complete — show guidance to next phase
                 guidanceBubbleCard = card
                 withAnimation(.spring(response: 0.4)) {
                     showGuidanceBubble = true
@@ -1821,7 +1814,10 @@ struct KnowledgeCardsOverlay: View {
 
     private func guidanceBubbleView(card: KnowledgeCard) -> some View {
         let progress = viewModel.cardProgress(for: buildingId)
-        let nextEnv = viewModel.nextSuggestedEnvironment(for: buildingId)
+        let buildingProgress = viewModel.buildingProgressMap[buildingId] ?? BuildingProgress()
+        let buildingName = viewModel.buildingPlots.first(where: { $0.id == buildingId })?.building.name ?? ""
+        let phase = buildingProgress.currentPhase(for: buildingName, workshopState: workshopState ?? WorkshopState())
+        let nextEnv = phase.environment  // nil means .build phase → city map
         let message = buildGuidanceMessage(card: card, progress: progress, nextEnv: nextEnv)
 
         // Determine the primary action button based on game loop state

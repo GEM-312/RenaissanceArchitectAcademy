@@ -13,6 +13,9 @@ final class BuildingProgressRecord {
     var isCompleted: Bool = false
     var challengeProgress: Double = 0.0
     var sketchingPhasesRaw: [String] = []
+    var completedCardIDsRaw: [String] = []
+    var completedSketchStudyIDsRaw: [Int] = []
+    var constructionSequenceCompleted: Bool = false
 
     init() {}
 
@@ -40,6 +43,16 @@ final class BuildingProgressRecord {
         }
     }
 
+    var completedCardIDs: Set<String> {
+        get { Set(completedCardIDsRaw) }
+        set { completedCardIDsRaw = Array(newValue) }
+    }
+
+    var completedSketchStudyIDs: Set<Int> {
+        get { Set(completedSketchStudyIDsRaw) }
+        set { completedSketchStudyIDsRaw = Array(newValue) }
+    }
+
     // MARK: - Conversion Helpers
 
     func toBuildingProgress() -> BuildingProgress {
@@ -49,6 +62,9 @@ final class BuildingProgressRecord {
         progress.quizPassed = quizPassed
         progress.lessonRead = lessonRead
         progress.lessonSectionIndex = lessonSectionIndex
+        progress.constructionSequenceCompleted = constructionSequenceCompleted
+        progress.completedCardIDs = completedCardIDs
+        progress.completedSketchStudyIDs = completedSketchStudyIDs
         return progress
     }
 
@@ -58,5 +74,8 @@ final class BuildingProgressRecord {
         quizPassed = progress.quizPassed
         lessonRead = progress.lessonRead
         lessonSectionIndex = progress.lessonSectionIndex
+        constructionSequenceCompleted = progress.constructionSequenceCompleted
+        completedCardIDs = progress.completedCardIDs
+        completedSketchStudyIDs = progress.completedSketchStudyIDs
     }
 }

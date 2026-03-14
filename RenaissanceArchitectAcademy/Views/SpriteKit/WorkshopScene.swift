@@ -235,7 +235,18 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
     // MARK: - Scene Setup
 
+    private var hasSetup = false
+
     override func didMove(to view: SKView) {
+        guard !hasSetup else {
+            // Scene reused — just update the camera to follow player
+            if playerNode != nil {
+                cameraNode.position = playerNode.position
+            }
+            return
+        }
+        hasSetup = true
+
         backgroundColor = PlatformColor(RenaissanceColors.parchment)
 
         setupCamera()

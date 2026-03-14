@@ -266,7 +266,15 @@ class ForestScene: SKScene, ScrollZoomable {
 
     // MARK: - Scene Setup
 
+    private var hasSetup = false
+
     override func didMove(to view: SKView) {
+        guard !hasSetup else {
+            if playerNode != nil { cameraNode.position = playerNode.position }
+            return
+        }
+        hasSetup = true
+
         backgroundColor = PlatformColor(RenaissanceColors.parchment)
 
         setupCamera()

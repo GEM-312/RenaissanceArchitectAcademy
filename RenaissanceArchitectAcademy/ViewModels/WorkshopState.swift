@@ -281,7 +281,10 @@ class WorkshopState {
     // MARK: - Persistence
 
     func loadFromPersistence() {
-        guard let manager = persistenceManager else { return }
+        guard let manager = persistenceManager else {
+            print("[WORKSHOP] WARNING: no persistenceManager — cannot load inventory!")
+            return
+        }
         let save = manager.loadPlayerSave()
         // Reset in-memory state before loading
         rawMaterials = [:]
@@ -294,6 +297,7 @@ class WorkshopState {
         rawMaterials = save.rawMaterials
         craftedMaterials = save.craftedMaterials
         tools = save.tools
+        print("[WORKSHOP] Loaded — raw: \(rawMaterials), crafted: \(craftedMaterials), tools: \(tools)")
     }
 
     func addRawMaterials(_ materials: [Material: Int]) {

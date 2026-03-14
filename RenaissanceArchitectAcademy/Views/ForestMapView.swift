@@ -209,11 +209,8 @@ struct ForestMapView: View {
                         setupScienceCards(for: poi)
                     }
                 } else if oldValue != nil {
-                    // POI dismissed — zoom out and player walks back to box
-                    sceneHolder.scene?.zoomCameraOut()
-                    sceneHolder.scene?.hidePlayer()
+                    // POI dismissed — player stays where they are
                     showToolDialog = false
-                    avatarInBox = true
                     if let truffle = pendingTruffle {
                         pendingTruffle = nil
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -247,45 +244,40 @@ struct ForestMapView: View {
         let buildingName = vm.buildingPlots.first(where: { $0.id == bid })?.building.name ?? ""
         let progress = vm.buildingProgressMap[bid] ?? BuildingProgress()
 
-        // 1. Check for uncompleted forest cards (respecting cooldown)
+        // LOCAL WORK FIRST: check if there's something to do in the forest
         let forestCards = KnowledgeCardContent.cards(for: buildingName, in: .forest)
-        let nextForestCard = forestCards.first { !progress.completedCardIDs.contains($0.id) }
-        let forestBlocked = vm.lastCardEnvironment == .forest
+        let hasUncompletedCards = forestCards.contains { !progress.completedCardIDs.contains($0.id) }
 
-        if nextForestCard != nil, !forestBlocked {
+        if hasUncompletedCards {
             guidanceMessage = "Tap a tree to discover knowledge cards! Each tree hides science."
             guidanceDestination = nil
+            withAnimation(.spring(response: 0.4)) { showGuidance = true }
+            return
         }
-        // 2. Suggest other environments
-        else if let nextEnv = vm.nextSuggestedEnvironment(for: bid) {
-            switch nextEnv {
-            case .workshop:
-                guidanceMessage = "Head to the Workshop — more cards about \(buildingName) await!"
-                guidanceDestination = .workshop
-            case .craftingRoom:
-                guidanceMessage = "Visit the Crafting Room to learn how materials were transformed."
-                guidanceDestination = .workshop
-            case .cityMap:
-                guidanceMessage = "Back to the City Map! More \(buildingName) cards await."
-                guidanceDestination = .cityMap
-            case .forest:
-                if forestBlocked {
-                    guidanceMessage = "Explore another environment first, then come back!"
-                    guidanceDestination = .workshop
-                } else {
-                    return
-                }
-            }
-        }
-        // 3. All cards done
-        else {
-            let total = KnowledgeCardContent.cards(for: buildingName)
-            if !total.isEmpty && progress.completedCardIDs.count >= total.count {
-                guidanceMessage = "All cards collected for \(buildingName)! Ready to build!"
-                guidanceDestination = .cityMap
-            } else {
-                return
-            }
+
+        // No local work — fall through to phase-based guidance
+        let phase = progress.currentPhase(for: buildingName, workshopState: workshop)
+
+        switch phase {
+        case .explore:
+            guidanceMessage = "Great exploring! Collect timber before you go."
+            guidanceDestination = nil
+
+        case .learn:
+            guidanceMessage = "Head to the City Map first — learn about the \(buildingName) before exploring!"
+            guidanceDestination = .cityMap
+
+        case .collect:
+            guidanceMessage = "Head to the Workshop — collect materials for the \(buildingName)!"
+            guidanceDestination = .workshop
+
+        case .craft:
+            guidanceMessage = "Visit the Crafting Room — transform your materials for the \(buildingName)!"
+            guidanceDestination = .workshop
+
+        case .build:
+            guidanceMessage = "All done for the \(buildingName)! Head to the City Map to build!"
+            guidanceDestination = .cityMap
         }
 
         withAnimation(.spring(response: 0.4)) {
@@ -400,8 +392,6 @@ struct ForestMapView: View {
             }
         }
         .onAppear {
-            // Clear cooldown — player traveled to forest
-            viewModel?.clearCooldownIfDifferent(.forest)
             withAnimation(.easeInOut(duration: 2.5).repeatForever(autoreverses: true)) {
                 floatOffset = 8
             }
@@ -497,9 +487,22 @@ struct ForestMapView: View {
         return others.firstIndex(of: category) ?? 0
     }
 
+    /// The next card the player should work on (first uncompleted in order)
+    private var nextUnlockedCategory: ForestCardCategory? {
+        ForestCardCategory.allCases.first { !completedCards.contains($0) }
+    }
+
+    /// Whether a card is currently unlocked for interaction
+    private func isCardUnlocked(_ category: ForestCardCategory) -> Bool {
+        completedCards.contains(category) || category == nextUnlockedCategory
+    }
+
     /// Handle tap on a card — 3D flip or unflip
     private func handleCardTap(category: ForestCardCategory, isCompleted: Bool) {
         if isCompleted && flippedOpenCard != category { return }
+
+        // Only allow tapping the next unlocked card
+        guard isCardUnlocked(category) else { return }
 
         if flippedOpenCard == category {
             // Tapping the flipped card — unflip back to front
@@ -532,14 +535,16 @@ struct ForestMapView: View {
 
     // MARK: - Card Front (icon + science name)
 
+    @ViewBuilder
     private func cardFront(category: ForestCardCategory, isCompleted: Bool) -> some View {
+        let locked = !isCardUnlocked(category)
         ZStack {
             // Layer 1: Glass background + aurora blobs
             RoundedRectangle(cornerRadius: 14)
                 .fill(
                     isCompleted
                     ? RenaissanceColors.sageGreen.opacity(0.06)
-                    : Color.clear
+                    : locked ? RenaissanceColors.sepiaInk.opacity(0.4) : Color.clear
                 )
                 .overlay(
                     Group {
@@ -607,18 +612,18 @@ struct ForestMapView: View {
                         .fill(isCompleted ? RenaissanceColors.sageGreen.opacity(0.2) : category.color.opacity(0.15))
                         .frame(width: 70, height: 70)
 
-                    Image(systemName: isCompleted ? "checkmark.circle.fill" : category.icon)
+                    Image(systemName: isCompleted ? "checkmark.circle.fill" : locked ? "lock.fill" : category.icon)
                         .font(.system(size: 36))
-                        .foregroundStyle(isCompleted ? RenaissanceColors.sageGreen : category.color)
-                        .shadow(color: isCompleted ? .clear : category.color.opacity(0.5), radius: 6)
+                        .foregroundStyle(isCompleted ? RenaissanceColors.sageGreen : locked ? RenaissanceColors.sepiaInk.opacity(0.4) : category.color)
+                        .shadow(color: isCompleted || locked ? .clear : category.color.opacity(0.5), radius: 6)
                 }
 
                 Text(category.rawValue)
                     .font(RenaissanceFont.cardTitle)
                     .tracking(Tracking.label)
-                    .foregroundStyle(isCompleted ? RenaissanceColors.sageGreen : category.color)
+                    .foregroundStyle(isCompleted ? RenaissanceColors.sageGreen : locked ? RenaissanceColors.sepiaInk.opacity(0.4) : category.color)
 
-                if !isCompleted {
+                if !isCompleted && !locked {
                     Image(systemName: "hand.tap.fill")
                         .font(.system(size: 13))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.3))
@@ -1079,7 +1084,10 @@ struct ForestMapView: View {
             selectedPOIIndex = nil
             cardsAppeared = false
         }
-        sceneHolder.scene?.zoomCameraOut()
+        // Show bird guidance after cards dismiss
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            showForestGuidance()
+        }
     }
 
     // MARK: - Bird Encouragement
@@ -1314,7 +1322,6 @@ struct ForestMapView: View {
             selectedPOIIndex = nil
             cardsAppeared = false
         }
-        sceneHolder.scene?.zoomCameraOut()
 
         if collected > 0 {
             timberFloatAmount = collected
@@ -1443,9 +1450,6 @@ struct ForestMapView: View {
         withAnimation(.spring(response: 0.3)) {
             showToolDialog = false
         }
-        sceneHolder.scene?.zoomCameraOut()
-        sceneHolder.scene?.hidePlayer()
-        avatarInBox = true
     }
 
     // MARK: - Inventory Bar

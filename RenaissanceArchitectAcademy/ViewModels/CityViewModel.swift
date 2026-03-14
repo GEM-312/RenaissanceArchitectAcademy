@@ -9,7 +9,6 @@ class CityViewModel: ObservableObject {
     @Published var buildingProgressMap: [Int: BuildingProgress] = [:]
     @Published var totalPlayTime: TimeInterval = 0
     @Published var activeBuildingId: Int? = nil  // Which building the player is currently working on
-    @Published var lastCardEnvironment: CardEnvironment? = nil  // Cooldown: blocks same-env cards until player travels
 
     var persistenceManager: PersistenceManager?
 
@@ -251,8 +250,13 @@ class CityViewModel: ObservableObject {
         }
 
         let records = manager.loadAllBuildingProgress()
+        print("[PERSIST] Loaded \(records.count) building progress records")
         for (buildingId, record) in records {
-            buildingProgressMap[buildingId] = record.toBuildingProgress()
+            let progress = record.toBuildingProgress()
+            buildingProgressMap[buildingId] = progress
+            if !progress.completedCardIDs.isEmpty {
+                print("[PERSIST] Building \(buildingId): \(progress.completedCardIDs.count) cards loaded — \(progress.completedCardIDs)")
+            }
             if let index = buildingPlots.firstIndex(where: { $0.id == buildingId }) {
                 buildingPlots[index].isCompleted = record.isCompleted
                 buildingPlots[index].challengeProgress = record.challengeProgress
@@ -272,10 +276,16 @@ class CityViewModel: ObservableObject {
     }
 
     private func persistBuildingProgress(for plotId: Int) {
-        guard let manager = persistenceManager else { return }
+        guard let manager = persistenceManager else {
+            print("[PERSIST] WARNING: no persistenceManager — building \(plotId) progress NOT saved!")
+            return
+        }
         let record = manager.getOrCreateBuildingProgress(for: plotId)
         if let progress = buildingProgressMap[plotId] {
             record.update(from: progress)
+            if !progress.completedCardIDs.isEmpty {
+                print("[PERSIST] Saving building \(plotId): \(progress.completedCardIDs.count) cards — \(progress.completedCardIDs)")
+            }
         }
         if let plot = buildingPlots.first(where: { $0.id == plotId }) {
             record.isCompleted = plot.isCompleted
@@ -475,6 +485,7 @@ class CityViewModel: ObservableObject {
         guard !progress.completedCardIDs.contains(cardID) else { return }
         progress.completedCardIDs.insert(cardID)
         buildingProgressMap[plotId] = progress
+        print("[CARDS] Marked card '\(cardID)' complete for building \(plotId) — now \(progress.completedCardIDs.count) cards total")
         persistBuildingProgress(for: plotId)
 
         // Save lesson to notebook
@@ -500,57 +511,18 @@ class CityViewModel: ObservableObject {
     }
 
     /// Next uncompleted card at a specific station for the active building (1-at-a-time discovery)
-    /// Returns nil if this environment is on cooldown (player just completed a card here)
     func nextUncompletedCard(for plotId: Int, at stationKey: String) -> KnowledgeCard? {
         let progress = buildingProgressMap[plotId] ?? BuildingProgress()
         let buildingName = buildingPlots.first(where: { $0.id == plotId })?.building.name ?? ""
         let stationCards = KnowledgeCardContent.cards(for: buildingName, at: stationKey)
-        guard let card = stationCards.first(where: { !progress.completedCardIDs.contains($0.id) }) else { return nil }
-        // Cooldown: block if player just completed a card in this same environment
-        if let cooldown = lastCardEnvironment, card.environment == cooldown { return nil }
-        return card
+        return stationCards.first(where: { !progress.completedCardIDs.contains($0.id) })
     }
 
     /// Next uncompleted card in a specific environment for the active building
-    /// Returns nil if this environment is on cooldown (player just completed a card here)
     func nextUncompletedCard(for plotId: Int, in environment: CardEnvironment) -> KnowledgeCard? {
-        // Cooldown: block if player just completed a card in this same environment
-        if let cooldown = lastCardEnvironment, environment == cooldown { return nil }
         let progress = buildingProgressMap[plotId] ?? BuildingProgress()
         let buildingName = buildingPlots.first(where: { $0.id == plotId })?.building.name ?? ""
         let envCards = KnowledgeCardContent.cards(for: buildingName, in: environment)
         return envCards.first { !progress.completedCardIDs.contains($0.id) }
-    }
-
-    /// Set the environment cooldown after completing a card (forces travel to a different environment)
-    func setLastCardEnvironment(_ env: CardEnvironment) {
-        lastCardEnvironment = env
-    }
-
-    /// Clear the cooldown when player enters a different environment
-    func clearCooldownIfDifferent(_ currentEnv: CardEnvironment) {
-        if lastCardEnvironment != currentEnv {
-            lastCardEnvironment = nil
-        }
-    }
-
-    /// Which environment the bird should suggest next for the active building
-    func nextSuggestedEnvironment(for plotId: Int) -> CardEnvironment? {
-        let progress = buildingProgressMap[plotId] ?? BuildingProgress()
-        let buildingName = buildingPlots.first(where: { $0.id == plotId })?.building.name ?? ""
-        let allCards = KnowledgeCardContent.cards(for: buildingName)
-
-        // Find environment with the most incomplete cards
-        var bestEnv: CardEnvironment?
-        var bestCount = 0
-        for env in CardEnvironment.allCases {
-            let envCards = allCards.filter { $0.environment == env }
-            let incomplete = envCards.filter { !progress.completedCardIDs.contains($0.id) }.count
-            if incomplete > bestCount {
-                bestCount = incomplete
-                bestEnv = env
-            }
-        }
-        return bestEnv
     }
 }

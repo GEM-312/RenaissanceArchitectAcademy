@@ -228,7 +228,15 @@ class CityScene: SKScene, ScrollZoomable {
 
     // MARK: - Scene Setup
 
+    private var hasSetup = false
+
     override func didMove(to view: SKView) {
+        guard !hasSetup else {
+            if playerNode != nil { cameraNode.position = playerNode.position }
+            return
+        }
+        hasSetup = true
+
         backgroundColor = PlatformColor(red: 0.94, green: 0.91, blue: 0.86, alpha: 1.0) // Match terrain edge color
 
         setupCamera()
@@ -1128,9 +1136,13 @@ class CityScene: SKScene, ScrollZoomable {
         cameraNode.run(SKAction.group([moveAction, zoomAction]), withKey: "cameraZoom")
     }
 
-    /// Reset state — zoom camera out (replaces old resetMascot)
+    /// Reset internal state only — does NOT zoom the camera.
+    /// Camera stays where it is so bird guidance can appear without jarring zoom-out.
     func resetMascot() {
-        zoomCameraOut()
+        isFollowingPlayer = false
+        walkTargetPosition = nil
+        dialogBuildingNode = nil
+        stopWalkingTerrainEffects()
     }
 
     private var hasFiredDragCallback = false

@@ -63,6 +63,7 @@ struct WorkshopMapView: View {
     @State private var showArrivalGuidance = false
     @State private var guidanceMessage: String = ""
     @State private var guidanceDestination: SidebarDestination? = nil  // nil = stay in workshop
+    @State private var guidanceStationType: ResourceStationType? = nil  // station to walk to
     // Stations player has collected from since last non-station activity
     // Resets when player does a card, navigates to another env, or buys a tool
     @State private var recentlyCollectedStations: Set<ResourceStationType> = []
@@ -164,24 +165,46 @@ struct WorkshopMapView: View {
                                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                                 }
 
-                                // "Go!" button if guidance points to another environment
-                                if let dest = guidanceDestination, onNavigate != nil {
-                                    Button {
-                                        withAnimation(.easeOut(duration: 0.2)) { showArrivalGuidance = false }
-                                        onNavigate?(dest)
-                                    } label: {
-                                        HStack(spacing: 5) {
-                                            Image(systemName: dest == .forest ? "tree.fill" : dest == .cityMap ? "building.columns.fill" : "hammer.fill")
-                                                .font(.system(size: 12))
-                                            Text("Go!")
-                                                .font(.custom("EBGaramond-SemiBold", size: 14))
+                                HStack(spacing: 8) {
+                                    // "Go to Station" button — walks player to the suggested station
+                                    if let station = guidanceStationType {
+                                        Button {
+                                            withAnimation(.easeOut(duration: 0.2)) { showArrivalGuidance = false }
+                                            sceneHolder.scene?.walkToStation(station)
+                                        } label: {
+                                            HStack(spacing: 5) {
+                                                Image(systemName: "figure.walk")
+                                                    .font(.system(size: 12))
+                                                Text("Go!")
+                                                    .font(.custom("EBGaramond-SemiBold", size: 14))
+                                            }
+                                            .foregroundStyle(.white)
+                                            .padding(.horizontal, 14)
+                                            .padding(.vertical, 6)
+                                            .background(Capsule().fill(RenaissanceColors.warmBrown))
                                         }
-                                        .foregroundStyle(.white)
-                                        .padding(.horizontal, 14)
-                                        .padding(.vertical, 6)
-                                        .background(Capsule().fill(RenaissanceColors.renaissanceBlue))
+                                        .buttonStyle(.plain)
                                     }
-                                    .buttonStyle(.plain)
+
+                                    // "Go!" button if guidance points to another environment
+                                    if let dest = guidanceDestination, onNavigate != nil {
+                                        Button {
+                                            withAnimation(.easeOut(duration: 0.2)) { showArrivalGuidance = false }
+                                            onNavigate?(dest)
+                                        } label: {
+                                            HStack(spacing: 5) {
+                                                Image(systemName: dest == .forest ? "tree.fill" : dest == .cityMap ? "building.columns.fill" : "hammer.fill")
+                                                    .font(.system(size: 12))
+                                                Text("Go!")
+                                                    .font(.custom("EBGaramond-SemiBold", size: 14))
+                                            }
+                                            .foregroundStyle(.white)
+                                            .padding(.horizontal, 14)
+                                            .padding(.vertical, 6)
+                                            .background(Capsule().fill(RenaissanceColors.renaissanceBlue))
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
                                 }
                             }
                             Spacer()
@@ -548,8 +571,6 @@ struct WorkshopMapView: View {
             }
         }
         .onAppear {
-            // Clear cooldown — player traveled to workshop
-            viewModel?.clearCooldownIfDifferent(.workshop)
             recentlyCollectedStations.removeAll()
             if workshop.currentAssignment == nil {
                 workshop.generateNewAssignment()
@@ -559,13 +580,8 @@ struct WorkshopMapView: View {
         }
         .onChange(of: activeStation) { oldValue, newValue in
             if oldValue != nil && newValue == nil {
-                // Station overlay dismissed — zoom camera back out
-                sceneHolder.scene?.zoomCameraOut()
-                // Player walks back to box position
-                sceneHolder.scene?.hidePlayer()
-                avatarInBox = true
-                // Show bird guidance after mini-game completion
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                // Station overlay dismissed — show guidance (player stays where they are)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     showNextGuidance()
                 }
             }
@@ -657,7 +673,7 @@ struct WorkshopMapView: View {
     }
 
 
-    /// Show bird guidance following the full game loop.
+    /// Show bird guidance following phase-based progression.
     /// forceRefresh: bypasses overlay guards (used after buying tools at market)
     private func showNextGuidance(forceRefresh: Bool = false) {
         guard let vm = viewModel else { return }
@@ -679,6 +695,37 @@ struct WorkshopMapView: View {
         let progress = bid.flatMap { vm.buildingProgressMap[$0] } ?? BuildingProgress()
         let building = bid.flatMap { id in vm.buildingPlots.first(where: { $0.id == id })?.building }
 
+        // Phase-based: check if player should be in the workshop at all
+        let phase = progress.currentPhase(for: buildingName, workshopState: workshop)
+
+        // Reset station guidance each time
+        guidanceStationType = nil
+
+        // If not in COLLECT phase, guide player to the correct environment
+        if phase != .collect {
+            switch phase {
+            case .learn:
+                guidanceMessage = "Head to the City Map first — learn about the \(buildingName)!"
+                guidanceDestination = .cityMap
+            case .explore:
+                guidanceMessage = "Explore the Forest — discover more about the \(buildingName) and collect timber!"
+                guidanceDestination = .forest
+            case .craft:
+                guidanceMessage = "Time for the Crafting Room — transform your materials for the \(buildingName)!"
+                guidanceDestination = nil
+                guidanceStationType = .craftingRoom
+            case .build:
+                guidanceMessage = "All done for the \(buildingName)! Head to the City Map to build!"
+                guidanceDestination = .cityMap
+            case .collect:
+                break  // handled below
+            }
+            withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
+            return
+        }
+
+        // ── COLLECT PHASE: Workshop-specific guidance ──
+
         // Compute what raw materials the building still needs
         let neededRaw = rawMaterialsStillNeeded(for: building)
         // Which stations provide needed materials
@@ -689,6 +736,7 @@ struct WorkshopMapView: View {
             let toolName = Tool.requiredFor(station: returnStation)?.displayName ?? "tool"
             guidanceMessage = "You got your \(toolName)! Head back to the \(returnStation.label) to collect materials!"
             guidanceDestination = nil
+            guidanceStationType = returnStation
             returnToStationAfterMarket = nil
             withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
             return
@@ -699,6 +747,7 @@ struct WorkshopMapView: View {
             if let craftable = nextCraftableRecipe(for: building) {
                 guidanceMessage = "You have the materials to craft \(craftable.output.rawValue)! Head to the Crafting Room!"
                 guidanceDestination = nil
+                guidanceStationType = .craftingRoom
                 recentlyCollectedStations.removeAll()
                 withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
                 return
@@ -727,31 +776,18 @@ struct WorkshopMapView: View {
             }
         }()
 
-        // Uncompleted cards in OTHER environments (no tool gate)
-        let otherEnvWithCards: [CardEnvironment] = {
-            guard !buildingName.isEmpty else { return [] }
-            var envs: [CardEnvironment] = []
-            for env in [CardEnvironment.cityMap, .forest, .craftingRoom] {
-                let envCards = KnowledgeCardContent.cards(for: buildingName, in: env)
-                if envCards.contains(where: { !progress.completedCardIDs.contains($0.id) }) {
-                    envs.append(env)
-                }
-            }
-            return envs
-        }()
-
         // PRIORITY 3: Fresh station (not recently visited) with needed materials
         if let station = freshStations.first {
             let stationMats = station.materials
             if let needed = stationMats.first(where: { neededRaw[$0, default: 0] > 0 }) {
-                guidanceMessage = "Head to the \(station.label) — you need \(needed.rawValue) for the \(buildingName)!"
+                let progressHint = materialProgressHint(needed, neededRaw: neededRaw, building: building)
+                guidanceMessage = "Head to the \(station.label) — you need \(needed.rawValue)\(progressHint) for the \(buildingName)!"
                 guidanceDestination = nil
+                guidanceStationType = station
                 withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
                 return
             }
         }
-
-        // ── All tool-ready stations visited. Now prioritize EXPANDING to new stations ──
 
         // PRIORITY 4: Need a tool + can afford — BUY IT before re-cycling old stations!
         if let station = needToolStations.first, let tool = Tool.requiredFor(station: station), florins >= toolCost {
@@ -760,6 +796,7 @@ struct WorkshopMapView: View {
             let neededMat = stationMats.first(where: { neededRaw[$0, default: 0] > 0 })?.rawValue ?? "materials"
             guidanceMessage = "Buy a \(tool.displayName) at the Market (\(toolCost) florins) — the \(station.label) has \(neededMat) you need!"
             guidanceDestination = nil
+            guidanceStationType = .market
             recentlyCollectedStations.removeAll()
             withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
             return
@@ -769,30 +806,12 @@ struct WorkshopMapView: View {
         if let card = workshopCards.first {
             guidanceMessage = "Head to the \(card.stationKey.capitalized) — discover a knowledge card about the \(buildingName)!"
             guidanceDestination = nil
+            guidanceStationType = stationTypeFromKey(card.stationKey)
             withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
             return
         }
 
-        // PRIORITY 6: Other environments (no tool gate — cards, florins, variety)
-        if let env = otherEnvWithCards.first {
-            let earnHint = needToolStations.isEmpty ? "" : " Earn florins to buy tools!"
-            switch env {
-            case .cityMap:
-                guidanceMessage = "Discover knowledge cards on the City Map!\(earnHint)"
-                guidanceDestination = .cityMap
-            case .forest:
-                guidanceMessage = "Explore the Forest — discover cards and collect timber!\(earnHint)"
-                guidanceDestination = .forest
-            case .craftingRoom:
-                guidanceMessage = "Visit the Crafting Room — learn about \(buildingName) materials!\(earnHint)"
-                guidanceDestination = nil
-            default: break
-            }
-            withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
-            return
-        }
-
-        // PRIORITY 7: Need tools but can't afford — tell player HOW to earn florins
+        // PRIORITY 6: Need tools but can't afford — tell player HOW to earn florins
         if let station = needToolStations.first, let tool = Tool.requiredFor(station: station), florins < toolCost {
             guidanceMessage = "You need \(toolCost) florins for a \(tool.displayName) (you have \(florins)). Explore the City Map or Forest to earn more!"
             guidanceDestination = .cityMap
@@ -800,39 +819,29 @@ struct WorkshopMapView: View {
             return
         }
 
-        // PRIORITY 8: All stations visited, no new tools to buy, no cards — cycle back
+        // PRIORITY 7: All stations visited — cycle back with progress info
         if !allReadyStations.isEmpty {
             recentlyCollectedStations.removeAll()
+            // Count total materials still needed across all stations
+            let totalNeeded = neededRaw.values.reduce(0, +)
             if let station = allReadyStations.first {
                 let stationMats = station.materials
                 if let needed = stationMats.first(where: { neededRaw[$0, default: 0] > 0 }) {
-                    guidanceMessage = "Back to the \(station.label) — you still need more \(needed.rawValue) for the \(buildingName)!"
+                    let progressHint = materialProgressHint(needed, neededRaw: neededRaw, building: building)
+                    if allReadyStations.count == 1 && totalNeeded <= 3 {
+                        guidanceMessage = "Almost there! \(neededRaw[needed, default: 0]) more \(needed.rawValue) to go!"
+                    } else {
+                        guidanceMessage = "Back to the \(station.label) — \(needed.rawValue)\(progressHint) still needed!"
+                    }
                     guidanceDestination = nil
+                    guidanceStationType = station
                     withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
                     return
                 }
             }
         }
 
-        // PRIORITY 7: All workshop work done — suggest next environment
-        if let bid = bid, let nextEnv = vm.nextSuggestedEnvironment(for: bid) {
-            switch nextEnv {
-            case .forest:
-                guidanceMessage = "Explore the Forest — discover more about the \(buildingName) and collect timber!"
-                guidanceDestination = .forest
-            case .craftingRoom:
-                guidanceMessage = "Time for the Crafting Room — transform your materials for the \(buildingName)!"
-                guidanceDestination = nil
-            case .cityMap:
-                guidanceMessage = "Head to the City Map — more to discover about the \(buildingName)!"
-                guidanceDestination = .cityMap
-            default: break
-            }
-            withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
-            return
-        }
-
-        // PRIORITY 8: Default
+        // Default
         guidanceMessage = "Explore the workshop — collect materials and learn about building!"
         guidanceDestination = nil
         withAnimation(.spring(response: 0.4)) {
@@ -865,6 +874,25 @@ struct WorkshopMapView: View {
             }
         }
         return needed
+    }
+
+    /// Show progress like " (2 more)" for a material the player is collecting
+    private func materialProgressHint(_ material: Material, neededRaw: [Material: Int], building: Building?) -> String {
+        let stillNeeded = neededRaw[material, default: 0]
+        guard stillNeeded > 1 else { return "" }
+        // Find total required for this material across all recipes
+        guard let building = building else { return " (\(stillNeeded) more)" }
+        var totalRequired = 0
+        for (craftedItem, qty) in building.requiredMaterials {
+            if let recipe = Recipe.allRecipes.first(where: { $0.output == craftedItem }) {
+                totalRequired += (recipe.ingredients[material] ?? 0) * qty
+            }
+        }
+        let collected = totalRequired - stillNeeded
+        if collected > 0 {
+            return " (\(collected)/\(totalRequired) collected)"
+        }
+        return " (\(stillNeeded) needed)"
     }
 
     /// Which stations provide materials the building needs (ordered by priority)
