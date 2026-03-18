@@ -386,6 +386,16 @@ class GoldsmithScene: SKScene, ScrollZoomable {
         onPlayerPositionChanged?(CGPoint(x: normalizedX, y: normalizedY), playerNode.isWalking)
     }
 
+    override func willMove(from view: SKView) {
+        removeAllActions()
+        removeAllChildren()
+        playerNode = nil
+        hasSetup = false
+        onFurnitureReached = nil
+        onPlayerPositionChanged = nil
+        onPlayerStartedWalking = nil
+    }
+
     override func update(_ currentTime: TimeInterval) {
         updatePlayerScreenPosition()
     }

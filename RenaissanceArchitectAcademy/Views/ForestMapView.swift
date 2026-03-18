@@ -70,14 +70,17 @@ struct ForestMapView: View {
                 GameSpriteView(scene: makeScene(), options: [.allowsTransparency])
                     .ignoresSafeArea()
 
-                // Layer 2: Bird companion overlay
-                BirdCharacter(isSitting: !playerIsWalking)
-                    .frame(width: 100, height: 100)
-                    .position(
-                        x: playerPosition.x * geometry.size.width + 70,
-                        y: playerPosition.y * geometry.size.height - 50
-                    )
-                    .allowsHitTesting(false)
+                // Layer 2: Bird companion overlay — only show when stopped (reduces memory)
+                if !playerIsWalking {
+                    BirdCharacter(isSitting: true)
+                        .frame(width: 80, height: 80)
+                        .position(
+                            x: playerPosition.x * geometry.size.width + 60,
+                            y: playerPosition.y * geometry.size.height - 45
+                        )
+                        .allowsHitTesting(false)
+                        .transition(.opacity)
+                }
 
                 // Layer 3: Nav panel + inventory bar (same layout as Workshop)
                 VStack(spacing: 0) {
@@ -89,10 +92,10 @@ struct ForestMapView: View {
                 .frame(maxWidth: .infinity)
                 .padding(Spacing.md)
 
-                // Layer 4: Science Cards overlay (replaces old poiInfoOverlay)
+                // Layer 4: Tree info + collect timber overlay
                 if let poiIndex = selectedPOIIndex,
                    let poi = sceneHolder.scene?.getPOI(at: poiIndex) {
-                    scienceCardsOverlay(poi: poi)
+                    treeInfoOverlay(poi: poi)
                         .transition(.opacity.combined(with: .scale(scale: 0.9)))
                 }
 
@@ -230,6 +233,14 @@ struct ForestMapView: View {
                     withAnimation(.easeOut(duration: 0.2)) { showGuidance = false }
                 }
             }
+            .onAppear {
+                // Show bird guidance after player settles (avoid race with auto-walk)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    if !showGuidance && selectedPOIIndex == nil {
+                        showForestGuidance()
+                    }
+                }
+            }
         }
     }
 
@@ -238,46 +249,71 @@ struct ForestMapView: View {
     // MARK: - Bird Guidance
 
     private func showForestGuidance() {
-        guard let vm = viewModel, let bid = vm.activeBuildingId else { return }
-        guard selectedPOIIndex == nil && discoveredTruffle == nil else { return }
+        print("[FOREST GUIDANCE] Called. selectedPOI=\(selectedPOIIndex as Any), truffle=\(discoveredTruffle != nil)")
+        guard selectedPOIIndex == nil && discoveredTruffle == nil else {
+            print("[FOREST GUIDANCE] Blocked by POI/truffle guard")
+            return
+        }
+
+        let hasAxe = workshop.hasTool(for: .forest)
+        let timberCount = workshop.rawMaterials[.timber] ?? 0
+
+        print("[FOREST GUIDANCE] hasAxe=\(hasAxe), timber=\(timberCount), activeBuildingId=\(viewModel?.activeBuildingId as Any)")
+
+        // No active building — guide through forest activities
+        guard let vm = viewModel, let bid = vm.activeBuildingId else {
+            if !hasAxe {
+                guidanceMessage = "You need an Axe to collect timber! Buy one at the Market in the Workshop (10 florins)."
+                guidanceDestination = .workshop
+            } else if timberCount < 3 {
+                guidanceMessage = "Tap a tree → complete all 4 science cards → collect timber! You need 3 timber for scaffolding. (\(timberCount)/3 collected)"
+                guidanceDestination = nil
+            } else {
+                guidanceMessage = "Good work! You've collected \(timberCount) timber. Head back to the Workshop to craft Timber Beams!"
+                guidanceDestination = .workshop
+            }
+            withAnimation(.spring(response: 0.4)) { showGuidance = true }
+            return
+        }
 
         let buildingName = vm.buildingPlots.first(where: { $0.id == bid })?.building.name ?? ""
         let progress = vm.buildingProgressMap[bid] ?? BuildingProgress()
 
-        // LOCAL WORK FIRST: check if there's something to do in the forest
+        // LOCAL WORK FIRST: check forest knowledge cards
         let forestCards = KnowledgeCardContent.cards(for: buildingName, in: .forest)
         let hasUncompletedCards = forestCards.contains { !progress.completedCardIDs.contains($0.id) }
 
-        if hasUncompletedCards {
-            guidanceMessage = "Tap a tree to discover knowledge cards! Each tree hides science."
+        // 1. Need an axe first
+        if !hasAxe {
+            guidanceMessage = "You need an Axe to collect timber! Buy one at the Market in the Workshop (10 florins)."
+            guidanceDestination = .workshop
+            withAnimation(.spring(response: 0.4)) { showGuidance = true }
+            return
+        }
+
+        // 2. Need timber — guide to the specific tree with the next knowledge card
+        if timberCount < 3 {
+            let forestCards = KnowledgeCardContent.cards(for: buildingName, in: .forest)
+            let nextCard = forestCards.first { !progress.completedCardIDs.contains($0.id) }
+            if let card = nextCard {
+                let treeName = card.stationKey.capitalized
+                guidanceMessage = "Visit the \(treeName) tree! Learn about \(card.title) and collect timber for the \(buildingName). (\(timberCount)/3 timber)"
+            } else {
+                guidanceMessage = "Tap any tree to collect timber for the \(buildingName)! (\(timberCount)/3 timber)"
+            }
             guidanceDestination = nil
             withAnimation(.spring(response: 0.4)) { showGuidance = true }
             return
         }
 
-        // No local work — fall through to phase-based guidance
-        let phase = progress.currentPhase(for: buildingName, workshopState: workshop)
-
-        switch phase {
-        case .explore:
-            guidanceMessage = "Great exploring! Collect timber before you go."
-            guidanceDestination = nil
-
-        case .learn:
-            guidanceMessage = "Head to the City Map first — learn about the \(buildingName) before exploring!"
-            guidanceDestination = .cityMap
-
-        case .collect:
-            guidanceMessage = "Head to the Workshop — collect materials for the \(buildingName)!"
-            guidanceDestination = .workshop
-
-        case .craft:
-            guidanceMessage = "Visit the Crafting Room — transform your materials for the \(buildingName)!"
-            guidanceDestination = .workshop
-
-        case .build:
+        // 4. Enough timber — guide to Crafting Room to craft Timber Beams
+        let hasCraftedTimberBeams = (workshop.craftedMaterials[.timberBeams] ?? 0) >= 1
+        if hasCraftedTimberBeams {
             guidanceMessage = "All done for the \(buildingName)! Head to the City Map to build!"
             guidanceDestination = .cityMap
+        } else {
+            guidanceMessage = "You have \(timberCount) timber! Head to the Crafting Room to craft Timber Beams for the \(buildingName)!"
+            guidanceDestination = .workshop
         }
 
         withAnimation(.spring(response: 0.4)) {
@@ -286,6 +322,7 @@ struct ForestMapView: View {
     }
 
     private func setupScienceCards(for poi: ForestScene.ForestPOI) {
+        showGuidance = false  // Dismiss guidance when opening science cards
         scienceCards = ScienceCardContent.cards(for: poi.name)
         cardPhases = [:]
         completedCards = []
@@ -330,6 +367,125 @@ struct ForestMapView: View {
     private let flippedW: CGFloat = 560
     private let flippedH: CGFloat = 780
 
+    // MARK: - Tree Info + Collect Timber Overlay (replaces old 4-card science cards)
+
+    private func treeInfoOverlay(poi: ForestScene.ForestPOI) -> some View {
+        let hasAxe = workshop.hasTool(for: .forest)
+        let timberCount = workshop.rawMaterials[.timber] ?? 0
+
+        return ZStack {
+            RenaissanceColors.overlayDimming
+                .ignoresSafeArea()
+                .onTapGesture {
+                    withAnimation(.easeOut(duration: 0.2)) {
+                        selectedPOIIndex = nil
+                    }
+                }
+
+            VStack(spacing: Spacing.md) {
+                Spacer(minLength: 40)
+
+                // Tree header
+                VStack(spacing: Spacing.xs) {
+                    Text(poi.name)
+                        .font(RenaissanceFont.title)
+                        .tracking(Tracking.label)
+                        .foregroundStyle(RenaissanceColors.ochre)
+                    Text(poi.italianName)
+                        .font(RenaissanceFont.dialogSubtitle)
+                        .foregroundStyle(RenaissanceColors.ochre.opacity(0.7))
+                    HStack(spacing: 6) {
+                        poiBadge(poi.woodType, color: RenaissanceColors.ochre)
+                        poiBadge(poi.leafType, color: RenaissanceColors.sageGreen)
+                        poiBadge(poi.maxHeight, color: RenaissanceColors.warmBrown)
+                    }
+                }
+
+                // Biology fact
+                VStack(spacing: Spacing.sm) {
+                    Text(poi.biologyFact)
+                        .font(RenaissanceFont.body)
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(LineHeight.relaxed)
+                        .padding(.horizontal, Spacing.lg)
+
+                    // Building-specific knowledge card lesson (if exists)
+                    if let vm = viewModel, let bid = vm.activeBuildingId {
+                        let treeName = poi.name.lowercased()
+                        let buildingName = vm.activeBuildingName ?? ""
+                        let treeCards = KnowledgeCardContent.cards(for: buildingName, at: treeName)
+                        if let card = treeCards.first {
+                            VStack(spacing: Spacing.xs) {
+                                Text(card.title)
+                                    .font(RenaissanceFont.cardTitle)
+                                    .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                                Text(card.lessonText)
+                                    .font(RenaissanceFont.bodySmall)
+                                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                                    .multilineTextAlignment(.center)
+                                    .lineSpacing(LineHeight.normal)
+                            }
+                            .padding(Spacing.md)
+                            .background(
+                                RoundedRectangle(cornerRadius: CornerRadius.sm)
+                                    .fill(RenaissanceColors.renaissanceBlue.opacity(0.06))
+                            )
+                            .padding(.horizontal, Spacing.md)
+                        }
+                    }
+                }
+                .padding(Spacing.lg)
+                .background(
+                    RoundedRectangle(cornerRadius: CornerRadius.lg)
+                        .fill(RenaissanceColors.parchment.opacity(0.95))
+                )
+                .borderModal(radius: CornerRadius.lg)
+                .padding(.horizontal, Spacing.lg)
+
+                // Collect timber button
+                VStack(spacing: 8) {
+                    Button {
+                        if hasAxe { collectTimber(from: poi) }
+                    } label: {
+                        HStack(spacing: 8) {
+                            if !hasAxe {
+                                Text("Need an Axe (buy at Market — 10 florins)")
+                                    .font(RenaissanceFont.buttonSmall)
+                            } else {
+                                Image(systemName: "leaf.fill")
+                                    .font(.body)
+                                Text("Collect Timber (+\(poi.timberYield) 🪵)  [\(timberCount)/3]")
+                                    .font(RenaissanceFont.buttonSmall)
+                            }
+                        }
+                        .foregroundStyle(.white)
+                        .padding(.vertical, 11)
+                        .frame(maxWidth: .infinity)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(hasAxe ? RenaissanceColors.ochre : RenaissanceColors.stoneGray.opacity(0.5))
+                        )
+                    }
+                    .disabled(!hasAxe)
+                    .padding(.horizontal, Spacing.lg)
+
+                    Button {
+                        withAnimation(.easeOut(duration: 0.2)) { selectedPOIIndex = nil }
+                    } label: {
+                        Text("Continue Exploring")
+                            .font(RenaissanceFont.caption)
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.bottom, 80)
+            }
+        }
+    }
+
+    // MARK: - Old Science Cards (kept for reference, no longer shown)
+
     private func scienceCardsOverlay(poi: ForestScene.ForestPOI) -> some View {
         GeometryReader { geo in
             ZStack {
@@ -352,11 +508,11 @@ struct ForestMapView: View {
                         }
                     }
 
-                    // Vertical layout: tree header + cards grouped, bottom bar
+                    // Vertical layout: tree header + cards + timber button
                     VStack(spacing: 0) {
-                        Spacer()
+                        Spacer(minLength: 20)
 
-                        // Tree header + cards as one unit (same as building overlay)
+                        // Tree header
                         VStack(spacing: Spacing.xs) {
                             Text(poi.name)
                                 .font(RenaissanceFont.title)
@@ -373,21 +529,19 @@ struct ForestMapView: View {
                                 poiBadge(poi.maxHeight, color: RenaissanceColors.warmBrown)
                             }
                         }
-                        .padding(.bottom, Spacing.lg)
+                        .padding(.bottom, Spacing.sm)
 
                         // Cards row — 3D flip in place, pile when one flips
                         cardsRowView(screenSize: geo.size)
 
-                        Spacer()
-                        Spacer()
-
-                        // Bottom bar: bird + timber button
-                        VStack(spacing: 10) {
+                        // Bottom bar: bird encouragement + timber collect button
+                        VStack(spacing: 8) {
                             birdEncouragement
                             collectTimberButton(poi: poi)
                         }
                         .padding(.horizontal, 20)
-                        .padding(.bottom, 16)
+                        .padding(.top, Spacing.sm)
+                        .padding(.bottom, 80) // above inventory bar
                     }
             }
         }
@@ -400,6 +554,10 @@ struct ForestMapView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 showForestGuidance()
             }
+        }
+        .onDisappear {
+            // Release scene to free SpriteKit texture memory when navigating away
+            sceneHolder.scene = nil
         }
     }
 
@@ -1098,9 +1256,9 @@ struct ForestMapView: View {
                 .frame(width: 36, height: 36)
 
             let count = completedCards.count
-            Text(count == 0 ? "Tap a card to discover this tree's secrets!"
-                 : count < 4 ? "\(4 - count) card\(4 - count == 1 ? "" : "s") left — keep going!"
-                 : "All done! Collect your timber!")
+            Text(count == 0 ? "Tap a card to learn about this tree!"
+                 : count < 2 ? "\(2 - count) more card\(2 - count == 1 ? "" : "s") to unlock timber!"
+                 : "Ready! Collect your timber below!")
                 .font(RenaissanceFont.caption)
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
         }
@@ -1112,15 +1270,21 @@ struct ForestMapView: View {
         )
     }
 
-    // MARK: - Collect Timber Button (gated behind card completion)
+    // MARK: - Collect Timber Button (gated behind building knowledge card OR science cards)
+
+    /// Check if timber collection is unlocked at this tree
+    private func isTimberUnlocked(for poi: ForestScene.ForestPOI) -> Bool {
+        // Require at least 1 science card completed to unlock timber
+        return completedCards.count >= 1
+    }
 
     private func collectTimberButton(poi: ForestScene.ForestPOI) -> some View {
-        let allDone = completedCards.count == 4
+        let unlocked = isTimberUnlocked(for: poi)
         let hasAxe = workshop.hasTool(for: .forest)
 
         return VStack(spacing: 6) {
             Button {
-                if allDone && hasAxe { collectTimber(from: poi) }
+                if unlocked && hasAxe { collectTimber(from: poi) }
             } label: {
                 HStack(spacing: 8) {
                     if !hasAxe {
@@ -1129,11 +1293,11 @@ struct ForestMapView: View {
                         Text("Need an Axe to collect timber")
                             .font(RenaissanceFont.buttonSmall)
                     } else {
-                        Image(systemName: allDone ? "leaf.fill" : "lock.fill")
+                        Image(systemName: unlocked ? "leaf.fill" : "lock.fill")
                             .font(.body)
-                        Text(allDone
+                        Text(unlocked
                              ? "Collect Timber (+\(poi.timberYield) 🪵)"
-                             : "Complete all cards to collect")
+                             : "Complete the cards to collect")
                             .font(RenaissanceFont.buttonSmall)
                     }
                 }
@@ -1142,12 +1306,12 @@ struct ForestMapView: View {
                 .frame(maxWidth: .infinity)
                 .background(
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(allDone && hasAxe ? RenaissanceColors.ochre : RenaissanceColors.stoneGray.opacity(0.5))
+                        .fill(unlocked && hasAxe ? RenaissanceColors.ochre : RenaissanceColors.stoneGray.opacity(0.5))
                 )
             }
-            .disabled(!allDone || !hasAxe)
-            .scaleEffect(allDone && hasAxe ? 1.0 : 0.97)
-            .animation(.easeInOut(duration: 0.3), value: allDone)
+            .disabled(!unlocked || !hasAxe)
+            .scaleEffect(unlocked && hasAxe ? 1.0 : 0.97)
+            .animation(.easeInOut(duration: 0.3), value: unlocked)
 
             Button {
                 dismissScienceCards()
@@ -1318,6 +1482,26 @@ struct ForestMapView: View {
             sceneHolder.scene?.playPlayerCelebrateAnimation()
         }
 
+        // Auto-complete the next forest knowledge card for the active building
+        // Each tree has 4 science cards — completing those + collecting timber earns credit
+        if let vm = viewModel {
+            let bid = vm.activeBuildingId ?? vm.buildingPlots.first(where: {
+                !KnowledgeCardContent.cards(for: $0.building.name, in: .forest).isEmpty
+            })?.id
+
+            if let bid = bid {
+                let buildingName = vm.buildingPlots.first(where: { $0.id == bid })?.building.name ?? ""
+                let allForestCards = KnowledgeCardContent.cards(for: buildingName, in: .forest)
+                let progress = vm.buildingProgressMap[bid] ?? BuildingProgress()
+
+                // Complete the NEXT uncompleted forest card (any tree visit counts)
+                if let nextCard = allForestCards.first(where: { !progress.completedCardIDs.contains($0.id) }) {
+                    vm.markCardCompleted(for: bid, cardID: nextCard.id)
+                    print("[FOREST] Auto-completed knowledge card '\(nextCard.id)' from \(poi.name) tree — science cards + timber earned it")
+                }
+            }
+        }
+
         withAnimation(.easeOut(duration: 0.2)) {
             selectedPOIIndex = nil
             cardsAppeared = false
@@ -1333,6 +1517,15 @@ struct ForestMapView: View {
                 withAnimation(.easeOut(duration: 0.3)) {
                     showTimberFloat = false
                 }
+                // Show guidance after timber float fades
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    showForestGuidance()
+                }
+            }
+        } else {
+            // No timber collected (already maxed) — show guidance immediately
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                showForestGuidance()
             }
         }
     }

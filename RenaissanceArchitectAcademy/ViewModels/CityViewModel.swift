@@ -445,19 +445,23 @@ class CityViewModel: ObservableObject {
         guard let plot = buildingPlots.first(where: { $0.id == plotId }) else { return false }
         let progress = buildingProgressMap[plotId] ?? BuildingProgress()
 
-        // 1. Lesson must be read first
+        // For buildings with knowledge cards: ALL cards + all materials
+        let totalCards = KnowledgeCardContent.cards(for: plot.building.name)
+        if !totalCards.isEmpty {
+            let allCardsDone = totalCards.allSatisfy { progress.completedCardIDs.contains($0.id) }
+            let materialsOk = plot.building.requiredMaterials.allSatisfy { item, needed in
+                (workshopState.craftedMaterials[item] ?? 0) >= needed
+            }
+            // Sketch required if sketching content exists
+            let sketchOk = SketchingContent.sketchingChallenge(for: plot.building.name) == nil || progress.sketchCompleted
+            return allCardsDone && materialsOk && sketchOk
+        }
+
+        // Legacy path: buildings without knowledge cards
         let lessonOk = LessonContent.lesson(for: plot.building.name) == nil || progress.lessonRead
-
-        // 2. All sciences must be earned
         let allSciencesBadged = plot.building.sciences.allSatisfy { progress.scienceBadgesEarned.contains($0) }
-
-        // 3. Sketch must be done if sketching content exists
         let sketchOk = SketchingContent.sketchingChallenge(for: plot.building.name) == nil || progress.sketchCompleted
-
-        // 4. Quiz must be passed if quiz content exists
         let quizOk = ChallengeContent.interactiveChallenge(for: plot.building.name) == nil || progress.quizPassed
-
-        // 5. All required materials collected & crafted
         let materialsOk = plot.building.requiredMaterials.allSatisfy { item, needed in
             (workshopState.craftedMaterials[item] ?? 0) >= needed
         }
@@ -524,5 +528,75 @@ class CityViewModel: ObservableObject {
         let buildingName = buildingPlots.first(where: { $0.id == plotId })?.building.name ?? ""
         let envCards = KnowledgeCardContent.cards(for: buildingName, in: environment)
         return envCards.first { !progress.completedCardIDs.contains($0.id) }
+    }
+
+    // MARK: - Phase Completion Detection
+
+    /// Check if the current phase's work is complete for a building in the given environment
+    func isPhaseComplete(for plotId: Int, phase: BuildingPhase, workshopState: WorkshopState) -> Bool {
+        let progress = buildingProgressMap[plotId] ?? BuildingProgress()
+        let buildingName = buildingPlots.first(where: { $0.id == plotId })?.building.name ?? ""
+
+        switch phase {
+        case .learn:
+            let cityCards = KnowledgeCardContent.cards(for: buildingName, in: .cityMap)
+            let citySketches = MuseumSketchContent.sketches(for: buildingName)
+            let cityCardsDone = cityCards.allSatisfy { progress.completedCardIDs.contains($0.id) }
+            let sketchesDone = citySketches.allSatisfy { progress.completedSketchStudyIDs.contains($0.id) }
+            return cityCards.isEmpty || (cityCardsDone && sketchesDone)
+
+        case .collect:
+            let workshopCards = KnowledgeCardContent.cards(for: buildingName, in: .workshop)
+            return workshopCards.allSatisfy { progress.completedCardIDs.contains($0.id) }
+
+        case .explore:
+            let forestCards = KnowledgeCardContent.cards(for: buildingName, in: .forest)
+            return forestCards.isEmpty || forestCards.allSatisfy { progress.completedCardIDs.contains($0.id) }
+
+        case .craft:
+            let craftingCards = KnowledgeCardContent.cards(for: buildingName, in: .craftingRoom)
+            return craftingCards.allSatisfy { progress.completedCardIDs.contains($0.id) }
+
+        case .build:
+            return progress.constructionSequenceCompleted
+        }
+    }
+
+    /// The destination to navigate to after completing a phase
+    func nextDestination(after phase: BuildingPhase) -> SidebarDestination {
+        switch phase {
+        case .learn:   return .workshop
+        case .collect: return .forest
+        case .explore: return .workshop   // Goes through workshop to reach crafting room
+        case .craft:   return .cityMap
+        case .build:   return .cityMap
+        }
+    }
+
+    /// The human-readable name for the next destination
+    func nextDestinationName(after phase: BuildingPhase) -> String {
+        switch phase {
+        case .learn:   return "Workshop"
+        case .collect: return "Forest"
+        case .explore: return "Crafting Room"
+        case .craft:   return "City Map"
+        case .build:   return "City Map"
+        }
+    }
+
+    /// Tutorial hint for first building (Pantheon, id=4) explaining the next environment
+    func pantheonTutorialHint(for phase: BuildingPhase) -> String? {
+        switch phase {
+        case .learn:
+            return "The Workshop has stations like the Quarry and Volcano. Walk to each one to collect materials and discover more knowledge cards!"
+        case .collect:
+            return "The Italian Forest has trees with timber you'll need. Tap each tree to learn and collect!"
+        case .explore:
+            return "The Crafting Room is inside the Workshop. Mix materials at the Workbench and fire them in the Furnace!"
+        case .craft:
+            return "You've done it! All that's left is the construction puzzle. Tap the building to place it on your city!"
+        case .build:
+            return nil
+        }
     }
 }

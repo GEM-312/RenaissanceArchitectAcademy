@@ -351,9 +351,17 @@ Styles/[name]_frames/clean/    # Photoshop exports (no bg)
 - **ALWAYS read the FULL file before editing it.** Never edit a file based on memory, summaries, or assumptions. Use the Read tool on every file you are about to modify, every single time, no exceptions. If the file is large, read it in chunks until you have seen all relevant sections. Failure to do this causes wrong edits, missed context, and broken code.
 - **ALWAYS read related files before making cross-file changes.** If a change touches callbacks, state, or UI across multiple files (e.g. a Scene + its MapView wrapper), read ALL of them first.
 
+## Teaching System (PROACTIVE)
+- **ALWAYS teach while coding.** When introducing a new pattern, avoiding a pitfall, fixing a bug, or writing non-trivial logic, deliver a short teaching moment.
+- Print the title in green via Bash: `echo -e "\n\033[1;32m━━━ TEACHING MOMENT: [Title] ━━━\033[0m\n"`
+- Follow with: THE CONCEPT (1-2 sentences) → STEP BY STEP (numbered) → IN OUR CODE (specific reference) → KEY TAKEAWAY (1 sentence)
+- Append every teaching moment to `Teaching.md` under the appropriate section
+- Use `/teach [topic]` to request a specific lesson on demand
+- Teaching style: MIT professor — clear, step-by-step, real-world analogies, no fluff
+
 ## Notes
 - Marina prefers direct fixes over long explanations
-- Teach concepts as you go when making changes
+- Teach concepts as you go when making changes — use the Teaching System above
 - Always push to GitHub after significant changes
 - New Midjourney assets are usually huge — always resize before adding
 - Challenge.swift contains all quiz questions

@@ -80,6 +80,10 @@ struct GoldsmithMapView: View {
                 }
             }
         }
+        .onDisappear {
+            // Release scene to free SpriteKit texture memory when navigating away
+            sceneHolder.scene = nil
+        }
     }
 
     // MARK: - Scene Factory

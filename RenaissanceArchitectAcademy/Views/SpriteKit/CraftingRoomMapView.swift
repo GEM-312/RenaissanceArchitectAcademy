@@ -204,6 +204,10 @@ struct CraftingRoomMapView: View {
                 showCraftingGuidance()
             }
         }
+        .onDisappear {
+            // Release scene to free SpriteKit texture memory when navigating away
+            sceneHolder.scene = nil
+        }
         .onChange(of: activeStation) { oldValue, newValue in
             if oldValue != nil && newValue == nil {
                 // Station overlay dismissed — player stays where they are
@@ -261,6 +265,9 @@ struct CraftingRoomMapView: View {
                 }
             }
 
+            // Dismiss any stale guidance before showing station overlay
+            self.showGuidance = false
+
             // Check for next uncompleted knowledge card at this station
             let stationKey = "\(station)"  // enum case name matches KnowledgeCard stationKey
             if let vm = viewModel, let bid = vm.activeBuildingId,
@@ -309,6 +316,15 @@ struct CraftingRoomMapView: View {
 
         // LOCAL WORK FIRST: check if there's something useful to do here
 
+        // 0. Is there something in the furnace ready to fire? Guide to furnace!
+        if workshop.furnaceInput != nil && !workshop.isProcessing {
+            let recipeName = workshop.currentRecipe?.output.rawValue ?? "your mixture"
+            guidanceMessage = "Head to the Furnace — fire \(recipeName) to finish crafting! (\(craftedCount)/\(totalRequired) materials crafted)"
+            guidanceDestination = nil
+            withAnimation(.spring(response: 0.4)) { showGuidance = true }
+            return
+        }
+
         // 1. Can the player craft a recipe right now? Tell them the recipe + temperature!
         if let building = building, let recipe = nextCraftableRecipeInCraftingRoom(for: building) {
             let ingredientList = recipe.ingredients.map { "\($0.value) \($0.key.rawValue)" }.joined(separator: " + ")
@@ -321,9 +337,17 @@ struct CraftingRoomMapView: View {
         // 2. Are there crafting room knowledge cards to discover?
         let craftingCards = KnowledgeCardContent.cards(for: buildingName, in: .craftingRoom)
         let hasMortar = (workshop.tools[.mortarAndPestle] ?? 0) > 0
-        // Skip pigment table cards if player doesn't have mortar & pestle
-        let availableCards = craftingCards.filter { card in
-            guard !progress.completedCardIDs.contains(card.id) else { return false }
+
+        // If pigment table card is the only one left and player doesn't have mortar — guide them to buy it
+        let uncompletedCards = craftingCards.filter { !progress.completedCardIDs.contains($0.id) }
+        if !uncompletedCards.isEmpty && uncompletedCards.allSatisfy({ $0.stationKey == "pigmentTable" }) && !hasMortar {
+            guidanceMessage = "Buy a Mortar & Pestle at the Market (10 florins) to access the Pigment Table and complete your last card!"
+            guidanceDestination = .workshop
+            withAnimation(.spring(response: 0.4)) { showGuidance = true }
+            return
+        }
+
+        let availableCards = uncompletedCards.filter { card in
             if card.stationKey == "pigmentTable" && !hasMortar { return false }
             return true
         }
@@ -342,28 +366,7 @@ struct CraftingRoomMapView: View {
             return
         }
 
-        // 3. Player has raw materials — tell them specifically what they can work toward
-        if let building = building,
-           !workshop.rawMaterials.isEmpty,
-           workshop.rawMaterials.values.contains(where: { $0 > 0 }) {
-            // Find the next needed recipe and show what's missing
-            if let (recipe, missing) = nextNeededRecipeWithMissing(for: building) {
-                if missing.isEmpty {
-                    // Shouldn't happen (caught by step 1), but just in case
-                    guidanceMessage = "Walk to the Workbench to craft \(recipe.output.rawValue)!"
-                } else {
-                    let missingList = missing.map { "\($0.value) \($0.key.rawValue)" }.joined(separator: ", ")
-                    guidanceMessage = "To craft \(recipe.output.rawValue), you still need \(missingList). Collect them at the Workshop! (\(craftedCount)/\(totalRequired) crafted)"
-                }
-            } else {
-                guidanceMessage = "Try combining materials at the Workbench! Drag ingredients into the slots."
-            }
-            guidanceDestination = needsMoreMaterials(for: building) ? .workshop : nil
-            withAnimation(.spring(response: 0.4)) { showGuidance = true }
-            return
-        }
-
-        // 4. All building materials crafted? Celebrate!
+        // 3. All building materials crafted? Celebrate!
         if totalRequired > 0 && craftedCount >= totalRequired {
             guidanceMessage = "All \(totalRequired) materials for the \(buildingName) are crafted! Head to the City Map to build!"
             guidanceDestination = .cityMap
@@ -371,7 +374,23 @@ struct CraftingRoomMapView: View {
             return
         }
 
-        // 5. No raw materials at all — tell them what to collect
+        // 4. Player has raw materials — tell them specifically what they can work toward
+        if let building = building {
+            if let (recipe, missing) = nextNeededRecipeWithMissing(for: building) {
+                if missing.isEmpty {
+                    guidanceMessage = "Walk to the Workbench to craft \(recipe.output.rawValue)! (\(craftedCount)/\(totalRequired) crafted)"
+                    guidanceDestination = nil
+                } else {
+                    let missingList = missing.map { "\($0.value) \($0.key.rawValue)" }.joined(separator: ", ")
+                    guidanceMessage = "To craft \(recipe.output.rawValue), you still need \(missingList). Collect them at the Workshop! (\(craftedCount)/\(totalRequired) crafted)"
+                    guidanceDestination = .workshop
+                }
+                withAnimation(.spring(response: 0.4)) { showGuidance = true }
+                return
+            }
+        }
+
+        // 5. No recipe found — tell them what to collect
         if let building = building, let (recipe, _) = nextNeededRecipeWithMissing(for: building) {
             let ingredientList = recipe.ingredients.map { "\($0.value) \($0.key.rawValue)" }.joined(separator: ", ")
             guidanceMessage = "To craft \(recipe.output.rawValue), collect \(ingredientList) at the Workshop. (\(craftedCount)/\(totalRequired) crafted)"
@@ -393,8 +412,17 @@ struct CraftingRoomMapView: View {
             guidanceDestination = .workshop
 
         case .explore:
-            guidanceMessage = "Explore the Forest — discover more about the \(buildingName)!"
-            guidanceDestination = .forest
+            // Phase stuck on .explore due to forest knowledge cards not wired
+            // Check timber directly — if player has enough, guide to craft instead
+            let timberCount = workshop.rawMaterials[.timber] ?? 0
+            let hasTimberBeams = (workshop.craftedMaterials[.timberBeams] ?? 0) >= 1
+            if hasTimberBeams || timberCount >= 3 {
+                guidanceMessage = "Craft your materials at the Workbench and Furnace! (\(craftedCount)/\(totalRequired) crafted)"
+                guidanceDestination = nil
+            } else {
+                guidanceMessage = "Visit the Forest to collect timber for the \(buildingName)! (\(timberCount)/3 timber)"
+                guidanceDestination = .forest
+            }
 
         case .craft:
             guidanceMessage = "Craft your materials at the Workbench and Furnace! (\(craftedCount)/\(totalRequired) crafted)"

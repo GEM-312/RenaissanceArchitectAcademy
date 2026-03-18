@@ -137,24 +137,25 @@ struct QuarryMiniGameView: View {
     // MARK: - Phase 1: Material Choice
 
     private var materialChoiceCard: some View {
-        VStack(spacing: 20) {
-            // Header — bird + title (same as Earn Florins)
-            HStack(spacing: 12) {
+        VStack(spacing: Spacing.lg) {
+            // Header
+            HStack(spacing: 14) {
                 BirdCharacter()
                     .frame(width: 70, height: 70)
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 6) {
                     Text("La Cava")
-                        .font(.custom("Cinzel-Bold", size: 22))
+                        .font(RenaissanceFont.title)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text("Choose your stone. Harder stone requires faster hands.")
-                        .font(RenaissanceFont.dialogSubtitle)
+                        .font(RenaissanceFont.body)
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                 }
+                Spacer()
             }
 
-            // Material option rows (same pattern as earnOptionCard)
-            VStack(spacing: 10) {
+            // Material option rows
+            VStack(spacing: 12) {
                 materialOptionRow(
                     material: .limestone,
                     difficulty: "Easy",
@@ -175,16 +176,17 @@ struct QuarryMiniGameView: View {
             Button("Back") {
                 onDismiss()
             }
-            .font(RenaissanceFont.bodySmall)
-            .foregroundStyle(RenaissanceColors.sepiaInk)
+            .font(RenaissanceFont.body)
+            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
         }
         .padding(Spacing.xl)
-        .adaptiveWidth(400)
+        .padding(.bottom, 60)
+        .frame(maxWidth: .infinity)
         .background(
-            RoundedRectangle(cornerRadius: CornerRadius.lg)
+            RoundedRectangle(cornerRadius: CornerRadius.xl)
                 .fill(RenaissanceColors.parchment)
         )
-        .borderWorkshop()
+        .borderModal(radius: CornerRadius.xl)
     }
 
     private func materialOptionRow(material: Material, difficulty: String, description: String) -> some View {
@@ -192,37 +194,37 @@ struct QuarryMiniGameView: View {
             selectedMaterial = material
             withAnimation { phase = .intro }
         } label: {
-            HStack(spacing: 12) {
-                // Icon square (matches earnOptionCard icon box)
+            HStack(spacing: 14) {
+                // Icon
                 Text(material.icon)
-                    .font(.title3)
-                    .frame(width: 32, height: 32)
+                    .font(.title2)
+                    .frame(width: 44, height: 44)
                     .background(
                         RoundedRectangle(cornerRadius: CornerRadius.sm)
                             .fill(RenaissanceColors.warmBrown.opacity(0.1))
                     )
 
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text(material.rawValue)
-                        .font(.custom("EBGaramond-Regular", size: 16))
+                        .font(RenaissanceFont.bodySemibold)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text(description)
-                        .font(RenaissanceFont.captionSmall)
+                        .font(RenaissanceFont.bodySmall)
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
-                        .lineLimit(1)
+                        .lineLimit(2)
                 }
 
                 Spacer()
 
                 Text(difficulty)
-                    .font(.custom("EBGaramond-SemiBold", size: 13))
+                    .font(RenaissanceFont.bodySemibold)
                     .foregroundStyle(difficultyColor(difficulty))
 
                 Image(systemName: "chevron.right")
-                    .font(.caption)
+                    .font(.body)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
-            .padding(Spacing.sm)
+            .padding(Spacing.md)
             .background(
                 RoundedRectangle(cornerRadius: 10)
                     .fill(RenaissanceColors.parchment.opacity(0.6))

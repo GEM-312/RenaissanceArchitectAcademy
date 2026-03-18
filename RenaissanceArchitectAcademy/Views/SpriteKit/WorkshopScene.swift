@@ -23,11 +23,11 @@ class WorkshopScene: SKScene, ScrollZoomable {
     // Map size — matches city's 3500×2500 so terrain renders at same density
     private let mapSize = CGSize(width: 3500, height: 2500)
 
-    /// Terrain sprite reference for blur effect
+    /// Terrain sprite reference
     private var terrainSprite: SKSpriteNode?
 
-    /// Effect node wrapping terrain for Gaussian blur during walking
-    private var terrainEffectNode: SKEffectNode?
+    /// Semi-transparent overlay that fades in during walking (replaces memory-heavy CIGaussianBlur)
+    private var walkingOverlay: SKSpriteNode?
 
     /// Whether the player is currently walking
     private(set) var isPlayerWalking = false
@@ -348,17 +348,19 @@ class WorkshopScene: SKScene, ScrollZoomable {
         terrainTexture.filteringMode = .linear
         let terrain = SKSpriteNode(texture: terrainTexture)
         terrain.size = mapSize
-        // Wrap terrain in SKEffectNode — base blur always on, walking increases
-        let effectNode = SKEffectNode()
-        effectNode.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
-        effectNode.zPosition = -100
-        effectNode.shouldEnableEffects = true
-        effectNode.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": 1.0])
-        effectNode.shouldRasterize = true
-        effectNode.addChild(terrain)
-        addChild(effectNode)
+        terrain.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
+        terrain.zPosition = -100
+        addChild(terrain)
         terrainSprite = terrain
-        terrainEffectNode = effectNode
+
+        // Walking overlay — semi-transparent parchment that fades in during walking
+        // Replaces SKEffectNode+CIGaussianBlur which used ~140MB of rasterization buffer
+        let overlay = SKSpriteNode(color: PlatformColor(red: 0.96, green: 0.91, blue: 0.84, alpha: 1.0), size: mapSize)
+        overlay.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
+        overlay.zPosition = -99
+        overlay.alpha = 0
+        addChild(overlay)
+        walkingOverlay = overlay
     }
 
     // MARK: - Grid Lines (notebook style)
@@ -461,6 +463,21 @@ class WorkshopScene: SKScene, ScrollZoomable {
         onPlayerPositionChanged?(CGPoint(x: normalizedX, y: normalizedY), playerNode.isWalking)
     }
 
+    // MARK: - Scene Lifecycle
+
+    override func willMove(from view: SKView) {
+        removeAllActions()
+        removeAllChildren()
+        terrainSprite = nil
+        walkingOverlay = nil
+        playerNode = nil
+        hasSetup = false
+        // Break retain cycles from closures capturing SwiftUI views
+        onPlayerPositionChanged = nil
+        onStationReached = nil
+        onPlayerStartedWalking = nil
+    }
+
     override func update(_ currentTime: TimeInterval) {
         // Check for theme change
         let currentDark = GameSettings.shared.isDarkMode
@@ -499,19 +516,14 @@ class WorkshopScene: SKScene, ScrollZoomable {
             clampCamera()
         }
 
-        // Zoom-based terrain blur — more blur when zoomed in (not during walking, which has its own blur)
+        // Zoom-based terrain fade — subtle overlay when zoomed in (replaces CIGaussianBlur to save memory)
         if let cam = cameraNode, !isPlayerWalking, !isFollowingPlayer {
             let scale = cam.xScale
             if scale >= 1.0 {
-                // Zoomed out to full map — base blur
-                terrainEffectNode?.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": 1.0])
-                terrainEffectNode?.shouldRasterize = true
+                walkingOverlay?.alpha = 0
             } else {
-                // Zoomed in — interpolate blur from 1.0 (at scale 1.0) to 6.0 (at scale 0.5)
-                let t = 1.0 - max(0, min(1, (scale - 0.5) / 0.5))  // 0 at scale 1.0, 1 at scale 0.5
-                let blurRadius = 1.0 + t * 5.0
-                terrainEffectNode?.shouldRasterize = false
-                terrainEffectNode?.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": blurRadius])
+                let t = 1.0 - max(0, min(1, (scale - 0.5) / 0.5))
+                walkingOverlay?.alpha = t * 0.15
             }
         }
     }
@@ -856,16 +868,14 @@ class WorkshopScene: SKScene, ScrollZoomable {
         }
     }
 
-    // MARK: - Terrain Effects (blur during walking)
+    // MARK: - Terrain Effects (walking overlay fade)
 
     private func startWalkingTerrainEffects() {
-        terrainEffectNode?.shouldRasterize = false
-        terrainEffectNode?.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": 8.0])
+        walkingOverlay?.run(SKAction.fadeAlpha(to: 0.25, duration: 0.3))
     }
 
     private func stopWalkingTerrainEffects() {
-        terrainEffectNode?.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": 1.0])
-        terrainEffectNode?.shouldRasterize = true
+        walkingOverlay?.run(SKAction.fadeAlpha(to: 0, duration: 0.3))
     }
 
     // MARK: - Station Camera Zoom

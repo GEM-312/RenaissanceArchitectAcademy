@@ -121,22 +121,23 @@ struct VolcanoMiniGameView: View {
     // MARK: - Choice Card
 
     private var choiceCard: some View {
-        VStack(spacing: 20) {
-            HStack(spacing: 12) {
+        VStack(spacing: Spacing.lg) {
+            HStack(spacing: 14) {
                 BirdCharacter()
                     .frame(width: 70, height: 70)
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 6) {
                     Text("Il Vulcano")
-                        .font(.custom("Cinzel-Bold", size: 22))
+                        .font(RenaissanceFont.title)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text("The volcano gives three treasures — each demands different skill.")
-                        .font(RenaissanceFont.dialogSubtitle)
+                        .font(RenaissanceFont.body)
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                 }
+                Spacer()
             }
 
-            VStack(spacing: 10) {
+            VStack(spacing: 12) {
                 materialOptionRow(
                     material: .volcanicAsh,
                     difficulty: "Easy",
@@ -155,16 +156,17 @@ struct VolcanoMiniGameView: View {
             }
 
             Button("Back") { onDismiss() }
-                .font(RenaissanceFont.bodySmall)
-                .foregroundStyle(RenaissanceColors.sepiaInk)
+                .font(RenaissanceFont.body)
+                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
         }
         .padding(Spacing.xl)
-        .adaptiveWidth(400)
+        .padding(.bottom, 60)
+        .frame(maxWidth: .infinity)
         .background(
-            RoundedRectangle(cornerRadius: CornerRadius.lg)
+            RoundedRectangle(cornerRadius: CornerRadius.xl)
                 .fill(RenaissanceColors.parchment)
         )
-        .borderWorkshop()
+        .borderModal(radius: CornerRadius.xl)
     }
 
     private func materialOptionRow(material: Material, difficulty: String, description: String) -> some View {
@@ -179,21 +181,21 @@ struct VolcanoMiniGameView: View {
                 }
             }
         } label: {
-            HStack(spacing: 12) {
+            HStack(spacing: 14) {
                 Text(material.icon)
-                    .font(.title3)
-                    .frame(width: 32, height: 32)
+                    .font(.title2)
+                    .frame(width: 44, height: 44)
                     .background(
                         RoundedRectangle(cornerRadius: CornerRadius.sm)
                             .fill(RenaissanceColors.furnaceOrange.opacity(0.1))
                     )
 
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text(material.rawValue)
-                        .font(.custom("EBGaramond-Regular", size: 16))
+                        .font(RenaissanceFont.bodySemibold)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text(description)
-                        .font(RenaissanceFont.captionSmall)
+                        .font(RenaissanceFont.bodySmall)
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                         .lineLimit(2)
                 }
@@ -201,14 +203,14 @@ struct VolcanoMiniGameView: View {
                 Spacer()
 
                 Text(difficulty)
-                    .font(.custom("EBGaramond-SemiBold", size: 13))
+                    .font(RenaissanceFont.bodySemibold)
                     .foregroundStyle(difficultyColor(difficulty))
 
                 Image(systemName: "chevron.right")
-                    .font(.caption)
+                    .font(.body)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
-            .padding(Spacing.sm)
+            .padding(Spacing.md)
             .background(
                 RoundedRectangle(cornerRadius: 10)
                     .fill(RenaissanceColors.parchment.opacity(0.6))

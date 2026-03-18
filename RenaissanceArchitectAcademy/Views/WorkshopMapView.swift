@@ -578,6 +578,10 @@ struct WorkshopMapView: View {
             // Show bird guidance if player has an active building with workshop cards
             checkArrivalGuidance()
         }
+        .onDisappear {
+            // Release scene to free SpriteKit texture memory when navigating away
+            sceneHolder.scene = nil
+        }
         .onChange(of: activeStation) { oldValue, newValue in
             if oldValue != nil && newValue == nil {
                 // Station overlay dismissed — show guidance (player stays where they are)
@@ -703,25 +707,40 @@ struct WorkshopMapView: View {
 
         // If not in COLLECT phase, guide player to the correct environment
         if phase != .collect {
-            switch phase {
-            case .learn:
-                guidanceMessage = "Head to the City Map first — learn about the \(buildingName)!"
-                guidanceDestination = .cityMap
-            case .explore:
-                guidanceMessage = "Explore the Forest — discover more about the \(buildingName) and collect timber!"
-                guidanceDestination = .forest
-            case .craft:
-                guidanceMessage = "Time for the Crafting Room — transform your materials for the \(buildingName)!"
-                guidanceDestination = nil
-                guidanceStationType = .craftingRoom
-            case .build:
-                guidanceMessage = "All done for the \(buildingName)! Head to the City Map to build!"
-                guidanceDestination = .cityMap
-            case .collect:
-                break  // handled below
+            // Special case: phase says "explore" but player may already have enough timber
+            // The phase gets stuck on .explore because forest knowledge cards can't be completed
+            // in the current system. Check timber directly instead.
+            if phase == .explore {
+                let timberCount = workshop.rawMaterials[.timber] ?? 0
+                let needsTimber = building?.requiredMaterials[.timberBeams] != nil
+                let hasTimberBeams = (workshop.craftedMaterials[.timberBeams] ?? 0) >= 1
+                if !needsTimber || hasTimberBeams || timberCount >= 3 {
+                    // Player has enough timber or doesn't need it — skip forest, continue with workshop/crafting
+                    // Fall through to COLLECT phase logic below
+                } else {
+                    guidanceMessage = "Explore the Forest — collect timber for the \(buildingName)! (\(timberCount)/3 timber)"
+                    guidanceDestination = .forest
+                    withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
+                    return
+                }
+            } else {
+                switch phase {
+                case .learn:
+                    guidanceMessage = "Head to the City Map first — learn about the \(buildingName)!"
+                    guidanceDestination = .cityMap
+                case .craft:
+                    guidanceMessage = "Time for the Crafting Room — transform your materials for the \(buildingName)!"
+                    guidanceDestination = nil
+                    guidanceStationType = .craftingRoom
+                case .build:
+                    guidanceMessage = "All done for the \(buildingName)! Head to the City Map to build!"
+                    guidanceDestination = .cityMap
+                default:
+                    break
+                }
+                withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
+                return
             }
-            withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
-            return
         }
 
         // ── COLLECT PHASE: Workshop-specific guidance ──
@@ -841,6 +860,30 @@ struct WorkshopMapView: View {
             }
         }
 
+        // PRIORITY 8: Uncompleted crafting room cards needing tools (e.g., pigment table needs mortar & pestle)
+        if !buildingName.isEmpty {
+            let craftingCards = KnowledgeCardContent.cards(for: buildingName, in: .craftingRoom)
+            let uncompletedCrafting = craftingCards.filter { !progress.completedCardIDs.contains($0.id) }
+            if !uncompletedCrafting.isEmpty {
+                let hasMortar = (workshop.tools[.mortarAndPestle] ?? 0) > 0
+                if uncompletedCrafting.contains(where: { $0.stationKey == "pigmentTable" }) && !hasMortar {
+                    if florins >= toolCost {
+                        guidanceMessage = "Buy a Mortar & Pestle at the Market (10 florins) — you need it for the Pigment Table in the Crafting Room!"
+                        guidanceDestination = nil
+                        guidanceStationType = .market
+                        withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
+                        return
+                    }
+                } else {
+                    guidanceMessage = "Head to the Crafting Room — a knowledge card awaits at the \(uncompletedCrafting.first?.stationKey.capitalized ?? "station")!"
+                    guidanceDestination = nil
+                    guidanceStationType = .craftingRoom
+                    withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
+                    return
+                }
+            }
+        }
+
         // Default
         guidanceMessage = "Explore the workshop — collect materials and learn about building!"
         guidanceDestination = nil
@@ -946,6 +989,7 @@ struct WorkshopMapView: View {
         guard let vm = viewModel, let bid = vm.activeBuildingId else { return }
         let stationKey = "\(station)"
         if let nextCard = vm.nextUncompletedCard(for: bid, at: stationKey) {
+            showArrivalGuidance = false  // Dismiss guidance before showing card
             stationKnowledgeCards = [nextCard]
             SubsonicController.shared.play(sound: "cards_appear.mp3")
             withAnimation(.spring(response: 0.3)) {
@@ -972,6 +1016,7 @@ struct WorkshopMapView: View {
         showRiverMiniGame = false
         showClayPitMiniGame = false
         showFarmMiniGame = false
+        showArrivalGuidance = false
     }
 
     /// Show a single overlay based on tool ownership:
@@ -1329,22 +1374,39 @@ struct WorkshopMapView: View {
     // MARK: - Layer 5: Collection Overlay
 
     private func collectionOverlay(for station: ResourceStationType) -> some View {
-        VStack(spacing: 10) {
-            // Only shown when player lacks the required tool
-            if let requiredTool = Tool.requiredFor(station: station) {
-                toolRequirementView(tool: requiredTool, station: station)
-            } else {
-                // Fallback (station has no tool requirement) — show collection
-                collectionMaterialsView(for: station)
+        VStack(spacing: 0) {
+            Spacer()
+            VStack(spacing: 12) {
+                // Station name header
+                HStack {
+                    Text(station.label)
+                        .font(RenaissanceFont.title2)
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                    Spacer()
+                    if let building = viewModel?.activeBuildingName {
+                        Text("for the \(building)")
+                            .font(RenaissanceFont.caption)
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                    }
+                }
+
+                // Only shown when player lacks the required tool
+                if let requiredTool = Tool.requiredFor(station: station) {
+                    toolRequirementView(tool: requiredTool, station: station)
+                } else {
+                    // Fallback (station has no tool requirement) — show collection
+                    collectionMaterialsView(for: station)
+                }
             }
+            .padding(Spacing.xl)
+            .padding(.bottom, 60) // above inventory bar
+            .background(
+                RoundedRectangle(cornerRadius: CornerRadius.xl)
+                    .fill(settings.cardBackground)
+            )
+            .borderModal(radius: CornerRadius.xl)
         }
-        .padding(Spacing.md)
-        .frame(width: 280)
-        .background(
-            RoundedRectangle(cornerRadius: CornerRadius.lg)
-                .fill(settings.cardBackground)
-        )
-        .padding(.trailing, Spacing.md)
+        .ignoresSafeArea(edges: .bottom)
     }
 
     /// Shows when player lacks the tool for a station — compact right-side card
@@ -1423,12 +1485,12 @@ struct WorkshopMapView: View {
             } else {
                 // Florins display
                 if let vm = viewModel {
-                    HStack(spacing: 4) {
+                    HStack(spacing: 6) {
                         Image(systemName: "dollarsign.circle.fill")
-                            .font(.caption)
+                            .font(.body)
                             .foregroundStyle(settings.pillTextColor)
-                        Text("\(vm.goldFlorins)")
-                            .font(.custom("EBGaramond-Regular", size: 15))
+                        Text("\(vm.goldFlorins) florins")
+                            .font(RenaissanceFont.bodySemibold)
                             .foregroundStyle(settings.cardTextColor)
                     }
                 }
@@ -1481,24 +1543,24 @@ struct WorkshopMapView: View {
                                 }
                             }
                         } label: {
-                            VStack(spacing: 2) {
+                            VStack(spacing: 4) {
                                 Text(material.icon)
-                                    .font(.body)
+                                    .font(.title2)
                                 Text(material.rawValue)
-                                    .font(.custom("EBGaramond-Regular", size: 13))
+                                    .font(RenaissanceFont.body)
                                     .foregroundStyle(settings.cardTextColor)
                                     .lineLimit(1)
                                     .minimumScaleFactor(0.8)
-                                HStack(spacing: 2) {
+                                HStack(spacing: 3) {
                                     Image(systemName: "dollarsign.circle.fill")
-                                        .font(.system(size: 9))
+                                        .font(.system(size: 12))
                                         .foregroundStyle(settings.cardTextColor)
                                     Text("\(material.cost)")
-                                        .font(.custom("EBGaramond-Regular", size: 12))
+                                        .font(RenaissanceFont.bodySmall)
                                         .foregroundStyle(canAfford ? settings.cardTextColor : RenaissanceColors.errorRed)
                                 }
                             }
-                            .padding(6)
+                            .padding(10)
                             .frame(maxWidth: .infinity)
                             .background(
                                 RoundedRectangle(cornerRadius: CornerRadius.sm)
@@ -1512,14 +1574,14 @@ struct WorkshopMapView: View {
                     }
                 }
 
-                Button("Done") {
+                Button("Back") {
                     withAnimation(.spring(response: 0.3)) {
                         showCollectionOverlay = false
                         showHintBubble = false
                         activeStation = nil
                     }
                 }
-                .font(RenaissanceFont.captionSmall)
+                .font(RenaissanceFont.bodySmall)
                 .foregroundStyle(settings.cardTextColor.opacity(0.5))
             }
         }

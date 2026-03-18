@@ -123,6 +123,7 @@
 		0E0 /* MuseumSketch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E0 /* MuseumSketch.swift */; };
 		0E1 /* MuseumSketchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E1 /* MuseumSketchService.swift */; };
 		0E2 /* SketchStudyOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2 /* SketchStudyOverlay.swift */; };
+		0E3 /* PhaseCompleteOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3 /* PhaseCompleteOverlay.swift */; };
 		543AD36B2F60C199001895ED /* card_flip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 183 /* card_flip.mp3 */; };
 		543AD36C2F60C199001895ED /* GirlIntroAudio.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 182 /* GirlIntroAudio.m4a */; };
 		544299832F32E0F700F92073 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = 544299822F32E0F700F92073 /* Pow */; };
@@ -300,6 +301,7 @@
 		1E0 /* MuseumSketch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MuseumSketch.swift; sourceTree = "<group>"; };
 		1E1 /* MuseumSketchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MuseumSketchService.swift; sourceTree = "<group>"; };
 		1E2 /* SketchStudyOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchStudyOverlay.swift; sourceTree = "<group>"; };
+		1E3 /* PhaseCompleteOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhaseCompleteOverlay.swift; sourceTree = "<group>"; };
 		544299972F3646ED00F92073 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BuildingNode.swift; path = Views/SpriteKit/BuildingNode.swift; sourceTree = "<group>"; };
 		544299982F3646ED00F92073 /* CityMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityMapView.swift; path = Views/SpriteKit/CityMapView.swift; sourceTree = "<group>"; };
 		544299992F3646ED00F92073 /* CityScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityScene.swift; path = Views/SpriteKit/CityScene.swift; sourceTree = "<group>"; };
@@ -469,6 +471,7 @@
 				141 /* OnboardingView.swift */,
 				1A3 /* SettingsView.swift */,
 				1E2 /* SketchStudyOverlay.swift */,
+				1E3 /* PhaseCompleteOverlay.swift */,
 				308 /* Sketching */,
 				309 /* Onboarding */,
 				310 /* StationMiniGames */,
@@ -877,6 +880,7 @@
 				0E0 /* MuseumSketch.swift in Sources */,
 				0E1 /* MuseumSketchService.swift in Sources */,
 				0E2 /* SketchStudyOverlay.swift in Sources */,
+				0E3 /* PhaseCompleteOverlay.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1009,7 +1013,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = M84U73M2CT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = RenaissanceArchitectAcademy/Info.plist;
@@ -1044,7 +1048,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = M84U73M2CT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = RenaissanceArchitectAcademy/Info.plist;

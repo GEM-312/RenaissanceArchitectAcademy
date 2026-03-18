@@ -163,15 +163,16 @@ enum KnowledgeCardContent {
         return cards(for: name, at: stationKey)
     }
 
-    // MARK: - Pantheon (14 cards)
+    // MARK: - Pantheon (14 cards — mapped to 8 construction steps)
     // Writing style: Morgan Housel — story-driven, surprising, punchy.
-    // Start with a hook. Make complex ideas feel obvious. End with a twist.
+    // Each card teaches ONE construction step so the player knows the building order.
+    // Steps: 1.Foundation → 2.Walls → 3.Coffers → 4.Grade Concrete → 5.Pour Dome → 6.Oculus → 7.Bronze Doors → 8.Marble Floor
 
     private static var pantheonCards: [KnowledgeCard] {
         let bid = 4
         let name = "Pantheon"
         return [
-            // ── CITY MAP (5 cards) ────────────────────────────
+            // ── CITY MAP (5 cards): Steps 1-3 + overview ─────
 
             KnowledgeCard(
                 id: "\(bid)_cityMap_building_0",
@@ -181,52 +182,53 @@ enum KnowledgeCardContent {
                 title: "Temple of All Gods",
                 italianTitle: "Tempio di Tutti gli Dei",
                 icon: "building.columns.fill",
-                lessonText: "Sixteen columns guard the Pantheon's entrance. Each one is 12 meters tall, weighs 60 tons, and traveled by ship from Egypt. That's a 2,000-kilometer journey for a single piece of stone — before engines existed. Emperor Hadrian built this around 125 AD. The name means 'all gods' in Greek. He wasn't thinking small.",
+                lessonText: "Sixteen columns guard the Pantheon's entrance. Each one is 12 meters tall, weighs 60 tons, and traveled by ship from Egypt. Emperor Hadrian built this around 125 AD. The name means 'all gods.' To build it, you'll follow 8 steps — from laying the ring foundation to finishing the marble floor. Every step builds on the last.",
                 keywords: [
                     KeywordPair(keyword: "Pantheon", definition: "Temple dedicated to all the gods"),
                     KeywordPair(keyword: "Portico", definition: "Covered entrance with columns"),
                     KeywordPair(keyword: "Hadrian", definition: "Roman emperor who built the Pantheon"),
-                    KeywordPair(keyword: "Granite", definition: "Hard stone used for the columns"),
+                    KeywordPair(keyword: "8 steps", definition: "Foundation → walls → coffers → concrete → dome → oculus → doors → floor"),
                 ],
                 activity: .hangman(word: "PANTHEON", hint: "Temple dedicated to all the gods"),
-                notebookSummary: "Emperor Hadrian built the Pantheon (~125 AD) — 'temple of all gods.' 16 granite columns shipped 2,000 km from Egypt."
+                notebookSummary: "Emperor Hadrian built the Pantheon (~125 AD). 16 granite columns from Egypt. Construction follows 8 steps: foundation → walls → coffers → concrete → dome → oculus → doors → floor."
             ),
 
             KnowledgeCard(
                 id: "\(bid)_cityMap_building_1",
                 buildingId: bid, buildingName: name,
-                science: .geometry,
+                science: .engineering,
                 environment: .cityMap, stationKey: "building",
-                title: "A Perfect Sphere",
-                italianTitle: "Una Sfera Perfetta",
+                title: "Step 1: Ring Foundation",
+                italianTitle: "Passo 1: Fondazione Anulare",
                 icon: "circle.circle",
-                lessonText: "If you could roll a giant ball inside the Pantheon, it would fit perfectly — touching the floor and the top of the dome. The height and diameter are identical: 43.3 meters. That's not a coincidence. The Romans encoded meaning into math. The circular dome represented the heavens. The square floor, the earth. One building, two worlds.",
+                lessonText: "Everything starts underground. A circular trench is dug 4.5 meters deep and filled with 7.3 meters of concrete — the ring foundation. This massive hidden circle distributes the dome's weight evenly into the clay beneath Rome. If the foundation isn't perfect, nothing above it will be. The strongest part of the building is the part you never see.",
                 keywords: [
-                    KeywordPair(keyword: "Sphere", definition: "3D shape — dome height equals diameter"),
-                    KeywordPair(keyword: "43.3 meters", definition: "Both the height and diameter of the dome"),
-                    KeywordPair(keyword: "Proportion", definition: "Mathematical relationship between dimensions"),
+                    KeywordPair(keyword: "Ring foundation", definition: "Circular concrete base beneath the walls"),
+                    KeywordPair(keyword: "4.5 meters", definition: "Depth of the foundation trench"),
+                    KeywordPair(keyword: "7.3 meters", definition: "Width of the foundation ring"),
+                    KeywordPair(keyword: "Load distribution", definition: "Spreading weight evenly across soft ground"),
                 ],
-                activity: .numberFishing(question: "What is the dome's height and diameter in meters?", correctAnswer: 43, decoys: [28, 35, 51, 60, 72]),
-                notebookSummary: "A perfect sphere fits inside. Height = diameter = 43.3m. Circle dome = heavens, square floor = earth."
+                activity: .numberFishing(question: "How wide is the Pantheon's ring foundation (meters)?", correctAnswer: 7, decoys: [3, 5, 10, 15, 20]),
+                notebookSummary: "STEP 1: Dig circular trench 4.5m deep, pour 7.3m-wide ring foundation. Distributes the dome's weight into soft Roman clay. Foundation first — always."
             ),
 
             KnowledgeCard(
                 id: "\(bid)_cityMap_building_2",
                 buildingId: bid, buildingName: name,
-                science: .architecture,
+                science: .geometry,
                 environment: .cityMap, stationKey: "building",
-                title: "The Eye of the Pantheon",
-                italianTitle: "L'Occhio del Pantheon",
-                icon: "eye.fill",
-                lessonText: "There are no windows. The only light comes from a 9-meter hole at the top of the dome — the oculus, 'the eye.' As the Earth rotates, the light beam crawls across the walls like a sundial. What about rain? It falls straight in. But 22 nearly invisible drain holes in the floor handle it. The hole also makes the dome lighter exactly where it's thinnest.",
+                title: "Step 2: Rotunda Walls",
+                italianTitle: "Passo 2: Muri della Rotonda",
+                icon: "square.stack.fill",
+                lessonText: "The walls rise 6 meters thick — packed with hidden brick arches that channel the dome's weight downward to 8 piers. Height equals diameter: 43.3 meters. A perfect sphere fits inside. The Romans encoded meaning into math — circle dome for the heavens, square floor for the earth. Without these walls, the dome has nothing to push against.",
                 keywords: [
-                    KeywordPair(keyword: "Oculus", definition: "Circular opening at the dome's top"),
-                    KeywordPair(keyword: "Apex", definition: "Highest point of the dome"),
-                    KeywordPair(keyword: "Sundial", definition: "Light beam tracks time across the floor"),
-                    KeywordPair(keyword: "Drain holes", definition: "22 floor openings that channel rain away"),
+                    KeywordPair(keyword: "Rotunda", definition: "Circular room beneath the dome"),
+                    KeywordPair(keyword: "Relieving arch", definition: "Hidden arch inside walls that redirects weight"),
+                    KeywordPair(keyword: "43.3 meters", definition: "Both height and diameter — a perfect sphere"),
+                    KeywordPair(keyword: "Pier", definition: "Thick pillar that carries the dome's weight to ground"),
                 ],
-                activity: .wordScramble(word: "OCULUS", hint: "The circular opening at the dome's top — 'the eye'"),
-                notebookSummary: "The oculus — a 9m hole — is the only light source. Light sweeps like a sundial. Rain enters and drains through 22 floor holes."
+                activity: .numberFishing(question: "What is the dome's height and diameter in meters?", correctAnswer: 43, decoys: [28, 35, 51, 60, 72]),
+                notebookSummary: "STEP 2: Build 6m-thick walls with hidden relieving arches. 8 piers carry the load. Height = diameter = 43.3m. Walls BEFORE dome."
             ),
 
             KnowledgeCard(
@@ -234,17 +236,17 @@ enum KnowledgeCardContent {
                 buildingId: bid, buildingName: name,
                 science: .geometry,
                 environment: .cityMap, stationKey: "building",
-                title: "Coffered Dome",
-                italianTitle: "Cupola a Cassettoni",
+                title: "Step 3: Coffers",
+                italianTitle: "Passo 3: Cassettoni",
                 icon: "square.grid.3x3",
-                lessonText: "Look up inside the dome and you'll see 28 rows of sunken square panels — coffers. Tourists think they're decoration. Engineers know better. Each coffer scoops out about 2 tons of concrete. Multiply that across the entire dome and you've removed roughly 2,400 tons of dead weight. The prettiest part of the building is also the smartest.",
+                lessonText: "Before pouring the dome, the builders carved 28 rows of sunken panels — coffers — into the formwork. Tourists think they're decoration. Engineers know better. Each coffer removes about 2 tons of concrete. Across the entire dome: 2,400 tons gone. The coffers must be built INTO the dome as it rises, not carved after. The prettiest part is the smartest.",
                 keywords: [
-                    KeywordPair(keyword: "Coffer", definition: "Recessed square panel in a ceiling"),
+                    KeywordPair(keyword: "Coffer", definition: "Recessed square panel that reduces dome weight"),
                     KeywordPair(keyword: "28 rows", definition: "Number of coffer rows in the dome"),
-                    KeywordPair(keyword: "Lighten", definition: "Coffers reduce the dome's weight"),
+                    KeywordPair(keyword: "2,400 tons", definition: "Weight removed by all coffers combined"),
                 ],
                 activity: .numberFishing(question: "How many rows of coffers are in the dome?", correctAnswer: 28, decoys: [14, 22, 36, 42, 50]),
-                notebookSummary: "28 rows of coffers look like decoration but remove ~2,400 tons. The prettiest part is the smartest engineering."
+                notebookSummary: "STEP 3: Build coffers INTO the formwork before pouring concrete. 28 rows remove 2,400 tons. Decoration that's actually engineering."
             ),
 
             KnowledgeCard(
@@ -252,38 +254,38 @@ enum KnowledgeCardContent {
                 buildingId: bid, buildingName: name,
                 science: .architecture,
                 environment: .cityMap, stationKey: "building",
-                title: "Hidden Relieving Arches",
-                italianTitle: "Archi di Scarico Nascosti",
-                icon: "archivebox.fill",
-                lessonText: "The Pantheon has a skeleton. You just can't see it. Buried inside the 6-meter-thick walls are brick arches that channel the dome's crushing weight down to eight massive piers at ground level. Without this hidden framework, the walls would have split apart centuries ago. The best engineering is often invisible.",
+                title: "Step 6: The Oculus",
+                italianTitle: "Passo 6: L'Oculo",
+                icon: "eye.fill",
+                lessonText: "After pouring the dome in rings, leave a 9-meter hole at the top — the oculus. No windows. This is the only light. As Earth rotates, the beam crawls like a sundial. Rain falls in through 22 drain holes. Here's the physics: the hole creates a compression ring that actually STRENGTHENS the dome's crown. The weakest-looking point is the strongest.",
                 keywords: [
-                    KeywordPair(keyword: "Relieving arch", definition: "Hidden arch that redirects weight downward"),
-                    KeywordPair(keyword: "Pier", definition: "Thick pillar supporting massive loads"),
-                    KeywordPair(keyword: "Load path", definition: "Route weight travels through a structure"),
+                    KeywordPair(keyword: "Oculus", definition: "9-meter opening at the dome's apex"),
+                    KeywordPair(keyword: "Compression ring", definition: "Circle of force that strengthens the opening"),
+                    KeywordPair(keyword: "Step 6", definition: "Oculus is opened AFTER the dome is poured"),
                 ],
-                activity: .hangman(word: "PIER", hint: "Thick pillar supporting massive loads"),
-                notebookSummary: "Hidden brick arches inside 6m-thick walls funnel the dome's weight to 8 ground piers. The best engineering is invisible."
+                activity: .wordScramble(word: "OCULUS", hint: "The 9-meter eye at the dome's top"),
+                notebookSummary: "STEP 6: Open the 9m oculus AFTER pouring the dome. Creates a compression ring that strengthens the crown. Light enters, rain drains through 22 holes."
             ),
 
-            // ── WORKSHOP (4 cards) ───────────────────────────
+            // ── WORKSHOP (4 cards): Steps 1, 4, 7 materials ──
 
             KnowledgeCard(
                 id: "\(bid)_workshop_quarry_0",
                 buildingId: bid, buildingName: name,
                 science: .materials,
                 environment: .workshop, stationKey: "quarry",
-                title: "Limestone & Travertine",
-                italianTitle: "Calcare e Travertino",
+                title: "Step 1 Material: Stone from the Quarry",
+                italianTitle: "Materiale Passo 1: Pietra dalla Cava",
                 icon: "mountain.2.fill",
-                lessonText: "Every dome wants to push its walls outward. That's physics. The Pantheon fights this with weight — its foundation is built from travertine, the same dense stone as the Colosseum. Each block weighs 5 tons, quarried near Tivoli where hot springs deposited limestone over millennia. Workers split them with iron wedges hammered into drilled holes. Heavy stone at the bottom keeps everything from flying apart at the top.",
+                lessonText: "Here's a surprise: limestone and marble have the same chemical formula — CaCO₃. Marble is just limestone transformed by underground heat and pressure. Same rock, different destiny. Cheap limestone gets burned at 900°C to make concrete for the foundation (Step 1). Expensive marble gets sliced paper-thin for the floor (Step 8). One rock builds the skeleton. The other makes it beautiful.",
                 keywords: [
-                    KeywordPair(keyword: "Travertine", definition: "Limestone formed by hot spring deposits"),
-                    KeywordPair(keyword: "Tivoli", definition: "Town near Rome with famous quarries"),
-                    KeywordPair(keyword: "Thrust", definition: "Outward force a dome exerts on walls"),
-                    KeywordPair(keyword: "Iron wedge", definition: "Tool driven into stone to split it"),
+                    KeywordPair(keyword: "CaCO₃", definition: "Chemical formula shared by limestone AND marble"),
+                    KeywordPair(keyword: "Metamorphism", definition: "Heat + pressure transforms limestone into marble"),
+                    KeywordPair(keyword: "Limestone", definition: "Burned into quicklime for concrete (Step 1)"),
+                    KeywordPair(keyword: "Marble", definition: "Cut into decorative slabs for the floor (Step 8)"),
                 ],
-                activity: .wordScramble(word: "TRAVERTINE", hint: "Limestone formed by hot spring deposits near Tivoli"),
-                notebookSummary: "5-ton travertine blocks from Tivoli anchor the foundation. Heavy stone at the bottom counteracts the dome's outward thrust."
+                activity: .trueFalse(statement: "Limestone and marble share the same chemical formula: CaCO₃", isTrue: true),
+                notebookSummary: "STEP 1 & 8 MATERIAL: Limestone and marble are both CaCO₃. Limestone → burned for concrete (foundation). Marble → sliced for decoration (floor). Same rock, different destiny."
             ),
 
             KnowledgeCard(
@@ -291,18 +293,17 @@ enum KnowledgeCardContent {
                 buildingId: bid, buildingName: name,
                 science: .chemistry,
                 environment: .workshop, stationKey: "volcano",
-                title: "Volcanic Ash — Pozzolana",
-                italianTitle: "Cenere Vulcanica — Pozzolana",
+                title: "Step 4 Material: Pozzolana",
+                italianTitle: "Materiale Passo 4: Pozzolana",
                 icon: "flame.fill",
-                lessonText: "Modern concrete lasts about 100 years. Roman concrete has lasted 2,000. The difference? Volcanic ash. Romans mixed pozzolana — ash from near Mount Vesuvius — with lime and water. The silica in the ash triggered a chemical reaction that gets stronger over time, not weaker. It even sets underwater. Roman harbors still stand on the seafloor. We only recently figured out why.",
+                lessonText: "Step 4 — grading the concrete mix — requires volcanic ash. Romans mixed pozzolana from near Vesuvius with lime and water. The silica triggers a reaction that gets STRONGER over time. Modern concrete lasts 100 years. Roman concrete: 2,000. The secret isn't just the recipe — it's changing the aggregate at each height. Heavy basalt at base, light pumice at top.",
                 keywords: [
-                    KeywordPair(keyword: "Pozzolana", definition: "Volcanic ash that makes Roman concrete"),
-                    KeywordPair(keyword: "Silica", definition: "Chemical in ash that strengthens concrete"),
-                    KeywordPair(keyword: "Hydraulic", definition: "Sets and hardens even underwater"),
-                    KeywordPair(keyword: "Lime", definition: "Calcium oxide — mixed with ash to make concrete"),
+                    KeywordPair(keyword: "Pozzolana", definition: "Volcanic ash for Step 4 concrete grading"),
+                    KeywordPair(keyword: "Graduated mix", definition: "Heavy aggregate at base, light at top"),
+                    KeywordPair(keyword: "Pumice", definition: "Volcanic rock so light it floats"),
                 ],
-                activity: .wordScramble(word: "POZZOLANA", hint: "Volcanic ash that makes Roman concrete last 2,000 years"),
-                notebookSummary: "Roman concrete outlasts modern by 20x. Secret: pozzolana (volcanic ash) + lime. The silica reaction strengthens over time. Sets underwater."
+                activity: .wordScramble(word: "POZZOLANA", hint: "Volcanic ash that makes concrete last 2,000 years"),
+                notebookSummary: "STEP 4 MATERIAL: Pozzolana (volcanic ash) + lime = concrete that lasts 2,000 years. Grade it: heavy basalt (base) → light pumice (top)."
             ),
 
             KnowledgeCard(
@@ -310,18 +311,17 @@ enum KnowledgeCardContent {
                 buildingId: bid, buildingName: name,
                 science: .materials,
                 environment: .workshop, stationKey: "river",
-                title: "Graduated Aggregate",
-                italianTitle: "Aggregato Graduato",
+                title: "Step 5: Pour in Rings",
+                italianTitle: "Passo 5: Getto a Anelli",
                 icon: "drop.triangle.fill",
-                lessonText: "Here's something counterintuitive: the Pantheon's dome is made of different concrete at different heights. Heavy travertine chunks at the base. Medium-weight tufa in the middle. Featherweight pumice — volcanic rock so light it floats on water — near the top. The dome literally gets lighter as it rises. Less weight where the structure is thinnest. Simple idea. Took a genius to think of it.",
+                lessonText: "Step 5 is where everything comes together. The dome is poured in horizontal rings — each ring must cure before the next is added. Water is critical: too much weakens concrete, too little and it won't set. The ratio is exact. Each ring is self-supporting as it rises, so no centering is needed above the first few courses. Ring by ring, the dome closes toward the oculus.",
                 keywords: [
-                    KeywordPair(keyword: "Aggregate", definition: "Stones mixed into concrete for strength"),
-                    KeywordPair(keyword: "Pumice", definition: "Lightweight volcanic rock full of air holes"),
-                    KeywordPair(keyword: "Tufa", definition: "Medium-weight volcanic stone"),
-                    KeywordPair(keyword: "Graduated", definition: "Changing density from heavy to light"),
+                    KeywordPair(keyword: "Ring pouring", definition: "Building the dome in horizontal layers (Step 5)"),
+                    KeywordPair(keyword: "Curing", definition: "Concrete hardening — each ring must cure first"),
+                    KeywordPair(keyword: "Self-supporting", definition: "Each ring holds itself without centering"),
                 ],
-                activity: .hangman(word: "PUMICE", hint: "Volcanic rock so light it floats on water"),
-                notebookSummary: "Different concrete at different heights: heavy travertine (base) → tufa (middle) → pumice that floats on water (top). Lighter where thinnest."
+                activity: .trueFalse(statement: "The Pantheon dome was poured in horizontal rings, each curing before the next", isTrue: true),
+                notebookSummary: "STEP 5: Pour dome in horizontal rings. Each ring cures before the next. Self-supporting as it rises. Ring by ring toward the oculus."
             ),
 
             KnowledgeCard(
@@ -329,37 +329,37 @@ enum KnowledgeCardContent {
                 buildingId: bid, buildingName: name,
                 science: .materials,
                 environment: .workshop, stationKey: "mine",
-                title: "Bronze & Lead",
-                italianTitle: "Bronzo e Piombo",
+                title: "Step 7 Material: Bronze",
+                italianTitle: "Materiale Passo 7: Bronzo",
                 icon: "shield.lefthalf.filled",
-                lessonText: "The Pantheon's dome once gleamed with gilded bronze tiles — gold over bronze, visible for miles. In 663 AD, Byzantine Emperor Constans II sailed to Rome and stripped every tile. Centuries later, Pope Urban VIII melted 200 tons of bronze from the portico ceiling to build Bernini's famous canopy in St. Peter's. Romans built it. Everyone else recycled it.",
+                lessonText: "Step 7 — install the bronze doors. Each door is 7 meters tall and weighs several tons, yet swings on bronze pivots. Lead clamps join the stone frame. The dome once gleamed with gilded bronze tiles too. In 663 AD, Emperor Constans II stripped every tile. Later, Pope Urban VIII melted 200 tons for Bernini's baldachin. Doors and fittings come near the END of construction.",
                 keywords: [
-                    KeywordPair(keyword: "Gilded bronze", definition: "Bronze covered with a thin layer of gold"),
-                    KeywordPair(keyword: "Lead clamp", definition: "Metal fastener joining stone or timber"),
-                    KeywordPair(keyword: "Baldachin", definition: "Ornamental canopy over an altar"),
+                    KeywordPair(keyword: "Bronze doors", definition: "7m tall doors installed in Step 7"),
+                    KeywordPair(keyword: "Lead clamp", definition: "Metal fastener joining stone to frame"),
+                    KeywordPair(keyword: "Step 7", definition: "Doors installed AFTER the dome and oculus"),
                 ],
                 activity: .numberFishing(question: "How many tons of bronze did Pope Urban VIII melt?", correctAnswer: 200, decoys: [50, 100, 350, 500, 800]),
-                notebookSummary: "Once covered in gilded bronze. Stripped by Emperor Constans II (663 AD). Pope Urban VIII melted 200 tons for Bernini's baldachin. Romans built it; everyone else recycled it."
+                notebookSummary: "STEP 7 MATERIAL: Bronze for doors (7m tall) and fittings. Lead clamps join stone. Doors go in AFTER dome + oculus. Near the end."
             ),
 
-            // ── FOREST (2 cards) ─────────────────────────────
+            // ── FOREST (2 cards): Step 5 support ─────────────
 
             KnowledgeCard(
                 id: "\(bid)_forest_oak_0",
                 buildingId: bid, buildingName: name,
                 science: .engineering,
                 environment: .forest, stationKey: "oak",
-                title: "Timber Centering",
-                italianTitle: "Centina di Legno",
+                title: "Step 5 Support: Centering",
+                italianTitle: "Supporto Passo 5: Centina",
                 icon: "arrowshape.turn.up.backward.badge.clock",
-                lessonText: "Before the dome existed, a wooden one had to be built first. Oak beams were curved into a massive temporary frame — centering — that held the wet concrete while it hardened. For three weeks, this timber skeleton carried thousands of tons. Then it was removed from below and the concrete stood on its own. The thing that made the dome possible was designed to disappear.",
+                lessonText: "Before Step 5 (pouring the dome), a wooden dome must be built first. Oak beams curve into a massive temporary frame — centering — that holds wet concrete while it cures. For three weeks, this timber skeleton carries thousands of tons. Then it's removed from below and the concrete stands alone. The thing that makes the dome possible is designed to disappear.",
                 keywords: [
-                    KeywordPair(keyword: "Centering", definition: "Temporary frame supporting a dome during construction"),
-                    KeywordPair(keyword: "Curing", definition: "Chemical hardening of concrete over time"),
-                    KeywordPair(keyword: "Deflection", definition: "Bending under weight — centering must resist this"),
+                    KeywordPair(keyword: "Centering", definition: "Temporary oak frame for Step 5 dome pouring"),
+                    KeywordPair(keyword: "Curing", definition: "3 weeks for concrete to harden"),
+                    KeywordPair(keyword: "Remove from below", definition: "Centering is dismantled after concrete sets"),
                 ],
-                activity: .wordScramble(word: "CENTERING", hint: "Temporary frame supporting a dome during construction"),
-                notebookSummary: "A temporary oak framework (centering) held wet concrete for 3 weeks. Then removed — designed to make the dome possible and disappear."
+                activity: .wordScramble(word: "CENTERING", hint: "Temporary frame supporting the dome during Step 5"),
+                notebookSummary: "STEP 5 SUPPORT: Oak centering holds wet concrete for 3 weeks. Then removed — designed to disappear after the dome cures."
             ),
 
             KnowledgeCard(
@@ -367,38 +367,38 @@ enum KnowledgeCardContent {
                 buildingId: bid, buildingName: name,
                 science: .engineering,
                 environment: .forest, stationKey: "poplar",
-                title: "Scaffolding & Formwork",
-                italianTitle: "Impalcatura e Cassaforma",
+                title: "Steps 2-5: Scaffolding",
+                italianTitle: "Passi 2-5: Impalcatura",
                 icon: "square.stack.3d.up",
-                lessonText: "Poplar grows 3 meters a year. It's light, cheap, and disposable — which made it perfect for scaffolding. Workers stood on poplar platforms 43 meters up, pouring concrete ring by ring. Poplar formwork shaped each layer of the dome like a mold. When construction finished, the wood became crates and firewood. Nothing was wasted in Rome.",
+                lessonText: "Poplar grows 3 meters a year — light, cheap, disposable. Perfect for scaffolding. Workers stood on poplar platforms 43 meters up throughout Steps 2 through 5: building walls, constructing coffers, grading concrete, pouring the dome ring by ring. Poplar formwork shaped each layer. When construction finished, the wood became crates and firewood. Nothing was wasted.",
                 keywords: [
-                    KeywordPair(keyword: "Scaffolding", definition: "Temporary platforms for workers at height"),
-                    KeywordPair(keyword: "Formwork", definition: "Wooden mold that shapes wet concrete"),
-                    KeywordPair(keyword: "Layer by layer", definition: "Dome built in horizontal rings, bottom to top"),
+                    KeywordPair(keyword: "Scaffolding", definition: "Poplar platforms for Steps 2-5"),
+                    KeywordPair(keyword: "Formwork", definition: "Wooden mold shaping wet concrete"),
+                    KeywordPair(keyword: "Steps 2-5", definition: "Walls → coffers → concrete → dome pouring"),
                 ],
-                activity: .hangman(word: "SCAFFOLDING", hint: "Temporary platforms for workers at height"),
-                notebookSummary: "Fast-growing poplar: light, cheap, disposable. Workers stood 43m up on poplar platforms. Afterward, recycled into crates and firewood."
+                activity: .hangman(word: "SCAFFOLDING", hint: "Temporary poplar platforms used through Steps 2-5"),
+                notebookSummary: "STEPS 2-5 SUPPORT: Poplar scaffolding for walls, coffers, concrete, dome. 43m up. Light, cheap, recycled after. Nothing wasted."
             ),
 
-            // ── CRAFTING ROOM (3 cards) ──────────────────────
+            // ── CRAFTING ROOM (3 cards): Steps 4, 1, 8 ──────
 
             KnowledgeCard(
                 id: "\(bid)_craftingRoom_workbench_0",
                 buildingId: bid, buildingName: name,
                 science: .chemistry,
                 environment: .craftingRoom, stationKey: "workbench",
-                title: "Mixing Roman Concrete",
-                italianTitle: "Miscelare il Calcestruzzo Romano",
+                title: "Step 4: Mix the Concrete",
+                italianTitle: "Passo 4: Miscelare il Calcestruzzo",
                 icon: "flask.fill",
-                lessonText: "The recipe hasn't been improved in 2,000 years. Vitruvius wrote it down: 1 part lime to 3 parts volcanic ash. First, workers added water to quicklime — a reaction so hot it could burn skin. Then they mixed in pozzolana and stone aggregate, poured it into wooden molds, and packed it down with tools. One layer at a time. Patience was the secret ingredient.",
+                lessonText: "Step 4 is grading the concrete — mixing different recipes for different heights. Vitruvius's ratio: 1 part lime to 3 parts volcanic ash. First, slake quicklime with water (dangerously hot reaction). Mix in pozzolana and aggregate. At the base: heavy basalt chunks. Middle: medium tufa. Top: light pumice. Pour into formwork, tamp with wooden tools. One layer at a time.",
                 keywords: [
-                    KeywordPair(keyword: "Vitruvius", definition: "Roman architect who wrote the recipe"),
-                    KeywordPair(keyword: "Slaking", definition: "Adding water to quicklime (hot reaction)"),
-                    KeywordPair(keyword: "1:3 ratio", definition: "1 part lime to 3 parts pozzolana"),
+                    KeywordPair(keyword: "1:3 ratio", definition: "1 lime + 3 pozzolana (Step 4 recipe)"),
+                    KeywordPair(keyword: "Slaking", definition: "Adding water to quicklime — very hot"),
+                    KeywordPair(keyword: "Graduated", definition: "Heavy at base, light at top"),
                     KeywordPair(keyword: "Tamping", definition: "Compacting concrete with wooden tools"),
                 ],
-                activity: .wordScramble(word: "VITRUVIUS", hint: "Roman architect who wrote the concrete recipe"),
-                notebookSummary: "Vitruvius's 2,000-year-old recipe: 1 lime + 3 pozzolana. Slake quicklime (dangerously hot), mix with ash, pour into molds, tamp. Patience is the secret ingredient."
+                activity: .wordScramble(word: "VITRUVIUS", hint: "Roman architect who wrote the Step 4 concrete recipe"),
+                notebookSummary: "STEP 4: Grade concrete. 1 lime + 3 pozzolana. Heavy basalt (base) → tufa (middle) → pumice (top). Slake, mix, pour, tamp."
             ),
 
             KnowledgeCard(
@@ -406,18 +406,17 @@ enum KnowledgeCardContent {
                 buildingId: bid, buildingName: name,
                 science: .chemistry,
                 environment: .craftingRoom, stationKey: "furnace",
-                title: "Firing Quicklime",
-                italianTitle: "Cottura della Calce Viva",
+                title: "Step 1: Fire the Quicklime",
+                italianTitle: "Passo 1: Cottura della Calce",
                 icon: "flame.circle.fill",
-                lessonText: "Take a piece of limestone. Heat it to 900°C. The carbon dioxide burns off and you're left with a white powder — quicklime — that explodes when it touches water. Roman kilns ran day and night, eating through entire forests for fuel. One chemical equation powered an empire: CaCO₃ → CaO + CO₂. Limestone becomes quicklime. Heat transforms everything.",
+                lessonText: "Before Step 1 (foundation), you need quicklime. Take limestone, heat to 900°C. Carbon dioxide burns off: CaCO₃ → CaO + CO₂. The white powder left behind explodes when it touches water. Roman kilns ran day and night. This quicklime binds the foundation concrete. Without it, there IS no foundation. Fire transforms limestone into the glue that holds Rome together.",
                 keywords: [
-                    KeywordPair(keyword: "Quicklime", definition: "Calcium oxide — made by heating limestone"),
-                    KeywordPair(keyword: "900°C", definition: "Temperature needed to convert limestone"),
-                    KeywordPair(keyword: "Kiln", definition: "High-temperature oven for firing materials"),
-                    KeywordPair(keyword: "CaCO₃ → CaO + CO₂", definition: "Limestone loses carbon dioxide when heated"),
+                    KeywordPair(keyword: "900°C", definition: "Temperature to make quicklime for Step 1"),
+                    KeywordPair(keyword: "CaCO₃ → CaO + CO₂", definition: "Limestone becomes quicklime + carbon dioxide"),
+                    KeywordPair(keyword: "Quicklime", definition: "Foundation binder — made BEFORE Step 1"),
                 ],
                 activity: .numberFishing(question: "What temperature (°C) converts limestone to quicklime?", correctAnswer: 900, decoys: [450, 600, 750, 1100, 1500]),
-                notebookSummary: "Heat limestone to 900°C → CO₂ burns off → quicklime (CaO) remains. Reacts violently with water. One equation powered an empire."
+                notebookSummary: "BEFORE STEP 1: Fire limestone at 900°C → quicklime (CaO). The binder for foundation concrete. Must be made first."
             ),
 
             KnowledgeCard(
@@ -425,17 +424,17 @@ enum KnowledgeCardContent {
                 buildingId: bid, buildingName: name,
                 science: .architecture,
                 environment: .craftingRoom, stationKey: "pigmentTable",
-                title: "Marble Finishing",
-                italianTitle: "Finitura in Marmo",
-                icon: "paintbrush.fill",
-                lessonText: "The Pantheon's walls are concrete. But you'd never know it. Every surface is covered in marble shipped from three continents: yellow giallo antico from Tunisia, purple pavonazzetto from Turkey, grey granite from Egypt. Craftsmen sliced these stones paper-thin and pinned them to the walls with bronze clamps. The floor alone uses 7 types of marble. The building is a map of the Empire.",
+                title: "Step 8: Marble Floor",
+                italianTitle: "Passo 8: Pavimento in Marmo",
+                icon: "diamond.fill",
+                lessonText: "The final step. Seven types of marble from three continents cover the floor in geometric patterns — yellow giallo antico from Tunisia, purple pavonazzetto from Turkey, grey granite from Egypt. Craftsmen sliced stones paper-thin and pinned them to concrete walls with bronze clamps. The floor slopes slightly for rain drainage. Step 8 is the finishing touch — beauty meets function.",
                 keywords: [
-                    KeywordPair(keyword: "Veneer", definition: "Thin decorative marble slice on a wall"),
+                    KeywordPair(keyword: "Step 8", definition: "Marble floor is the LAST construction step"),
                     KeywordPair(keyword: "Giallo antico", definition: "Yellow marble from Tunisia"),
-                    KeywordPair(keyword: "Pavonazzetto", definition: "Purple-veined marble from Turkey"),
+                    KeywordPair(keyword: "Veneer", definition: "Thin marble slices covering concrete walls"),
                 ],
-                activity: .hangman(word: "VENEER", hint: "Thin decorative marble slice covering a wall"),
-                notebookSummary: "Concrete walls hidden behind marble from 3 continents. 7 types of marble in the floor. The building is a map of the Roman Empire."
+                activity: .hangman(word: "VENEER", hint: "Thin marble slices covering the concrete walls (Step 8)"),
+                notebookSummary: "STEP 8 (LAST): Marble floor + wall veneer. 7 types from 3 continents. Geometric patterns, slight slope for drainage. Beauty meets function."
             ),
         ]
     }

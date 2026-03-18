@@ -123,8 +123,8 @@ struct Building: Identifiable {
             // Walls: brick-faced concrete | Roof: concrete vaults + bronze tiles | Windows: cast glass | Floor: marble mosaic
             return [.romanConcrete: 1, .timberBeams: 1, .glassPanes: 1, .marbleSlabs: 1]
         case "Pantheon":
-            // Walls: 6m-thick concrete | Roof: concrete dome + lead sheeting | Floor: colored marble | Special: bronze doors
-            return [.romanConcrete: 1, .leadSheeting: 1, .marbleSlabs: 1, .bronzeFittings: 1]
+            // Walls: 6m-thick concrete | Roof: concrete dome + lead sheeting | Floor: colored marble | Special: bronze doors | Scaffolding: timber centering for dome
+            return [.romanConcrete: 1, .leadSheeting: 1, .marbleSlabs: 1, .bronzeFittings: 1, .timberBeams: 1]
         case "Roman Roads":
             // Four layers: stone foundation → rubble+mortar → gravel+mortar → basalt paving
             return [.romanConcrete: 1, .limeMortar: 1, .marbleSlabs: 1]

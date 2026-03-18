@@ -123,22 +123,23 @@ struct ClayPitMiniGameView: View {
     // MARK: - Choice Card
 
     private var choiceCard: some View {
-        VStack(spacing: 20) {
-            HStack(spacing: 12) {
+        VStack(spacing: Spacing.lg) {
+            HStack(spacing: 14) {
                 BirdCharacter()
                     .frame(width: 70, height: 70)
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 6) {
                     Text("La Fossa d'Argilla")
-                        .font(.custom("Cinzel-Bold", size: 22))
+                        .font(RenaissanceFont.title)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text("Three steps to perfect clay — dig, knead, wash.")
-                        .font(RenaissanceFont.dialogSubtitle)
+                        .font(RenaissanceFont.body)
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                 }
+                Spacer()
             }
 
-            VStack(spacing: 10) {
+            VStack(spacing: 12) {
                 gameOptionRow(
                     game: .digging,
                     difficulty: "Easy",
@@ -157,16 +158,17 @@ struct ClayPitMiniGameView: View {
             }
 
             Button("Back") { onDismiss() }
-                .font(RenaissanceFont.bodySmall)
-                .foregroundStyle(RenaissanceColors.sepiaInk)
+                .font(RenaissanceFont.body)
+                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
         }
         .padding(Spacing.xl)
-        .adaptiveWidth(400)
+        .padding(.bottom, 60)
+        .frame(maxWidth: .infinity)
         .background(
-            RoundedRectangle(cornerRadius: CornerRadius.lg)
+            RoundedRectangle(cornerRadius: CornerRadius.xl)
                 .fill(RenaissanceColors.parchment)
         )
-        .borderWorkshop()
+        .borderModal(radius: CornerRadius.xl)
     }
 
     private func gameOptionRow(game: ClayGame, difficulty: String, description: String) -> some View {
@@ -180,22 +182,22 @@ struct ClayPitMiniGameView: View {
                 }
             }
         } label: {
-            HStack(spacing: 12) {
+            HStack(spacing: 14) {
                 Image(systemName: game.icon)
-                    .font(.title3)
+                    .font(.title2)
                     .foregroundStyle(RenaissanceColors.terracotta)
-                    .frame(width: 32, height: 32)
+                    .frame(width: 44, height: 44)
                     .background(
                         RoundedRectangle(cornerRadius: CornerRadius.sm)
                             .fill(RenaissanceColors.terracotta.opacity(0.1))
                     )
 
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text(game.displayName)
-                        .font(.custom("EBGaramond-Regular", size: 16))
+                        .font(RenaissanceFont.bodySemibold)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text(description)
-                        .font(RenaissanceFont.captionSmall)
+                        .font(RenaissanceFont.bodySmall)
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                         .lineLimit(2)
                 }
@@ -203,14 +205,14 @@ struct ClayPitMiniGameView: View {
                 Spacer()
 
                 Text(difficulty)
-                    .font(.custom("EBGaramond-SemiBold", size: 13))
+                    .font(RenaissanceFont.bodySemibold)
                     .foregroundStyle(difficultyColor(difficulty))
 
                 Image(systemName: "chevron.right")
-                    .font(.caption)
+                    .font(.body)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
-            .padding(Spacing.sm)
+            .padding(Spacing.md)
             .background(
                 RoundedRectangle(cornerRadius: 10)
                     .fill(RenaissanceColors.parchment.opacity(0.6))
