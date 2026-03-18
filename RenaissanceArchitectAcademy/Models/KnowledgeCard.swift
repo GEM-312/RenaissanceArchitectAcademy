@@ -141,8 +141,25 @@ enum KnowledgeCardContent {
     /// All cards for a building
     static func cards(for buildingName: String) -> [KnowledgeCard] {
         switch buildingName {
-        case "Pantheon":       return pantheonCards
-        // TODO: Add remaining 16 buildings
+        // Ancient Rome
+        case "Aqueduct":            return aqueductCards
+        case "Colosseum":           return colosseumCards
+        case "Roman Baths":         return romanBathsCards
+        case "Pantheon":            return pantheonCards
+        case "Roman Roads":         return romanRoadsCards
+        case "Harbor":              return harborCards
+        case "Siege Workshop":      return siegeWorkshopCards
+        case "Insula":              return insulaCards
+        // Renaissance
+        case "Duomo", "Il Duomo":   return duomoCards
+        case "Botanical Garden":    return botanicalGardenCards
+        case "Glassworks":          return glassworksCards
+        case "Arsenal":             return arsenalCards
+        case "Anatomy Theater":     return anatomyTheaterCards
+        case "Leonardo's Workshop": return leonardoWorkshopCards
+        case "Flying Machine":      return flyingMachineCards
+        case "Vatican Observatory": return vaticanObservatoryCards
+        case "Printing Press":      return printingPressCards
         default: return []
         }
     }
@@ -420,23 +437,23 @@ enum KnowledgeCardContent {
             ),
 
             KnowledgeCard(
-                id: "\(bid)_craftingRoom_pigmentTable_0",
+                id: "\(bid)_craftingRoom_shelf_0",
                 buildingId: bid, buildingName: name,
                 science: .architecture,
-                environment: .craftingRoom, stationKey: "pigmentTable",
-                title: "Step 8: Marble Floor",
-                italianTitle: "Passo 8: Pavimento in Marmo",
+                environment: .craftingRoom, stationKey: "shelf",
+                title: "Step 8: Opus Sectile Floor",
+                italianTitle: "Passo 8: Pavimento in Opus Sectile",
                 icon: "diamond.fill",
-                lessonText: "The final step. Seven types of marble from three continents cover the floor in geometric patterns — yellow giallo antico from Tunisia, purple pavonazzetto from Turkey, grey granite from Egypt. Craftsmen sliced stones paper-thin and pinned them to concrete walls with bronze clamps. The floor slopes slightly for rain drainage. Step 8 is the finishing touch — beauty meets function.",
+                lessonText: "The final step. No paint — only natural stone. Craftsmen cut marble into geometric shapes and fit them together like a puzzle. Purple porphyry from Egypt. Yellow giallo antico from Tunisia. White pavonazzetto from Turkey. Grey granite from the Nile. Sliced paper-thin, polished mirror-smooth, fitted without mortar. The squares and circles in the floor echo the coffered dome above. The whole empire is under your feet.",
                 keywords: [
-                    KeywordPair(keyword: "Step 8", definition: "Marble floor is the LAST construction step"),
-                    KeywordPair(keyword: "Giallo antico", definition: "Yellow marble from Tunisia"),
-                    KeywordPair(keyword: "Veneer", definition: "Thin marble slices covering concrete walls"),
+                    KeywordPair(keyword: "Opus sectile", definition: "Cut stone fitted together without mortar"),
+                    KeywordPair(keyword: "Porphyry", definition: "Imperial purple-red stone from Egypt"),
+                    KeywordPair(keyword: "Giallo antico", definition: "Honey-yellow marble from Tunisia"),
+                    KeywordPair(keyword: "Pavonazzetto", definition: "White marble with purple veins from Turkey"),
                 ],
-                activity: .hangman(word: "VENEER", hint: "Thin marble slices covering the concrete walls (Step 8)"),
-                notebookSummary: "STEP 8 (LAST): Marble floor + wall veneer. 7 types from 3 continents. Geometric patterns, slight slope for drainage. Beauty meets function."
+                activity: .hangman(word: "PORPHYRY", hint: "Imperial purple-red stone from Egypt, reserved for emperors (Step 8)"),
+                notebookSummary: "STEP 8 (LAST): Opus sectile floor. No paint — only natural stone. Porphyry (Egypt), giallo antico (Tunisia), pavonazzetto (Turkey), granite (Egypt). Cut, polished, fitted without mortar."
             ),
         ]
     }
 }
-    // Aqua Claudia stretched 69 km. Only 16 km on arches. The rest? Underground.

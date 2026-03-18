@@ -42,6 +42,10 @@ struct WorkshopMapView: View {
     @State private var showStationKnowledgeCards = false
     @State private var stationKnowledgeCards: [KnowledgeCard] = []
 
+    // Discovery card (no active building)
+    @State private var showDiscoveryCard = false
+    @State private var discoveryCard: DiscoveryCard? = nil
+
     // After knowledge card dismissed, proceed to tool check / mini-game for this station
     @State private var pendingStationAfterCard: ResourceStationType?
     // Skip knowledge card when player is sent to market via "Go to Market" button
@@ -283,6 +287,38 @@ struct WorkshopMapView: View {
                         playerName: onboardingState?.apprenticeName ?? "Apprentice",
                         workshopState: workshop,
                         currentStation: activeStation
+                    )
+                    .transition(.opacity)
+                }
+
+                // Layer 8b: Discovery card (no active building)
+                if showDiscoveryCard, let card = discoveryCard {
+                    DiscoveryCardOverlay(
+                        card: card,
+                        onDismiss: {
+                            withAnimation {
+                                showDiscoveryCard = false
+                                discoveryCard = nil
+                            }
+                            // After dismissing discovery, show normal station overlay
+                            if let pending = pendingStationAfterCard {
+                                pendingStationAfterCard = nil
+                                activeStation = pending
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    showSingleStationOverlay()
+                                }
+                            }
+                        },
+                        onChooseBuilding: {
+                            withAnimation {
+                                showDiscoveryCard = false
+                                discoveryCard = nil
+                                activeStation = nil
+                            }
+                            pendingStationAfterCard = nil
+                            onNavigate?(.cityMap)
+                        },
+                        playerName: onboardingState?.apprenticeName ?? "Apprentice"
                     )
                     .transition(.opacity)
                 }
@@ -978,22 +1014,38 @@ struct WorkshopMapView: View {
         }
     }
 
-    /// Check if a station has an uncompleted knowledge card
+    /// Check if a station has an uncompleted knowledge card OR a discovery card
     private func hasKnowledgeCard(at station: ResourceStationType) -> Bool {
-        guard let vm = viewModel, let bid = vm.activeBuildingId else { return false }
-        return vm.nextUncompletedCard(for: bid, at: "\(station)") != nil
+        guard let vm = viewModel else { return false }
+        if let bid = vm.activeBuildingId {
+            return vm.nextUncompletedCard(for: bid, at: "\(station)") != nil
+        }
+        // No active building — show discovery card if available
+        return DiscoveryCardContent.card(for: "\(station)") != nil
     }
 
-    /// Show knowledge card overlay for a station
+    /// Show knowledge card overlay for a station, or discovery card if no active building
     private func showKnowledgeCardForStation(_ station: ResourceStationType) {
-        guard let vm = viewModel, let bid = vm.activeBuildingId else { return }
+        guard let vm = viewModel else { return }
         let stationKey = "\(station)"
-        if let nextCard = vm.nextUncompletedCard(for: bid, at: stationKey) {
-            showArrivalGuidance = false  // Dismiss guidance before showing card
+
+        if let bid = vm.activeBuildingId,
+           let nextCard = vm.nextUncompletedCard(for: bid, at: stationKey) {
+            // Active building — show building-specific knowledge card
+            showArrivalGuidance = false
             stationKnowledgeCards = [nextCard]
             SubsonicController.shared.play(sound: "cards_appear.mp3")
             withAnimation(.spring(response: 0.3)) {
                 showStationKnowledgeCards = true
+            }
+        } else if vm.activeBuildingId == nil,
+                  let card = DiscoveryCardContent.card(for: stationKey) {
+            // No active building — show discovery card
+            showArrivalGuidance = false
+            discoveryCard = card
+            SubsonicController.shared.play(sound: "cards_appear.mp3")
+            withAnimation(.spring(response: 0.3)) {
+                showDiscoveryCard = true
             }
         }
     }

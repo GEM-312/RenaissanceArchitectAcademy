@@ -30,6 +30,10 @@ struct CraftingRoomMapView: View {
     @State private var showCraftingKnowledgeCards = false
     @State private var craftingKnowledgeCards: [KnowledgeCard] = []
 
+    // Discovery card (no active building)
+    @State private var showDiscoveryCard = false
+    @State private var discoveryCard: DiscoveryCard? = nil
+
     // Avatar box: sprite visible only when player hasn't moved yet
     @State private var avatarInBox = true
 
@@ -107,6 +111,30 @@ struct CraftingRoomMapView: View {
                                 activeStation = nil
                             }
                             onNavigate?(destination)
+                        },
+                        playerName: onboardingState?.apprenticeName ?? "Apprentice"
+                    )
+                    .transition(.opacity)
+                }
+
+                // Discovery card (no active building)
+                if showDiscoveryCard, let card = discoveryCard {
+                    DiscoveryCardOverlay(
+                        card: card,
+                        onDismiss: {
+                            withAnimation {
+                                showDiscoveryCard = false
+                                discoveryCard = nil
+                            }
+                            // activeStation is already set; the normal overlay will show
+                        },
+                        onChooseBuilding: {
+                            withAnimation {
+                                showDiscoveryCard = false
+                                discoveryCard = nil
+                                activeStation = nil
+                            }
+                            onNavigate?(.cityMap)
                         },
                         playerName: onboardingState?.apprenticeName ?? "Apprentice"
                     )
@@ -277,6 +305,17 @@ struct CraftingRoomMapView: View {
                 SubsonicController.shared.play(sound: "cards_appear.mp3")
                 withAnimation(.spring(response: 0.3)) {
                     self.showCraftingKnowledgeCards = true
+                }
+                return
+            }
+            // No active building — show discovery card if available
+            if let vm = viewModel, vm.activeBuildingId == nil,
+               let card = DiscoveryCardContent.card(for: stationKey) {
+                self.discoveryCard = card
+                self.activeStation = station
+                SubsonicController.shared.play(sound: "cards_appear.mp3")
+                withAnimation(.spring(response: 0.3)) {
+                    self.showDiscoveryCard = true
                 }
                 return
             }

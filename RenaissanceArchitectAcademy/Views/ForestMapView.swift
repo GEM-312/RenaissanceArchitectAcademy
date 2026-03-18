@@ -433,6 +433,59 @@ struct ForestMapView: View {
                             )
                             .padding(.horizontal, Spacing.md)
                         }
+                    } else if viewModel?.activeBuildingId == nil {
+                        // No active building — show discovery card for this tree
+                        let treeName = poi.name.lowercased()
+                        if let card = DiscoveryCardContent.card(for: treeName) {
+                            VStack(spacing: Spacing.xs) {
+                                HStack(spacing: 6) {
+                                    Text("DISCOVERY")
+                                        .font(.custom("Cinzel-Bold", size: 9))
+                                        .tracking(1.5)
+                                        .foregroundStyle(.white)
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 3)
+                                        .background(card.color.opacity(0.8), in: Capsule())
+                                    Spacer()
+                                }
+                                Text(card.storyText)
+                                    .font(RenaissanceFont.bodySmall)
+                                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                                    .multilineTextAlignment(.center)
+                                    .lineSpacing(LineHeight.normal)
+
+                                HStack(spacing: 6) {
+                                    Image(systemName: "lightbulb.fill")
+                                        .foregroundStyle(.yellow)
+                                        .font(.caption)
+                                    Text(card.funFact)
+                                        .font(.custom("EBGaramond-Italic", size: 12))
+                                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
+                                }
+
+                                Button {
+                                    selectedPOIIndex = nil
+                                    onNavigate?(.cityMap)
+                                } label: {
+                                    HStack(spacing: 4) {
+                                        Image(systemName: "building.columns.fill")
+                                            .font(.caption)
+                                        Text("Choose a Building")
+                                            .font(.custom("Cinzel-Bold", size: 11))
+                                    }
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 7)
+                                    .background(card.color, in: RoundedRectangle(cornerRadius: 8))
+                                }
+                            }
+                            .padding(Spacing.md)
+                            .background(
+                                RoundedRectangle(cornerRadius: CornerRadius.sm)
+                                    .fill(card.color.opacity(0.06))
+                            )
+                            .padding(.horizontal, Spacing.md)
+                        }
                     }
                 }
                 .padding(Spacing.lg)

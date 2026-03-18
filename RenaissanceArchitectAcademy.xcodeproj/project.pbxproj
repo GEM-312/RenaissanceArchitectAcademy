@@ -124,6 +124,12 @@
 		0E1 /* MuseumSketchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E1 /* MuseumSketchService.swift */; };
 		0E2 /* SketchStudyOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2 /* SketchStudyOverlay.swift */; };
 		0E3 /* PhaseCompleteOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3 /* PhaseCompleteOverlay.swift */; };
+		0E4 /* SketchTeachingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E4 /* SketchTeachingData.swift */; };
+		0E5 /* SketchTeachingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E5 /* SketchTeachingView.swift */; };
+		0E6 /* KnowledgeCardContentRome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E6 /* KnowledgeCardContentRome.swift */; };
+		0E7 /* KnowledgeCardContentRenaissance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E7 /* KnowledgeCardContentRenaissance.swift */; };
+		0E8 /* DiscoveryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E8 /* DiscoveryCard.swift */; };
+		0E9 /* DiscoveryCardOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E9 /* DiscoveryCardOverlay.swift */; };
 		543AD36B2F60C199001895ED /* card_flip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 183 /* card_flip.mp3 */; };
 		543AD36C2F60C199001895ED /* GirlIntroAudio.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 182 /* GirlIntroAudio.m4a */; };
 		544299832F32E0F700F92073 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = 544299822F32E0F700F92073 /* Pow */; };
@@ -302,6 +308,12 @@
 		1E1 /* MuseumSketchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MuseumSketchService.swift; sourceTree = "<group>"; };
 		1E2 /* SketchStudyOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchStudyOverlay.swift; sourceTree = "<group>"; };
 		1E3 /* PhaseCompleteOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhaseCompleteOverlay.swift; sourceTree = "<group>"; };
+		1E4 /* SketchTeachingData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchTeachingData.swift; sourceTree = "<group>"; };
+		1E5 /* SketchTeachingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchTeachingView.swift; sourceTree = "<group>"; };
+		1E6 /* KnowledgeCardContentRome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnowledgeCardContentRome.swift; sourceTree = "<group>"; };
+		1E7 /* KnowledgeCardContentRenaissance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnowledgeCardContentRenaissance.swift; sourceTree = "<group>"; };
+		1E8 /* DiscoveryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoveryCard.swift; sourceTree = "<group>"; };
+		1E9 /* DiscoveryCardOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoveryCardOverlay.swift; sourceTree = "<group>"; };
 		544299972F3646ED00F92073 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BuildingNode.swift; path = Views/SpriteKit/BuildingNode.swift; sourceTree = "<group>"; };
 		544299982F3646ED00F92073 /* CityMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityMapView.swift; path = Views/SpriteKit/CityMapView.swift; sourceTree = "<group>"; };
 		544299992F3646ED00F92073 /* CityScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityScene.swift; path = Views/SpriteKit/CityScene.swift; sourceTree = "<group>"; };
@@ -472,6 +484,8 @@
 				1A3 /* SettingsView.swift */,
 				1E2 /* SketchStudyOverlay.swift */,
 				1E3 /* PhaseCompleteOverlay.swift */,
+				1E5 /* SketchTeachingView.swift */,
+				1E9 /* DiscoveryCardOverlay.swift */,
 				308 /* Sketching */,
 				309 /* Onboarding */,
 				310 /* StationMiniGames */,
@@ -528,6 +542,10 @@
 				1C2 /* ChatMessage.swift */,
 				1D2 /* StationCompounds.swift */,
 				1E0 /* MuseumSketch.swift */,
+				1E4 /* SketchTeachingData.swift */,
+				1E6 /* KnowledgeCardContentRome.swift */,
+				1E7 /* KnowledgeCardContentRenaissance.swift */,
+				1E8 /* DiscoveryCard.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -881,6 +899,12 @@
 				0E1 /* MuseumSketchService.swift in Sources */,
 				0E2 /* SketchStudyOverlay.swift in Sources */,
 				0E3 /* PhaseCompleteOverlay.swift in Sources */,
+				0E4 /* SketchTeachingData.swift in Sources */,
+				0E5 /* SketchTeachingView.swift in Sources */,
+				0E6 /* KnowledgeCardContentRome.swift in Sources */,
+				0E7 /* KnowledgeCardContentRenaissance.swift in Sources */,
+				0E8 /* DiscoveryCard.swift in Sources */,
+				0E9 /* DiscoveryCardOverlay.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -34,7 +34,19 @@
 
 ## Swift Language
 
-*(Teaching moments about Swift syntax, protocols, generics, closures, and language features will appear here)*
+### Extension-Based Content Splitting — 2026-03-18
+
+**The Concept:** When a single file grows too large (our 208 knowledge cards would be 4000+ lines), Swift extensions let you split content across multiple files while keeping the same type.
+
+**Step by Step:**
+1. Define the main enum/struct in one file (`KnowledgeCard.swift` — model + router)
+2. Create extensions in separate files (`KnowledgeCardContentRome.swift`, `...Renaissance.swift`)
+3. Each extension adds `static var` computed properties to the same enum
+4. The compiler treats them as one type — no imports needed between files
+
+**In Our Code:** `KnowledgeCardContent` is an enum in `KnowledgeCard.swift`. The Rome/Renaissance files use `extension KnowledgeCardContent { ... }` to add building card arrays. The router switch in the main file references them all seamlessly.
+
+**Key Takeaway:** Extensions across files = unlimited content scaling without a 5000-line monster file. Same pattern used for `LessonContent` → `LessonContentRome` + `LessonContentRenaissance`.
 
 ---
 
@@ -73,6 +85,22 @@
 ---
 
 ## Architecture & Patterns
+
+### Actionable Checklists — Navigate From Status to Action — 2026-03-18
+
+**The Concept:** A static checklist that only shows "done/not done" is a UI dead end. Making incomplete items tappable turns the checklist into a navigation hub — the player sees what's missing AND can do it right there.
+
+**Step by Step:**
+1. Checklist shows requirements with checkmarks for completed items
+2. Incomplete item (e.g., "Floor Plan") becomes a `Button` instead of a static `HStack`
+3. Button fires a callback (`onBeginSketching`) that the parent view handles
+4. Parent dismisses checklist, then presents the next activity (sketching challenge)
+
+**In Our Code:** `BuildingChecklistView.swift:87-109` — the sketch row is now a tappable `Button` with blue "Begin Sketch >" text when incomplete. `CityMapView.swift:593-601` — `onBeginSketching` dismisses checklist then opens the sketching sheet.
+
+**Key Takeaway:** Every "not yet done" item in a UI should tell the user HOW to do it. Callbacks bridge the gap between "showing status" and "enabling action."
+
+---
 
 ### Two Card Systems = Two Bugs — 2026-03-17
 
@@ -145,4 +173,4 @@
 
 ---
 
-*Last updated: 2026-03-17*
+*Last updated: 2026-03-18*
