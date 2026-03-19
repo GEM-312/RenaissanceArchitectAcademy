@@ -330,7 +330,7 @@ enum MuseumSketchContent {
 
         // ── Renaissance Italy ─────────────────────────────
 
-        case "Il Duomo":
+        case "Duomo", "Il Duomo":
             return [
                 MuseumSketch(
                     id: 341618,

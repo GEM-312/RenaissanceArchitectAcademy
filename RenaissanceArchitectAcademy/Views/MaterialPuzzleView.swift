@@ -115,6 +115,9 @@ struct MaterialPuzzleView: View {
     let onComplete: () -> Void
     let onDismiss: () -> Void
 
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    private var isLargeScreen: Bool { sizeClass == .regular }
+
     @State private var grid: [[ElementTile]] = []
     @State private var collectedElements: [String: Int] = [:]
     @State private var showSuccess = false
@@ -137,7 +140,7 @@ struct MaterialPuzzleView: View {
     @State private var birdHasLanded = false  // Switches from flying to sitting
 
     private let gridSize = 5  // Bigger grid = harder
-    private let tileSize: CGFloat = 58  // Slightly smaller tiles
+    private var tileSize: CGFloat { isLargeScreen ? 58 : 48 }
     private let tileSpacing: CGFloat = 8  // Spacing for drag
 
     // Distractor elements (make puzzle harder)
@@ -167,44 +170,31 @@ struct MaterialPuzzleView: View {
             RenaissanceColors.parchmentGradient
                 .ignoresSafeArea()
 
-            HStack(spacing: 0) {
-                // Bird character on the left side
-                VStack {
-                    Spacer()
-                    puzzleMascotView
-                        .offset(x: birdOffset + 60, y: birdBounce)
-                    Spacer()
-                }
-                .frame(width: 200)  // Wider area for bigger bird
+            Group {
+                if isLargeScreen {
+                    HStack(spacing: 0) {
+                        // Bird character on the left side
+                        VStack {
+                            Spacer()
+                            puzzleMascotView
+                                .offset(x: birdOffset + 60, y: birdBounce)
+                            Spacer()
+                        }
+                        .frame(width: 200)  // Wider area for bigger bird
 
-                // Main puzzle content
-                VStack(spacing: 16) {
-                    // Header
-                    header
-
-                    // Formula card (answer hidden)
-                    formulaCard
-
-                    // Element collection progress
-                    elementProgressView
-
-                    // Puzzle grid
-                    puzzleGrid
-
-                    // Hint button
-                    hintButton
-
-                    Spacer()
-
-                    // Cancel button
-                    Button("Return to City") {
-                        onDismiss()
+                        // Main puzzle content
+                        mainPuzzleContent
                     }
-                    .font(.custom("EBGaramond-Regular", size: 16))
-                    .foregroundColor(RenaissanceColors.sepiaInk)
-                    .padding(.bottom, 20)
+                } else {
+                    VStack(spacing: 8) {
+                        // Bird character above the grid on compact
+                        puzzleMascotView
+                            .offset(x: birdOffset, y: birdBounce)
+
+                        // Main puzzle content
+                        mainPuzzleContent
+                    }
                 }
-                .padding()
             }
 
             // Success overlay
@@ -249,11 +239,43 @@ struct MaterialPuzzleView: View {
         }
     }
 
+    // MARK: - Main Puzzle Content
+
+    private var mainPuzzleContent: some View {
+        VStack(spacing: isLargeScreen ? 16 : 10) {
+            // Header
+            header
+
+            // Formula card (answer hidden)
+            formulaCard
+
+            // Element collection progress
+            elementProgressView
+
+            // Puzzle grid
+            puzzleGrid
+
+            // Hint button
+            hintButton
+
+            Spacer()
+
+            // Cancel button
+            Button("Return to City") {
+                onDismiss()
+            }
+            .font(.custom("EBGaramond-Regular", size: 16))
+            .foregroundColor(RenaissanceColors.sepiaInk)
+            .padding(.bottom, isLargeScreen ? 20 : 10)
+        }
+        .padding(isLargeScreen ? 16 : 10)
+    }
+
     // MARK: - Mascot in Puzzle View
 
     private var puzzleMascotView: some View {
         BirdCharacter(isSitting: birdHasLanded)
-            .frame(width: 200, height: 200)
+            .frame(width: isLargeScreen ? 200 : 80, height: isLargeScreen ? 200 : 80)
     }
 
     /// Animate bird flying in from left then landing to sitting pose
@@ -542,7 +564,7 @@ struct MaterialPuzzleView: View {
 
                 if let moleculeData = MoleculeData.molecule(forFormula: formula.name) {
                     MoleculeView(molecule: moleculeData, showLabel: false)
-                        .frame(width: 360, height: 260)
+                        .frame(maxWidth: 360, maxHeight: 260)
                 }
 
                 RenaissanceButton(title: "Continue Building") {
@@ -550,7 +572,7 @@ struct MaterialPuzzleView: View {
                 }
                 .padding(.top, 10)
             }
-            .padding(36)
+            .padding(isLargeScreen ? 36 : 20)
         }
         .transition(.opacity)
     }

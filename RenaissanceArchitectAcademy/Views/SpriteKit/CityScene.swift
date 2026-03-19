@@ -41,6 +41,9 @@ class CityScene: SKScene, ScrollZoomable {
     /// The building currently showing a dialog — tracked every frame for position updates
     private var dialogBuildingNode: BuildingNode?
 
+    /// Last reported screen position — only fire callback when position changes meaningfully
+    private var lastReportedScreenPos: CGPoint = .zero
+
     /// Callback when player starts walking (dismiss any open dialogs)
     var onPlayerStartedWalking: (() -> Void)?
 
@@ -62,8 +65,8 @@ class CityScene: SKScene, ScrollZoomable {
     /// Terrain sprite reference — fades when zoomed in to reveal clean parchment
     private var terrainSprite: SKSpriteNode?
 
-    /// Semi-transparent overlay that fades in during walking for dreamy effect (replaces memory-heavy CIGaussianBlur)
-    private var walkingOverlay: SKSpriteNode?
+    /// Pre-blurred terrain that fades in during walking/zoom-in (replaces memory-heavy CIGaussianBlur)
+    private var blurredTerrainSprite: SKSpriteNode?
 
     #if DEBUG
     private lazy var editorMode = SceneEditorMode(scene: self)
@@ -316,7 +319,7 @@ class CityScene: SKScene, ScrollZoomable {
         removeAllActions()
         removeAllChildren()
         terrainSprite = nil
-        walkingOverlay = nil
+        blurredTerrainSprite = nil
         playerNode = nil
         hasSetup = false
         // Break retain cycles from closures capturing SwiftUI views
@@ -365,18 +368,36 @@ class CityScene: SKScene, ScrollZoomable {
             clampCamera()
         }
 
-        // Zoom-based terrain fade — subtle overlay when zoomed in (replaces CIGaussianBlur to save memory)
-        if let cam = cameraNode, !isPlayerWalking, !isFollowingPlayer {
+        // Terrain crossfade — smooth transition between sharp and blurred terrain
+        // Uses a transition zone (0.8–1.2) to avoid hard-threshold blinking when scale
+        // hovers near 1.0 during pan/zoom gestures.
+        if let cam = cameraNode {
             let scale = cam.xScale
-            if scale >= 1.0 {
-                walkingOverlay?.alpha = 0
+            let loThreshold: CGFloat = 0.8   // fully blurred below this
+            let hiThreshold: CGFloat = 1.2   // fully sharp above this
+            let blurAlpha: CGFloat
+            if scale <= loThreshold {
+                blurAlpha = 1.0
+            } else if scale >= hiThreshold {
+                blurAlpha = 0.0
             } else {
-                let t = 1.0 - max(0, min(1, (scale - 0.5) / 0.5))
-                walkingOverlay?.alpha = t * 0.15  // Subtle parchment wash when zoomed in
+                // Linear interpolation through the transition zone
+                blurAlpha = 1.0 - (scale - loThreshold) / (hiThreshold - loThreshold)
             }
+            // Smooth lerp to avoid per-frame jitter
+            let lerpSpeed: CGFloat = 0.15
+            let currentBlur = blurredTerrainSprite?.alpha ?? 0
+            let newBlur = currentBlur + (blurAlpha - currentBlur) * lerpSpeed
+            blurredTerrainSprite?.alpha = newBlur
+            // Fade sharp terrain as blur fades in, but never below 0.35 to prevent
+            // background color bleed-through (which caused blinking)
+            let sharpAlpha = max(0.35, 1.0 - newBlur)
+            let currentSharp = terrainSprite?.alpha ?? 1.0
+            terrainSprite?.alpha = currentSharp + (sharpAlpha - currentSharp) * lerpSpeed
         }
 
-        // Continuously update dialog position so it tracks the building when map pans/zooms
+        // Update dialog position — only fires callback when position changes by >1pt
+        // to avoid triggering SwiftUI re-renders every frame (causes flicker on iPhone)
         if let buildingNode = dialogBuildingNode, let view = self.view {
             let viewPoint = convertPoint(toView: buildingNode.position)
             let viewSize = view.bounds.size
@@ -390,7 +411,13 @@ class CityScene: SKScene, ScrollZoomable {
                 x: viewPoint.x / viewSize.width,
                 y: normalizedY
             )
-            onBuildingScreenPosition?(normalized)
+            // Only update if moved more than ~1pt in screen space to avoid per-frame SwiftUI re-renders
+            let dx = abs(normalized.x - lastReportedScreenPos.x) * viewSize.width
+            let dy = abs(normalized.y - lastReportedScreenPos.y) * viewSize.height
+            if dx > 1.0 || dy > 1.0 {
+                lastReportedScreenPos = normalized
+                onBuildingScreenPosition?(normalized)
+            }
         }
     }
 
@@ -440,14 +467,17 @@ class CityScene: SKScene, ScrollZoomable {
                 addChild(sprite)
                 terrainSprite = sprite
 
-                // Walking overlay — semi-transparent parchment that fades in during walking
-                // Replaces SKEffectNode+CIGaussianBlur which used ~140MB of rasterization buffer
-                let overlay = SKSpriteNode(color: PlatformColor(red: 0.96, green: 0.91, blue: 0.84, alpha: 1.0), size: tile.size)
-                overlay.position = CGPoint(x: centerX, y: centerY)
-                overlay.zPosition = -99
-                overlay.alpha = 0
-                addChild(overlay)
-                walkingOverlay = overlay
+                // Pre-blurred terrain — fades in during walking/zoom for depth-of-field effect
+                // Zero GPU cost: just alpha crossfade between sharp and blurred textures
+                let blurredTexture = SKTexture(imageNamed: "BlurredTerrain")
+                blurredTexture.filteringMode = .linear
+                let blurred = SKSpriteNode(texture: blurredTexture)
+                blurred.size = tile.size
+                blurred.position = CGPoint(x: centerX, y: centerY)
+                blurred.zPosition = -99
+                blurred.alpha = 0
+                addChild(blurred)
+                blurredTerrainSprite = blurred
             } else {
                 // Placeholder tile — parchment rectangle with dashed border
                 let placeholder = SKSpriteNode(color: PlatformColor(red: 0.96, green: 0.90, blue: 0.83, alpha: 1.0), size: tile.size)
@@ -1072,16 +1102,15 @@ class CityScene: SKScene, ScrollZoomable {
         onMascotReachedBuilding?(buildingNode.buildingId)
     }
 
-    // MARK: - Terrain Effects (walking overlay fade)
+    // MARK: - Terrain Effects
 
-    /// Fade in parchment overlay during walking for dreamy effect
+    /// Walking terrain effects — zoom-based swap in update() handles the actual terrain switch
     private func startWalkingTerrainEffects() {
-        walkingOverlay?.run(SKAction.fadeAlpha(to: 0.25, duration: 0.3))
+        // Handled by update() loop based on camera zoom level
     }
 
-    /// Fade out parchment overlay when walking stops
     private func stopWalkingTerrainEffects() {
-        walkingOverlay?.run(SKAction.fadeAlpha(to: 0, duration: 0.3))
+        // Handled by update() loop based on camera zoom level
     }
 
     // MARK: - Camera Follow & Zoom
@@ -1102,10 +1131,14 @@ class CityScene: SKScene, ScrollZoomable {
     private func zoomCameraToBuilding(_ buildingPos: CGPoint) {
         guard let cameraNode = cameraNode else { return }
 
+        // On smaller screens (iPhone), zoom less so the player sprite stays visible
+        let viewWidth = view?.bounds.width ?? 1024
+        let targetScale: CGFloat = viewWidth < 500 ? 0.85 : 0.6
+
         let moveAction = SKAction.move(to: buildingPos, duration: 0.5)
         moveAction.timingMode = .easeInEaseOut
 
-        let zoomAction = SKAction.scale(to: 0.6, duration: 0.5)
+        let zoomAction = SKAction.scale(to: targetScale, duration: 0.5)
         zoomAction.timingMode = .easeInEaseOut
 
         cameraNode.run(SKAction.group([moveAction, zoomAction]), withKey: "cameraZoom")
@@ -1238,8 +1271,11 @@ class CityScene: SKScene, ScrollZoomable {
         clampCamera()
     }
 
-    /// Dismiss SwiftUI overlays on any map interaction (scroll, pan, zoom, drag)
+    /// Dismiss SwiftUI overlays on any map interaction (scroll, pan, zoom, drag).
+    /// Only fires the callback if there's actually a dialog to dismiss, preventing
+    /// redundant SwiftUI state changes on every gesture tick (which cause flicker).
     private func dismissOverlaysOnInteraction() {
+        guard dialogBuildingNode != nil else { return }
         dialogBuildingNode = nil
         onPlayerStartedWalking?()
     }

@@ -32,6 +32,9 @@ struct HintOverlayView: View {
     // Pre-generated earn reward (shown on activity card, awarded on correct answer)
     @State private var pendingEarnReward: [(Material, Int)] = []
 
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    private var isLargeScreen: Bool { sizeClass == .regular }
+
     private var totalMaterials: Int {
         workshopState?.rawMaterials.values.reduce(0, +) ?? 0
     }
@@ -66,7 +69,7 @@ struct HintOverlayView: View {
 
                 // Phase content card
                 phaseContent
-                    .padding(.horizontal, 32)
+                    .adaptivePadding(.horizontal, regular: 32, compact: 16)
             }
         }
         .onAppear {
@@ -144,7 +147,7 @@ struct HintOverlayView: View {
                 }
             }
         }
-        .padding(.horizontal, 40)
+        .adaptivePadding(.horizontal, regular: 40, compact: 16)
     }
 
     // MARK: - Mascot Section

@@ -260,42 +260,50 @@ Styles/[name]_frames/clean/    # Photoshop exports (no bg)
 
 ## Next Steps
 
-### PRIORITY 1: Terrain & Camera Polish (next session)
+### PRIORITY 1: Responsive Layout Polish (next session)
+- [x] ~~Phase 0-8: Core responsive layout~~ (DONE — Mar 18 2026)
+- [x] ~~Fix iOS gray button containers (.buttonStyle(.plain) at root)~~ (DONE — Mar 18 2026)
+- [x] ~~Fix map blinking on iPhone pan (terrain crossfade, callback throttling)~~ (DONE — Mar 18 2026)
+- [x] ~~Fix building zoom too close on iPhone (0.85 vs 0.6)~~ (DONE — Mar 18 2026)
+- [ ] Continue iPhone layout testing — check all mini-games (quarry, river, volcano, clay, farm) on iPhone SE
+- [ ] Test Workshop outdoor/indoor layouts on iPhone
+- [ ] Test Forest map overlays on iPhone
+- [ ] Test onboarding flow end-to-end on iPhone
+- [ ] Test lesson reader (BuildingLessonView) on iPhone — ensure pages don't overflow
+- [ ] Test sketching challenge on iPhone — canvas sizing
+
+### PRIORITY 2: Terrain & Camera Polish
 - [ ] Improve terrain art for City Map, Workshop, Forest (higher quality Midjourney terrains)
 - [ ] Create station micro-environments — detail sprites/objects that appear when zoomed in near stations
-- [ ] Camera polish — smooth zoom transitions, better clamp behavior at map edges
+- [ ] LOD system — detail sprites fade in based on camera distance + zoom
 - [ ] Terrain blur is implemented (CityScene + WorkshopScene) — see terrain-blur-system.md in memory
 
-### PRIORITY 2: Station Micro-Environments / LOD Detail (next session)
-- [ ] Add LOD (Level of Detail) system — detail sprites appear when camera zooms in near stations
-- [ ] Each station gets a `detailGroup` (SKNode) with 5-8 small props (tools, barrels, crates, flames, vegetation, etc.)
-- [ ] Detail nodes start at `alpha = 0`, fade in based on camera distance + zoom level in `update()` loop
-- [ ] Trigger: `distToCamera < 600 && scale < 0.8` — nearby + zoomed in
-- [ ] Prototype on WorkshopScene first, then extend to CityScene buildings and ForestScene trees
-- [ ] Props per station type: Quarry (pickaxes, stone piles), River (buckets, reeds), Volcano (embers, sulfur), Mine (lanterns, cart), Clay Pit (pottery, clay mounds), Market (crates, fabric), Crafting Room (smoke, tools by door)
-- [ ] Use Midjourney sprites or hand-drawn SKShapeNode props (same watercolor aesthetic)
-- [ ] Smooth fade transition: `SKAction.fadeAlpha` over 0.3s, not instant toggle
+### PRIORITY 3: Knowledge Cards — Remaining Buildings
+- [x] ~~KnowledgeCardsOverlay reusable component~~ (DONE)
+- [x] ~~Card integration across all 4 environments~~ (DONE)
+- [ ] Author cards for remaining 16 buildings (Pantheon has 14 cards, others need content)
+- [ ] Card aurora glow uses per-science color at subtle opacity (0.4/0.3) — consistent design
 
-### PRIORITY 3: Knowledge Cards Across Environments (next session)
-- [ ] Spread knowledge cards across all environments to complete the game loop
-- [ ] Extract card UI from ForestMapView into reusable `KnowledgeCardsOverlay.swift`
-- [ ] Integrate into CityMapView, WorkshopMapView, CraftingRoomMapView, ForestMapView
-- [ ] Author cards for remaining 16 buildings (Pantheon prototype has 14 cards)
-- [ ] Bird guidance hints across all environments
-
-### PRIORITY 4: Game Tools System (next session)
-- [ ] Implement tools that player can acquire and use across environments
-- [ ] Tools tied to crafting system — craft tools at workbench
-- [ ] Tool usage in building construction, resource collection, sketching
+### PRIORITY 4: Audio & Sound Design
+- [ ] Background music — ambient Renaissance lute/harpsichord loop for main menu, city map, workshop
+- [ ] Forest ambience — birds, wind, rustling leaves (looping)
+- [ ] Crafting room ambience — crackling fire, workshop sounds
+- [ ] UI sounds — button tap, overlay open/close, page turn (lessons)
+- [ ] Crafting sounds — workbench mixing, furnace fire whoosh, crafting complete chime
+- [ ] Collection sounds — resource pickup, timber chop, stone quarry hit
+- [ ] Challenge sounds — correct answer ding, wrong answer buzz, quiz complete fanfare
+- [ ] Walking sounds — footstep.wav already exists (0.55s interval), add surface variants (stone, grass, wood)
+- [ ] Transition sounds — scene enter/exit swoosh, crafting room door creak
+- [ ] Bird companion — chirp on hint, squawk on wrong answer, happy trill on success
+- [ ] Sketch sounds — pencil scratch on canvas, stamp for column placement
+- [ ] Consider AVAudioPlayer for music loops, SKAction.playSoundFileNamed for SFX
+- [ ] Volume controls — separate sliders for music vs SFX in settings/profile
 
 ### Game Flow & Progression
 - [ ] Prompt user to explore cities/buildings after workshop play (bird nudge system)
 - [ ] Trigger quizzes after certain gameplay milestones (time played, materials collected, buildings visited)
 - [ ] Award system — badges, achievements for completing challenges, crafting, sketching
 - [ ] Re-enable onboarding skip (uncomment check in ContentView after onboarding is finalized)
-
-### New Scenes
-- [ ] Building-specific scenes for each of the 17 buildings
 
 ### Content
 - [x] ~~Create lessons for all 17 buildings~~ (DONE — Feb 2026)
@@ -311,20 +319,8 @@ Styles/[name]_frames/clean/    # Photoshop exports (no bg)
 - [ ] Remove backgrounds from volcano frames (Marina in Photoshop)
 - [x] ~~Add station sprites for remaining stations (market, crafting room)~~ (DONE — Feb 22 2026)
 
-### PRIORITY 4: Audio & Sound Design (next session)
-- [ ] Background music — ambient Renaissance lute/harpsichord loop for main menu, city map, workshop
-- [ ] Forest ambience — birds, wind, rustling leaves (looping)
-- [ ] Crafting room ambience — crackling fire, workshop sounds
-- [ ] UI sounds — button tap, overlay open/close, page turn (lessons)
-- [ ] Crafting sounds — workbench mixing, furnace fire whoosh, crafting complete chime
-- [ ] Collection sounds — resource pickup, timber chop, stone quarry hit
-- [ ] Challenge sounds — correct answer ding, wrong answer buzz, quiz complete fanfare
-- [ ] Walking sounds — footstep.wav already exists (0.55s interval), add surface variants (stone, grass, wood)
-- [ ] Transition sounds — scene enter/exit swoosh, crafting room door creak
-- [ ] Bird companion — chirp on hint, squawk on wrong answer, happy trill on success
-- [ ] Sketch sounds — pencil scratch on canvas, stamp for column placement
-- [ ] Consider AVAudioPlayer for music loops, SKAction.playSoundFileNamed for SFX
-- [ ] Volume controls — separate sliders for music vs SFX in settings/profile
+### New Scenes
+- [ ] Building-specific scenes for each of the 17 buildings
 
 ### Technical
 - [ ] Adjust 64 waypoints to match new terrain in editor mode

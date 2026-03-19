@@ -86,6 +86,24 @@
 
 ## Architecture & Patterns
 
+### Root Cause vs Symptom Fixing — 2026-03-18
+
+**The Concept:** When a state machine returns the wrong state, fixing the UI that reads it is a band-aid. Fix the computation layer first, then add safety nets in the display layer.
+
+**Step by Step:**
+1. `currentPhase()` only checked card completion → returned `.build` prematurely (cards done ≠ materials crafted)
+2. CityMapView `.build` detected missing materials → sent player to Workshop
+3. WorkshopMapView `.build` didn't check materials → sent player back to City
+4. **Infinite loop** — neither view could resolve the contradiction
+5. **Root fix:** Made `currentPhase()` stay at `.craft` until materials are ACTUALLY crafted, not just until cards are done
+6. **Safety net:** Fixed guidance in all 3 views so even if phase is `.build`, they verify materials before routing
+
+**In Our Code:** `BuildingProgress.swift:108-119` — new material check using `Building.requiredCraftedItems(for:)` keeps phase at `.craft` until `workshopState.craftedMaterials` has all required items.
+
+**Key Takeaway:** Always fix the computation layer (state machine) first, then the display layer (guidance messages). A wrong state will always find new ways to cause bugs if you only patch the UI.
+
+---
+
 ### Actionable Checklists — Navigate From Status to Action — 2026-03-18
 
 **The Concept:** A static checklist that only shows "done/not done" is a UI dead end. Making incomplete items tappable turns the checklist into a navigation hub — the player sees what's missing AND can do it right there.
@@ -170,6 +188,39 @@
 ## General CS Concepts
 
 *(Teaching moments about algorithms, data structures, and computer science fundamentals will appear here)*
+
+---
+
+## Responsive Layout
+
+### Size Classes & AdaptiveWidthModifier — 2026-03-18
+
+**The Concept:** SwiftUI provides `@Environment(\.horizontalSizeClass)` to detect iPhone (`.compact`) vs iPad/Mac (`.regular`). Instead of hardcoding pixel sizes, compute them relative to screen width using GeometryReader or toggle between two presets.
+
+**Step by Step:**
+1. Read `horizontalSizeClass` from environment → derive `isLargeScreen` boolean
+2. For maxWidth constraints: use `.adaptiveWidth(420)` — expands to `.infinity` on iPhone, stays 420pt on iPad
+3. For padding: use `.adaptivePadding(.horizontal, regular: 40, compact: 16)` — one modifier replaces inline ternaries
+4. For cards/grids: use computed properties (`var cardW: CGFloat { isLargeScreen ? 200 : 140 }`)
+5. For layout changes: switch `HStack` → `VStack` on compact (`Group { if isLargeScreen { HStack { ... } } else { VStack { ... } } }`)
+
+**In Our Code:** KnowledgeCardsOverlay flipped card was 560pt (overflows 375pt iPhone SE by 185pt). Now 340pt on compact. CharacterSelectView gender cards were 300pt each (624pt total) — now 160pt (332pt total). MaterialPuzzleView switches from HStack to VStack on compact.
+
+**Key Takeaway:** One `@Environment` + computed properties = responsive across all Apple devices. SpriteKit scenes need no changes — the camera system handles all sizes automatically.
+
+### AdaptivePaddingModifier Pattern — 2026-03-18
+
+**The Concept:** When `padding(isLargeScreen ? 40 : 16)` repeats across dozens of files, extract into a ViewModifier that reads `horizontalSizeClass` internally, so callers don't need their own `@Environment`.
+
+**Step by Step:**
+1. `AdaptivePaddingModifier` takes edges, regular, and compact parameters
+2. Reads `@Environment(\.horizontalSizeClass)` inside the modifier
+3. Usage: `.adaptivePadding(.horizontal, regular: 40, compact: 16)`
+4. Pair with `.adaptiveWidth()` for maxWidth constraints
+
+**In Our Code:** Added to `RenaissanceTheme.swift` alongside `AdaptiveWidthModifier`. Used in ConstructionSequenceView, HintOverlayView, BuildingChecklistView.
+
+**Key Takeaway:** One modifier call replaces two lines of Environment + ternary per file.
 
 ---
 

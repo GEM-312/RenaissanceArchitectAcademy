@@ -59,12 +59,18 @@ struct KnowledgeCardsOverlay: View {
     /// Current station type (when shown from workshop)
     var currentStation: ResourceStationType? = nil
 
-    // MARK: - Card Layout
+    // MARK: - Card Layout (responsive)
 
-    private let cardW: CGFloat = 200
-    private let cardH: CGFloat = 280
-    private let flippedW: CGFloat = 560
-    private let flippedH: CGFloat = 780
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    private var isLargeScreen: Bool { sizeClass == .regular }
+
+    // Screen width captured from GeometryReader — used to compute responsive card sizes
+    @State private var screenWidth: CGFloat = 400
+
+    private var cardW: CGFloat { isLargeScreen ? 200 : min(200, screenWidth * 0.6) }
+    private var cardH: CGFloat { isLargeScreen ? 280 : min(280, cardW * 1.4) }
+    private var flippedW: CGFloat { isLargeScreen ? 560 : min(560, screenWidth * 0.88) }
+    private var flippedH: CGFloat { isLargeScreen ? 780 : min(780, flippedW * 1.5) }
 
     // MARK: - Card State
 
@@ -131,12 +137,11 @@ struct KnowledgeCardsOverlay: View {
                 RenaissanceColors.overlayDimming
                     .ignoresSafeArea()
                     .onTapGesture { handleBackgroundTap() }
+                    .onAppear { screenWidth = geo.size.width }
+                    .onChange(of: geo.size.width) { screenWidth = $1 }
 
                 VStack(spacing: 16) {
                     Spacer()
-
-                    // Bird encouragement
-                    birdEncouragement
 
                     // Card progress
                     cardProgressBar
@@ -327,37 +332,25 @@ struct KnowledgeCardsOverlay: View {
         let color = card.color
         return ZStack {
             RoundedRectangle(cornerRadius: 14)
-                .fill(isCompleted ? RenaissanceColors.sageGreen.opacity(0.06) : Color.clear)
-                .overlay(
-                    Group {
-                        if !isCompleted {
-                            RoundedRectangle(cornerRadius: 14).fill(RenaissanceColors.sepiaInk)
-                        }
-                    }
-                )
+                .fill(isCompleted ? Color.clear : RenaissanceColors.sepiaInk)
                 .overlay(
                     ZStack {
                         if !isCompleted {
+                            // Science-colored aurora glow at subtle opacity
                             Ellipse()
-                                .fill(color.opacity(0.55))
+                                .fill(color.opacity(0.4))
                                 .frame(width: 180, height: 120)
                                 .blur(radius: 38)
                                 .offset(x: auroraPhase ? 40 : -30, y: auroraPhase ? 100 : 130)
                                 .animation(.easeInOut(duration: 4.0).repeatForever(autoreverses: true), value: auroraPhase)
                             Ellipse()
-                                .fill(color.opacity(0.4))
+                                .fill(color.opacity(0.3))
                                 .frame(width: 128, height: 165)
                                 .blur(radius: 33)
                                 .offset(x: auroraPhase ? -35 : 25, y: auroraPhase ? 110 : 140)
                                 .animation(.easeInOut(duration: 5.5).repeatForever(autoreverses: true), value: auroraPhase)
-                            Ellipse()
-                                .fill(RenaissanceColors.goldSuccess.opacity(0.3))
-                                .frame(width: 135, height: 90)
-                                .blur(radius: 36)
-                                .offset(x: auroraPhase ? 20 : -40, y: auroraPhase ? 105 : 135)
-                                .animation(.easeInOut(duration: 6.5).repeatForever(autoreverses: true), value: auroraPhase)
                             Circle()
-                                .fill(Color.white.opacity(0.25))
+                                .fill(Color.white.opacity(0.15))
                                 .frame(width: 82, height: 82)
                                 .blur(radius: 27)
                                 .offset(x: auroraPhase ? -15 : 30, y: auroraPhase ? 115 : 120)
@@ -373,12 +366,11 @@ struct KnowledgeCardsOverlay: View {
 
                 ZStack {
                     Circle()
-                        .fill(isCompleted ? RenaissanceColors.sageGreen.opacity(0.2) : color.opacity(0.15))
+                        .fill(isCompleted ? RenaissanceColors.sageGreen.opacity(0.3) : color.opacity(0.2))
                         .frame(width: 70, height: 70)
                     Image(systemName: isCompleted ? "checkmark.circle.fill" : card.icon)
                         .font(.system(size: 36))
                         .foregroundStyle(isCompleted ? RenaissanceColors.sageGreen : color)
-                        .shadow(color: isCompleted ? .clear : color.opacity(0.5), radius: 6)
                 }
 
                 Text(card.title)
@@ -387,10 +379,11 @@ struct KnowledgeCardsOverlay: View {
                     .foregroundStyle(isCompleted ? RenaissanceColors.sageGreen : color)
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
+                    .padding(.horizontal, Spacing.sm)
 
                 Text(card.science.rawValue)
                     .font(RenaissanceFont.captionSmall)
-                    .foregroundStyle(color.opacity(0.7))
+                    .foregroundStyle(isCompleted ? RenaissanceColors.sageGreen.opacity(0.7) : color.opacity(0.7))
 
                 if isCompleted {
                     // "Ask the Bird" button on completed cards
@@ -406,19 +399,19 @@ struct KnowledgeCardsOverlay: View {
                             Text("Ask the Bird")
                                 .font(.custom("EBGaramond-Regular", size: 12))
                         }
-                        .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                        .foregroundStyle(RenaissanceColors.sageGreen)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 5)
                         .background(
                             Capsule()
-                                .fill(RenaissanceColors.renaissanceBlue.opacity(0.1))
+                                .fill(RenaissanceColors.sageGreen.opacity(0.1))
                         )
                     }
                     .buttonStyle(.plain)
                 } else {
                     Image(systemName: "hand.tap.fill")
                         .font(.system(size: 13))
-                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.3))
+                        .foregroundStyle(RenaissanceColors.parchment.opacity(0.4))
                 }
 
                 Spacer()
@@ -429,8 +422,8 @@ struct KnowledgeCardsOverlay: View {
             RoundedRectangle(cornerRadius: 14)
                 .stroke(isCompleted ? RenaissanceColors.sageGreen.opacity(0.4) : color.opacity(0.3), lineWidth: 1.5)
         )
-        .shadow(color: isCompleted ? .clear : color.opacity(0.5), radius: 20, y: 6)
-        .shadow(color: isCompleted ? .clear : color.opacity(0.3), radius: 40, y: 10)
+        .shadow(color: isCompleted ? .clear : color.opacity(0.4), radius: 20, y: 6)
+        .shadow(color: isCompleted ? .clear : color.opacity(0.2), radius: 40, y: 10)
     }
 
     // MARK: - Card Back (reading ↔ activity)
@@ -968,9 +961,11 @@ struct KnowledgeCardsOverlay: View {
                 }
             }
 
-            // Scrambled letter tiles
-            let colCount = max(min(scramblePool.count, 6), 1)
-            let columns = Array(repeating: GridItem(.fixed(52), spacing: 8), count: colCount)
+            // Scrambled letter tiles (responsive grid)
+            let scrambleColMax = isLargeScreen ? 6 : 5
+            let scrambleTileSize: CGFloat = isLargeScreen ? 52 : 44
+            let colCount = max(min(scramblePool.count, scrambleColMax), 1)
+            let columns = Array(repeating: GridItem(.fixed(scrambleTileSize), spacing: 8), count: colCount)
             LazyVGrid(columns: columns, spacing: 8) {
                 ForEach(scramblePool) { tile in
                     Button {
@@ -979,7 +974,7 @@ struct KnowledgeCardsOverlay: View {
                         Text(String(tile.character))
                             .font(.custom("Cinzel-Bold", size: 18))
                             .foregroundStyle(color)
-                            .frame(width: 48, height: 48)
+                            .frame(width: scrambleTileSize - 4, height: scrambleTileSize - 4)
                             .contentShape(Rectangle())
                             .background(
                                 RoundedRectangle(cornerRadius: CornerRadius.sm)
@@ -1216,9 +1211,11 @@ struct KnowledgeCardsOverlay: View {
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
             }
 
-            // Alphabet grid (2 rows × 13)
+            // Alphabet grid (responsive: 13 cols on iPad, 9 cols on iPhone)
             let alphabet: [Character] = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-            let columns = Array(repeating: GridItem(.fixed(36), spacing: 3), count: 13)
+            let hangmanColCount = isLargeScreen ? 13 : 9
+            let hangmanCellSize: CGFloat = isLargeScreen ? 36 : 32
+            let columns = Array(repeating: GridItem(.fixed(hangmanCellSize), spacing: 3), count: hangmanColCount)
 
             LazyVGrid(columns: columns, spacing: 3) {
                 ForEach(alphabet, id: \.self) { letter in
@@ -1236,7 +1233,7 @@ struct KnowledgeCardsOverlay: View {
                                 : isWrongLetter ? RenaissanceColors.errorRed.opacity(0.5)
                                 : color
                             )
-                            .frame(width: 34, height: 34)
+                            .frame(width: hangmanCellSize - 2, height: hangmanCellSize - 2)
                             .contentShape(Rectangle())
                             .background(
                                 RoundedRectangle(cornerRadius: 6)
@@ -1816,7 +1813,7 @@ struct KnowledgeCardsOverlay: View {
         let progress = viewModel.cardProgress(for: buildingId)
         let buildingProgress = viewModel.buildingProgressMap[buildingId] ?? BuildingProgress()
         let buildingName = viewModel.buildingPlots.first(where: { $0.id == buildingId })?.building.name ?? ""
-        let phase = buildingProgress.currentPhase(for: buildingName, workshopState: workshopState ?? WorkshopState())
+        let phase = buildingProgress.currentPhase(for: buildingName, workshopState: workshopState ?? WorkshopState(), craftedMaterials: workshopState?.craftedMaterials ?? [:])
         let nextEnv = phase.environment  // nil means .build phase → city map
         let message = buildGuidanceMessage(card: card, progress: progress, nextEnv: nextEnv)
 
@@ -1873,7 +1870,7 @@ struct KnowledgeCardsOverlay: View {
             }
         }
         .padding(Spacing.md)
-        .frame(maxWidth: 420)
+        .adaptiveWidth(420)
         .background(
             RoundedRectangle(cornerRadius: CornerRadius.md)
                 .fill(RenaissanceColors.parchment)

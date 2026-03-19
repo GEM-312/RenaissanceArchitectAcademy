@@ -1480,7 +1480,7 @@ struct ForestMapView: View {
                 }
             }
             .padding(Spacing.lg)
-            .frame(maxWidth: 380)
+            .adaptiveWidth(380)
             .background(
                 RoundedRectangle(cornerRadius: CornerRadius.lg)
                     .fill(RenaissanceColors.parchment)

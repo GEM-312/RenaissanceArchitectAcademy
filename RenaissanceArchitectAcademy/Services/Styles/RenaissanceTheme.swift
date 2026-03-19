@@ -164,6 +164,28 @@ extension View {
     }
 }
 
+// MARK: - Adaptive Padding (iPhone vs iPad/Mac)
+
+/// Applies different padding amounts based on size class.
+/// Usage: `.adaptivePadding(.horizontal, regular: 40, compact: 16)`
+struct AdaptivePaddingModifier: ViewModifier {
+    let edges: Edge.Set
+    let regular: CGFloat
+    let compact: CGFloat
+    @Environment(\.horizontalSizeClass) private var sizeClass
+
+    func body(content: Content) -> some View {
+        content.padding(edges, sizeClass == .compact ? compact : regular)
+    }
+}
+
+extension View {
+    /// Adaptive padding — smaller on iPhone, larger on iPad/Mac
+    func adaptivePadding(_ edges: Edge.Set = .all, regular: CGFloat, compact: CGFloat) -> some View {
+        modifier(AdaptivePaddingModifier(edges: edges, regular: regular, compact: compact))
+    }
+}
+
 // MARK: - 9. Card Background ViewModifiers
 
 struct ParchmentCardModifier: ViewModifier {

@@ -20,6 +20,9 @@ struct StoryNarrativeView: View {
     private let charsPerTick = 2
     private let tickInterval: TimeInterval = 0.03
 
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    private var isLargeScreen: Bool { sizeClass == .regular }
+
     var body: some View {
         ZStack {
             if let prefix = page.backgroundFramePrefix {
@@ -46,7 +49,7 @@ struct StoryNarrativeView: View {
 
                 // Title
                 Text(page.title)
-                    .font(.custom("Cinzel-Regular", size: 36))
+                    .font(.custom("Cinzel-Regular", size: isLargeScreen ? 36 : 26))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .opacity(showTitle ? 1 : 0)
                     .offset(y: showTitle ? 0 : -15)

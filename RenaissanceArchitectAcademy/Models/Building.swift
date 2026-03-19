@@ -111,6 +111,11 @@ struct Building: Identifiable {
     /// Crafted materials needed from the Workshop to build this structure
     /// Each building requires materials for walls, roof, windows, and floors
     var requiredMaterials: [CraftedItem: Int] {
+        Building.requiredCraftedItems(for: name)
+    }
+
+    /// Static lookup — usable from BuildingProgress.currentPhase() without a Building instance
+    static func requiredCraftedItems(for name: String) -> [CraftedItem: Int] {
         switch name {
         // ── Ancient Rome ──────────────────────────────────
         case "Aqueduct":
@@ -139,7 +144,7 @@ struct Building: Identifiable {
             return [.limeMortar: 1, .terracottaTiles: 1, .timberBeams: 1, .glassPanes: 1]
 
         // ── Renaissance Italy ─────────────────────────────
-        case "Il Duomo":
+        case "Duomo", "Il Duomo":
             // Walls: polychrome marble | Roof: herringbone brick dome + terracotta | Windows: stained glass! | Floor: marble | Special: frescoes
             return [.marbleSlabs: 1, .terracottaTiles: 1, .stainedGlass: 1, .redFrescoPigment: 1]
         case "Botanical Garden":

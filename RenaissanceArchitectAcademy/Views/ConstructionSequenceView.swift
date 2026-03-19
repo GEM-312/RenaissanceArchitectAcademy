@@ -16,6 +16,9 @@ struct ConstructionSequenceView: View {
     @State private var checkedOnce = false                 // Has player checked at least once
     @State private var auroraPhase = false
 
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    private var isLargeScreen: Bool { sizeClass == .regular }
+
     var body: some View {
         ZStack {
             // Dimmed background
@@ -97,7 +100,7 @@ struct ConstructionSequenceView: View {
                 .stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1.5)
         )
         .shadow(color: RenaissanceColors.ochre.opacity(0.3), radius: 20, y: 6)
-        .padding(40)
+        .adaptivePadding(.all, regular: 40, compact: 16)
     }
 
     // MARK: - Puzzle View
@@ -213,7 +216,7 @@ struct ConstructionSequenceView: View {
                 .stroke(RenaissanceColors.ochre.opacity(0.2), lineWidth: 1)
         )
         .shadow(color: RenaissanceColors.ochre.opacity(0.3), radius: 20, y: 6)
-        .padding(30)
+        .adaptivePadding(.all, regular: 30, compact: 12)
     }
 
     // MARK: - Step Row
@@ -394,7 +397,7 @@ struct ConstructionSequenceView: View {
                 .stroke(RenaissanceColors.sageGreen.opacity(0.3), lineWidth: 1.5)
         )
         .shadow(color: RenaissanceColors.sageGreen.opacity(0.4), radius: 25, y: 8)
-        .padding(40)
+        .adaptivePadding(.all, regular: 40, compact: 16)
     }
 
     // MARK: - Logic

@@ -49,6 +49,8 @@ struct BuildingGeometry {
 /// Falls back to pre-computed values when offline.
 actor WolframGeometryHelper {
 
+    static let shared = WolframGeometryHelper()
+
     private let wolfram = WolframService()
     private var cache: [String: String] = [:]
 

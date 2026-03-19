@@ -439,7 +439,7 @@ struct CraftingRoomMapView: View {
         }
 
         // FALLBACK: phase-based guidance
-        let phase = progress.currentPhase(for: buildingName, workshopState: workshop)
+        let phase = progress.currentPhase(for: buildingName, workshopState: workshop, craftedMaterials: workshop.craftedMaterials)
 
         switch phase {
         case .learn:
@@ -468,8 +468,14 @@ struct CraftingRoomMapView: View {
             guidanceDestination = nil
 
         case .build:
-            guidanceMessage = "All materials crafted for the \(buildingName)! Head to the City Map to build!"
-            guidanceDestination = .cityMap
+            // Verify materials are actually all crafted before sending to city
+            if totalRequired > 0 && craftedCount >= totalRequired {
+                guidanceMessage = "All materials crafted for the \(buildingName)! Head to the City Map to build!"
+                guidanceDestination = .cityMap
+            } else {
+                guidanceMessage = "Craft your materials at the Workbench and Furnace! (\(craftedCount)/\(totalRequired) crafted)"
+                guidanceDestination = nil
+            }
         }
 
         withAnimation(.spring(response: 0.4)) {
@@ -1457,6 +1463,7 @@ struct CraftingRoomMapView: View {
                 RoundedRectangle(cornerRadius: CornerRadius.lg)
                     .fill(RenaissanceColors.parchment)
             )
+            .adaptivePadding(.horizontal, regular: 0, compact: 40)
         }
     }
 

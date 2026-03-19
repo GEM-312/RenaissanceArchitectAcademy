@@ -33,7 +33,7 @@ struct SketchStudyOverlay: View {
             .background(RenaissanceColors.parchment)
             .clipShape(RoundedRectangle(cornerRadius: 16))
             .shadow(color: .black.opacity(0.3), radius: 20, y: 10)
-            .frame(maxWidth: 580)
+            .adaptiveWidth(580)
             .padding(.horizontal, 20)
             .padding(.vertical, 40)
             .scaleEffect(appearAnimation ? 1.0 : 0.9)

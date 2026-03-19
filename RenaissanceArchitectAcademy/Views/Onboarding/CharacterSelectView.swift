@@ -10,6 +10,9 @@ struct CharacterSelectView: View {
     @State private var showContent = false
     @FocusState private var nameFieldFocused: Bool
 
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    private var isLargeScreen: Bool { sizeClass == .regular }
+
     /// Current animation frame index (0-14), shared between both avatars
     @State private var currentFrame: Int = 0
     private let frameCount = 15
@@ -31,7 +34,7 @@ struct CharacterSelectView: View {
                         .frame(width: 200)
 
                     Text("Choose Your Apprentice")
-                        .font(.custom("Cinzel-Regular", size: 32))
+                        .font(.custom("Cinzel-Regular", size: isLargeScreen ? 32 : 24))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     Text("Florence, 1485")
@@ -45,9 +48,18 @@ struct CharacterSelectView: View {
                 .offset(y: showContent ? 0 : -20)
 
                 // Gender cards — 2x bigger with animated avatars
-                HStack(spacing: 24) {
-                    genderCard(gender: .boy)
-                    genderCard(gender: .girl)
+                Group {
+                    if isLargeScreen {
+                        HStack(spacing: 24) {
+                            genderCard(gender: .boy)
+                            genderCard(gender: .girl)
+                        }
+                    } else {
+                        HStack(spacing: 12) {
+                            genderCard(gender: .boy)
+                            genderCard(gender: .girl)
+                        }
+                    }
                 }
                 .opacity(showContent ? 1 : 0)
 
@@ -146,14 +158,14 @@ struct CharacterSelectView: View {
                 Image(frameName)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 270, height: 270)
+                    .frame(width: isLargeScreen ? 270 : 140, height: isLargeScreen ? 270 : 140)
                     .clipShape(RoundedRectangle(cornerRadius: 14))
 
                 Text(gender.displayName)
-                    .font(.custom("EBGaramond-SemiBold", size: 22))
+                    .font(.custom("EBGaramond-SemiBold", size: isLargeScreen ? 22 : 17))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
-            .frame(width: 300, height: 360)
+            .frame(width: isLargeScreen ? 300 : 160, height: isLargeScreen ? 360 : 210)
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .fill(isSelected

@@ -7,8 +7,10 @@ struct SketchingChallengeView: View {
     let challenge: SketchingChallenge
     let onComplete: (Set<SketchingPhaseType>) -> Void
     let onDismiss: () -> Void
+    var onFlorinsEarned: ((Int) -> Void)? = nil
 
     @State private var showIntro = true
+    @State private var showTeaching = false
     @State private var currentPhaseIndex = 0
     @State private var completedPhases: Set<SketchingPhaseType> = []
     @State private var showCompletion = false
@@ -34,6 +36,8 @@ struct SketchingChallengeView: View {
 
             if showIntro {
                 introView
+            } else if showTeaching {
+                teachingView
             } else if showCompletion {
                 completionView
             } else if let phase = currentPhase {
@@ -79,7 +83,7 @@ struct SketchingChallengeView: View {
                         .fill(RenaissanceColors.ochre.opacity(0.4))
                         .frame(height: 1)
                 }
-                .padding(.horizontal, 40)
+                .padding(.horizontal, isLargeScreen ? 40 : 20)
 
                 // Introduction text
                 Text(challenge.introduction)
@@ -140,7 +144,12 @@ struct SketchingChallengeView: View {
                 VStack(spacing: 12) {
                     RenaissanceButton(title: "Begin Drawing") {
                         withAnimation(.spring(response: 0.4)) {
-                            showIntro = false
+                            if SketchTeachingContent.teachingData(for: challenge.buildingName) != nil {
+                                showIntro = false
+                                showTeaching = true
+                            } else {
+                                showIntro = false
+                            }
                         }
                     }
 
@@ -157,6 +166,35 @@ struct SketchingChallengeView: View {
             }
             .frame(maxWidth: isLargeScreen ? 600 : .infinity)
             .frame(maxWidth: .infinity)
+        }
+    }
+
+    // MARK: - Teaching
+
+    @ViewBuilder
+    private var teachingView: some View {
+        if let data = SketchTeachingContent.teachingData(for: challenge.buildingName) {
+            SketchTeachingView(
+                teachingData: data,
+                challenge: challenge,
+                onComplete: {
+                    withAnimation(.spring(response: 0.4)) {
+                        showTeaching = false
+                    }
+                },
+                onBack: {
+                    withAnimation(.spring(response: 0.4)) {
+                        showTeaching = false
+                        showIntro = true
+                    }
+                },
+                onSkip: {
+                    withAnimation(.spring(response: 0.4)) {
+                        showTeaching = false
+                    }
+                },
+                onFlorinsEarned: onFlorinsEarned
+            )
         }
     }
 
@@ -272,7 +310,7 @@ struct SketchingChallengeView: View {
                         .fill(RenaissanceColors.goldSuccess.opacity(0.4))
                         .frame(height: 1)
                 }
-                .padding(.horizontal, 40)
+                .padding(.horizontal, isLargeScreen ? 40 : 20)
 
                 // Educational summary
                 Text(challenge.educationalSummary)
@@ -300,9 +338,9 @@ struct SketchingChallengeView: View {
                 RenaissanceButton(title: "Continue") {
                     onComplete(completedPhases)
                 }
-                .padding(.horizontal, 60)
+                .padding(.horizontal, isLargeScreen ? 60 : 24)
 
-                Spacer(minLength: 40)
+                Spacer(minLength: isLargeScreen ? 40 : 20)
             }
             .frame(maxWidth: isLargeScreen ? 600 : .infinity)
             .frame(maxWidth: .infinity)

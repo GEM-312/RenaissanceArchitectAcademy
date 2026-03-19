@@ -16,7 +16,7 @@ struct WolframGeometryView: View {
     @State private var animateReveal = false
     @State private var diagramPulse: CGFloat = 0
 
-    private let helper = WolframGeometryHelper()
+    private let helper = WolframGeometryHelper.shared
 
     var body: some View {
         VStack(spacing: compact ? 12 : 16) {
@@ -271,41 +271,55 @@ struct WolframGeometryView: View {
 
     private func drawPantheonDome(context: GraphicsContext, size: CGSize) {
         let midX = size.width / 2
-        let baseY = size.height * 0.85
-        let domeWidth = size.width * 0.7
-        let domeHeight = domeWidth * 0.5 // hemisphere proportions
+        let inkColor = RenaissanceColors.sepiaInk
 
-        // Scale factor based on slider (1.0 = default 43.3m)
+        // Available drawing area (leave room for dimension labels)
+        let padH: CGFloat = 15     // horizontal padding for dimension line
+        let padTop: CGFloat = 10
+        let dimBottom: CGFloat = 22 // space for bottom dimension label
+        let dimLeft: CGFloat = 30   // space for left dimension label
+
+        let availW = size.width - dimLeft - padH
+        let availH = size.height - padTop - dimBottom
+
+        // Hemisphere: height = width/2. Fit within available area.
+        let fitByWidth = availW
+        let fitByHeight = availH * 2  // hemisphere width = 2 * height
+        let maxWidth = min(fitByWidth, fitByHeight)
+
+        // Scale factor based on slider (1.0 = default)
         let defaultDiameter = geometry.interactiveParameter?.defaultValue ?? 43.3
         let scale = sliderValue > 0 ? sliderValue / defaultDiameter : 1.0
-        let scaledWidth = domeWidth * min(max(scale, 0.3), 1.8)
+        let clampedScale = min(max(scale, 0.3), 2.0)
+
+        // At default (scale=1.0) use 75% of max space; slider can grow up to max
+        let scaledWidth = min(maxWidth * 0.75 * clampedScale, maxWidth)
         let scaledHeight = scaledWidth * 0.5
 
-        let inkColor = RenaissanceColors.sepiaInk
+        let baseY = padTop + availH
+        let offsetX = dimLeft / 2  // shift right slightly for dim label
 
         // Floor line
         var floor = Path()
-        floor.move(to: CGPoint(x: midX - scaledWidth * 0.6, y: baseY))
-        floor.addLine(to: CGPoint(x: midX + scaledWidth * 0.6, y: baseY))
+        floor.move(to: CGPoint(x: midX + offsetX - scaledWidth * 0.6, y: baseY))
+        floor.addLine(to: CGPoint(x: midX + offsetX + scaledWidth * 0.6, y: baseY))
         context.stroke(floor, with: .color(inkColor.opacity(0.5)), lineWidth: 2)
 
         // Dome arc (hemisphere)
         var dome = Path()
-        dome.move(to: CGPoint(x: midX - scaledWidth / 2, y: baseY))
+        dome.move(to: CGPoint(x: midX + offsetX - scaledWidth / 2, y: baseY))
         dome.addQuadCurve(
-            to: CGPoint(x: midX + scaledWidth / 2, y: baseY),
-            control: CGPoint(x: midX, y: baseY - scaledHeight)
+            to: CGPoint(x: midX + offsetX + scaledWidth / 2, y: baseY),
+            control: CGPoint(x: midX + offsetX, y: baseY - scaledHeight)
         )
         context.stroke(dome, with: .color(inkColor), lineWidth: 2.5)
-
-        // Dome fill (subtle)
         context.fill(dome, with: .color(RenaissanceColors.ochre.opacity(0.08)))
 
         // Inscribed circle (the "perfect sphere")
         let circleR = min(scaledWidth / 2, scaledHeight) * 0.95
         var circle = Path()
         circle.addEllipse(in: CGRect(
-            x: midX - circleR, y: baseY - circleR * 2,
+            x: midX + offsetX - circleR, y: baseY - circleR * 2,
             width: circleR * 2, height: circleR * 2
         ))
         context.stroke(circle, with: .color(RenaissanceColors.renaissanceBlue.opacity(0.4)),
@@ -315,7 +329,7 @@ struct WolframGeometryView: View {
         let oculusWidth = scaledWidth * 0.12
         var oculus = Path()
         oculus.addEllipse(in: CGRect(
-            x: midX - oculusWidth / 2, y: baseY - scaledHeight - 4,
+            x: midX + offsetX - oculusWidth / 2, y: baseY - scaledHeight - 4,
             width: oculusWidth, height: oculusWidth * 0.3
         ))
         context.fill(oculus, with: .color(RenaissanceColors.renaissanceBlue.opacity(0.3)))
@@ -323,14 +337,14 @@ struct WolframGeometryView: View {
 
         // Dimension lines
         drawDimensionLine(context: context,
-                         from: CGPoint(x: midX - scaledWidth / 2 - 10, y: baseY),
-                         to: CGPoint(x: midX - scaledWidth / 2 - 10, y: baseY - scaledHeight),
+                         from: CGPoint(x: midX + offsetX - scaledWidth / 2 - 10, y: baseY),
+                         to: CGPoint(x: midX + offsetX - scaledWidth / 2 - 10, y: baseY - scaledHeight),
                          label: String(format: "%.1f m", sliderValue > 0 ? sliderValue / 2 : 21.65),
                          color: inkColor)
 
         drawDimensionLine(context: context,
-                         from: CGPoint(x: midX - scaledWidth / 2, y: baseY + 15),
-                         to: CGPoint(x: midX + scaledWidth / 2, y: baseY + 15),
+                         from: CGPoint(x: midX + offsetX - scaledWidth / 2, y: baseY + 12),
+                         to: CGPoint(x: midX + offsetX + scaledWidth / 2, y: baseY + 12),
                          label: String(format: "%.1f m", sliderValue > 0 ? sliderValue : 43.3),
                          color: inkColor)
     }
@@ -339,18 +353,34 @@ struct WolframGeometryView: View {
 
     private func drawColosseumEllipse(context: GraphicsContext, size: CGSize) {
         let midX = size.width / 2
-        let midY = size.height * 0.55
+        let inkColor = RenaissanceColors.sepiaInk
+
+        // Available drawing area
+        let padH: CGFloat = 15
+        let padV: CGFloat = 10
+        let dimBottom: CGFloat = 22
+
+        let availW = size.width - padH * 2
+        let availH = size.height - padV - dimBottom
+
+        // Colosseum ratio: semi-minor/semi-major = 78/94 ≈ 0.83
+        let axisRatio: CGFloat = 78.0 / 94.0
+
+        // Fit ellipse in available area
+        let fitByWidth = availW / 2       // semi-major from width
+        let fitByHeight = availH / 2 / axisRatio  // semi-major from height
+        let maxA = min(fitByWidth, fitByHeight)
+
+        // Scale factor based on slider
         let defaultMajor = geometry.interactiveParameter?.defaultValue ?? 188.0
         let scale = sliderValue > 0 ? sliderValue / defaultMajor : 1.0
+        let clampedScale = min(max(scale, 0.3), 2.0)
 
-        let maxW = size.width * 0.7
-        let baseA = maxW / 2  // semi-major
-        let baseB = baseA * (78.0 / 94.0) // semi-minor preserving real ratio
+        // At default (scale=1.0) use 75% of max space
+        let a = min(maxA * 0.75 * clampedScale, maxA)
+        let b = a * axisRatio
 
-        let a = baseA * min(max(scale, 0.3), 1.5)
-        let b = baseB
-
-        let inkColor = RenaissanceColors.sepiaInk
+        let midY = padV + availH / 2
 
         // Outer ellipse
         var outer = Path()
@@ -384,8 +414,8 @@ struct WolframGeometryView: View {
 
         // Dimension label
         drawDimensionLine(context: context,
-                         from: CGPoint(x: midX - a, y: midY + b + 15),
-                         to: CGPoint(x: midX + a, y: midY + b + 15),
+                         from: CGPoint(x: midX - a, y: midY + b + 12),
+                         to: CGPoint(x: midX + a, y: midY + b + 12),
                          label: String(format: "%.0f m", sliderValue > 0 ? sliderValue : 188),
                          color: inkColor)
     }
@@ -394,18 +424,39 @@ struct WolframGeometryView: View {
 
     private func drawDuomoDome(context: GraphicsContext, size: CGSize) {
         let midX = size.width / 2
-        let baseY = size.height * 0.85
-        let defaultD = geometry.interactiveParameter?.defaultValue ?? 44.0
-        let scale = sliderValue > 0 ? sliderValue / defaultD : 1.0
-
-        let baseWidth = size.width * 0.55
-        let scaledW = baseWidth * min(max(scale, 0.3), 1.8)
-        let domeH = scaledW * 0.7 // taller than hemisphere (pointed dome)
-
         let inkColor = RenaissanceColors.sepiaInk
 
+        // Available drawing area
+        let padH: CGFloat = 15
+        let padTop: CGFloat = 8
+        let dimBottom: CGFloat = 22
+
+        let availW = size.width - padH * 2
+        let availH = size.height - padTop - dimBottom
+
+        // Duomo proportions: totalHeight ≈ width * 0.87 (dome=0.7w + drum=0.15w + lantern=0.02w)
+        let heightToWidthRatio: CGFloat = 0.87
+
+        // Fit to available area
+        let fitByWidth = availW
+        let fitByHeight = availH / heightToWidthRatio
+        let maxWidth = min(fitByWidth, fitByHeight)
+
+        // Scale factor based on slider
+        let defaultD = geometry.interactiveParameter?.defaultValue ?? 44.0
+        let scale = sliderValue > 0 ? sliderValue / defaultD : 1.0
+        let clampedScale = min(max(scale, 0.3), 2.0)
+
+        // At default (scale=1.0) use 70% of max space; slider can grow up to max
+        let scaledW = min(maxWidth * 0.70 * clampedScale, maxWidth)
+        let totalH = scaledW * heightToWidthRatio
+        let drumH = totalH * 0.17
+        let domeH = totalH * 0.80
+        let lanternH = totalH * 0.03
+
+        let baseY = padTop + availH
+
         // Drum (base)
-        let drumH = size.height * 0.12
         var drum = Path()
         drum.addRect(CGRect(x: midX - scaledW / 2, y: baseY - drumH, width: scaledW, height: drumH))
         context.fill(drum, with: .color(RenaissanceColors.terracotta.opacity(0.1)))
@@ -425,7 +476,7 @@ struct WolframGeometryView: View {
         context.fill(outerDome, with: .color(RenaissanceColors.terracotta.opacity(0.08)))
         context.stroke(outerDome, with: .color(inkColor), lineWidth: 2.5)
 
-        // Inner dome shell (slightly smaller)
+        // Inner dome shell (slightly smaller — the double-shell)
         let innerOff: CGFloat = scaledW * 0.04
         var innerDome = Path()
         innerDome.move(to: CGPoint(x: midX - scaledW / 2 + innerOff, y: baseY - drumH))
@@ -442,7 +493,6 @@ struct WolframGeometryView: View {
 
         // Lantern on top
         let lanternW: CGFloat = scaledW * 0.08
-        let lanternH: CGFloat = domeH * 0.12
         var lantern = Path()
         lantern.addRect(CGRect(x: midX - lanternW / 2, y: baseY - drumH - domeH - lanternH,
                                width: lanternW, height: lanternH))

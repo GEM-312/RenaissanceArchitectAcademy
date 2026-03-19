@@ -6,7 +6,11 @@ struct BuildingChecklistView: View {
     @ObservedObject var viewModel: CityViewModel
     var workshopState: WorkshopState
     let onBeginConstruction: () -> Void
+    let onBeginSketching: (() -> Void)?
     let onDismiss: () -> Void
+
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    private var isLargeScreen: Bool { sizeClass == .regular }
 
     private var progress: BuildingProgress {
         viewModel.buildingProgressMap[plot.id] ?? BuildingProgress()
@@ -79,11 +83,42 @@ struct BuildingChecklistView: View {
                     let hasSketchContent = SketchingContent.sketchingChallenge(for: plot.building.name) != nil
                     requirementSection(title: "Architectural Sketch", icon: "pencil.and.outline") {
                         if hasSketchContent {
-                            checklistRow(
-                                icon: "pencil.and.outline",
-                                label: "Floor Plan (Pianta)",
-                                isMet: progress.sketchCompleted
-                            )
+                            if progress.sketchCompleted {
+                                checklistRow(
+                                    icon: "pencil.and.outline",
+                                    label: "Floor Plan (Pianta)",
+                                    isMet: true
+                                )
+                            } else {
+                                // Tappable row — navigates to sketching challenge
+                                Button {
+                                    onBeginSketching?()
+                                } label: {
+                                    HStack(spacing: 10) {
+                                        Image(systemName: "circle")
+                                            .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
+                                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+
+                                        Image(systemName: "pencil.and.outline")
+                                            .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
+                                            .foregroundStyle(RenaissanceColors.renaissanceBlue)
+
+                                        Text("Floor Plan (Pianta)")
+                                            .font(.custom("EBGaramond-Regular", size: 15))
+                                            .foregroundStyle(RenaissanceColors.sepiaInk)
+
+                                        Spacer()
+
+                                        Text("Begin Sketch")
+                                            .font(.custom("EBGaramond-Regular", size: 13))
+                                            .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                                        Image(systemName: "chevron.right")
+                                            .font(.custom("EBGaramond-Regular", size: 11, relativeTo: .caption2))
+                                            .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                                    }
+                                }
+                                .buttonStyle(.plain)
+                            }
                         } else {
                             HStack(spacing: 8) {
                                 Image(systemName: "minus.circle")
@@ -193,8 +228,8 @@ struct BuildingChecklistView: View {
                         .fill(RenaissanceColors.parchment)
                 )
                 .borderModal(radius: 20)
-                .padding(.horizontal, 32)
-                .padding(.vertical, 40)
+                .adaptivePadding(.horizontal, regular: 32, compact: 12)
+                .adaptivePadding(.vertical, regular: 40, compact: 20)
             }
         }
     }

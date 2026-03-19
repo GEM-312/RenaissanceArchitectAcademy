@@ -10,6 +10,9 @@ struct ProfileView: View {
     var onNavigate: ((SidebarDestination) -> Void)? = nil
     var onBackToMenu: (() -> Void)? = nil
 
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    private var isLargeScreen: Bool { sizeClass == .regular }
+
     @State private var selectedCategory: Achievement.AchievementCategory?
 
     /// Display name from onboarding, fallback to "Young Architect"
@@ -140,27 +143,50 @@ struct ProfileView: View {
                 )
 
                 // ── Row 2: Materials + Achievements side-by-side ──
-                HStack(alignment: .top, spacing: 16) {
-                    MaterialsCard(workshopState: workshopState)
-                    AchievementsSection(
-                        achievements: StudentProfile.defaultAchievements,
-                        selectedCategory: $selectedCategory
-                    )
+                if isLargeScreen {
+                    HStack(alignment: .top, spacing: 16) {
+                        MaterialsCard(workshopState: workshopState)
+                        AchievementsSection(
+                            achievements: StudentProfile.defaultAchievements,
+                            selectedCategory: $selectedCategory
+                        )
+                    }
+                } else {
+                    VStack(spacing: 16) {
+                        MaterialsCard(workshopState: workshopState)
+                        AchievementsSection(
+                            achievements: StudentProfile.defaultAchievements,
+                            selectedCategory: $selectedCategory
+                        )
+                    }
                 }
 
                 // ── Row 3: Sciences horizontal scroll ──
                 SciencesRow(masteries: computedScienceMasteries)
 
                 // ── Row 4: Statistics + Mastery Level side-by-side ──
-                HStack(alignment: .top, spacing: 16) {
-                    StatisticsCard(
-                        buildingPlots: viewModel.buildingPlots,
-                        totalPlayTime: viewModel.totalPlayTime
-                    )
-                    MasteryLevelCard(
-                        masteryLevel: computedMasteryLevel,
-                        progress: computedProgress
-                    )
+                if isLargeScreen {
+                    HStack(alignment: .top, spacing: 16) {
+                        StatisticsCard(
+                            buildingPlots: viewModel.buildingPlots,
+                            totalPlayTime: viewModel.totalPlayTime
+                        )
+                        MasteryLevelCard(
+                            masteryLevel: computedMasteryLevel,
+                            progress: computedProgress
+                        )
+                    }
+                } else {
+                    VStack(spacing: 16) {
+                        StatisticsCard(
+                            buildingPlots: viewModel.buildingPlots,
+                            totalPlayTime: viewModel.totalPlayTime
+                        )
+                        MasteryLevelCard(
+                            masteryLevel: computedMasteryLevel,
+                            progress: computedProgress
+                        )
+                    }
                 }
 
                 // ── Navigation Row ──
@@ -184,6 +210,9 @@ struct ProfileHeaderRow: View {
     let masteryLevel: MasteryLevel
     let goldFlorins: Int
 
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    private var isLargeScreen: Bool { sizeClass == .regular }
+
     @State private var currentFrame: Int = 0
     private let frameCount = 15
     private let fps: Double = 10
@@ -194,7 +223,7 @@ struct ProfileHeaderRow: View {
             Image(String(format: "%@%02d", avatarFramePrefix, currentFrame))
                 .resizable()
                 .scaledToFit()
-                .frame(height: 280)
+                .frame(height: isLargeScreen ? 280 : 200)
                 .clipShape(RoundedRectangle(cornerRadius: 16))
                 .opacity(0.5)
 
@@ -256,7 +285,7 @@ struct ProfileHeaderRow: View {
                 .padding(.bottom, 8)
             }
         }
-        .frame(height: 280)
+        .frame(height: isLargeScreen ? 280 : 200)
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(RenaissanceColors.parchment.opacity(0.6))

@@ -71,8 +71,9 @@ struct BuildingProgress {
 
     // MARK: - Phase Computation
 
-    /// Determine which phase the player is currently in for a given building
-    func currentPhase(for buildingName: String, workshopState: WorkshopState) -> BuildingPhase {
+    /// Determine which phase the player is currently in for a given building.
+    /// `craftedMaterials` is passed as a plain dict to avoid @MainActor isolation issues.
+    func currentPhase(for buildingName: String, workshopState: WorkshopState, craftedMaterials: [CraftedItem: Int] = [:]) -> BuildingPhase {
         let cityCards = KnowledgeCardContent.cards(for: buildingName, in: .cityMap)
         let workshopCards = KnowledgeCardContent.cards(for: buildingName, in: .workshop)
         let forestCards = KnowledgeCardContent.cards(for: buildingName, in: .forest)
@@ -99,13 +100,26 @@ struct BuildingProgress {
             return .explore
         }
 
-        // Phase 4: CRAFT — crafting room cards not done OR materials not crafted
+        // Phase 4: CRAFT — crafting room cards not done OR required materials not crafted
         let craftingCardsDone = craftingCards.allSatisfy { completedCardIDs.contains($0.id) }
         if !craftingCardsDone {
             return .craft
         }
 
-        // Phase 5: BUILD — all learning done, ready to construct
+        // Even with all cards done, stay in CRAFT if the building's required
+        // crafted materials aren't ready. This prevents the infinite loop where
+        // phase=.build but CityMapView sends to Workshop and Workshop sends back.
+        let required = Building.requiredCraftedItems(for: buildingName)
+        if !required.isEmpty {
+            let allCrafted = required.allSatisfy { item, needed in
+                (craftedMaterials[item] ?? 0) >= needed
+            }
+            if !allCrafted {
+                return .craft
+            }
+        }
+
+        // Phase 5: BUILD — all learning done AND materials ready
         return .build
     }
 

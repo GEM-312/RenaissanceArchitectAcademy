@@ -143,7 +143,7 @@ struct PhaseCompleteOverlay: View {
                 )
                 .borderModal(radius: CornerRadius.lg)
                 .renaissanceShadow(.modal)
-                .frame(maxWidth: 420)
+                .adaptiveWidth(420)
                 .padding(.horizontal, Spacing.dialogMargin)
             }
             .scaleEffect(showContent ? 1.0 : 0.85)

@@ -36,7 +36,7 @@ class CityViewModel: ObservableObject {
                     era: .ancientRome,
                     sciences: [.architecture, .engineering, .acoustics],
                     iconName: "building.columns",
-                    difficultyTier: .architect
+                    difficultyTier: .apprentice
                 ),
                 isCompleted: false
             ),
@@ -91,7 +91,7 @@ class CityViewModel: ObservableObject {
                     era: .ancientRome,
                     sciences: [.physics, .engineering, .mathematics],
                     iconName: "hammer",
-                    difficultyTier: .architect
+                    difficultyTier: .apprentice
                 ),
                 isCompleted: false
             ),
@@ -120,7 +120,7 @@ class CityViewModel: ObservableObject {
                     city: .florence,
                     sciences: [.geometry, .architecture, .physics],
                     iconName: "building.2",
-                    difficultyTier: .master
+                    difficultyTier: .apprentice
                 ),
                 isCompleted: false
             ),
@@ -146,7 +146,7 @@ class CityViewModel: ObservableObject {
                     city: .venice,
                     sciences: [.chemistry, .optics, .materials],
                     iconName: "eyeglasses",
-                    difficultyTier: .architect
+                    difficultyTier: .apprentice
                 ),
                 isCompleted: false
             ),
@@ -158,7 +158,7 @@ class CityViewModel: ObservableObject {
                     city: .venice,
                     sciences: [.engineering, .physics, .materials],
                     iconName: "sailboat",
-                    difficultyTier: .architect
+                    difficultyTier: .apprentice
                 ),
                 isCompleted: false
             ),
@@ -172,7 +172,7 @@ class CityViewModel: ObservableObject {
                     city: .padua,
                     sciences: [.biology, .optics, .chemistry],
                     iconName: "figure.stand",
-                    difficultyTier: .master
+                    difficultyTier: .apprentice
                 ),
                 isCompleted: false
             ),
@@ -186,7 +186,7 @@ class CityViewModel: ObservableObject {
                     city: .milan,
                     sciences: [.engineering, .physics, .materials],
                     iconName: "gearshape.2",
-                    difficultyTier: .master
+                    difficultyTier: .apprentice
                 ),
                 isCompleted: false
             ),
@@ -198,7 +198,7 @@ class CityViewModel: ObservableObject {
                     city: .milan,
                     sciences: [.physics, .engineering, .mathematics],
                     iconName: "bird",
-                    difficultyTier: .master
+                    difficultyTier: .apprentice
                 ),
                 isCompleted: false
             ),
@@ -212,7 +212,7 @@ class CityViewModel: ObservableObject {
                     city: .rome,
                     sciences: [.astronomy, .optics, .mathematics],
                     iconName: "sparkles",
-                    difficultyTier: .master
+                    difficultyTier: .apprentice
                 ),
                 isCompleted: false
             ),
@@ -224,7 +224,7 @@ class CityViewModel: ObservableObject {
                     city: .rome,
                     sciences: [.engineering, .chemistry, .physics],
                     iconName: "book",
-                    difficultyTier: .architect
+                    difficultyTier: .apprentice
                 ),
                 isCompleted: false
             )
@@ -555,7 +555,13 @@ class CityViewModel: ObservableObject {
 
         case .craft:
             let craftingCards = KnowledgeCardContent.cards(for: buildingName, in: .craftingRoom)
-            return craftingCards.allSatisfy { progress.completedCardIDs.contains($0.id) }
+            let cardsDone = craftingCards.allSatisfy { progress.completedCardIDs.contains($0.id) }
+            guard cardsDone else { return false }
+            // Cards done is not enough — materials must also be crafted
+            let required = Building.requiredCraftedItems(for: buildingName)
+            return required.allSatisfy { item, needed in
+                (workshopState.craftedMaterials[item] ?? 0) >= needed
+            }
 
         case .build:
             return progress.constructionSequenceCompleted

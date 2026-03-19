@@ -18,6 +18,8 @@ struct WorkshopMapView: View {
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.gameSettings) private var settings
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    private var isLargeScreen: Bool { sizeClass == .regular }
 
     // Scene reference — stored in a class box so it survives body re-evaluation
     // without triggering re-renders (unlike @State which causes infinite loops)
@@ -736,7 +738,7 @@ struct WorkshopMapView: View {
         let building = bid.flatMap { id in vm.buildingPlots.first(where: { $0.id == id })?.building }
 
         // Phase-based: check if player should be in the workshop at all
-        let phase = progress.currentPhase(for: buildingName, workshopState: workshop)
+        let phase = progress.currentPhase(for: buildingName, workshopState: workshop, craftedMaterials: workshop.craftedMaterials)
 
         // Reset station guidance each time
         guidanceStationType = nil
@@ -769,8 +771,20 @@ struct WorkshopMapView: View {
                     guidanceDestination = nil
                     guidanceStationType = .craftingRoom
                 case .build:
-                    guidanceMessage = "All done for the \(buildingName)! Head to the City Map to build!"
-                    guidanceDestination = .cityMap
+                    // Safety: check if materials are actually ready before sending to city
+                    let required = Building.requiredCraftedItems(for: buildingName)
+                    let allCrafted = required.allSatisfy { item, needed in
+                        (workshop.craftedMaterials[item] ?? 0) >= needed
+                    }
+                    if allCrafted {
+                        guidanceMessage = "All done for the \(buildingName)! Head to the City Map to build!"
+                        guidanceDestination = .cityMap
+                    } else {
+                        // Materials still missing — guide to crafting room, don't loop back to city
+                        guidanceMessage = "Time for the Crafting Room — craft the remaining materials for the \(buildingName)!"
+                        guidanceDestination = nil
+                        guidanceStationType = .craftingRoom
+                    }
                 default:
                     break
                 }
@@ -2128,6 +2142,7 @@ struct WorkshopMapView: View {
                 RoundedRectangle(cornerRadius: CornerRadius.lg)
                     .fill(RenaissanceColors.parchment)
             )
+            .adaptivePadding(.horizontal, regular: 0, compact: 40)
         }
     }
 
@@ -2292,7 +2307,7 @@ struct WorkshopMapView: View {
                 .buttonStyle(.plain)
                 .padding(.trailing, 16)
             }
-            .padding(.top, 420)
+            .padding(.top, isLargeScreen ? 420 : 200)
 
             Spacer()
         }
@@ -2396,7 +2411,7 @@ struct WorkshopMapView: View {
                 )
                 .padding(.trailing, 16)
             }
-            .padding(.top, 420)
+            .padding(.top, isLargeScreen ? 420 : 200)
 
             Spacer()
         }

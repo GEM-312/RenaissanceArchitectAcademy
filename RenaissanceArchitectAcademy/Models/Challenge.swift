@@ -1419,7 +1419,7 @@ enum ChallengeContent {
         case "Colosseum":
             return colosseumInteractive
         // Renaissance Italy (with aliases for renamed buildings)
-        case "Duomo":
+        case "Duomo", "Il Duomo":
             return duomoInteractive
         case "Observatory", "Vatican Observatory":
             return observatoryInteractive

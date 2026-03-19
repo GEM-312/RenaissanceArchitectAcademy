@@ -24,6 +24,7 @@ struct RenaissanceArchitectAcademyApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .buttonStyle(.plain)
         }
         .modelContainer(modelContainer)
         #if os(macOS)
