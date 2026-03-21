@@ -109,6 +109,8 @@ Build iconic structures from Ancient Rome and the Renaissance period while maste
 | **Developer** | Marina Pollak |
 | **Level Designer** | Ray Garmon |
 | **Game Designer** | Brianna Walker |
+| **Collaborator** | Marcus Escoto |
+| **Collaborator** | Ariel Sha Glassman |
 
 ## Installation
 
