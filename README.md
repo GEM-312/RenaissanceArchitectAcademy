@@ -12,30 +12,25 @@
 
 Build iconic structures from Ancient Rome and the Renaissance period while mastering mathematics, physics, engineering, and more!
 
-## The 13 Sciences
+## Renaissance Tools
 
 <p align="center">
-  <img src="docs/icons/ScienceMath.png" alt="Mathematics" width="80">
-  <img src="docs/icons/SciencePhysics.png" alt="Physics" width="80">
-  <img src="docs/icons/ScienceChemistry.png" alt="Chemistry" width="80">
-  <img src="docs/icons/ScienceGeometry.png" alt="Geometry" width="80">
-  <img src="docs/icons/ScienceEngineering.jpg" alt="Engineering" width="80">
-  <img src="docs/icons/ScienceAstronomy.png" alt="Astronomy" width="80">
-  <img src="docs/icons/ScienceBiology.png" alt="Biology" width="80">
+  <img src="docs/tools/ToolPickaxe.png" alt="Pickaxe" width="80">
+  <img src="docs/tools/ToolBucket.png" alt="Bucket" width="80">
+  <img src="docs/tools/ToolAshRake.png" alt="Ash Rake" width="80">
+  <img src="docs/tools/ToolShovel.png" alt="Shovel" width="80">
+  <img src="docs/tools/ToolMiningHammer.png" alt="Mining Hammer" width="80">
 </p>
 
 <p align="center">
-  <img src="docs/icons/ScienceGeology.png" alt="Geology" width="80">
-  <img src="docs/icons/ScienceOptics.png" alt="Optics" width="80">
-  <img src="docs/icons/ScienceHydraulics.png" alt="Hydraulics" width="80">
-  <img src="docs/icons/ScienceAcoustics.png" alt="Acoustics" width="80">
-  <img src="docs/icons/ScienceMaterials.png" alt="Materials" width="80">
-  <img src="docs/icons/ScienceArchitecture.png" alt="Architecture" width="80">
+  <img src="docs/tools/ToolAxe.png" alt="Axe" width="80">
+  <img src="docs/tools/ToolTradePurse.png" alt="Trade Purse" width="80">
+  <img src="docs/tools/ToolMortarAndPestle.png" alt="Mortar & Pestle" width="80">
+  <img src="docs/tools/ToolPitchfork.png" alt="Pitchfork" width="80">
 </p>
 
 <p align="center">
-  <sub>Mathematics • Physics • Chemistry • Geometry • Engineering • Astronomy • Biology</sub><br>
-  <sub>Geology • Optics • Hydraulics • Acoustics • Materials Science • Architecture</sub>
+  <sub>Pickaxe • Bucket • Ash Rake • Shovel • Mining Hammer • Axe • Trade Purse • Mortar & Pestle • Pitchfork</sub>
 </p>
 
 ## Screenshots
