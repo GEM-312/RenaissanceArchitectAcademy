@@ -1,43 +1,93 @@
 import SwiftUI
 
 /// "Study the Masters" overlay — shows a real Met Museum architectural sketch
-/// with an interactive study prompt from the bird companion.
-/// Used as an activity between knowledge cards to break up reading.
+/// with an interactive study activity from the bird companion.
+/// Two question types:
+///   .find  — tap on the image to locate a feature, "I found it!" checks position
+///   .count — study the image and enter a number, "I found it!" checks the count
+/// 3 wrong checks → hint appears automatically.
 struct SketchStudyOverlay: View {
     let sketch: MuseumSketch
     let onDismiss: () -> Void
     let onComplete: (Int) -> Void  // florins earned
 
     @StateObject private var sketchService = MuseumSketchService.shared
+
+    // Shared state
+    @State private var wrongAttempts = 0
     @State private var showHint = false
-    @State private var showAnswer = false
-    @State private var imageLoaded = false
+    @State private var foundFeature = false
+    @State private var showWrongFlash = false
     @State private var appearAnimation = false
 
-    private let florinsReward = 3
+    // Find mode state
+    @State private var tapPosition: CGPoint? = nil
+
+    // Count mode state
+    @State private var countInput: String = ""
+    @FocusState private var countFieldFocused: Bool
+
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    private var isLargeScreen: Bool { horizontalSizeClass == .regular }
+
+    private let florinsReward = GameRewards.sketchStudyFlorins  // 3
+
+    private var isCountMode: Bool {
+        if case .count = sketch.questionType { return true }
+        return false
+    }
+
+    private var correctCount: Int? {
+        if case .count(let n) = sketch.questionType { return n }
+        return nil
+    }
+
+    /// Whether the "I found it!" button should be enabled
+    private var canCheck: Bool {
+        if isCountMode {
+            return !countInput.isEmpty && Int(countInput) != nil
+        } else {
+            return tapPosition != nil
+        }
+    }
 
     var body: some View {
         ZStack {
             // Dimmed background
-            Color.black.opacity(0.5)
+            RenaissanceColors.overlayDimming
                 .ignoresSafeArea()
                 .onTapGesture { /* block dismiss on background tap */ }
 
-            // Main card
-            VStack(spacing: 0) {
-                headerBar
-                sketchImageSection
-                studyPromptSection
-                actionButtons
+            // Main card — 90-96% of screen
+            GeometryReader { geo in
+                let cardWidth = geo.size.width * (isLargeScreen ? 0.90 : 0.96)
+                let cardHeight = geo.size.height * (isLargeScreen ? 0.90 : 0.96)
+                let imageHeight = cardHeight * 0.58
+
+                VStack(spacing: 0) {
+                    headerBar
+
+                    sketchImageSection(height: imageHeight)
+
+                    studyPromptSection
+
+                    if isCountMode {
+                        countInputSection
+                    }
+
+                    actionButtons
+
+                    Spacer(minLength: 0)
+                }
+                .frame(width: cardWidth, height: cardHeight)
+                .background(RenaissanceColors.parchment)
+                .clipShape(RoundedRectangle(cornerRadius: CornerRadius.lg))
+                .borderModal(radius: CornerRadius.lg)
+                .renaissanceShadow(.modal)
+                .position(x: geo.size.width / 2, y: geo.size.height / 2)
+                .scaleEffect(appearAnimation ? 1.0 : 0.9)
+                .opacity(appearAnimation ? 1.0 : 0)
             }
-            .background(RenaissanceColors.parchment)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-            .shadow(color: .black.opacity(0.3), radius: 20, y: 10)
-            .adaptiveWidth(580)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 40)
-            .scaleEffect(appearAnimation ? 1.0 : 0.9)
-            .opacity(appearAnimation ? 1.0 : 0)
         }
         .onAppear {
             Task { await sketchService.loadImage(for: sketch) }
@@ -53,89 +103,179 @@ struct SketchStudyOverlay: View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Study the Masters")
-                    .font(.custom("Cinzel-Bold", size: 16))
-                    .foregroundColor(RenaissanceColors.sepiaInk)
+                    .font(RenaissanceFont.cardTitle)
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 Text(sketch.artist + ", " + sketch.date)
-                    .font(.custom("EBGaramond-Italic", size: 13))
-                    .foregroundColor(RenaissanceColors.sepiaInk.opacity(0.6))
+                    .font(RenaissanceFont.italicSmall)
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(TextEmphasis.tertiary))
             }
 
             Spacer()
+
+            MediumBadge(medium: sketch.medium)
 
             Button {
                 onDismiss()
             } label: {
                 Image(systemName: "xmark.circle.fill")
                     .font(.system(size: 22))
-                    .foregroundColor(RenaissanceColors.sepiaInk.opacity(0.4))
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(TextEmphasis.faint))
             }
+            .buttonStyle(.plain)
         }
-        .padding(.horizontal, 16)
-        .padding(.top, 14)
-        .padding(.bottom, 8)
+        .padding(.horizontal, Spacing.md)
+        .padding(.top, Spacing.sm)
+        .padding(.bottom, Spacing.xs)
     }
 
-    // MARK: - Sketch Image
+    // MARK: - Interactive Sketch Image
 
-    private var sketchImageSection: some View {
-        VStack(spacing: 0) {
+    private func sketchImageSection(height: CGFloat) -> some View {
+        VStack(spacing: Spacing.xxs) {
             ZStack {
-                // Parchment paper texture background
-                RoundedRectangle(cornerRadius: 8)
+                // Paper texture background
+                RoundedRectangle(cornerRadius: CornerRadius.sm)
                     .fill(RenaissanceColors.sepiaInk.opacity(0.05))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: CornerRadius.sm)
                             .stroke(RenaissanceColors.sepiaInk.opacity(0.15), lineWidth: 1)
                     )
 
                 if let cachedImage = sketchService.imageCache[sketch.id] {
-                    cachedImage
-                        .resizable()
-                        .scaledToFit()
-                        .clipShape(RoundedRectangle(cornerRadius: 6))
-                        .transition(.opacity)
-                        .onAppear { imageLoaded = true }
+                    if isCountMode {
+                        // Count mode — just show the image, no tap interaction
+                        cachedImage
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .clipShape(RoundedRectangle(cornerRadius: 6))
+                    } else {
+                        // Find mode — interactive tappable image
+                        GeometryReader { geo in
+                            ZStack {
+                                cachedImage
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .clipShape(RoundedRectangle(cornerRadius: 6))
+
+                                // Player's tap marker (blue pin)
+                                if let pos = tapPosition, !foundFeature {
+                                    Circle()
+                                        .fill(RenaissanceColors.renaissanceBlue.opacity(0.3))
+                                        .frame(width: 44, height: 44)
+                                        .overlay(
+                                            Circle()
+                                                .stroke(RenaissanceColors.renaissanceBlue, lineWidth: 2.5)
+                                        )
+                                        .position(
+                                            x: pos.x * geo.size.width,
+                                            y: pos.y * geo.size.height
+                                        )
+                                        .transition(.scale.combined(with: .opacity))
+                                }
+
+                                // Wrong flash — red ring
+                                if showWrongFlash, let pos = tapPosition {
+                                    Circle()
+                                        .stroke(RenaissanceColors.errorRed.opacity(0.7), lineWidth: 3)
+                                        .frame(width: 50, height: 50)
+                                        .position(
+                                            x: pos.x * geo.size.width,
+                                            y: pos.y * geo.size.height
+                                        )
+                                        .transition(.scale.combined(with: .opacity))
+                                }
+
+                                // Correct — green ring + checkmark at target
+                                if foundFeature {
+                                    Circle()
+                                        .stroke(RenaissanceColors.sageGreen, lineWidth: 3)
+                                        .frame(width: 56, height: 56)
+                                        .position(
+                                            x: sketch.tapTarget.x * geo.size.width,
+                                            y: sketch.tapTarget.y * geo.size.height
+                                        )
+                                        .transition(.scale.combined(with: .opacity))
+
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .font(.system(size: 24))
+                                        .foregroundStyle(RenaissanceColors.sageGreen)
+                                        .position(
+                                            x: sketch.tapTarget.x * geo.size.width,
+                                            y: sketch.tapTarget.y * geo.size.height
+                                        )
+                                        .transition(.scale)
+                                }
+
+                                // Hint pulse — after 3 wrong
+                                if showHint && !foundFeature {
+                                    Circle()
+                                        .stroke(RenaissanceColors.ochre.opacity(0.5), lineWidth: 2)
+                                        .frame(width: 70, height: 70)
+                                        .position(
+                                            x: sketch.tapTarget.x * geo.size.width,
+                                            y: sketch.tapTarget.y * geo.size.height
+                                        )
+                                        .modifier(PulseModifier())
+                                }
+
+                                // Tap gesture (disabled after correct)
+                                if !foundFeature {
+                                    Color.clear
+                                        .contentShape(Rectangle())
+                                        .onTapGesture { location in
+                                            let normalized = CGPoint(
+                                                x: location.x / geo.size.width,
+                                                y: location.y / geo.size.height
+                                            )
+                                            withAnimation(.easeOut(duration: 0.2)) {
+                                                tapPosition = normalized
+                                            }
+                                        }
+                                }
+                            }
+                        }
+                    }
                 } else if sketchService.loadingIDs.contains(sketch.id) {
-                    VStack(spacing: 12) {
+                    VStack(spacing: Spacing.sm) {
                         ProgressView()
                             .tint(RenaissanceColors.warmBrown)
                         Text("Loading sketch from the Metropolitan Museum...")
-                            .font(.custom("EBGaramond-Italic", size: 13))
-                            .foregroundColor(RenaissanceColors.sepiaInk.opacity(0.5))
+                            .font(RenaissanceFont.italicSmall)
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(TextEmphasis.tertiary))
                     }
                 } else {
-                    VStack(spacing: 8) {
+                    VStack(spacing: Spacing.xs) {
                         Image(systemName: "photo.artframe")
                             .font(.system(size: 40))
-                            .foregroundColor(RenaissanceColors.sepiaInk.opacity(0.2))
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.2))
                         Text(sketch.title)
-                            .font(.custom("EBGaramond-Regular", size: 14))
-                            .foregroundColor(RenaissanceColors.sepiaInk.opacity(0.4))
+                            .font(RenaissanceFont.caption)
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(TextEmphasis.faint))
                             .multilineTextAlignment(.center)
                     }
                 }
             }
-            .frame(maxHeight: 300)
-            .padding(.horizontal, 16)
+            .frame(height: height)
+            .padding(.horizontal, Spacing.md)
 
-            // Title caption below image
+            // Title caption
             Text(sketch.title)
-                .font(.custom("EBGaramond-Regular", size: 13))
-                .foregroundColor(RenaissanceColors.sepiaInk.opacity(0.5))
+                .font(RenaissanceFont.caption)
+                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(TextEmphasis.tertiary))
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
-                .padding(.horizontal, 20)
-                .padding(.top, 6)
+                .padding(.horizontal, Spacing.lg)
         }
     }
 
     // MARK: - Study Prompt (Bird)
 
     private var studyPromptSection: some View {
-        VStack(spacing: 10) {
-            HStack(alignment: .top, spacing: 10) {
-                // Bird icon
+        VStack(spacing: Spacing.xs) {
+            HStack(alignment: .top, spacing: Spacing.xs) {
                 Image("BirdFrame00")
                     .resizable()
                     .scaledToFit()
@@ -143,101 +283,216 @@ struct SketchStudyOverlay: View {
                     .clipShape(Circle())
                     .overlay(Circle().stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1))
 
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: Spacing.xs) {
                     Text(sketch.studyPrompt)
-                        .font(.custom("EBGaramond-Regular", size: 15))
-                        .foregroundColor(RenaissanceColors.sepiaInk)
+                        .font(RenaissanceFont.bodySmall)
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
                         .fixedSize(horizontal: false, vertical: true)
 
-                    if showHint && !showAnswer {
-                        Text(sketch.featureHint)
-                            .font(.custom("EBGaramond-Italic", size: 14))
-                            .foregroundColor(RenaissanceColors.warmBrown)
+                    // Instructions (only before answer found)
+                    if !foundFeature && !showWrongFlash {
+                        if isCountMode {
+                            if countInput.isEmpty {
+                                Text("Study the sketch, count carefully, then enter your answer below")
+                                    .font(RenaissanceFont.italicSmall)
+                                    .foregroundStyle(RenaissanceColors.renaissanceBlue.opacity(0.7))
+                                    .transition(.opacity)
+                            }
+                        } else {
+                            if tapPosition == nil {
+                                Text("Tap on the sketch to mark where you think it is")
+                                    .font(RenaissanceFont.italicSmall)
+                                    .foregroundStyle(RenaissanceColors.renaissanceBlue.opacity(0.7))
+                                    .transition(.opacity)
+                            }
+                        }
+                    }
+
+                    // Wrong attempt feedback
+                    if showWrongFlash {
+                        Text(isCountMode ? "Not quite — look again and recount!" : "Not quite — try tapping a different spot!")
+                            .font(RenaissanceFont.italicSmall)
+                            .foregroundStyle(RenaissanceColors.errorRed)
                             .transition(.opacity.combined(with: .move(edge: .top)))
                     }
 
-                    if showAnswer {
-                        HStack(spacing: 6) {
+                    // Hint after 3 wrong
+                    if showHint && !foundFeature {
+                        Text(sketch.featureHint)
+                            .font(RenaissanceFont.italicSmall)
+                            .foregroundStyle(RenaissanceColors.warmBrown)
+                            .transition(.opacity.combined(with: .move(edge: .top)))
+                    }
+
+                    // Correct answer
+                    if foundFeature {
+                        HStack(spacing: Spacing.xxs) {
                             Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(RenaissanceColors.sageGreen)
+                                .foregroundStyle(RenaissanceColors.sageGreen)
                             Text(sketch.featureToFind)
-                                .font(.custom("EBGaramond-Regular", size: 14))
-                                .foregroundColor(RenaissanceColors.sageGreen)
+                                .font(RenaissanceFont.bodySmall)
+                                .foregroundStyle(RenaissanceColors.sageGreen)
                         }
                         .transition(.scale.combined(with: .opacity))
                     }
                 }
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.top, 12)
+        .padding(.horizontal, Spacing.md)
+        .padding(.top, Spacing.sm)
     }
 
-    // MARK: - Actions
+    // MARK: - Count Input (only for .count questions)
+
+    private var countInputSection: some View {
+        HStack(spacing: Spacing.sm) {
+            Text("Your answer:")
+                .font(RenaissanceFont.bodySmall)
+                .foregroundStyle(RenaissanceColors.sepiaInk)
+
+            TextField("", text: $countInput)
+                .textFieldStyle(.plain)
+                .font(.custom("Cinzel-Bold", size: 22))
+                .foregroundStyle(RenaissanceColors.sepiaInk)
+                .multilineTextAlignment(.center)
+                .frame(width: 80)
+                .padding(.vertical, Spacing.xs)
+                .background(
+                    RoundedRectangle(cornerRadius: CornerRadius.sm)
+                        .fill(RenaissanceColors.parchment)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: CornerRadius.sm)
+                        .stroke(foundFeature
+                                ? RenaissanceColors.sageGreen
+                                : showWrongFlash
+                                    ? RenaissanceColors.errorRed
+                                    : RenaissanceColors.ochre.opacity(0.4),
+                                lineWidth: foundFeature || showWrongFlash ? 2 : 1)
+                )
+                #if os(iOS)
+                .keyboardType(.numberPad)
+                #endif
+                .focused($countFieldFocused)
+                .disabled(foundFeature)
+
+            if foundFeature, correctCount != nil {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 22))
+                    .foregroundStyle(RenaissanceColors.sageGreen)
+                    .transition(.scale)
+            }
+        }
+        .padding(.horizontal, Spacing.md)
+        .padding(.top, Spacing.xs)
+    }
+
+    // MARK: - Action Buttons
 
     private var actionButtons: some View {
-        HStack(spacing: 12) {
-            if !showAnswer {
-                // Hint button
-                if !showHint {
-                    Button {
-                        withAnimation(.easeOut(duration: 0.3)) {
-                            showHint = true
-                        }
-                    } label: {
-                        Label("Hint", systemImage: "lightbulb")
-                            .font(.custom("EBGaramond-Regular", size: 14))
-                            .foregroundColor(RenaissanceColors.warmBrown)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(RenaissanceColors.warmBrown.opacity(0.4), lineWidth: 1)
-                            )
-                    }
-                }
-
-                // "I see it!" button
+        HStack(spacing: Spacing.sm) {
+            if !foundFeature {
                 Button {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        showAnswer = true
-                    }
+                    checkAnswer()
                 } label: {
-                    Text("I found it!")
+                    Text(wrongAttempts > 0 && !showWrongFlash ? "Try Again!" : "I found it!")
                         .font(.custom("Cinzel-Bold", size: 14))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 10)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, Spacing.lg)
+                        .padding(.vertical, Spacing.xs + 2)
                         .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(RenaissanceColors.renaissanceBlue)
+                            RoundedRectangle(cornerRadius: CornerRadius.sm)
+                                .fill(canCheck
+                                      ? RenaissanceColors.renaissanceBlue
+                                      : RenaissanceColors.stoneGray)
                         )
                 }
+                .buttonStyle(.plain)
+                .disabled(!canCheck)
             } else {
-                // Continue button (after answer revealed)
                 Button {
                     onComplete(florinsReward)
                 } label: {
-                    HStack(spacing: 6) {
+                    HStack(spacing: Spacing.xxs) {
                         Text("Continue")
                             .font(.custom("Cinzel-Bold", size: 14))
                         Text("+\(florinsReward) florins")
-                            .font(.custom("EBGaramond-Regular", size: 13))
-                            .foregroundColor(RenaissanceColors.ochre)
+                            .font(RenaissanceFont.caption)
+                            .foregroundStyle(RenaissanceColors.ochre)
                     }
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 10)
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, Spacing.xl)
+                    .padding(.vertical, Spacing.xs + 2)
                     .background(
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: CornerRadius.sm)
                             .fill(RenaissanceColors.sageGreen)
                     )
                 }
+                .buttonStyle(.plain)
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.top, 12)
-        .padding(.bottom, 16)
+        .padding(.horizontal, Spacing.md)
+        .padding(.top, Spacing.sm)
+        .padding(.bottom, Spacing.md)
+    }
+
+    // MARK: - Check Answer
+
+    private func checkAnswer() {
+        switch sketch.questionType {
+        case .find:
+            checkFindAnswer()
+        case .count(let correctAnswer):
+            checkCountAnswer(correctAnswer)
+        }
+    }
+
+    private func checkFindAnswer() {
+        guard let pos = tapPosition else { return }
+
+        let dx = pos.x - sketch.tapTarget.x
+        let dy = pos.y - sketch.tapTarget.y
+        let distance = sqrt(dx * dx + dy * dy)
+
+        if distance < sketch.tapRadius {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                foundFeature = true
+            }
+        } else {
+            handleWrongAnswer()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                withAnimation { tapPosition = nil }
+            }
+        }
+    }
+
+    private func checkCountAnswer(_ correctAnswer: Int) {
+        guard let playerAnswer = Int(countInput) else { return }
+
+        if playerAnswer == correctAnswer {
+            countFieldFocused = false
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                foundFeature = true
+            }
+        } else {
+            handleWrongAnswer()
+            countInput = ""
+        }
+    }
+
+    private func handleWrongAnswer() {
+        wrongAttempts += 1
+        withAnimation(.easeOut(duration: 0.2)) {
+            showWrongFlash = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            withAnimation { showWrongFlash = false }
+        }
+        if wrongAttempts >= 3 && !showHint {
+            withAnimation(.easeOut(duration: 0.3)) {
+                showHint = true
+            }
+        }
     }
 }
 
@@ -248,13 +503,30 @@ private struct MediumBadge: View {
 
     var body: some View {
         Text(medium)
-            .font(.custom("EBGaramond-Italic", size: 11))
-            .foregroundColor(RenaissanceColors.sepiaInk.opacity(0.5))
-            .padding(.horizontal, 8)
+            .font(RenaissanceFont.captionSmall)
+            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(TextEmphasis.tertiary))
+            .padding(.horizontal, Spacing.xs)
             .padding(.vertical, 3)
             .background(
                 Capsule()
                     .fill(RenaissanceColors.sepiaInk.opacity(0.05))
             )
+    }
+}
+
+// MARK: - Pulse Animation Modifier
+
+private struct PulseModifier: ViewModifier {
+    @State private var scale: CGFloat = 0.9
+
+    func body(content: Content) -> some View {
+        content
+            .scaleEffect(scale)
+            .opacity(Double(2.0 - scale))
+            .onAppear {
+                withAnimation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true)) {
+                    scale = 1.3
+                }
+            }
     }
 }

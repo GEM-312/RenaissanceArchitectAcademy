@@ -354,17 +354,14 @@ struct CityMapView: View {
                     viewModel: viewModel,
                     notebookState: notebookState,
                     onDismiss: {
-                        // Clean exit — keep camera zoomed in, player stays near building
                         withAnimation {
                             showKnowledgeCards = false
                             activeKnowledgeCard = nil
                         }
-                        // Don't reset selectedPlot or mascot — camera stays zoomed
-                        // Show building prompt so player can tap "Read to Earn" again
+                        // Player tapped X — show bird guidance (don't auto-advance,
+                        // onAllComplete handles Card → Sketch → Card progression)
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            withAnimation(.spring(response: 0.3)) {
-                                showBuildingPrompt = true
-                            }
+                            showCityGuidance()
                         }
                     },
                     onAllComplete: {
@@ -828,9 +825,6 @@ struct CityMapView: View {
             // Release scene to free SpriteKit texture memory when navigating away
             sceneHolder.scene = nil
         }
-        .onChange(of: showKnowledgeCards) { _, _ in
-            // Knowledge cards dismissed — player can freely explore
-        }
         .sheet(isPresented: $showChallenge) {
             if let plot = selectedPlot,
                let challenge = ChallengeContent.interactiveChallenge(for: plot.building.name) {
@@ -932,15 +926,13 @@ struct CityMapView: View {
             SubsonicController.shared.play(sound: "building_tap.mp3")
             selectedPlot = plot
 
-            // If this is the active building and player already started cards, skip the prompt
-            // and go straight to the next card/action
-            let progress = viewModel.buildingProgressMap[plotId] ?? BuildingProgress()
-            if viewModel.activeBuildingId == plotId && !progress.completedCardIDs.isEmpty {
+            // If this is the active building, skip the prompt and go straight to the action
+            if viewModel.activeBuildingId == plotId {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                     handleBuildingAction(for: plot)
                 }
             } else {
-                // First time or different building — show "Work on this building?" prompt
+                // New building — show "Work on this building?" prompt
                 withAnimation(.spring(response: 0.3)) {
                     showBuildingPrompt = true
                 }
@@ -1015,6 +1007,10 @@ struct CityMapView: View {
         let buildingName = plot.building.name
         let progress = viewModel.buildingProgressMap[plot.id] ?? BuildingProgress()
 
+        // Dismiss any stale overlays before routing
+        showBuildingPrompt = false
+        showGuidance = false
+
         // CHECK IF READY TO BUILD FIRST — skip phase routing if all requirements met
         if viewModel.canStartBuilding(for: plot.id, workshopState: workshopState) {
             selectedPlot = plot
@@ -1029,7 +1025,6 @@ struct CityMapView: View {
         switch phase {
         case .learn:
             // Open knowledge card directly (or lesson for buildings without cards)
-            showGuidance = false  // Dismiss any stale guidance
             let nextCityCard = viewModel.nextUncompletedCard(for: plot.id, in: .cityMap)
             if let card = nextCityCard {
                 activeKnowledgeCard = card
@@ -1129,7 +1124,8 @@ struct CityMapView: View {
         // Don't show if other overlays are active
         guard !showKnowledgeCards && !showMascotDialogue && !showBuildingLesson
                 && !showBuildingChecklist && !showConstructionSequence
-                && !showEnvironmentPicker && !showSketchStudy else { return }
+                && !showEnvironmentPicker && !showSketchStudy
+                && !showBuildingPrompt else { return }
 
         // No active building yet — brand new player
         guard let bid = viewModel.activeBuildingId else {

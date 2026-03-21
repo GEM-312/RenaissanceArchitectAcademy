@@ -177,6 +177,12 @@ struct KnowledgeCardsOverlay: View {
                         onDismiss: {
                             showBirdChat = false
                             birdChatCard = nil
+                            // If all cards were completed while chatting, continue the flow now
+                            if completedCardIDs.count == cards.count {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                    onAllComplete?()
+                                }
+                            }
                         }
                     )
                     .transition(.opacity)
@@ -1558,6 +1564,8 @@ struct KnowledgeCardsOverlay: View {
         // Check if all cards in this set complete
         if Set(completedCardIDs).union([card.id]).count == cards.count {
             DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
+                // Don't auto-dismiss if player is chatting with the bird
+                guard !showBirdChat else { return }
                 onAllComplete?()
             }
         }

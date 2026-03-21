@@ -389,9 +389,8 @@ class CityScene: SKScene, ScrollZoomable {
             let currentBlur = blurredTerrainSprite?.alpha ?? 0
             let newBlur = currentBlur + (blurAlpha - currentBlur) * lerpSpeed
             blurredTerrainSprite?.alpha = newBlur
-            // Fade sharp terrain as blur fades in, but never below 0.35 to prevent
-            // background color bleed-through (which caused blinking)
-            let sharpAlpha = max(0.35, 1.0 - newBlur)
+            // Hide sharp terrain as blur fades in — fully hidden when blur is opaque
+            let sharpAlpha = 1.0 - newBlur
             let currentSharp = terrainSprite?.alpha ?? 1.0
             terrainSprite?.alpha = currentSharp + (sharpAlpha - currentSharp) * lerpSpeed
         }

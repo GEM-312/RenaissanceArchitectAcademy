@@ -1,5 +1,11 @@
 import Foundation
 
+/// How the player interacts with this sketch
+enum SketchQuestionType {
+    case find           // Tap on the image to locate a feature
+    case count(Int)     // Count items and enter the number (Int = correct answer)
+}
+
 /// A curated architectural sketch from the Metropolitan Museum of Art (Open Access API)
 struct MuseumSketch: Identifiable {
     let id: Int                 // Met object ID
@@ -12,15 +18,9 @@ struct MuseumSketch: Identifiable {
     let studyPrompt: String     // Bird asks this after viewing
     let featureToFind: String   // What the player should tap/identify
     let featureHint: String     // Hint if they can't find it
-}
-
-/// Interactive feature the player identifies on the sketch
-struct SketchFeature: Identifiable {
-    let id = UUID()
-    let name: String
-    let normalizedPosition: CGPoint  // 0-1 range within image
-    let radius: CGFloat              // Tap target radius (normalized)
-    let description: String          // Shown after correct tap
+    var questionType: SketchQuestionType = .find
+    var tapTarget: CGPoint = CGPoint(x: 0.5, y: 0.5)   // Normalized 0-1 position of feature (for .find)
+    var tapRadius: CGFloat = 0.18                        // Normalized hit radius (for .find)
 }
 
 /// Curated Met Museum sketches for all 17 buildings
@@ -42,9 +42,10 @@ enum MuseumSketchContent {
                     medium: "Etching",
                     imageURL: "https://images.metmuseum.org/CRDImages/dp/original/DP-16967-001.jpg",
                     buildingName: "Aqueduct",
-                    studyPrompt: "Count the arches! Why do you think they used three tiers instead of one tall one?",
+                    studyPrompt: "Count the tiers of arches! How many levels do you see stacked on top of each other?",
                     featureToFind: "The three tiers of arches",
-                    featureHint: "Look at how the arches stack — small ones on top carry the water channel"
+                    featureHint: "Look at how the arches stack — small ones on top carry the water channel",
+                    questionType: .count(3)
                 ),
                 MuseumSketch(
                     id: 364593,
@@ -56,7 +57,9 @@ enum MuseumSketchContent {
                     buildingName: "Aqueduct",
                     studyPrompt: "Piranesi drew the ruins of the Aqua Julia. What happened to the top water channel?",
                     featureToFind: "The broken water channel at the top",
-                    featureHint: "The top of the structure is crumbling — centuries of wear"
+                    featureHint: "The top of the structure is crumbling — centuries of wear",
+                    tapTarget: CGPoint(x: 0.5, y: 0.15),
+                    tapRadius: 0.18
                 ),
                 MuseumSketch(
                     id: 363938,
@@ -68,7 +71,9 @@ enum MuseumSketchContent {
                     buildingName: "Aqueduct",
                     studyPrompt: "This Renaissance artist sketched these ruins by hand. What drawing tool did he use?",
                     featureToFind: "The red chalk and ink medium",
-                    featureHint: "Notice the warm red tones — that's red chalk, a favorite of Renaissance draftsmen"
+                    featureHint: "Notice the warm red tones — that's red chalk, a favorite of Renaissance draftsmen",
+                    tapTarget: CGPoint(x: 0.45, y: 0.5),
+                    tapRadius: 0.22
                 ),
             ]
 
@@ -84,7 +89,9 @@ enum MuseumSketchContent {
                     buildingName: "Colosseum",
                     studyPrompt: "This is a cross-section — like cutting a cake in half. Can you see the different levels of seating?",
                     featureToFind: "The tiered seating levels",
-                    featureHint: "Look inside the cut — the seats rise from the arena floor in steep rows"
+                    featureHint: "Look inside the cut — the seats rise from the arena floor in steep rows",
+                    tapTarget: CGPoint(x: 0.45, y: 0.45),
+                    tapRadius: 0.20
                 ),
                 MuseumSketch(
                     id: 403241,
@@ -96,7 +103,9 @@ enum MuseumSketchContent {
                     buildingName: "Colosseum",
                     studyPrompt: "This shows what the Colosseum looked like when it was NEW. What covered the top?",
                     featureToFind: "The velarium (canvas sunshade)",
-                    featureHint: "Look at the very top — poles and ropes held a massive canvas to shade 50,000 spectators"
+                    featureHint: "Look at the very top — poles and ropes held a massive canvas to shade 50,000 spectators",
+                    tapTarget: CGPoint(x: 0.5, y: 0.12),
+                    tapRadius: 0.16
                 ),
                 MuseumSketch(
                     id: 360270,
@@ -106,9 +115,10 @@ enum MuseumSketchContent {
                     medium: "Etching",
                     imageURL: "https://images.metmuseum.org/CRDImages/dp/original/DP104275.jpg",
                     buildingName: "Colosseum",
-                    studyPrompt: "Piranesi drew the Colosseum as a ruin. Can you count the three types of columns on the outside?",
+                    studyPrompt: "Look at the columns on the outside wall. How many different column styles can you count?",
                     featureToFind: "The three orders: Doric, Ionic, Corinthian columns",
-                    featureHint: "Each level has a different column style — plain at bottom, ornate at top"
+                    featureHint: "Each level has a different column style — plain at bottom, ornate at top",
+                    questionType: .count(3)
                 ),
             ]
 
@@ -124,7 +134,9 @@ enum MuseumSketchContent {
                     buildingName: "Roman Baths",
                     studyPrompt: "This is a bird's-eye floor plan. Can you find the large central bathing hall?",
                     featureToFind: "The central natatio (swimming pool)",
-                    featureHint: "The largest room in the center — that's where Romans swam"
+                    featureHint: "The largest room in the center — that's where Romans swam",
+                    tapTarget: CGPoint(x: 0.5, y: 0.5),
+                    tapRadius: 0.18
                 ),
                 MuseumSketch(
                     id: 339683,
@@ -136,7 +148,9 @@ enum MuseumSketchContent {
                     buildingName: "Roman Baths",
                     studyPrompt: "This room has eight sides — an octagon. Why would architects choose this shape for a bath?",
                     featureToFind: "The octagonal vault structure",
-                    featureHint: "The eight-sided shape distributes the dome's weight evenly to the walls"
+                    featureHint: "The eight-sided shape distributes the dome's weight evenly to the walls",
+                    tapTarget: CGPoint(x: 0.5, y: 0.3),
+                    tapRadius: 0.20
                 ),
                 MuseumSketch(
                     id: 362673,
@@ -148,7 +162,9 @@ enum MuseumSketchContent {
                     buildingName: "Roman Baths",
                     studyPrompt: "Piranesi designed this plan INSPIRED by Roman baths. Can you see the symmetry?",
                     featureToFind: "The symmetrical layout (left mirrors right)",
-                    featureHint: "Fold this plan in half — both sides match perfectly"
+                    featureHint: "Fold this plan in half — both sides match perfectly",
+                    tapTarget: CGPoint(x: 0.5, y: 0.45),
+                    tapRadius: 0.22
                 ),
             ]
 
@@ -164,7 +180,9 @@ enum MuseumSketchContent {
                     buildingName: "Pantheon",
                     studyPrompt: "This cutaway shows the Pantheon sliced open. Can you find the oculus — the hole at the top of the dome?",
                     featureToFind: "The oculus (open hole at dome's apex)",
-                    featureHint: "Look at the very top of the dome — there's no glass, just an open circle to the sky"
+                    featureHint: "Look at the very top of the dome — there's no glass, just an open circle to the sky",
+                    tapTarget: CGPoint(x: 0.5, y: 0.15),
+                    tapRadius: 0.16
                 ),
                 MuseumSketch(
                     id: 362562,
@@ -176,7 +194,9 @@ enum MuseumSketchContent {
                     buildingName: "Pantheon",
                     studyPrompt: "A real architect measured these columns by hand in Rome! Can you see the measurements?",
                     featureToFind: "The measurement annotations and column details",
-                    featureHint: "The tiny numbers and lines — Renaissance architects traveled to Rome to measure ancient buildings"
+                    featureHint: "The tiny numbers and lines — Renaissance architects traveled to Rome to measure ancient buildings",
+                    tapTarget: CGPoint(x: 0.55, y: 0.4),
+                    tapRadius: 0.20
                 ),
                 MuseumSketch(
                     id: 348799,
@@ -186,9 +206,10 @@ enum MuseumSketchContent {
                     medium: "Etching",
                     imageURL: "https://images.metmuseum.org/CRDImages/dp/original/DP828229.jpg",
                     buildingName: "Pantheon",
-                    studyPrompt: "Count the columns on the portico. How many are there? The answer reveals a design secret.",
+                    studyPrompt: "Count ALL the columns on the portico — front AND behind. How many total?",
                     featureToFind: "The 16 Corinthian columns of the portico",
-                    featureHint: "Eight across the front, plus eight behind — 16 columns hold up the entrance"
+                    featureHint: "Eight across the front, plus eight behind — 16 columns hold up the entrance",
+                    questionType: .count(16)
                 ),
             ]
 
@@ -204,7 +225,9 @@ enum MuseumSketchContent {
                     buildingName: "Roman Roads",
                     studyPrompt: "The Appian Way is 2,300 years old and STILL exists. What do you notice about the stone shapes?",
                     featureToFind: "The interlocking basalt paving stones",
-                    featureHint: "The stones are irregular polygons — they lock together like a puzzle, spreading weight evenly"
+                    featureHint: "The stones are irregular polygons — they lock together like a puzzle, spreading weight evenly",
+                    tapTarget: CGPoint(x: 0.5, y: 0.65),
+                    tapRadius: 0.20
                 ),
                 MuseumSketch(
                     id: 412428,
@@ -216,7 +239,9 @@ enum MuseumSketchContent {
                     buildingName: "Roman Roads",
                     studyPrompt: "See the monuments along the road? Roman roads weren't just for travel — what else lined them?",
                     featureToFind: "The tombs and monuments lining the road",
-                    featureHint: "Important Romans built their family tombs along major roads — to be remembered by travelers"
+                    featureHint: "Important Romans built their family tombs along major roads — to be remembered by travelers",
+                    tapTarget: CGPoint(x: 0.3, y: 0.4),
+                    tapRadius: 0.18
                 ),
             ]
 
@@ -232,7 +257,9 @@ enum MuseumSketchContent {
                     buildingName: "Harbor",
                     studyPrompt: "Piranesi imagined an ideal Roman port. Can you find the lighthouse?",
                     featureToFind: "The lighthouse (pharos) tower",
-                    featureHint: "The tall structure at the harbor entrance — it guided ships with fire at night"
+                    featureHint: "The tall structure at the harbor entrance — it guided ships with fire at night",
+                    tapTarget: CGPoint(x: 0.8, y: 0.25),
+                    tapRadius: 0.16
                 ),
                 MuseumSketch(
                     id: 403938,
@@ -244,7 +271,9 @@ enum MuseumSketchContent {
                     buildingName: "Harbor",
                     studyPrompt: "This bird's-eye view shows the entire port. Why is there a curved breakwater?",
                     featureToFind: "The curved breakwater protecting the harbor",
-                    featureHint: "The curved wall blocks ocean waves — ships inside are protected from storms"
+                    featureHint: "The curved wall blocks ocean waves — ships inside are protected from storms",
+                    tapTarget: CGPoint(x: 0.55, y: 0.3),
+                    tapRadius: 0.20
                 ),
                 MuseumSketch(
                     id: 403529,
@@ -256,7 +285,9 @@ enum MuseumSketchContent {
                     buildingName: "Harbor",
                     studyPrompt: "This shows warehouses along the docks. What did Romans store in a port city?",
                     featureToFind: "The warehouse buildings along the waterfront",
-                    featureHint: "Grain from Egypt, olive oil from Spain, marble from Greece — all stored here"
+                    featureHint: "Grain from Egypt, olive oil from Spain, marble from Greece — all stored here",
+                    tapTarget: CGPoint(x: 0.4, y: 0.6),
+                    tapRadius: 0.20
                 ),
             ]
 
@@ -272,7 +303,9 @@ enum MuseumSketchContent {
                     buildingName: "Siege Workshop",
                     studyPrompt: "This is from a 1472 military engineering manual. Can you identify the siege machine?",
                     featureToFind: "The siege engine mechanism",
-                    featureHint: "Look for wheels, levers, and ropes — the same principles as modern cranes"
+                    featureHint: "Look for wheels, levers, and ropes — the same principles as modern cranes",
+                    tapTarget: CGPoint(x: 0.5, y: 0.45),
+                    tapRadius: 0.22
                 ),
                 MuseumSketch(
                     id: 387591,
@@ -284,7 +317,9 @@ enum MuseumSketchContent {
                     buildingName: "Siege Workshop",
                     studyPrompt: "Dürer shows a fortress under attack. What engineering principles make the walls strong?",
                     featureToFind: "The fortress walls and defensive towers",
-                    featureHint: "Thick walls, round towers (resist battering rams), and high ground — all engineering"
+                    featureHint: "Thick walls, round towers (resist battering rams), and high ground — all engineering",
+                    tapTarget: CGPoint(x: 0.5, y: 0.35),
+                    tapRadius: 0.20
                 ),
                 MuseumSketch(
                     id: 402607,
@@ -296,7 +331,9 @@ enum MuseumSketchContent {
                     buildingName: "Siege Workshop",
                     studyPrompt: "This shows a Roman castrum — a military camp. Why is it perfectly rectangular?",
                     featureToFind: "The grid layout of the camp",
-                    featureHint: "Romans could build this in ONE DAY because every soldier knew the standard layout"
+                    featureHint: "Romans could build this in ONE DAY because every soldier knew the standard layout",
+                    tapTarget: CGPoint(x: 0.5, y: 0.5),
+                    tapRadius: 0.22
                 ),
             ]
 
@@ -310,9 +347,10 @@ enum MuseumSketchContent {
                     medium: "Etching and engraving",
                     imageURL: "https://images.metmuseum.org/CRDImages/dp/original/DP300528.jpg",
                     buildingName: "Insula",
-                    studyPrompt: "These cross-sections show how Roman buildings were constructed. Can you count the floors?",
+                    studyPrompt: "Look at the cross-section. How many floors can you count in the tallest building?",
                     featureToFind: "The multi-story floor levels",
-                    featureHint: "Roman insulae had up to 6 stories — the higher you lived, the cheaper (and more dangerous)"
+                    featureHint: "Roman insulae had up to 6 stories — the higher you lived, the cheaper (and more dangerous)",
+                    questionType: .count(5)
                 ),
                 MuseumSketch(
                     id: 390215,
@@ -324,7 +362,9 @@ enum MuseumSketchContent {
                     buildingName: "Insula",
                     studyPrompt: "See the arched vaults? These supported multiple floors. Why arches instead of flat ceilings?",
                     featureToFind: "The barrel vaults and arches",
-                    featureHint: "Arches push weight to the sides and down — they can support much more than flat beams"
+                    featureHint: "Arches push weight to the sides and down — they can support much more than flat beams",
+                    tapTarget: CGPoint(x: 0.5, y: 0.3),
+                    tapRadius: 0.20
                 ),
             ]
 
@@ -342,7 +382,9 @@ enum MuseumSketchContent {
                     buildingName: "Il Duomo",
                     studyPrompt: "This is a study for painting INSIDE Brunelleschi's dome. How do you paint a curved ceiling?",
                     featureToFind: "The curved fresco composition following the dome shape",
-                    featureHint: "The artist had to distort figures so they'd look correct when viewed from 100 feet below"
+                    featureHint: "The artist had to distort figures so they'd look correct when viewed from 100 feet below",
+                    tapTarget: CGPoint(x: 0.5, y: 0.35),
+                    tapRadius: 0.22
                 ),
                 MuseumSketch(
                     id: 416883,
@@ -354,7 +396,9 @@ enum MuseumSketchContent {
                     buildingName: "Il Duomo",
                     studyPrompt: "Callot captured the Piazza del Duomo in 1617. The dome dominates the skyline — why?",
                     featureToFind: "Brunelleschi's dome rising above the city",
-                    featureHint: "At 114 meters, it was the tallest dome in the world — built WITHOUT scaffolding from the ground"
+                    featureHint: "At 114 meters, it was the tallest dome in the world — built WITHOUT scaffolding from the ground",
+                    tapTarget: CGPoint(x: 0.5, y: 0.2),
+                    tapRadius: 0.18
                 ),
             ]
 
@@ -370,7 +414,9 @@ enum MuseumSketchContent {
                     buildingName: "Botanical Garden",
                     studyPrompt: "Renaissance gardens used geometry to organize nature. Can you see the symmetry?",
                     featureToFind: "The geometric symmetry of the garden layout",
-                    featureHint: "The garden is perfectly balanced — left mirrors right, just like Renaissance architecture"
+                    featureHint: "The garden is perfectly balanced — left mirrors right, just like Renaissance architecture",
+                    tapTarget: CGPoint(x: 0.5, y: 0.5),
+                    tapRadius: 0.22
                 ),
                 MuseumSketch(
                     id: 702013,
@@ -382,7 +428,9 @@ enum MuseumSketchContent {
                     buildingName: "Botanical Garden",
                     studyPrompt: "This Italian garden combines architecture with nature. Where does the building end and the garden begin?",
                     featureToFind: "The transition from architecture to landscape",
-                    featureHint: "Terraces, stairs, and walls blur the line — Renaissance designers saw gardens as outdoor rooms"
+                    featureHint: "Terraces, stairs, and walls blur the line — Renaissance designers saw gardens as outdoor rooms",
+                    tapTarget: CGPoint(x: 0.5, y: 0.45),
+                    tapRadius: 0.22
                 ),
             ]
 
@@ -398,7 +446,9 @@ enum MuseumSketchContent {
                     buildingName: "Glassworks",
                     studyPrompt: "Whistler sketched the actual glass furnace on Murano island. Why was glassmaking isolated there?",
                     featureToFind: "The furnace building structure",
-                    featureHint: "Venice moved glassmakers to Murano in 1291 — furnaces caused fires, and secrets had to be kept"
+                    featureHint: "Venice moved glassmakers to Murano in 1291 — furnaces caused fires, and secrets had to be kept",
+                    tapTarget: CGPoint(x: 0.5, y: 0.4),
+                    tapRadius: 0.20
                 ),
                 MuseumSketch(
                     id: 344747,
@@ -410,7 +460,9 @@ enum MuseumSketchContent {
                     buildingName: "Glassworks",
                     studyPrompt: "These are actual design drawings from a Murano glass company. Which piece would be hardest to make?",
                     featureToFind: "The most complex glassware design",
-                    featureHint: "Chandeliers with multiple arms required incredible skill — each piece blown and attached by hand"
+                    featureHint: "Chandeliers with multiple arms required incredible skill — each piece blown and attached by hand",
+                    tapTarget: CGPoint(x: 0.5, y: 0.3),
+                    tapRadius: 0.20
                 ),
             ]
 
@@ -426,7 +478,9 @@ enum MuseumSketchContent {
                     buildingName: "Arsenal",
                     studyPrompt: "The Venice Arsenal was the world's first assembly line — before Ford by 400 years! What guards the entrance?",
                     featureToFind: "The monumental gateway with lions",
-                    featureHint: "Stone lions guard the gate — Venice brought them from Greece as war trophies"
+                    featureHint: "Stone lions guard the gate — Venice brought them from Greece as war trophies",
+                    tapTarget: CGPoint(x: 0.5, y: 0.45),
+                    tapRadius: 0.18
                 ),
                 MuseumSketch(
                     id: 335287,
@@ -438,7 +492,9 @@ enum MuseumSketchContent {
                     buildingName: "Arsenal",
                     studyPrompt: "Canaletto drew these boat-sheds where galleys were built. How many ships could the Arsenal produce?",
                     featureToFind: "The covered boat-building sheds",
-                    featureHint: "At its peak, the Arsenal could build a complete warship in ONE DAY using assembly-line methods"
+                    featureHint: "At its peak, the Arsenal could build a complete warship in ONE DAY using assembly-line methods",
+                    tapTarget: CGPoint(x: 0.45, y: 0.4),
+                    tapRadius: 0.20
                 ),
             ]
 
@@ -454,7 +510,9 @@ enum MuseumSketchContent {
                     buildingName: "Anatomy Theater",
                     studyPrompt: "Vesalius revolutionized anatomy at Padua. What's different about how he shows the human body?",
                     featureToFind: "The anatomical figure in a lifelike pose",
-                    featureHint: "Unlike older texts, Vesalius showed bodies as if they were alive — standing, gesturing, in landscapes"
+                    featureHint: "Unlike older texts, Vesalius showed bodies as if they were alive — standing, gesturing, in landscapes",
+                    tapTarget: CGPoint(x: 0.5, y: 0.45),
+                    tapRadius: 0.20
                 ),
                 MuseumSketch(
                     id: 340789,
@@ -466,7 +524,9 @@ enum MuseumSketchContent {
                     buildingName: "Anatomy Theater",
                     studyPrompt: "Michelangelo studied real anatomy to sculpt the human body. What joint is he drawing here?",
                     featureToFind: "The knee joint structure",
-                    featureHint: "Artists needed to understand bones and muscles to create realistic sculptures and paintings"
+                    featureHint: "Artists needed to understand bones and muscles to create realistic sculptures and paintings",
+                    tapTarget: CGPoint(x: 0.5, y: 0.5),
+                    tapRadius: 0.22
                 ),
                 MuseumSketch(
                     id: 342278,
@@ -478,7 +538,9 @@ enum MuseumSketchContent {
                     buildingName: "Anatomy Theater",
                     studyPrompt: "Architecture AND anatomy on the same page! Why did Renaissance artists study both?",
                     featureToFind: "Architecture and anatomy side by side",
-                    featureHint: "Renaissance thinkers saw the human body as architecture — bones are columns, ribs are arches"
+                    featureHint: "Renaissance thinkers saw the human body as architecture — bones are columns, ribs are arches",
+                    tapTarget: CGPoint(x: 0.5, y: 0.45),
+                    tapRadius: 0.25
                 ),
             ]
 
@@ -494,7 +556,9 @@ enum MuseumSketchContent {
                     buildingName: "Leonardo's Workshop",
                     studyPrompt: "Leonardo illustrated these geometric solids for a math book. Can you name any of these shapes?",
                     featureToFind: "The polyhedra (geometric solid shapes)",
-                    featureHint: "These are Platonic solids — the building blocks of geometry that fascinated Leonardo"
+                    featureHint: "These are Platonic solids — the building blocks of geometry that fascinated Leonardo",
+                    tapTarget: CGPoint(x: 0.5, y: 0.5),
+                    tapRadius: 0.22
                 ),
                 MuseumSketch(
                     id: 339130,
@@ -506,7 +570,9 @@ enum MuseumSketchContent {
                     buildingName: "Leonardo's Workshop",
                     studyPrompt: "Leonardo designed stage sets AND studied nature on the same page. What does this tell you about him?",
                     featureToFind: "The dual nature of the page — art and science",
-                    featureHint: "Leonardo never separated art from science — his workshop was where both came together"
+                    featureHint: "Leonardo never separated art from science — his workshop was where both came together",
+                    tapTarget: CGPoint(x: 0.5, y: 0.45),
+                    tapRadius: 0.25
                 ),
                 MuseumSketch(
                     id: 337494,
@@ -518,7 +584,9 @@ enum MuseumSketchContent {
                     buildingName: "Leonardo's Workshop",
                     studyPrompt: "Leonardo worked out the math of perspective here. Can you see the vanishing point lines?",
                     featureToFind: "The perspective lines converging to a point",
-                    featureHint: "All lines meet at one point — this mathematical trick creates the illusion of depth on a flat page"
+                    featureHint: "All lines meet at one point — this mathematical trick creates the illusion of depth on a flat page",
+                    tapTarget: CGPoint(x: 0.55, y: 0.5),
+                    tapRadius: 0.20
                 ),
             ]
 
@@ -534,7 +602,9 @@ enum MuseumSketchContent {
                     buildingName: "Flying Machine",
                     studyPrompt: "This print celebrates Renaissance inventions. The dream of flight drove inventors for centuries — what powered Leonardo's design?",
                     featureToFind: "The collection of Renaissance inventions",
-                    featureHint: "Compass, printing press, gunpowder, America — and the dream of flight united them all"
+                    featureHint: "Compass, printing press, gunpowder, America — and the dream of flight united them all",
+                    tapTarget: CGPoint(x: 0.5, y: 0.45),
+                    tapRadius: 0.25
                 ),
                 MuseumSketch(
                     id: 340981,
@@ -546,7 +616,9 @@ enum MuseumSketchContent {
                     buildingName: "Flying Machine",
                     studyPrompt: "Leonardo's teacher Verrocchio measured animals precisely. Leonardo applied the same method to birds and flight — why?",
                     featureToFind: "The precise measurements and proportions",
-                    featureHint: "To build a flying machine, Leonardo first measured real birds — wingspan, weight, wing-beat frequency"
+                    featureHint: "To build a flying machine, Leonardo first measured real birds — wingspan, weight, wing-beat frequency",
+                    tapTarget: CGPoint(x: 0.5, y: 0.5),
+                    tapRadius: 0.22
                 ),
             ]
 
@@ -562,7 +634,9 @@ enum MuseumSketchContent {
                     buildingName: "Vatican Observatory",
                     studyPrompt: "This is one of the first detailed Moon maps, made from telescope observations. Can you see the craters?",
                     featureToFind: "The lunar craters and mountain shadows",
-                    featureHint: "The dark spots are craters — Mellan used a single continuous spiral line to engrave this entire image"
+                    featureHint: "The dark spots are craters — Mellan used a single continuous spiral line to engrave this entire image",
+                    tapTarget: CGPoint(x: 0.45, y: 0.4),
+                    tapRadius: 0.18
                 ),
                 MuseumSketch(
                     id: 393543,
@@ -574,7 +648,9 @@ enum MuseumSketchContent {
                     buildingName: "Vatican Observatory",
                     studyPrompt: "Compare this full moon with the quarter moon. Why do craters look different when the sun angle changes?",
                     featureToFind: "The difference in shadow patterns between full and quarter moon",
-                    featureHint: "At full moon, sunlight hits straight on — craters nearly vanish. At quarter, long shadows reveal depth"
+                    featureHint: "At full moon, sunlight hits straight on — craters nearly vanish. At quarter, long shadows reveal depth",
+                    tapTarget: CGPoint(x: 0.5, y: 0.5),
+                    tapRadius: 0.22
                 ),
                 MuseumSketch(
                     id: 337061,
@@ -586,7 +662,9 @@ enum MuseumSketchContent {
                     buildingName: "Vatican Observatory",
                     studyPrompt: "This 1540 book had MOVABLE paper discs to calculate planet positions. It's an analog computer! What moves?",
                     featureToFind: "The rotating paper calculation discs",
-                    featureHint: "The colored circles rotate — line up the date and you can predict where Mars or Venus will appear"
+                    featureHint: "The colored circles rotate — line up the date and you can predict where Mars or Venus will appear",
+                    tapTarget: CGPoint(x: 0.5, y: 0.45),
+                    tapRadius: 0.22
                 ),
             ]
 
@@ -602,7 +680,9 @@ enum MuseumSketchContent {
                     buildingName: "Printing Press",
                     studyPrompt: "This shows a real Renaissance print shop! Can you find the press, the typesetter, and the drying rack?",
                     featureToFind: "The three stages: typesetting, pressing, and drying",
-                    featureHint: "Left: setting tiny metal letters. Center: the press squeezing ink onto paper. Right: pages hanging to dry"
+                    featureHint: "Left: setting tiny metal letters. Center: the press squeezing ink onto paper. Right: pages hanging to dry",
+                    tapTarget: CGPoint(x: 0.5, y: 0.5),
+                    tapRadius: 0.22
                 ),
                 MuseumSketch(
                     id: 659685,
@@ -614,7 +694,9 @@ enum MuseumSketchContent {
                     buildingName: "Printing Press",
                     studyPrompt: "Copper engraving was another printing revolution. How is it different from a printing press with movable type?",
                     featureToFind: "The engraving tools and copper plate",
-                    featureHint: "Type prints TEXT from raised letters. Engraving prints IMAGES from carved grooves — opposite methods!"
+                    featureHint: "Type prints TEXT from raised letters. Engraving prints IMAGES from carved grooves — opposite methods!",
+                    tapTarget: CGPoint(x: 0.45, y: 0.55),
+                    tapRadius: 0.20
                 ),
                 MuseumSketch(
                     id: 365313,
@@ -626,7 +708,9 @@ enum MuseumSketchContent {
                     buildingName: "Printing Press",
                     studyPrompt: "This is one of the most beautiful books ever printed (1499). How did they combine text and images?",
                     featureToFind: "The harmony of text and woodcut illustration",
-                    featureHint: "The woodcut was carved to match the type size — both pressed together in a single pass"
+                    featureHint: "The woodcut was carved to match the type size — both pressed together in a single pass",
+                    tapTarget: CGPoint(x: 0.5, y: 0.4),
+                    tapRadius: 0.22
                 ),
             ]
 

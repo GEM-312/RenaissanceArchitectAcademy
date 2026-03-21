@@ -1,11 +1,7 @@
 # Renaissance Architect Academy
 
 <p align="center">
-  <img src="docs/Domo.png" alt="Renaissance Architect Academy" width="500">
-</p>
-
-<p align="center">
-  <em>Where Science Builds Civilization</em>
+  <img src="docs/banner.png" alt="Renaissance Architect Academy — Where Science Builds Civilization" width="700">
 </p>
 
 ---

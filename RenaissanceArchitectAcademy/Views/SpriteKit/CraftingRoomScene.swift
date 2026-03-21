@@ -165,7 +165,12 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
     private func setupBackground() {
         let terrainTexture = SKTexture(imageNamed: "WorkshopBackground")
         let terrain = SKSpriteNode(texture: terrainTexture)
-        terrain.size = mapSize
+        // Scale to fill the map while preserving aspect ratio (no distortion)
+        let imageSize = terrainTexture.size()
+        let scaleX = mapSize.width / imageSize.width
+        let scaleY = mapSize.height / imageSize.height
+        let fillScale = max(scaleX, scaleY)  // fill, not fit — covers the whole map
+        terrain.size = CGSize(width: imageSize.width * fillScale, height: imageSize.height * fillScale)
         terrain.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
         terrain.zPosition = -100
         addChild(terrain)
