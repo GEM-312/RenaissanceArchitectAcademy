@@ -38,6 +38,17 @@ Build iconic structures from Ancient Rome and the Renaissance period while maste
   <sub>Geology • Optics • Hydraulics • Acoustics • Materials Science • Architecture</sub>
 </p>
 
+## Screenshots
+
+<p align="center">
+  <img src="docs/avatar.png" alt="Character Selection" width="400">
+  <img src="docs/WorkshopMap.png" alt="Workshop Map" width="400">
+</p>
+<p align="center">
+  <img src="docs/Interactive_MetArt_sketch.png" alt="Interactive Met Art Sketch Study" width="400">
+  <img src="docs/ToolsInmarket.png" alt="Tools in Market" width="400">
+</p>
+
 ## Features
 
 - **17 Historic Buildings** - Construct aqueducts, colosseums, duomos, glassworks, and more across 6 zones
@@ -45,11 +56,10 @@ Build iconic structures from Ancient Rome and the Renaissance period while maste
 - **Leonardo's Notebook Aesthetic** - Hand-drawn engineering style with watercolor touches
 - **SpriteKit City Map** - Pan, zoom, and tap buildings on a 3500x2500 interactive map
 - **Workshop Mini-Game** - Township-style crafting: collect materials, mix at workbench, fire in furnace
-- **PencilKit Watercolor Paint** - Draw watercolor strokes directly on the map (iPad)
+- **Interactive Met Art Sketches** - Study real architectural drawings from the Metropolitan Museum of Art
 - **Two Historic Eras** - Ancient Rome and Renaissance Italy (Florence, Venice, Padua, Milan, Rome)
-- **Mascot Characters** - Splash (ink blob) + Bird companion follow you around the map
-- **Bird Animation** - 13-frame hand-drawn flying animation from Midjourney/Pika, background removed in Photoshop
-- **Molecule Diagrams** - Chemical structure visualizations (H₂O, Ca(OH)₂, SiO₂, CaCO₃, CO₂, Na₂O, C₆H₆) with animated sketch-in effect
+- **Bird Companion** - Guided learning with a bird that teaches architecture and science
+- **Knowledge Cards** - 208 cards across 17 buildings teaching construction steps
 - **Match-3 Puzzle** - Collect chemical elements to build structures
 - **Progress Tracking** - Track mastery levels from Apprentice to Master
 - **Custom AI Art** - Midjourney icons and Gemini-generated map backgrounds
@@ -99,7 +109,6 @@ Build iconic structures from Ancient Rome and the Renaissance period while maste
 | **Developer** | Marina Pollak |
 | **Level Designer** | Ray Garmon |
 | **Game Designer** | Brianna Walker |
-| **Game Designer** | Richard Calleja |
 
 ## Installation
 
