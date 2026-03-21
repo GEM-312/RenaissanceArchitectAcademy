@@ -40,14 +40,12 @@ Build iconic structures from Ancient Rome and the Renaissance period while maste
 
 ## Screenshots
 
-<p align="center">
-  <img src="docs/avatar.png" alt="Character Selection" width="400">
-  <img src="docs/WorkshopMap.png" alt="Workshop Map" width="400">
-</p>
-<p align="center">
-  <img src="docs/Interactive_MetArt_sketch.png" alt="Interactive Met Art Sketch Study" width="400">
-  <img src="docs/ToolsInmarket.png" alt="Tools in Market" width="400">
-</p>
+| | |
+|:---:|:---:|
+| ![Character Selection](docs/avatar.png) | ![Workshop Map](docs/WorkshopMap.png) |
+| *Apprentice Character* | *Workshop Resource Map* |
+| ![Met Art Sketch Study](docs/Interactive_MetArt_sketch.png) | ![Tools in Market](docs/ToolsInmarket.png) |
+| *Interactive Met Museum Sketch Study* | *Renaissance Tools Market* |
 
 ## Features
 
