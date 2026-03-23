@@ -25,9 +25,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
     /// Terrain sprite reference
     private var terrainSprite: SKSpriteNode?
-
-    /// Semi-transparent overlay that fades in during walking (replaces memory-heavy CIGaussianBlur)
-    private var walkingOverlay: SKSpriteNode?
+    private var blurredTerrainSprite: SKSpriteNode?
 
     /// Whether the player is currently walking
     private(set) var isPlayerWalking = false
@@ -239,10 +237,13 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
     override func didMove(to view: SKView) {
         guard !hasSetup else {
-            // Scene reused — just update the camera to follow player
+            // Scene reused — reset terrain to sharp, camera to full view
             if playerNode != nil {
                 cameraNode.position = playerNode.position
             }
+            terrainSprite?.alpha = 1.0
+            blurredTerrainSprite?.alpha = 0
+            fitCameraToMap()
             return
         }
         hasSetup = true
@@ -343,7 +344,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
     // MARK: - Background
 
     private func setupBackground() {
-        // Workshop-specific terrain — full image visible at default zoom
+        // Workshop terrain — switches to blurred version when player walks
         let terrainTexture = SKTexture(imageNamed: "WorkshopTerrain")
         terrainTexture.filteringMode = .linear
         let terrain = SKSpriteNode(texture: terrainTexture)
@@ -353,14 +354,16 @@ class WorkshopScene: SKScene, ScrollZoomable {
         addChild(terrain)
         terrainSprite = terrain
 
-        // Walking overlay — semi-transparent parchment that fades in during walking
-        // Replaces SKEffectNode+CIGaussianBlur which used ~140MB of rasterization buffer
-        let overlay = SKSpriteNode(color: PlatformColor(red: 0.96, green: 0.91, blue: 0.84, alpha: 1.0), size: mapSize)
-        overlay.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
-        overlay.zPosition = -99
-        overlay.alpha = 0
-        addChild(overlay)
-        walkingOverlay = overlay
+        // Blurred terrain — sits on top, fades in when zoomed in (same as CityScene)
+        let blurredTexture = SKTexture(imageNamed: "BlurredWorkshopTerrain")
+        blurredTexture.filteringMode = .linear
+        let blurred = SKSpriteNode(texture: blurredTexture)
+        blurred.size = mapSize
+        blurred.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
+        blurred.zPosition = -99
+        blurred.alpha = 0
+        addChild(blurred)
+        blurredTerrainSprite = blurred
     }
 
     // MARK: - Grid Lines (notebook style)
@@ -469,7 +472,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
         removeAllActions()
         removeAllChildren()
         terrainSprite = nil
-        walkingOverlay = nil
+        blurredTerrainSprite = nil
         playerNode = nil
         hasSetup = false
         // Break retain cycles from closures capturing SwiftUI views
@@ -516,16 +519,19 @@ class WorkshopScene: SKScene, ScrollZoomable {
             clampCamera()
         }
 
-        // Zoom-based terrain fade — subtle overlay when zoomed in (replaces CIGaussianBlur to save memory)
-        if let cam = cameraNode, !isPlayerWalking, !isFollowingPlayer {
+        // Terrain blur — blurred when zoomed in, sharp when zoomed out
+        if let cam = cameraNode {
             let scale = cam.xScale
-            if scale >= 1.0 {
-                walkingOverlay?.alpha = 0
+            let threshold: CGFloat = 1.0
+            if scale < threshold {
+                blurredTerrainSprite?.alpha = 1.0
+                terrainSprite?.alpha = 0
             } else {
-                let t = 1.0 - max(0, min(1, (scale - 0.5) / 0.5))
-                walkingOverlay?.alpha = t * 0.15
+                blurredTerrainSprite?.alpha = 0
+                terrainSprite?.alpha = 1.0
             }
         }
+
     }
 
     // MARK: - Input Handling
@@ -871,11 +877,11 @@ class WorkshopScene: SKScene, ScrollZoomable {
     // MARK: - Terrain Effects (walking overlay fade)
 
     private func startWalkingTerrainEffects() {
-        walkingOverlay?.run(SKAction.fadeAlpha(to: 0.25, duration: 0.3))
+        // Blur handled by crossfade in update()
     }
 
     private func stopWalkingTerrainEffects() {
-        walkingOverlay?.run(SKAction.fadeAlpha(to: 0, duration: 0.3))
+        // Sharp restore handled by crossfade in update()
     }
 
     // MARK: - Station Camera Zoom
@@ -924,8 +930,6 @@ class WorkshopScene: SKScene, ScrollZoomable {
         guard let cameraNode = cameraNode else { return }
         isFollowingPlayer = false
         walkTargetPosition = nil
-
-        stopWalkingTerrainEffects()
 
         let mapCenter = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
         let fitScale = max(mapSize.width / self.size.width, mapSize.height / self.size.height)
