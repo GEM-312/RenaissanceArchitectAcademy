@@ -93,6 +93,32 @@ enum CardActivityType: Codable, Equatable {
     }
 }
 
+// MARK: - Card Visual Model (science diagram data)
+
+/// Type of interactive science visual shown below lesson text on a knowledge card
+enum CardVisualType {
+    case reaction           // Molecules → arrow → products
+    case crossSection       // Layered cutaway with dimensions
+    case geometry           // Shapes with measurements
+    case ratio              // Proportional bars with numbers
+    case temperature        // Phase transition curve
+    case force              // Load arrows on structure
+    case flow               // Animated path movement
+    case mechanism          // Moving parts (gears, press)
+    case molecule           // Atom-bond structure
+    case comparison         // Side-by-side difference
+}
+
+/// Pre-computed data for a science visual. All values bundled — no live API calls.
+struct CardVisual {
+    let type: CardVisualType
+    let title: String                   // Label above visual
+    let values: [String: Double]        // Pre-computed numbers
+    let labels: [String]                // Dimension/annotation labels
+    let steps: Int                      // Animation steps (3-5)
+    var caption: String? = nil          // Optional caption below
+}
+
 /// A single knowledge card — placed at a station in an environment, teaches about a specific building
 struct KnowledgeCard: Identifiable {
     let id: String                    // Deterministic: "{buildingId}_{environment}_{stationKey}_{index}"
@@ -108,6 +134,8 @@ struct KnowledgeCard: Identifiable {
     let keywords: [KeywordPair]       // 3-4 keyword/definition pairs for keyword match
     let activity: CardActivityType    // Activity type on card back
     let notebookSummary: String       // What gets saved to the notebook on completion
+    var funFact: String? = nil        // Optional fun fact shown in lightbulb callout
+    var visual: CardVisual? = nil     // Optional interactive science visual below lesson text
 
     /// Color based on science
     var color: Color {
@@ -207,7 +235,14 @@ enum KnowledgeCardContent {
                     KeywordPair(keyword: "8 steps", definition: "Foundation → walls → coffers → concrete → dome → oculus → doors → floor"),
                 ],
                 activity: .hangman(word: "PANTHEON", hint: "Temple dedicated to all the gods"),
-                notebookSummary: "Emperor Hadrian built the Pantheon (~125 AD). 16 granite columns from Egypt. Construction follows 8 steps: foundation → walls → coffers → concrete → dome → oculus → doors → floor."
+                notebookSummary: "Emperor Hadrian built the Pantheon (~125 AD). 16 granite columns from Egypt. Construction follows 8 steps: foundation → walls → coffers → concrete → dome → oculus → doors → floor.",
+                visual: CardVisual(
+                    type: .force,
+                    title: "16 Columns Carrying the Portico",
+                    values: ["columns": 8, "height": 12, "perColumn": 60],
+                    labels: ["×16 columns, 12m tall, 60 tons each"],
+                    steps: 3, caption: "16 granite columns shipped from Egypt carry the entire portico"
+                )
             ),
 
             KnowledgeCard(
@@ -226,7 +261,14 @@ enum KnowledgeCardContent {
                     KeywordPair(keyword: "Load distribution", definition: "Spreading weight evenly across soft ground"),
                 ],
                 activity: .numberFishing(question: "How wide is the Pantheon's ring foundation (meters)?", correctAnswer: 7, decoys: [3, 5, 10, 15, 20]),
-                notebookSummary: "STEP 1: Dig circular trench 4.5m deep, pour 7.3m-wide ring foundation. Distributes the dome's weight into soft Roman clay. Foundation first — always."
+                notebookSummary: "STEP 1: Dig circular trench 4.5m deep, pour 7.3m-wide ring foundation. Distributes the dome's weight into soft Roman clay. Foundation first — always.",
+                visual: CardVisual(
+                    type: .crossSection,
+                    title: "Ring Foundation Cross-Section",
+                    values: ["depth": 4.5, "width": 7.3],
+                    labels: ["Ground surface", "Trench dug 4.5m down", "Soft Roman clay", "Concrete ring (7.3m wide)"],
+                    steps: 4, caption: "Hidden underground — the strongest part of the building is the part you never see"
+                )
             ),
 
             KnowledgeCard(
@@ -245,7 +287,14 @@ enum KnowledgeCardContent {
                     KeywordPair(keyword: "Pier", definition: "Thick pillar that carries the dome's weight to ground"),
                 ],
                 activity: .numberFishing(question: "What is the dome's height and diameter in meters?", correctAnswer: 43, decoys: [28, 35, 51, 60, 72]),
-                notebookSummary: "STEP 2: Build 6m-thick walls with hidden relieving arches. 8 piers carry the load. Height = diameter = 43.3m. Walls BEFORE dome."
+                notebookSummary: "STEP 2: Build 6m-thick walls with hidden relieving arches. 8 piers carry the load. Height = diameter = 43.3m. Walls BEFORE dome.",
+                visual: CardVisual(
+                    type: .geometry,
+                    title: "Perfect Sphere Inside the Rotunda",
+                    values: ["diameter": 43.3, "height": 43.3, "wallThickness": 6],
+                    labels: ["Height = Diameter = 43.3m", "A perfect sphere fits inside"],
+                    steps: 3, caption: "6m-thick walls with 8 piers channel the dome's weight"
+                )
             ),
 
             KnowledgeCard(
@@ -263,7 +312,14 @@ enum KnowledgeCardContent {
                     KeywordPair(keyword: "2,400 tons", definition: "Weight removed by all coffers combined"),
                 ],
                 activity: .numberFishing(question: "How many rows of coffers are in the dome?", correctAnswer: 28, decoys: [14, 22, 36, 42, 50]),
-                notebookSummary: "STEP 3: Build coffers INTO the formwork before pouring concrete. 28 rows remove 2,400 tons. Decoration that's actually engineering."
+                notebookSummary: "STEP 3: Build coffers INTO the formwork before pouring concrete. 28 rows remove 2,400 tons. Decoration that's actually engineering.",
+                visual: CardVisual(
+                    type: .force,
+                    title: "28 Rows of Coffers Inside the Dome",
+                    values: ["coffers": 1, "rows": 28, "removed": 2400, "total": 4535],
+                    labels: ["Coffers = sunken square panels", "28 rows × ~86 tons each", "2,400 tons removed from the dome"],
+                    steps: 3, caption: "The prettiest part of the dome is the smartest engineering"
+                )
             ),
 
             KnowledgeCard(
@@ -281,7 +337,14 @@ enum KnowledgeCardContent {
                     KeywordPair(keyword: "Step 6", definition: "Oculus is opened AFTER the dome is poured"),
                 ],
                 activity: .wordScramble(word: "OCULUS", hint: "The 9-meter eye at the dome's top"),
-                notebookSummary: "STEP 6: Open the 9m oculus AFTER pouring the dome. Creates a compression ring that strengthens the crown. Light enters, rain drains through 22 holes."
+                notebookSummary: "STEP 6: Open the 9m oculus AFTER pouring the dome. Creates a compression ring that strengthens the crown. Light enters, rain drains through 22 holes.",
+                visual: CardVisual(
+                    type: .force,
+                    title: "Oculus Compression Ring",
+                    values: ["oculus": 1, "diameter": 9, "arrows": 8],
+                    labels: ["9m opening at dome crown", "Arrows = compression pushing INWARD", "The hole makes the dome STRONGER"],
+                    steps: 3, caption: "The opening creates inward compression that strengthens the crown"
+                )
             ),
 
             // ── WORKSHOP (4 cards): Steps 1, 4, 7 materials ──
@@ -302,7 +365,14 @@ enum KnowledgeCardContent {
                     KeywordPair(keyword: "Marble", definition: "Cut into decorative slabs for the floor (Step 8)"),
                 ],
                 activity: .trueFalse(statement: "Limestone and marble share the same chemical formula: CaCO₃", isTrue: true),
-                notebookSummary: "STEP 1 & 8 MATERIAL: Limestone and marble are both CaCO₃. Limestone → burned for concrete (foundation). Marble → sliced for decoration (floor). Same rock, different destiny."
+                notebookSummary: "STEP 1 & 8 MATERIAL: Limestone and marble are both CaCO₃. Limestone → burned for concrete (foundation). Marble → sliced for decoration (floor). Same rock, different destiny.",
+                visual: CardVisual(
+                    type: .comparison,
+                    title: "Limestone vs Marble — Same Formula",
+                    values: ["equal": 1],
+                    labels: ["Limestone\nCaCO₃\nBurned → concrete", "Marble\nCaCO₃\nSliced → decoration", "Same chemical formula — heat + pressure transforms one into the other"],
+                    steps: 3, caption: "Same rock, different destiny: foundation vs floor"
+                )
             ),
 
             KnowledgeCard(
@@ -320,7 +390,14 @@ enum KnowledgeCardContent {
                     KeywordPair(keyword: "Pumice", definition: "Volcanic rock so light it floats"),
                 ],
                 activity: .wordScramble(word: "POZZOLANA", hint: "Volcanic ash that makes concrete last 2,000 years"),
-                notebookSummary: "STEP 4 MATERIAL: Pozzolana (volcanic ash) + lime = concrete that lasts 2,000 years. Grade it: heavy basalt (base) → light pumice (top)."
+                notebookSummary: "STEP 4 MATERIAL: Pozzolana (volcanic ash) + lime = concrete that lasts 2,000 years. Grade it: heavy basalt (base) → light pumice (top).",
+                visual: CardVisual(
+                    type: .comparison,
+                    title: "Roman vs Modern Concrete",
+                    values: ["equal": 0],
+                    labels: ["Roman concrete\n2,000 years\nPozzolana + lime", "Modern concrete\n100 years\nPortland cement", "Secret: volcanic silica gets STRONGER over time"],
+                    steps: 3, caption: "Ca(OH)₂ + SiO₂ → CaSiO₃ — the reaction that outlasts empires"
+                )
             ),
 
             KnowledgeCard(
@@ -338,7 +415,14 @@ enum KnowledgeCardContent {
                     KeywordPair(keyword: "Self-supporting", definition: "Each ring holds itself without centering"),
                 ],
                 activity: .trueFalse(statement: "The Pantheon dome was poured in horizontal rings, each curing before the next", isTrue: true),
-                notebookSummary: "STEP 5: Pour dome in horizontal rings. Each ring cures before the next. Self-supporting as it rises. Ring by ring toward the oculus."
+                notebookSummary: "STEP 5: Pour dome in horizontal rings. Each ring cures before the next. Self-supporting as it rises. Ring by ring toward the oculus.",
+                visual: CardVisual(
+                    type: .crossSection,
+                    title: "Dome Layers — Graded Aggregate",
+                    values: ["height": 21.65, "dome": 1],
+                    labels: ["Heavy basalt", "Medium tufa", "Light pumice", "Oculus (open)"],
+                    steps: 4, caption: "Heavy aggregate at base → light pumice at top, poured ring by ring"
+                )
             ),
 
             KnowledgeCard(
@@ -356,7 +440,14 @@ enum KnowledgeCardContent {
                     KeywordPair(keyword: "Step 7", definition: "Doors installed AFTER the dome and oculus"),
                 ],
                 activity: .numberFishing(question: "How many tons of bronze did Pope Urban VIII melt?", correctAnswer: 200, decoys: [50, 100, 350, 500, 800]),
-                notebookSummary: "STEP 7 MATERIAL: Bronze for doors (7m tall) and fittings. Lead clamps join stone. Doors go in AFTER dome + oculus. Near the end."
+                notebookSummary: "STEP 7 MATERIAL: Bronze for doors (7m tall) and fittings. Lead clamps join stone. Doors go in AFTER dome + oculus. Near the end.",
+                visual: CardVisual(
+                    type: .force,
+                    title: "7-Meter Bronze Doors",
+                    values: ["doors": 1, "height": 7, "melted": 200],
+                    labels: ["7m tall bronze doors", "Swing on bronze pivots", "Pope Urban VIII melted 200 tons for Bernini's baldachin"],
+                    steps: 3, caption: "Installed in Step 7 — doors and fittings come near the END"
+                )
             ),
 
             // ── FOREST (2 cards): Step 5 support ─────────────
@@ -376,7 +467,14 @@ enum KnowledgeCardContent {
                     KeywordPair(keyword: "Remove from below", definition: "Centering is dismantled after concrete sets"),
                 ],
                 activity: .wordScramble(word: "CENTERING", hint: "Temporary frame supporting the dome during Step 5"),
-                notebookSummary: "STEP 5 SUPPORT: Oak centering holds wet concrete for 3 weeks. Then removed — designed to disappear after the dome cures."
+                notebookSummary: "STEP 5 SUPPORT: Oak centering holds wet concrete for 3 weeks. Then removed — designed to disappear after the dome cures.",
+                visual: CardVisual(
+                    type: .force,
+                    title: "Centering — Temporary Dome Frame",
+                    values: ["centering": 1, "load": 4535, "arrows": 6, "weeks": 3],
+                    labels: ["Oak beams curve into temporary dome", "Carries thousands of tons for 3 weeks", "Removed after concrete cures"],
+                    steps: 3, caption: "The thing that makes the dome possible is designed to disappear"
+                )
             ),
 
             KnowledgeCard(
@@ -394,7 +492,14 @@ enum KnowledgeCardContent {
                     KeywordPair(keyword: "Steps 2-5", definition: "Walls → coffers → concrete → dome pouring"),
                 ],
                 activity: .hangman(word: "SCAFFOLDING", hint: "Temporary poplar platforms used through Steps 2-5"),
-                notebookSummary: "STEPS 2-5 SUPPORT: Poplar scaffolding for walls, coffers, concrete, dome. 43m up. Light, cheap, recycled after. Nothing wasted."
+                notebookSummary: "STEPS 2-5 SUPPORT: Poplar scaffolding for walls, coffers, concrete, dome. 43m up. Light, cheap, recycled after. Nothing wasted.",
+                visual: CardVisual(
+                    type: .force,
+                    title: "Scaffolding Around the Dome — 43m High",
+                    values: ["scaffolding": 1, "height": 43, "platforms": 5],
+                    labels: ["Poplar platforms for Steps 2-5", "Workers stood 43m up", "Removed after → became crates + firewood"],
+                    steps: 3, caption: "Poplar grows 3m/year — light, cheap, disposable, nothing wasted"
+                )
             ),
 
             // ── CRAFTING ROOM (3 cards): Steps 4, 1, 8 ──────
@@ -415,7 +520,14 @@ enum KnowledgeCardContent {
                     KeywordPair(keyword: "Tamping", definition: "Compacting concrete with wooden tools"),
                 ],
                 activity: .wordScramble(word: "VITRUVIUS", hint: "Roman architect who wrote the Step 4 concrete recipe"),
-                notebookSummary: "STEP 4: Grade concrete. 1 lime + 3 pozzolana. Heavy basalt (base) → tufa (middle) → pumice (top). Slake, mix, pour, tamp."
+                notebookSummary: "STEP 4: Grade concrete. 1 lime + 3 pozzolana. Heavy basalt (base) → tufa (middle) → pumice (top). Slake, mix, pour, tamp.",
+                visual: CardVisual(
+                    type: .ratio,
+                    title: "Vitruvius Concrete Recipe — 1:3",
+                    values: ["Lime": 1, "Pozzolana": 3],
+                    labels: ["1 part lime to 3 parts volcanic ash"],
+                    steps: 3, caption: "Slake quicklime, mix pozzolana, grade aggregate by height"
+                )
             ),
 
             KnowledgeCard(
@@ -433,7 +545,14 @@ enum KnowledgeCardContent {
                     KeywordPair(keyword: "Quicklime", definition: "Foundation binder — made BEFORE Step 1"),
                 ],
                 activity: .numberFishing(question: "What temperature (°C) converts limestone to quicklime?", correctAnswer: 900, decoys: [450, 600, 750, 1100, 1500]),
-                notebookSummary: "BEFORE STEP 1: Fire limestone at 900°C → quicklime (CaO). The binder for foundation concrete. Must be made first."
+                notebookSummary: "BEFORE STEP 1: Fire limestone at 900°C → quicklime (CaO). The binder for foundation concrete. Must be made first.",
+                visual: CardVisual(
+                    type: .temperature,
+                    title: "Calcination — CaCO₃ → CaO + CO₂",
+                    values: ["transition": 900, "max": 1200],
+                    labels: ["Limestone (CaCO₃)", "Quicklime (CaO)"],
+                    steps: 3, caption: "At 900°C, CO₂ burns off — limestone becomes the glue of Rome"
+                )
             ),
 
             KnowledgeCard(
@@ -452,7 +571,14 @@ enum KnowledgeCardContent {
                     KeywordPair(keyword: "Pavonazzetto", definition: "White marble with purple veins from Turkey"),
                 ],
                 activity: .hangman(word: "PORPHYRY", hint: "Imperial purple-red stone from Egypt, reserved for emperors (Step 8)"),
-                notebookSummary: "STEP 8 (LAST): Opus sectile floor. No paint — only natural stone. Porphyry (Egypt), giallo antico (Tunisia), pavonazzetto (Turkey), granite (Egypt). Cut, polished, fitted without mortar."
+                notebookSummary: "STEP 8 (LAST): Opus sectile floor. No paint — only natural stone. Porphyry (Egypt), giallo antico (Tunisia), pavonazzetto (Turkey), granite (Egypt). Cut, polished, fitted without mortar.",
+                visual: CardVisual(
+                    type: .geometry,
+                    title: "Opus Sectile — Geometric Stone Puzzle",
+                    values: ["tessellation": 1, "stones": 4],
+                    labels: ["Porphyry (purple)", "Giallo antico (yellow)", "Pavonazzetto (white)", "Granite (grey)"],
+                    steps: 4, caption: "Cut marble fitted together like a puzzle — no mortar, no paint"
+                )
             ),
         ]
     }

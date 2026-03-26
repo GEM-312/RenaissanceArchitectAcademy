@@ -58,6 +58,33 @@ class SceneEditorMode {
         onToggle?(isActive)
     }
 
+    // MARK: - Public Actions (for SwiftUI buttons)
+
+    /// Rotate selected node left
+    func rotateLeft() {
+        guard isActive, let node = selectedNode else { return }
+        node.zRotation += 0.05
+        updateHighlight()
+        updateCoordinateLabel()
+    }
+
+    /// Rotate selected node right
+    func rotateRight() {
+        guard isActive, let node = selectedNode else { return }
+        node.zRotation -= 0.05
+        updateHighlight()
+        updateCoordinateLabel()
+    }
+
+    /// Nudge selected node
+    func nudge(dx: CGFloat, dy: CGFloat) {
+        guard isActive, let node = selectedNode else { return }
+        node.position.x += dx
+        node.position.y += dy
+        updateHighlight()
+        updateCoordinateLabel()
+    }
+
     // MARK: - Input Handlers (return true if consumed)
 
     /// Handle tap/click down — selects nearest registered node
@@ -113,11 +140,14 @@ class SceneEditorMode {
         guard isActive, let node = selectedNode else { return false }
 
         let nudge: CGFloat = 1
+        let rotateStep: CGFloat = 0.05  // ~3 degrees per tap
         switch keyCode {
         case 123: node.position.x -= nudge  // left arrow
         case 124: node.position.x += nudge  // right arrow
         case 125: node.position.y -= nudge  // down arrow
         case 126: node.position.y += nudge  // up arrow
+        case 15:  node.zRotation += rotateStep  // R key = rotate left
+        case 17:  node.zRotation -= rotateStep  // T key = rotate right
         default: return false
         }
 
@@ -204,7 +234,11 @@ class SceneEditorMode {
     }
 
     private func coordText(for node: SKNode) -> String {
-        "x: \(Int(node.position.x))  y: \(Int(node.position.y))"
+        let deg = Int(node.zRotation * 180 / .pi)
+        if deg == 0 {
+            return "x: \(Int(node.position.x))  y: \(Int(node.position.y))"
+        }
+        return "x: \(Int(node.position.x))  y: \(Int(node.position.y))  rot: \(deg)°"
     }
 
     // MARK: - Badge
@@ -257,7 +291,13 @@ class SceneEditorMode {
         print("\n// ========== EDITOR MODE — ALL POSITIONS ==========")
         for entry in registeredNodes {
             let p = entry.node.position
-            print("  \"\(entry.name)\": CGPoint(x: \(Int(p.x)), y: \(Int(p.y))),")
+            let rot = entry.node.zRotation
+            if abs(rot) > 0.001 {
+                let deg = Int(rot * 180 / .pi)
+                print("  \"\(entry.name)\": CGPoint(x: \(Int(p.x)), y: \(Int(p.y))),  // rot: \(deg)°")
+            } else {
+                print("  \"\(entry.name)\": CGPoint(x: \(Int(p.x)), y: \(Int(p.y))),")
+            }
         }
         print("// ==================================================\n")
     }

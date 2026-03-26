@@ -31,7 +31,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Underground", definition: "85% of the aqueduct was hidden in tunnels"),
                 ],
                 activity: .numberFishing(question: "How many km long was the Aqua Claudia?", correctAnswer: 69, decoys: [32, 45, 83, 100, 120]),
-                notebookSummary: "Aqua Claudia: 69 km from springs to Rome, 14 years to build. Only 16 km on arches — 85% underground."
+                notebookSummary: "Aqua Claudia: 69 km from springs to Rome, 14 years to build. Only 16 km on arches — 85% underground.",
+                visual: CardVisual(
+                    type: .crossSection,
+                    title: "69 km — Mostly Underground",
+                    values: ["depth": 69, "width": 16],
+                    labels: ["Underground tunnel (85%)", "Above ground on arches (16 km)", "Mountain springs (source)", "Rome (destination)"],
+                    steps: 4, caption: "The longest engineering project of the ancient world — 85% invisible"
+                )
             ),
 
             KnowledgeCard(
@@ -49,7 +56,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Surveying", definition: "Measuring ground level before construction"),
                 ],
                 activity: .wordScramble(word: "CHOROBATES", hint: "Roman leveling tool with a water channel on top"),
-                notebookSummary: "Chorobates: 6m leveling beam with water channel. Aqua Claudia gradient: 1:4800 (14m drop over 69 km)."
+                notebookSummary: "Chorobates: 6m leveling beam with water channel. Aqua Claudia gradient: 1:4800 (14m drop over 69 km).",
+                visual: CardVisual(
+                    type: .geometry,
+                    title: "The Chorobates — 6m Leveling Beam",
+                    values: ["diameter": 6, "height": 0.2],
+                    labels: ["Water channel on top shows level", "If water is flat → ground is flat"],
+                    steps: 3, caption: "1:4800 gradient — a marble on the floor rolls faster"
+                )
             ),
 
             KnowledgeCard(
@@ -68,7 +82,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Stagnation", definition: "Too gentle a gradient stops water movement"),
                 ],
                 activity: .trueFalse(statement: "The Aqua Claudia dropped 34 cm per kilometer — a gradient of about 1:4800", isTrue: true),
-                notebookSummary: "Aqueduct gradient: 34 cm/km (1:4800). Too steep = erosion. Too gentle = stagnation. Gravity does all the work."
+                notebookSummary: "Aqueduct gradient: 34 cm/km (1:4800). Too steep = erosion. Too gentle = stagnation. Gravity does all the work.",
+                visual: CardVisual(
+                    type: .comparison,
+                    title: "Finding the Right Gradient",
+                    values: ["equal": 0],
+                    labels: ["Too steep\nWater erodes\nthe channel", "Too gentle\nWater stagnates\nand stops", "34 cm drop per kilometer (1:4800) — gravity does all the work"],
+                    steps: 3, caption: "No pumps, no engines — just precise math over 69 km"
+                )
             ),
 
             KnowledgeCard(
@@ -87,7 +108,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "30 meters", definition: "Height of triple-tiered aqueduct arches"),
                 ],
                 activity: .hangman(word: "VOUSSOIR", hint: "Wedge-shaped stone that forms an arch"),
-                notebookSummary: "Aqueduct arches: 3 tiers, 30m tall. Voussoir wedge stones + keystone hold through compression. Strong because it wants to fall."
+                notebookSummary: "Aqueduct arches: 3 tiers, 30m tall. Voussoir wedge stones + keystone hold through compression. Strong because it wants to fall.",
+                visual: CardVisual(
+                    type: .force,
+                    title: "Arch with Voussoirs + Keystone",
+                    values: ["arch": 1, "height": 30, "tiers": 3],
+                    labels: ["Wedge-shaped voussoirs", "Keystone locks the top", "Compression: every stone pushes against its neighbor"],
+                    steps: 3, caption: "Strong precisely because it wants to fall apart"
+                )
             ),
 
             KnowledgeCard(
@@ -106,7 +134,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Settling tank", definition: "Filters sediment from flowing water"),
                 ],
                 activity: .wordScramble(word: "SPECUS", hint: "The water channel inside the aqueduct"),
-                notebookSummary: "Specus: waterproof channel (0.9m × 1.5m) lined with opus signinum. Castellum distributes water: fountains → baths → homes."
+                notebookSummary: "Specus: waterproof channel (0.9m × 1.5m) lined with opus signinum. Castellum distributes water: fountains → baths → homes.",
+                visual: CardVisual(
+                    type: .crossSection,
+                    title: "Specus Channel Cross-Section",
+                    values: ["depth": 1.5, "width": 0.9],
+                    labels: ["Opus signinum lining", "Water channel", "0.9m wide × 1.5m tall", "Waterproof cement"],
+                    steps: 4, caption: "Distribution: public fountains → baths → private homes (that priority order)"
+                )
             ),
 
             // ── WORKSHOP (4 cards) ─────────────────────────────
@@ -127,7 +162,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Aggregate", definition: "Rock chunks added to concrete for strength"),
                 ],
                 activity: .trueFalse(statement: "Mortar and concrete both use lime as their binder", isTrue: true),
-                notebookSummary: "Mortar = lime + sand (bonds stones). Concrete = lime + ash + aggregate (fills foundations). Same binder, different recipes."
+                notebookSummary: "Mortar = lime + sand (bonds stones). Concrete = lime + ash + aggregate (fills foundations). Same binder, different recipes.",
+                visual: CardVisual(
+                    type: .comparison,
+                    title: "Mortar vs Concrete",
+                    values: ["equal": 0],
+                    labels: ["Mortar\nLime + sand\nGlue between stones", "Concrete\nLime + ash + aggregate\nFills foundations", "Same binder (lime) — different jobs: mortar holds, concrete fills"],
+                    steps: 3, caption: "Understanding binders is how you choose the right recipe"
+                )
             ),
 
             KnowledgeCard(
@@ -145,7 +187,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Silica reaction", definition: "Volcanic ash + lime = waterproof bond"),
                 ],
                 activity: .multipleChoice(question: "What makes Roman concrete set underwater?", options: ["Sand", "Volcanic ash (pozzolana)", "Marble dust", "Iron filings"], correctIndex: 1),
-                notebookSummary: "Pozzolana + lime = hydraulic concrete that sets HARDER underwater. Silica reaction needs no air. Discovered at Pozzuoli."
+                notebookSummary: "Pozzolana + lime = hydraulic concrete that sets HARDER underwater. Silica reaction needs no air. Discovered at Pozzuoli.",
+                visual: CardVisual(
+                    type: .comparison,
+                    title: "Underwater: Dissolves vs Hardens",
+                    values: ["equal": 0],
+                    labels: ["Normal mortar\nDissolves in water\nNeeds air to set", "Pozzolanic concrete\nSets HARDER underwater\nSilica reaction — no air needed", "The material that hates water becomes the one that conquers it"],
+                    steps: 3, caption: "Discovered by accident near Pozzuoli, at the foot of Vesuvius"
+                )
             ),
 
             KnowledgeCard(
@@ -163,7 +212,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Burnishing", definition: "Polishing with stone to seal the surface"),
                 ],
                 activity: .wordScramble(word: "SIGNINUM", hint: "Roman waterproof lining made from crushed terracotta"),
-                notebookSummary: "Opus signinum: crushed terracotta + lime, 3 burnished coats. First waterproof channel lining. Smoother than modern plumbing."
+                notebookSummary: "Opus signinum: crushed terracotta + lime, 3 burnished coats. First waterproof channel lining. Smoother than modern plumbing.",
+                visual: CardVisual(
+                    type: .crossSection,
+                    title: "3 Burnished Coats of Opus Signinum",
+                    values: ["depth": 0.03],
+                    labels: ["Coat 1 (coarse)", "Coat 2 (medium)", "Coat 3 (finest — burnished smooth)"],
+                    steps: 3, caption: "Crushed terracotta fills every pore — smoother than modern plumbing"
+                )
             ),
 
             KnowledgeCard(
@@ -182,7 +238,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Soldered seam", definition: "Lead sheet bent and sealed into a tube"),
                 ],
                 activity: .hangman(word: "FISTULA", hint: "Roman lead pipe stamped with the emperor's name"),
-                notebookSummary: "Fistulae: lead pipes cast over sand molds, bent into tubes, soldered shut. 10 standard sizes, stamped with emperor's name."
+                notebookSummary: "Fistulae: lead pipes cast over sand molds, bent into tubes, soldered shut. 10 standard sizes, stamped with emperor's name.",
+                visual: CardVisual(
+                    type: .crossSection,
+                    title: "Making a Lead Fistula Pipe",
+                    values: ["depth": 0.1],
+                    labels: ["Flat lead sheet", "Bent into tube", "Soldered seam", "Stamped: size + emperor"],
+                    steps: 4, caption: "10 standard sizes — soft, bendable, easy to repair"
+                )
             ),
 
             // ── CRAFTING ROOM (3 cards) ────────────────────────
@@ -202,7 +265,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Trowel test", definition: "Good mortar clings when trowel is inverted"),
                 ],
                 activity: .fillInBlanks(text: "Aqueduct mortar: ___ part lime, ___ parts sand, half-part ___", blanks: ["1", "2", "pozzolana"], distractors: ["3", "4", "marble"]),
-                notebookSummary: "Aqueduct mortar: 1 lime + 2 sand + ½ pozzolana. Slake lime first. Trowel test: good mortar clings upside down."
+                notebookSummary: "Aqueduct mortar: 1 lime + 2 sand + ½ pozzolana. Slake lime first. Trowel test: good mortar clings upside down.",
+                visual: CardVisual(
+                    type: .ratio,
+                    title: "Aqueduct Mortar Recipe — 1:2:½",
+                    values: ["Lime": 1, "Sand": 2, "Pozzolana": 0.5],
+                    labels: ["1 lime : 2 sand : ½ pozzolana"],
+                    steps: 3, caption: "Slake lime first, mix until it clings to an inverted trowel"
+                )
             ),
 
             KnowledgeCard(
@@ -220,7 +290,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Graded powder", definition: "Finest particles for the waterproof top coat"),
                 ],
                 activity: .numberFishing(question: "Minimum firing temperature (°C) for terracotta tiles?", correctAnswer: 600, decoys: [200, 400, 800, 1100, 1500]),
-                notebookSummary: "Terracotta fires at 600-900°C (ring test). Crush to powder, sieve through linen. Finest grains for the waterproof coat."
+                notebookSummary: "Terracotta fires at 600-900°C (ring test). Crush to powder, sieve through linen. Finest grains for the waterproof coat.",
+                visual: CardVisual(
+                    type: .temperature,
+                    title: "Firing Terracotta — 600-900°C",
+                    values: ["transition": 600, "max": 1100],
+                    labels: ["Raw clay", "Fired terracotta (rings when tapped)"],
+                    steps: 3, caption: "Crush to powder, sieve finest grains — graded like jewelers grade diamonds"
+                )
             ),
 
             KnowledgeCard(
@@ -239,7 +316,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "De Aquaeductu", definition: "First water management book in history"),
                 ],
                 activity: .hangman(word: "FRONTINUS", hint: "Rome's water commissioner who wrote De Aquaeductu"),
-                notebookSummary: "Frontinus measured flow via quinaria pipes. Aqua Claudia: 184,000 m³/day (190 L/person). De Aquaeductu = first water manual."
+                notebookSummary: "Frontinus measured flow via quinaria pipes. Aqua Claudia: 184,000 m³/day (190 L/person). De Aquaeductu = first water manual.",
+                visual: CardVisual(
+                    type: .ratio,
+                    title: "Daily Flow — 184,000 m³",
+                    values: ["Total flow": 184000, "Per person": 190],
+                    labels: ["184,000 m³/day → 190 liters per person"],
+                    steps: 3, caption: "More than many modern cities — measured by Frontinus, Rome's water commissioner"
+                )
             ),
         ]
     }
@@ -268,7 +352,12 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "30 km/day", definition: "Standard army marching pace on Roman roads"),
                 ],
                 activity: .numberFishing(question: "How many km of roads did Rome build at its peak?", correctAnswer: 400000, decoys: [50000, 150000, 250000, 600000, 800000]),
-                notebookSummary: "Rome built 400,000 km of roads. 29 highways from the golden milestone. Armies marched 30 km/day. Roads = empire."
+                notebookSummary: "Rome built 400,000 km of roads. 29 highways from the golden milestone. Armies marched 30 km/day. Roads = empire.",
+                visual: CardVisual(
+                    type: .geometry, title: "400,000 km of Roads from One Point",
+                    values: ["diameter": 400000], labels: ["29 highways radiate from the golden milestone", "Enough road to circle Earth 10 times"],
+                    steps: 3, caption: "Every road leads to Rome — literally"
+                )
             ),
 
             KnowledgeCard(
@@ -286,7 +375,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "80 km", definition: "Length of some perfectly straight Roman roads"),
                 ],
                 activity: .wordScramble(word: "GROMA", hint: "Cross-shaped Roman surveying tool with plumb lines"),
-                notebookSummary: "Groma: cross-shaped tool with plumb lines for surveying. Some roads run 80 km dead straight. Simple tools + discipline."
+                notebookSummary: "Groma: cross-shaped tool with plumb lines for surveying. Some roads run 80 km dead straight. Simple tools + discipline.",
+                visual: CardVisual(type: .geometry, title: "The Groma — Cross-Shaped Level", values: ["diameter": 6], labels: ["Cross arms with plumb lines", "Sight along two arms = straight line", "80 km dead straight with this tool"], steps: 3, caption: "Simple tools + discipline = 80 km dead straight")
             ),
 
             KnowledgeCard(
@@ -305,7 +395,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Summa crusta", definition: "Top layer — cut stone polygons"),
                 ],
                 activity: .multipleChoice(question: "What is the bottom layer of a Roman road?", options: ["Nucleus", "Rudus", "Statumen", "Summa crusta"], correctIndex: 2),
-                notebookSummary: "4 layers bottom→top: statumen (drainage stones), rudus (lime gravel), nucleus (packed sand), summa crusta (cut polygons). Up to 1.5m deep."
+                notebookSummary: "4 layers bottom→top: statumen (drainage stones), rudus (lime gravel), nucleus (packed sand), summa crusta (cut polygons). Up to 1.5m deep.",
+                visual: CardVisual(type: .crossSection, title: "Four Layers of a Roman Road", values: ["depth": 1.5], labels: ["Summa crusta (polygonal stones)", "Nucleus (packed sand)", "Rudus (lime gravel)", "Statumen (drainage stones)"], steps: 4, caption: "A geological sandwich up to 1.5 meters deep")
             ),
 
             KnowledgeCard(
@@ -324,7 +415,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "2,300 years", definition: "Age of original basalt paving still walkable"),
                 ],
                 activity: .hangman(word: "BASALT", hint: "Volcanic rock so hard it dulls iron chisels"),
-                notebookSummary: "Via Appia: basalt polygons — no mortar, interlock under weight. 2,300 years old, still walkable. Hardest rock = smoothest road."
+                notebookSummary: "Via Appia: basalt polygons — no mortar, interlock under weight. 2,300 years old, still walkable. Hardest rock = smoothest road.",
+                visual: CardVisual(type: .geometry, title: "Basalt Polygons — No Mortar", values: ["tessellation": 1, "stones": 1], labels: ["Basalt (volcanic)"], steps: 3, caption: "Interlock under weight — 2,300 years old, still walkable")
             ),
 
             // ── WORKSHOP (3 cards) ─────────────────────────────
@@ -345,7 +437,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Rough top", definition: "Textured surface grips the rudus layer above"),
                 ],
                 activity: .trueFalse(statement: "Romans used frozen water in cracks to split basalt for road foundations", isTrue: true),
-                notebookSummary: "Basalt split with iron wedges + ice expansion. Statumen stones: flat bottom (stable), rough top (grips rudus). Selected by feel."
+                notebookSummary: "Basalt split with iron wedges + ice expansion. Statumen stones: flat bottom (stable), rough top (grips rudus). Selected by feel.",
+                visual: CardVisual(type: .comparison, title: "Ice Splitting — Nature's Chisel", values: ["equal": 0], labels: ["Iron wedge\nin drill holes\nwater added", "Ice expands\ncracks basalt\nalong grain", "Water freezes → 9% expansion → splits the hardest stone"], steps: 3, caption: "Flat bottom for stability, rough top to grip the rudus layer")
             ),
 
             KnowledgeCard(
@@ -363,7 +456,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Grows stronger", definition: "Pozzolanic reaction continues for years"),
                 ],
                 activity: .wordScramble(word: "RUDUS", hint: "Gravel road layer bound with volcanic mortar"),
-                notebookSummary: "Rudus: gravel + volcanic lime mortar. Pozzolanic reaction creates crystals in pores — gets stronger over years."
+                notebookSummary: "Rudus: gravel + volcanic lime mortar. Pozzolanic reaction creates crystals in pores — gets stronger over years.",
+                visual: CardVisual(type: .reaction, title: "Pozzolanic Crystals in Road Mortar", values: ["durability_roman": 2000], labels: ["Lime + volcanic ash", "Calcium silicate crystals", "crystals grow in pores"], steps: 3, caption: "Gets STRONGER over years — crystals fill the gaps between gravel")
             ),
 
             KnowledgeCard(
@@ -382,7 +476,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Drainage ditch", definition: "Channels on both sides collecting runoff"),
                 ],
                 activity: .numberFishing(question: "Maximum camber height (cm) above the road edges?", correctAnswer: 30, decoys: [5, 10, 50, 75, 100]),
-                notebookSummary: "Nucleus camber: center 15-30 cm higher than edges. Gentle arc drains rainwater to side ditches. Every road is a roof."
+                notebookSummary: "Nucleus camber: center 15-30 cm higher than edges. Gentle arc drains rainwater to side ditches. Every road is a roof.",
+                visual: CardVisual(type: .flow, title: "Camber — Every Road Is a Roof", values: ["camber": 30], labels: ["Center 15-30 cm higher → water drains to side ditches"], steps: 3, caption: "A gentle arc invisible to the eye — but rain sees it perfectly")
             ),
 
             // ── CRAFTING ROOM (3 cards) ────────────────────────
@@ -403,7 +498,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "50 rams/m²", definition: "Compaction standard per square meter"),
                 ],
                 activity: .fillInBlanks(text: "Road mortar: ___ part lime, ___ parts crushed volcanic rock, rammed ___ times per square meter", blanks: ["1", "3", "50"], distractors: ["2", "5", "20"]),
-                notebookSummary: "Road mortar: 1 lime + 3 crushed volcanic rock. Dry mix, add water. Ram 50 times per m². Built by rhythm."
+                notebookSummary: "Road mortar: 1 lime + 3 crushed volcanic rock. Dry mix, add water. Ram 50 times per m². Built by rhythm.",
+                visual: CardVisual(type: .ratio, title: "Road Mortar Recipe — 1:3", values: ["Lime": 1, "Volcanic rock": 3], labels: ["1 lime : 3 crushed volcanic rock"], steps: 3, caption: "Dry mix → add water → ram 50 times per m²")
             ),
 
             KnowledgeCard(
@@ -421,7 +517,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Quicklime", definition: "CaO — white powder that reacts violently with water"),
                 ],
                 activity: .trueFalse(statement: "Road-grade quicklime requires 3 days of continuous firing at 900°C", isTrue: true),
-                notebookSummary: "Lime firing: 3 days at 900°C. Limestone → quicklime (CaO). Burns skin, reacts with water. Store bone dry."
+                notebookSummary: "Lime firing: 3 days at 900°C. Limestone → quicklime (CaO). Burns skin, reacts with water. Store bone dry.",
+                visual: CardVisual(type: .temperature, title: "3-Day Kiln — Limestone to Quicklime", values: ["transition": 900, "max": 1200], labels: ["Limestone (CaCO₃)", "Quicklime (CaO)"], steps: 3, caption: "3 days at 900°C — burns skin, reacts violently with water")
             ),
 
             KnowledgeCard(
@@ -440,7 +537,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Augustus", definition: "Emperor who established the milestone system"),
                 ],
                 activity: .numberFishing(question: "How many meters in a Roman mile?", correctAnswer: 1480, decoys: [1000, 1200, 1600, 1850, 2000]),
-                notebookSummary: "Milliarium: milestone every 1,480m (1 Roman mile). Listed emperor, road, distances. Golden milestone in Forum = mile zero."
+                notebookSummary: "Milliarium: milestone every 1,480m (1 Roman mile). Listed emperor, road, distances. Golden milestone in Forum = mile zero.",
+                visual: CardVisual(type: .geometry, title: "Milestone Every 1,480 Meters", values: ["diameter": 1480, "height": 1.8], labels: ["1 Roman mile = 1,480 m", "Carved: emperor, road, distances"], steps: 3, caption: "Golden milestone in the Forum = mile zero for the entire empire")
             ),
         ]
     }
@@ -469,7 +567,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Social engineering", definition: "Architecture designed to shape citizen behavior"),
                 ],
                 activity: .numberFishing(question: "How many bathers could the Baths of Caracalla hold?", correctAnswer: 1600, decoys: [400, 800, 2500, 5000, 10000]),
-                notebookSummary: "Thermae: baths + library + gym + garden. Caracalla: 1,600 bathers. Almost free. Social engineering as architecture."
+                notebookSummary: "Thermae: baths + library + gym + garden. Caracalla: 1,600 bathers. Almost free. Social engineering as architecture.",
+                visual: CardVisual(type: .comparison, title: "Thermae — More Than a Bath", values: ["equal": 0], labels: ["Modern gym\nOne purpose\nExpensive", "Roman thermae\nBath + library + gym\n+ garden — almost free", "1,600 bathers simultaneously at Caracalla"], steps: 3, caption: "Social engineering as architecture — open to almost everyone")
             ),
 
             KnowledgeCard(
@@ -488,7 +587,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Central heating", definition: "One furnace heats the entire building"),
                 ],
                 activity: .wordScramble(word: "HYPOCAUST", hint: "Roman underfloor heating — hot air beneath raised floors"),
-                notebookSummary: "Hypocaust: furnace → hot air under raised floor (pilae) → up through hollow walls (tubuli) → roof vents. First central heating."
+                notebookSummary: "Hypocaust: furnace → hot air under raised floor (pilae) → up through hollow walls (tubuli) → roof vents. First central heating.",
+                visual: CardVisual(type: .crossSection, title: "Hypocaust — First Central Heating", values: ["depth": 1.0], labels: ["Floor (radiates heat up)", "Pilae stacks (air gap)", "Hot air from furnace", "Tubuli (hollow walls → roof vents)"], steps: 4, caption: "Furnace → under floor → up through walls → out roof vents")
             ),
 
             KnowledgeCard(
@@ -506,7 +606,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Gravity rationing", definition: "Low pressure cuts high outlets first"),
                 ],
                 activity: .multipleChoice(question: "Which pool's outlet was placed lowest in the castellum?", options: ["Hot pool (caldarium)", "Warm pool (tepidarium)", "Cold pool (frigidarium)", "All at equal height"], correctIndex: 2),
-                notebookSummary: "Castellum: 3 outlets at different heights. Cold (lowest) → warm → hot (highest). Low pressure cuts hot first. Gravity rations."
+                notebookSummary: "Castellum: 3 outlets at different heights. Cold (lowest) → warm → hot (highest). Low pressure cuts hot first. Gravity rations.",
+                visual: CardVisual(type: .crossSection, title: "Castellum — 3 Outlets by Height", values: ["depth": 2.0], labels: ["Hot water (highest outlet)", "Warm water (middle)", "Cold water (lowest — last to run dry)"], steps: 3, caption: "When water runs low, hot supply cuts first — gravity rations automatically")
             ),
 
             KnowledgeCard(
@@ -525,7 +626,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Temperature gradient", definition: "Rooms arranged cold → warm → hot"),
                 ],
                 activity: .fillInBlanks(text: "Bath route: ___ (cold 15°C) → ___ (warm 25°C) → ___ (hot 40°C)", blanks: ["frigidarium", "tepidarium", "caldarium"], distractors: ["laconicum", "natatio", "apodyterium"]),
-                notebookSummary: "Bath route: frigidarium (15°C) → tepidarium (25°C) → caldarium (40°C). Caldarium over furnace. Temperature gradient as architecture."
+                notebookSummary: "Bath route: frigidarium (15°C) → tepidarium (25°C) → caldarium (40°C). Caldarium over furnace. Temperature gradient as architecture.",
+                visual: CardVisual(type: .temperature, title: "Bath Temperature Gradient", values: ["transition": 25, "max": 45], labels: ["Frigidarium 15°C", "Caldarium 40°C"], steps: 3, caption: "Cold → warm → hot: temperature gradient as architecture")
             ),
 
             KnowledgeCard(
@@ -544,7 +646,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Reuse", definition: "Bath drain water flushed public latrines"),
                 ],
                 activity: .hangman(word: "CLOACA", hint: "Rome's great sewer — the Cloaca Maxima"),
-                notebookSummary: "Baths: 10M liters/day. Floors slope 2% to drains → Cloaca Maxima sewer. Drain water reused for latrines. Zero waste."
+                notebookSummary: "Baths: 10M liters/day. Floors slope 2% to drains → Cloaca Maxima sewer. Drain water reused for latrines. Zero waste.",
+                visual: CardVisual(type: .flow, title: "10 Million Liters Daily → Zero Waste", values: ["flow": 10000000], labels: ["2% floor slope → drains → Cloaca Maxima sewer"], steps: 3, caption: "Drain water reused for latrines — nothing wasted")
             ),
 
             // ── WORKSHOP (3 cards) ─────────────────────────────
@@ -564,7 +667,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Opus signinum", definition: "Waterproof layer behind the marble"),
                 ],
                 activity: .trueFalse(statement: "Roman bath walls used opus signinum behind the marble to prevent leaks", isTrue: true),
-                notebookSummary: "Bath walls: marble veneer (beauty) over opus signinum (waterproofing) over concrete. Lead clamps hold marble. Watertight 400 years."
+                notebookSummary: "Bath walls: marble veneer (beauty) over opus signinum (waterproofing) over concrete. Lead clamps hold marble. Watertight 400 years.",
+                visual: CardVisual(type: .crossSection, title: "Bath Wall — 3 Layers", values: ["depth": 0.5], labels: ["Marble veneer (beauty)", "Opus signinum (waterproof)", "Concrete core (structure)"], steps: 3, caption: "Lead clamps hold marble — watertight for 400 years")
             ),
 
             KnowledgeCard(
@@ -582,7 +686,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Self-healing", definition: "Excess silica fills micro-cracks as they form"),
                 ],
                 activity: .fillInBlanks(text: "Bath concrete uses ___ part lime to ___ parts pozzolana — extra silica ___ micro-cracks", blanks: ["1", "4", "heals"], distractors: ["2", "3", "prevents"]),
-                notebookSummary: "Bath concrete: 1:4 lime-to-pozzolana (vs normal 1:3). Extra silica self-heals thermal cycling cracks. Engineered for invisible problems."
+                notebookSummary: "Bath concrete: 1:4 lime-to-pozzolana (vs normal 1:3). Extra silica self-heals thermal cycling cracks. Engineered for invisible problems.",
+                visual: CardVisual(type: .ratio, title: "Bath Concrete — 1:4 (Extra Silica)", values: ["Lime": 1, "Pozzolana": 4], labels: ["1:4 ratio (vs normal 1:3) — extra silica self-heals cracks"], steps: 3, caption: "Thermal cycling creates micro-cracks — extra silica fills them")
             ),
 
             KnowledgeCard(
@@ -601,7 +706,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Cast glass", definition: "Molten glass poured and rolled flat on stone"),
                 ],
                 activity: .numberFishing(question: "What temperature (°C) melts sand into glass?", correctAnswer: 1100, decoys: [600, 800, 900, 1400, 1800]),
-                notebookSummary: "Bath glass: river sand (silica) + natron at 1,100°C. Poured and rolled flat. Thick and greenish but flooded caldarium with light."
+                notebookSummary: "Bath glass: river sand (silica) + natron at 1,100°C. Poured and rolled flat. Thick and greenish but flooded caldarium with light.",
+                visual: CardVisual(type: .temperature, title: "Making Glass — Sand at 1,100°C", values: ["transition": 1100, "max": 1400], labels: ["Sand (SiO₂)", "Molten glass"], steps: 3, caption: "River sand + natron → poured flat → thick but floods the room with light")
             ),
 
             // ── FOREST (2 cards) ───────────────────────────────
@@ -622,7 +728,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Interlocking grain", definition: "Oak's structure that resists splitting"),
                 ],
                 activity: .numberFishing(question: "Maximum span (meters) of frigidarium roof trusses?", correctAnswer: 25, decoys: [10, 15, 35, 45, 60]),
-                notebookSummary: "Frigidarium: oak king-post trusses spanning 25m, carrying 20 tons of tiles each. Oak's interlocking grain resists splitting."
+                notebookSummary: "Frigidarium: oak king-post trusses spanning 25m, carrying 20 tons of tiles each. Oak's interlocking grain resists splitting.",
+                visual: CardVisual(type: .force, title: "King-Post Truss — 25m Span", values: ["columns": 3, "height": 25, "perColumn": 20, "arrows": 3], labels: ["Oak truss carries 20 tons of tiles over 25m span"], steps: 3, caption: "Depth = span/20 rule: 25m span → 1.25m deep beams")
             ),
 
             KnowledgeCard(
@@ -641,7 +748,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "30 minutes", definition: "Feeding interval for the stoker"),
                 ],
                 activity: .trueFalse(statement: "Chestnut was preferred for bath furnaces because it burns with steady, even heat", isTrue: true),
-                notebookSummary: "Chestnut: splits easily, steady heat. Stoker feeds every 30 min. Furnace 300°C → floor 40°C. Temperature control = craft."
+                notebookSummary: "Chestnut: splits easily, steady heat. Stoker feeds every 30 min. Furnace 300°C → floor 40°C. Temperature control = craft.",
+                visual: CardVisual(type: .temperature, title: "Furnace 300°C → Floor 40°C", values: ["transition": 300, "max": 400], labels: ["Furnace (300°C)", "Bath floor (40°C)"], steps: 3, caption: "Chestnut burns 45 min per log — stoker feeds every 30 min for steady heat")
             ),
 
             // ── CRAFTING ROOM (3 cards) ────────────────────────
@@ -661,7 +769,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Manganese", definition: "Added to remove green tint from iron impurities"),
                 ],
                 activity: .multipleChoice(question: "What is 'cullet' in glassmaking?", options: ["Iron impurity", "Recycled crushed glass", "Raw silica sand", "Soda ash flux"], correctIndex: 1),
-                notebookSummary: "Roman glass: 60% silica + 15% natron + 10% lime + 15% cullet (recycled glass). 1,100°C. Manganese removes green tint."
+                notebookSummary: "Roman glass: 60% silica + 15% natron + 10% lime + 15% cullet (recycled glass). 1,100°C. Manganese removes green tint.",
+                visual: CardVisual(type: .ratio, title: "Roman Glass Recipe", values: ["Silica": 60, "Natron": 15, "Lime": 10, "Cullet": 15], labels: ["60% silica + 15% natron + 10% lime + 15% recycled glass"], steps: 3, caption: "1,100°C — manganese removes the green tint")
             ),
 
             KnowledgeCard(
@@ -679,7 +788,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Air grate", definition: "Controls oxygen — the real temperature dial"),
                 ],
                 activity: .wordScramble(word: "PRAEFURNIUM", hint: "The vaulted mouth of the hypocaust furnace"),
-                notebookSummary: "Praefurnium: vaulted furnace mouth. Venturi effect accelerates air. Temperature controlled by air grate, not just fuel."
+                notebookSummary: "Praefurnium: vaulted furnace mouth. Venturi effect accelerates air. Temperature controlled by air grate, not just fuel.",
+                visual: CardVisual(type: .flow, title: "Venturi Effect in the Furnace", values: ["flow": 300], labels: ["Vaulted chamber narrows → air accelerates → hotter fire"], steps: 3, caption: "Temperature controlled by air grate opening, not just fuel")
             ),
 
             KnowledgeCard(
@@ -698,7 +808,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Lead container", definition: "For storing reactive quicklime safely"),
                 ],
                 activity: .hangman(word: "AMPHORA", hint: "Two-handled clay vessel lined with pine pitch"),
-                notebookSummary: "Storage: amphorae lined with pine pitch for oils. Wax-sealed cork stoppers. Quicklime in sealed lead. Proper storage saves lives."
+                notebookSummary: "Storage: amphorae lined with pine pitch for oils. Wax-sealed cork stoppers. Quicklime in sealed lead. Proper storage saves lives.",
+                visual: CardVisual(type: .crossSection, title: "Amphora — Waterproof Storage", values: ["depth": 0.6], labels: ["Wax-sealed cork stopper", "Clay vessel", "Pine pitch lining (waterproof)"], steps: 3, caption: "Oils, perfumes, cleaning supplies — proper storage saves lives")
             ),
         ]
     }
@@ -727,7 +838,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Richest lowest", definition: "Wealthy tenants lived on lower, safer floors"),
                 ],
                 activity: .numberFishing(question: "How many stories tall was a typical Roman insula?", correctAnswer: 7, decoys: [3, 4, 10, 12, 15]),
-                notebookSummary: "Insula: Rome's apartment buildings, 6-7 stories. Ground floor = shops (tabernae). Rich lived low, poor lived high. First vertical city."
+                notebookSummary: "Insula: Rome's apartment buildings, 6-7 stories. Ground floor = shops (tabernae). Rich lived low, poor lived high. First vertical city.",
+                visual: CardVisual(
+                    type: .crossSection,
+                    title: "6-7 Story Apartment",
+                    values: ["height": 7],
+                    labels: ["Shops (ground)", "Rich apartments", "Middle class", "Poor (top floor)", "Roof (fire risk)"],
+                    steps: 4, caption: "Vertical cities have always sorted people by money"
+                )
             ),
 
             KnowledgeCard(
@@ -746,7 +864,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Foundation limit", definition: "Roman foundations couldn't support 7+ stories"),
                 ],
                 activity: .numberFishing(question: "Augustus limited insulae to what height (meters)?", correctAnswer: 20, decoys: [10, 15, 25, 30, 40]),
-                notebookSummary: "Augustus: max 20m. Nero: max 17.5m after Great Fire. First building codes — written after collapses. Foundations were the limit."
+                notebookSummary: "Augustus: max 20m. Nero: max 17.5m after Great Fire. First building codes — written after collapses. Foundations were the limit.",
+                visual: CardVisual(
+                    type: .comparison,
+                    title: "Building Height Limits",
+                    values: ["equal": 0],
+                    labels: ["Before code\nCollapse risk\nNo limit", "After Augustus\n20m maximum\nNero: 17.5m", "First building codes — written after collapses"],
+                    steps: 3, caption: "Building codes were written in blood"
+                )
             ),
 
             KnowledgeCard(
@@ -765,7 +890,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Arch opening", definition: "Served as both door and display window"),
                 ],
                 activity: .wordScramble(word: "TABERNAE", hint: "Ground-floor shops in Roman apartment buildings"),
-                notebookSummary: "Tabernae: arched ground-floor shops. Bakers, butchers, wine sellers. Mezzanine bedroom above. Max visibility, min wasted space."
+                notebookSummary: "Tabernae: arched ground-floor shops. Bakers, butchers, wine sellers. Mezzanine bedroom above. Max visibility, min wasted space.",
+                visual: CardVisual(
+                    type: .crossSection,
+                    title: "Taberna — Ground Floor Shop",
+                    values: ["height": 4],
+                    labels: ["Street entrance (arch)", "Shop floor", "Mezzanine bedroom above"],
+                    steps: 3, caption: "Maximum visibility, minimum wasted space"
+                )
             ),
 
             KnowledgeCard(
@@ -784,7 +916,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Timber frame", definition: "Lightest construction on top floors"),
                 ],
                 activity: .multipleChoice(question: "Why did insula walls get thinner on upper floors?", options: ["To save money on bricks", "To reduce the load that lower walls carry", "Romans ran out of materials", "Upper floors weren't important"], correctIndex: 1),
-                notebookSummary: "Insula walls: 60cm (ground) → 45cm → 30cm → timber (top). Thinner upper floors = less cumulative load. Lightest where tallest."
+                notebookSummary: "Insula walls: 60cm (ground) → 45cm → 30cm → timber (top). Thinner upper floors = less cumulative load. Lightest where tallest.",
+                visual: CardVisual(
+                    type: .crossSection,
+                    title: "Wall Thickness Taper",
+                    values: ["depth": 0.6],
+                    labels: ["60cm (ground)", "45cm (2nd floor)", "30cm (3rd floor)", "Timber frame (top)"],
+                    steps: 4, caption: "Lightest where it's tallest — weight management in vertical architecture"
+                )
             ),
 
             KnowledgeCard(
@@ -803,7 +942,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Floor space", definition: "Spiral uses minimum area for maximum height"),
                 ],
                 activity: .trueFalse(statement: "Roman insula spiral staircases fit within a 2-meter diameter circle", isTrue: true),
-                notebookSummary: "Spiral stairs: 2m diameter, wedge steps, central newel column. Maximum vertical travel in minimum floor space."
+                notebookSummary: "Spiral stairs: 2m diameter, wedge steps, central newel column. Maximum vertical travel in minimum floor space.",
+                visual: CardVisual(
+                    type: .geometry,
+                    title: "Spiral Staircase — 2m Circle",
+                    values: ["diameter": 2, "height": 12],
+                    labels: ["Wedge steps spiral up", "2m diameter = minimum footprint"],
+                    steps: 3, caption: "Maximum vertical travel in minimum floor space"
+                )
             ),
 
             // ── WORKSHOP (3 cards) ─────────────────────────────
@@ -823,7 +969,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Slower setting", definition: "Trade-off of using sand instead of volcanic ash"),
                 ],
                 activity: .trueFalse(statement: "Insula mortar used cheaper local sand instead of pozzolana, with thicker joints to compensate", isTrue: true),
-                notebookSummary: "Insula mortar: 1:4 lime-to-sand (no pozzolana). Weaker but 1/3 cost. 2cm joints vs 1cm. Economy + engineering balanced."
+                notebookSummary: "Insula mortar: 1:4 lime-to-sand (no pozzolana). Weaker but 1/3 cost. 2cm joints vs 1cm. Economy + engineering balanced.",
+                visual: CardVisual(
+                    type: .ratio,
+                    title: "Cheap Mortar Recipe — 1:4",
+                    values: ["Lime": 1, "Sand": 4],
+                    labels: ["1:4 (no pozzolana) — weaker but 1/3 cost"],
+                    steps: 3, caption: "Economy and engineering, balanced on a budget"
+                )
             ),
 
             KnowledgeCard(
@@ -842,7 +995,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "No nails", definition: "Gravity and overlap hold tiles in place"),
                 ],
                 activity: .hangman(word: "TEGULAE", hint: "Flat Roman roof tiles with raised edges"),
-                notebookSummary: "Tegulae (flat + edges) + imbrices (half-round caps). 3,000 tiles per insula. No nails — gravity holds them. Still used today."
+                notebookSummary: "Tegulae (flat + edges) + imbrices (half-round caps). 3,000 tiles per insula. No nails — gravity holds them. Still used today.",
+                visual: CardVisual(
+                    type: .comparison,
+                    title: "Tegulae + Imbrices — Interlocking Tiles",
+                    values: ["equal": 0],
+                    labels: ["Tegulae\nFlat tiles\nRaised edges", "Imbrices\nHalf-round caps\nCover the joints", "3,000 tiles per insula — no nails, gravity holds them"],
+                    steps: 3, caption: "The system hasn't changed in 2,000 years"
+                )
             ),
 
             KnowledgeCard(
@@ -861,7 +1021,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "10× cost", definition: "Glass vs mica price difference"),
                 ],
                 activity: .wordScramble(word: "MICA", hint: "Natural mineral split into transparent window sheets"),
-                notebookSummary: "Windows: cast glass (expensive, clear) or mica/lapis specularis (cheap, translucent). Mica from Hispania. Light was a priced luxury."
+                notebookSummary: "Windows: cast glass (expensive, clear) or mica/lapis specularis (cheap, translucent). Mica from Hispania. Light was a priced luxury.",
+                visual: CardVisual(
+                    type: .comparison,
+                    title: "Glass vs Mica Windows",
+                    values: ["equal": 0],
+                    labels: ["Cast glass\nClear, expensive\nRich tenants", "Mica (lapis specularis)\nTranslucent, cheap\nBlocks wind + rain", "Light was a luxury — priced by floor"],
+                    steps: 3, caption: "Most insulae had mica below the 3rd floor and open shutters above"
+                )
             ),
 
             // ── FOREST (2 cards) ───────────────────────────────
@@ -882,7 +1049,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "25 cm depth", definition: "Beam size for a 5-meter span"),
                 ],
                 activity: .numberFishing(question: "What depth beam (cm) for a 5-meter span using the 1/20 rule?", correctAnswer: 25, decoys: [10, 15, 30, 40, 50]),
-                notebookSummary: "Oak floor beams: 40cm apart, spanning 4-5m. Rule: depth = span ÷ 20. 5m span → 25cm beam. Learned by apprenticeship."
+                notebookSummary: "Oak floor beams: 40cm apart, spanning 4-5m. Rule: depth = span ÷ 20. 5m span → 25cm beam. Learned by apprenticeship.",
+                visual: CardVisual(
+                    type: .ratio,
+                    title: "Beam Depth Rule: Span ÷ 20",
+                    values: ["Span": 5, "Depth": 0.25],
+                    labels: ["5m span → 25cm deep beam"],
+                    steps: 3, caption: "Roman carpenters knew the ratio by apprenticeship, not textbooks"
+                )
             ),
 
             KnowledgeCard(
@@ -901,7 +1075,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Flammable", definition: "Upper floors burned easily — caused great fires"),
                 ],
                 activity: .multipleChoice(question: "Why was poplar used on upper insula floors instead of oak?", options: ["Stronger grain", "40% lighter", "Fire resistant", "Cheaper to cut"], correctIndex: 1),
-                notebookSummary: "Upper floors: poplar (40% lighter than oak) + wattle and daub. Cheap, fast, light — but flammable. Rome's fires started high."
+                notebookSummary: "Upper floors: poplar (40% lighter than oak) + wattle and daub. Cheap, fast, light — but flammable. Rome's fires started high.",
+                visual: CardVisual(
+                    type: .comparison,
+                    title: "Oak vs Poplar Frames",
+                    values: ["equal": 0],
+                    labels: ["Oak (lower floors)\nHeavy + strong\nFire resistant", "Poplar (upper floors)\n40% lighter\nBut flammable", "Rome's fires started high — where the cheapest wood was"],
+                    steps: 3, caption: "The cheapest material had the highest cost"
+                )
             ),
 
             // ── CRAFTING ROOM (2 cards) ────────────────────────
@@ -922,7 +1103,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Thick yogurt", definition: "Correct mortar consistency"),
                 ],
                 activity: .numberFishing(question: "How many months must lime putty age before use?", correctAnswer: 3, decoys: [1, 2, 6, 9, 12]),
-                notebookSummary: "Insula mortar: 1 lime putty (aged 3+ months) + 4 sand. Thick yogurt consistency. 2cm joints. Aging prevents cracking."
+                notebookSummary: "Insula mortar: 1 lime putty (aged 3+ months) + 4 sand. Thick yogurt consistency. 2cm joints. Aging prevents cracking.",
+                visual: CardVisual(
+                    type: .ratio,
+                    title: "Aged Lime Putty — 3+ Months",
+                    values: ["Lime putty": 1, "Sand": 4],
+                    labels: ["Aged 3+ months to eliminate hot spots", "Thick yogurt consistency"],
+                    steps: 3, caption: "Patience is an ingredient — the oldest lime makes the strongest mortar"
+                )
             ),
 
             KnowledgeCard(
@@ -941,7 +1129,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Air vent", definition: "Kiln temperature controlled by opening width"),
                 ],
                 activity: .fillInBlanks(text: "Below ___°C clay crumbles. Above ___°C it vitrifies. Sweet spot: ___-1050°C", blanks: ["900", "1100", "950"], distractors: ["600", "800", "1200"]),
-                notebookSummary: "Terracotta: 950-1050°C sweet spot. Below 900°C = crumbly. Above 1100°C = glassy/brittle. Air vent controls kiln temperature."
+                notebookSummary: "Terracotta: 950-1050°C sweet spot. Below 900°C = crumbly. Above 1100°C = glassy/brittle. Air vent controls kiln temperature.",
+                visual: CardVisual(
+                    type: .temperature,
+                    title: "Brick Firing Sweet Spot",
+                    values: ["transition": 950, "max": 1200],
+                    labels: ["Below 900°C = crumbly", "Above 1100°C = brittle"],
+                    steps: 3, caption: "Precision from a hole in a wall — air vent controls everything"
+                )
             ),
         ]
     }
@@ -970,7 +1165,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "200 acres", definition: "Size of Claudius's artificial harbor basin"),
                 ],
                 activity: .numberFishing(question: "How many ships could dock simultaneously at Portus?", correctAnswer: 350, decoys: [50, 150, 500, 750, 1000]),
-                notebookSummary: "Portus: 30 km from Rome. Claudius dug 200-acre basin. Trajan added hexagonal inner harbor. 350 ships at once. Fed a million people."
+                notebookSummary: "Portus: 30 km from Rome. Claudius dug 200-acre basin. Trajan added hexagonal inner harbor. 350 ships at once. Fed a million people.",
+                visual: CardVisual(
+                    type: .geometry,
+                    title: "Portus — 200-Acre Harbor",
+                    values: ["diameter": 200],
+                    labels: ["Hexagonal inner harbor", "350 ships simultaneously"],
+                    steps: 3, caption: "The harbor that fed a million people was itself an engineering marvel"
+                )
             ),
 
             KnowledgeCard(
@@ -989,7 +1191,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "3-4 meters", definition: "Typical Mediterranean storm wave height"),
                 ],
                 activity: .numberFishing(question: "Force (tons per meter) of a 3-meter wave hitting a wall?", correctAnswer: 30, decoys: [5, 10, 50, 75, 100]),
-                notebookSummary: "3m wave = 30 tons/meter impact force. Breakwaters absorb, don't resist. Curved walls redirect energy sideways."
+                notebookSummary: "3m wave = 30 tons/meter impact force. Breakwaters absorb, don't resist. Curved walls redirect energy sideways.",
+                visual: CardVisual(
+                    type: .force,
+                    title: "Wave Impact Force",
+                    values: ["columns": 3, "load": 30, "arrows": 3, "perColumn": 10],
+                    labels: ["3m wave = 30 tons/meter impact force"],
+                    steps: 3, caption: "The strongest wall isn't the thickest — it's the one that refuses to fight"
+                )
             ),
 
             KnowledgeCard(
@@ -1008,7 +1217,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Dry workspace", definition: "Pumped-out area for pouring concrete"),
                 ],
                 activity: .wordScramble(word: "COFFERDAM", hint: "Watertight enclosure for building in water"),
-                notebookSummary: "Cofferdam: double ring of piles + clay. Archimedean screws pump water out. Build dry, then remove walls. Underwater = on land."
+                notebookSummary: "Cofferdam: double ring of piles + clay. Archimedean screws pump water out. Build dry, then remove walls. Underwater = on land.",
+                visual: CardVisual(
+                    type: .crossSection,
+                    title: "Cofferdam — Build Dry Underwater",
+                    values: ["depth": 4],
+                    labels: ["Water level", "Double pile wall + clay", "Dry building area", "Archimedean screw pumps"],
+                    steps: 4, caption: "Building underwater is just building on land — if you can make the water leave"
+                )
             ),
 
             KnowledgeCard(
@@ -1027,7 +1243,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Low pressure", definition: "Water flowing over creates suction above"),
                 ],
                 activity: .multipleChoice(question: "Block weight must exceed how many times the wave uplift force?", options: ["1.5×", "2×", "3×", "5×"], correctIndex: 2),
-                notebookSummary: "Breakwater: 10-15 ton blocks minimum. Wave uplift creates suction. 3× rule: block weight ≥ 3× uplift force."
+                notebookSummary: "Breakwater: 10-15 ton blocks minimum. Wave uplift creates suction. 3× rule: block weight ≥ 3× uplift force.",
+                visual: CardVisual(
+                    type: .force,
+                    title: "Breakwater Block Resistance",
+                    values: ["columns": 4, "load": 45, "arrows": 4, "perColumn": 15],
+                    labels: ["10-15 ton blocks resist 3× wave uplift"],
+                    steps: 3, caption: "Overbuilding by 3× sounds wasteful until the first storm proves you right"
+                )
             ),
 
             KnowledgeCard(
@@ -1046,7 +1269,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "50 meters", definition: "Height of the Portus lighthouse"),
                 ],
                 activity: .hangman(word: "PHAROS", hint: "Ancient lighthouse design from Alexandria"),
-                notebookSummary: "Portus lighthouse: 50m tall, bronze mirror reflectors. Visible 50 km. Fire + curved reflection = beam. Guided 350 ships daily."
+                notebookSummary: "Portus lighthouse: 50m tall, bronze mirror reflectors. Visible 50 km. Fire + curved reflection = beam. Guided 350 ships daily.",
+                visual: CardVisual(
+                    type: .geometry,
+                    title: "Portus Lighthouse",
+                    values: ["diameter": 50, "height": 50],
+                    labels: ["50m tall", "Bronze mirror reflects fire beam", "Visible 50 km at sea"],
+                    steps: 3, caption: "Fire and reflection — solving the hardest problem: finding your way in the dark"
+                )
             ),
 
             // ── WORKSHOP (3 cards) ─────────────────────────────
@@ -1066,7 +1296,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Salt resistance", definition: "Soft stone absorbs salt, hard stone cracks"),
                 ],
                 activity: .trueFalse(statement: "Porous tufa resists saltwater better than dense marble because salt fills its pores", isTrue: true),
-                notebookSummary: "Harbor quays: tufa — soft volcanic rock. Porous = salt fills pores instead of cracking. Soft stone beats hard at the harbor."
+                notebookSummary: "Harbor quays: tufa — soft volcanic rock. Porous = salt fills pores instead of cracking. Soft stone beats hard at the harbor.",
+                visual: CardVisual(
+                    type: .comparison,
+                    title: "Harbor Stone Selection",
+                    values: ["equal": 0],
+                    labels: ["Tufa (volcanic)\nPorous — salt fills\npores harmlessly", "Marble/granite\nDense — salt cracks\nfrom inside", "Soft stone beats hard stone at the harbor"],
+                    steps: 3, caption: "The softest stone wins at the harbor"
+                )
             ),
 
             KnowledgeCard(
@@ -1084,7 +1321,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Portland cement", definition: "Modern concrete that dissolves in salt"),
                 ],
                 activity: .wordScramble(word: "TOBERMORITE", hint: "Crystal that grows inside Roman marine concrete — gets stronger in seawater"),
-                notebookSummary: "Marine concrete: ash + lime + seawater → Al-tobermorite crystal. Grows stronger over centuries in salt. Modern Portland dissolves."
+                notebookSummary: "Marine concrete: ash + lime + seawater → Al-tobermorite crystal. Grows stronger over centuries in salt. Modern Portland dissolves.",
+                visual: CardVisual(
+                    type: .comparison,
+                    title: "Roman vs Modern Marine Concrete",
+                    values: ["equal": 0],
+                    labels: ["Roman marine concrete\nAl-tobermorite crystals\nStronger over centuries", "Modern Portland\nDissolves in salt\nFails in decades", "Seawater is the secret ingredient"],
+                    steps: 3, caption: "The ocean that destroys everything else makes this concrete immortal"
+                )
             ),
 
             KnowledgeCard(
@@ -1103,7 +1347,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Double lifespan", definition: "Lead sheeting's benefit to wooden hulls"),
                 ],
                 activity: .hangman(word: "TEREDO", hint: "Marine worm that destroys wooden ship hulls"),
-                notebookSummary: "Lead sheeting below waterline: stops teredo worms, resists salt. Copper tacks hold it. Doubled hull lifespan. Protection has weight."
+                notebookSummary: "Lead sheeting below waterline: stops teredo worms, resists salt. Copper tacks hold it. Doubled hull lifespan. Protection has weight.",
+                visual: CardVisual(
+                    type: .crossSection,
+                    title: "Lead Hull Protection",
+                    values: ["depth": 3],
+                    labels: ["Wooden hull", "Copper tacks", "Lead sheeting (waterline)"],
+                    steps: 3, caption: "Protection weighs something — it always does"
+                )
             ),
 
             // ── FOREST (2 cards) ───────────────────────────────
@@ -1124,7 +1375,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Tannins", definition: "Oak's natural moisture-repelling chemicals"),
                 ],
                 activity: .wordScramble(word: "HORREA", hint: "Roman warehouses — 200 of them stored grain at Portus"),
-                notebookSummary: "Horrea: 200 warehouses at Portus. Oak queen-post trusses spanning 12-15m. Tannins resist salt air moisture."
+                notebookSummary: "Horrea: 200 warehouses at Portus. Oak queen-post trusses spanning 12-15m. Tannins resist salt air moisture.",
+                visual: CardVisual(
+                    type: .force,
+                    title: "Warehouse Truss Structure",
+                    values: ["columns": 4, "height": 15, "perColumn": 5, "arrows": 3],
+                    labels: ["Queen-post trusses spanning 12-15m"],
+                    steps: 3, caption: "The harbor's skeleton was oak — tannins naturally repel moisture"
+                )
             ),
 
             KnowledgeCard(
@@ -1143,7 +1401,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Reusable", definition: "Piles pulled and reused after concrete sets"),
                 ],
                 activity: .trueFalse(statement: "Poplar wood swells when wet, making it ideal for watertight cofferdam piles", isTrue: true),
-                notebookSummary: "Cofferdam: poplar piles 3-4m deep, double ring with puddle clay. Poplar swells wet = tighter seal. Reusable. Temporary → permanent."
+                notebookSummary: "Cofferdam: poplar piles 3-4m deep, double ring with puddle clay. Poplar swells wet = tighter seal. Reusable. Temporary → permanent.",
+                visual: CardVisual(
+                    type: .crossSection,
+                    title: "Poplar Piles Swell Tight",
+                    values: ["depth": 4],
+                    labels: ["Sea level", "Double ring of piles", "Puddle clay seal", "3-4m deep"],
+                    steps: 4, caption: "Temporary by design, permanent in effect"
+                )
             ),
 
             // ── CRAFTING ROOM (2 cards) ────────────────────────
@@ -1163,7 +1428,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Wooden forms", definition: "Lowered into the sea to contain wet concrete"),
                 ],
                 activity: .fillInBlanks(text: "Marine concrete: ___ part lime, ___ parts volcanic ash, mixed with ___ (not fresh water!)", blanks: ["1", "3", "seawater"], distractors: ["2", "4", "rainwater"]),
-                notebookSummary: "Marine concrete: 1 lime + 3 ash + seawater. Pour into forms in the sea. Sets in 7 days, strengthens for centuries."
+                notebookSummary: "Marine concrete: 1 lime + 3 ash + seawater. Pour into forms in the sea. Sets in 7 days, strengthens for centuries.",
+                visual: CardVisual(
+                    type: .ratio,
+                    title: "Marine Concrete — 1:3 + Seawater",
+                    values: ["Lime": 1, "Volcanic ash": 3],
+                    labels: ["Mixed with seawater (not fresh!)", "Sets underwater in 7 days"],
+                    steps: 3, caption: "The sea's worst quality (salt) was the concrete's best ingredient"
+                )
             ),
 
             KnowledgeCard(
@@ -1182,7 +1454,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "No bellows", definition: "Low temperature — wood fire is enough"),
                 ],
                 activity: .numberFishing(question: "At what temperature (°C) does lead melt?", correctAnswer: 327, decoys: [100, 200, 450, 600, 900]),
-                notebookSummary: "Lead melts at 327°C — wood fire, no bellows. Sand molds, 10 min cooling. 200 sheets/day at Portus. Easiest metal, most useful."
+                notebookSummary: "Lead melts at 327°C — wood fire, no bellows. Sand molds, 10 min cooling. 200 sheets/day at Portus. Easiest metal, most useful.",
+                visual: CardVisual(
+                    type: .temperature,
+                    title: "Lead Casting at 327°C",
+                    values: ["transition": 327, "max": 600],
+                    labels: ["Solid lead", "Molten lead"],
+                    steps: 3, caption: "The easiest metal to melt was the most useful at the harbor"
+                )
             ),
         ]
     }
@@ -1211,7 +1490,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Vomitoria", definition: "Angled corridors accelerating crowd exit"),
                 ],
                 activity: .numberFishing(question: "How many minutes to empty the Colosseum?", correctAnswer: 15, decoys: [5, 30, 45, 60, 90]),
-                notebookSummary: "Colosseum: 50,000 seats, 76 numbered entrances. Tessera tickets. Vomitoria corridors empty in 15 min. Invented crowd management."
+                notebookSummary: "Colosseum: 50,000 seats, 76 numbered entrances. Tessera tickets. Vomitoria corridors empty in 15 min. Invented crowd management.",
+                visual: CardVisual(
+                    type: .geometry,
+                    title: "Colosseum — 76 Exits, 15 Minutes",
+                    values: ["diameter": 188, "height": 48],
+                    labels: ["76 numbered entrances", "50,000 seats", "Vomitoria angled corridors"],
+                    steps: 3, caption: "Romans didn't just build a stadium — they invented crowd management"
+                )
             ),
 
             KnowledgeCard(
@@ -1230,7 +1516,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Vespasian", definition: "Emperor who turned Nero's luxury into public arena"),
                 ],
                 activity: .numberFishing(question: "How deep (meters) is the Colosseum's foundation?", correctAnswer: 13, decoys: [5, 8, 20, 30, 40]),
-                notebookSummary: "Built on Nero's drained lake. Oak piles + 13m concrete raft foundation + lead drain pipes. Foundation cost more than the building."
+                notebookSummary: "Built on Nero's drained lake. Oak piles + 13m concrete raft foundation + lead drain pipes. Foundation cost more than the building.",
+                visual: CardVisual(
+                    type: .crossSection,
+                    title: "Foundation on a Drained Lake",
+                    values: ["depth": 13],
+                    labels: ["Arena floor level", "Oak piles driven into clay", "13m concrete raft", "Lead drainage pipes"],
+                    steps: 4, caption: "The foundation cost more than the building above it"
+                )
             ),
 
             KnowledgeCard(
@@ -1249,7 +1542,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Composite", definition: "Top floor — combined Ionic + Corinthian"),
                 ],
                 activity: .multipleChoice(question: "Which column order is on the ground floor of the Colosseum?", options: ["Ionic", "Corinthian", "Doric", "Composite"], correctIndex: 2),
-                notebookSummary: "4 column orders bottom→top: Doric → Ionic → Corinthian → Composite. Each lighter than the last. Visual physics."
+                notebookSummary: "4 column orders bottom→top: Doric → Ionic → Corinthian → Composite. Each lighter than the last. Visual physics.",
+                visual: CardVisual(
+                    type: .crossSection,
+                    title: "Four Orders — Bottom to Top",
+                    values: ["height": 48],
+                    labels: ["Doric (ground — simplest)", "Ionic (2nd — scroll capitals)", "Corinthian (3rd — acanthus leaves)", "Composite (top — combined)"],
+                    steps: 4, caption: "Architecture is visual physics — heavier at the bottom, lighter at the top"
+                )
             ),
 
             KnowledgeCard(
@@ -1268,7 +1568,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "50 meters", definition: "Distance at which speech remained audible"),
                 ],
                 activity: .numberFishing(question: "What angle (degrees) were the Colosseum seats raked for acoustics?", correctAnswer: 37, decoys: [15, 25, 45, 55, 70]),
-                notebookSummary: "Elliptical shape focuses sound. 37° seating rake for optimal acoustics. Speech audible 50m away. Bowl = amplifier."
+                notebookSummary: "Elliptical shape focuses sound. 37° seating rake for optimal acoustics. Speech audible 50m away. Bowl = amplifier.",
+                visual: CardVisual(
+                    type: .geometry,
+                    title: "Acoustic Bowl — 37° Rake",
+                    values: ["diameter": 188, "height": 37],
+                    labels: ["Elliptical shape focuses sound waves", "37° seating rake", "Audible 50m away"],
+                    steps: 3, caption: "The bowl shape turns architecture into an amplifier"
+                )
             ),
 
             KnowledgeCard(
@@ -1287,7 +1594,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Trap doors", definition: "Hidden openings in the wooden arena floor"),
                 ],
                 activity: .wordScramble(word: "HYPOGEUM", hint: "Underground tunnel network beneath the Colosseum arena"),
-                notebookSummary: "Hypogeum: 2 underground levels, 80 elevator shafts, trap doors. Lion from basement to arena in 7 seconds. Invisible infrastructure."
+                notebookSummary: "Hypogeum: 2 underground levels, 80 elevator shafts, trap doors. Lion from basement to arena in 7 seconds. Invisible infrastructure.",
+                visual: CardVisual(
+                    type: .crossSection,
+                    title: "The Hypogeum — Underground Machine",
+                    values: ["depth": 7],
+                    labels: ["Arena floor + trap doors", "Level 1: animal cages", "Level 2: storage + tunnels", "80 rope-and-pulley elevators"],
+                    steps: 4, caption: "The greatest show in Rome ran on invisible infrastructure"
+                )
             ),
 
             // ── WORKSHOP (4 cards) ─────────────────────────────
@@ -1308,7 +1622,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "30% lighter", definition: "Travertine vs marble weight comparison"),
                 ],
                 activity: .hangman(word: "TRAVERTINE", hint: "Limestone from Tivoli's hot springs — 30% lighter than marble"),
-                notebookSummary: "Travertine from Tivoli: hot-spring limestone, 30% lighter than marble. 100,000 m³ used. Air pockets grip iron clamps."
+                notebookSummary: "Travertine from Tivoli: hot-spring limestone, 30% lighter than marble. 100,000 m³ used. Air pockets grip iron clamps.",
+                visual: CardVisual(
+                    type: .comparison,
+                    title: "Travertine vs Marble",
+                    values: ["equal": 0],
+                    labels: ["Travertine\n30% lighter\nAir pockets grip clamps", "Marble\nHeavier, denser\nClamps can't grip", "100,000 m³ quarried from Tivoli — 30 km east"],
+                    steps: 3, caption: "Those holes you see today are vandalism scars, not design"
+                )
             ),
 
             KnowledgeCard(
@@ -1327,7 +1648,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Earthquake flex", definition: "Clamp joints absorb seismic movement"),
                 ],
                 activity: .trueFalse(statement: "The Colosseum uses no mortar — 300 tons of iron clamps hold the stone blocks together", isTrue: true),
-                notebookSummary: "No mortar: 300 tons iron clamps + molten lead anchors. Flexes in earthquakes. Clamps later stolen — scars visible today."
+                notebookSummary: "No mortar: 300 tons iron clamps + molten lead anchors. Flexes in earthquakes. Clamps later stolen — scars visible today.",
+                visual: CardVisual(
+                    type: .force,
+                    title: "300 Tons of Iron Clamps",
+                    values: ["columns": 3, "load": 300, "arrows": 3, "perColumn": 100],
+                    labels: ["Iron clamps lock block to block", "Molten lead anchors each clamp", "Flexes in earthquakes — rigid mortar would crack"],
+                    steps: 3, caption: "Survived 2,000 years of earthquakes but not human greed"
+                )
             ),
 
             KnowledgeCard(
@@ -1346,7 +1674,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Silk Road", definition: "Trade route importing silk from China"),
                 ],
                 activity: .numberFishing(question: "How many sailors operated the Colosseum's velarium?", correctAnswer: 1000, decoys: [100, 250, 500, 2000, 5000]),
-                notebookSummary: "Velarium: silk + linen retractable awning. 240 masts, 1,000 sailors. Silk from China. 30 min to deploy. First retractable roof."
+                notebookSummary: "Velarium: silk + linen retractable awning. 240 masts, 1,000 sailors. Silk from China. 30 min to deploy. First retractable roof.",
+                visual: CardVisual(
+                    type: .geometry,
+                    title: "The Velarium — Retractable Awning",
+                    values: ["diameter": 188, "height": 240],
+                    labels: ["240 masts around the rim", "Silk + linen canopy", "1,000 sailors operate ropes"],
+                    steps: 3, caption: "The world's first retractable roof — operated by the world's first navy"
+                )
             ),
 
             KnowledgeCard(
@@ -1364,7 +1699,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Daily watering", definition: "Workers kept the foundation wet during curing"),
                 ],
                 activity: .numberFishing(question: "How many years did the Colosseum's foundation take to cure?", correctAnswer: 2, decoys: [1, 3, 5, 7, 10]),
-                notebookSummary: "Foundation cured 2 years — kept wet daily. Hydration: water + lime → crystals. Dry concrete crumbles. Water builds."
+                notebookSummary: "Foundation cured 2 years — kept wet daily. Hydration: water + lime → crystals. Dry concrete crumbles. Water builds.",
+                visual: CardVisual(
+                    type: .reaction,
+                    title: "Hydration Curing — 2 Years Wet",
+                    values: ["time": 2],
+                    labels: ["Water + lime", "Calcium hydroxide crystals", "Daily watering for 2 years"],
+                    steps: 3, caption: "The building that drained a lake needed water to set its own foundation"
+                )
             ),
 
             // ── CRAFTING ROOM (4 cards) ────────────────────────
@@ -1385,7 +1727,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Pumice", definition: "Light aggregate for upper vaults"),
                 ],
                 activity: .multipleChoice(question: "Which aggregate was used in the Colosseum's upper vaults?", options: ["Basalt (heavy)", "Tufa (medium)", "Pumice (light)", "Marble (decorative)"], correctIndex: 2),
-                notebookSummary: "3 concrete grades: basalt (foundation), tufa (walls), pumice (vaults). 6M cubic feet total. More concrete than stone."
+                notebookSummary: "3 concrete grades: basalt (foundation), tufa (walls), pumice (vaults). 6M cubic feet total. More concrete than stone.",
+                visual: CardVisual(
+                    type: .crossSection,
+                    title: "Graded Concrete — 3 Weights",
+                    values: ["height": 48],
+                    labels: ["Basalt aggregate (heavy — foundation)", "Tufa aggregate (medium — walls)", "Pumice aggregate (light — upper vaults)"],
+                    steps: 3, caption: "Same binder, different stone — the Colosseum is more concrete than stone"
+                )
             ),
 
             KnowledgeCard(
@@ -1403,7 +1752,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Grit sequence", definition: "Coarse sand → pumice → tin oxide paste"),
                 ],
                 activity: .wordScramble(word: "VENEER", hint: "Thin decorative marble slabs polished to a mirror finish"),
-                notebookSummary: "Marble polished in 3 stages: coarse sand → pumice → heated tin oxide paste. Tin fills pores. Perfection = grit sequence."
+                notebookSummary: "Marble polished in 3 stages: coarse sand → pumice → heated tin oxide paste. Tin fills pores. Perfection = grit sequence.",
+                visual: CardVisual(
+                    type: .comparison,
+                    title: "Marble Polishing — 3 Grit Stages",
+                    values: ["equal": 0],
+                    labels: ["Stage 1: Coarse sand\nRemoves rough surface", "Stage 2: Pumice powder\nSmooths grain", "Stage 3: Heated tin oxide\nFills pores — mirror finish"],
+                    steps: 3, caption: "Perfection is about grit sequence"
+                )
             ),
 
             KnowledgeCard(
@@ -1422,7 +1778,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Ellipse", definition: "Shape where no two rows share the same radius"),
                 ],
                 activity: .numberFishing(question: "How many rows of seating did the Colosseum have?", correctAnswer: 76, decoys: [30, 50, 64, 90, 120]),
-                notebookSummary: "76 rows, 5 social tiers. Sightline ratio: height ÷ distance. Ellipse = every row has unique radius. 50,000 unique seats."
+                notebookSummary: "76 rows, 5 social tiers. Sightline ratio: height ÷ distance. Ellipse = every row has unique radius. 50,000 unique seats.",
+                visual: CardVisual(
+                    type: .geometry,
+                    title: "Seating Math — 76 Rows, 5 Tiers",
+                    values: ["diameter": 188, "height": 76],
+                    labels: ["5 social tiers", "Sightline ratio: height ÷ distance", "Ellipse = every row unique radius"],
+                    steps: 3, caption: "50,000 unique solutions — every seat is a unique coordinate"
+                )
             ),
 
             KnowledgeCard(
@@ -1441,7 +1804,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "240 ropes", definition: "One from each mast to the center ring"),
                 ],
                 activity: .hangman(word: "VELARIUM", hint: "The Colosseum's retractable silk awning operated by 1,000 sailors"),
-                notebookSummary: "Velarium rigging: 240 masts → ropes → central ring. Pulleys and windlasses control tension. Tension cone geometry. 1,000 sailors."
+                notebookSummary: "Velarium rigging: 240 masts → ropes → central ring. Pulleys and windlasses control tension. Tension cone geometry. 1,000 sailors.",
+                visual: CardVisual(
+                    type: .force,
+                    title: "Velarium Tension Cone",
+                    values: ["columns": 240, "load": 240, "arrows": 4, "perColumn": 1],
+                    labels: ["240 masts at rim", "Ropes converge to central ring", "Pulleys + windlasses control tension", "Wide at rim, narrow at center"],
+                    steps: 4, caption: "A circus tent the size of a football field"
+                )
             ),
         ]
     }
@@ -1470,7 +1840,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "8 men", definition: "Crew needed to operate one onager"),
                 ],
                 activity: .numberFishing(question: "Maximum range (meters) of a Roman onager?", correctAnswer: 300, decoys: [50, 100, 200, 500, 800]),
-                notebookSummary: "Onager: torsion catapult. Twisted sinew stores elastic energy. 25 kg stones, 300m range, 8-man crew. Physics with a target."
+                notebookSummary: "Onager: torsion catapult. Twisted sinew stores elastic energy. 25 kg stones, 300m range, 8-man crew. Physics with a target.",
+                visual: CardVisual(
+                    type: .force,
+                    title: "Onager — Torsion Catapult",
+                    values: ["columns": 1, "load": 25, "arrows": 1, "perColumn": 25],
+                    labels: ["Twisted sinew stores elastic energy", "25 kg stone launched 300m", "8-man crew"],
+                    steps: 3, caption: "Destruction is just physics with a target"
+                )
             ),
 
             KnowledgeCard(
@@ -1489,7 +1866,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Equal components", definition: "At 45°, vertical = horizontal velocity"),
                 ],
                 activity: .numberFishing(question: "What launch angle (degrees) gives maximum range?", correctAnswer: 45, decoys: [15, 30, 60, 75, 90]),
-                notebookSummary: "45° = max range. Vertical and horizontal velocity are equal. Roman quadrant measured the angle. Math makes every stone count."
+                notebookSummary: "45° = max range. Vertical and horizontal velocity are equal. Roman quadrant measured the angle. Math makes every stone count.",
+                visual: CardVisual(
+                    type: .geometry,
+                    title: "45° — Maximum Range Arc",
+                    values: ["diameter": 300, "height": 45],
+                    labels: ["45° launch angle", "Vertical = horizontal velocity", "Parabolic arc for maximum range"],
+                    steps: 3, caption: "Mathematics makes every stone count"
+                )
             ),
 
             KnowledgeCard(
@@ -1508,7 +1892,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "70% tension", definition: "Safe operating limit before sinew snaps"),
                 ],
                 activity: .trueFalse(statement: "Doubling the twists in a torsion rope quadruples the stored energy", isTrue: true),
-                notebookSummary: "Torsion: twisted sinew stores elastic energy. Power ∝ twists². Safe limit: 70% of breaking tension. Know the edge."
+                notebookSummary: "Torsion: twisted sinew stores elastic energy. Power ∝ twists². Safe limit: 70% of breaking tension. Know the edge.",
+                visual: CardVisual(
+                    type: .force,
+                    title: "Torsion Energy — Square Law",
+                    values: ["columns": 2, "load": 4, "arrows": 2, "perColumn": 2],
+                    labels: ["Double twists = 4× power", "Safe limit: 70% of breaking tension", "Over-twist and the sinew snaps"],
+                    steps: 3, caption: "Engineering is knowing how close to the edge you can go"
+                )
             ),
 
             KnowledgeCard(
@@ -1527,7 +1918,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Energy accumulation", definition: "Each swing adds more force to the next"),
                 ],
                 activity: .wordScramble(word: "PENDULUM", hint: "Swinging motion that accumulates energy with each cycle"),
-                notebookSummary: "Battering ram: 5-ton oak + iron head, suspended as pendulum. Energy accumulates per swing. 10 swings = force of 30 men."
+                notebookSummary: "Battering ram: 5-ton oak + iron head, suspended as pendulum. Energy accumulates per swing. 10 swings = force of 30 men.",
+                visual: CardVisual(
+                    type: .force,
+                    title: "Battering Ram — Pendulum Physics",
+                    values: ["columns": 1, "load": 5, "arrows": 1, "perColumn": 5],
+                    labels: ["5-ton oak log + iron head", "Pendulum swing accumulates energy", "10 swings = force of 30 men"],
+                    steps: 3, caption: "Rhythm beats strength"
+                )
             ),
 
             KnowledgeCard(
@@ -1546,7 +1944,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "6 platforms", definition: "Internal levels for soldiers climbing inside"),
                 ],
                 activity: .numberFishing(question: "How tall (meters) was a Roman siege tower?", correctAnswer: 20, decoys: [8, 12, 30, 40, 50]),
-                notebookSummary: "Siege tower: 20m tall on wheels. Wet hide fire protection. 6 internal platforms. Drawbridge drops onto walls. Engineering under fire."
+                notebookSummary: "Siege tower: 20m tall on wheels. Wet hide fire protection. 6 internal platforms. Drawbridge drops onto walls. Engineering under fire.",
+                visual: CardVisual(
+                    type: .crossSection,
+                    title: "Siege Tower — 20m Mobile Fortress",
+                    values: ["height": 20],
+                    labels: ["Drawbridge at top", "6 internal platforms", "Wet hide cladding (fire resistant)", "Wheels for rolling to wall"],
+                    steps: 4, caption: "Engineering under maximum pressure"
+                )
             ),
 
             // ── WORKSHOP (4 cards) ─────────────────────────────
@@ -1567,7 +1972,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Vitrified", definition: "Clay fused into hard, glassy shell"),
                 ],
                 activity: .numberFishing(question: "How many terracotta tiles covered a siege workshop roof?", correctAnswer: 500, decoys: [100, 250, 750, 1000, 2000]),
-                notebookSummary: "Workshop roof: 500 terracotta tiles at 2 kg each. Fired at 1,000°C until vitrified. Fire-resistant — deflects flaming arrows."
+                notebookSummary: "Workshop roof: 500 terracotta tiles at 2 kg each. Fired at 1,000°C until vitrified. Fire-resistant — deflects flaming arrows.",
+                visual: CardVisual(
+                    type: .temperature,
+                    title: "Terracotta Tiles — 1,000°C Vitrification",
+                    values: ["transition": 1000, "max": 1200],
+                    labels: ["500 tiles × 2 kg = 1 ton of fire armor", "Vitrified at 1,000°C — won't burn"],
+                    steps: 3, caption: "The roof protects the machines that break the walls"
+                )
             ),
 
             KnowledgeCard(
@@ -1586,7 +1998,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "1,024 layers", definition: "Result of 10 folds (2¹⁰)"),
                 ],
                 activity: .numberFishing(question: "How many layers result from folding iron 10 times?", correctAnswer: 1024, decoys: [20, 100, 512, 2048, 5000]),
-                notebookSummary: "Wrought iron: smelted at 1,100°C, bloom hammered to expel slag. 10 folds = 1,024 layers. Pattern welding = tough iron."
+                notebookSummary: "Wrought iron: smelted at 1,100°C, bloom hammered to expel slag. 10 folds = 1,024 layers. Pattern welding = tough iron.",
+                visual: CardVisual(
+                    type: .temperature,
+                    title: "Bloomery Smelting — 1,100°C",
+                    values: ["transition": 1100, "max": 1500],
+                    labels: ["Iron ore → spongy bloom", "Hammer to expel slag", "10 folds = 1,024 layers"],
+                    steps: 3, caption: "Patience at the anvil is a form of technology"
+                )
             ),
 
             KnowledgeCard(
@@ -1605,7 +2024,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Tooth surface", definition: "Bronze casts smoother than iron — less friction"),
                 ],
                 activity: .fillInBlanks(text: "Bronze is ___% copper and ___% tin, cast using the lost-___ method", blanks: ["90", "10", "wax"], distractors: ["80", "20", "mold"]),
-                notebookSummary: "Bronze gears: 90% Cu + 10% Sn. Lost-wax casting: wax → clay → melt → pour. Smooth tooth surfaces, corrosion resistant."
+                notebookSummary: "Bronze gears: 90% Cu + 10% Sn. Lost-wax casting: wax → clay → melt → pour. Smooth tooth surfaces, corrosion resistant.",
+                visual: CardVisual(
+                    type: .ratio,
+                    title: "Bronze Alloy — 90:10",
+                    values: ["Copper": 90, "Tin": 10],
+                    labels: ["90% copper + 10% tin", "Lost-wax casting for smooth gears"],
+                    steps: 3, caption: "One wax model, one perfect gear — precision starts in wax"
+                )
             ),
 
             KnowledgeCard(
@@ -1623,7 +2049,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Shock absorption", definition: "Wet wood bounces — dry wood shatters"),
                 ],
                 activity: .trueFalse(statement: "Siege ram logs were soaked in water to make them more flexible on impact", isTrue: true),
-                notebookSummary: "Water seasoning: soak logs for weeks. Water fills cell walls → flexible fibers. Wet = bounces on impact. Dry = shatters."
+                notebookSummary: "Water seasoning: soak logs for weeks. Water fills cell walls → flexible fibers. Wet = bounces on impact. Dry = shatters.",
+                visual: CardVisual(
+                    type: .comparison,
+                    title: "Wet vs Dry Ram Logs",
+                    values: ["equal": 0],
+                    labels: ["Soaked log\nWater fills cell walls\nFlexible — bounces", "Dry log\nBrittle fibers\nShatters on impact", "The ram needs to flex, not break"],
+                    steps: 3, caption: "Wet wood absorbs shock — dry wood transfers it"
+                )
             ),
 
             // ── FOREST (2 cards) ───────────────────────────────
@@ -1644,7 +2077,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Iron plates", definition: "Reinforce joints against torsion stress"),
                 ],
                 activity: .multipleChoice(question: "Why was green (fresh) oak preferred for catapult frames?", options: ["Lighter weight", "Better color", "More flexible — absorbs vibration", "Cheaper to cut"], correctIndex: 2),
-                notebookSummary: "Catapult frame: green oak (flexible) + mortise-and-tenon joints + iron plates. Green = 500 shots. Dry = 50. Flexibility wins."
+                notebookSummary: "Catapult frame: green oak (flexible) + mortise-and-tenon joints + iron plates. Green = 500 shots. Dry = 50. Flexibility wins.",
+                visual: CardVisual(
+                    type: .comparison,
+                    title: "Green Oak vs Dry Oak Frames",
+                    values: ["equal": 0],
+                    labels: ["Green (fresh) oak\nFlexible — absorbs vibration\n500 shots", "Dry oak\nBrittle — cracks under stress\n50 shots", "Mortise-and-tenon joints + iron plate reinforcement"],
+                    steps: 3, caption: "A green frame lasts 10× longer — flexibility wins"
+                )
             ),
 
             KnowledgeCard(
@@ -1663,7 +2103,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Ratchet pawl", definition: "Walnut mechanism part for incremental tensioning"),
                 ],
                 activity: .hangman(word: "WALNUT", hint: "Tight-grained wood used for precision catapult triggers"),
-                notebookSummary: "Walnut: tight grain, no splintering, oil-resistant. Used for triggers, ratchets, aiming gears. Stability = accuracy."
+                notebookSummary: "Walnut: tight grain, no splintering, oil-resistant. Used for triggers, ratchets, aiming gears. Stability = accuracy.",
+                visual: CardVisual(
+                    type: .comparison,
+                    title: "Walnut — The Precision Wood",
+                    values: ["equal": 0],
+                    labels: ["Walnut\nTight grain, no splinter\nOil-resistant, stable", "Other woods\nRough edges on cuts\nAbsorb oil — swell", "Triggers, ratchet pawls, aiming gears — stability = accuracy"],
+                    steps: 3, caption: "The wood that doesn't change is the one you trust"
+                )
             ),
 
             // ── CRAFTING ROOM (2 cards) ────────────────────────
@@ -1684,7 +2131,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "4 hours", definition: "Assembly time for a field onager"),
                 ],
                 activity: .multipleChoice(question: "Which joint resists being pulled apart?", options: ["Mortise-and-tenon", "Dovetail", "Scarf", "Butt joint"], correctIndex: 1),
-                notebookSummary: "3 siege joints: mortise-and-tenon (strongest), dovetail (pull-resistant), scarf (end-to-end). No glue. Onager assembled in 4 hours."
+                notebookSummary: "3 siege joints: mortise-and-tenon (strongest), dovetail (pull-resistant), scarf (end-to-end). No glue. Onager assembled in 4 hours.",
+                visual: CardVisual(
+                    type: .comparison,
+                    title: "3 Military Joints — No Glue",
+                    values: ["equal": 0],
+                    labels: ["Mortise-and-tenon\nStrongest — peg in socket", "Dovetail\nPull-resistant — fan shape", "Scarf joint\nEnd-to-end beam extension"],
+                    steps: 3, caption: "Modularity before the word existed — onager assembled in 4 hours"
+                )
             ),
 
             KnowledgeCard(
@@ -1703,7 +2157,14 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Oil quench", definition: "Rapid cooling that traps carbon in crystal"),
                 ],
                 activity: .fillInBlanks(text: "Tempering: heat to ___°C (cherry red), quench in ___, reheat to ___°C (straw yellow)", blanks: ["750", "oil", "300"], distractors: ["500", "water", "600"]),
-                notebookSummary: "Tempering: 750°C → oil quench (martensite) → 300°C reheat (temper). Hard enough to pierce, tough enough not to shatter."
+                notebookSummary: "Tempering: 750°C → oil quench (martensite) → 300°C reheat (temper). Hard enough to pierce, tough enough not to shatter.",
+                visual: CardVisual(
+                    type: .temperature,
+                    title: "Tempering Cycle — 750°C → 300°C",
+                    values: ["transition": 750, "max": 1000],
+                    labels: ["750°C cherry red → oil quench", "Martensite: hard but brittle", "300°C straw yellow → air cool (temper)"],
+                    steps: 3, caption: "Hard enough to pierce, tough enough not to shatter"
+                )
             ),
         ]
     }

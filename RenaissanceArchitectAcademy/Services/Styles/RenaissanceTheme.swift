@@ -15,6 +15,7 @@ enum RenaissanceFont {
     static let bodyLarge   = Font.custom("EBGaramond-Regular", size: 19, relativeTo: .body)
     static let body        = Font.custom("EBGaramond-Regular", size: 17, relativeTo: .body)
     static let bodySemibold = Font.custom("EBGaramond-SemiBold", size: 17, relativeTo: .body)
+    static let bodyMedium  = Font.custom("EBGaramond-Regular", size: 16, relativeTo: .body)
     static let bodySmall   = Font.custom("EBGaramond-Regular", size: 15, relativeTo: .body)
     static let caption     = Font.custom("EBGaramond-Regular", size: 13, relativeTo: .caption)
     static let captionSmall = Font.custom("EBGaramond-Regular", size: 11, relativeTo: .caption2)

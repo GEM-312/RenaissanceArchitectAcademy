@@ -802,6 +802,92 @@ struct CityMapView: View {
                 )
                 .transition(.opacity)
             }
+            // Debug buttons (temporary — remove when done testing)
+            VStack {
+                HStack {
+                    Spacer()
+                    VStack(spacing: 8) {
+                        // Building sprite toggle
+                        Button {
+                            BuildingNode.debugShowAllComplete.toggle()
+                            if let scene = sceneHolder.scene {
+                                for child in scene.children {
+                                    if let bn = child as? BuildingNode {
+                                        bn.updateState(bn.currentState)
+                                    }
+                                }
+                            }
+                        } label: {
+                            Text(BuildingNode.debugShowAllComplete ? "🏛 Complete" : "👻 Ghost")
+                                .font(.custom("Cinzel-Bold", size: 13))
+                                .foregroundStyle(RenaissanceColors.sepiaInk)
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 8)
+                                .background(RenaissanceColors.ochre.opacity(0.9))
+                                .cornerRadius(8)
+                        }
+                        .buttonStyle(.plain)
+
+                        // Editor mode toggle (drag buildings to reposition)
+                        #if DEBUG
+                        Button {
+                            sceneHolder.scene?.toggleEditorMode()
+                        } label: {
+                            Text(sceneHolder.scene?.isEditorActive == true ? "📐 Editing" : "📐 Editor")
+                                .font(.custom("Cinzel-Bold", size: 13))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 8)
+                                .background(sceneHolder.scene?.isEditorActive == true ? Color.red.opacity(0.8) : RenaissanceColors.warmBrown.opacity(0.9))
+                                .cornerRadius(8)
+                        }
+                        .buttonStyle(.plain)
+
+                        // Editor controls (visible when editing)
+                        if sceneHolder.scene?.isEditorActive == true {
+                            VStack(spacing: 4) {
+                                // Rotate
+                                HStack(spacing: 4) {
+                                    Button { sceneHolder.scene?.editorRotateLeft() } label: {
+                                        Text("↺").font(.system(size: 18)).frame(width: 36, height: 32)
+                                            .background(Color.white.opacity(0.9)).cornerRadius(6)
+                                    }.buttonStyle(.plain)
+                                    Button { sceneHolder.scene?.editorRotateRight() } label: {
+                                        Text("↻").font(.system(size: 18)).frame(width: 36, height: 32)
+                                            .background(Color.white.opacity(0.9)).cornerRadius(6)
+                                    }.buttonStyle(.plain)
+                                }
+                                // Nudge
+                                Button { sceneHolder.scene?.editorNudge(dx: 0, dy: 5) } label: {
+                                    Text("▲").font(.system(size: 14)).frame(width: 36, height: 28)
+                                        .background(Color.white.opacity(0.9)).cornerRadius(6)
+                                }.buttonStyle(.plain)
+                                HStack(spacing: 4) {
+                                    Button { sceneHolder.scene?.editorNudge(dx: -5, dy: 0) } label: {
+                                        Text("◀").font(.system(size: 14)).frame(width: 36, height: 28)
+                                            .background(Color.white.opacity(0.9)).cornerRadius(6)
+                                    }.buttonStyle(.plain)
+                                    Button { sceneHolder.scene?.editorNudge(dx: 5, dy: 0) } label: {
+                                        Text("▶").font(.system(size: 14)).frame(width: 36, height: 28)
+                                            .background(Color.white.opacity(0.9)).cornerRadius(6)
+                                    }.buttonStyle(.plain)
+                                }
+                                Button { sceneHolder.scene?.editorNudge(dx: 0, dy: -5) } label: {
+                                    Text("▼").font(.system(size: 14)).frame(width: 36, height: 28)
+                                        .background(Color.white.opacity(0.9)).cornerRadius(6)
+                                }.buttonStyle(.plain)
+                            }
+                        }
+                        #endif
+                    }
+                    .shadow(color: .black.opacity(0.3), radius: 6, y: 3)
+                    .padding(.trailing, 16)
+                    .padding(.top, 50)
+                }
+                Spacer()
+            }
+            .zIndex(100)
+
             } // end ZStack
         } // end GeometryReader
         .onAppear {

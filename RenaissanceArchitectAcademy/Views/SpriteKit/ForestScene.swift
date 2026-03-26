@@ -27,8 +27,8 @@ class ForestScene: SKScene, ScrollZoomable {
     /// The POI position the player is walking toward (for gradual zoom)
     private var walkTargetPosition: CGPoint?
 
-    /// Semi-transparent overlay that fades in during walking (replaces memory-heavy CIGaussianBlur)
-    private var walkingOverlay: SKSpriteNode?
+    /// Reusable terrain blur system (auto-generates blurred texture from Forest1)
+    let terrainBlur = TerrainBlurHelper()
 
     // Map size — standard 3500×2500 coordinate space
     private let mapSize = CGSize(width: 3500, height: 2500)
@@ -450,35 +450,16 @@ class ForestScene: SKScene, ScrollZoomable {
 
     // MARK: - Terrain Effects (walking overlay fade)
 
-    /// Fade in parchment overlay during walking for dreamy effect
-    private func startWalkingTerrainEffects() {
-        walkingOverlay?.run(SKAction.fadeAlpha(to: 0.25, duration: 0.3))
-    }
-
-    /// Fade out parchment overlay when walking stops
-    private func stopWalkingTerrainEffects() {
-        walkingOverlay?.run(SKAction.fadeAlpha(to: 0, duration: 0.3))
-    }
+    /// Terrain effects are now handled by TerrainBlurHelper in update() — these are kept as no-ops
+    /// for call sites that still reference them during walking start/stop.
+    private func startWalkingTerrainEffects() { }
+    private func stopWalkingTerrainEffects() { }
 
     // MARK: - Background (stretched to mapSize per standard)
 
     private func setupBackground() {
-        let terrainTexture = SKTexture(imageNamed: "Forest1")
-        terrainTexture.filteringMode = .linear
-        let terrain = SKSpriteNode(texture: terrainTexture)
-        terrain.size = mapSize
-        terrain.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
-        terrain.zPosition = -100
-        addChild(terrain)
-
-        // Walking overlay — semi-transparent parchment that fades in during walking
-        // Replaces SKEffectNode+CIGaussianBlur which used ~140MB of rasterization buffer
-        let overlay = SKSpriteNode(color: PlatformColor(red: 0.96, green: 0.91, blue: 0.84, alpha: 1.0), size: mapSize)
-        overlay.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
-        overlay.zPosition = -99
-        overlay.alpha = 0
-        addChild(overlay)
-        walkingOverlay = overlay
+        // Forest terrain — auto-generates blurred version at setup (one-time CIFilter cost)
+        terrainBlur.setup(in: self, sharp: "Forest1", mapSize: mapSize, blurRadius: 12.0)
     }
 
     // MARK: - Grid Lines (notebook style)
@@ -788,7 +769,7 @@ class ForestScene: SKScene, ScrollZoomable {
     override func willMove(from view: SKView) {
         removeAllActions()
         removeAllChildren()
-        walkingOverlay = nil
+        terrainBlur.cleanup()
         playerNode = nil
         hasSetup = false
         // Break retain cycles from closures capturing SwiftUI views
@@ -837,15 +818,9 @@ class ForestScene: SKScene, ScrollZoomable {
             clampCamera()
         }
 
-        // Zoom-based terrain fade — subtle overlay when zoomed in (replaces CIGaussianBlur to save memory)
-        if let cam = cameraNode, !isPlayerWalking, !isFollowingPlayer {
-            let scale = cam.xScale
-            if scale >= 1.0 {
-                walkingOverlay?.alpha = 0
-            } else {
-                let t = 1.0 - max(0, min(1, (scale - 0.5) / 0.5))
-                walkingOverlay?.alpha = t * 0.15
-            }
+        // Terrain blur — zoomed in = blurred, zoomed out = sharp
+        if let cam = cameraNode {
+            terrainBlur.updateBlur(cameraScale: cam.xScale)
         }
     }
 

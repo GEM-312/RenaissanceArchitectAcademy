@@ -81,6 +81,8 @@ struct KnowledgeCardsOverlay: View {
     @State private var cardsAppeared = false
     @State private var floatOffset: CGFloat = 0
     @State private var auroraPhase = false
+    @State private var showFlippedContent = false
+    @State private var animateFlippedStory = false
 
     // MARK: - Activity State
 
@@ -297,6 +299,8 @@ struct KnowledgeCardsOverlay: View {
 
         if flippedOpenCard == card.id {
             // Unflip
+            showFlippedContent = false
+            animateFlippedStory = false
             SubsonicController.shared.play(sound: "card_flip.mp3")
             withAnimation(.spring(response: 0.6, dampingFraction: 0.75)) {
                 flipAngles[card.id] = 0
@@ -307,12 +311,23 @@ struct KnowledgeCardsOverlay: View {
             if let current = flippedOpenCard {
                 flipAngles[current] = 0
             }
+            showFlippedContent = false
+            animateFlippedStory = false
             // Flip this card
             SubsonicController.shared.play(sound: "card_flip.mp3")
             withAnimation(.spring(response: 0.6, dampingFraction: 0.75)) {
                 flippedOpenCard = card.id
                 flipAngles[card.id] = 180
                 cardPhases[card.id] = .reading
+            }
+            // Start content fade-in after flip completes
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                withAnimation(.easeIn(duration: 0.3)) {
+                    showFlippedContent = true
+                }
+                withAnimation(.easeIn(duration: 0.8).delay(0.3)) {
+                    animateFlippedStory = true
+                }
             }
         }
     }
@@ -323,6 +338,8 @@ struct KnowledgeCardsOverlay: View {
                 cardPhases[open] = .reading
             }
         } else if let open = flippedOpenCard {
+            showFlippedContent = false
+            animateFlippedStory = false
             withAnimation(.spring(response: 0.6, dampingFraction: 0.75)) {
                 flipAngles[open] = 0
                 flippedOpenCard = nil
@@ -335,61 +352,49 @@ struct KnowledgeCardsOverlay: View {
     // MARK: - Card Front
 
     private func cardFront(card: KnowledgeCard, isCompleted: Bool) -> some View {
-        let color = card.color
+        let color = isCompleted ? RenaissanceColors.sageGreen : card.color
         return ZStack {
-            RoundedRectangle(cornerRadius: 14)
-                .fill(isCompleted ? Color.clear : RenaissanceColors.sepiaInk)
-                .overlay(
-                    ZStack {
-                        if !isCompleted {
-                            // Science-colored aurora glow at subtle opacity
-                            Ellipse()
-                                .fill(color.opacity(0.4))
-                                .frame(width: 180, height: 120)
-                                .blur(radius: 38)
-                                .offset(x: auroraPhase ? 40 : -30, y: auroraPhase ? 100 : 130)
-                                .animation(.easeInOut(duration: 4.0).repeatForever(autoreverses: true), value: auroraPhase)
-                            Ellipse()
-                                .fill(color.opacity(0.3))
-                                .frame(width: 128, height: 165)
-                                .blur(radius: 33)
-                                .offset(x: auroraPhase ? -35 : 25, y: auroraPhase ? 110 : 140)
-                                .animation(.easeInOut(duration: 5.5).repeatForever(autoreverses: true), value: auroraPhase)
-                            Circle()
-                                .fill(Color.white.opacity(0.15))
-                                .frame(width: 82, height: 82)
-                                .blur(radius: 27)
-                                .offset(x: auroraPhase ? -15 : 30, y: auroraPhase ? 115 : 120)
-                                .animation(.easeInOut(duration: 3.5).repeatForever(autoreverses: true), value: auroraPhase)
-                        }
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
+            // Parchment gradient background (matches Discovery Card)
+            RoundedRectangle(cornerRadius: 16)
+                .fill(
+                    LinearGradient(
+                        colors: [color.opacity(0.15), RenaissanceColors.parchment],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
                 )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .strokeBorder(color.opacity(0.5), lineWidth: 2)
+                )
+                .shadow(color: color.opacity(0.3), radius: 8, y: 4)
 
             VStack(spacing: 12) {
-                Spacer()
+                // Science badge
+                Text(card.science.rawValue.uppercased())
+                    .font(.custom("Cinzel-Bold", size: 10))
+                    .tracking(2)
+                    .foregroundStyle(color)
 
-                ZStack {
-                    Circle()
-                        .fill(isCompleted ? RenaissanceColors.sageGreen.opacity(0.3) : color.opacity(0.2))
-                        .frame(width: 70, height: 70)
-                    Image(systemName: isCompleted ? "checkmark.circle.fill" : card.icon)
-                        .font(.system(size: 36))
-                        .foregroundStyle(isCompleted ? RenaissanceColors.sageGreen : color)
-                }
+                // Icon (bare, no circle — matches Discovery)
+                Image(systemName: isCompleted ? "checkmark.circle.fill" : card.icon)
+                    .font(.system(size: 44))
+                    .foregroundStyle(color)
+                    .shadow(color: color.opacity(0.3), radius: 4)
 
+                // Title
                 Text(card.title)
-                    .font(RenaissanceFont.cardTitle)
-                    .tracking(Tracking.label)
-                    .foregroundStyle(isCompleted ? RenaissanceColors.sageGreen : color)
+                    .font(.custom("Cinzel-Bold", size: 18))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
-                    .padding(.horizontal, Spacing.sm)
 
-                Text(card.science.rawValue)
-                    .font(RenaissanceFont.captionSmall)
-                    .foregroundStyle(isCompleted ? RenaissanceColors.sageGreen.opacity(0.7) : color.opacity(0.7))
+                // Italian name
+                Text(card.italianTitle)
+                    .font(.custom("EBGaramond-Italic", size: 14))
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+
+                Spacer().frame(height: 8)
 
                 if isCompleted {
                     // "Ask the Bird" button on completed cards
@@ -415,21 +420,14 @@ struct KnowledgeCardsOverlay: View {
                     }
                     .buttonStyle(.plain)
                 } else {
-                    Image(systemName: "hand.tap.fill")
-                        .font(.system(size: 13))
-                        .foregroundStyle(RenaissanceColors.parchment.opacity(0.4))
+                    // Tap hint text (matches Discovery)
+                    Text("Tap to learn")
+                        .font(.custom("EBGaramond-Regular", size: 13))
+                        .foregroundStyle(color.opacity(0.7))
                 }
-
-                Spacer()
             }
+            .padding(20)
         }
-        .clipShape(RoundedRectangle(cornerRadius: 14))
-        .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .stroke(isCompleted ? RenaissanceColors.sageGreen.opacity(0.4) : color.opacity(0.3), lineWidth: 1.5)
-        )
-        .shadow(color: isCompleted ? .clear : color.opacity(0.4), radius: 20, y: 6)
-        .shadow(color: isCompleted ? .clear : color.opacity(0.2), radius: 40, y: 10)
     }
 
     // MARK: - Card Back (reading ↔ activity)
@@ -495,7 +493,7 @@ struct KnowledgeCardsOverlay: View {
             }
             .animation(.easeInOut(duration: 0.4), value: isActivity)
         }
-        .padding(Spacing.sm)
+        .padding(Spacing.xl)
         .background(
             RoundedRectangle(cornerRadius: 14).fill(RenaissanceColors.parchment)
         )
@@ -529,19 +527,46 @@ struct KnowledgeCardsOverlay: View {
                 }
             }
             .padding(.vertical, Spacing.xs)
+            .opacity(showFlippedContent ? 1 : 0)
 
             Rectangle()
                 .fill(card.color.opacity(0.1))
                 .frame(height: 1)
                 .padding(.horizontal, Spacing.xs)
+                .opacity(showFlippedContent ? 1 : 0)
 
             // Lesson text
             ScrollView(.vertical, showsIndicators: false) {
-                VStack(spacing: Spacing.sm) {
+                VStack(spacing: Spacing.md) {
                     highlightedLessonText(card: card)
+                        .lineSpacing(6)
                         .padding(.top, Spacing.xs)
+                        .opacity(animateFlippedStory ? 1 : 0)
 
-                    // (Geometry diagrams moved to activity/back side of card)
+                    // Interactive science visual
+                    if let visual = card.visual {
+                        CardVisualView(visual: visual, color: card.color)
+                            .opacity(animateFlippedStory ? 1 : 0)
+                    }
+
+                    // Fun fact lightbulb callout
+                    if let funFact = card.funFact {
+                        HStack(alignment: .top, spacing: 8) {
+                            Image(systemName: "lightbulb.fill")
+                                .foregroundStyle(.yellow)
+                                .font(.system(size: 16))
+                            Text(funFact)
+                                .font(RenaissanceFont.italicSmall)
+                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                                .lineSpacing(4)
+                        }
+                        .padding(Spacing.sm)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(card.color.opacity(0.08))
+                        )
+                        .opacity(animateFlippedStory ? 1 : 0)
+                    }
                 }
             }
 
@@ -561,6 +586,7 @@ struct KnowledgeCardsOverlay: View {
                         )
                 }
                 .buttonStyle(.plain)
+                .opacity(animateFlippedStory ? 1 : 0)
             }
         }
     }
@@ -601,11 +627,11 @@ struct KnowledgeCardsOverlay: View {
         for (text, isKeyword) in segments {
             if isKeyword {
                 result = result + Text(text)
-                    .font(RenaissanceFont.buttonSmall)
+                    .font(.custom("EBGaramond-SemiBold", size: 16))
                     .foregroundColor(color)
             } else {
                 result = result + Text(text)
-                    .font(RenaissanceFont.bodySmall)
+                    .font(RenaissanceFont.bodyMedium)
                     .foregroundColor(RenaissanceColors.sepiaInk)
             }
         }

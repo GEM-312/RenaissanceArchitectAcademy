@@ -62,14 +62,22 @@ class CityScene: SKScene, ScrollZoomable {
     private var lastPanLocation: CGPoint?
     private var initialCameraScale: CGFloat = 1.0
 
-    /// Terrain sprite reference — fades when zoomed in to reveal clean parchment
-    private var terrainSprite: SKSpriteNode?
-
-    /// Pre-blurred terrain that fades in during walking/zoom-in (replaces memory-heavy CIGaussianBlur)
-    private var blurredTerrainSprite: SKSpriteNode?
+    /// Reusable terrain blur system
+    let terrainBlur = TerrainBlurHelper()
 
     #if DEBUG
     private lazy var editorMode = SceneEditorMode(scene: self)
+
+    /// Toggle editor mode from SwiftUI (for iPad / when keyboard doesn't work)
+    func toggleEditorMode() {
+        editorMode.toggle()
+    }
+
+    var isEditorActive: Bool { editorMode.isActive }
+
+    func editorRotateLeft() { editorMode.rotateLeft() }
+    func editorRotateRight() { editorMode.rotateRight() }
+    func editorNudge(dx: CGFloat, dy: CGFloat) { editorMode.nudge(dx: dx, dy: dy) }
     #endif
 
     // MARK: - Terrain Tile System
@@ -264,17 +272,6 @@ class CityScene: SKScene, ScrollZoomable {
             addChild(glow)
         }
 
-        // Light mode glow (subtle sepia)
-        for (_, node) in buildingNodes {
-            let glow = WorkshopScene.makeRadialGlow(radius: 160, color: PlatformColor(red: 0.55, green: 0.44, blue: 0.28, alpha: 1.0))
-            glow.name = "lightGlow"
-            glow.position = node.position
-            glow.zPosition = 13
-            glow.alpha = 0.25
-            glow.blendMode = .add
-            addChild(glow)
-        }
-
         // Apply initial theme
         applyTheme()
 
@@ -309,7 +306,6 @@ class CityScene: SKScene, ScrollZoomable {
         // Toggle tint + glow visibility
         enumerateChildNodes(withName: "darkTint") { node, _ in node.isHidden = !dark }
         enumerateChildNodes(withName: "darkGlow") { node, _ in node.isHidden = !dark }
-        enumerateChildNodes(withName: "lightGlow") { node, _ in node.isHidden = dark }
     }
 
     // MARK: - Scene Lifecycle
@@ -318,8 +314,7 @@ class CityScene: SKScene, ScrollZoomable {
         // Release all textures and children to free memory when scene is removed
         removeAllActions()
         removeAllChildren()
-        terrainSprite = nil
-        blurredTerrainSprite = nil
+        terrainBlur.cleanup()
         playerNode = nil
         hasSetup = false
         // Break retain cycles from closures capturing SwiftUI views
@@ -368,31 +363,9 @@ class CityScene: SKScene, ScrollZoomable {
             clampCamera()
         }
 
-        // Terrain crossfade — smooth transition between sharp and blurred terrain
-        // Uses a transition zone (0.8–1.2) to avoid hard-threshold blinking when scale
-        // hovers near 1.0 during pan/zoom gestures.
+        // Terrain blur — instant swap between sharp and blurred image
         if let cam = cameraNode {
-            let scale = cam.xScale
-            let loThreshold: CGFloat = 0.8   // fully blurred below this
-            let hiThreshold: CGFloat = 1.2   // fully sharp above this
-            let blurAlpha: CGFloat
-            if scale <= loThreshold {
-                blurAlpha = 1.0
-            } else if scale >= hiThreshold {
-                blurAlpha = 0.0
-            } else {
-                // Linear interpolation through the transition zone
-                blurAlpha = 1.0 - (scale - loThreshold) / (hiThreshold - loThreshold)
-            }
-            // Smooth lerp to avoid per-frame jitter
-            let lerpSpeed: CGFloat = 0.15
-            let currentBlur = blurredTerrainSprite?.alpha ?? 0
-            let newBlur = currentBlur + (blurAlpha - currentBlur) * lerpSpeed
-            blurredTerrainSprite?.alpha = newBlur
-            // Hide sharp terrain as blur fades in — fully hidden when blur is opaque
-            let sharpAlpha = 1.0 - newBlur
-            let currentSharp = terrainSprite?.alpha ?? 1.0
-            terrainSprite?.alpha = currentSharp + (sharpAlpha - currentSharp) * lerpSpeed
+            terrainBlur.updateBlur(cameraScale: cam.xScale)
         }
 
         // Update dialog position — only fires callback when position changes by >1pt
@@ -455,28 +428,12 @@ class CityScene: SKScene, ScrollZoomable {
             let centerX = tile.origin.x + tile.size.width / 2
             let centerY = tile.origin.y + tile.size.height / 2
 
-            if let imageName = tile.imageName {
-                // Tile with art — use linear filtering for smooth zoom-in
-                let texture = SKTexture(imageNamed: imageName)
-                texture.filteringMode = .linear
-                let sprite = SKSpriteNode(texture: texture)
-                sprite.size = tile.size
-                sprite.position = CGPoint(x: centerX, y: centerY)
-                sprite.zPosition = -100
-                addChild(sprite)
-                terrainSprite = sprite
-
-                // Pre-blurred terrain — fades in during walking/zoom for depth-of-field effect
-                // Zero GPU cost: just alpha crossfade between sharp and blurred textures
-                let blurredTexture = SKTexture(imageNamed: "BlurredTerrain")
-                blurredTexture.filteringMode = .linear
-                let blurred = SKSpriteNode(texture: blurredTexture)
-                blurred.size = tile.size
-                blurred.position = CGPoint(x: centerX, y: centerY)
-                blurred.zPosition = -99
-                blurred.alpha = 0
-                addChild(blurred)
-                blurredTerrainSprite = blurred
+            if tile.imageName != nil {
+                // Terrain pair handled by TerrainBlurHelper (sharp + blurred crossfade)
+                terrainBlur.setup(in: self, sharp: "Terrain", blurred: "BlurredTerrain", mapSize: tile.size)
+                // Reposition to tile center (helper places at mapSize center by default)
+                terrainBlur.terrainSprite?.position = CGPoint(x: centerX, y: centerY)
+                terrainBlur.blurredTerrainSprite?.position = CGPoint(x: centerX, y: centerY)
             } else {
                 // Placeholder tile — parchment rectangle with dashed border
                 let placeholder = SKSpriteNode(color: PlatformColor(red: 0.96, green: 0.90, blue: 0.83, alpha: 1.0), size: tile.size)
@@ -628,41 +585,41 @@ class CityScene: SKScene, ScrollZoomable {
         // Positions based on level_design_sketch.JPG layout
 
         // All 17 buildings organized by region
-        let buildings: [(id: String, name: String, position: CGPoint, era: String)] = [
+        let buildings: [(id: String, name: String, position: CGPoint, era: String, rotation: CGFloat)] = [
             // ========================================
-            // ANCIENT ROME (left side of map)
+            // ANCIENT ROME
             // ========================================
-            ("aqueduct", "Aqueduct", CGPoint(x: 200, y: 2100), "rome"),
-            ("colosseum", "Colosseum", CGPoint(x: 550, y: 1800), "rome"),
-            ("romanBaths", "Roman Baths", CGPoint(x: 250, y: 1450), "rome"),
-            ("pantheon", "Pantheon", CGPoint(x: 600, y: 1200), "rome"),
-            ("romanRoads", "Roman Roads", CGPoint(x: 350, y: 900), "rome"),
-            ("harbor", "Harbor", CGPoint(x: 150, y: 550), "rome"),
-            ("siegeWorkshop", "Siege Workshop", CGPoint(x: 500, y: 400), "rome"),
-            ("insula", "Insula", CGPoint(x: 700, y: 650), "rome"),
+            ("aqueduct", "Aqueduct", CGPoint(x: 777, y: 1002), "rome", -2),
+            ("colosseum", "Colosseum", CGPoint(x: 550, y: 1800), "rome", 0),
+            ("romanBaths", "Roman Baths", CGPoint(x: 250, y: 1450), "rome", 0),
+            ("pantheon", "Pantheon", CGPoint(x: 1624, y: 1748), "rome", 0),
+            ("romanRoads", "Roman Roads", CGPoint(x: 2270, y: 393), "rome", -11),
+            ("harbor", "Harbor", CGPoint(x: 2898, y: 2040), "rome", 0),
+            ("siegeWorkshop", "Siege Workshop", CGPoint(x: 434, y: 1928), "rome", 0),
+            ("insula", "Insula", CGPoint(x: 148, y: 850), "rome", 0),
 
             // ========================================
             // RENAISSANCE ITALY (right side of map)
             // ========================================
 
             // Florence (top right)
-            ("duomo", "Il Duomo", CGPoint(x: 2400, y: 2200), "florence"),
-            ("botanicalGarden", "Botanical Garden", CGPoint(x: 2700, y: 1900), "florence"),
+            ("duomo", "Il Duomo", CGPoint(x: 2400, y: 2200), "florence", 0),
+            ("botanicalGarden", "Botanical Garden", CGPoint(x: 2700, y: 1900), "florence", 0),
 
             // Venice (middle right, near water)
-            ("glassworks", "Glassworks", CGPoint(x: 3100, y: 1650), "venice"),
-            ("arsenal", "Arsenal", CGPoint(x: 2900, y: 1350), "venice"),
+            ("glassworks", "Glassworks", CGPoint(x: 3036, y: 1126), "venice", 0),
+            ("arsenal", "Arsenal", CGPoint(x: 2900, y: 1350), "venice", 0),
 
             // Padua (center)
-            ("anatomyTheater", "Anatomy Theater", CGPoint(x: 2200, y: 1500), "padua"),
+            ("anatomyTheater", "Anatomy Theater", CGPoint(x: 2200, y: 1500), "padua", 0),
 
             // Milan (upper middle)
-            ("leonardoWorkshop", "Leonardo's Workshop", CGPoint(x: 1800, y: 2000), "milan"),
-            ("flyingMachine", "Flying Machine", CGPoint(x: 1500, y: 1700), "milan"),
+            ("leonardoWorkshop", "Leonardo's Workshop", CGPoint(x: 1800, y: 2000), "milan", 0),
+            ("flyingMachine", "Flying Machine", CGPoint(x: 1500, y: 1700), "milan", 0),
 
             // Rome (lower right - Renaissance Rome)
-            ("vaticanObservatory", "Vatican Observatory", CGPoint(x: 2500, y: 900), "renaissanceRome"),
-            ("printingPress", "Printing Press", CGPoint(x: 2100, y: 600), "renaissanceRome")
+            ("vaticanObservatory", "Vatican Observatory", CGPoint(x: 2500, y: 900), "renaissanceRome", 0),
+            ("printingPress", "Printing Press", CGPoint(x: 2100, y: 600), "renaissanceRome", 0)
         ]
 
         for building in buildings {
@@ -672,6 +629,7 @@ class CityScene: SKScene, ScrollZoomable {
                 era: building.era
             )
             node.position = building.position
+            node.zRotation = building.rotation * .pi / 180  // degrees to radians
             node.zPosition = 10
             addChild(node)
             buildingNodes[building.id] = node
@@ -894,6 +852,17 @@ class CityScene: SKScene, ScrollZoomable {
     override func keyDown(with event: NSEvent) {
         #if DEBUG
         if editorMode.handleKeyDown(event.keyCode) { return }
+
+        // B key: toggle building sprite preview (ghost ↔ complete)
+        if event.keyCode == 11 { // B key
+            BuildingNode.debugShowAllComplete.toggle()
+            let mode = BuildingNode.debugShowAllComplete ? "COMPLETE (full color)" : "GHOST (normal game state)"
+            print("🏛 Building preview: \(mode)")
+            // Refresh all building nodes
+            for (_, node) in buildingNodes {
+                node.updateState(node.currentState)
+            }
+        }
         #endif
     }
     #endif

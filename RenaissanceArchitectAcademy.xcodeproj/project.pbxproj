@@ -130,6 +130,8 @@
 		0E7 /* KnowledgeCardContentRenaissance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E7 /* KnowledgeCardContentRenaissance.swift */; };
 		0E8 /* DiscoveryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E8 /* DiscoveryCard.swift */; };
 		0E9 /* DiscoveryCardOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E9 /* DiscoveryCardOverlay.swift */; };
+		0EA /* TerrainBlurHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EA /* TerrainBlurHelper.swift */; };
+		0EB /* CardVisualView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EB /* CardVisualView.swift */; };
 		543AD36B2F60C199001895ED /* card_flip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 183 /* card_flip.mp3 */; };
 		543AD36C2F60C199001895ED /* GirlIntroAudio.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 182 /* GirlIntroAudio.m4a */; };
 		544299832F32E0F700F92073 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = 544299822F32E0F700F92073 /* Pow */; };
@@ -314,6 +316,8 @@
 		1E7 /* KnowledgeCardContentRenaissance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnowledgeCardContentRenaissance.swift; sourceTree = "<group>"; };
 		1E8 /* DiscoveryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoveryCard.swift; sourceTree = "<group>"; };
 		1E9 /* DiscoveryCardOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoveryCardOverlay.swift; sourceTree = "<group>"; };
+		1EA /* TerrainBlurHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TerrainBlurHelper.swift; path = Views/SpriteKit/TerrainBlurHelper.swift; sourceTree = "<group>"; };
+		1EB /* CardVisualView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardVisualView.swift; sourceTree = "<group>"; };
 		544299972F3646ED00F92073 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BuildingNode.swift; path = Views/SpriteKit/BuildingNode.swift; sourceTree = "<group>"; };
 		544299982F3646ED00F92073 /* CityMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityMapView.swift; path = Views/SpriteKit/CityMapView.swift; sourceTree = "<group>"; };
 		544299992F3646ED00F92073 /* CityScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityScene.swift; path = Views/SpriteKit/CityScene.swift; sourceTree = "<group>"; };
@@ -409,6 +413,7 @@
 				544299982F3646ED00F92073 /* CityMapView.swift */,
 				544299992F3646ED00F92073 /* CityScene.swift */,
 				544299BF2F3A000100F92073 /* SceneEditorMode.swift */,
+				1EA /* TerrainBlurHelper.swift */,
 				5475D2F92F319000003AA131 /* Assets.xcassets */,
 				54477B172F313D06007D8C64 /* Info.plist */,
 				54477B162F313B22007D8C64 /* Fonts */,
@@ -486,6 +491,7 @@
 				1E3 /* PhaseCompleteOverlay.swift */,
 				1E5 /* SketchTeachingView.swift */,
 				1E9 /* DiscoveryCardOverlay.swift */,
+				1EB /* CardVisualView.swift */,
 				308 /* Sketching */,
 				309 /* Onboarding */,
 				310 /* StationMiniGames */,
@@ -905,6 +911,8 @@
 				0E7 /* KnowledgeCardContentRenaissance.swift in Sources */,
 				0E8 /* DiscoveryCard.swift in Sources */,
 				0E9 /* DiscoveryCardOverlay.swift in Sources */,
+				0EA /* TerrainBlurHelper.swift in Sources */,
+				0EB /* CardVisualView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1047,7 +1055,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1082,7 +1090,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1127,8 +1135,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/EmergeTools/Pow.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.5;
+				branch = main;
+				kind = branch;
 			};
 		};
 		544299842F32E11600F92073 /* XCRemoteSwiftPackageReference "Subsonic" */ = {

@@ -23,9 +23,8 @@ class WorkshopScene: SKScene, ScrollZoomable {
     // Map size — matches city's 3500×2500 so terrain renders at same density
     private let mapSize = CGSize(width: 3500, height: 2500)
 
-    /// Terrain sprite reference
-    private var terrainSprite: SKSpriteNode?
-    private var blurredTerrainSprite: SKSpriteNode?
+    /// Reusable terrain blur system
+    let terrainBlur = TerrainBlurHelper()
 
     /// Whether the player is currently walking
     private(set) var isPlayerWalking = false
@@ -241,8 +240,8 @@ class WorkshopScene: SKScene, ScrollZoomable {
             if playerNode != nil {
                 cameraNode.position = playerNode.position
             }
-            terrainSprite?.alpha = 1.0
-            blurredTerrainSprite?.alpha = 0
+            terrainBlur.terrainSprite?.alpha = 1.0
+            terrainBlur.blurredTerrainSprite?.alpha = 0
             fitCameraToMap()
             return
         }
@@ -252,6 +251,9 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
         setupCamera()
         setupBackground()
+        // Force terrain sharp on first load (before update() loop starts)
+        terrainBlur.terrainSprite?.alpha = 1.0
+        terrainBlur.blurredTerrainSprite?.alpha = 0
         setupGridLines()
         setupTitle()
         setupWalkingPaths()
@@ -277,17 +279,6 @@ class WorkshopScene: SKScene, ScrollZoomable {
             addChild(glow)
         }
 
-        // Light mode glow (subtle sepia)
-        for (_, pos) in stationPositions {
-            let glow = Self.makeRadialGlow(radius: 180, color: PlatformColor(red: 0.55, green: 0.44, blue: 0.28, alpha: 1.0))
-            glow.name = "lightGlow"
-            glow.position = pos
-            glow.zPosition = 13
-            glow.alpha = 0.25
-            glow.blendMode = .add
-            addChild(glow)
-        }
-
         // Apply initial theme
         applyTheme()
 
@@ -306,7 +297,6 @@ class WorkshopScene: SKScene, ScrollZoomable {
         // Toggle tint + glow visibility
         enumerateChildNodes(withName: "darkTint") { node, _ in node.isHidden = !dark }
         enumerateChildNodes(withName: "darkGlow") { node, _ in node.isHidden = !dark }
-        enumerateChildNodes(withName: "lightGlow") { node, _ in node.isHidden = dark }
 
         // Update station label colors
         for child in children {
@@ -344,26 +334,8 @@ class WorkshopScene: SKScene, ScrollZoomable {
     // MARK: - Background
 
     private func setupBackground() {
-        // Workshop terrain — switches to blurred version when player walks
-        let terrainTexture = SKTexture(imageNamed: "WorkshopTerrain")
-        terrainTexture.filteringMode = .linear
-        let terrain = SKSpriteNode(texture: terrainTexture)
-        terrain.size = mapSize
-        terrain.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
-        terrain.zPosition = -100
-        addChild(terrain)
-        terrainSprite = terrain
-
-        // Blurred terrain — sits on top, fades in when zoomed in (same as CityScene)
-        let blurredTexture = SKTexture(imageNamed: "BlurredWorkshopTerrain")
-        blurredTexture.filteringMode = .linear
-        let blurred = SKSpriteNode(texture: blurredTexture)
-        blurred.size = mapSize
-        blurred.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
-        blurred.zPosition = -99
-        blurred.alpha = 0
-        addChild(blurred)
-        blurredTerrainSprite = blurred
+        // Workshop terrain — sharp/blurred pair with smooth lerp crossfade
+        terrainBlur.setup(in: self, sharp: "WorkshopTerrain", blurred: "BlurredWorkshopTerrain", mapSize: mapSize)
     }
 
     // MARK: - Grid Lines (notebook style)
@@ -471,8 +443,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
     override func willMove(from view: SKView) {
         removeAllActions()
         removeAllChildren()
-        terrainSprite = nil
-        blurredTerrainSprite = nil
+        terrainBlur.cleanup()
         playerNode = nil
         hasSetup = false
         // Break retain cycles from closures capturing SwiftUI views
@@ -519,17 +490,9 @@ class WorkshopScene: SKScene, ScrollZoomable {
             clampCamera()
         }
 
-        // Terrain blur — blurred when zoomed in, sharp when zoomed out
+        // Terrain blur — zoomed in = blurred, zoomed out = sharp
         if let cam = cameraNode {
-            let scale = cam.xScale
-            let threshold: CGFloat = 1.0
-            if scale < threshold {
-                blurredTerrainSprite?.alpha = 1.0
-                terrainSprite?.alpha = 0
-            } else {
-                blurredTerrainSprite?.alpha = 0
-                terrainSprite?.alpha = 1.0
-            }
+            terrainBlur.updateBlur(cameraScale: cam.xScale)
         }
 
     }

@@ -23,6 +23,12 @@ class BuildingNode: SKNode {
     // Building sizes (isometric style — used for blueprint/complete states)
     private let buildingSize = CGSize(width: 120, height: 100)
 
+    /// Sprite size for Midjourney building art (matches workshop station sprites at 420)
+    private let spriteSize = CGSize(width: 420, height: 420)
+
+    /// Debug: force all buildings to show as complete (for previewing sprites on map)
+    static var debugShowAllComplete = false
+
     // MARK: - Initialization
 
     init(buildingId: String, buildingName: String, era: String) {
@@ -54,23 +60,46 @@ class BuildingNode: SKNode {
         labelNode?.removeFromParent()
         labelNode = nil
 
+        // Debug: show all buildings as complete to preview sprites
+        if BuildingNode.debugShowAllComplete && state != .locked {
+            setupCompletedBuilding()
+            addStateIcon("StateComplete")
+            return
+        }
+
+        let hasSprite = buildingSpriteImageName() != nil
+
         switch state {
         case .locked:
             setupSignpost(isLocked: true)
 
         case .available:
-            setupSignpost(isLocked: false)
-            addSignpostSway()
+            if hasSprite {
+                setupGhostBuilding()
+            } else {
+                setupSignpost(isLocked: false)
+                addSignpostSway()
+            }
 
         case .sketched:
-            setupBlueprint()
-            addStateIcon("StateAvailable")
+            if hasSprite {
+                setupGhostBuilding()
+                addStateIcon("StateAvailable")
+            } else {
+                setupBlueprint()
+                addStateIcon("StateAvailable")
+            }
 
         case .construction:
-            setupBlueprint()
-            setupScaffolding()
-            addStateIcon("StateConstruction")
-            addConstructionAnimation()
+            if hasSprite {
+                setupGhostBuilding()
+                addStateIcon("StateConstruction")
+            } else {
+                setupBlueprint()
+                setupScaffolding()
+                addStateIcon("StateConstruction")
+                addConstructionAnimation()
+            }
 
         case .complete:
             setupCompletedBuilding()
@@ -234,6 +263,33 @@ class BuildingNode: SKNode {
         }
     }
 
+    /// Map buildingId to sprite asset name
+    private func buildingSpriteImageName() -> String? {
+        switch buildingId {
+        case "aqueduct":            return "BuildingAqueduct"
+        case "pantheon":            return "BuildingPantheon"
+        case "romanRoads":          return "BuildingRomanRoads"
+        case "harbor":              return "BuildingHarbor"
+        case "siegeWorkshop":       return "BuildingSiegeWorkshop"
+        case "insula":              return "BuildingInsula"
+        case "glassworks":          return "BuildingGlassworks"
+        // Add more as sprites are created:
+        // case "colosseum":        return "BuildingColosseum"
+        // case "romanBaths":       return "BuildingRomanBaths"
+        // case "duomo":            return "BuildingDuomo"
+        default:                    return nil
+        }
+    }
+
+    /// Check if a sprite image exists in the asset catalog
+    private func spriteImageExists(_ name: String) -> Bool {
+        #if os(iOS)
+        return UIImage(named: name) != nil
+        #else
+        return NSImage(named: name) != nil
+        #endif
+    }
+
     /// Gentle sway animation for available signpost
     private func addSignpostSway() {
         guard let plank = visualContainer.childNode(withName: "plank") else { return }
@@ -327,9 +383,70 @@ class BuildingNode: SKNode {
         visualContainer.addChild(brace)
     }
 
-    // MARK: - Completed Building
+    // MARK: - Ghost Building (grayscale + transparent — available/sketched/construction states)
+
+    private func setupGhostBuilding() {
+        guard let imageName = buildingSpriteImageName(), spriteImageExists(imageName) else {
+            // No sprite available — fall back to signpost
+            setupSignpost(isLocked: false)
+            return
+        }
+
+        let texture = SKTexture(imageNamed: imageName)
+        let sprite = SKSpriteNode(texture: texture)
+        sprite.size = spriteSize
+
+        // Ghost effect: sepia-tinted desaturation (like a faded architectural sketch)
+        sprite.colorBlendFactor = 0.75
+        sprite.color = PlatformColor(red: 0.85, green: 0.78, blue: 0.68, alpha: 1.0)  // warm parchment sepia
+        sprite.alpha = 0.5
+
+        visualContainer.addChild(sprite)
+        addSpritePulse(sprite)
+
+        // Building name label
+        labelNode = SKLabelNode(text: buildingName)
+        labelNode.fontName = "Cinzel-Regular"
+        labelNode.fontSize = 12
+        labelNode.fontColor = PlatformColor(RenaissanceColors.sepiaInk.opacity(0.5))
+        labelNode.position = CGPoint(x: 0, y: -spriteSize.height * 0.45)
+        labelNode.zPosition = 10
+        addChild(labelNode)
+    }
+
+    // MARK: - Completed Building (full color sprite)
 
     private func setupCompletedBuilding() {
+        // Try to use Midjourney sprite
+        if let imageName = buildingSpriteImageName(), spriteImageExists(imageName) {
+            let texture = SKTexture(imageNamed: imageName)
+            let sprite = SKSpriteNode(texture: texture)
+            sprite.size = spriteSize
+            visualContainer.addChild(sprite)
+            addSpritePulse(sprite)
+
+            // Shadow underneath building (offset down, slightly squished)
+            let shadowSprite = SKSpriteNode(texture: texture)
+            shadowSprite.size = CGSize(width: spriteSize.width * 1.05, height: spriteSize.height * 0.3)
+            shadowSprite.colorBlendFactor = 1.0
+            shadowSprite.color = .black
+            shadowSprite.alpha = 0.15
+            shadowSprite.position = CGPoint(x: 0, y: -spriteSize.height * 0.4)
+            shadowSprite.zPosition = -1
+            visualContainer.addChild(shadowSprite)
+
+            // Building name label
+            labelNode = SKLabelNode(text: buildingName)
+            labelNode.fontName = "Cinzel-Regular"
+            labelNode.fontSize = 14
+            labelNode.fontColor = PlatformColor(RenaissanceColors.sepiaInk)
+            labelNode.position = CGPoint(x: 0, y: -spriteSize.height * 0.45)
+            labelNode.zPosition = 10
+            addChild(labelNode)
+            return
+        }
+
+        // Fallback: shape-based building
         let path = createIsometricBuildingPath()
 
         let building = SKShapeNode(path: path)
@@ -423,6 +540,16 @@ class BuildingNode: SKNode {
     }
 
     // MARK: - Animations
+
+    /// Gentle breathing pulse — matches workshop station sprites
+    private func addSpritePulse(_ sprite: SKSpriteNode) {
+        let scaleUp = SKAction.scale(to: 1.05, duration: 1.2)
+        scaleUp.timingMode = .easeInEaseOut
+        let scaleDown = SKAction.scale(to: 1.0, duration: 1.2)
+        scaleDown.timingMode = .easeInEaseOut
+        let pulse = SKAction.sequence([scaleUp, scaleDown])
+        sprite.run(SKAction.repeatForever(pulse), withKey: "pulse")
+    }
 
     private func addConstructionAnimation() {
         let moveLeft = SKAction.moveBy(x: -2, y: 0, duration: 0.1)
