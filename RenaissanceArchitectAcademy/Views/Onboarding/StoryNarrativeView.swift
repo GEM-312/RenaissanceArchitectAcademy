@@ -6,12 +6,6 @@ struct StoryNarrativeView: View {
     /// Optional dynamic text override (e.g., generated Medici commission).
     /// When set, replaces page.text. Typewriter animation works identically.
     var dynamicTextOverride: String? = nil
-    /// Optional generated background scene (e.g., Medici at his desk writing).
-    /// Replaces backgroundFramePrefix when available. Fades in behind text.
-    var dynamicSceneImage: CGImage? = nil
-    /// Optional generated inline image (e.g., sealed letter with Medici crest).
-    /// Displayed between title and typewriter text.
-    var dynamicLetterImage: CGImage? = nil
     var onContinue: () -> Void
 
     /// The text to display — dynamic override if available, otherwise static page text
@@ -22,7 +16,6 @@ struct StoryNarrativeView: View {
     @State private var showBird = false
     @State private var showButton = false
     @State private var typewriterTimer: Timer?
-    @State private var showLetterImage = false
 
     // Animated background frames
     @State private var bgFrame: Int = 0
@@ -38,20 +31,7 @@ struct StoryNarrativeView: View {
 
     var body: some View {
         ZStack {
-            // Background layer: generated scene image OR animated frames OR plain parchment
-            if let sceneImage = dynamicSceneImage {
-                // Generated scene (e.g., Medici writing at his desk)
-                Image(decorative: sceneImage, scale: 1.0)
-                    .resizable()
-                    .scaledToFill()
-                    .ignoresSafeArea()
-                    .opacity(0.4)
-
-                // Parchment overlay for readability
-                RenaissanceColors.parchment
-                    .opacity(0.6)
-                    .ignoresSafeArea()
-            } else if let prefix = page.backgroundFramePrefix {
+            if let prefix = page.backgroundFramePrefix {
                 // Animated background frames (looping)
                 Image(String(format: "%@%02d", prefix, bgFrame))
                     .resizable()
@@ -84,25 +64,6 @@ struct StoryNarrativeView: View {
                     .frame(width: 180)
                     .opacity(showTitle ? 1 : 0)
 
-                // Generated letter image with vignette fade — can arrive late, fades in
-                if let letterImage = dynamicLetterImage {
-                    Image(decorative: letterImage, scale: 1.0)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxWidth: isLargeScreen ? 280 : 200, maxHeight: isLargeScreen ? 200 : 150)
-                        .mask(
-                            // Radial vignette — center is opaque, edges fade to transparent
-                            RadialGradient(
-                                gradient: Gradient(colors: [.white, .white, .white.opacity(0)]),
-                                center: .center,
-                                startRadius: isLargeScreen ? 60 : 40,
-                                endRadius: isLargeScreen ? 150 : 110
-                            )
-                        )
-                        .shadow(color: RenaissanceColors.ochre.opacity(0.2), radius: 12, y: 2)
-                        .transition(.opacity.combined(with: .scale(scale: 0.95)))
-                }
-
                 // Typewriter text
                 Text(revealedText)
                     .font(.custom("EBGaramond-Regular", size: 19))
@@ -113,8 +74,6 @@ struct StoryNarrativeView: View {
                     .padding(.horizontal, 24)
 
                 // Bird companion (only on final story page)
-                // Conditionally inserted when showBird=true so BirdCharacter's
-                // onAppear fly-in animation plays at the right moment.
                 if page.showBird && showBird {
                     BirdCharacter(isSitting: false)
                         .frame(width: 180, height: 180)
@@ -176,15 +135,8 @@ struct StoryNarrativeView: View {
             showTitle = true
         }
 
-        // Reveal letter image shortly after title
-        if dynamicLetterImage != nil {
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.75).delay(0.4)) {
-                showLetterImage = true
-            }
-        }
-
-        // Start typewriter after title + letter animation
-        DispatchQueue.main.asyncAfter(deadline: .now() + (dynamicLetterImage != nil ? 1.0 : 0.7)) {
+        // Start typewriter after title animation
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
             typewriterTimer = Timer.scheduledTimer(withTimeInterval: tickInterval, repeats: true) { timer in
                 if revealedCharCount < displayText.count {
                     revealedCharCount = min(revealedCharCount + charsPerTick, displayText.count)

@@ -1263,7 +1263,8 @@ struct WorkshopMapView: View {
                         let count = workshop.rawMaterials[material] ?? 0
                         if count > 0 {
                             HStack(spacing: 3) {
-                                MaterialIconView(material: material, size: 20)
+                                Text(material.icon)
+                                    .font(.caption)
                                 Text("\(count)")
                                     .font(.custom("EBGaramond-Regular", size: 12))
                                     .foregroundStyle(settings.cardTextColor)
@@ -1644,7 +1645,8 @@ struct WorkshopMapView: View {
                             }
                         } label: {
                             VStack(spacing: 4) {
-                                MaterialIconView(material: material, size: 96)
+                                Text(material.icon)
+                                    .font(.title2)
                                 Text(material.rawValue)
                                     .font(RenaissanceFont.body)
                                     .foregroundStyle(settings.cardTextColor)
@@ -1752,55 +1754,53 @@ struct WorkshopMapView: View {
     }
 
     private var marketMaterialsGrid: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 10) {
-                ForEach(ResourceStationType.market.materials, id: \.self) { material in
-                    let canAfford = (viewModel?.goldFlorins ?? 0) >= material.cost
-                    Button {
-                        guard let vm = viewModel else { return }
-                        guard vm.goldFlorins >= material.cost else {
-                            withAnimation(.spring(response: 0.3)) {
-                                showCollectionOverlay = false
-                                showHintBubble = false
-                                activeStation = nil
-                            }
-                            showNextGuidance(forceRefresh: true)
-                            return
+        LazyVGrid(columns: [GridItem(.flexible(), spacing: 6), GridItem(.flexible(), spacing: 6)], spacing: 6) {
+            ForEach(ResourceStationType.market.materials, id: \.self) { material in
+                let canAfford = (viewModel?.goldFlorins ?? 0) >= material.cost
+                Button {
+                    guard let vm = viewModel else { return }
+                    guard vm.goldFlorins >= material.cost else {
+                        withAnimation(.spring(response: 0.3)) {
+                            showCollectionOverlay = false
+                            showHintBubble = false
+                            activeStation = nil
                         }
-                        if workshop.collectFromStation(.market, material: material) {
-                            vm.goldFlorins -= material.cost
-                            sceneHolder.scene?.showCollectionEffect(at: .market)
-                            sceneHolder.scene?.playPlayerCelebrateAnimation()
-                        }
-                    } label: {
-                        VStack(spacing: 4) {
-                            MaterialIconView(material: material, size: 96)
-
-                            Text(material.rawValue)
-                                .font(RenaissanceFont.captionSmall)
-                                .foregroundStyle(settings.cardTextColor)
-                                .lineLimit(1)
-
-                            HStack(spacing: 2) {
-                                Image(systemName: "dollarsign.circle.fill")
-                                    .font(.custom("EBGaramond-Regular", size: 9, relativeTo: .caption2))
-                                    .foregroundStyle(settings.cardTextColor)
-                                Text("\(material.cost)")
-                                    .font(RenaissanceFont.captionSmall)
-                                    .foregroundStyle(canAfford ? settings.cardTextColor : RenaissanceColors.errorRed)
-                            }
-                        }
-                        .padding(Spacing.xs)
-                        .frame(width: 80)
-                        .background(
-                            RoundedRectangle(cornerRadius: CornerRadius.sm)
-                                .fill(canAfford ? settings.itemBadgeBackground : RenaissanceColors.stoneGray.opacity(0.15))
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: CornerRadius.sm)
-                                .strokeBorder(canAfford ? settings.cardBorderColor : RenaissanceColors.stoneGray.opacity(0.3), lineWidth: 1)
-                        )
+                        showNextGuidance(forceRefresh: true)
+                        return
                     }
+                    if workshop.collectFromStation(.market, material: material) {
+                        vm.goldFlorins -= material.cost
+                        sceneHolder.scene?.showCollectionEffect(at: .market)
+                        sceneHolder.scene?.playPlayerCelebrateAnimation()
+                    }
+                } label: {
+                    VStack(spacing: 2) {
+                        Text(material.icon)
+                            .font(.title2)
+                        Text(material.rawValue)
+                            .font(.custom("EBGaramond-Regular", size: 10))
+                            .foregroundStyle(settings.cardTextColor)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
+                        HStack(spacing: 1) {
+                            Image(systemName: "dollarsign.circle.fill")
+                                .font(.system(size: 8))
+                                .foregroundStyle(settings.cardTextColor)
+                            Text("\(material.cost)")
+                                .font(.custom("EBGaramond-Regular", size: 10))
+                                .foregroundStyle(canAfford ? settings.cardTextColor : RenaissanceColors.errorRed)
+                        }
+                    }
+                    .padding(6)
+                    .frame(maxWidth: .infinity)
+                    .background(
+                        RoundedRectangle(cornerRadius: CornerRadius.sm)
+                            .fill(canAfford ? settings.itemBadgeBackground : RenaissanceColors.stoneGray.opacity(0.15))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: CornerRadius.sm)
+                            .strokeBorder(canAfford ? settings.cardBorderColor : RenaissanceColors.stoneGray.opacity(0.3), lineWidth: 1)
+                    )
                 }
             }
         }
@@ -1926,7 +1926,8 @@ struct WorkshopMapView: View {
                                     _ = workshop.addToWorkbench(material)
                                 } label: {
                                     VStack(spacing: 2) {
-                                        MaterialIconView(material: material, size: 28)
+                                        Text(material.icon)
+                                            .font(.title3)
                                         Text("×\(count)")
                                             .font(RenaissanceFont.captionSmall)
                                             .foregroundStyle(RenaissanceColors.sepiaInk)
@@ -2018,7 +2019,8 @@ struct WorkshopMapView: View {
                 )
 
             if let material = workshop.workbenchSlots[index] {
-                MaterialIconView(material: material, size: 32)
+                Text(material.icon)
+                    .font(.title2)
             } else {
                 Image(systemName: "plus")
                     .font(.caption)

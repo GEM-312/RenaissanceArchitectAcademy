@@ -142,17 +142,6 @@ struct KnowledgeCard: Identifiable {
         scienceColor(science)
     }
 
-    // MARK: - Image Generation (Foundation Models / Image Playground)
-
-    /// Cache key for generated card illustration
-    var imageCacheKey: String { "card_\(id)" }
-
-    /// Image Playground prompt — combines card title and lesson for rich context.
-    /// Style prefix is added by ImageGenerationService automatically.
-    var imagePrompt: String {
-        let lessonSnippet = String(lessonText.prefix(120))
-        return "\(title): \(lessonSnippet). Architectural educational diagram showing the concept clearly."
-    }
 }
 
 /// Color mapping for sciences (used on card fronts/backs)

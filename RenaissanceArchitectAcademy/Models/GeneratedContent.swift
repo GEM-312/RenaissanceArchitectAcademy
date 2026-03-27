@@ -102,36 +102,6 @@ struct BirdTeachingResponse: Equatable {
     var followUpQuestion: String
 }
 
-// MARK: - Material Image Prompt
-
-/// Generates an Image Playground prompt + sensory description for a building material.
-@available(iOS 26.0, macOS 26.0, *)
-@Generable
-struct MaterialDescription: Equatable {
-    /// Image Playground prompt for a Renaissance sketch of this material
-    @Guide(description: "Image Playground prompt for a Renaissance pen-and-ink sketch of this building material, emphasizing texture and form, on aged parchment")
-    var imagePrompt: String
-
-    /// Brief sensory description for educational display
-    @Guide(description: "What this material looks like, feels like, and smells like — 1 sentence, vivid and specific")
-    var sensoryDescription: String
-}
-
-// MARK: - Card Illustration Prompt
-
-/// Generates an Image Playground prompt for a knowledge card illustration.
-@available(iOS 26.0, macOS 26.0, *)
-@Generable
-struct CardIllustration: Equatable {
-    /// Image Playground prompt for the card's educational illustration
-    @Guide(description: "Image Playground prompt for a Renaissance notebook sketch illustrating this architectural or scientific concept — detailed, educational, pen-and-ink style")
-    var imagePrompt: String
-
-    /// A brief caption describing what the illustration shows
-    @Guide(description: "A brief caption for the illustration, under 15 words")
-    var caption: String
-}
-
 // MARK: - NPC Dialogue Response (for multi-turn NPC conversations)
 
 /// Structured NPC dialogue during a conversation at a station or building.

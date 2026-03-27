@@ -7,8 +7,6 @@ struct CardVisualView: View {
     let visual: CardVisual
     let color: Color
     var containerHeight: CGFloat = 780  // Card height — visual uses 35%
-    /// Optional card reference for image generation (provides prompt + cache key)
-    var card: KnowledgeCard? = nil
 
     /// Visual canvas height — 35% of the card container
     private var visualHeight: CGFloat { containerHeight * 0.35 }
@@ -16,77 +14,12 @@ struct CardVisualView: View {
     @State private var currentStep: Int = 1   // Start at step 1 (not empty step 0)
     @State private var animationPhase: CGFloat = 0
 
-    /// Generated illustration from Image Playground cache
-    @State private var generatedImage: CGImage?
-
     var body: some View {
-        // Priority 1: Interactive visual (Pantheon, etc.)
+        // Use interactive visual if available (Pantheon, etc.)
         if PantheonInteractiveVisuals.hasInteractiveVisual(for: visual) {
             PantheonInteractiveVisuals.view(for: visual, color: color, height: visualHeight)
-        }
-        // Priority 2: Generated Image Playground illustration (cached)
-        else if let image = generatedImage {
-            generatedImageView(image)
-        }
-        // Priority 3: Legacy Canvas-based drawing
-        else {
+        } else {
             legacyCanvasView
-                .onAppear { loadGeneratedImage() }
-        }
-    }
-
-    // MARK: - Generated Image View
-
-    private func generatedImageView(_ image: CGImage) -> some View {
-        VStack(spacing: 6) {
-            Text(visual.title)
-                .font(.custom("Cinzel-Bold", size: 12))
-                .tracking(1)
-                .foregroundStyle(color)
-
-            Image(decorative: image, scale: 1.0)
-                .resizable()
-                .scaledToFit()
-                .frame(height: visualHeight)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .strokeBorder(color.opacity(0.2), lineWidth: 1)
-                )
-
-            if let caption = visual.caption {
-                Text(caption)
-                    .font(.custom("EBGaramond-Italic", size: 11))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
-            }
-        }
-    }
-
-    /// Check cache for a generated image, trigger generation if available
-    private func loadGeneratedImage() {
-        guard let card = card else { return }
-
-        if #available(iOS 26.0, macOS 26.0, *), ImageGenerationService.isAvailable {
-            let service = ImageGenerationService.shared
-
-            // Check cache (synchronous)
-            if let cached = service.cachedImage(for: card.imageCacheKey) {
-                generatedImage = cached
-                return
-            }
-
-            // Generate in background — Canvas shows while generating
-            Task {
-                let image = try? await service.generateImage(
-                    prompt: card.imagePrompt,
-                    cacheKey: card.imageCacheKey
-                )
-                if let image {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        generatedImage = image
-                    }
-                }
-            }
         }
     }
 

@@ -136,18 +136,6 @@ struct ContentView: View {
             // Start tracking play time
             sessionStartDate = Date()
 
-            // Kick off material image generation in background (iOS 26+)
-            // Generates all 34 material sketches via Image Playground, caches to disk.
-            // Runs once — skips already-cached images. Non-blocking.
-            if #available(iOS 26.0, macOS 26.0, *), ImageGenerationService.isAvailable {
-                Task {
-                    print("🎨 [Materials] Starting batch generation of \(Material.allCases.count) materials...")
-                    await generateAllMaterialImages { done, total in
-                        print("🎨 [Materials] \(done)/\(total) generated")
-                    }
-                    print("🎨 [Materials] ✅ Batch generation complete")
-                }
-            }
         }
         .onChange(of: scenePhase) { _, newPhase in
             switch newPhase {

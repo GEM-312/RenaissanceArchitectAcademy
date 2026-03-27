@@ -196,7 +196,8 @@ struct QuarryMiniGameView: View {
         } label: {
             HStack(spacing: 14) {
                 // Icon
-                MaterialIconView(material: material, size: 40)
+                Text(material.icon)
+                    .font(.title2)
                     .frame(width: 44, height: 44)
                     .background(
                         RoundedRectangle(cornerRadius: CornerRadius.sm)

@@ -94,47 +94,6 @@ enum Material: String, CaseIterable, Identifiable, Codable {
         }
     }
 
-    // MARK: - Image Generation (Foundation Models / Image Playground)
-
-    /// Cache key for generated sketch-style image
-    var imageCacheKey: String { "material_v4_\(self)" }
-
-    /// Image Playground prompt — describes the material for sketch-style generation.
-    /// Style prefix is added by ImageGenerationService automatically.
-    var imagePrompt: String {
-        switch self {
-        case .limestone:        return "A rough-cut block of pale cream limestone showing layered sedimentary texture"
-        case .volcanicAsh:      return "A pile of dark grey volcanic ash with visible mineral crystals and pumice fragments"
-        case .sand:             return "A mound of fine golden river sand with small pebbles mixed in"
-        case .water:            return "A clay amphora pouring clear water into a Roman stone basin"
-        case .ironOre:          return "A chunk of rusty reddish-brown iron ore with metallic glints"
-        case .clay:             return "A lump of wet reddish-brown terracotta clay on a potter's wheel, soft and malleable"
-        case .marbleDust:       return "A small pile of fine white marble powder next to a marble fragment"
-        case .redOchre:         return "A chunk of deep red ochre mineral pigment with earthy texture"
-        case .lapisBlue:        return "A polished piece of deep blue lapis lazuli stone with gold pyrite flecks"
-        case .verdigrisGreen:   return "Green verdigris crystals forming on a corroded copper plate"
-        case .timber:           return "A stack of freshly cut oak timber planks with visible wood grain"
-        case .lead:             return "A rolled sheet of dull grey lead metal with a Roman plumber's stamp"
-        case .marble:           return "A polished block of white Carrara marble with subtle grey veins"
-        case .silk:             return "A bolt of shimmering silk fabric draped over a merchant's table"
-        case .cinnabar:         return "A bright vermillion red cinnabar mineral crystal cluster"
-        case .saffron:          return "Dried saffron crocus threads in a small ceramic bowl, deep orange-red"
-        case .groundRedOchre:   return "Fine red ochre powder in a stone mortar, ready for paint mixing"
-        case .groundLapisBlue:  return "Brilliant ultramarine blue powder ground from lapis lazuli in a mortar"
-        case .groundVerdigris:  return "Fine green verdigris powder in a ceramic dish"
-        case .groundCinnabar:   return "Bright red ground cinnabar powder in a small glass vial"
-        case .groundSaffron:    return "Fine golden-yellow saffron powder in a ceramic cup"
-        case .sulfur:           return "Bright yellow sulfur crystals in a volcanic rock crevice"
-        case .copper:           return "A rough chunk of native copper with greenish patina on edges"
-        case .gold:             return "A small gold ingot stamped with a Florentine lily mark"
-        case .herbs:            return "A bundle of dried medicinal herbs — rosemary, sage, and wormwood tied together"
-        case .letame:           return "A wooden cart of dark composted manure for Renaissance farming"
-        case .charredOxHorn:    return "A blackened piece of charred ox horn used for casting molds"
-        case .beeswax:          return "A golden block of beeswax with honeycomb texture impression"
-        case .eggs:             return "Three brown eggs in a straw nest, used for tempera paint binding"
-        }
-    }
-
     /// Whether this is a raw pigment that can be ground at the Pigment Table
     var isRawPigment: Bool {
         switch self {

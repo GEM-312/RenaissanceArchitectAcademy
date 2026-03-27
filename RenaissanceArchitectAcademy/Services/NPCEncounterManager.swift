@@ -111,7 +111,7 @@ class NPCEncounterManager: ObservableObject {
             currentNPC = cached
             npcSeenThisSession.insert(key)
             // Load portrait from image cache in background
-            Task { await loadPortrait(station: station, buildingId: buildingId, portraitPrompt: cached.portraitPrompt) }
+            // Portrait placeholder — Midjourney art assets to be added later
             return cached
         }
 
@@ -142,7 +142,7 @@ class NPCEncounterManager: ObservableObject {
             saveToCache(npc: displayData, key: key)
 
             // Generate portrait in background
-            Task { await loadPortrait(station: station, buildingId: buildingId, portraitPrompt: displayData.portraitPrompt) }
+            // Portrait placeholder — Midjourney art assets to be added later
 
             currentNPC = displayData
             npcSeenThisSession.insert(key)
@@ -172,28 +172,6 @@ class NPCEncounterManager: ObservableObject {
     func resetSession() {
         npcSeenThisSession.removeAll()
         clearCurrentNPC()
-    }
-
-    // MARK: - Portrait
-
-    private func loadPortrait(station: String, buildingId: Int, portraitPrompt: String) async {
-        let portraitKey = "npc_portrait_\(station)_\(buildingId)"
-
-        if let cached = ImageGenerationService.shared.cachedImage(for: portraitKey) {
-            currentPortrait = cached
-            return
-        }
-
-        do {
-            let image = try await ImageGenerationService.shared.generateImage(
-                prompt: portraitPrompt,
-                cacheKey: portraitKey
-            )
-            currentPortrait = image
-        } catch {
-            // No portrait — view will show a placeholder icon
-            print("[NPCEncounterManager] Portrait generation failed: \(error)")
-        }
     }
 
     // MARK: - Disk Cache (Codable JSON)

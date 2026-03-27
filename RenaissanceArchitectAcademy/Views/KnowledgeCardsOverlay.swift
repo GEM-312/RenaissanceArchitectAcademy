@@ -601,7 +601,7 @@ struct KnowledgeCardsOverlay: View {
 
                     // Interactive science visual
                     if let visual = card.visual {
-                        CardVisualView(visual: visual, color: card.color, containerHeight: flippedH, card: card)
+                        CardVisualView(visual: visual, color: card.color, containerHeight: flippedH)
                             .opacity(animateFlippedStory ? 1 : 0)
                     }
 
