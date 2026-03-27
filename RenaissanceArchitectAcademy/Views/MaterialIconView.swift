@@ -16,10 +16,11 @@ struct MaterialIconView: View {
     var body: some View {
         Group {
             if let image = generatedImage {
-                // Generated sketch-style image
+                // Generated sketch-style image — fill the frame, clip overflow
                 Image(decorative: image, scale: 1.0)
                     .resizable()
-                    .scaledToFit()
+                    .scaledToFill()
+                    .frame(width: size, height: size)
                     .clipShape(RoundedRectangle(cornerRadius: size * 0.15))
             } else {
                 // Emoji fallback (always available)
@@ -28,6 +29,7 @@ struct MaterialIconView: View {
             }
         }
         .frame(width: size, height: size)
+        .clipped()
         .onAppear {
             loadOrGenerate()
         }
