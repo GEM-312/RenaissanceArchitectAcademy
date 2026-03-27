@@ -260,31 +260,13 @@ Styles/[name]_frames/clean/    # Photoshop exports (no bg)
 
 ## Next Steps
 
-### PRIORITY 1: Responsive Layout Polish (next session)
-- [x] ~~Phase 0-8: Core responsive layout~~ (DONE — Mar 18 2026)
-- [x] ~~Fix iOS gray button containers (.buttonStyle(.plain) at root)~~ (DONE — Mar 18 2026)
-- [x] ~~Fix map blinking on iPhone pan (terrain crossfade, callback throttling)~~ (DONE — Mar 18 2026)
-- [x] ~~Fix building zoom too close on iPhone (0.85 vs 0.6)~~ (DONE — Mar 18 2026)
-- [ ] Continue iPhone layout testing — check all mini-games (quarry, river, volcano, clay, farm) on iPhone SE
-- [ ] Test Workshop outdoor/indoor layouts on iPhone
-- [ ] Test Forest map overlays on iPhone
-- [ ] Test onboarding flow end-to-end on iPhone
-- [ ] Test lesson reader (BuildingLessonView) on iPhone — ensure pages don't overflow
-- [ ] Test sketching challenge on iPhone — canvas sizing
-
-### PRIORITY 2: Terrain & Camera Polish
-- [ ] Improve terrain art for City Map, Workshop, Forest (higher quality Midjourney terrains)
-- [ ] Create station micro-environments — detail sprites/objects that appear when zoomed in near stations
-- [ ] LOD system — detail sprites fade in based on camera distance + zoom
-- [ ] Terrain blur is implemented (CityScene + WorkshopScene) — see terrain-blur-system.md in memory
-
-### PRIORITY 3: Knowledge Cards — Remaining Buildings
+### PRIORITY 1: Knowledge Cards — Remaining Buildings
 - [x] ~~KnowledgeCardsOverlay reusable component~~ (DONE)
 - [x] ~~Card integration across all 4 environments~~ (DONE)
 - [ ] Author cards for remaining 16 buildings (Pantheon has 14 cards, others need content)
 - [ ] Card aurora glow uses per-science color at subtle opacity (0.4/0.3) — consistent design
 
-### PRIORITY 4: Audio & Sound Design
+### PRIORITY 2: Audio & Sound Design
 - [ ] Background music — ambient Renaissance lute/harpsichord loop for main menu, city map, workshop
 - [ ] Forest ambience — birds, wind, rustling leaves (looping)
 - [ ] Crafting room ambience — crackling fire, workshop sounds
@@ -298,6 +280,14 @@ Styles/[name]_frames/clean/    # Photoshop exports (no bg)
 - [ ] Sketch sounds — pencil scratch on canvas, stamp for column placement
 - [ ] Consider AVAudioPlayer for music loops, SKAction.playSoundFileNamed for SFX
 - [ ] Volume controls — separate sliders for music vs SFX in settings/profile
+
+### PRIORITY 3: Foundation Models — On-Device AI (Mar 27 2026)
+- [ ] Test dynamic Medici commission text in onboarding
+- [ ] Test bird tool calling (calendar, progress, inventory) — ask "what should I work on?"
+- [ ] Test NPC text generation at workshop stations
+- [ ] Generate Medici character art in Midjourney for onboarding animation
+- [ ] Generate NPC character art in Midjourney for workshop stations
+- [ ] Image Playground: NO people/names/non-English — only objects, scenes, animals (see memory)
 
 ### Game Flow & Progression
 - [ ] Prompt user to explore cities/buildings after workshop play (bird nudge system)
@@ -328,6 +318,20 @@ Styles/[name]_frames/clean/    # Photoshop exports (no bg)
 - [ ] Building construction animation
 - [ ] Full bloom animation (gray sketch → watercolor)
 - [ ] Generate expansion terrain tiles for map growth
+
+### Responsive Layout Polish (moved down — core layout done Mar 18)
+- [ ] iPhone layout testing — all mini-games (quarry, river, volcano, clay, farm) on iPhone SE
+- [ ] Test Workshop outdoor/indoor layouts on iPhone
+- [ ] Test Forest map overlays on iPhone
+- [ ] Test onboarding flow end-to-end on iPhone
+- [ ] Test lesson reader (BuildingLessonView) on iPhone — pages don't overflow
+- [ ] Test sketching challenge on iPhone — canvas sizing
+
+### Terrain & Camera Polish (moved down)
+- [ ] Improve terrain art for City Map, Workshop, Forest (higher quality Midjourney terrains)
+- [ ] Station micro-environments — detail sprites when zoomed in
+- [ ] LOD system — detail sprites fade based on camera distance + zoom
+- [ ] Terrain blur is implemented (CityScene + WorkshopScene) — see terrain-blur-system.md in memory
 
 ## Key Architecture Patterns
 - **MVVM**: Views observe ViewModels via `@ObservedObject` (shared) or `@StateObject`
