@@ -50,8 +50,9 @@ struct MaterialIconView: View {
             Task {
                 do {
                     let image = try await service.generateImage(
-                        prompt: material.imagePrompt,
-                        cacheKey: material.imageCacheKey
+                        prompt: material.imagePrompt + ". On a simple warm stone surface, clean background.",
+                        cacheKey: material.imageCacheKey,
+                        style: .sketch
                     )
                     generatedImage = image
                 } catch {
@@ -70,9 +71,22 @@ struct MaterialIconView: View {
 /// Generate all material images in the background. Call once on first iOS 26+ launch.
 /// Non-blocking — images appear as they're generated, views update via cache checks.
 @available(iOS 26.0, macOS 26.0, *)
+@MainActor
 func generateAllMaterialImages(onProgress: ((Int, Int) -> Void)? = nil) async {
-    let requests = Material.allCases.map { material in
-        (prompt: material.imagePrompt, cacheKey: material.imageCacheKey)
+    // Generate each material with .animation style (no parchment prefix)
+    let uncached = Material.allCases.filter {
+        !ImageGenerationService.shared.isCached($0.imageCacheKey)
     }
-    await ImageGenerationService.shared.generateBatch(requests: requests, onProgress: onProgress)
+    for (index, material) in uncached.enumerated() {
+        do {
+            _ = try await ImageGenerationService.shared.generateImage(
+                prompt: material.imagePrompt + ". On a simple warm stone surface, clean background.",
+                cacheKey: material.imageCacheKey,
+                style: .sketch
+            )
+        } catch {
+            print("[Materials] Failed: \(material.rawValue) — \(error)")
+        }
+        onProgress?(index + 1, uncached.count)
+    }
 }

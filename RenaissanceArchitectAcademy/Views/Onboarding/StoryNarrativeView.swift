@@ -12,9 +12,6 @@ struct StoryNarrativeView: View {
     /// Optional generated inline image (e.g., sealed letter with Medici crest).
     /// Displayed between title and typewriter text.
     var dynamicLetterImage: CGImage? = nil
-    /// Optional generated mascot image (e.g., Florin coin character).
-    /// Displayed above the letter image, between title and text.
-    var dynamicMascotImage: CGImage? = nil
     var onContinue: () -> Void
 
     /// The text to display — dynamic override if available, otherwise static page text
@@ -86,24 +83,6 @@ struct StoryNarrativeView: View {
                 DividerOrnament()
                     .frame(width: 180)
                     .opacity(showTitle ? 1 : 0)
-
-                // Generated mascot (e.g., Florin coin character) — can arrive late, fades in
-                if let mascotImage = dynamicMascotImage {
-                    Image(decorative: mascotImage, scale: 1.0)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxWidth: isLargeScreen ? 160 : 120, maxHeight: isLargeScreen ? 160 : 120)
-                        .mask(
-                            RadialGradient(
-                                gradient: Gradient(colors: [.white, .white, .white.opacity(0)]),
-                                center: .center,
-                                startRadius: isLargeScreen ? 40 : 30,
-                                endRadius: isLargeScreen ? 90 : 70
-                            )
-                        )
-                        .shadow(color: RenaissanceColors.ochre.opacity(0.3), radius: 8, y: 2)
-                        .transition(.opacity.combined(with: .scale(scale: 0.9)))
-                }
 
                 // Generated letter image with vignette fade — can arrive late, fades in
                 if let letterImage = dynamicLetterImage {

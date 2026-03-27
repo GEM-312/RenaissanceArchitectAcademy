@@ -97,7 +97,7 @@ enum Material: String, CaseIterable, Identifiable, Codable {
     // MARK: - Image Generation (Foundation Models / Image Playground)
 
     /// Cache key for generated sketch-style image
-    var imageCacheKey: String { "material_\(self)" }
+    var imageCacheKey: String { "material_v4_\(self)" }
 
     /// Image Playground prompt — describes the material for sketch-style generation.
     /// Style prefix is added by ImageGenerationService automatically.
@@ -108,7 +108,7 @@ enum Material: String, CaseIterable, Identifiable, Codable {
         case .sand:             return "A mound of fine golden river sand with small pebbles mixed in"
         case .water:            return "A clay amphora pouring clear water into a Roman stone basin"
         case .ironOre:          return "A chunk of rusty reddish-brown iron ore with metallic glints"
-        case .clay:             return "A lump of wet reddish-brown terracotta clay being shaped by hands"
+        case .clay:             return "A lump of wet reddish-brown terracotta clay on a potter's wheel, soft and malleable"
         case .marbleDust:       return "A small pile of fine white marble powder next to a marble fragment"
         case .redOchre:         return "A chunk of deep red ochre mineral pigment with earthy texture"
         case .lapisBlue:        return "A polished piece of deep blue lapis lazuli stone with gold pyrite flecks"

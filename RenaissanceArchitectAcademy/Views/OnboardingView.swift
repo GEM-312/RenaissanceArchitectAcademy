@@ -20,8 +20,7 @@ struct OnboardingView: View {
     @State private var mediciSceneImage: CGImage?
     /// Generated letter: sealed parchment with wax seal (inline)
     @State private var mediciLetterImage: CGImage?
-    /// Generated Florin mascot: walking gold coin with painter's beret (inline)
-    @State private var florinMascotImage: CGImage?
+    // Florin mascot removed — Marina will generate Medici character in Midjourney and animate
 
     var body: some View {
         ZStack {
@@ -53,8 +52,7 @@ struct OnboardingView: View {
                         // Only override on page 0 (Medici commission) when generated
                         dynamicTextOverride: index == 0 ? generatedMediciText : nil,
                         dynamicSceneImage: index == 0 ? mediciSceneImage : nil,
-                        dynamicLetterImage: index == 0 ? mediciLetterImage : nil,
-                        dynamicMascotImage: index == 0 ? florinMascotImage : nil
+                        dynamicLetterImage: index == 0 ? mediciLetterImage : nil
                     ) {
                         let nextIndex = index + 1
                         if nextIndex < pages.count {
@@ -184,24 +182,6 @@ struct OnboardingView: View {
                 }
             }
 
-            // Generate Florin mascot: walking gold coin with painter's beret
-            Task {
-                guard ImageGenerationService.isAvailable else { return }
-                print("🎨 [Medici] Generating Florin mascot...")
-                do {
-                    let image = try await ImageGenerationService.shared.generateImage(
-                        prompt: "A cheerful golden coin character with small arms and legs, wearing a Renaissance painter's beret and carrying a tiny easel and paintbrush. The coin face shows a lily flower emblem. Whimsical, elegant, warm golden glow.",
-                        cacheKey: "onboarding_florin_mascot_anim",
-                        style: .animation
-                    )
-                    if let image {
-                        print("🎨 [Medici] ✅ Florin mascot generated")
-                        florinMascotImage = image
-                    }
-                } catch {
-                    print("🎨 [Medici] ❌ Florin mascot error: \(error)")
-                }
-            }
         } else {
             print("🎨 [Medici] ⏭️ Skipping — iOS/macOS 26 not available")
         }

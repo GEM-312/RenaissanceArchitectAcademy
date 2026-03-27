@@ -163,8 +163,7 @@ struct FarmMiniGameView: View {
             withAnimation { phase = .intro }
         } label: {
             HStack(spacing: 14) {
-                Text(material.icon)
-                    .font(.title2)
+                MaterialIconView(material: material, size: 40)
                     .frame(width: 44, height: 44)
                     .background(
                         RoundedRectangle(cornerRadius: CornerRadius.sm)

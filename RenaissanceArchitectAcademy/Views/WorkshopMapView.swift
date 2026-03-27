@@ -1263,8 +1263,7 @@ struct WorkshopMapView: View {
                         let count = workshop.rawMaterials[material] ?? 0
                         if count > 0 {
                             HStack(spacing: 3) {
-                                Text(material.icon)
-                                    .font(.caption)
+                                MaterialIconView(material: material, size: 20)
                                 Text("\(count)")
                                     .font(.custom("EBGaramond-Regular", size: 12))
                                     .foregroundStyle(settings.cardTextColor)
@@ -1645,8 +1644,7 @@ struct WorkshopMapView: View {
                             }
                         } label: {
                             VStack(spacing: 4) {
-                                Text(material.icon)
-                                    .font(.title2)
+                                MaterialIconView(material: material, size: 96)
                                 Text(material.rawValue)
                                     .font(RenaissanceFont.body)
                                     .foregroundStyle(settings.cardTextColor)
@@ -1775,8 +1773,7 @@ struct WorkshopMapView: View {
                     }
                 } label: {
                     VStack(spacing: 2) {
-                        Text(material.icon)
-                            .font(.body)
+                        MaterialIconView(material: material, size: 24)
                         Text(material.rawValue)
                             .font(.custom("EBGaramond-Regular", size: 10))
                             .foregroundStyle(settings.cardTextColor)
@@ -1926,8 +1923,7 @@ struct WorkshopMapView: View {
                                     _ = workshop.addToWorkbench(material)
                                 } label: {
                                     VStack(spacing: 2) {
-                                        Text(material.icon)
-                                            .font(.title3)
+                                        MaterialIconView(material: material, size: 28)
                                         Text("×\(count)")
                                             .font(RenaissanceFont.captionSmall)
                                             .foregroundStyle(RenaissanceColors.sepiaInk)
@@ -2019,8 +2015,7 @@ struct WorkshopMapView: View {
                 )
 
             if let material = workshop.workbenchSlots[index] {
-                Text(material.icon)
-                    .font(.title2)
+                MaterialIconView(material: material, size: 32)
             } else {
                 Image(systemName: "plus")
                     .font(.caption)

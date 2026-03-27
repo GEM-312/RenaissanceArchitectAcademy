@@ -127,8 +127,9 @@ class ImageGenerationService: ObservableObject {
             }
         }
 
-        // Only add style prefix for sketch mode; animation mode gets raw prompt
-        let fullPrompt = style == .sketch ? Self.stylePrefix + prompt : prompt
+        // No prefix — the .sketch/.animation style parameter handles the aesthetic.
+        // Prompts should describe the subject directly.
+        let fullPrompt = prompt
         let generator = try await ImageCreator()
         let generations = generator.images(
             for: [.text(fullPrompt)],
