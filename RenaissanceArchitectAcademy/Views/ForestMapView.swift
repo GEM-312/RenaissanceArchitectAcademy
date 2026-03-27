@@ -1,6 +1,6 @@
 import SwiftUI
 import SpriteKit
-import Subsonic
+// Audio via SoundManager
 
 /// SwiftUI wrapper for the ForestScene SpriteKit experience
 /// Layers: SpriteKit scene → bird companion → nav panel + inventory → science cards overlay → truffle overlay
@@ -63,12 +63,18 @@ struct ForestMapView: View {
     @State private var guidanceMessage: String = ""
     @State private var guidanceDestination: SidebarDestination? = nil
 
+    @ObservedObject private var assetManager = AssetManager.shared
+
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // Layer 1: SpriteKit scene
-                GameSpriteView(scene: makeScene(), options: [.allowsTransparency])
-                    .ignoresSafeArea()
+                // Layer 1: SpriteKit scene (wait for ODR on iOS)
+                if assetManager.isReady(AssetManager.forestScene) {
+                    GameSpriteView(scene: makeScene(), options: [.allowsTransparency])
+                        .ignoresSafeArea()
+                } else {
+                    ODRLoadingView(tag: AssetManager.forestScene, message: "Preparing the forest...")
+                }
 
                 // Layer 2: Bird companion overlay — only show when stopped (reduces memory)
                 if !playerIsWalking {
@@ -346,7 +352,7 @@ struct ForestMapView: View {
 
         // Staggered card appearance animation
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            SubsonicController.shared.play(sound: "cards_appear.mp3")
+            SoundManager.shared.play(.cardsAppear)
             withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
                 cardsAppeared = true
             }
@@ -598,6 +604,9 @@ struct ForestMapView: View {
                     }
             }
         }
+        .task {
+            await AssetManager.shared.requestAssets(tag: AssetManager.forestScene)
+        }
         .onAppear {
             withAnimation(.easeInOut(duration: 2.5).repeatForever(autoreverses: true)) {
                 floatOffset = 8
@@ -717,7 +726,7 @@ struct ForestMapView: View {
 
         if flippedOpenCard == category {
             // Tapping the flipped card — unflip back to front
-            SubsonicController.shared.play(sound: "card_flip.mp3")
+            SoundManager.shared.play(.cardFlip)
             withAnimation(.spring(response: 0.6, dampingFraction: 0.75)) {
                 flipAngles[category] = 0
                 flippedOpenCard = nil
@@ -734,7 +743,7 @@ struct ForestMapView: View {
                 }
             }
             // Flip this card with 3D rotation, others pile left
-            SubsonicController.shared.play(sound: "card_flip.mp3")
+            SoundManager.shared.play(.cardFlip)
             withAnimation(.spring(response: 0.6, dampingFraction: 0.75)) {
                 flippedOpenCard = category
                 flipAngles[category] = 180
@@ -1203,7 +1212,7 @@ struct ForestMapView: View {
         // Both IDs should refer to the same KeywordPair (keyword tapped = definition tapped)
         if keywordID == definitionID {
             // Correct match!
-            SubsonicController.shared.play(sound: "correct_chime.mp3")
+            SoundManager.shared.play(.correctChime)
             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                 matchedPairIDs.insert(keywordID)
                 selectedKeywordID = nil
@@ -1232,7 +1241,7 @@ struct ForestMapView: View {
             }
         } else {
             // Wrong match — flash red
-            SubsonicController.shared.play(sound: "wrong_buzz.mp3")
+            SoundManager.shared.play(.wrongBuzz)
             withAnimation(.easeOut(duration: 0.15)) {
                 wrongMatchFlash = true
             }
@@ -1275,7 +1284,7 @@ struct ForestMapView: View {
 
     /// Mark a card as completed — flip it back to front showing green checkmark
     private func completeCard(_ category: ForestCardCategory) {
-        SubsonicController.shared.play(sound: "card_complete.mp3")
+        SoundManager.shared.play(.cardComplete)
         withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
             cardPhases[category] = .completed
             completedCards.insert(category)

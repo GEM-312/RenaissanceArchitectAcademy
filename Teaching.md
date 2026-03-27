@@ -34,6 +34,44 @@
 
 ## Swift Language
 
+### Swift Concurrency (async/await/Task) — 2026-03-26
+
+**The Concept:** Swift Concurrency lets code **wait** for slow work (network, disk) without freezing the UI. Like ordering at a restaurant — you place the order (`async` call), do other things (UI stays responsive), and get notified when it's ready (`await`).
+
+**Three Patterns in Our App:**
+
+1. **`async/await` + `actor`** — For network calls (the REAL concurrency):
+   - `ClaudeService` — bird chat API (~1-3 seconds)
+   - `MuseumSketchService` — Met Museum image downloads
+   - `WolframService` / `PubChemService` — science API calls
+   - `actor` protects caches from race conditions (like a lock on a filing cabinet)
+
+2. **`DispatchQueue.main.asyncAfter`** — For animation delays (155+ uses):
+   - NOT real concurrency — just "do this later"
+   - Perfect for staggered animations, dialog sequences, game timing
+
+3. **`Timer.scheduledTimer`** — For repeating updates (16 uses):
+   - Frame animations, game loops, typewriter text
+   - **Pitfall:** Timer fires on the run loop and can block keyboard/touch events
+   - **Fix:** Replace with `Task { @MainActor in ... Task.sleep() }` which **yields** to the system
+
+**Timer vs Task.sleep — The Key Difference:**
+```swift
+// Timer DEMANDS — fires on run loop, can starve keyboard events
+Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { ... }
+
+// Task.sleep YIELDS — tells system "wake me later", lets keyboard work
+Task { @MainActor in
+    try? await Task.sleep(for: .milliseconds(100))
+}
+```
+
+**In Our Code:** CharacterSelectView's avatar animation used Timer at 10fps — it blocked the name TextField from receiving focus. Replaced with `Task { @MainActor in }` loop using `Task.sleep`, keyboard now appears instantly.
+
+**Key Takeaway:** Use `async/await` for slow operations (network, disk). Use `DispatchQueue.asyncAfter` for one-shot delays. Replace `Timer` with `Task.sleep` when the timer competes with user interaction (keyboard, gestures).
+
+---
+
 ### Extension-Based Content Splitting — 2026-03-18
 
 **The Concept:** When a single file grows too large (our 208 knowledge cards would be 4000+ lines), Swift extensions let you split content across multiple files while keeping the same type.

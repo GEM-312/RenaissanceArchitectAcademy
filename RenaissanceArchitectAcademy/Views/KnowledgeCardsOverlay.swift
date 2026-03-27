@@ -1,5 +1,5 @@
 import SwiftUI
-import Subsonic
+// Audio via SoundManager
 
 // MARK: - Falling Florin Model
 
@@ -54,6 +54,10 @@ struct KnowledgeCardsOverlay: View {
     var onNavigate: ((SidebarDestination) -> Void)? = nil
     /// Player name for bird chat
     var playerName: String = "Apprentice"
+    /// Show AI provider picker (at parent level so it survives overlay changes)
+    var onShowAIPicker: (() -> Void)? = nil
+    /// When true, open bird chat (set after AI picker completes at parent level)
+    @Binding var triggerBirdChat: Bool
     /// Workshop state for game-loop-aware guidance (tools, materials, etc.)
     var workshopState: WorkshopState? = nil
     /// Current station type (when shown from workshop)
@@ -64,13 +68,14 @@ struct KnowledgeCardsOverlay: View {
     @Environment(\.horizontalSizeClass) private var sizeClass
     private var isLargeScreen: Bool { sizeClass == .regular }
 
-    // Screen width captured from GeometryReader — used to compute responsive card sizes
+    // Screen size captured from GeometryReader — responsive card sizing
     @State private var screenWidth: CGFloat = 400
+    @State private var screenHeight: CGFloat = 800
 
     private var cardW: CGFloat { isLargeScreen ? 200 : min(200, screenWidth * 0.6) }
     private var cardH: CGFloat { isLargeScreen ? 280 : min(280, cardW * 1.4) }
-    private var flippedW: CGFloat { isLargeScreen ? 560 : min(560, screenWidth * 0.88) }
-    private var flippedH: CGFloat { isLargeScreen ? 780 : min(780, flippedW * 1.5) }
+    private var flippedW: CGFloat { isLargeScreen ? screenWidth * 0.65 : screenWidth * 0.90 }
+    private var flippedH: CGFloat { isLargeScreen ? screenHeight * 0.85 : screenHeight * 0.80 }
 
     // MARK: - Card State
 
@@ -128,8 +133,9 @@ struct KnowledgeCardsOverlay: View {
     @State private var guidanceBubbleCard: KnowledgeCard? = nil
 
     // Bird chat (manual "Ask the Bird" only)
-    @StateObject private var claudeService = ClaudeService()
+    @StateObject private var chatViewModel = BirdChatViewModel()
     @State private var showBirdChat = false
+    @State private var showAIPicker = false
     @State private var birdChatCard: KnowledgeCard? = nil
 
     var body: some View {
@@ -139,8 +145,8 @@ struct KnowledgeCardsOverlay: View {
                 RenaissanceColors.overlayDimming
                     .ignoresSafeArea()
                     .onTapGesture { handleBackgroundTap() }
-                    .onAppear { screenWidth = geo.size.width }
-                    .onChange(of: geo.size.width) { screenWidth = $1 }
+                    .onAppear { screenWidth = geo.size.width; screenHeight = geo.size.height }
+                    .onChange(of: geo.size) { screenWidth = $1.width; screenHeight = $1.height }
 
                 VStack(spacing: 16) {
                     Spacer()
@@ -161,21 +167,19 @@ struct KnowledgeCardsOverlay: View {
                             .transition(.move(edge: .bottom).combined(with: .opacity))
                     }
 
-                    // Guidance bubble after card completion
-                    if showGuidanceBubble, let guideCard = guidanceBubbleCard {
-                        guidanceBubbleView(card: guideCard)
-                            .transition(.move(edge: .bottom).combined(with: .opacity))
-                    }
+                    // Guidance bubble REMOVED — CityMapView guidance handles navigation
 
                     Spacer()
                 }
 
-                // Bird chat overlay (manual "Ask the Bird" only)
-                if showBirdChat, let chatCard = birdChatCard {
+                // AI picker removed from here — lives at CityMapView level
+
+                // Bird chat overlay — only after provider chosen
+                if showBirdChat, !showAIPicker, let chatCard = birdChatCard {
                     BirdChatOverlay(
                         card: chatCard,
                         playerName: playerName,
-                        claudeService: claudeService,
+                        chatViewModel: chatViewModel,
                         onDismiss: {
                             showBirdChat = false
                             birdChatCard = nil
@@ -191,6 +195,24 @@ struct KnowledgeCardsOverlay: View {
                 }
             }
         }
+        .onChange(of: triggerBirdChat) { _, open in
+            if open, let card = birdChatCard {
+                triggerBirdChat = false
+                let context = BirdContext(
+                    buildingName: card.buildingName,
+                    buildingId: card.buildingId,
+                    sciences: [card.science.rawValue],
+                    cardTitle: card.title,
+                    cardLesson: card.lessonText,
+                    playerName: playerName,
+                    masteryLevel: "Apprentice"
+                )
+                chatViewModel.startSession(context: context)
+                withAnimation(.spring(response: 0.3)) {
+                    showBirdChat = true
+                }
+            }
+        }
         .onAppear {
             // Load already-completed cards from progress
             let progress = viewModel.buildingProgressMap[buildingId] ?? BuildingProgress()
@@ -201,7 +223,7 @@ struct KnowledgeCardsOverlay: View {
             }
             auroraPhase = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                SubsonicController.shared.play(sound: "cards_appear.mp3")
+                SoundManager.shared.play(.cardsAppear)
                 withAnimation(.spring(response: 0.5, dampingFraction: 0.65)) {
                     cardsAppeared = true
                 }
@@ -301,7 +323,7 @@ struct KnowledgeCardsOverlay: View {
             // Unflip
             showFlippedContent = false
             animateFlippedStory = false
-            SubsonicController.shared.play(sound: "card_flip.mp3")
+            SoundManager.shared.play(.cardFlip)
             withAnimation(.spring(response: 0.6, dampingFraction: 0.75)) {
                 flipAngles[card.id] = 0
                 flippedOpenCard = nil
@@ -314,7 +336,7 @@ struct KnowledgeCardsOverlay: View {
             showFlippedContent = false
             animateFlippedStory = false
             // Flip this card
-            SubsonicController.shared.play(sound: "card_flip.mp3")
+            SoundManager.shared.play(.cardFlip)
             withAnimation(.spring(response: 0.6, dampingFraction: 0.75)) {
                 flippedOpenCard = card.id
                 flipAngles[card.id] = 180
@@ -400,8 +422,23 @@ struct KnowledgeCardsOverlay: View {
                     // "Ask the Bird" button on completed cards
                     Button {
                         birdChatCard = card
-                        withAnimation(.spring(response: 0.3)) {
-                            showBirdChat = true
+                        // First time? Show AI picker at parent level. Otherwise open chat.
+                        if !GameSettings.shared.hasChosenAIProvider {
+                            onShowAIPicker?()
+                        } else {
+                            let context = BirdContext(
+                                buildingName: card.buildingName,
+                                buildingId: card.buildingId,
+                                sciences: [card.science.rawValue],
+                                cardTitle: card.title,
+                                cardLesson: card.lessonText,
+                                playerName: playerName,
+                                masteryLevel: "Apprentice"
+                            )
+                            chatViewModel.startSession(context: context)
+                            withAnimation(.spring(response: 0.3)) {
+                                showBirdChat = true
+                            }
                         }
                     } label: {
                         HStack(spacing: 4) {
@@ -545,7 +582,7 @@ struct KnowledgeCardsOverlay: View {
 
                     // Interactive science visual
                     if let visual = card.visual {
-                        CardVisualView(visual: visual, color: card.color)
+                        CardVisualView(visual: visual, color: card.color, containerHeight: flippedH)
                             .opacity(animateFlippedStory ? 1 : 0)
                     }
 
@@ -802,13 +839,13 @@ struct KnowledgeCardsOverlay: View {
                     selectedMCIndex = index
                     mcAnswered = true
                     if isCorrect {
-                        SubsonicController.shared.play(sound: "correct_chime.mp3")
+                        SoundManager.shared.play(.correctChime)
                         awardFlorins(GameRewards.scienceCardMatchFlorins * 2)
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                             completeCard(card)
                         }
                     } else {
-                        SubsonicController.shared.play(sound: "wrong_buzz.mp3")
+                        SoundManager.shared.play(.wrongBuzz)
                     }
                 } label: {
                     HStack {
@@ -899,13 +936,13 @@ struct KnowledgeCardsOverlay: View {
                         tfSelected = value
                         tfAnswered = true
                         if isCorrect {
-                            SubsonicController.shared.play(sound: "correct_chime.mp3")
+                            SoundManager.shared.play(.correctChime)
                             awardFlorins(GameRewards.scienceCardMatchFlorins * 2)
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                                 completeCard(card)
                             }
                         } else {
-                            SubsonicController.shared.play(sound: "wrong_buzz.mp3")
+                            SoundManager.shared.play(.wrongBuzz)
                         }
                     } label: {
                         Text(label)
@@ -1055,14 +1092,14 @@ struct KnowledgeCardsOverlay: View {
         let expected = word[word.index(word.startIndex, offsetBy: nextIndex)]
         if tile.character == expected {
             // Correct
-            SubsonicController.shared.play(sound: "tap_soft.mp3")
+            SoundManager.shared.play(.tapSoft)
             withAnimation(.spring(response: 0.2, dampingFraction: 0.7)) {
                 spelledTiles.append(tile)
                 scramblePool.removeAll { $0.id == tile.id }
             }
             // Check completion
             if spelledTiles.count == word.count {
-                SubsonicController.shared.play(sound: "correct_chime.mp3")
+                SoundManager.shared.play(.correctChime)
                 awardFlorins(GameRewards.scienceCardMatchFlorins * 2)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                     completeCard(card)
@@ -1070,7 +1107,7 @@ struct KnowledgeCardsOverlay: View {
             }
         } else {
             // Wrong — flash red
-            SubsonicController.shared.play(sound: "wrong_buzz.mp3")
+            SoundManager.shared.play(.wrongBuzz)
             withAnimation(.easeOut(duration: 0.1)) { scrambleWrongFlash = true }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
                 withAnimation(.easeOut(duration: 0.15)) { scrambleWrongFlash = false }
@@ -1176,7 +1213,7 @@ struct KnowledgeCardsOverlay: View {
 
         if bubble.isCorrect {
             // Correct — gold glow, rise to top
-            SubsonicController.shared.play(sound: "correct_chime.mp3")
+            SoundManager.shared.play(.correctChime)
             withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                 fishingAnswered = true
             }
@@ -1188,7 +1225,7 @@ struct KnowledgeCardsOverlay: View {
             }
         } else {
             // Wrong — shrink and sink
-            SubsonicController.shared.play(sound: "water_plop.mp3")
+            SoundManager.shared.play(.waterPlop)
             withAnimation(.easeIn(duration: 0.4)) {
                 fishingSunkIDs.insert(bubble.id)
             }
@@ -1329,7 +1366,7 @@ struct KnowledgeCardsOverlay: View {
 
         if !uniqueLetters.contains(letter) {
             // Wrong guess
-            SubsonicController.shared.play(sound: "hangman_wrong.mp3")
+            SoundManager.shared.play(.hangmanWrong)
             withAnimation(.easeOut(duration: 0.3)) {
                 hangmanWrongCount += 1
             }
@@ -1341,10 +1378,10 @@ struct KnowledgeCardsOverlay: View {
             }
         } else {
             // Correct letter
-            SubsonicController.shared.play(sound: "tap_soft.mp3")
+            SoundManager.shared.play(.tapSoft)
             // Check if all letters guessed
             if uniqueLetters.isSubset(of: hangmanGuessed) {
-                SubsonicController.shared.play(sound: "correct_chime.mp3")
+                SoundManager.shared.play(.correctChime)
                 hangmanWon = true
                 awardFlorins(GameRewards.scienceCardMatchFlorins * 3)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
@@ -1447,7 +1484,7 @@ struct KnowledgeCardsOverlay: View {
     private func tryMatch(keywordID: UUID, definitionID: UUID, card: KnowledgeCard) {
         if keywordID == definitionID {
             // Correct
-            SubsonicController.shared.play(sound: "correct_chime.mp3")
+            SoundManager.shared.play(.correctChime)
             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                 matchedPairIDs.insert(keywordID)
                 selectedKeywordID = nil
@@ -1462,7 +1499,7 @@ struct KnowledgeCardsOverlay: View {
             }
         } else {
             // Wrong
-            SubsonicController.shared.play(sound: "wrong_buzz.mp3")
+            SoundManager.shared.play(.wrongBuzz)
             withAnimation(.easeOut(duration: 0.15)) { wrongMatchFlash = true }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 withAnimation(.easeOut(duration: 0.15)) {
@@ -1556,7 +1593,7 @@ struct KnowledgeCardsOverlay: View {
         )
 
         // Mark card as completed with simple flip-back animation
-        SubsonicController.shared.play(sound: "correct_chime.mp3")
+        SoundManager.shared.play(.correctChime)
         withAnimation(.easeOut(duration: 0.4)) {
             flippedOpenCard = nil
         }

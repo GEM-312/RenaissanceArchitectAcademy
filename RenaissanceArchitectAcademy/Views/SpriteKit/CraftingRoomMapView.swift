@@ -1,6 +1,6 @@
 import SwiftUI
 import SpriteKit
-import Subsonic
+// Audio via SoundManager
 
 /// SwiftUI wrapper for the CraftingRoomScene SpriteKit interior
 /// Layers: SpriteKit scene → UI bars → station overlays → educational/earn popups → master task card
@@ -46,9 +46,13 @@ struct CraftingRoomMapView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // Layer 1: SpriteKit scene
-                GameSpriteView(scene: makeScene(), options: [.allowsTransparency])
-                    .ignoresSafeArea()
+                // Layer 1: SpriteKit scene (wait for ODR on iOS)
+                if AssetManager.shared.isReady(AssetManager.craftingRoom) {
+                    GameSpriteView(scene: makeScene(), options: [.allowsTransparency])
+                        .ignoresSafeArea()
+                } else {
+                    ODRLoadingView(tag: AssetManager.craftingRoom, message: "Preparing the crafting room...")
+                }
 
                 // Layer 2: Nav + inventory
                 VStack(spacing: 0) {
@@ -112,7 +116,8 @@ struct CraftingRoomMapView: View {
                             }
                             onNavigate?(destination)
                         },
-                        playerName: onboardingState?.apprenticeName ?? "Apprentice"
+                        playerName: onboardingState?.apprenticeName ?? "Apprentice",
+                        triggerBirdChat: .constant(false)
                     )
                     .transition(.opacity)
                 }
@@ -223,6 +228,9 @@ struct CraftingRoomMapView: View {
                 }
             }
         }
+        .task {
+            await AssetManager.shared.requestAssets(tag: AssetManager.craftingRoom)
+        }
         .onAppear {
             if workshop.currentAssignment == nil {
                 workshop.generateNewAssignment()
@@ -302,7 +310,7 @@ struct CraftingRoomMapView: View {
                let nextCard = vm.nextUncompletedCard(for: bid, at: stationKey) {
                 self.craftingKnowledgeCards = [nextCard]
                 self.activeStation = station  // remember which station for after cards
-                SubsonicController.shared.play(sound: "cards_appear.mp3")
+                SoundManager.shared.play(.cardsAppear)
                 withAnimation(.spring(response: 0.3)) {
                     self.showCraftingKnowledgeCards = true
                 }
@@ -313,7 +321,7 @@ struct CraftingRoomMapView: View {
                let card = DiscoveryCardContent.card(for: stationKey) {
                 self.discoveryCard = card
                 self.activeStation = station
-                SubsonicController.shared.play(sound: "cards_appear.mp3")
+                SoundManager.shared.play(.cardsAppear)
                 withAnimation(.spring(response: 0.3)) {
                     self.showDiscoveryCard = true
                 }

@@ -1,6 +1,6 @@
 import SwiftUI
 import SpriteKit
-import Subsonic
+// Audio via SoundManager
 
 /// SwiftUI wrapper for the WorkshopScene SpriteKit mini-game
 /// Layers: SpriteKit scene → companion overlay → UI bars → hint/collection/crafting overlays
@@ -80,12 +80,18 @@ struct WorkshopMapView: View {
     @State private var jobRewardFlorins: Int = 0
     @State private var jobStreakBonus: Int = 0
 
+    @ObservedObject private var assetManager = AssetManager.shared
+
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // Layer 1: SpriteKit scene
-                GameSpriteView(scene: makeScene(), options: [.allowsTransparency])
-                    .ignoresSafeArea()
+                // Layer 1: SpriteKit scene (wait for ODR on iOS)
+                if assetManager.isReady(AssetManager.workshopScene) {
+                    GameSpriteView(scene: makeScene(), options: [.allowsTransparency])
+                        .ignoresSafeArea()
+                } else {
+                    ODRLoadingView(tag: AssetManager.workshopScene, message: "Preparing the workshop...")
+                }
 
                 // Layer 2: Station lesson overlay (bird teaches before first collection)
                 if showStationLesson, let station = pendingLessonStation,
@@ -287,6 +293,7 @@ struct WorkshopMapView: View {
                             onNavigate?(destination)
                         },
                         playerName: onboardingState?.apprenticeName ?? "Apprentice",
+                        triggerBirdChat: .constant(false),
                         workshopState: workshop,
                         currentStation: activeStation
                     )
@@ -607,6 +614,11 @@ struct WorkshopMapView: View {
                         .transition(.opacity.combined(with: .scale(scale: 0.9)))
                 }
             }
+        }
+        .task {
+            await AssetManager.shared.requestAssets(tag: AssetManager.workshopScene)
+            AssetManager.shared.prefetchAssets(tag: AssetManager.craftingRoom)
+            AssetManager.shared.prefetchAssets(tag: AssetManager.forestScene)
         }
         .onAppear {
             recentlyCollectedStations.removeAll()
@@ -1048,7 +1060,7 @@ struct WorkshopMapView: View {
             // Active building — show building-specific knowledge card
             showArrivalGuidance = false
             stationKnowledgeCards = [nextCard]
-            SubsonicController.shared.play(sound: "cards_appear.mp3")
+            SoundManager.shared.play(.cardsAppear)
             withAnimation(.spring(response: 0.3)) {
                 showStationKnowledgeCards = true
             }
@@ -1057,7 +1069,7 @@ struct WorkshopMapView: View {
             // No active building — show discovery card
             showArrivalGuidance = false
             discoveryCard = card
-            SubsonicController.shared.play(sound: "cards_appear.mp3")
+            SoundManager.shared.play(.cardsAppear)
             withAnimation(.spring(response: 0.3)) {
                 showDiscoveryCard = true
             }

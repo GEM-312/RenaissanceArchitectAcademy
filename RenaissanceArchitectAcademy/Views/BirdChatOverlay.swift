@@ -1,21 +1,11 @@
 import SwiftUI
 
-/// Chat overlay for the bird companion — powered by Claude API.
+/// Chat overlay for the bird companion — powered by AI (Apple Intelligence or Claude API).
 /// Appears after a student reads a knowledge card and taps "Ask the Bird."
-///
-/// Usage:
-/// ```swift
-/// BirdChatOverlay(
-///     card: someKnowledgeCard,
-///     playerName: onboardingState.apprenticeName,
-///     claudeService: claudeService,
-///     onDismiss: { showBirdChat = false }
-/// )
-/// ```
 struct BirdChatOverlay: View {
     let card: KnowledgeCard
     let playerName: String
-    @ObservedObject var claudeService: ClaudeService
+    @ObservedObject var chatViewModel: BirdChatViewModel
     let onDismiss: () -> Void
 
     @State private var inputText = ""
@@ -70,23 +60,13 @@ struct BirdChatOverlay: View {
             }
         }
         .onAppear {
-            // Start the Claude session with card context
-            claudeService.startSession(context: .init(
-                buildingName: card.buildingName,
-                buildingId: card.buildingId,
-                sciences: [card.science.rawValue],
-                cardTitle: card.title,
-                cardLesson: card.lessonText,
-                playerName: playerName,
-                masteryLevel: "Apprentice"
-            ))
-
+            // Session already started from KnowledgeCardsOverlay — just animate in
             withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                 showContent = true
             }
         }
         .onDisappear {
-            claudeService.endSession()
+            chatViewModel.endSession()
         }
     }
 
@@ -112,12 +92,16 @@ struct BirdChatOverlay: View {
 
             Spacer()
 
-            // Message count
-            let used = claudeService.messages.filter { $0.role == .user }.count
-            let max = ClaudeService.maxMessagesPerSession
-            Text("\(used)/\(max)")
-                .font(RenaissanceFont.captionSmall)
-                .foregroundStyle(RenaissanceColors.stoneGray)
+            // Message count (only show limit for Claude API)
+            Group {
+                if let max = chatViewModel.maxMessages {
+                    Text("\(chatViewModel.userMessageCount)/\(max)")
+                } else {
+                    Text("\(chatViewModel.userMessageCount)")
+                }
+            }
+            .font(RenaissanceFont.captionSmall)
+            .foregroundStyle(RenaissanceColors.stoneGray)
 
             // Close button
             Button { dismiss() } label: {
@@ -144,7 +128,7 @@ struct BirdChatOverlay: View {
                     )
 
                     // Chat messages
-                    ForEach(claudeService.messages) { message in
+                    ForEach(chatViewModel.messages) { message in
                         switch message.role {
                         case .user:
                             userBubble(text: message.content, id: message.id.uuidString)
@@ -156,7 +140,7 @@ struct BirdChatOverlay: View {
                     }
 
                     // Loading indicator
-                    if claudeService.isLoading {
+                    if chatViewModel.isLoading {
                         HStack(spacing: 6) {
                             TypingIndicator()
                             Text("Thinking...")
@@ -169,7 +153,7 @@ struct BirdChatOverlay: View {
                     }
 
                     // Error message
-                    if let error = claudeService.error {
+                    if let error = chatViewModel.error {
                         HStack {
                             Image(systemName: "exclamationmark.triangle.fill")
                                 .foregroundStyle(RenaissanceColors.ochre)
@@ -186,11 +170,11 @@ struct BirdChatOverlay: View {
                 }
                 .padding(.vertical, 12)
             }
-            .onChange(of: claudeService.messages.count) { _, _ in
+            .onChange(of: chatViewModel.messages.count) { _, _ in
                 withAnimation {
-                    if claudeService.isLoading {
+                    if chatViewModel.isLoading {
                         proxy.scrollTo("loading", anchor: .bottom)
-                    } else if let last = claudeService.messages.last {
+                    } else if let last = chatViewModel.messages.last {
                         proxy.scrollTo(last.id.uuidString, anchor: .bottom)
                     }
                 }
@@ -248,7 +232,7 @@ struct BirdChatOverlay: View {
     private var inputView: some View {
         VStack(spacing: 8) {
             // Suggested questions (only when no messages yet)
-            if claudeService.messages.isEmpty {
+            if chatViewModel.messages.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
                         ForEach(suggestedQuestions, id: \.self) { question in
@@ -289,13 +273,13 @@ struct BirdChatOverlay: View {
                     Image(systemName: "arrow.up.circle.fill")
                         .font(.system(size: 28))
                         .foregroundStyle(
-                            inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || claudeService.isLoading
+                            inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || chatViewModel.isLoading
                             ? RenaissanceColors.stoneGray
                             : RenaissanceColors.renaissanceBlue
                         )
                 }
                 .buttonStyle(.plain)
-                .disabled(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || claudeService.isLoading)
+                .disabled(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || chatViewModel.isLoading)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
@@ -310,7 +294,7 @@ struct BirdChatOverlay: View {
 
     private func sendQuestion(_ text: String) {
         Task {
-            await claudeService.sendMessage(text)
+            await chatViewModel.sendMessage(text)
         }
     }
 
@@ -363,7 +347,7 @@ private struct TypingIndicator: View {
     BirdChatOverlay(
         card: KnowledgeCardContent.cards(for: "Pantheon").first!,
         playerName: "Marco",
-        claudeService: ClaudeService(),
+        chatViewModel: BirdChatViewModel(),
         onDismiss: {}
     )
 }

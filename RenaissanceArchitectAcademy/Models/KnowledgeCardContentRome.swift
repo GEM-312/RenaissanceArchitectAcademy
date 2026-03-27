@@ -60,7 +60,7 @@ extension KnowledgeCardContent {
                 visual: CardVisual(
                     type: .geometry,
                     title: "The Chorobates — 6m Leveling Beam",
-                    values: ["diameter": 6, "height": 0.2],
+                    values: ["beam": 1, "length": 6, "height": 0.2],
                     labels: ["Water channel on top shows level", "If water is flat → ground is flat"],
                     steps: 3, caption: "1:4800 gradient — a marble on the floor rolls faster"
                 )

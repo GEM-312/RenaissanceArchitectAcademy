@@ -25,7 +25,6 @@ struct SketchStudyOverlay: View {
 
     // Count mode state
     @State private var countInput: String = ""
-    @FocusState private var countFieldFocused: Bool
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     private var isLargeScreen: Bool { horizontalSizeClass == .regular }
@@ -58,11 +57,16 @@ struct SketchStudyOverlay: View {
                 .ignoresSafeArea()
                 .onTapGesture { /* block dismiss on background tap */ }
 
-            // Main card — 90-96% of screen
+            // Main card — width adapts to image aspect ratio
             GeometryReader { geo in
-                let cardWidth = geo.size.width * (isLargeScreen ? 0.90 : 0.96)
+                let maxCardWidth = geo.size.width * (isLargeScreen ? 0.90 : 0.96)
                 let cardHeight = geo.size.height * (isLargeScreen ? 0.90 : 0.96)
                 let imageHeight = cardHeight * 0.58
+                // If image is loaded, size card to match its aspect ratio
+                let imageAspect = sketchService.aspectRatios[sketch.id] ?? 1.2
+                let imageWidth = imageHeight * imageAspect
+                // Card width = image width + padding, clamped to max
+                let cardWidth = min(maxCardWidth, max(imageWidth + 32, maxCardWidth * 0.5))
 
                 VStack(spacing: 0) {
                     headerBar
@@ -342,7 +346,7 @@ struct SketchStudyOverlay: View {
         .padding(.top, Spacing.sm)
     }
 
-    // MARK: - Count Input (only for .count questions)
+    // MARK: - Count Input (custom number pad — avoids system keyboard issues over SpriteKit)
 
     private var countInputSection: some View {
         HStack(spacing: Spacing.sm) {
@@ -350,12 +354,32 @@ struct SketchStudyOverlay: View {
                 .font(RenaissanceFont.bodySmall)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
-            TextField("", text: $countInput)
-                .textFieldStyle(.plain)
-                .font(.custom("Cinzel-Bold", size: 22))
-                .foregroundStyle(RenaissanceColors.sepiaInk)
-                .multilineTextAlignment(.center)
-                .frame(width: 80)
+            // Minus button
+            if !foundFeature {
+                Button {
+                    if let n = Int(countInput), n > 0 {
+                        countInput = "\(n - 1)"
+                    }
+                } label: {
+                    Image(systemName: "minus")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .frame(width: 36, height: 36)
+                        .background(
+                            Circle().fill(RenaissanceColors.sepiaInk.opacity(0.06))
+                        )
+                        .overlay(Circle().stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 0.5))
+                }
+                .buttonStyle(.plain)
+            }
+
+            // Number display
+            Text(countInput.isEmpty ? "?" : countInput)
+                .font(.custom("Cinzel-Bold", size: 24))
+                .foregroundStyle(countInput.isEmpty
+                                ? RenaissanceColors.sepiaInk.opacity(0.3)
+                                : RenaissanceColors.sepiaInk)
+                .frame(width: 56)
                 .padding(.vertical, Spacing.xs)
                 .background(
                     RoundedRectangle(cornerRadius: CornerRadius.sm)
@@ -370,11 +394,24 @@ struct SketchStudyOverlay: View {
                                     : RenaissanceColors.ochre.opacity(0.4),
                                 lineWidth: foundFeature || showWrongFlash ? 2 : 1)
                 )
-                #if os(iOS)
-                .keyboardType(.numberPad)
-                #endif
-                .focused($countFieldFocused)
-                .disabled(foundFeature)
+
+            // Plus button
+            if !foundFeature {
+                Button {
+                    let n = Int(countInput) ?? 0
+                    if n < 99 { countInput = "\(n + 1)" }
+                } label: {
+                    Image(systemName: "plus")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .frame(width: 36, height: 36)
+                        .background(
+                            Circle().fill(RenaissanceColors.sepiaInk.opacity(0.06))
+                        )
+                        .overlay(Circle().stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 0.5))
+                }
+                .buttonStyle(.plain)
+            }
 
             if foundFeature, correctCount != nil {
                 Image(systemName: "checkmark.circle.fill")
@@ -470,7 +507,6 @@ struct SketchStudyOverlay: View {
         guard let playerAnswer = Int(countInput) else { return }
 
         if playerAnswer == correctAnswer {
-            countFieldFocused = false
             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                 foundFeature = true
             }

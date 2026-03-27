@@ -6,11 +6,25 @@ import SwiftUI
 struct CardVisualView: View {
     let visual: CardVisual
     let color: Color
+    var containerHeight: CGFloat = 780  // Card height — visual uses 35%
+
+    /// Visual canvas height — 35% of the card container
+    private var visualHeight: CGFloat { containerHeight * 0.35 }
 
     @State private var currentStep: Int = 1   // Start at step 1 (not empty step 0)
     @State private var animationPhase: CGFloat = 0
 
     var body: some View {
+        // Use interactive visual if available (Pantheon, etc.)
+        if PantheonInteractiveVisuals.hasInteractiveVisual(for: visual) {
+            PantheonInteractiveVisuals.view(for: visual, color: color, height: visualHeight)
+        } else {
+            legacyCanvasView
+        }
+    }
+
+    /// Legacy Canvas-based visual (for cards without interactive implementations)
+    private var legacyCanvasView: some View {
         VStack(spacing: 6) {
             // Title
             Text(visual.title)
@@ -23,7 +37,7 @@ struct CardVisualView: View {
                 drawGrid(context: context, size: size)
                 drawVisual(context: context, size: size)
             }
-            .frame(height: 220)
+            .frame(height: visualHeight)
             .background(
                 RoundedRectangle(cornerRadius: 10)
                     .fill(RenaissanceColors.parchment)
@@ -233,11 +247,11 @@ struct CardVisualView: View {
         }
 
         // Standard flat layers
-        let pad: CGFloat = 20
+        let pad: CGFloat = 10
         let layerCount = min(visual.labels.count, 5)
         let totalHeight = h - pad * 2
         let layerHeight = totalHeight / CGFloat(layerCount)
-        let layerWidth = w * 0.6
+        let layerWidth = w * 0.7
         let visibleLayers = min(currentStep, layerCount)
 
         // Ghost outlines
@@ -293,8 +307,8 @@ struct CardVisualView: View {
         let w = size.width, h = size.height
         let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
         let centerX = w * 0.5
-        let baseY = h * 0.85
-        let domeRadius = w * 0.4
+        let baseY = h * 0.7
+        let domeRadius = min(w * 0.4, baseY - 10)
 
         let layerCount = min(visual.labels.count, 5)
         let visibleLayers = min(currentStep, layerCount)
@@ -353,6 +367,12 @@ struct CardVisualView: View {
         // Special case: tessellation pattern
         if visual.values["tessellation"] == 1 {
             drawTessellation(context: context, size: size)
+            return
+        }
+
+        // Special case: chorobates leveling beam
+        if visual.values["beam"] == 1 {
+            drawChorobatesBeam(context: context, size: size)
             return
         }
 
@@ -542,15 +562,117 @@ struct CardVisualView: View {
         }
     }
 
+    // MARK: - Chorobates Beam (6m wooden leveling tool)
+
+    private func drawChorobatesBeam(context: GraphicsContext, size: CGSize) {
+        let w = size.width, h = size.height
+        let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
+        let wood = Color(red: 0.6, green: 0.45, blue: 0.3)
+
+        let beamW = w * 0.75
+        let beamH: CGFloat = 14
+        let beamY = h * 0.4
+        let centerX = w * 0.5
+
+        // Step 1: The wooden beam
+        var beam = Path()
+        beam.addRoundedRect(in: CGRect(x: centerX - beamW / 2, y: beamY, width: beamW, height: beamH),
+                            cornerSize: CGSize(width: 3, height: 3))
+        context.fill(beam, with: .color(wood.opacity(0.4)))
+        context.stroke(beam, with: .color(wood), lineWidth: 2)
+
+        // Wood grain lines
+        for i in 0..<6 {
+            let grainX = centerX - beamW / 2 + CGFloat(i + 1) * beamW / 7
+            var grain = Path()
+            grain.move(to: CGPoint(x: grainX, y: beamY + 2))
+            grain.addLine(to: CGPoint(x: grainX, y: beamY + beamH - 2))
+            context.stroke(grain, with: .color(wood.opacity(0.2)), lineWidth: 0.5)
+        }
+
+        // Legs (4 supports underneath)
+        for i in 0..<4 {
+            let legX = centerX - beamW / 2 + beamW * CGFloat(i + 1) / 5
+            var leg = Path()
+            leg.move(to: CGPoint(x: legX, y: beamY + beamH))
+            leg.addLine(to: CGPoint(x: legX, y: beamY + beamH + 30))
+            context.stroke(leg, with: .color(wood), lineWidth: 2)
+        }
+
+        // Ground line
+        let groundY = beamY + beamH + 30
+        var ground = Path()
+        ground.move(to: CGPoint(x: centerX - beamW / 2 - 10, y: groundY))
+        ground.addLine(to: CGPoint(x: centerX + beamW / 2 + 10, y: groundY))
+        context.stroke(ground, with: .color(sepiaInk.opacity(0.2)), lineWidth: 1)
+
+        // "6m" dimension
+        let dimY = beamY - 10
+        var dimLine = Path()
+        dimLine.move(to: CGPoint(x: centerX - beamW / 2, y: dimY))
+        dimLine.addLine(to: CGPoint(x: centerX + beamW / 2, y: dimY))
+        context.stroke(dimLine, with: .color(sepiaInk.opacity(0.3)), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
+        for xOff in [centerX - beamW / 2, centerX + beamW / 2] {
+            var tick = Path()
+            tick.move(to: CGPoint(x: xOff, y: dimY - 3))
+            tick.addLine(to: CGPoint(x: xOff, y: dimY + 3))
+            context.stroke(tick, with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+        }
+        context.draw(
+            Text("6 meters").font(.custom("EBGaramond-SemiBold", size: 11)).foregroundColor(color),
+            at: CGPoint(x: centerX, y: dimY - 10)
+        )
+
+        guard currentStep >= 2 else { return }
+
+        // Step 2: Water channel on top (blue line showing the level surface)
+        let channelInset: CGFloat = 12
+        var channel = Path()
+        channel.move(to: CGPoint(x: centerX - beamW / 2 + channelInset, y: beamY + 3))
+        channel.addLine(to: CGPoint(x: centerX + beamW / 2 - channelInset, y: beamY + 3))
+        context.stroke(channel, with: .color(Color(red: 0.35, green: 0.55, blue: 0.75)), lineWidth: 3)
+
+        // Water surface label
+        context.draw(
+            Text("water channel").font(.custom("EBGaramond-Italic", size: 10)).foregroundColor(Color(red: 0.35, green: 0.55, blue: 0.75)),
+            at: CGPoint(x: centerX, y: beamY - 24)
+        )
+
+        // "Level!" indicators at each end
+        for xOff in [centerX - beamW / 2 + channelInset + 8, centerX + beamW / 2 - channelInset - 8] {
+            var droplet = Path()
+            droplet.addEllipse(in: CGRect(x: xOff - 3, y: beamY, width: 6, height: 6))
+            context.fill(droplet, with: .color(Color(red: 0.35, green: 0.55, blue: 0.75).opacity(0.5)))
+        }
+
+        guard currentStep >= 3 else { return }
+
+        // Step 3: Gradient annotation — the beam shows how tiny the slope is
+        let slopeLabel = "1:4800 slope — 14m drop over 69 km"
+        context.draw(
+            Text(slopeLabel).font(.custom("EBGaramond-SemiBold", size: 11)).foregroundColor(color),
+            at: CGPoint(x: centerX, y: groundY + 18)
+        )
+
+        // Tiny tilt indicator (exaggerated for visibility)
+        let tiltStart = CGPoint(x: centerX + beamW / 2 + 16, y: beamY + beamH / 2)
+        let tiltEnd = CGPoint(x: centerX + beamW / 2 + 16, y: beamY + beamH / 2 + 12)
+        drawArrow(context: context, from: tiltStart, to: tiltEnd, color: Color.red.opacity(0.5))
+        context.draw(
+            Text("tiny drop").font(.custom("EBGaramond-Italic", size: 9)).foregroundColor(Color.red.opacity(0.5)),
+            at: CGPoint(x: centerX + beamW / 2 + 16, y: beamY + beamH / 2 + 22)
+        )
+    }
+
     // MARK: - Ratio (proportional bars — step-by-step reveal)
 
     private func drawRatio(context: GraphicsContext, size: CGSize) {
         let w = size.width, h = size.height
-        let pad: CGFloat = 20
+        let pad: CGFloat = 12
         let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
         let barWidth = w - pad * 2
-        let barHeight: CGFloat = 32
-        let barY = h * 0.4
+        let barHeight: CGFloat = 40
+        let barY = h * 0.35
 
         let sortedValues = visual.values.sorted { $0.value > $1.value }
         let total = sortedValues.reduce(0.0) { $0 + $1.value }
@@ -633,7 +755,7 @@ struct CardVisualView: View {
 
     private func drawTemperature(context: GraphicsContext, size: CGSize) {
         let w = size.width, h = size.height
-        let pad: CGFloat = 30
+        let pad: CGFloat = 20
         let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
 
         guard currentStep >= 1 else { return }
@@ -868,8 +990,8 @@ struct CardVisualView: View {
         let w = size.width, h = size.height
         let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
         let centerX = w * 0.5
-        let baseY = h * 0.8
-        let domeRadius = w * 0.38
+        let baseY = h * 0.7
+        let domeRadius = min(w * 0.4, baseY - 10)
         let domeCenter = CGPoint(x: centerX, y: baseY)
 
         // Step 1: Dome arc + walls
@@ -889,13 +1011,14 @@ struct CardVisualView: View {
         rightWall.addLine(to: CGPoint(x: centerX + domeRadius, y: baseY + 20))
         context.stroke(rightWall, with: .color(sepiaInk), lineWidth: 2.5)
 
-        // Oculus opening at top
+        // Oculus opening at top (hole in the dome — no fill, just an opening)
         let oculusRadius: CGFloat = domeRadius * 0.2
         let oculusY = baseY - domeRadius
         var oculusCircle = Path()
         oculusCircle.addEllipse(in: CGRect(x: centerX - oculusRadius, y: oculusY - oculusRadius * 0.4, width: oculusRadius * 2, height: oculusRadius * 0.8))
-        context.fill(oculusCircle, with: .color(RenaissanceColors.parchment))
-        context.stroke(oculusCircle, with: .color(color), lineWidth: 2)
+        // White fill = "hole" cut through the dome, showing sky
+        context.fill(oculusCircle, with: .color(.white))
+        context.stroke(oculusCircle, with: .color(sepiaInk), lineWidth: 2)
 
         // "9m" label
         if let diameter = visual.values["diameter"] {
@@ -944,7 +1067,7 @@ struct CardVisualView: View {
         let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
         let centerX = w * 0.5
         let baseY = h * 0.78
-        let archRadius = w * 0.32
+        let archRadius = w * 0.36
         let archCenter = CGPoint(x: centerX, y: baseY)
 
         // Step 1: Arch shape with individual voussoir wedge stones
@@ -1053,8 +1176,8 @@ struct CardVisualView: View {
         let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
         let wood = Color.brown
         let centerX = w * 0.5
-        let groundY = h * 0.9
-        let domeRadius = w * 0.28
+        let groundY = h * 0.72
+        let domeRadius = w * 0.26
         let domeCenter = CGPoint(x: centerX, y: groundY)
 
         // Step 1: Dome outline (the building being constructed)
@@ -1193,8 +1316,8 @@ struct CardVisualView: View {
         let w = size.width, h = size.height
         let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
         let centerX = w * 0.5
-        let baseY = h * 0.85
-        let domeRadius = w * 0.4
+        let baseY = h * 0.55
+        let domeRadius = min(w * 0.35, baseY - 8)
         let domeCenter = CGPoint(x: centerX, y: baseY)
 
         // Step 1: Dome outline with coffer grid inside
@@ -1249,11 +1372,12 @@ struct CardVisualView: View {
             }
         }
 
-        // Oculus at top
+        // Oculus at top (hole — white opening)
         let oculusR = domeRadius * 0.1
         var oculus = Path()
         oculus.addEllipse(in: CGRect(x: centerX - oculusR, y: baseY - domeRadius - oculusR * 0.3, width: oculusR * 2, height: oculusR * 0.6))
-        context.fill(oculus, with: .color(RenaissanceColors.renaissanceBlue.opacity(0.2)))
+        context.fill(oculus, with: .color(.white))
+        context.stroke(oculus, with: .color(sepiaInk.opacity(0.4)), lineWidth: 1)
 
         // "28 rows" label
         context.draw(
@@ -1282,35 +1406,48 @@ struct CardVisualView: View {
             }
         }
 
-        // Arrow pointing to a coffer with "sunken panel" label
-        let sampleAngle = Double.pi * 0.65
-        let sampleR = domeRadius * 0.65
-        let sampleX = centerX + sampleR * cos(sampleAngle)
-        let sampleY = baseY + sampleR * sin(sampleAngle)
-        let labelX = sampleX - 40
-        let labelY = sampleY + 20
-
-        var pointer = Path()
-        pointer.move(to: CGPoint(x: labelX + 30, y: labelY - 5))
-        pointer.addLine(to: CGPoint(x: sampleX, y: sampleY))
-        context.stroke(pointer, with: .color(color.opacity(0.4)), lineWidth: 1)
-
+        // "sunken panel" label inside the dome
         context.draw(
-            Text("sunken panel").font(.custom("EBGaramond-Italic", size: 10)).foregroundColor(color),
-            at: CGPoint(x: labelX, y: labelY)
+            Text("each panel removes ~2 tons").font(.custom("EBGaramond-Italic", size: 10)).foregroundColor(color),
+            at: CGPoint(x: centerX, y: baseY - domeRadius * 0.3)
         )
 
         guard currentStep >= 3 else { return }
 
-        // Step 3: Weight annotation
+        // Step 3: Weight comparison — solid vs hollowed (below dome with proper spacing)
+        let barY = baseY + 20
+        let barW = w * 0.7
+        let barH: CGFloat = 16
+
+        // Full weight bar (background — represents solid dome)
+        var fullBar = Path()
+        fullBar.addRoundedRect(in: CGRect(x: centerX - barW / 2, y: barY, width: barW, height: barH), cornerSize: CGSize(width: 4, height: 4))
+        context.fill(fullBar, with: .color(sepiaInk.opacity(0.1)))
+        context.stroke(fullBar, with: .color(sepiaInk.opacity(0.2)), lineWidth: 1)
+
+        // Reduced weight bar (foreground — with coffers)
+        let reducedW = barW * 0.65
+        var reducedBar = Path()
+        reducedBar.addRoundedRect(in: CGRect(x: centerX - barW / 2, y: barY, width: reducedW, height: barH), cornerSize: CGSize(width: 4, height: 4))
+        context.fill(reducedBar, with: .color(color.opacity(0.2)))
+        context.stroke(reducedBar, with: .color(color), lineWidth: 1.5)
+
+        // Labels on bars
         context.draw(
-            Text("–2,400 tons removed").font(.custom("EBGaramond-SemiBold", size: 13)).foregroundColor(color),
-            at: CGPoint(x: centerX, y: baseY + 16)
+            Text("4,535 t (with coffers)").font(.custom("EBGaramond-SemiBold", size: 10)).foregroundColor(color),
+            at: CGPoint(x: centerX - barW / 2 + reducedW / 2, y: barY + barH / 2)
         )
 
+        // Strikethrough section showing removed weight
         context.draw(
-            Text("dome weight: 4,535 tons").font(.custom("EBGaramond-Regular", size: 11)).foregroundColor(sepiaInk.opacity(0.5)),
-            at: CGPoint(x: centerX, y: baseY + 30)
+            Text("6,935 t").font(.custom("EBGaramond-Regular", size: 9)).foregroundColor(sepiaInk.opacity(0.4)),
+            at: CGPoint(x: centerX - barW / 2 + barW * 0.85, y: barY + barH / 2)
+        )
+
+        // Summary below
+        context.draw(
+            Text("–2,400 tons removed by hollowing each panel").font(.custom("EBGaramond-SemiBold", size: 11)).foregroundColor(color),
+            at: CGPoint(x: centerX, y: barY + barH + 14)
         )
     }
 
@@ -1430,8 +1567,8 @@ struct CardVisualView: View {
         let w = size.width, h = size.height
         let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
         let centerX = w * 0.5
-        let baseY = h * 0.82
-        let archRadius = w * 0.35
+        let baseY = h * 0.7
+        let archRadius = min(w * 0.4, baseY - 10)
 
         // Step 1: Wooden arch frame (curved beams)
         // Main arch
@@ -1513,10 +1650,10 @@ struct CardVisualView: View {
         guard currentStep >= 1 else { return }
 
         // Channel path
-        let startX = w * 0.1
-        let endX = w * 0.9
-        let channelY = h * 0.45
-        let drop: CGFloat = currentStep >= 2 ? 20 : 0
+        let startX = w * 0.08
+        let endX = w * 0.92
+        let channelY = h * 0.4
+        let drop: CGFloat = currentStep >= 2 ? 30 : 0
 
         var channel = Path()
         channel.move(to: CGPoint(x: startX, y: channelY))
@@ -1621,8 +1758,8 @@ struct CardVisualView: View {
         guard visual.labels.count >= 2 else { return }
 
         let leftX = w * 0.25, rightX = w * 0.75
-        let boxW: CGFloat = w * 0.32, boxH: CGFloat = h * 0.4
-        let boxY = h * 0.15
+        let boxW: CGFloat = w * 0.36, boxH: CGFloat = h * 0.45
+        let boxY = h * 0.1
 
         // Step 1: Left item
         var leftBox = Path()

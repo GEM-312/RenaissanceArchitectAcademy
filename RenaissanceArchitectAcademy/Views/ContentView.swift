@@ -44,6 +44,8 @@ struct ContentView: View {
 
             if showingOnboarding {
                 OnboardingView(onboardingState: onboardingState) {
+                    // Prefetch city scene during onboarding completion
+                    AssetManager.shared.prefetchAssets(tag: AssetManager.cityScene)
                     // Onboarding completed — switch to the new player's data
                     let name = onboardingState.apprenticeName
                     if !name.isEmpty {

@@ -9,7 +9,7 @@ import Foundation
 ///
 /// Cost: ~$0.05 per 100 bird questions using Haiku 4.5
 @MainActor
-class ClaudeService: ObservableObject {
+class ClaudeService: ObservableObject, AIService {
 
     // API key loaded from APIKeys.swift (not committed to repo)
     static let apiKey = APIKeys.claude
@@ -35,52 +35,7 @@ class ClaudeService: ObservableObject {
     /// Current context for the bird companion
     private var currentContext: BirdContext?
 
-    // MARK: - Bird Context
-
-    /// Context passed to Claude so the bird stays on-topic
-    struct BirdContext {
-        let buildingName: String
-        let buildingId: Int
-        let sciences: [String]
-        let cardTitle: String
-        let cardLesson: String
-        let playerName: String
-        let masteryLevel: String
-
-        /// Build the system prompt for this context
-        var systemPrompt: String {
-            """
-            You are a wise and playful bird companion in an educational game about \
-            Renaissance and Ancient Roman architecture. You help young apprentices \
-            (ages 12-18) learn about building, science, and engineering.
-
-            Your personality:
-            - Enthusiastic about architecture and history
-            - Use occasional Italian words naturally (not forced)
-            - Keep answers under 3 sentences unless explaining a complex concept
-            - Reference the specific building when relevant
-            - Make complex ideas feel simple through stories and analogies
-            - If asked something off-topic, gently redirect: "Interesting question! \
-            But right now, let's focus on our building..."
-
-            Current context:
-            - Building: \(buildingName)
-            - Sciences: \(sciences.joined(separator: ", "))
-            - Card topic: \(cardTitle)
-            - Card lesson: \(cardLesson)
-            - Player name: \(playerName)
-            - Level: \(masteryLevel)
-
-            Rules:
-            - Stay on topic: architecture, science, math, history, engineering
-            - Use real measurements and facts
-            - When explaining math, show the steps clearly
-            - Never make up historical facts — say "I'm not sure" if uncertain
-            - Encourage curiosity — "Great question!" when appropriate
-            - End responses with a thought-provoking follow-up when natural
-            """
-        }
-    }
+    // BirdContext is defined in AIService.swift (shared across all AI providers)
 
     // MARK: - Public API
 

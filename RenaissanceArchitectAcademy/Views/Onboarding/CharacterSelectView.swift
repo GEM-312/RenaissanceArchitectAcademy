@@ -87,6 +87,10 @@ struct CharacterSelectView: View {
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .colorScheme(.light)
                         .focused($nameFieldFocused)
+                        .submitLabel(.done)
+                        .onSubmit {
+                            nameFieldFocused = false
+                        }
                         #if os(iOS)
                         .textInputAutocapitalization(.words)
                         #endif
@@ -132,11 +136,11 @@ struct CharacterSelectView: View {
     // MARK: - Frame Animation (plays once, no loop, no crossfade)
 
     private func startFrameAnimation() {
-        Timer.scheduledTimer(withTimeInterval: 1.0 / fps, repeats: true) { timer in
-            if currentFrame < frameCount - 1 {
-                currentFrame += 1
-            } else {
-                timer.invalidate()
+        // Use MainActor-isolated Task to avoid blocking TextField focus
+        Task { @MainActor in
+            for frame in 1..<frameCount {
+                try? await Task.sleep(for: .milliseconds(Int(1000.0 / fps)))
+                currentFrame = frame
             }
         }
     }

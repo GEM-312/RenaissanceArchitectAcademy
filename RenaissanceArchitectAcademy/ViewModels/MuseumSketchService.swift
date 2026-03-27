@@ -9,6 +9,8 @@ class MuseumSketchService: ObservableObject {
     /// In-memory image cache keyed by Met object ID
     @Published private(set) var imageCache: [Int: Image] = [:]
     @Published private(set) var loadingIDs: Set<Int> = []
+    /// Aspect ratios (width/height) for loaded images
+    private(set) var aspectRatios: [Int: CGFloat] = [:]
 
     private let urlSession: URLSession
     private var diskCacheURL: URL? {
@@ -55,9 +57,11 @@ class MuseumSketchService: ObservableObject {
             // Downscale for memory efficiency (max 1024px on longest side)
             let scaled = downsample(uiImage, maxDimension: 1024)
             let image = Image(uiImage: scaled)
+            aspectRatios[objectID] = scaled.size.width / scaled.size.height
             #else
             guard let nsImage = NSImage(data: data) else { return }
             let image = Image(nsImage: nsImage)
+            aspectRatios[objectID] = nsImage.size.width / nsImage.size.height
             #endif
 
             imageCache[objectID] = image
@@ -87,9 +91,11 @@ class MuseumSketchService: ObservableObject {
 
         #if os(iOS)
         guard let uiImage = UIImage(contentsOfFile: path.path) else { return nil }
+        aspectRatios[objectID] = uiImage.size.width / uiImage.size.height
         return Image(uiImage: uiImage)
         #else
         guard let nsImage = NSImage(contentsOfFile: path.path) else { return nil }
+        aspectRatios[objectID] = nsImage.size.width / nsImage.size.height
         return Image(nsImage: nsImage)
         #endif
     }

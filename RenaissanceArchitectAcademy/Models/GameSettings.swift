@@ -27,14 +27,32 @@ class GameSettings {
 
     var isDarkMode: Bool { theme == .dark }
 
-    // MARK: - Audio (placeholders for future)
+    // MARK: - AI Provider
 
-    var musicVolume: Double = 0.7 {
+    var preferredAIProvider: AIProvider = .appleOnDevice {
         didSet { save() }
     }
 
-    var sfxVolume: Double = 0.8 {
+    var hasChosenAIProvider: Bool = false {
         didSet { save() }
+    }
+
+    // MARK: - Audio
+
+    var musicVolume: Double = 0.7 {
+        didSet {
+            guard isLoaded else { return }
+            save()
+            SoundManager.shared.updateVolumes()
+        }
+    }
+
+    var sfxVolume: Double = 0.8 {
+        didSet {
+            guard isLoaded else { return }
+            save()
+            SoundManager.shared.updateVolumes()
+        }
     }
 
     // MARK: - Theme Colors (computed, SwiftUI)
@@ -112,12 +130,17 @@ class GameSettings {
     private static let themeKey = "gameSettings_theme"
     private static let musicVolumeKey = "gameSettings_musicVolume"
     private static let sfxVolumeKey = "gameSettings_sfxVolume"
+    private static let aiProviderKey = "gameSettings_aiProvider"
+    private static let aiChosenKey = "gameSettings_aiChosen"
 
     /// Shared instance — used by SpriteKit scenes that can't access SwiftUI Environment
     static let shared = GameSettings()
 
+    private var isLoaded = false
+
     init() {
         load()
+        isLoaded = true
     }
 
     private func load() {
@@ -131,12 +154,19 @@ class GameSettings {
         if UserDefaults.standard.object(forKey: Self.sfxVolumeKey) != nil {
             sfxVolume = UserDefaults.standard.double(forKey: Self.sfxVolumeKey)
         }
+        if let raw = UserDefaults.standard.string(forKey: Self.aiProviderKey),
+           let p = AIProvider(rawValue: raw) {
+            preferredAIProvider = p
+        }
+        hasChosenAIProvider = UserDefaults.standard.bool(forKey: Self.aiChosenKey)
     }
 
     private func save() {
         UserDefaults.standard.set(theme.rawValue, forKey: Self.themeKey)
         UserDefaults.standard.set(musicVolume, forKey: Self.musicVolumeKey)
         UserDefaults.standard.set(sfxVolume, forKey: Self.sfxVolumeKey)
+        UserDefaults.standard.set(preferredAIProvider.rawValue, forKey: Self.aiProviderKey)
+        UserDefaults.standard.set(hasChosenAIProvider, forKey: Self.aiChosenKey)
     }
 }
 

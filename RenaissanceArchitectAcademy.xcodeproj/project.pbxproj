@@ -132,10 +132,17 @@
 		0E9 /* DiscoveryCardOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E9 /* DiscoveryCardOverlay.swift */; };
 		0EA /* TerrainBlurHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EA /* TerrainBlurHelper.swift */; };
 		0EB /* CardVisualView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EB /* CardVisualView.swift */; };
+		0F0 /* HapticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F0 /* HapticsManager.swift */; };
+		0F1 /* PantheonInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F1 /* PantheonInteractiveVisuals.swift */; };
+		0F2 /* AssetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2 /* AssetManager.swift */; };
+		0F3 /* AIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F3 /* AIService.swift */; };
+		0F4 /* AppleAIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4 /* AppleAIService.swift */; };
+		0F5 /* MockAIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5 /* MockAIService.swift */; };
+		0F6 /* BirdChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6 /* BirdChatViewModel.swift */; };
+		0F7 /* AIProviderPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F7 /* AIProviderPickerView.swift */; };
 		543AD36B2F60C199001895ED /* card_flip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 183 /* card_flip.mp3 */; };
 		543AD36C2F60C199001895ED /* GirlIntroAudio.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 182 /* GirlIntroAudio.m4a */; };
 		544299832F32E0F700F92073 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = 544299822F32E0F700F92073 /* Pow */; };
-		544299862F32E11600F92073 /* Subsonic in Frameworks */ = {isa = PBXBuildFile; productRef = 544299852F32E11600F92073 /* Subsonic */; };
 		544299892F32E14D00F92073 /* Vortex in Frameworks */ = {isa = PBXBuildFile; productRef = 544299882F32E14D00F92073 /* Vortex */; };
 		5442999A2F3646ED00F92073 /* BuildingNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299972F3646ED00F92073 /* BuildingNode.swift */; };
 		5442999B2F3646ED00F92073 /* CityMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299982F3646ED00F92073 /* CityMapView.swift */; };
@@ -318,6 +325,14 @@
 		1E9 /* DiscoveryCardOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoveryCardOverlay.swift; sourceTree = "<group>"; };
 		1EA /* TerrainBlurHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TerrainBlurHelper.swift; path = Views/SpriteKit/TerrainBlurHelper.swift; sourceTree = "<group>"; };
 		1EB /* CardVisualView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardVisualView.swift; sourceTree = "<group>"; };
+		1F0 /* HapticsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticsManager.swift; sourceTree = "<group>"; };
+		1F1 /* PantheonInteractiveVisuals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PantheonInteractiveVisuals.swift; path = RenaissanceArchitectAcademy/Views/PantheonInteractiveVisuals.swift; sourceTree = SOURCE_ROOT; };
+		1F2 /* AssetManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetManager.swift; sourceTree = "<group>"; };
+		1F3 /* AIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIService.swift; sourceTree = "<group>"; };
+		1F4 /* AppleAIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleAIService.swift; sourceTree = "<group>"; };
+		1F5 /* MockAIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAIService.swift; sourceTree = "<group>"; };
+		1F6 /* BirdChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BirdChatViewModel.swift; path = RenaissanceArchitectAcademy/ViewModels/BirdChatViewModel.swift; sourceTree = SOURCE_ROOT; };
+		1F7 /* AIProviderPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AIProviderPickerView.swift; path = RenaissanceArchitectAcademy/Views/AIProviderPickerView.swift; sourceTree = SOURCE_ROOT; };
 		544299972F3646ED00F92073 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BuildingNode.swift; path = Views/SpriteKit/BuildingNode.swift; sourceTree = "<group>"; };
 		544299982F3646ED00F92073 /* CityMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityMapView.swift; path = Views/SpriteKit/CityMapView.swift; sourceTree = "<group>"; };
 		544299992F3646ED00F92073 /* CityScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityScene.swift; path = Views/SpriteKit/CityScene.swift; sourceTree = "<group>"; };
@@ -378,7 +393,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				544299862F32E11600F92073 /* Subsonic in Frameworks */,
 				544299832F32E0F700F92073 /* Pow in Frameworks */,
 				544299892F32E14D00F92073 /* Vortex in Frameworks */,
 			);
@@ -392,6 +406,7 @@
 			children = (
 				301 /* RenaissanceArchitectAcademy */,
 				302 /* Products */,
+				5462151D2F75CC830001F971 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -572,6 +587,11 @@
 			isa = PBXGroup;
 			children = (
 				115 /* SoundManager.swift */,
+				1F0 /* HapticsManager.swift */,
+				1F2 /* AssetManager.swift */,
+				1F3 /* AIService.swift */,
+				1F4 /* AppleAIService.swift */,
+				1F5 /* MockAIService.swift */,
 				1C0 /* ClaudeService.swift */,
 				1D0 /* PubChemService.swift */,
 				1D3 /* APIKeys.swift */,
@@ -660,6 +680,14 @@
 			path = Fonts;
 			sourceTree = "<group>";
 		};
+		5462151D2F75CC830001F971 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				1F1 /* PantheonInteractiveVisuals.swift */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -706,7 +734,6 @@
 			mainGroup = 300;
 			packageReferences = (
 				544299812F32E0F700F92073 /* XCRemoteSwiftPackageReference "Pow" */,
-				544299842F32E11600F92073 /* XCRemoteSwiftPackageReference "Subsonic" */,
 				544299872F32E14D00F92073 /* XCRemoteSwiftPackageReference "Vortex" */,
 			);
 			productRefGroup = 302 /* Products */;
@@ -804,6 +831,14 @@
 				099 /* RenaissanceTheme.swift in Sources */,
 				011 /* SidebarView.swift in Sources */,
 				015 /* SoundManager.swift in Sources */,
+				0F0 /* HapticsManager.swift in Sources */,
+				0F1 /* PantheonInteractiveVisuals.swift in Sources */,
+				0F2 /* AssetManager.swift in Sources */,
+				0F3 /* AIService.swift in Sources */,
+				0F4 /* AppleAIService.swift in Sources */,
+				0F5 /* MockAIService.swift in Sources */,
+				0F6 /* BirdChatViewModel.swift in Sources */,
+				0F7 /* AIProviderPickerView.swift in Sources */,
 				016 /* BloomEffectView.swift in Sources */,
 				544299A72F369AB700F92073 /* MascotDialogueView.swift in Sources */,
 				544299A82F369AB700F92073 /* MaterialPuzzleView.swift in Sources */,
@@ -1046,6 +1081,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = M84U73M2CT;
+				"ENABLE_ON_DEMAND_RESOURCES[sdk=iphoneos*]" = YES;
+				"ENABLE_ON_DEMAND_RESOURCES[sdk=iphonesimulator*]" = YES;
+				"ENABLE_ON_DEMAND_RESOURCES[sdk=macosx*]" = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = RenaissanceArchitectAcademy/Info.plist;
@@ -1081,6 +1119,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = M84U73M2CT;
+				"ENABLE_ON_DEMAND_RESOURCES[sdk=iphoneos*]" = YES;
+				"ENABLE_ON_DEMAND_RESOURCES[sdk=iphonesimulator*]" = YES;
+				"ENABLE_ON_DEMAND_RESOURCES[sdk=macosx*]" = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = RenaissanceArchitectAcademy/Info.plist;
@@ -1139,14 +1180,6 @@
 				kind = branch;
 			};
 		};
-		544299842F32E11600F92073 /* XCRemoteSwiftPackageReference "Subsonic" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/twostraws/Subsonic.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.2.0;
-			};
-		};
 		544299872F32E14D00F92073 /* XCRemoteSwiftPackageReference "Vortex" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/twostraws/Vortex.git";
@@ -1162,11 +1195,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 544299812F32E0F700F92073 /* XCRemoteSwiftPackageReference "Pow" */;
 			productName = Pow;
-		};
-		544299852F32E11600F92073 /* Subsonic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 544299842F32E11600F92073 /* XCRemoteSwiftPackageReference "Subsonic" */;
-			productName = Subsonic;
 		};
 		544299882F32E14D00F92073 /* Vortex */ = {
 			isa = XCSwiftPackageProductDependency;

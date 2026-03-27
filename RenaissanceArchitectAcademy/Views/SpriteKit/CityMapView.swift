@@ -1,6 +1,6 @@
 import SwiftUI
 import SpriteKit
-import Subsonic
+// Audio via SoundManager
 
 /// SwiftUI wrapper for the SpriteKit city scene
 ///
@@ -103,6 +103,10 @@ struct CityMapView: View {
     @State private var showSketchStudy = false
     @State private var activeSketch: MuseumSketch? = nil
 
+    /// AI provider picker (shown at CityMapView level so it persists)
+    @State private var showAIPickerOverlay = false
+    @State private var triggerBirdChat = false
+
     /// Reference to the SpriteKit scene — stored in a class box so it survives body
     /// re-evaluation without triggering re-renders (unlike @State which causes infinite loops)
     @State private var sceneHolder = SceneHolder<CityScene>()
@@ -137,12 +141,19 @@ struct CityMapView: View {
 
     // MARK: - Body
 
+    @ObservedObject private var assetManager = AssetManager.shared
+
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // The SpriteKit scene (the actual game map — fills full width)
-                GameSpriteView(scene: makeScene(), options: [])
-                    .ignoresSafeArea()
+                // Wait for city assets on iOS (macOS: always ready)
+                if assetManager.isReady(AssetManager.cityScene) {
+                    // The SpriteKit scene (the actual game map — fills full width)
+                    GameSpriteView(scene: makeScene(), options: [])
+                        .ignoresSafeArea()
+                } else {
+                    ODRLoadingView(tag: AssetManager.cityScene, message: "Preparing the city...")
+                }
 
                 // Nav (left) + Buildings (right) with margins
                 VStack(spacing: 0) {
@@ -266,9 +277,11 @@ struct CityMapView: View {
                                 // Store the card so overlay survives ViewModel re-renders
                                 activeKnowledgeCard = card
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                    SubsonicController.shared.play(sound: "cards_appear.mp3")
+                                    SoundManager.shared.play(.cardsAppear)
                                     withAnimation(.spring(response: 0.3)) {
-                                        showKnowledgeCards = true
+                                        showGuidance = false
+                                        showGuidance = false
+                                    showKnowledgeCards = true
                                     }
                                 }
                             } else if !KnowledgeCardContent.cards(for: plot.building.name).isEmpty {
@@ -281,7 +294,7 @@ struct CityMapView: View {
                             } else {
                                 // Fallback to old paged lesson (buildings without cards)
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                    SubsonicController.shared.play(sound: "cards_appear.mp3")
+                                    SoundManager.shared.play(.cardsAppear)
                                     withAnimation(.spring(response: 0.3)) {
                                         showBuildingLesson = true
                                     }
@@ -374,9 +387,10 @@ struct CityMapView: View {
                         }
 
                         // Check for next sketch study first (Card → Sketch → Card → Sketch)
+                        // But NOT if user is chatting with the bird — wait for chat to finish
                         let sketches = MuseumSketchContent.sketches(for: buildingName)
                         let nextSketch = sketches.first { !progress.completedSketchStudyIDs.contains($0.id) }
-                        if let sketch = nextSketch {
+                        if let sketch = nextSketch, !showKnowledgeCards, !showAIPickerOverlay {
                             activeSketch = sketch
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
                                 withAnimation(.spring(response: 0.4)) {
@@ -386,8 +400,9 @@ struct CityMapView: View {
                         } else if let nextCard = viewModel.nextUncompletedCard(for: plot.id, in: .cityMap) {
                             activeKnowledgeCard = nextCard
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                                SubsonicController.shared.play(sound: "cards_appear.mp3")
+                                SoundManager.shared.play(.cardsAppear)
                                 withAnimation(.spring(response: 0.3)) {
+                                    showGuidance = false
                                     showKnowledgeCards = true
                                 }
                             }
@@ -410,6 +425,12 @@ struct CityMapView: View {
                         onNavigate?(destination)
                     },
                     playerName: onboardingState?.apprenticeName ?? "Apprentice",
+                    onShowAIPicker: {
+                        withAnimation(.spring(response: 0.3)) {
+                            showAIPickerOverlay = true
+                        }
+                    },
+                    triggerBirdChat: $triggerBirdChat,
                     workshopState: workshopState
                 )
                 .transition(.opacity)
@@ -444,6 +465,23 @@ struct CityMapView: View {
                 )
                 .transition(.opacity)
                 .zIndex(45)
+            }
+
+            // AI provider picker (at CityMapView level — survives card overlay changes)
+            if showAIPickerOverlay {
+                AIProviderPickerView { provider in
+                    GameSettings.shared.preferredAIProvider = provider
+                    GameSettings.shared.hasChosenAIProvider = true
+                    withAnimation(.spring(response: 0.3)) {
+                        showAIPickerOverlay = false
+                    }
+                    // Tell KnowledgeCardsOverlay to open the bird chat
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        triggerBirdChat = true
+                    }
+                }
+                .transition(.opacity)
+                .zIndex(200)
             }
 
             // Bird guidance — tells player where to go next
@@ -725,63 +763,9 @@ struct CityMapView: View {
                 .transition(.move(edge: .trailing))  // Slide in from right
             }
 
-            // Workshop prompt (after quiz from "I don't know" path)
-            if showWorkshopPrompt {
-                ZStack {
-                    RenaissanceColors.overlayDimming
-                        .ignoresSafeArea()
-                        .onTapGesture {
-                            withAnimation {
-                                showWorkshopPrompt = false
-                                selectedPlot = nil
-                            }
-                            sceneHolder.scene?.resetMascot()
-                        }
-
-                    VStack(spacing: 20) {
-                        Spacer()
-
-                        BirdCharacter(isSitting: true)
-                            .frame(width: 160, height: 160)
-
-                        VStack(spacing: 16) {
-                            Text("Nice work on the quiz!")
-                                .font(.custom("EBGaramond-SemiBold", size: 24))
-                                .foregroundStyle(RenaissanceColors.sepiaInk)
-
-                            Text("Now head to the Workshop to collect raw materials and craft what you need to build.")
-                                .font(.custom("EBGaramond-Regular", size: 18, relativeTo: .body))
-                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
-                                .multilineTextAlignment(.center)
-                                .lineSpacing(4)
-
-                            VStack(spacing: 10) {
-                                RenaissanceButton(title: "Go to Workshop") {
-                                    withAnimation {
-                                        showWorkshopPrompt = false
-                                        selectedPlot = nil
-                                    }
-                                    sceneHolder.scene?.resetMascot()
-                                    showWorkshopSheet = true
-                                }
-
-                                RenaissanceSecondaryButton(title: "Stay on Map") {
-                                    withAnimation {
-                                        showWorkshopPrompt = false
-                                        selectedPlot = nil
-                                    }
-                                    sceneHolder.scene?.resetMascot()
-                                }
-                            }
-                        }
-                        .padding(28)
-                        .background(DialogueBubble())
-                        .padding(.horizontal, Spacing.xxxl)
-
-                        Spacer()
-                    }
-                }
-                .transition(.opacity)
+            // Workshop prompt removed — KnowledgeCardsOverlay handles workshop guidance
+            if false {
+                EmptyView()
             }
 
             // Building detail overlay (shown for info/help)
@@ -890,6 +874,13 @@ struct CityMapView: View {
 
             } // end ZStack
         } // end GeometryReader
+        .task {
+            // Request city assets (no-op on macOS, downloads on iOS if needed)
+            await AssetManager.shared.requestAssets(tag: AssetManager.cityScene)
+            // Prefetch bird animations and workshop scene (next likely destination)
+            AssetManager.shared.prefetchAssets(tag: AssetManager.birdAnimations)
+            AssetManager.shared.prefetchAssets(tag: AssetManager.workshopScene)
+        }
         .onAppear {
             // Sync completion states when view appears (e.g., after completing in Era view)
             if let currentScene = sceneHolder.scene {
@@ -930,16 +921,7 @@ struct CityMapView: View {
                         // Close the challenge sheet
                         showChallenge = false
 
-                        // If user came from "I don't know", offer to go to Workshop
-                        if challengeEntryPath == .readToEarn {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                                withAnimation(.spring(response: 0.4)) {
-                                    showWorkshopPrompt = true
-                                }
-                            }
-                        } else {
-                            selectedPlot = nil
-                        }
+                        selectedPlot = nil
                     },
                     onDismiss: {
                         showChallenge = false
@@ -1009,7 +991,7 @@ struct CityMapView: View {
                 return
             }
 
-            SubsonicController.shared.play(sound: "building_tap.mp3")
+            SoundManager.shared.play(.buildingTap)
             selectedPlot = plot
 
             // If this is the active building, skip the prompt and go straight to the action
@@ -1073,18 +1055,15 @@ struct CityMapView: View {
             // Show next card (stay zoomed in)
             activeKnowledgeCard = nextCard
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                SubsonicController.shared.play(sound: "cards_appear.mp3")
+                SoundManager.shared.play(.cardsAppear)
                 withAnimation(.spring(response: 0.3)) {
                     showKnowledgeCards = true
                 }
             }
         } else {
-            // All cards + sketches done — zoom out and show guidance
+            // All cards + sketches done — KnowledgeCardsOverlay handles guidance
             selectedPlot = nil
             sceneHolder.scene?.resetMascot()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                showCityGuidance()
-            }
         }
     }
 
@@ -1115,13 +1094,13 @@ struct CityMapView: View {
             if let card = nextCityCard {
                 activeKnowledgeCard = card
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    SubsonicController.shared.play(sound: "cards_appear.mp3")
+                    SoundManager.shared.play(.cardsAppear)
                     withAnimation(.spring(response: 0.3)) {
                         showKnowledgeCards = true
                     }
                 }
-            } else {
-                // Check sketch studies
+            } else if !showKnowledgeCards, !showAIPickerOverlay {
+                // Check sketch studies (only if knowledge cards and AI picker are closed)
                 let sketches = MuseumSketchContent.sketches(for: buildingName)
                 if let sketch = sketches.first(where: { !progress.completedSketchStudyIDs.contains($0.id) }) {
                     activeSketch = sketch
@@ -1143,13 +1122,8 @@ struct CityMapView: View {
                                 showSketching = true
                             }
                         }
-                    } else if !KnowledgeCardContent.cards(for: buildingName).isEmpty {
-                        // All city cards + sketch done, nudge to workshop
-                        guidanceMessage = "Well studied! Time to collect materials. Head to the Workshop!"
-                        guidanceDestination = .workshop
-                        withAnimation(.spring(response: 0.4)) { showGuidance = true }
                     } else if LessonContent.lesson(for: buildingName) != nil {
-                        SubsonicController.shared.play(sound: "cards_appear.mp3")
+                        SoundManager.shared.play(.cardsAppear)
                         withAnimation(.spring(response: 0.3)) {
                             showBuildingLesson = true
                         }
@@ -1257,7 +1231,8 @@ struct CityMapView: View {
                 if cityDone.done == 0 {
                     guidanceMessage = "Tap the \(buildingName) to discover your first knowledge card!"
                 } else {
-                    guidanceMessage = "Keep going! Tap the \(buildingName) for card \(cityDone.done + 1) of \(cityDone.total)."
+                    let totalProgress = viewModel.cardProgress(for: bid)
+                    guidanceMessage = "Keep going! Tap the \(buildingName) for card \(totalProgress.completed + 1) of \(totalProgress.total)."
                 }
                 guidanceDestination = nil
             } else if nextSketch != nil {
@@ -1270,14 +1245,14 @@ struct CityMapView: View {
                     guidanceMessage = "Time to sketch the \(buildingName)! Tap it to draw the floor plan using what you learned."
                     guidanceDestination = nil
                 } else {
-                    guidanceMessage = "Well studied! Time to collect materials. Head to the Workshop!"
+                    guidanceMessage = "Well studied! Head to the Workshop to collect materials!"
                     guidanceDestination = .workshop
                 }
             }
 
         // PHASE 2: COLLECT — go to workshop
         case .collect:
-            guidanceMessage = "Head to the Workshop — collect materials and discover more about the \(buildingName)!"
+            guidanceMessage = "Head to the Workshop — collect materials for the \(buildingName)!"
             guidanceDestination = .workshop
 
         // PHASE 3: EXPLORE — go to forest
