@@ -80,6 +80,11 @@ struct WorkshopMapView: View {
     @State private var jobRewardFlorins: Int = 0
     @State private var jobStreakBonus: Int = 0
 
+    // NPC encounter (Foundation Models — iOS 26+)
+    @State private var showNPCEncounter = false
+    @State private var npcDisplayData: NPCDisplayData?
+    @State private var npcPortrait: CGImage?
+
     @ObservedObject private var assetManager = AssetManager.shared
 
     var body: some View {
@@ -329,6 +334,24 @@ struct WorkshopMapView: View {
                         },
                         playerName: onboardingState?.apprenticeName ?? "Apprentice"
                     )
+                    .transition(.opacity)
+                }
+
+                // Layer 8c: NPC encounter (Foundation Models — iOS 26+)
+                if showNPCEncounter, let npc = npcDisplayData {
+                    NPCDialogueView(
+                        npc: npc,
+                        portrait: npcPortrait,
+                        stationName: activeStation?.rawValue ?? "Workshop"
+                    ) {
+                        withAnimation(.spring(response: 0.3)) {
+                            showNPCEncounter = false
+                            npcDisplayData = nil
+                            npcPortrait = nil
+                        }
+                        // Continue with normal guidance after NPC dismissed
+                        showNextGuidance(forceRefresh: true)
+                    }
                     .transition(.opacity)
                 }
 
@@ -2743,6 +2766,48 @@ struct WorkshopMapView: View {
                 showFurnaceOverlay = false
                 activeStation = nil
             }
+        }
+    }
+
+    // MARK: - NPC Encounter (Foundation Models)
+
+    /// Try to show an NPC encounter after station interaction.
+    /// If available and not yet seen this session, shows the NPC overlay.
+    /// Otherwise falls through to normal guidance.
+    private func tryShowNPCEncounter(for station: ResourceStationType) {
+        guard let vm = viewModel, let buildingId = vm.activeBuildingId else {
+            showNextGuidance(forceRefresh: true)
+            return
+        }
+
+        let buildingName = vm.buildingPlots.first(where: { $0.id == buildingId })?.building.name ?? ""
+        let sciences = vm.buildingPlots.first(where: { $0.id == buildingId })?.building.sciences.map(\.rawValue) ?? []
+
+        if #available(iOS 26.0, macOS 26.0, *) {
+            let manager = NPCEncounterManager.shared
+            guard manager.shouldShowNPC(station: station.rawValue, buildingId: buildingId) else {
+                showNextGuidance(forceRefresh: true)
+                return
+            }
+
+            Task {
+                if let npc = await manager.getNPC(
+                    station: station.rawValue,
+                    buildingId: buildingId,
+                    buildingName: buildingName,
+                    sciences: sciences
+                ) {
+                    npcDisplayData = npc
+                    npcPortrait = manager.currentPortrait
+                    withAnimation(.spring(response: 0.3)) {
+                        showNPCEncounter = true
+                    }
+                } else {
+                    showNextGuidance(forceRefresh: true)
+                }
+            }
+        } else {
+            showNextGuidance(forceRefresh: true)
         }
     }
 }

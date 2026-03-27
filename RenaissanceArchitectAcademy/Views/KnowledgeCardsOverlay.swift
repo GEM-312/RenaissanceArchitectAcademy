@@ -218,6 +218,25 @@ struct KnowledgeCardsOverlay: View {
             let progress = viewModel.buildingProgressMap[buildingId] ?? BuildingProgress()
             completedCardIDs = progress.completedCardIDs.intersection(Set(cards.map { $0.id }))
 
+            // Configure game tool context for bird chat (iOS 26+ tool calling)
+            let ws = workshopState
+            chatViewModel.gameToolContext = GameToolContext(
+                buildingPlots: viewModel.buildingPlots.map { plot in
+                    let state = plot.isCompleted ? "complete" : "in_progress"
+                    return (name: plot.building.name, state: state, phase: state)
+                },
+                activeBuildingName: viewModel.buildingPlots.first(where: { $0.id == viewModel.activeBuildingId })?.building.name,
+                totalComplete: viewModel.buildingPlots.filter { $0.isCompleted }.count,
+                rawMaterials: ws?.rawMaterials.reduce(into: [String: Int]()) { dict, pair in
+                    dict[pair.key.rawValue] = pair.value
+                } ?? [:],
+                craftedItems: ws?.craftedMaterials.reduce(into: [String: Int]()) { dict, pair in
+                    dict[pair.key.rawValue] = pair.value
+                } ?? [:],
+                tools: ws?.tools.compactMap { $0.value > 0 ? $0.key.displayName : nil } ?? [],
+                florins: viewModel.goldFlorins
+            )
+
             withAnimation(.easeInOut(duration: 2.5).repeatForever(autoreverses: true)) {
                 floatOffset = 8
             }
@@ -582,7 +601,7 @@ struct KnowledgeCardsOverlay: View {
 
                     // Interactive science visual
                     if let visual = card.visual {
-                        CardVisualView(visual: visual, color: card.color, containerHeight: flippedH)
+                        CardVisualView(visual: visual, color: card.color, containerHeight: flippedH, card: card)
                             .opacity(animateFlippedStory ? 1 : 0)
                     }
 

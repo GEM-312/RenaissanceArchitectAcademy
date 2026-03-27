@@ -23,6 +23,40 @@ struct StationLesson: Identifiable {
 /// All static narrative content for the onboarding system
 enum OnboardingContent {
 
+    // MARK: - Dynamic Medici Commission (Foundation Models)
+
+    /// Generate a unique Medici commission speech for each playthrough.
+    /// Returns nil if generation fails — caller uses static text as fallback.
+    /// Called during avatar transition (~5-10 seconds before story page 0).
+    @available(iOS 26.0, macOS 26.0, *)
+    @MainActor
+    static func generateMediciCommission() async -> MediciCommission? {
+        guard GenerationService.isAvailable else { return nil }
+
+        do {
+            return try await GenerationService.shared.generateMediciCommission()
+        } catch {
+            print("[OnboardingContent] Medici generation failed: \(error)")
+            return nil
+        }
+    }
+
+    /// Convert a generated MediciCommission into story page text format.
+    /// Preserves the narrative framing while injecting dynamic content.
+    @available(iOS 26.0, macOS 26.0, *)
+    static func mediciStoryText(from commission: MediciCommission) -> String {
+        """
+        The year is 1485. In a small town near Florence, a talented youth has been noticed \
+        by the most powerful family in Italy.
+
+        A letter arrives, sealed with the crest of the Medici:
+
+        "\(commission.commissionSpeech)"
+
+        The letter mentions \(commission.projectMention) — \(commission.patronageFact)
+        """
+    }
+
     // MARK: - Story Pages (3 cinematic pages)
 
     static let storyPages: [StoryPage] = [

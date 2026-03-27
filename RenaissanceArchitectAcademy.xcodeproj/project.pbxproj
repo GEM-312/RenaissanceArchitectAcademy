@@ -140,6 +140,13 @@
 		0F5 /* MockAIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5 /* MockAIService.swift */; };
 		0F6 /* BirdChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6 /* BirdChatViewModel.swift */; };
 		0F7 /* AIProviderPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F7 /* AIProviderPickerView.swift */; };
+		0F8 /* GeneratedContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8 /* GeneratedContent.swift */; };
+		0F9 /* GenerationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F9 /* GenerationService.swift */; };
+		0FA /* ImageGenerationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA /* ImageGenerationService.swift */; };
+		0FB /* GameTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB /* GameTools.swift */; };
+		0FC /* MaterialIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FC /* MaterialIconView.swift */; };
+		0FD /* NPCDialogueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD /* NPCDialogueView.swift */; };
+		0FE /* NPCEncounterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE /* NPCEncounterManager.swift */; };
 		543AD36B2F60C199001895ED /* card_flip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 183 /* card_flip.mp3 */; };
 		543AD36C2F60C199001895ED /* GirlIntroAudio.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 182 /* GirlIntroAudio.m4a */; };
 		544299832F32E0F700F92073 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = 544299822F32E0F700F92073 /* Pow */; };
@@ -333,6 +340,13 @@
 		1F5 /* MockAIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAIService.swift; sourceTree = "<group>"; };
 		1F6 /* BirdChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BirdChatViewModel.swift; path = RenaissanceArchitectAcademy/ViewModels/BirdChatViewModel.swift; sourceTree = SOURCE_ROOT; };
 		1F7 /* AIProviderPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AIProviderPickerView.swift; path = RenaissanceArchitectAcademy/Views/AIProviderPickerView.swift; sourceTree = SOURCE_ROOT; };
+		1F8 /* GeneratedContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneratedContent.swift; sourceTree = "<group>"; };
+		1F9 /* GenerationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerationService.swift; sourceTree = "<group>"; };
+		1FA /* ImageGenerationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGenerationService.swift; sourceTree = "<group>"; };
+		1FB /* GameTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameTools.swift; sourceTree = "<group>"; };
+		1FC /* MaterialIconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialIconView.swift; sourceTree = "<group>"; };
+		1FD /* NPCDialogueView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NPCDialogueView.swift; sourceTree = "<group>"; };
+		1FE /* NPCEncounterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NPCEncounterManager.swift; sourceTree = "<group>"; };
 		544299972F3646ED00F92073 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BuildingNode.swift; path = Views/SpriteKit/BuildingNode.swift; sourceTree = "<group>"; };
 		544299982F3646ED00F92073 /* CityMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityMapView.swift; path = Views/SpriteKit/CityMapView.swift; sourceTree = "<group>"; };
 		544299992F3646ED00F92073 /* CityScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityScene.swift; path = Views/SpriteKit/CityScene.swift; sourceTree = "<group>"; };
@@ -507,6 +521,8 @@
 				1E5 /* SketchTeachingView.swift */,
 				1E9 /* DiscoveryCardOverlay.swift */,
 				1EB /* CardVisualView.swift */,
+				1FC /* MaterialIconView.swift */,
+				1FD /* NPCDialogueView.swift */,
 				308 /* Sketching */,
 				309 /* Onboarding */,
 				310 /* StationMiniGames */,
@@ -567,6 +583,7 @@
 				1E6 /* KnowledgeCardContentRome.swift */,
 				1E7 /* KnowledgeCardContentRenaissance.swift */,
 				1E8 /* DiscoveryCard.swift */,
+				1F8 /* GeneratedContent.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -597,6 +614,10 @@
 				1D3 /* APIKeys.swift */,
 				1D4 /* WolframService.swift */,
 				1D5 /* WolframGeometryHelper.swift */,
+				1F9 /* GenerationService.swift */,
+				1FA /* ImageGenerationService.swift */,
+				1FB /* GameTools.swift */,
+				1FE /* NPCEncounterManager.swift */,
 				306 /* Styles */,
 			);
 			path = Services;
@@ -839,6 +860,13 @@
 				0F5 /* MockAIService.swift in Sources */,
 				0F6 /* BirdChatViewModel.swift in Sources */,
 				0F7 /* AIProviderPickerView.swift in Sources */,
+				0F8 /* GeneratedContent.swift in Sources */,
+				0F9 /* GenerationService.swift in Sources */,
+				0FA /* ImageGenerationService.swift in Sources */,
+				0FB /* GameTools.swift in Sources */,
+				0FC /* MaterialIconView.swift in Sources */,
+				0FD /* NPCDialogueView.swift in Sources */,
+				0FE /* NPCEncounterManager.swift in Sources */,
 				016 /* BloomEffectView.swift in Sources */,
 				544299A72F369AB700F92073 /* MascotDialogueView.swift in Sources */,
 				544299A82F369AB700F92073 /* MaterialPuzzleView.swift in Sources */,

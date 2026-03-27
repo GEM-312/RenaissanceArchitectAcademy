@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Coordinates AI service selection for the bird chat
-/// Manages: provider choice, service lifecycle, subscription checks
+/// Manages: provider choice, service lifecycle, tool configuration, subscription checks
 @MainActor
 class BirdChatViewModel: ObservableObject {
 
@@ -18,6 +18,9 @@ class BirdChatViewModel: ObservableObject {
 
     private var activeService: (any AIService)?
     private var currentContext: BirdContext?
+
+    /// Game state for tool calling — set before starting a session
+    var gameToolContext: GameToolContext?
 
     /// Current provider
     var currentProvider: AIProvider {
@@ -69,7 +72,13 @@ class BirdChatViewModel: ObservableObject {
     private func activateService(provider: AIProvider, context: BirdContext) {
         let service = createService(for: provider)
         activeService = service
-        service.startSession(context: context)
+
+        // If the service supports tools AND we have game state, start with tools
+        if service.supportsTools, let toolCtx = gameToolContext {
+            service.startSession(context: context, toolContext: toolCtx)
+        } else {
+            service.startSession(context: context)
+        }
 
         // Observe the service's state — poll since we can't use Combine across protocol
         observeService(service)

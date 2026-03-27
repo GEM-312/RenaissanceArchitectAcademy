@@ -25,5 +25,7 @@
 		<string>EBGaramond-Italic-VariableFont_wght.ttf</string>
 		<string>PetitFormalScript-Regular.ttf</string>
 	</array>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Your bird companion can reference upcoming events to personalize architecture lessons.</string>
 </dict>
 </plist>

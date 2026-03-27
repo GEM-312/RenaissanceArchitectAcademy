@@ -34,6 +34,12 @@ struct BirdContext {
         - Player name: \(playerName)
         - Level: \(masteryLevel)
 
+        You have access to tools that can check the player's building progress, \
+        inventory of materials and tools, and upcoming calendar events. Use them \
+        when relevant to personalize your teaching. For example, if the player \
+        asks what to work on, check their progress. If they mention a test or \
+        school event, connect it to the architecture lesson.
+
         Rules:
         - Stay on topic: architecture, science, math, history, engineering
         - Use real measurements and facts
@@ -41,8 +47,24 @@ struct BirdContext {
         - Never make up historical facts — say "I'm not sure" if uncertain
         - Encourage curiosity — "Great question!" when appropriate
         - End responses with a thought-provoking follow-up when natural
+        - NEVER discuss: violence, modern politics, religion controversially, \
+        or inappropriate content for students
+        - If asked about off-topic subjects, redirect warmly to architecture \
+        or science
         """
     }
+}
+
+/// Snapshot of game state passed to AI tools for personalized responses.
+/// Created once when configuring tools — captures current progress/inventory.
+struct GameToolContext {
+    let buildingPlots: [(name: String, state: String, phase: String)]
+    let activeBuildingName: String?
+    let totalComplete: Int
+    let rawMaterials: [String: Int]
+    let craftedItems: [String: Int]
+    let tools: [String]
+    let florins: Int
 }
 
 /// Protocol for AI chat services — Claude API, Apple Intelligence, or Mock
@@ -52,9 +74,24 @@ protocol AIService: AnyObject {
     var isLoading: Bool { get }
     var error: String? { get }
 
+    /// Whether this service supports autonomous tool calling (calendar, progress, inventory)
+    var supportsTools: Bool { get }
+
     func startSession(context: BirdContext)
+    /// Start a session with game tools for personalized responses (iOS 26+ only)
+    func startSession(context: BirdContext, toolContext: GameToolContext)
     func sendMessage(_ text: String) async
     func endSession()
+}
+
+// Default implementations so MockAIService and ClaudeService don't need changes
+extension AIService {
+    var supportsTools: Bool { false }
+
+    func startSession(context: BirdContext, toolContext: GameToolContext) {
+        // Default: ignore tool context, start plain session
+        startSession(context: context)
+    }
 }
 
 /// Which AI provider the user has chosen
