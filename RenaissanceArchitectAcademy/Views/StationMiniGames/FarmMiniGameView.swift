@@ -163,8 +163,7 @@ struct FarmMiniGameView: View {
             withAnimation { phase = .intro }
         } label: {
             HStack(spacing: 14) {
-                Text(material.icon)
-                    .font(.title2)
+                MaterialIconView(material: material, size: 36)
                     .frame(width: 44, height: 44)
                     .background(
                         RoundedRectangle(cornerRadius: CornerRadius.sm)
@@ -491,8 +490,7 @@ struct FarmMiniGameView: View {
 
                     Spacer()
 
-                    Text(selectedMaterial.icon)
-                        .font(.title3)
+                    MaterialIconView(material: selectedMaterial, size: 28)
                 }
                 .padding(Spacing.sm)
                 .background(
@@ -535,7 +533,7 @@ struct FarmMiniGameView: View {
                 onComplete(selectedMaterial, bonusFlorins)
             } label: {
                 HStack(spacing: 8) {
-                    Text(selectedMaterial.icon)
+                    MaterialIconView(material: selectedMaterial, size: 24)
                     Text("Collect \(selectedMaterial.rawValue)")
                         .font(.custom("EBGaramond-SemiBold", size: 16))
                 }

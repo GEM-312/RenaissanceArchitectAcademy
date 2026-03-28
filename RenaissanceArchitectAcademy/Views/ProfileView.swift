@@ -348,8 +348,7 @@ struct MaterialsCard: View {
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 50))], spacing: 6) {
                         ForEach(rawItems, id: \.0) { mat, count in
                             VStack(spacing: 2) {
-                                Text(mat.icon)
-                                    .font(.custom("EBGaramond-Regular", size: 20, relativeTo: .title3))
+                                MaterialIconView(material: mat, size: 24)
                                 Text("\(count)")
                                     .font(.custom("EBGaramond-Regular", size: 11))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)

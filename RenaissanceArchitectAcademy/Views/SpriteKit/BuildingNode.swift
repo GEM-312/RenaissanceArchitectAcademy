@@ -78,7 +78,6 @@ class BuildingNode: SKNode {
                 setupGhostBuilding()
             } else {
                 setupSignpost(isLocked: false)
-                addSignpostSway()
             }
 
         case .sketched:
@@ -98,7 +97,6 @@ class BuildingNode: SKNode {
                 setupBlueprint()
                 setupScaffolding()
                 addStateIcon("StateConstruction")
-                addConstructionAnimation()
             }
 
         case .complete:
@@ -402,7 +400,6 @@ class BuildingNode: SKNode {
         sprite.alpha = 0.5
 
         visualContainer.addChild(sprite)
-        addSpritePulse(sprite)
 
         // Building name label
         labelNode = SKLabelNode(text: buildingName)
@@ -423,17 +420,6 @@ class BuildingNode: SKNode {
             let sprite = SKSpriteNode(texture: texture)
             sprite.size = spriteSize
             visualContainer.addChild(sprite)
-            addSpritePulse(sprite)
-
-            // Shadow underneath building (offset down, slightly squished)
-            let shadowSprite = SKSpriteNode(texture: texture)
-            shadowSprite.size = CGSize(width: spriteSize.width * 1.05, height: spriteSize.height * 0.3)
-            shadowSprite.colorBlendFactor = 1.0
-            shadowSprite.color = .black
-            shadowSprite.alpha = 0.15
-            shadowSprite.position = CGPoint(x: 0, y: -spriteSize.height * 0.4)
-            shadowSprite.zPosition = -1
-            visualContainer.addChild(shadowSprite)
 
             // Building name label
             labelNode = SKLabelNode(text: buildingName)
@@ -456,14 +442,6 @@ class BuildingNode: SKNode {
         building.strokeColor = PlatformColor(RenaissanceColors.sepiaInk)
         building.lineWidth = 2
         visualContainer.addChild(building)
-
-        // Shadow
-        let shadow = SKShapeNode(path: path)
-        shadow.fillColor = PlatformColor(RenaissanceColors.sepiaInk.opacity(0.15))
-        shadow.strokeColor = .clear
-        shadow.position = CGPoint(x: 4, y: -4)
-        shadow.zPosition = -1
-        visualContainer.addChild(shadow)
 
         // Completion glow
         let glow = SKShapeNode(circleOfRadius: 35)
@@ -570,14 +548,7 @@ class BuildingNode: SKNode {
         scaleDown.timingMode = .easeIn
 
         let bounce = SKAction.sequence([scaleUp, scaleDown])
-        visualContainer.run(bounce) { [weak self] in
-            guard let self = self else { return }
-            if self.currentState == .available {
-                self.addSignpostSway()
-            } else if self.currentState == .construction {
-                self.addConstructionAnimation()
-            }
-        }
+        visualContainer.run(bounce)
     }
 
     // MARK: - Tier Badge

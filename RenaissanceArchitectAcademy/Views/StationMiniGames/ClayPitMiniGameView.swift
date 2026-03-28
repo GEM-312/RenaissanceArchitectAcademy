@@ -1278,8 +1278,7 @@ struct ClayPitMiniGameView: View {
 
                     Spacer()
 
-                    Text(Material.clay.icon)
-                        .font(.title3)
+                    MaterialIconView(material: .clay, size: 28)
                 }
                 .padding(Spacing.sm)
                 .background(
@@ -1322,7 +1321,7 @@ struct ClayPitMiniGameView: View {
                 onComplete(.clay, bonusFlorins)
             } label: {
                 HStack(spacing: 8) {
-                    Text(Material.clay.icon)
+                    MaterialIconView(material: .clay, size: 24)
                     Text("Collect Clay")
                         .font(.custom("EBGaramond-SemiBold", size: 16))
                 }

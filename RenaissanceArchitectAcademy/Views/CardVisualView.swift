@@ -6,10 +6,10 @@ import SwiftUI
 struct CardVisualView: View {
     let visual: CardVisual
     let color: Color
-    var containerHeight: CGFloat = 780  // Card height — visual uses 35%
+    var containerHeight: CGFloat = 780
 
-    /// Visual canvas height — 35% of the card container
-    private var visualHeight: CGFloat { containerHeight * 0.35 }
+    /// Visual canvas height — 55% of card for interactive, 35% for legacy
+    private var visualHeight: CGFloat { containerHeight * 0.55 }
 
     @State private var currentStep: Int = 1   // Start at step 1 (not empty step 0)
     @State private var animationPhase: CGFloat = 0

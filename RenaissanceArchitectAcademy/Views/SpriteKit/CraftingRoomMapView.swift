@@ -638,7 +638,7 @@ struct CraftingRoomMapView: View {
                         let count = workshop.rawMaterials[material] ?? 0
                         if count > 0 {
                             HStack(spacing: 3) {
-                                Text(material.icon).font(.caption)
+                                MaterialIconView(material: material, size: 18)
                                 Text("\(count)")
                                     .font(.custom("EBGaramond-Regular", size: 12))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
@@ -762,8 +762,7 @@ struct CraftingRoomMapView: View {
                                     _ = workshop.addToWorkbench(material)
                                 } label: {
                                     VStack(spacing: 2) {
-                                        Text(material.icon)
-                                            .font(.title3)
+                                        MaterialIconView(material: material, size: 32)
                                         Text(material.rawValue)
                                             .font(.custom("EBGaramond-Regular", size: 10))
                                             .foregroundStyle(RenaissanceColors.sepiaInk)
@@ -879,8 +878,7 @@ struct CraftingRoomMapView: View {
                 )
 
             if let material = workshop.workbenchSlots[index] {
-                Text(material.icon)
-                    .font(.title2)
+                MaterialIconView(material: material, size: 32)
             } else {
                 Image(systemName: "plus")
                     .font(.caption)
@@ -937,8 +935,11 @@ struct CraftingRoomMapView: View {
                         VStack(spacing: 4) {
                             HStack(spacing: 4) {
                                 ForEach(Array(input.keys.sorted(by: { $0.rawValue < $1.rawValue })), id: \.self) { material in
-                                    Text("\(material.icon)\u{00D7}\(input[material]!)")
-                                        .font(RenaissanceFont.caption)
+                                    HStack(spacing: 2) {
+                                        MaterialIconView(material: material, size: 16)
+                                        Text("×\(input[material]!)")
+                                            .font(RenaissanceFont.caption)
+                                    }
                                 }
                             }
                             if let recipe = workshop.currentRecipe {
@@ -1127,8 +1128,7 @@ struct CraftingRoomMapView: View {
                                         _ = workshop.addToMortar(material)
                                     } label: {
                                         VStack(spacing: 2) {
-                                            Text(material.icon)
-                                                .font(.body)
+                                            MaterialIconView(material: material, size: 24)
                                             Text("\(count)")
                                                 .font(RenaissanceFont.captionSmall)
                                                 .foregroundStyle(RenaissanceColors.sepiaInk)
@@ -1297,8 +1297,11 @@ struct CraftingRoomMapView: View {
 
             HStack(spacing: 4) {
                 ForEach(Array(recipe.ingredients.keys.sorted(by: { $0.rawValue < $1.rawValue })), id: \.self) { material in
-                    Text("\(material.icon)\u{00D7}\(recipe.ingredients[material]!)")
-                        .font(.custom("EBGaramond-Regular", size: 12))
+                    HStack(spacing: 2) {
+                        MaterialIconView(material: material, size: 16)
+                        Text("×\(recipe.ingredients[material]!)")
+                            .font(.custom("EBGaramond-Regular", size: 12))
+                    }
                 }
             }
             .foregroundStyle(RenaissanceColors.sepiaInk)
@@ -1358,8 +1361,7 @@ struct CraftingRoomMapView: View {
                             ForEach(materialsWithStock) { material in
                                 let count = workshop.rawMaterials[material] ?? 0
                                 VStack(spacing: 2) {
-                                    Text(material.icon)
-                                        .font(.title3)
+                                    MaterialIconView(material: material, size: 28)
                                     Text(material.rawValue)
                                         .font(.custom("EBGaramond-Regular", size: 9))
                                         .foregroundStyle(RenaissanceColors.sepiaInk)

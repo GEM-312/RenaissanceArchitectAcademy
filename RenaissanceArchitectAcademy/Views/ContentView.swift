@@ -84,6 +84,52 @@ struct ContentView: View {
                 // Full-width detail view — no sidebar
                 detailView
             }
+            #if DEBUG
+            // Visual Editor — toggle button (top-right) + bottom panel
+            if VisualEditorState.shared.isActive {
+                VStack {
+                    HStack {
+                        Spacer()
+                        Button {
+                            VisualEditorState.shared.toggle()
+                        } label: {
+                            EditorBadge()
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.top, 4)
+
+                    Spacer()
+
+                    if VisualEditorState.shared.selectedId != nil {
+                        EditorBottomPanel()
+                            .frame(maxHeight: 300)
+                    }
+                }
+            } else {
+                // Small toggle button when editor is off
+                VStack {
+                    HStack {
+                        Spacer()
+                        Button {
+                            VisualEditorState.shared.toggle()
+                        } label: {
+                            Text("EDITOR")
+                                .font(.system(size: 8, weight: .bold, design: .monospaced))
+                                .foregroundStyle(.white.opacity(0.7))
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 3)
+                                .background(Capsule().fill(.black.opacity(0.25)))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.top, 4)
+                    Spacer()
+                }
+            }
+            #endif
         }
         .environment(\.gameSettings, gameSettings)
         .onAppear {

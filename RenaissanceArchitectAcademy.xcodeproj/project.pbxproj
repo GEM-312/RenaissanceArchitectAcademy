@@ -145,6 +145,9 @@
 		0FB /* GameTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB /* GameTools.swift */; };
 		0FD /* NPCDialogueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD /* NPCDialogueView.swift */; };
 		0FE /* NPCEncounterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE /* NPCEncounterManager.swift */; };
+		2A0 /* VisualEditorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0 /* VisualEditorState.swift */; };
+		2A1 /* EditableModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1 /* EditableModifier.swift */; };
+		2A2 /* EditorBottomPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A2 /* EditorBottomPanel.swift */; };
 		543AD36B2F60C199001895ED /* card_flip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 183 /* card_flip.mp3 */; };
 		543AD36C2F60C199001895ED /* GirlIntroAudio.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 182 /* GirlIntroAudio.m4a */; };
 		544299832F32E0F700F92073 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = 544299822F32E0F700F92073 /* Pow */; };
@@ -217,6 +220,9 @@
 		110 /* RenaissanceButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenaissanceButton.swift; sourceTree = "<group>"; };
 		111 /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
 		115 /* SoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
+		3A0 /* VisualEditorState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEditorState.swift; sourceTree = "<group>"; };
+		3A1 /* EditableModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableModifier.swift; sourceTree = "<group>"; };
+		3A2 /* EditorBottomPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorBottomPanel.swift; sourceTree = "<group>"; };
 		116 /* BloomEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BloomEffectView.swift; sourceTree = "<group>"; };
 		117 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		118 /* StudentProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentProfile.swift; sourceTree = "<group>"; };
@@ -518,6 +524,8 @@
 				1E9 /* DiscoveryCardOverlay.swift */,
 				1EB /* CardVisualView.swift */,
 				1FD /* NPCDialogueView.swift */,
+				3A1 /* EditableModifier.swift */,
+				3A2 /* EditorBottomPanel.swift */,
 				308 /* Sketching */,
 				309 /* Onboarding */,
 				310 /* StationMiniGames */,
@@ -612,6 +620,7 @@
 				1F9 /* GenerationService.swift */,
 				1FB /* GameTools.swift */,
 				1FE /* NPCEncounterManager.swift */,
+				3A0 /* VisualEditorState.swift */,
 				306 /* Styles */,
 			);
 			path = Services;
@@ -968,6 +977,9 @@
 				0E9 /* DiscoveryCardOverlay.swift in Sources */,
 				0EA /* TerrainBlurHelper.swift in Sources */,
 				0EB /* CardVisualView.swift in Sources */,
+				2A0 /* VisualEditorState.swift in Sources */,
+				2A1 /* EditableModifier.swift in Sources */,
+				2A2 /* EditorBottomPanel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

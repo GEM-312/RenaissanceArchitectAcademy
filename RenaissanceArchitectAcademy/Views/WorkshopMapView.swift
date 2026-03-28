@@ -1263,8 +1263,7 @@ struct WorkshopMapView: View {
                         let count = workshop.rawMaterials[material] ?? 0
                         if count > 0 {
                             HStack(spacing: 3) {
-                                Text(material.icon)
-                                    .font(.caption)
+                                MaterialIconView(material: material, size: 20)
                                 Text("\(count)")
                                     .font(.custom("EBGaramond-Regular", size: 12))
                                     .foregroundStyle(settings.cardTextColor)
@@ -1645,8 +1644,7 @@ struct WorkshopMapView: View {
                             }
                         } label: {
                             VStack(spacing: 4) {
-                                Text(material.icon)
-                                    .font(.title2)
+                                MaterialIconView(material: material, size: 40)
                                 Text(material.rawValue)
                                     .font(RenaissanceFont.body)
                                     .foregroundStyle(settings.cardTextColor)
@@ -1699,6 +1697,7 @@ struct WorkshopMapView: View {
 
     private var marketOverlayContent: some View {
         VStack(spacing: 8) {
+            EmptyView().editable("market-overlay")
             // Florins display
             if let vm = viewModel {
                 HStack(spacing: 4) {
@@ -1775,8 +1774,7 @@ struct WorkshopMapView: View {
                     }
                 } label: {
                     VStack(spacing: 2) {
-                        Text(material.icon)
-                            .font(.title2)
+                        MaterialIconView(material: material, size: 36)
                         Text(material.rawValue)
                             .font(.custom("EBGaramond-Regular", size: 10))
                             .foregroundStyle(settings.cardTextColor)
@@ -1801,6 +1799,7 @@ struct WorkshopMapView: View {
                         RoundedRectangle(cornerRadius: CornerRadius.sm)
                             .strokeBorder(canAfford ? settings.cardBorderColor : RenaissanceColors.stoneGray.opacity(0.3), lineWidth: 1)
                     )
+                    .editable("market-material-\(material.rawValue)", paddingH: 6)
                 }
             }
         }
@@ -1926,8 +1925,7 @@ struct WorkshopMapView: View {
                                     _ = workshop.addToWorkbench(material)
                                 } label: {
                                     VStack(spacing: 2) {
-                                        Text(material.icon)
-                                            .font(.title3)
+                                        MaterialIconView(material: material, size: 28)
                                         Text("×\(count)")
                                             .font(RenaissanceFont.captionSmall)
                                             .foregroundStyle(RenaissanceColors.sepiaInk)
@@ -2019,8 +2017,7 @@ struct WorkshopMapView: View {
                 )
 
             if let material = workshop.workbenchSlots[index] {
-                Text(material.icon)
-                    .font(.title2)
+                MaterialIconView(material: material, size: 32)
             } else {
                 Image(systemName: "plus")
                     .font(.caption)
@@ -2063,8 +2060,11 @@ struct WorkshopMapView: View {
                         VStack(spacing: 4) {
                             HStack(spacing: 4) {
                                 ForEach(Array(input.keys.sorted(by: { $0.rawValue < $1.rawValue })), id: \.self) { material in
-                                    Text("\(material.icon)×\(input[material]!)")
-                                        .font(RenaissanceFont.caption)
+                                    HStack(spacing: 2) {
+                                        MaterialIconView(material: material, size: 16)
+                                        Text("×\(input[material]!)")
+                                            .font(RenaissanceFont.caption)
+                                    }
                                 }
                             }
                             if let recipe = workshop.currentRecipe {
@@ -2376,8 +2376,7 @@ struct WorkshopMapView: View {
                             let needed = p?.needed ?? job.requirements[material] ?? 0
                             let done = collected >= needed
                             HStack(spacing: 2) {
-                                Text(material.icon)
-                                    .font(.caption2)
+                                MaterialIconView(material: material, size: 16)
                                 Text("\(collected)/\(needed)")
                                     .font(RenaissanceFont.captionSmall)
                                     .foregroundStyle(done ? RenaissanceColors.sageGreen : RenaissanceColors.sepiaInk)
@@ -2567,8 +2566,7 @@ struct WorkshopMapView: View {
                 HStack(spacing: 8) {
                     ForEach(Array(job.requirements.keys.sorted(by: { $0.rawValue < $1.rawValue })), id: \.self) { material in
                         HStack(spacing: 2) {
-                            Text(material.icon)
-                                .font(.caption2)
+                            MaterialIconView(material: material, size: 16)
                             Text("×\(job.requirements[material]!)")
                                 .font(.custom("EBGaramond-Regular", size: 12))
                                 .foregroundStyle(RenaissanceColors.sepiaInk)

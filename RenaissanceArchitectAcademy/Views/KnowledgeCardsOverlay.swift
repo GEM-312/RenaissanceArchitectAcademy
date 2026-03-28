@@ -528,6 +528,7 @@ struct KnowledgeCardsOverlay: View {
             .padding(.top, Spacing.sm)
             .padding(.bottom, 6)
             .padding(.horizontal, Spacing.xxs)
+            .editable("card-header", fontSize: 16)
 
             Rectangle()
                 .fill(color.opacity(0.2))
@@ -564,26 +565,27 @@ struct KnowledgeCardsOverlay: View {
     private func readingContent(card: KnowledgeCard, isCompleted: Bool) -> some View {
         VStack(spacing: 0) {
             // Keyword circles
-            HStack(spacing: 10) {
+            HStack(spacing: Spacing.md) {
                 ForEach(card.keywords.prefix(4)) { pair in
-                    VStack(spacing: 3) {
+                    VStack(spacing: 4) {
                         Circle()
                             .fill(card.color.opacity(0.1))
-                            .frame(width: 36, height: 36)
+                            .frame(width: 40, height: 40)
                             .overlay(
                                 Image(systemName: card.icon)
-                                    .font(.system(size: 14))
+                                    .font(.system(size: 15))
                                     .foregroundStyle(card.color.opacity(0.5))
                             )
                         Text(pair.keyword)
-                            .font(.custom("EBGaramond-SemiBold", size: 9))
+                            .font(.custom("EBGaramond-SemiBold", size: 10))
                             .foregroundStyle(card.color)
                             .lineLimit(1)
                     }
                 }
             }
-            .padding(.vertical, Spacing.xs)
+            .padding(.vertical, Spacing.sm)
             .opacity(showFlippedContent ? 1 : 0)
+            .editable("keyword-circles", fontSize: 10)
 
             Rectangle()
                 .fill(card.color.opacity(0.1))
@@ -598,11 +600,13 @@ struct KnowledgeCardsOverlay: View {
                         .lineSpacing(6)
                         .padding(.top, Spacing.xs)
                         .opacity(animateFlippedStory ? 1 : 0)
+                        .editable("lesson-text", paddingV: Spacing.xs)
 
                     // Interactive science visual
                     if let visual = card.visual {
                         CardVisualView(visual: visual, color: card.color, containerHeight: flippedH)
                             .opacity(animateFlippedStory ? 1 : 0)
+                            .editable("card-visual", height: flippedH * 0.35)
                     }
 
                     // Fun fact lightbulb callout
@@ -622,6 +626,7 @@ struct KnowledgeCardsOverlay: View {
                                 .fill(card.color.opacity(0.08))
                         )
                         .opacity(animateFlippedStory ? 1 : 0)
+                        .editable("fun-fact", fontSize: 15, cornerRadius: 10)
                     }
                 }
             }
@@ -643,6 +648,7 @@ struct KnowledgeCardsOverlay: View {
                 }
                 .buttonStyle(.plain)
                 .opacity(animateFlippedStory ? 1 : 0)
+                .editable("done-button", cornerRadius: 9)
             }
         }
     }

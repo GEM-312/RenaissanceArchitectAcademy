@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Interactive science visuals for Pantheon knowledge cards
-/// Replaces passive Canvas drawings with drag/tap/slider interactions
+/// Each visual teaches with labeled dimension lines, formulas, and step-by-step progression
 struct PantheonInteractiveVisuals {
 
     /// Returns an interactive view for a Pantheon card visual, or nil if not yet implemented
@@ -63,6 +63,7 @@ struct PantheonInteractiveVisuals {
 private let gridColor = Color.brown.opacity(0.06)
 private let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
 private let waterBlue = Color(red: 0.35, green: 0.55, blue: 0.75)
+private let dimColor = Color(red: 0.7, green: 0.35, blue: 0.25)
 
 private struct VisualTitle: View {
     let text: String
@@ -72,16 +73,6 @@ private struct VisualTitle: View {
             .font(.custom("Cinzel-Bold", size: 12))
             .tracking(1)
             .foregroundStyle(color)
-    }
-}
-
-private struct VisualCaption: View {
-    let text: String
-    var body: some View {
-        Text(text)
-            .font(.custom("EBGaramond-Italic", size: 13))
-            .foregroundStyle(sepiaInk.opacity(0.6))
-            .multilineTextAlignment(.center)
     }
 }
 
@@ -105,17 +96,20 @@ private struct PantheonBlueprintGrid: View {
     }
 }
 
-private struct VisualContainer<Content: View>: View {
+// MARK: - Teaching Container
+
+private struct TeachingContainer<Content: View>: View {
     let title: String
     let color: Color
-    let caption: String?
+    let totalSteps: Int
+    @Binding var step: Int
+    let stepLabel: String
     var height: CGFloat = 275
     @ViewBuilder let content: () -> Content
 
     var body: some View {
-        VStack(spacing: 6) {
-            VisualTitle(text: title, color: color)
-
+        ZStack(alignment: .bottom) {
+            // Full-size canvas
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(RenaissanceColors.parchment)
@@ -123,814 +117,1774 @@ private struct VisualContainer<Content: View>: View {
                     .strokeBorder(color.opacity(0.2), lineWidth: 1)
                 PantheonBlueprintGrid()
                 content()
-                    .padding(12)
+                    .padding(.horizontal, 10)
+                    .padding(.top, 8)
+                    .padding(.bottom, 42)
             }
-            .frame(height: height)
             .clipShape(RoundedRectangle(cornerRadius: 10))
 
-            if let caption = caption {
-                VisualCaption(text: caption)
+            // Step controls + label overlaid at bottom
+            VStack(spacing: 2) {
+                StepControls(totalSteps: totalSteps, currentStep: $step, color: color)
+                    .padding(.horizontal, 8)
+                Text(stepLabel)
+                    .font(.custom("EBGaramond-Regular", size: 10))
+                    .foregroundStyle(sepiaInk.opacity(0.7))
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .padding(.horizontal, 12)
             }
+            .padding(.bottom, 4)
+            .background(
+                LinearGradient(colors: [RenaissanceColors.parchment.opacity(0), RenaissanceColors.parchment],
+                               startPoint: .top, endPoint: .bottom)
+                    .frame(height: 50)
+                    .offset(y: -10)
+            )
         }
+        .frame(height: height)
     }
 }
 
-// MARK: - 1. Columns Count (Tap to count columns)
-
-private struct ColumnsCountVisual: View {
-    let visual: CardVisual
+private struct StepControls: View {
+    let totalSteps: Int
+    @Binding var currentStep: Int
     let color: Color
-    var height: CGFloat = 275
-    @State private var tappedColumns: Set<Int> = []
 
     var body: some View {
-        VisualContainer(title: visual.title, color: color, caption: visual.caption, height: height) {
-            VStack(spacing: 8) {
-                // Pediment
-                PantheonTriangle()
-                    .fill(color.opacity(0.08))
-                    .stroke(sepiaInk.opacity(0.5), lineWidth: 1.5)
-                    .frame(height: 30)
-                    .padding(.horizontal, 20)
-
-                // Entablature
-                Rectangle()
-                    .fill(sepiaInk.opacity(0.12))
-                    .frame(height: 6)
-                    .padding(.horizontal, 14)
-
-                // 8 columns (representing 16 — tap to count)
-                HStack(spacing: 6) {
-                    ForEach(0..<8, id: \.self) { i in
-                        VStack(spacing: 0) {
-                            // Capital
-                            Rectangle()
-                                .fill(sepiaInk.opacity(0.15))
-                                .frame(width: 16, height: 5)
-                            // Shaft
-                            Rectangle()
-                                .fill(tappedColumns.contains(i) ? color.opacity(0.3) : sepiaInk.opacity(0.08))
-                                .frame(width: 8, height: 80)
-                                .overlay(
-                                    Rectangle().stroke(
-                                        tappedColumns.contains(i) ? color : sepiaInk.opacity(0.4),
-                                        lineWidth: tappedColumns.contains(i) ? 2 : 1
-                                    )
-                                )
-                            // Base
-                            Rectangle()
-                                .fill(sepiaInk.opacity(0.1))
-                                .frame(width: 16, height: 4)
-                        }
-                        .onTapGesture {
-                            withAnimation(.easeOut(duration: 0.2)) {
-                                if tappedColumns.contains(i) {
-                                    tappedColumns.remove(i)
-                                } else {
-                                    tappedColumns.insert(i)
-                                }
-                            }
-                            SoundManager.shared.play(.tapSoft)
-                        }
+        HStack(spacing: 4) {
+            if currentStep > 1 {
+                Button {
+                    withAnimation(.easeInOut(duration: 0.3)) { currentStep -= 1 }
+                    SoundManager.shared.play(.tapSoft)
+                } label: {
+                    HStack(spacing: 2) {
+                        Image(systemName: "chevron.left").font(.system(size: 9))
+                        Text("Back").font(.custom("EBGaramond-Regular", size: 11))
                     }
+                    .foregroundStyle(color.opacity(0.6))
                 }
-
-                // Floor line
-                Rectangle()
-                    .fill(sepiaInk.opacity(0.3))
-                    .frame(height: 1)
-
-                // Counter
-                HStack(spacing: 4) {
-                    Text("Tapped: \(tappedColumns.count) × 2 = \(tappedColumns.count * 2) columns")
-                        .font(.custom("EBGaramond-SemiBold", size: 12))
-                        .foregroundStyle(tappedColumns.count == 8 ? RenaissanceColors.sageGreen : color)
-
-                    if tappedColumns.count == 8 {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundStyle(RenaissanceColors.sageGreen)
-                            .font(.system(size: 14))
+                .buttonStyle(.plain)
+            } else {
+                Spacer().frame(width: 40)
+            }
+            Spacer()
+            ForEach(1...totalSteps, id: \.self) { s in
+                Circle()
+                    .fill(s <= currentStep ? color : color.opacity(0.2))
+                    .frame(width: 5, height: 5)
+            }
+            Spacer()
+            if currentStep < totalSteps {
+                Button {
+                    withAnimation(.easeInOut(duration: 0.3)) { currentStep += 1 }
+                    SoundManager.shared.play(.tapSoft)
+                } label: {
+                    HStack(spacing: 2) {
+                        Text("Next").font(.custom("EBGaramond-Regular", size: 11))
+                        Image(systemName: "chevron.right").font(.system(size: 9))
                     }
+                    .foregroundStyle(color)
                 }
-                .padding(.top, 2)
-
-                Text("Tap each column to count — 8 visible × 2 rows = 16 total")
-                    .font(.custom("EBGaramond-Italic", size: 10))
-                    .foregroundStyle(sepiaInk.opacity(0.5))
+                .buttonStyle(.plain)
+            } else {
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundStyle(RenaissanceColors.sageGreen)
+                    .font(.system(size: 14))
             }
         }
     }
 }
 
-private struct PantheonTriangle: Shape {
+// MARK: - Shared Helpers
+
+private struct DimLabel: View {
+    let text: String
+    var fontSize: CGFloat = 11
+    var body: some View {
+        Text(text)
+            .font(.custom("EBGaramond-SemiBold", size: fontSize))
+            .foregroundStyle(dimColor)
+    }
+}
+
+private struct FormulaText: View {
+    let text: String
+    var highlighted: Bool = false
+    var fontSize: CGFloat = 14
+    var body: some View {
+        Text(text)
+            .font(.custom("EBGaramond-Bold", size: fontSize))
+            .foregroundStyle(highlighted ? RenaissanceColors.sageGreen : sepiaInk)
+    }
+}
+
+/// Draws a dimension line with end ticks
+private struct DimLine: Shape {
+    let from: CGPoint
+    let to: CGPoint
+    let tickSize: CGFloat
+    init(from: CGPoint, to: CGPoint, tickSize: CGFloat = 3) {
+        self.from = from; self.to = to; self.tickSize = tickSize
+    }
     func path(in rect: CGRect) -> Path {
         Path { p in
-            p.move(to: CGPoint(x: rect.midX, y: rect.minY))
-            p.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
-            p.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
-            p.closeSubpath()
+            p.move(to: from)
+            p.addLine(to: to)
+            let horiz = abs(to.y - from.y) < abs(to.x - from.x)
+            if horiz {
+                p.move(to: CGPoint(x: from.x, y: from.y - tickSize))
+                p.addLine(to: CGPoint(x: from.x, y: from.y + tickSize))
+                p.move(to: CGPoint(x: to.x, y: to.y - tickSize))
+                p.addLine(to: CGPoint(x: to.x, y: to.y + tickSize))
+            } else {
+                p.move(to: CGPoint(x: from.x - tickSize, y: from.y))
+                p.addLine(to: CGPoint(x: from.x + tickSize, y: from.y))
+                p.move(to: CGPoint(x: to.x - tickSize, y: to.y))
+                p.addLine(to: CGPoint(x: to.x + tickSize, y: to.y))
+            }
         }
     }
 }
 
-// MARK: - 2. Ring Foundation (Tap to dig layers)
+// MARK: - 1. Columns — 16 × 12m × 60t = 960 tons
+
+private struct ColumnsCountVisual: View {
+    let visual: CardVisual; let color: Color; var height: CGFloat = 275
+    @State private var step: Int = 1
+    private var label: String {
+        switch step {
+        case 1: return "A portico of granite columns guards the entrance."
+        case 2: return "Each column: 12m tall, 1.5m diameter — quarried in Egypt."
+        case 3: return "Each column carries 60 tons of the portico roof."
+        default: return "16 × 60 = 960 tons. The portico alone outweighs most buildings."
+        }
+    }
+    var body: some View {
+        TeachingContainer(title: visual.title, color: color, totalSteps: 4, step: $step, stepLabel: label, height: height) {
+            GeometryReader { geo in
+                let w = geo.size.width; let h = geo.size.height
+                let baseY = h * 0.85; let topY = h * 0.12
+                let colW: CGFloat = 10; let colCount = 8
+                let spacing = (w - 60) / CGFloat(colCount - 1)
+                let startX: CGFloat = 30
+
+                ZStack {
+                    // Pediment
+                    Path { p in
+                        p.move(to: CGPoint(x: w / 2, y: topY - 15))
+                        p.addLine(to: CGPoint(x: startX - 10, y: topY))
+                        p.addLine(to: CGPoint(x: startX + spacing * CGFloat(colCount - 1) + 10, y: topY))
+                        p.closeSubpath()
+                    }
+                    .fill(color.opacity(0.06))
+                    .stroke(sepiaInk.opacity(0.3), lineWidth: 1)
+
+                    // Entablature
+                    Rectangle()
+                        .fill(sepiaInk.opacity(0.08))
+                        .frame(width: w - 40, height: 5)
+                        .position(x: w / 2, y: topY + 2)
+
+                    // Columns
+                    ForEach(0..<colCount, id: \.self) { i in
+                        let cx = startX + spacing * CGFloat(i)
+                        Rectangle()
+                            .fill(sepiaInk.opacity(0.08))
+                            .overlay(Rectangle().stroke(sepiaInk.opacity(0.4), lineWidth: 1))
+                            .frame(width: colW, height: baseY - topY - 6)
+                            .position(x: cx, y: (topY + 6 + baseY) / 2)
+                    }
+
+                    // Floor
+                    Path { p in
+                        p.move(to: CGPoint(x: 10, y: baseY))
+                        p.addLine(to: CGPoint(x: w - 10, y: baseY))
+                    }
+                    .stroke(sepiaInk.opacity(0.3), lineWidth: 1.5)
+
+                    // Step 2: dimension lines
+                    if step >= 2 {
+                        let dimX = startX + spacing * CGFloat(colCount - 1) + 20
+                        DimLine(from: CGPoint(x: dimX, y: topY + 6), to: CGPoint(x: dimX, y: baseY))
+                            .stroke(dimColor, lineWidth: 1)
+                        DimLabel(text: "12m")
+                            .position(x: dimX + 16, y: (topY + 6 + baseY) / 2)
+
+                        DimLine(from: CGPoint(x: startX - colW / 2, y: baseY + 8),
+                                to: CGPoint(x: startX + colW / 2, y: baseY + 8))
+                            .stroke(dimColor, lineWidth: 1)
+                        DimLabel(text: "1.5m", fontSize: 9)
+                            .position(x: startX, y: baseY + 18)
+                    }
+
+                    // Step 3: force arrows + weight
+                    if step >= 3 {
+                        ForEach(0..<colCount, id: \.self) { i in
+                            let cx = startX + spacing * CGFloat(i)
+                            Image(systemName: "arrow.down")
+                                .font(.system(size: 8, weight: .bold))
+                                .foregroundStyle(Color.red.opacity(0.5))
+                                .position(x: cx, y: topY + 14)
+                        }
+                        Text("60t each")
+                            .font(.custom("EBGaramond-SemiBold", size: 10))
+                            .foregroundStyle(Color.red.opacity(0.6))
+                            .position(x: w / 2, y: topY + 24)
+                    }
+
+                    // Step 4: formula
+                    if step >= 4 {
+                        FormulaText(text: "16 × 60t = 960 tons", highlighted: true, fontSize: 13)
+                            .position(x: w / 2, y: baseY - 12)
+                    }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - 2. Foundation — 4.5m deep, 7.3m wide ring
 
 private struct LayerDigVisual: View {
-    let visual: CardVisual
-    let color: Color
-    var height: CGFloat = 275
-    @State private var revealedLayers: Int = 0
-
-    private let layers = [
-        ("Ground surface", Color.brown.opacity(0.3)),
-        ("Soft Roman clay", Color(red: 0.7, green: 0.55, blue: 0.35)),
-        ("Trench dug 4.5m", Color(red: 0.5, green: 0.4, blue: 0.3)),
-        ("Concrete ring (7.3m wide)", Color(red: 0.6, green: 0.6, blue: 0.6)),
-    ]
-
+    let visual: CardVisual; let color: Color; var height: CGFloat = 275
+    @State private var step: Int = 1
+    private var label: String {
+        switch step {
+        case 1: return "Construction begins at ground level."
+        case 2: return "Dig a circular trench 4.5m deep into soft Roman clay."
+        case 3: return "Fill with a 7.3m wide concrete ring — the hidden foundation."
+        default: return "The ring distributes the dome's weight evenly into the earth."
+        }
+    }
     var body: some View {
-        VisualContainer(title: visual.title, color: color, caption: visual.caption, height: height) {
-            VStack(spacing: 0) {
-                // Layers stack
-                ForEach(0..<layers.count, id: \.self) { i in
-                    let (name, layerColor) = layers[i]
-                    let revealed = i < revealedLayers
+        TeachingContainer(title: visual.title, color: color, totalSteps: 4, step: $step, stepLabel: label, height: height) {
+            GeometryReader { geo in
+                let w = geo.size.width; let h = geo.size.height
+                let groundY = h * 0.25
+                let trenchBottom = h * 0.78
+                let ringW = w * 0.55
+                let ringH: CGFloat = 20
 
-                    ZStack {
+                ZStack {
+                    // Ground surface
+                    Path { p in
+                        p.move(to: CGPoint(x: 10, y: groundY))
+                        p.addLine(to: CGPoint(x: w - 10, y: groundY))
+                    }
+                    .stroke(Color.brown.opacity(0.5), lineWidth: 2)
+                    Text("Ground level")
+                        .font(.custom("EBGaramond-Italic", size: 9))
+                        .foregroundStyle(sepiaInk.opacity(0.4))
+                        .position(x: w * 0.8, y: groundY - 8)
+
+                    // Step 2: trench
+                    if step >= 2 {
+                        // Trench walls
+                        let trenchL = (w - ringW) / 2
+                        let trenchR = trenchL + ringW
+                        Path { p in
+                            p.move(to: CGPoint(x: trenchL, y: groundY))
+                            p.addLine(to: CGPoint(x: trenchL, y: trenchBottom))
+                            p.addLine(to: CGPoint(x: trenchR, y: trenchBottom))
+                            p.addLine(to: CGPoint(x: trenchR, y: groundY))
+                        }
+                        .stroke(sepiaInk.opacity(0.4), lineWidth: 1.5)
+
+                        // Clay fill
                         Rectangle()
-                            .fill(revealed ? layerColor : sepiaInk.opacity(0.04))
-                            .overlay(
-                                Rectangle().stroke(sepiaInk.opacity(revealed ? 0.3 : 0.08), lineWidth: 1)
-                            )
+                            .fill(Color(red: 0.7, green: 0.55, blue: 0.35).opacity(0.15))
+                            .frame(width: ringW, height: trenchBottom - groundY)
+                            .position(x: w / 2, y: (groundY + trenchBottom) / 2)
 
-                        if revealed {
-                            HStack {
-                                Text(name)
-                                    .font(.custom("EBGaramond-SemiBold", size: 11))
-                                    .foregroundStyle(.white)
-                                    .shadow(color: .black.opacity(0.5), radius: 2)
-                                Spacer()
-                                if i == 3 {
-                                    Text("7.3m")
-                                        .font(.custom("EBGaramond-Bold", size: 12))
-                                        .foregroundStyle(color)
-                                        .shadow(color: .black.opacity(0.3), radius: 1)
-                                }
-                            }
-                            .padding(.horizontal, 8)
-                        } else {
-                            HStack {
-                                Image(systemName: "hand.tap.fill")
-                                    .font(.system(size: 14))
-                                    .foregroundStyle(sepiaInk.opacity(0.2))
-                                Text("Tap to dig")
-                                    .font(.custom("EBGaramond-Italic", size: 11))
-                                    .foregroundStyle(sepiaInk.opacity(0.3))
-                            }
-                        }
+                        Text("Soft clay")
+                            .font(.custom("EBGaramond-Italic", size: 9))
+                            .foregroundStyle(sepiaInk.opacity(0.4))
+                            .position(x: w / 2, y: (groundY + trenchBottom) / 2)
+
+                        // Depth dimension
+                        DimLine(from: CGPoint(x: w - 20, y: groundY), to: CGPoint(x: w - 20, y: trenchBottom))
+                            .stroke(dimColor, lineWidth: 1)
+                        DimLabel(text: "4.5m")
+                            .position(x: w - 8, y: (groundY + trenchBottom) / 2)
                     }
-                    .frame(height: 42)
-                    .onTapGesture {
-                        if i == revealedLayers {
-                            withAnimation(.spring(response: 0.3)) {
-                                revealedLayers += 1
-                            }
-                            SoundManager.shared.play(.tapSoft)
+
+                    // Step 3: concrete ring
+                    if step >= 3 {
+                        let trenchL = (w - ringW) / 2
+                        RoundedRectangle(cornerRadius: 3)
+                            .fill(Color.gray.opacity(0.35))
+                            .overlay(RoundedRectangle(cornerRadius: 3).stroke(sepiaInk.opacity(0.5), lineWidth: 1.5))
+                            .frame(width: ringW, height: ringH)
+                            .position(x: w / 2, y: trenchBottom - ringH / 2)
+
+                        Text("Concrete ring")
+                            .font(.custom("EBGaramond-SemiBold", size: 9))
+                            .foregroundStyle(.white)
+                            .shadow(color: .black.opacity(0.5), radius: 1)
+                            .position(x: w / 2, y: trenchBottom - ringH / 2)
+
+                        // Width dimension
+                        DimLine(from: CGPoint(x: trenchL, y: trenchBottom + 8),
+                                to: CGPoint(x: trenchL + ringW, y: trenchBottom + 8))
+                            .stroke(dimColor, lineWidth: 1)
+                        DimLabel(text: "7.3m")
+                            .position(x: w / 2, y: trenchBottom + 18)
+                    }
+
+                    // Step 4: load arrows
+                    if step >= 4 {
+                        ForEach([0.3, 0.4, 0.5, 0.6, 0.7], id: \.self) { frac in
+                            Image(systemName: "arrow.down")
+                                .font(.system(size: 8, weight: .bold))
+                                .foregroundStyle(Color.red.opacity(0.4))
+                                .position(x: w * frac, y: groundY - 16)
                         }
+                        Text("Dome weight distributed →")
+                            .font(.custom("EBGaramond-Italic", size: 9))
+                            .foregroundStyle(Color.red.opacity(0.5))
+                            .position(x: w / 2, y: groundY - 26)
                     }
                 }
-
-                // Depth dimension
-                HStack {
-                    Spacer()
-                    Text("Depth: \(String(format: "%.1f", 4.5 * Double(min(revealedLayers, 4)) / 4.0))m")
-                        .font(.custom("EBGaramond-SemiBold", size: 12))
-                        .foregroundStyle(color)
-                }
-                .padding(.top, 4)
             }
         }
     }
 }
 
-// MARK: - 3. Rotunda Walls (Cross-section showing 6m walls + 8 piers + dome)
+// MARK: - 3. Rotunda — Height = Diameter = 43.3m, sphere fits inside
 
 private struct SphereSliderVisual: View {
-    let visual: CardVisual
-    let color: Color
-    var height: CGFloat = 275
-    @State private var revealedPiers: Int = 0
-    @State private var showDome = false
-
+    let visual: CardVisual; let color: Color; var height: CGFloat = 275
+    @State private var step: Int = 1
+    private var label: String {
+        switch step {
+        case 1: return "The rotunda walls define the cylinder: 43.3m tall."
+        case 2: return "The diameter is also 43.3m — height equals width."
+        case 3: return "Because height = diameter, a perfect sphere fits exactly inside."
+        default: return "6m-thick walls contain hidden arches channeling weight to 8 piers."
+        }
+    }
     var body: some View {
-        VisualContainer(title: "Cross-Section: 6m Walls with 8 Piers", color: color, caption: visual.caption, height: height) {
-            VStack(spacing: 6) {
-                GeometryReader { geo in
-                    let w = geo.size.width
-                    let h = geo.size.height
-                    let centerX = w / 2
-                    let baseY = h * 0.82
-                    let wallH = h * 0.55
-                    let wallW: CGFloat = 24   // 6m thick walls (visual width)
-                    let innerW = w * 0.55      // Interior space
-                    let domeH = wallH * 0.7
+        TeachingContainer(title: visual.title, color: color, totalSteps: 4, step: $step, stepLabel: label, height: height) {
+            GeometryReader { geo in
+                let w = geo.size.width; let h = geo.size.height
+                let cx = w / 2
+                let baseY = h * 0.88
+                let wallW: CGFloat = 16
+                let innerW = w * 0.52
+                let wallH = h * 0.72
 
-                    ZStack {
-                        // Floor line
-                        Path { p in
-                            p.move(to: CGPoint(x: centerX - innerW / 2 - wallW - 10, y: baseY))
-                            p.addLine(to: CGPoint(x: centerX + innerW / 2 + wallW + 10, y: baseY))
-                        }
-                        .stroke(sepiaInk.opacity(0.3), lineWidth: 1.5)
-
-                        // Left wall (6m thick)
-                        Rectangle()
-                            .fill(color.opacity(0.15))
-                            .frame(width: wallW, height: wallH)
-                            .overlay(Rectangle().stroke(sepiaInk.opacity(0.5), lineWidth: 1.5))
-                            .position(x: centerX - innerW / 2 - wallW / 2, y: baseY - wallH / 2)
-
-                        // Right wall (6m thick)
-                        Rectangle()
-                            .fill(color.opacity(0.15))
-                            .frame(width: wallW, height: wallH)
-                            .overlay(Rectangle().stroke(sepiaInk.opacity(0.5), lineWidth: 1.5))
-                            .position(x: centerX + innerW / 2 + wallW / 2, y: baseY - wallH / 2)
-
-                        // "6m" wall thickness labels
-                        Text("6m")
-                            .font(.custom("EBGaramond-Bold", size: 13))
-                            .foregroundStyle(color)
-                            .position(x: centerX - innerW / 2 - wallW / 2, y: baseY - wallH - 8)
-                        Text("6m")
-                            .font(.custom("EBGaramond-Bold", size: 13))
-                            .foregroundStyle(color)
-                            .position(x: centerX + innerW / 2 + wallW / 2, y: baseY - wallH - 8)
-
-                        // 8 Piers (tap to reveal) — shown as thick vertical bars inside the walls
-                        let pierCount = 8
-                        let pierSpacing = innerW / CGFloat(pierCount + 1)
-                        ForEach(0..<pierCount, id: \.self) { i in
-                            let pierX = centerX - innerW / 2 + pierSpacing * CGFloat(i + 1)
-                            let revealed = i < revealedPiers
-
-                            Rectangle()
-                                .fill(revealed ? color.opacity(0.25) : sepiaInk.opacity(0.04))
-                                .frame(width: 10, height: wallH * 0.8)
-                                .overlay(
-                                    Rectangle().stroke(
-                                        revealed ? color.opacity(0.6) : sepiaInk.opacity(0.1),
-                                        lineWidth: revealed ? 1.5 : 0.5
-                                    )
-                                )
-                                .position(x: pierX, y: baseY - wallH * 0.4)
-                                .onTapGesture {
-                                    if i == revealedPiers {
-                                        withAnimation(.spring(response: 0.3)) {
-                                            revealedPiers += 1
-                                        }
-                                        SoundManager.shared.play(.tapSoft)
-                                        if revealedPiers == pierCount {
-                                            withAnimation(.spring(response: 0.5).delay(0.3)) {
-                                                showDome = true
-                                            }
-                                        }
-                                    }
-                                }
-
-                            // Down arrow on revealed piers (weight channeling)
-                            if revealed {
-                                Image(systemName: "arrow.down")
-                                    .font(.system(size: 10, weight: .bold))
-                                    .foregroundStyle(Color.red.opacity(0.4))
-                                    .position(x: pierX, y: baseY - wallH * 0.85)
-                            }
-                        }
-
-                        // Dome appears after all 8 piers revealed
-                        if showDome {
-                            Path { p in
-                                p.move(to: CGPoint(x: centerX - innerW / 2 - wallW, y: baseY - wallH))
-                                p.addQuadCurve(
-                                    to: CGPoint(x: centerX + innerW / 2 + wallW, y: baseY - wallH),
-                                    control: CGPoint(x: centerX, y: baseY - wallH - domeH)
-                                )
-                            }
-                            .stroke(sepiaInk, lineWidth: 2)
-
-                            Text("43.3m dome")
-                                .font(.custom("EBGaramond-SemiBold", size: 11))
-                                .foregroundStyle(color)
-                                .position(x: centerX, y: baseY - wallH - domeH * 0.4)
-                        }
-
-                        // Interior width label
-                        Path { p in
-                            p.move(to: CGPoint(x: centerX - innerW / 2, y: baseY + 8))
-                            p.addLine(to: CGPoint(x: centerX + innerW / 2, y: baseY + 8))
-                        }
-                        .stroke(sepiaInk.opacity(0.3), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
-
-                        Text("43.3m interior")
-                            .font(.custom("EBGaramond-Regular", size: 10))
-                            .foregroundStyle(sepiaInk.opacity(0.5))
-                            .position(x: centerX, y: baseY + 20)
+                ZStack {
+                    // Floor
+                    Path { p in
+                        p.move(to: CGPoint(x: cx - innerW / 2 - wallW - 5, y: baseY))
+                        p.addLine(to: CGPoint(x: cx + innerW / 2 + wallW + 5, y: baseY))
                     }
-                }
+                    .stroke(sepiaInk.opacity(0.3), lineWidth: 1.5)
 
-                // Counter + instruction
-                HStack {
-                    Text("Piers found: \(revealedPiers)/8")
-                        .font(.custom("EBGaramond-SemiBold", size: 13))
-                        .foregroundStyle(revealedPiers == 8 ? RenaissanceColors.sageGreen : color)
-                    if revealedPiers == 8 {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundStyle(RenaissanceColors.sageGreen)
+                    // Left wall
+                    Rectangle()
+                        .fill(color.opacity(0.12))
+                        .overlay(Rectangle().stroke(sepiaInk.opacity(0.4), lineWidth: 1.5))
+                        .frame(width: wallW, height: wallH)
+                        .position(x: cx - innerW / 2 - wallW / 2, y: baseY - wallH / 2)
+
+                    // Right wall
+                    Rectangle()
+                        .fill(color.opacity(0.12))
+                        .overlay(Rectangle().stroke(sepiaInk.opacity(0.4), lineWidth: 1.5))
+                        .frame(width: wallW, height: wallH)
+                        .position(x: cx + innerW / 2 + wallW / 2, y: baseY - wallH / 2)
+
+                    // Dome arc
+                    Path { p in
+                        p.addArc(center: CGPoint(x: cx, y: baseY),
+                                 radius: innerW / 2 + wallW,
+                                 startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
                     }
-                    Spacer()
-                    Text(revealedPiers == 0 ? "Tap piers inside the walls" : revealedPiers < 8 ? "Keep tapping!" : "Dome supported!")
-                        .font(.custom("EBGaramond-Italic", size: 11))
-                        .foregroundStyle(sepiaInk.opacity(0.5))
+                    .stroke(sepiaInk.opacity(0.4), lineWidth: 1.5)
+
+                    // Step 1: height dimension
+                    if step >= 1 {
+                        let dimX = cx + innerW / 2 + wallW + 14
+                        DimLine(from: CGPoint(x: dimX, y: baseY), to: CGPoint(x: dimX, y: baseY - wallH))
+                            .stroke(dimColor, lineWidth: 1)
+                        DimLabel(text: "43.3m")
+                            .position(x: dimX + 18, y: baseY - wallH / 2)
+                    }
+
+                    // Step 2: diameter dimension + formula
+                    if step >= 2 {
+                        DimLine(from: CGPoint(x: cx - innerW / 2, y: baseY + 8),
+                                to: CGPoint(x: cx + innerW / 2, y: baseY + 8))
+                            .stroke(dimColor, lineWidth: 1)
+                        DimLabel(text: "43.3m")
+                            .position(x: cx, y: baseY + 18)
+
+                        FormulaText(text: "Height = Diameter = 43.3m", fontSize: 11)
+                            .position(x: cx, y: baseY - wallH - 8)
+                    }
+
+                    // Step 3: inscribed sphere (dashed circle)
+                    if step >= 3 {
+                        let sphereR = innerW / 2
+                        Circle()
+                            .stroke(color.opacity(0.4), style: StrokeStyle(lineWidth: 1.5, dash: [5, 3]))
+                            .frame(width: sphereR * 2, height: sphereR * 2)
+                            .position(x: cx, y: baseY - sphereR)
+
+                        Text("Perfect sphere")
+                            .font(.custom("EBGaramond-Italic", size: 10))
+                            .foregroundStyle(color)
+                            .position(x: cx, y: baseY - sphereR)
+                    }
+
+                    // Step 4: wall thickness dimensions
+                    if step >= 4 {
+                        // Left wall thickness
+                        let lwLeft = cx - innerW / 2 - wallW
+                        let lwRight = cx - innerW / 2
+                        let dimY = baseY - wallH * 0.15
+                        DimLine(from: CGPoint(x: lwLeft, y: dimY), to: CGPoint(x: lwRight, y: dimY))
+                            .stroke(dimColor, lineWidth: 1)
+                        DimLabel(text: "6m", fontSize: 9)
+                            .position(x: (lwLeft + lwRight) / 2, y: dimY - 8)
+
+                        // Right wall thickness
+                        let rwLeft = cx + innerW / 2
+                        let rwRight = cx + innerW / 2 + wallW
+                        DimLine(from: CGPoint(x: rwLeft, y: dimY), to: CGPoint(x: rwRight, y: dimY))
+                            .stroke(dimColor, lineWidth: 1)
+                        DimLabel(text: "6m", fontSize: 9)
+                            .position(x: (rwLeft + rwRight) / 2, y: dimY - 8)
+
+                        FormulaText(text: "Height = Diameter ∴ sphere fits", highlighted: true, fontSize: 11)
+                            .position(x: cx, y: baseY - wallH - 8)
+                    }
                 }
             }
         }
     }
 }
 
-// MARK: - 4. Coffers (Slider removes weight — dome walls visually thin)
+// MARK: - 4. Coffers — 2,400/4,535 = 53% weight reduction
 
 private struct CofferTapVisual: View {
-    let visual: CardVisual
-    let color: Color
-    var height: CGFloat = 275
-    @State private var cofferProgress: CGFloat = 0  // 0 = solid dome, 1 = all coffers carved
-
-    private var removedWeight: Int { Int(cofferProgress * 2400) }
-    private var remainingWeight: Int { 6935 - removedWeight }
-
+    let visual: CardVisual; let color: Color; var height: CGFloat = 275
+    @State private var step: Int = 1
+    private var label: String {
+        switch step {
+        case 1: return "The dome, if solid, would weigh 4,535 tons."
+        case 2: return "28 rows of coffers remove 2,400 tons of concrete."
+        case 3: return "That's 53% weight reduction — 2,135 tons remaining."
+        default: return "Lighter dome = less outward thrust. Decoration that is engineering."
+        }
+    }
     var body: some View {
-        VisualContainer(title: visual.title, color: color, caption: visual.caption, height: height) {
-            VStack(spacing: 8) {
-                // Weight counter
-                HStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Dome weight")
-                            .font(.custom("EBGaramond-Regular", size: 11))
-                            .foregroundStyle(sepiaInk.opacity(0.5))
-                        Text("\(remainingWeight) tons")
-                            .font(.custom("EBGaramond-Bold", size: 18))
-                            .foregroundStyle(sepiaInk)
-                    }
-                    Spacer()
-                    if removedWeight > 0 {
-                        VStack(alignment: .trailing, spacing: 2) {
-                            Text("Removed")
-                                .font(.custom("EBGaramond-Regular", size: 11))
-                                .foregroundStyle(color.opacity(0.7))
-                            Text("–\(removedWeight) tons")
-                                .font(.custom("EBGaramond-Bold", size: 18))
-                                .foregroundStyle(color)
-                        }
-                    }
-                }
+        TeachingContainer(title: visual.title, color: color, totalSteps: 4, step: $step, stepLabel: label, height: height) {
+            GeometryReader { geo in
+                let w = geo.size.width; let h = geo.size.height
+                let cx = w / 2; let baseY = h * 0.85
+                let domeR = min(w * 0.38, h * 0.72)
 
-                // Dome cross-section — walls thin as coffers are carved
-                GeometryReader { geo in
-                    let w = geo.size.width
-                    let h = geo.size.height
-                    let centerX = w / 2
-                    let baseY = h * 0.88
-                    let outerR = min(w * 0.42, h * 0.8)
-                    // Inner radius grows as coffers are carved (wall gets thinner)
-                    let wallThickness = outerR * (0.22 - cofferProgress * 0.12) // 22% → 10% thickness
-                    let innerR = outerR - outerR * wallThickness / outerR * 3
+                ZStack {
+                    // Base line
+                    Path { p in
+                        p.move(to: CGPoint(x: cx - domeR - 10, y: baseY))
+                        p.addLine(to: CGPoint(x: cx + domeR + 10, y: baseY))
+                    }
+                    .stroke(sepiaInk.opacity(0.3), lineWidth: 1.5)
 
-                    ZStack {
-                        // Outer dome arc
+                    // Solid dome (step 1)
+                    Path { p in
+                        p.addArc(center: CGPoint(x: cx, y: baseY),
+                                 radius: domeR,
+                                 startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
+                        p.closeSubpath()
+                    }
+                    .fill(color.opacity(step == 1 ? 0.2 : 0.08))
+                    .overlay(
                         Path { p in
-                            p.addArc(center: CGPoint(x: centerX, y: baseY),
-                                     radius: outerR,
+                            p.addArc(center: CGPoint(x: cx, y: baseY),
+                                     radius: domeR,
+                                     startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
+                        }
+                        .stroke(sepiaInk.opacity(0.4), lineWidth: 1.5)
+                    )
+
+                    // Weight label
+                    if step == 1 {
+                        FormulaText(text: "4,535 tons", fontSize: 16)
+                            .position(x: cx, y: baseY - domeR * 0.45)
+                    }
+
+                    // Step 2+: coffer rows visible
+                    if step >= 2 {
+                        // Inner dome (thinned)
+                        Path { p in
+                            p.addArc(center: CGPoint(x: cx, y: baseY),
+                                     radius: domeR * 0.8,
                                      startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
                             p.closeSubpath()
                         }
-                        .fill(color.opacity(0.12))
-                        .overlay(
-                            Path { p in
-                                p.addArc(center: CGPoint(x: centerX, y: baseY),
-                                         radius: outerR,
-                                         startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
-                            }
-                            .stroke(sepiaInk, lineWidth: 2)
-                        )
+                        .fill(RenaissanceColors.parchment)
 
-                        // Inner dome arc (shows hollow space from coffers)
-                        if cofferProgress > 0.05 {
-                            Path { p in
-                                p.addArc(center: CGPoint(x: centerX, y: baseY),
-                                         radius: innerR,
-                                         startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
-                                p.closeSubpath()
-                            }
-                            .fill(RenaissanceColors.parchment)
-                            .overlay(
-                                Path { p in
-                                    p.addArc(center: CGPoint(x: centerX, y: baseY),
-                                             radius: innerR,
-                                             startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
-                                }
-                                .stroke(color.opacity(0.4), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
-                            )
+                        // Coffer row indicators
+                        ForEach(0..<5, id: \.self) { row in
+                            let angle = 160.0 - Double(row) * 30.0
+                            let midR = (domeR + domeR * 0.8) / 2
+                            let rad = angle * .pi / 180
+                            let px = cx + midR * cos(rad)
+                            let py = baseY + midR * sin(rad)
+                            Rectangle()
+                                .fill(color.opacity(0.15))
+                                .frame(width: 12, height: 8)
+                                .overlay(Rectangle().stroke(color.opacity(0.3), lineWidth: 0.5))
+                                .position(x: px, y: py)
                         }
 
-                        // Coffer grid pattern (visible between inner and outer arcs)
-                        if cofferProgress > 0.1 {
-                            let rows = Int(cofferProgress * 5) + 1
-                            ForEach(0..<rows, id: \.self) { row in
-                                let t = CGFloat(row + 1) / CGFloat(rows + 1)
-                                let arcR = innerR + (outerR - innerR) * 0.5
-                                let cofferCount = max(3, 7 - row)
-                                ForEach(0..<cofferCount, id: \.self) { col in
-                                    let angle = Double.pi - (Double(col) + 0.5) / Double(cofferCount) * Double.pi
-                                    let cx = centerX + arcR * cos(angle) * t + arcR * cos(angle) * (1 - t)
-                                    let cy = baseY + arcR * sin(angle)
-                                    let size: CGFloat = max(8, outerR * 0.08)
-
-                                    Rectangle()
-                                        .stroke(color.opacity(0.3), lineWidth: 0.8)
-                                        .frame(width: size, height: size)
-                                        .position(x: cx, y: cy)
-                                }
-                            }
-                        }
-
-                        // Oculus at top
-                        let oculusR: CGFloat = outerR * 0.08
-                        Circle()
-                            .fill(.white)
-                            .frame(width: oculusR * 2, height: oculusR * 2)
-                            .overlay(Circle().stroke(sepiaInk.opacity(0.4), lineWidth: 1))
-                            .position(x: centerX, y: baseY - outerR)
-
-                        // Floor
-                        Path { p in
-                            p.move(to: CGPoint(x: centerX - outerR - 8, y: baseY))
-                            p.addLine(to: CGPoint(x: centerX + outerR + 8, y: baseY))
-                        }
-                        .stroke(sepiaInk.opacity(0.3), lineWidth: 1.5)
-
-                        // "28 rows" label
-                        if cofferProgress > 0.3 {
-                            Text("28 rows of coffers")
-                                .font(.custom("EBGaramond-Italic", size: 11))
-                                .foregroundStyle(color.opacity(0.6))
-                                .position(x: centerX, y: baseY - outerR * 0.45)
-                        }
-                    }
-                }
-
-                // Slider — "Carve coffers"
-                VStack(spacing: 2) {
-                    HStack {
-                        Text("Solid dome")
-                            .font(.custom("EBGaramond-Regular", size: 10))
-                            .foregroundStyle(sepiaInk.opacity(0.4))
-                        Spacer()
-                        Text(cofferProgress < 0.1 ? "Drag to carve coffers →" : cofferProgress > 0.9 ? "All 28 rows carved!" : "Carving coffers...")
-                            .font(.custom("EBGaramond-Italic", size: 11))
-                            .foregroundStyle(cofferProgress > 0.9 ? RenaissanceColors.sageGreen : color)
-                        Spacer()
-                        Text("All coffers")
-                            .font(.custom("EBGaramond-Regular", size: 10))
-                            .foregroundStyle(sepiaInk.opacity(0.4))
-                    }
-                    Slider(value: $cofferProgress, in: 0...1)
-                        .tint(cofferProgress > 0.9 ? RenaissanceColors.sageGreen : color)
-                }
-            }
-        }
-    }
-}
-
-// MARK: - 5. Oculus Compression (Tap arrows)
-
-private struct OculusCompressionVisual: View {
-    let visual: CardVisual
-    let color: Color
-    var height: CGFloat = 275
-    @State private var showCompression = false
-
-    var body: some View {
-        VisualContainer(title: visual.title, color: color, caption: visual.caption, height: height) {
-            VStack(spacing: 8) {
-                GeometryReader { geo in
-                    let w = geo.size.width
-                    let h = geo.size.height
-                    let centerX = w / 2
-                    let baseY = h * 0.85
-                    let radius = min(w * 0.4, h * 0.75)
-
-                    ZStack {
-                        // Dome arc
-                        Path { p in
-                            p.addArc(center: CGPoint(x: centerX, y: baseY),
-                                     radius: radius,
-                                     startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
-                        }
-                        .fill(color.opacity(0.04))
-                        .overlay(
-                            Path { p in
-                                p.addArc(center: CGPoint(x: centerX, y: baseY),
-                                         radius: radius,
-                                         startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
-                            }
-                            .stroke(sepiaInk, lineWidth: 2.5)
-                        )
-
-                        // Oculus opening (white hole)
-                        let oculusR: CGFloat = radius * 0.18
-                        let oculusY = baseY - radius
-
-                        Circle()
-                            .fill(.white)
-                            .frame(width: oculusR * 2, height: oculusR * 2)
-                            .overlay(Circle().stroke(sepiaInk, lineWidth: 2))
-                            .position(x: centerX, y: oculusY)
-
-                        Text("9m")
+                        Text("−2,400t")
                             .font(.custom("EBGaramond-Bold", size: 14))
                             .foregroundStyle(color)
-                            .position(x: centerX, y: oculusY)
-
-                        // Compression arrows (appear on tap)
-                        if showCompression {
-                            ForEach(0..<8, id: \.self) { i in
-                                let angle = Double(i) / 8.0 * 2 * Double.pi - Double.pi / 2
-                                let outerR = oculusR * 2.5
-                                let arrowX = centerX + outerR * cos(angle)
-                                let arrowY = oculusY + outerR * sin(angle)
-
-                                Image(systemName: "arrow.right")
-                                    .font(.system(size: 12, weight: .bold))
-                                    .foregroundStyle(Color.orange.opacity(0.8))
-                                    .rotationEffect(.radians(angle + .pi))
-                                    .position(x: arrowX, y: arrowY)
-                                    .transition(.scale.combined(with: .opacity))
-                            }
-
-                            Text("compression")
-                                .font(.custom("EBGaramond-Italic", size: 11))
-                                .foregroundStyle(Color.orange.opacity(0.7))
-                                .position(x: centerX, y: oculusY + oculusR * 2)
-                        }
+                            .position(x: cx, y: baseY - domeR * 0.45)
                     }
-                    .onTapGesture {
-                        withAnimation(.spring(response: 0.4)) {
-                            showCompression.toggle()
+
+                    // Step 3: formula
+                    if step >= 3 {
+                        VStack(spacing: 1) {
+                            FormulaText(text: "2,400 ÷ 4,535 = 53%", highlighted: true, fontSize: 12)
+                            Text("Remaining: 2,135 tons")
+                                .font(.custom("EBGaramond-SemiBold", size: 10))
+                                .foregroundStyle(sepiaInk.opacity(0.5))
                         }
-                        SoundManager.shared.play(.tapSoft)
+                        .position(x: cx, y: baseY - domeR * 0.2)
+                    }
+
+                    // Step 4: thrust arrows (smaller)
+                    if step >= 4 {
+                        ForEach([-1.0, 1.0], id: \.self) { dir in
+                            Image(systemName: dir > 0 ? "arrow.right" : "arrow.left")
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundStyle(RenaissanceColors.sageGreen.opacity(0.6))
+                                .position(x: cx + dir * (domeR + 18), y: baseY - 10)
+                        }
+                        Text("Less thrust!")
+                            .font(.custom("EBGaramond-Italic", size: 9))
+                            .foregroundStyle(RenaissanceColors.sageGreen)
+                            .position(x: cx, y: baseY + 10)
                     }
                 }
-                .frame(height: 160)
-
-                Text(showCompression ? "The hole creates INWARD compression — making the dome stronger!" : "Tap the dome to see compression forces")
-                    .font(.custom("EBGaramond-Italic", size: 11))
-                    .foregroundStyle(showCompression ? color : sepiaInk.opacity(0.5))
-                    .multilineTextAlignment(.center)
             }
         }
     }
 }
 
-// MARK: - 6. Limestone vs Marble (Heat transform slider)
+// MARK: - 5. Oculus — 9m compression ring
+
+private struct OculusCompressionVisual: View {
+    let visual: CardVisual; let color: Color; var height: CGFloat = 275
+    @State private var step: Int = 1
+    private var label: String {
+        switch step {
+        case 1: return "The oculus is a 9m opening at the dome's crown."
+        case 2: return "Without the ring, dome weight pushes outward — spreading the walls."
+        case 3: return "The compression ring redirects forces inward around the opening."
+        default: return "A hole that makes the dome stronger — the weakest point is the strongest."
+        }
+    }
+    var body: some View {
+        TeachingContainer(title: visual.title, color: color, totalSteps: 4, step: $step, stepLabel: label, height: height) {
+            GeometryReader { geo in
+                let w = geo.size.width; let h = geo.size.height
+                let cx = w / 2; let baseY = h * 0.88
+                let domeR = min(w * 0.4, h * 0.78)
+                let oculusR: CGFloat = domeR * 0.18
+
+                ZStack {
+                    // Dome arc
+                    Path { p in
+                        p.addArc(center: CGPoint(x: cx, y: baseY),
+                                 radius: domeR,
+                                 startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
+                    }
+                    .stroke(sepiaInk.opacity(0.4), lineWidth: 2)
+
+                    // Base
+                    Path { p in
+                        p.move(to: CGPoint(x: cx - domeR - 5, y: baseY))
+                        p.addLine(to: CGPoint(x: cx + domeR + 5, y: baseY))
+                    }
+                    .stroke(sepiaInk.opacity(0.3), lineWidth: 1.5)
+
+                    // Oculus circle at top
+                    let oculusY = baseY - domeR + oculusR * 0.3
+                    Circle()
+                        .fill(Color.white.opacity(0.7))
+                        .frame(width: oculusR * 2, height: oculusR * 2)
+                        .overlay(Circle().stroke(sepiaInk.opacity(0.5), lineWidth: 2))
+                        .position(x: cx, y: oculusY)
+
+                    // Step 1: 9m dimension
+                    DimLine(from: CGPoint(x: cx - oculusR, y: oculusY - oculusR - 6),
+                            to: CGPoint(x: cx + oculusR, y: oculusY - oculusR - 6))
+                        .stroke(dimColor, lineWidth: 1)
+                    DimLabel(text: "9m")
+                        .position(x: cx, y: oculusY - oculusR - 14)
+
+                    // Step 2: outward thrust arrows
+                    if step >= 2 {
+                        ForEach([150.0, 120.0, 60.0, 30.0], id: \.self) { deg in
+                            let rad = deg * .pi / 180
+                            let ax = cx - domeR * 0.6 * cos(rad)
+                            let ay = baseY - domeR * 0.6 * sin(rad)
+                            Image(systemName: deg > 90 ? "arrow.left" : "arrow.right")
+                                .font(.system(size: 9, weight: .bold))
+                                .foregroundStyle(Color.red.opacity(0.5))
+                                .position(x: ax + (deg > 90 ? -10 : 10), y: ay)
+                        }
+                        Text("Outward thrust")
+                            .font(.custom("EBGaramond-Italic", size: 9))
+                            .foregroundStyle(Color.red.opacity(0.5))
+                            .position(x: cx, y: baseY - domeR * 0.3)
+                    }
+
+                    // Step 3: inward compression arrows
+                    if step >= 3 {
+                        ForEach(0..<8, id: \.self) { i in
+                            let angle = Double(i) / 8.0 * 2.0 * .pi - .pi / 2
+                            let arrowR = oculusR * 2.2
+                            let ax = cx + arrowR * cos(angle)
+                            let ay = oculusY + arrowR * sin(angle)
+                            Image(systemName: "arrow.right")
+                                .font(.system(size: 8, weight: .bold))
+                                .foregroundStyle(Color.orange.opacity(0.7))
+                                .rotationEffect(.radians(angle + .pi))
+                                .position(x: ax, y: ay)
+                        }
+                        Text("Compression →")
+                            .font(.custom("EBGaramond-SemiBold", size: 9))
+                            .foregroundStyle(Color.orange)
+                            .position(x: cx + oculusR * 3, y: oculusY)
+                    }
+
+                    // Step 4: highlighted formula
+                    if step >= 4 {
+                        FormulaText(text: "Hole = stronger dome", highlighted: true, fontSize: 12)
+                            .position(x: cx, y: baseY - domeR * 0.35)
+                    }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - 6. Limestone vs Marble — CaCO₃ same formula, different structure
 
 private struct HeatTransformVisual: View {
-    let visual: CardVisual
-    let color: Color
-    var height: CGFloat = 275
-    @State private var heatLevel: CGFloat = 0
-
-    var body: some View {
-        VisualContainer(title: visual.title, color: color, caption: visual.caption, height: height) {
-            VStack(spacing: 10) {
-                HStack(spacing: 20) {
-                    // Left: limestone/marble
-                    VStack(spacing: 4) {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color(
-                                red: 0.85 + Double(heatLevel) * 0.1,
-                                green: 0.82 - Double(heatLevel) * 0.1,
-                                blue: 0.78 - Double(heatLevel) * 0.15
-                            ))
-                            .frame(width: 80, height: 80)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(sepiaInk.opacity(0.3), lineWidth: 1)
-                            )
-                        Text(heatLevel < 0.5 ? "Limestone" : "Marble")
-                            .font(.custom("EBGaramond-SemiBold", size: 13))
-                            .foregroundStyle(sepiaInk)
-                        Text("CaCO₃")
-                            .font(.custom("EBGaramond-Italic", size: 11))
-                            .foregroundStyle(color)
-                    }
-
-                    // Arrow
-                    VStack(spacing: 2) {
-                        Image(systemName: "arrow.right")
-                            .font(.system(size: 20))
-                            .foregroundStyle(color)
-                        Text("heat +\npressure")
-                            .font(.custom("EBGaramond-Italic", size: 9))
-                            .foregroundStyle(color.opacity(0.7))
-                            .multilineTextAlignment(.center)
-                    }
-
-                    // Right: result
-                    VStack(spacing: 4) {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(heatLevel > 0.5
-                                  ? Color(red: 0.95, green: 0.93, blue: 0.9)
-                                  : Color(red: 0.85, green: 0.82, blue: 0.78))
-                            .frame(width: 80, height: 80)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(sepiaInk.opacity(0.3), lineWidth: 1)
-                            )
-                            .overlay(
-                                // Crystal pattern when transformed
-                                heatLevel > 0.5 ?
-                                    AnyView(
-                                        ForEach(0..<5, id: \.self) { i in
-                                            Rectangle()
-                                                .fill(Color.white.opacity(0.3))
-                                                .frame(width: 2, height: 20)
-                                                .rotationEffect(.degrees(Double(i) * 36))
-                                        }
-                                    ) : AnyView(EmptyView())
-                            )
-                        Text(heatLevel > 0.5 ? "Marble" : "Limestone")
-                            .font(.custom("EBGaramond-SemiBold", size: 13))
-                            .foregroundStyle(sepiaInk)
-                        Text(heatLevel > 0.5 ? "Crystallized" : "Sedimentary")
-                            .font(.custom("EBGaramond-Italic", size: 11))
-                            .foregroundStyle(color)
-                    }
-                }
-
-                // Heat slider
-                VStack(spacing: 2) {
-                    HStack {
-                        Text("Room temp")
-                            .font(.custom("EBGaramond-Regular", size: 10))
-                            .foregroundStyle(sepiaInk.opacity(0.4))
-                        Spacer()
-                        Text(heatLevel > 0.5 ? "Same formula, transformed!" : "Drag to heat →")
-                            .font(.custom("EBGaramond-Italic", size: 10))
-                            .foregroundStyle(heatLevel > 0.5 ? RenaissanceColors.sageGreen : sepiaInk.opacity(0.5))
-                        Spacer()
-                        Text("200°C + pressure")
-                            .font(.custom("EBGaramond-Regular", size: 10))
-                            .foregroundStyle(sepiaInk.opacity(0.4))
-                    }
-                    Slider(value: $heatLevel, in: 0...1)
-                        .tint(Color(red: 0.8 * Double(heatLevel) + 0.3, green: 0.3, blue: 0.2))
-                }
-            }
+    let visual: CardVisual; let color: Color; var height: CGFloat = 275
+    @State private var step: Int = 1
+    private var label: String {
+        switch step {
+        case 1: return "Limestone: sedimentary rock. Chemical formula: CaCO₃."
+        case 2: return "Underground heat (900°C) and pressure begin transformation."
+        case 3: return "Random grains recrystallize into aligned, interlocking crystals."
+        default: return "Marble: same CaCO₃, but metamorphic. Same formula, different rock."
         }
     }
-}
-
-// MARK: - 7. Timeline Aging (Roman vs Modern concrete)
-
-private struct TimelineAgingVisual: View {
-    let visual: CardVisual
-    let color: Color
-    var height: CGFloat = 275
-    @State private var years: CGFloat = 0
-
     var body: some View {
-        VisualContainer(title: visual.title, color: color, caption: visual.caption, height: height) {
-            VStack(spacing: 10) {
-                HStack(spacing: 16) {
-                    // Roman concrete
-                    VStack(spacing: 4) {
+        TeachingContainer(title: visual.title, color: color, totalSteps: 4, step: $step, stepLabel: label, height: height) {
+            GeometryReader { geo in
+                let w = geo.size.width; let h = geo.size.height
+                let blockSize: CGFloat = min(w * 0.22, h * 0.45)
+                let leftX = w * 0.22; let rightX = w * 0.78
+                let centerY = h * 0.45
+
+                ZStack {
+                    // Left block: Limestone
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(Color(red: 0.75, green: 0.72, blue: 0.65))
+                        .frame(width: blockSize, height: blockSize)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(sepiaInk.opacity(0.4), lineWidth: 1.5)
+                        )
+                        .overlay(
+                            // Random grain dots
+                            ZStack {
+                                ForEach(0..<8, id: \.self) { i in
+                                    Circle()
+                                        .fill(sepiaInk.opacity(0.12))
+                                        .frame(width: 4, height: 4)
+                                        .offset(x: CGFloat([-10, 8, -5, 12, -8, 3, 10, -12][i]),
+                                                y: CGFloat([5, -8, 10, -3, -10, 8, 2, -5][i]))
+                                }
+                            }
+                        )
+                        .position(x: leftX, y: centerY)
+
+                    Text("Limestone")
+                        .font(.custom("EBGaramond-SemiBold", size: 10))
+                        .foregroundStyle(sepiaInk)
+                        .position(x: leftX, y: centerY + blockSize / 2 + 12)
+
+                    FormulaText(text: "CaCO₃", fontSize: 13)
+                        .position(x: leftX, y: centerY + blockSize / 2 + 24)
+
+                    // Step 2+: heat + pressure arrows + temperature
+                    if step >= 2 {
+                        Image(systemName: "arrow.right")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundStyle(RenaissanceColors.furnaceOrange)
+                            .position(x: w / 2, y: centerY)
+
+                        Text("900°C")
+                            .font(.custom("EBGaramond-Bold", size: 12))
+                            .foregroundStyle(RenaissanceColors.furnaceOrange)
+                            .position(x: w / 2, y: centerY - 14)
+
+                        Text("+ pressure")
+                            .font(.custom("EBGaramond-Italic", size: 9))
+                            .foregroundStyle(RenaissanceColors.furnaceOrange.opacity(0.7))
+                            .position(x: w / 2, y: centerY + 14)
+                    }
+
+                    // Step 3+: crystal change visualization
+                    if step >= 3 {
+                        // Arrow showing grain transformation
+                        VStack(spacing: 2) {
+                            Text("Random → Aligned")
+                                .font(.custom("EBGaramond-Italic", size: 8))
+                                .foregroundStyle(color)
+                        }
+                        .position(x: w / 2, y: h * 0.82)
+                    }
+
+                    // Step 3+: right block (marble)
+                    if step >= 3 {
                         RoundedRectangle(cornerRadius: 6)
-                            .fill(Color(red: 0.6, green: 0.55, blue: 0.5).opacity(0.5 + Double(years) * 0.5))
-                            .frame(width: 90, height: 70)
+                            .fill(Color(red: 0.92, green: 0.90, blue: 0.87))
+                            .frame(width: blockSize, height: blockSize)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 6)
                                     .stroke(sepiaInk.opacity(0.4), lineWidth: 1.5)
                             )
-                        Text("Roman")
-                            .font(.custom("EBGaramond-SemiBold", size: 12))
-                            .foregroundStyle(sepiaInk)
-                        Text(years > 0.5 ? "STRONGER" : "Pozzolana + lime")
-                            .font(.custom("EBGaramond-Italic", size: 10))
-                            .foregroundStyle(years > 0.5 ? RenaissanceColors.sageGreen : sepiaInk.opacity(0.5))
-                    }
-
-                    // Modern concrete
-                    VStack(spacing: 4) {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 6)
-                                .fill(Color.gray.opacity(max(0.1, 0.6 - Double(years) * 0.5)))
-                                .frame(width: 90, height: 70)
-
-                            // Cracks appear over time
-                            if years > 0.4 {
-                                Path { p in
-                                    p.move(to: CGPoint(x: 20, y: 15))
-                                    p.addLine(to: CGPoint(x: 50, y: 35))
-                                    p.addLine(to: CGPoint(x: 70, y: 55))
+                            .overlay(
+                                // Aligned crystal lines
+                                ZStack {
+                                    ForEach(0..<5, id: \.self) { i in
+                                        Rectangle()
+                                            .fill(sepiaInk.opacity(0.06))
+                                            .frame(width: blockSize * 0.7, height: 1)
+                                            .rotationEffect(.degrees(Double(i) * 36))
+                                    }
                                 }
-                                .stroke(Color.red.opacity(Double(years) * 0.5), lineWidth: 1.5)
-                                .frame(width: 90, height: 70)
-                            }
-                        }
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 6)
-                                .stroke(sepiaInk.opacity(0.3), lineWidth: 1)
-                                .frame(width: 90, height: 70)
-                        )
-                        Text("Modern")
-                            .font(.custom("EBGaramond-SemiBold", size: 12))
-                            .foregroundStyle(sepiaInk)
-                        Text(years > 0.5 ? "CRACKING" : "Portland cement")
-                            .font(.custom("EBGaramond-Italic", size: 10))
-                            .foregroundStyle(years > 0.5 ? Color.red.opacity(0.7) : sepiaInk.opacity(0.5))
-                    }
-                }
+                            )
+                            .position(x: rightX, y: centerY)
 
-                // Timeline slider
-                VStack(spacing: 2) {
-                    HStack {
-                        Text("Year 0")
-                            .font(.custom("EBGaramond-Regular", size: 10))
-                            .foregroundStyle(sepiaInk.opacity(0.4))
-                        Spacer()
-                        Text("\(Int(years * 2000)) years")
-                            .font(.custom("EBGaramond-SemiBold", size: 12))
-                            .foregroundStyle(color)
-                        Spacer()
-                        Text("2000 years")
-                            .font(.custom("EBGaramond-Regular", size: 10))
-                            .foregroundStyle(sepiaInk.opacity(0.4))
+                        Text("Marble")
+                            .font(.custom("EBGaramond-SemiBold", size: 10))
+                            .foregroundStyle(sepiaInk)
+                            .position(x: rightX, y: centerY + blockSize / 2 + 12)
+
+                        FormulaText(text: "CaCO₃", fontSize: 13)
+                            .position(x: rightX, y: centerY + blockSize / 2 + 24)
                     }
-                    Slider(value: $years, in: 0...1)
-                        .tint(color)
+
+                    // Step 4: highlighted formula
+                    if step >= 4 {
+                        FormulaText(text: "Same CaCO₃ — different structure", highlighted: true, fontSize: 11)
+                            .position(x: w / 2, y: h * 0.1)
+                    }
                 }
             }
         }
     }
 }
 
-// MARK: - 8-14: Placeholder stubs (to be implemented next)
+// MARK: - 7. Roman vs Modern Concrete — Ca(OH)₂ + SiO₂ → CaSiO₃
+
+private struct TimelineAgingVisual: View {
+    let visual: CardVisual; let color: Color; var height: CGFloat = 275
+    @State private var step: Int = 1
+    @State private var yearSlider: CGFloat = 0
+    private var label: String {
+        switch step {
+        case 1: return "Two concrete blocks, fresh from the mixer."
+        case 2: return "Roman concrete uses pozzolanic reaction: Ca(OH)₂ + SiO₂ → CaSiO₃."
+        case 3: return "Drag the slider. At 100 years: modern cracks, Roman holds."
+        default: return "At 2,000 years: modern gone. Roman is stronger than day one."
+        }
+    }
+    var body: some View {
+        TeachingContainer(title: visual.title, color: color, totalSteps: 4, step: $step, stepLabel: label, height: height) {
+            VStack(spacing: 6) {
+                // Formula (step 2+)
+                if step >= 2 {
+                    Text("Ca(OH)₂ + SiO₂ → CaSiO₃")
+                        .font(.custom("EBGaramond-Bold", size: step >= 4 ? 13 : 12))
+                        .foregroundStyle(step >= 4 ? RenaissanceColors.sageGreen : sepiaInk)
+                }
+
+                // Two blocks
+                HStack(spacing: 20) {
+                    // Roman
+                    VStack(spacing: 4) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(Color(red: 0.6, green: 0.55, blue: 0.5)
+                                    .opacity(0.5 + (step >= 3 ? yearSlider * 0.5 : 0)))
+                                .frame(width: 70, height: 55)
+                                .overlay(RoundedRectangle(cornerRadius: 6).stroke(sepiaInk.opacity(0.3), lineWidth: 1))
+                        }
+                        Text("Roman")
+                            .font(.custom("EBGaramond-SemiBold", size: 11))
+                            .foregroundStyle(sepiaInk)
+                        if step >= 3 {
+                            Text(yearSlider > 0.5 ? "STRONGER" : "Pozzolana + lime")
+                                .font(.custom("EBGaramond-Italic", size: 9))
+                                .foregroundStyle(yearSlider > 0.5 ? RenaissanceColors.sageGreen : sepiaInk.opacity(0.5))
+                        }
+                    }
+
+                    // Modern
+                    VStack(spacing: 4) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(Color.gray.opacity(max(0.1, 0.5 - (step >= 3 ? yearSlider * 0.4 : 0))))
+                                .frame(width: 70, height: 55)
+                                .overlay(RoundedRectangle(cornerRadius: 6).stroke(sepiaInk.opacity(0.3), lineWidth: 1))
+
+                            if step >= 3 && yearSlider > 0.05 {
+                                Path { p in
+                                    p.move(to: CGPoint(x: 15, y: 10))
+                                    p.addLine(to: CGPoint(x: 35, y: 28))
+                                    p.addLine(to: CGPoint(x: 25, y: 45))
+                                }
+                                .stroke(Color.red.opacity(min(1, yearSlider)), lineWidth: 1.5)
+                                .frame(width: 70, height: 55)
+                            }
+                        }
+                        Text("Modern")
+                            .font(.custom("EBGaramond-SemiBold", size: 11))
+                            .foregroundStyle(sepiaInk)
+                        if step >= 3 {
+                            Text(yearSlider > 0.5 ? "CRACKING" : "Portland cement")
+                                .font(.custom("EBGaramond-Italic", size: 9))
+                                .foregroundStyle(yearSlider > 0.5 ? Color.red.opacity(0.7) : sepiaInk.opacity(0.5))
+                        }
+                    }
+                }
+
+                // Year slider (step 3+)
+                if step >= 3 {
+                    VStack(spacing: 2) {
+                        HStack {
+                            Text("Year 0").font(.custom("EBGaramond-Regular", size: 9)).foregroundStyle(sepiaInk.opacity(0.4))
+                            Spacer()
+                            DimLabel(text: "\(Int(yearSlider * 2000)) years", fontSize: 12)
+                            Spacer()
+                            Text("2,000").font(.custom("EBGaramond-Regular", size: 9)).foregroundStyle(sepiaInk.opacity(0.4))
+                        }
+                        Slider(value: $yearSlider, in: 0...1).tint(color)
+                    }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - 8. Dome Layers — density 2,400 → 1,350 kg/m³
 
 private struct PourRingsVisual: View {
     let visual: CardVisual; let color: Color; var height: CGFloat = 275
-    var body: some View { VisualContainer(title: visual.title, color: color, caption: visual.caption, height: height) {
-        Text("Pour rings — coming next").foregroundStyle(sepiaInk.opacity(0.4))
-    }}
+    @State private var step: Int = 1
+    private let rings: [(name: String, density: String, c: Color)] = [
+        ("Basalt",       "2,400 kg/m³", Color(red: 0.40, green: 0.35, blue: 0.30)),
+        ("Tufa",         "2,000 kg/m³", Color(red: 0.50, green: 0.45, blue: 0.38)),
+        ("Tufa",         "1,750 kg/m³", Color(red: 0.60, green: 0.55, blue: 0.45)),
+        ("Tufa+brick",   "1,500 kg/m³", Color(red: 0.72, green: 0.65, blue: 0.52)),
+        ("Pumice",       "1,350 kg/m³", Color(red: 0.85, green: 0.78, blue: 0.65)),
+    ]
+    private var label: String {
+        switch step {
+        case 1: return "The dome is 21.65m tall, poured in 5 layers bottom to top."
+        case 2: return "Ring 1: basalt at 2,400 kg/m³ — heaviest at the base."
+        case 3: return "Rings 2-3: tufa at 2,000 and 1,750 kg/m³ — progressively lighter."
+        default: return "Rings 4-5: pumice at 1,350 kg/m³. Heavy base, light top = stable dome."
+        }
+    }
+    var body: some View {
+        TeachingContainer(title: visual.title, color: color, totalSteps: 4, step: $step, stepLabel: label, height: height) {
+            GeometryReader { geo in
+                let w = geo.size.width; let h = geo.size.height
+                let cx = w / 2; let baseY = h * 0.88
+                let domeR = min(w * 0.38, h * 0.78)
+
+                ZStack {
+                    // Base
+                    Path { p in
+                        p.move(to: CGPoint(x: cx - domeR - 10, y: baseY))
+                        p.addLine(to: CGPoint(x: cx + domeR + 10, y: baseY))
+                    }
+                    .stroke(sepiaInk.opacity(0.3), lineWidth: 1.5)
+
+                    // Dome outline (dashed)
+                    Path { p in
+                        p.addArc(center: CGPoint(x: cx, y: baseY), radius: domeR,
+                                 startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
+                    }
+                    .stroke(sepiaInk.opacity(0.1), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
+
+                    // Height dimension
+                    DimLine(from: CGPoint(x: cx + domeR + 12, y: baseY),
+                            to: CGPoint(x: cx + domeR + 12, y: baseY - domeR))
+                        .stroke(dimColor, lineWidth: 1)
+                    DimLabel(text: "21.65m")
+                        .position(x: cx + domeR + 30, y: baseY - domeR / 2)
+
+                    // Rings based on step
+                    let visibleRings = step == 1 ? 0 : step == 2 ? 1 : step == 3 ? 3 : 5
+                    ForEach(0..<visibleRings, id: \.self) { i in
+                        let startDeg = 180.0 - Double(i) * 36.0
+                        let endDeg = 180.0 - Double(i + 1) * 36.0
+                        let outerR = domeR; let innerR = domeR * 0.82
+
+                        Path { p in
+                            p.addArc(center: CGPoint(x: cx, y: baseY), radius: outerR,
+                                     startAngle: .degrees(startDeg), endAngle: .degrees(endDeg), clockwise: true)
+                            p.addArc(center: CGPoint(x: cx, y: baseY), radius: innerR,
+                                     startAngle: .degrees(endDeg), endAngle: .degrees(startDeg), clockwise: false)
+                            p.closeSubpath()
+                        }
+                        .fill(rings[i].c.opacity(0.45))
+                        .overlay(
+                            Path { p in
+                                p.addArc(center: CGPoint(x: cx, y: baseY), radius: outerR,
+                                         startAngle: .degrees(startDeg), endAngle: .degrees(endDeg), clockwise: true)
+                                p.addArc(center: CGPoint(x: cx, y: baseY), radius: innerR,
+                                         startAngle: .degrees(endDeg), endAngle: .degrees(startDeg), clockwise: false)
+                                p.closeSubpath()
+                            }
+                            .stroke(sepiaInk.opacity(0.25), lineWidth: 0.5)
+                        )
+
+                        // Density label
+                        let midDeg = (startDeg + endDeg) / 2.0
+                        let labelR = (outerR + innerR) / 2
+                        let lx = cx + labelR * cos(midDeg * .pi / 180)
+                        let ly = baseY + labelR * sin(midDeg * .pi / 180)
+                        Text(rings[i].density)
+                            .font(.custom("EBGaramond-SemiBold", size: 8))
+                            .foregroundStyle(.white)
+                            .shadow(color: .black.opacity(0.6), radius: 1)
+                            .position(x: lx, y: ly)
+                    }
+
+                    // Step 4: gradient formula
+                    if step >= 4 {
+                        FormulaText(text: "2,400 → 1,350 kg/m³", highlighted: true, fontSize: 11)
+                            .position(x: cx, y: baseY - domeR * 0.4)
+                    }
+                }
+            }
+        }
+    }
 }
+
+// MARK: - 9. Bronze Doors — 7m tall, top-down pivot view
 
 private struct DoorSwingVisual: View {
     let visual: CardVisual; let color: Color; var height: CGFloat = 275
-    var body: some View { VisualContainer(title: visual.title, color: color, caption: visual.caption, height: height) {
-        Text("Door swing — coming next").foregroundStyle(sepiaInk.opacity(0.4))
-    }}
+    @State private var step: Int = 1
+    @State private var doorSlider: CGFloat = 0
+    private var label: String {
+        switch step {
+        case 1: return "Each bronze door stands 7 meters tall."
+        case 2: return "Bronze cylinder bearings at top and bottom — the pivot mechanism."
+        case 3: return "Top-down view: drag to swing. Torque = Force × Distance."
+        default: return "Still swinging on original pivots after 2,000 years."
+        }
+    }
+    var body: some View {
+        TeachingContainer(title: visual.title, color: color, totalSteps: 4, step: $step, stepLabel: label, height: height) {
+            GeometryReader { geo in
+                let w = geo.size.width; let h = geo.size.height
+                let cx = w / 2
+
+                ZStack {
+                    if step <= 2 {
+                        // FRONT ELEVATION (steps 1-2)
+                        let floorY = h * 0.85; let doorH = h * 0.55; let doorW = w * 0.14
+
+                        // Stone arch frame
+                        Path { p in
+                            let archR = doorW + 10
+                            p.addArc(center: CGPoint(x: cx, y: floorY - doorH),
+                                     radius: archR,
+                                     startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
+                        }
+                        .stroke(sepiaInk.opacity(0.3), lineWidth: 2)
+
+                        // Left door
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(Color(red: 0.6, green: 0.45, blue: 0.25).opacity(0.35))
+                            .overlay(RoundedRectangle(cornerRadius: 2).stroke(sepiaInk.opacity(0.5), lineWidth: 1.5))
+                            .frame(width: doorW, height: doorH)
+                            .position(x: cx - doorW / 2 - 2, y: floorY - doorH / 2)
+
+                        // Right door
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(Color(red: 0.6, green: 0.45, blue: 0.25).opacity(0.35))
+                            .overlay(RoundedRectangle(cornerRadius: 2).stroke(sepiaInk.opacity(0.5), lineWidth: 1.5))
+                            .frame(width: doorW, height: doorH)
+                            .position(x: cx + doorW / 2 + 2, y: floorY - doorH / 2)
+
+                        // Floor
+                        Path { p in
+                            p.move(to: CGPoint(x: cx - doorW * 2, y: floorY))
+                            p.addLine(to: CGPoint(x: cx + doorW * 2, y: floorY))
+                        }
+                        .stroke(sepiaInk.opacity(0.3), lineWidth: 1.5)
+
+                        // 7m dimension
+                        let dimX = cx + doorW + 16
+                        DimLine(from: CGPoint(x: dimX, y: floorY), to: CGPoint(x: dimX, y: floorY - doorH))
+                            .stroke(dimColor, lineWidth: 1)
+                        DimLabel(text: "7m")
+                            .position(x: dimX + 14, y: floorY - doorH / 2)
+
+                        // Step 2: pivot circles
+                        if step >= 2 {
+                            let pivotColor = Color(red: 0.7, green: 0.55, blue: 0.3)
+                            ForEach([floorY - doorH, floorY], id: \.self) { py in
+                                Circle().fill(pivotColor).frame(width: 8, height: 8)
+                                    .position(x: cx - doorW - 2, y: py)
+                                Circle().fill(pivotColor).frame(width: 8, height: 8)
+                                    .position(x: cx + doorW + 2, y: py)
+                            }
+                            Text("Bronze pivots")
+                                .font(.custom("EBGaramond-Italic", size: 9))
+                                .foregroundStyle(sepiaInk.opacity(0.5))
+                                .position(x: cx - doorW - 30, y: floorY - doorH / 2)
+                        }
+                    } else {
+                        // TOP-DOWN PLAN VIEW (steps 3-4)
+                        let planY = h * 0.4
+                        let wallThickness: CGFloat = 12
+                        let doorLen = w * 0.2
+                        let wallSpan = w * 0.7
+
+                        // Wall (top-down)
+                        Rectangle()
+                            .fill(sepiaInk.opacity(0.12))
+                            .frame(width: wallSpan, height: wallThickness)
+                            .overlay(Rectangle().stroke(sepiaInk.opacity(0.3), lineWidth: 1))
+                            .position(x: cx, y: planY)
+
+                        // Opening in wall
+                        Rectangle()
+                            .fill(RenaissanceColors.parchment)
+                            .frame(width: doorLen * 2 + 8, height: wallThickness + 2)
+                            .position(x: cx, y: planY)
+
+                        Text("PLAN VIEW (top-down)")
+                            .font(.custom("EBGaramond-Italic", size: 8))
+                            .foregroundStyle(sepiaInk.opacity(0.3))
+                            .position(x: cx, y: h * 0.08)
+
+                        // Left door (rotates from left hinge)
+                        let leftHingeX = cx - doorLen - 4
+                        let angleRad = Double(doorSlider) * .pi / 2
+                        let leftEndX = leftHingeX + doorLen * cos(angleRad)
+                        let leftEndY = planY + doorLen * sin(angleRad)
+
+                        Path { p in
+                            p.move(to: CGPoint(x: leftHingeX, y: planY))
+                            p.addLine(to: CGPoint(x: leftEndX, y: leftEndY))
+                        }
+                        .stroke(Color(red: 0.6, green: 0.45, blue: 0.25), lineWidth: 4)
+
+                        // Right door (rotates from right hinge)
+                        let rightHingeX = cx + doorLen + 4
+                        let rightEndX = rightHingeX - doorLen * cos(angleRad)
+                        let rightEndY = planY + doorLen * sin(angleRad)
+
+                        Path { p in
+                            p.move(to: CGPoint(x: rightHingeX, y: planY))
+                            p.addLine(to: CGPoint(x: rightEndX, y: rightEndY))
+                        }
+                        .stroke(Color(red: 0.6, green: 0.45, blue: 0.25), lineWidth: 4)
+
+                        // Pivot dots
+                        Circle().fill(Color(red: 0.7, green: 0.55, blue: 0.3)).frame(width: 8, height: 8)
+                            .position(x: leftHingeX, y: planY)
+                        Circle().fill(Color(red: 0.7, green: 0.55, blue: 0.3)).frame(width: 8, height: 8)
+                            .position(x: rightHingeX, y: planY)
+
+                        // Angle label
+                        Text("\(Int(doorSlider * 90))°")
+                            .font(.custom("EBGaramond-Bold", size: 14))
+                            .foregroundStyle(color)
+                            .position(x: cx, y: planY + 30)
+
+                        // Slider
+                        VStack(spacing: 2) {
+                            Slider(value: $doorSlider, in: 0...1).tint(color)
+                            HStack {
+                                Text("Closed").font(.custom("EBGaramond-Regular", size: 9)).foregroundStyle(sepiaInk.opacity(0.4))
+                                Spacer()
+                                Text("Open").font(.custom("EBGaramond-Regular", size: 9)).foregroundStyle(sepiaInk.opacity(0.4))
+                            }
+                        }
+                        .position(x: cx, y: h * 0.78)
+                        .frame(width: w * 0.7)
+
+                        // Formula
+                        FormulaText(text: step >= 4 ? "2,000 years on original pivots" : "Torque = Force × Distance",
+                                    highlighted: step >= 4, fontSize: 11)
+                            .position(x: cx, y: h * 0.93)
+                    }
+                }
+            }
+        }
+    }
 }
+
+// MARK: - 10. Centering — 4,535 tons load, 3 weeks cure
 
 private struct CenteringBuildVisual: View {
     let visual: CardVisual; let color: Color; var height: CGFloat = 275
-    var body: some View { VisualContainer(title: visual.title, color: color, caption: visual.caption, height: height) {
-        Text("Centering build — coming next").foregroundStyle(sepiaInk.opacity(0.4))
-    }}
+    @State private var step: Int = 1
+    private var label: String {
+        switch step {
+        case 1: return "An arch cannot support itself until complete — needs temporary support."
+        case 2: return "Oak centering: curved wooden frame holds the arch shape."
+        case 3: return "Wet concrete presses down with 4,535 tons. Must cure 3 weeks."
+        default: return "Remove the centering — arch stands through compression alone."
+        }
+    }
+    var body: some View {
+        TeachingContainer(title: visual.title, color: color, totalSteps: 4, step: $step, stepLabel: label, height: height) {
+            GeometryReader { geo in
+                let w = geo.size.width; let h = geo.size.height
+                let cx = w / 2; let baseY = h * 0.8
+                let archR = min(w * 0.35, baseY - 15)
+
+                ZStack {
+                    // Floor
+                    Path { p in
+                        p.move(to: CGPoint(x: cx - archR - 15, y: baseY))
+                        p.addLine(to: CGPoint(x: cx + archR + 15, y: baseY))
+                    }
+                    .stroke(sepiaInk.opacity(0.3), lineWidth: 1.5)
+
+                    // Support walls
+                    Rectangle()
+                        .fill(sepiaInk.opacity(0.1))
+                        .overlay(Rectangle().stroke(sepiaInk.opacity(0.3), lineWidth: 1))
+                        .frame(width: 12, height: archR * 0.5)
+                        .position(x: cx - archR - 6, y: baseY - archR * 0.25)
+                    Rectangle()
+                        .fill(sepiaInk.opacity(0.1))
+                        .overlay(Rectangle().stroke(sepiaInk.opacity(0.3), lineWidth: 1))
+                        .frame(width: 12, height: archR * 0.5)
+                        .position(x: cx + archR + 6, y: baseY - archR * 0.25)
+
+                    // Ghost arch (step 1)
+                    Path { p in
+                        p.addArc(center: CGPoint(x: cx, y: baseY), radius: archR,
+                                 startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
+                    }
+                    .stroke(sepiaInk.opacity(0.1), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
+
+                    // Step 2: wood centering
+                    if step >= 2 && step < 4 {
+                        Path { p in
+                            p.addArc(center: CGPoint(x: cx, y: baseY), radius: archR * 0.92,
+                                     startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
+                        }
+                        .stroke(Color.brown.opacity(0.7), lineWidth: 4)
+
+                        ForEach(0..<7, id: \.self) { i in
+                            let ang = (180.0 - Double(i) * 30.0) * .pi / 180
+                            Path { p in
+                                p.move(to: CGPoint(x: cx, y: baseY))
+                                p.addLine(to: CGPoint(x: cx + archR * 0.92 * cos(ang),
+                                                      y: baseY + archR * 0.92 * sin(ang)))
+                            }
+                            .stroke(Color.brown.opacity(0.4), lineWidth: 1.5)
+                        }
+
+                        Text("Oak centering")
+                            .font(.custom("EBGaramond-SemiBold", size: 10))
+                            .foregroundStyle(Color.brown)
+                            .position(x: cx, y: baseY - archR * 0.4)
+                    }
+
+                    // Step 3: concrete arch + load
+                    if step >= 3 {
+                        Path { p in
+                            p.addArc(center: CGPoint(x: cx, y: baseY), radius: archR,
+                                     startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
+                            p.addArc(center: CGPoint(x: cx, y: baseY), radius: archR * 0.85,
+                                     startAngle: .degrees(0), endAngle: .degrees(180), clockwise: true)
+                            p.closeSubpath()
+                        }
+                        .fill(color.opacity(0.2))
+                        .overlay(
+                            Path { p in
+                                p.addArc(center: CGPoint(x: cx, y: baseY), radius: archR,
+                                         startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
+                            }
+                            .stroke(sepiaInk.opacity(0.5), lineWidth: 2)
+                        )
+
+                        if step == 3 {
+                            ForEach([50.0, 90.0, 130.0], id: \.self) { deg in
+                                let rad = deg * .pi / 180
+                                Image(systemName: "arrow.down")
+                                    .font(.system(size: 8, weight: .bold))
+                                    .foregroundStyle(Color.red.opacity(0.5))
+                                    .position(x: cx - archR * cos(rad), y: baseY - archR * sin(rad) - 10)
+                            }
+                            DimLabel(text: "4,535 tons", fontSize: 11)
+                                .position(x: cx, y: baseY - archR - 10)
+                            DimLabel(text: "3 weeks cure", fontSize: 10)
+                                .position(x: cx, y: baseY - archR * 0.5)
+                        }
+                    }
+
+                    // Step 4: centering removed
+                    if step >= 4 {
+                        FormulaText(text: "Self-supporting through compression!", highlighted: true, fontSize: 11)
+                            .position(x: cx, y: baseY - archR * 0.4)
+                    }
+                }
+            }
+        }
+    }
 }
+
+// MARK: - 11. Scaffolding — 43m, 4 tiers
 
 private struct ScaffoldClimbVisual: View {
     let visual: CardVisual; let color: Color; var height: CGFloat = 275
-    var body: some View { VisualContainer(title: visual.title, color: color, caption: visual.caption, height: height) {
-        Text("Scaffold climb — coming next").foregroundStyle(sepiaInk.opacity(0.4))
-    }}
+    @State private var step: Int = 1
+    private let heights = ["11m", "22m", "33m", "43m"]
+    private var label: String {
+        switch step {
+        case 1: return "The dome reaches 43 meters — workers need platforms at every level."
+        case 2: return "Tier 1: 11m. Poplar wood — grows 3m/year, light and cheap."
+        case 3: return "Tiers 2-3: 22m and 33m. Scaffold rises with construction."
+        default: return "Tier 4: 43m. Putlog holes in the wall still visible today."
+        }
+    }
+    var body: some View {
+        TeachingContainer(title: visual.title, color: color, totalSteps: 4, step: $step, stepLabel: label, height: height) {
+            GeometryReader { geo in
+                let w = geo.size.width; let h = geo.size.height
+                let cx = w / 2; let groundY = h * 0.9
+                let domeR = w * 0.2
+                let tierH = (groundY - 10) / 5.0
+                let scaffL = cx - domeR - 25; let scaffR = cx + domeR + 25
+
+                ZStack {
+                    // Ground
+                    Path { p in
+                        p.move(to: CGPoint(x: 5, y: groundY))
+                        p.addLine(to: CGPoint(x: w - 5, y: groundY))
+                    }
+                    .stroke(sepiaInk.opacity(0.3), lineWidth: 1.5)
+
+                    // Dome outline
+                    Path { p in
+                        p.addArc(center: CGPoint(x: cx, y: groundY), radius: domeR,
+                                 startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
+                    }
+                    .stroke(sepiaInk.opacity(0.15), lineWidth: 2)
+
+                    // 43m dimension
+                    DimLine(from: CGPoint(x: w - 12, y: groundY), to: CGPoint(x: w - 12, y: groundY - domeR))
+                        .stroke(dimColor, lineWidth: 1)
+                    DimLabel(text: "43m")
+                        .position(x: w - 3, y: groundY - domeR / 2)
+
+                    // Visible tiers based on step
+                    let visibleTiers = step == 1 ? 0 : step == 2 ? 1 : step == 3 ? 3 : 4
+
+                    ForEach(0..<visibleTiers, id: \.self) { level in
+                        let tierTop = groundY - CGFloat(level + 1) * tierH
+                        let tierBot = groundY - CGFloat(level) * tierH
+
+                        // Left scaffold
+                        Path { p in
+                            p.move(to: CGPoint(x: scaffL, y: tierBot))
+                            p.addLine(to: CGPoint(x: scaffL, y: tierTop))
+                            p.move(to: CGPoint(x: scaffL + 14, y: tierBot))
+                            p.addLine(to: CGPoint(x: scaffL + 14, y: tierTop))
+                            p.move(to: CGPoint(x: scaffL - 2, y: tierTop))
+                            p.addLine(to: CGPoint(x: scaffL + 18, y: tierTop))
+                            p.move(to: CGPoint(x: scaffL, y: tierBot))
+                            p.addLine(to: CGPoint(x: scaffL + 14, y: tierTop))
+                        }
+                        .stroke(Color.brown.opacity(0.5), lineWidth: 1.5)
+
+                        // Right scaffold
+                        Path { p in
+                            p.move(to: CGPoint(x: scaffR, y: tierBot))
+                            p.addLine(to: CGPoint(x: scaffR, y: tierTop))
+                            p.move(to: CGPoint(x: scaffR - 14, y: tierBot))
+                            p.addLine(to: CGPoint(x: scaffR - 14, y: tierTop))
+                            p.move(to: CGPoint(x: scaffR - 18, y: tierTop))
+                            p.addLine(to: CGPoint(x: scaffR + 2, y: tierTop))
+                            p.move(to: CGPoint(x: scaffR, y: tierBot))
+                            p.addLine(to: CGPoint(x: scaffR - 14, y: tierTop))
+                        }
+                        .stroke(Color.brown.opacity(0.5), lineWidth: 1.5)
+
+                        // Height tick mark
+                        DimLabel(text: heights[level], fontSize: 9)
+                            .position(x: scaffR + 22, y: tierTop)
+                    }
+
+                    // Step 3: poplar formula
+                    if step >= 3 {
+                        Text("Poplar: 3m/year")
+                            .font(.custom("EBGaramond-Italic", size: 9))
+                            .foregroundStyle(color.opacity(0.6))
+                            .position(x: scaffL - 10, y: groundY - tierH * 2)
+                    }
+
+                    // Step 4: putlog holes
+                    if step >= 4 {
+                        ForEach([0.3, 0.5, 0.7], id: \.self) { frac in
+                            let ang = .pi * frac
+                            let hx = cx - domeR * 0.92 * cos(ang)
+                            let hy = groundY - domeR * 0.92 * sin(ang)
+                            Rectangle()
+                                .fill(sepiaInk.opacity(0.5))
+                                .frame(width: 4, height: 4)
+                                .position(x: hx, y: hy)
+                        }
+                        Text("Putlog holes")
+                            .font(.custom("EBGaramond-Italic", size: 8))
+                            .foregroundStyle(sepiaInk.opacity(0.5))
+                            .position(x: cx, y: groundY - domeR - 6)
+                    }
+                }
+            }
+        }
+    }
 }
+
+// MARK: - 12. Mix Recipe — Vitruvius 1:3
 
 private struct MixRecipeVisual: View {
     let visual: CardVisual; let color: Color; var height: CGFloat = 275
-    var body: some View { VisualContainer(title: visual.title, color: color, caption: visual.caption, height: height) {
-        Text("Mix recipe — coming next").foregroundStyle(sepiaInk.opacity(0.4))
-    }}
+    @State private var scoopsAdded: Int = 0
+    private let limeC = Color(red: 0.92, green: 0.90, blue: 0.85)
+    private let pozzC = Color(red: 0.65, green: 0.40, blue: 0.30)
+
+    private var isLimeTurn: Bool { scoopsAdded == 0 }
+    private var isPozzTurn: Bool { scoopsAdded >= 1 && scoopsAdded < 4 }
+    private var isDone: Bool { scoopsAdded == 4 }
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 10).fill(RenaissanceColors.parchment)
+            RoundedRectangle(cornerRadius: 10).strokeBorder(color.opacity(0.2), lineWidth: 1)
+            PantheonBlueprintGrid()
+
+            GeometryReader { geo in
+                let w = geo.size.width
+                let h = geo.size.height
+
+                VStack(spacing: 0) {
+                    // Formula — big and prominent
+                    Text("1 Lime + 3 Pozzolana = Roman Concrete")
+                        .font(.custom("EBGaramond-Bold", size: 17))
+                        .foregroundStyle(isDone ? RenaissanceColors.sageGreen : sepiaInk)
+                        .multilineTextAlignment(.center)
+                        .padding(.top, 12)
+
+                    Spacer()
+
+                    // Ratio bar — full width, proportional
+                    HStack(spacing: 4) {
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(scoopsAdded >= 1 ? limeC : sepiaInk.opacity(0.06))
+                            .overlay(RoundedRectangle(cornerRadius: 4).stroke(sepiaInk.opacity(0.3), lineWidth: 1))
+                            .frame(height: 24)
+                            .overlay(
+                                Text(scoopsAdded >= 1 ? "Lime" : "")
+                                    .font(.custom("EBGaramond-SemiBold", size: 11))
+                                    .foregroundStyle(sepiaInk.opacity(0.6))
+                            )
+
+                        ForEach(0..<3, id: \.self) { i in
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(scoopsAdded >= i + 2 ? pozzC.opacity(0.45) : sepiaInk.opacity(0.06))
+                                .overlay(RoundedRectangle(cornerRadius: 4).stroke(sepiaInk.opacity(0.3), lineWidth: 1))
+                                .frame(height: 24)
+                                .overlay(
+                                    Text(scoopsAdded >= i + 2 ? "Pozz" : "")
+                                        .font(.custom("EBGaramond-SemiBold", size: 11))
+                                        .foregroundStyle(.white.opacity(0.8))
+                                )
+                        }
+                    }
+                    .padding(.horizontal, 16)
+
+                    // Ratio label
+                    Text("Ratio: \(scoopsAdded >= 1 ? "1" : "—") : \(max(0, scoopsAdded - 1))")
+                        .font(.custom("EBGaramond-SemiBold", size: 14))
+                        .foregroundStyle(isDone ? RenaissanceColors.sageGreen : color)
+                        .padding(.top, 8)
+
+                    Spacer()
+
+                    // Two big tappable ingredient boxes
+                    HStack(spacing: 24) {
+                        // Lime box
+                        Button {
+                            if isLimeTurn {
+                                withAnimation(.spring(response: 0.3)) { scoopsAdded = 1 }
+                                SoundManager.shared.play(.tapSoft)
+                            }
+                        } label: {
+                            VStack(spacing: 8) {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(limeC)
+                                    .frame(height: h * 0.22)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(isLimeTurn ? color : sepiaInk.opacity(0.2), lineWidth: isLimeTurn ? 3 : 1)
+                                    )
+                                    .overlay(
+                                        VStack(spacing: 4) {
+                                            Text("CaO")
+                                                .font(.custom("EBGaramond-Bold", size: 18))
+                                                .foregroundStyle(sepiaInk)
+                                            if isLimeTurn {
+                                                Text("TAP")
+                                                    .font(.custom("EBGaramond-SemiBold", size: 11))
+                                                    .foregroundStyle(color)
+                                            }
+                                        }
+                                    )
+                                Text("Lime — 1 part")
+                                    .font(.custom("EBGaramond-SemiBold", size: 13))
+                                    .foregroundStyle(sepiaInk)
+                            }
+                        }
+                        .buttonStyle(.plain)
+                        .opacity(scoopsAdded >= 1 ? 0.4 : 1)
+
+                        // Pozzolana box
+                        Button {
+                            if isPozzTurn {
+                                withAnimation(.spring(response: 0.3)) { scoopsAdded += 1 }
+                                SoundManager.shared.play(.tapSoft)
+                            }
+                        } label: {
+                            VStack(spacing: 8) {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(pozzC.opacity(0.4))
+                                    .frame(height: h * 0.22)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(isPozzTurn ? color : sepiaInk.opacity(0.2), lineWidth: isPozzTurn ? 3 : 1)
+                                    )
+                                    .overlay(
+                                        VStack(spacing: 4) {
+                                            Text("SiO₂")
+                                                .font(.custom("EBGaramond-Bold", size: 18))
+                                                .foregroundStyle(sepiaInk)
+                                            if isPozzTurn {
+                                                Text("TAP ×\(4 - scoopsAdded)")
+                                                    .font(.custom("EBGaramond-SemiBold", size: 11))
+                                                    .foregroundStyle(color)
+                                            }
+                                        }
+                                    )
+                                Text("Pozzolana — 3 parts")
+                                    .font(.custom("EBGaramond-SemiBold", size: 13))
+                                    .foregroundStyle(sepiaInk)
+                            }
+                        }
+                        .buttonStyle(.plain)
+                        .opacity(isDone ? 0.4 : 1)
+                    }
+                    .padding(.horizontal, 16)
+
+                    Spacer()
+
+                    // Status
+                    if isDone {
+                        Text("Perfect 1:3 ratio! The recipe that outlasts empires.")
+                            .font(.custom("EBGaramond-Bold", size: 14))
+                            .foregroundStyle(RenaissanceColors.sageGreen)
+                            .multilineTextAlignment(.center)
+                    } else {
+                        Text(isLimeTurn ? "Tap lime to add 1 part binder" : "Tap pozzolana to add volcanic ash (\(scoopsAdded - 1)/3)")
+                            .font(.custom("EBGaramond-Italic", size: 13))
+                            .foregroundStyle(sepiaInk.opacity(0.5))
+                    }
+
+                    Spacer().frame(height: 8)
+                }
+            }
+        }
+        .frame(height: height)
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+    }
 }
+
+private struct BowlShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        Path { p in
+            p.move(to: CGPoint(x: 0, y: rect.minY + rect.height * 0.2))
+            p.addQuadCurve(to: CGPoint(x: rect.width, y: rect.minY + rect.height * 0.2),
+                           control: CGPoint(x: rect.width / 2, y: rect.maxY + rect.height * 0.1))
+        }
+    }
+}
+
+// MARK: - 13. Calcination — CaCO₃ → CaO + CO₂ (slider-driven formula fade-in)
 
 private struct CalcinationSliderVisual: View {
     let visual: CardVisual; let color: Color; var height: CGFloat = 275
-    var body: some View { VisualContainer(title: visual.title, color: color, caption: visual.caption, height: height) {
-        Text("Calcination — coming next").foregroundStyle(sepiaInk.opacity(0.4))
-    }}
+    @State private var temperature: CGFloat = 0
+    @State private var bubblePhase: Bool = false
+
+    private var tempC: Int { Int(temperature * 1000) }
+    private var arrowOpacity: Double { min(1, max(0, (temperature - 0.4) / 0.2)) }
+    private var caoOpacity: Double { min(1, max(0, (temperature - 0.6) / 0.15)) }
+    private var plusOpacity: Double { min(1, max(0, (temperature - 0.75) / 0.1)) }
+    private var co2Opacity: Double { min(1, max(0, (temperature - 0.85) / 0.1)) }
+    private var isCalcining: Bool { tempC >= 900 }
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 10).fill(RenaissanceColors.parchment)
+            RoundedRectangle(cornerRadius: 10).strokeBorder(color.opacity(0.2), lineWidth: 1)
+            PantheonBlueprintGrid()
+
+            GeometryReader { geo in
+                let w = geo.size.width
+                let h = geo.size.height
+
+                VStack(spacing: 0) {
+                    Spacer()
+
+                    // Formula — large, elements fade in with slider
+                    HStack(spacing: 10) {
+                        Text("CaCO₃")
+                            .font(.custom("EBGaramond-Bold", size: 22))
+                            .foregroundStyle(sepiaInk)
+
+                        Image(systemName: "arrow.right")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(RenaissanceColors.furnaceOrange.opacity(arrowOpacity))
+
+                        Text("CaO")
+                            .font(.custom("EBGaramond-Bold", size: 22))
+                            .foregroundStyle(color.opacity(caoOpacity))
+
+                        Text("+")
+                            .font(.custom("EBGaramond-Bold", size: 20))
+                            .foregroundStyle(sepiaInk.opacity(plusOpacity))
+
+                        Text("CO₂↑")
+                            .font(.custom("EBGaramond-Bold", size: 22))
+                            .foregroundStyle(RenaissanceColors.sageGreen.opacity(co2Opacity))
+                    }
+
+                    Spacer()
+
+                    // Stone block + CO₂ — centered, large
+                    HStack(spacing: 0) {
+                        Spacer()
+
+                        // Stone block
+                        VStack(spacing: 6) {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color(
+                                    red: isCalcining ? 0.92 : 0.65,
+                                    green: isCalcining ? 0.90 : 0.63,
+                                    blue: isCalcining ? 0.85 : 0.60
+                                ))
+                                .frame(width: isCalcining ? h * 0.28 : h * 0.38,
+                                       height: isCalcining ? h * 0.28 : h * 0.38)
+                                .overlay(RoundedRectangle(cornerRadius: 8).stroke(sepiaInk.opacity(0.4), lineWidth: 1.5))
+                                .animation(.spring(response: 0.5), value: isCalcining)
+
+                            DimLabel(text: isCalcining ? "56g (CaO)" : "100g (CaCO₃)", fontSize: 13)
+                        }
+
+                        // CO₂ bubbles
+                        if isCalcining {
+                            VStack(spacing: 4) {
+                                ZStack {
+                                    ForEach(0..<8, id: \.self) { i in
+                                        Circle()
+                                            .fill(sepiaInk.opacity(0.2))
+                                            .frame(width: CGFloat(5 + i % 3 * 3))
+                                            .offset(
+                                                x: CGFloat([-12, 8, -5, 14, -9, 5, -3, 10][i]),
+                                                y: bubblePhase ? CGFloat([-40, -25, -45, -30, -20, -50, -35, -15][i]) : 0
+                                            )
+                                    }
+                                }
+                                .frame(width: 50, height: h * 0.25)
+
+                                DimLabel(text: "44g CO₂↑", fontSize: 13)
+                            }
+                            .padding(.leading, 20)
+                            .transition(.opacity)
+                        }
+
+                        Spacer()
+                    }
+
+                    Spacer()
+
+                    // Temperature slider — full width
+                    VStack(spacing: 3) {
+                        HStack {
+                            Text("0°C").font(.custom("EBGaramond-Regular", size: 10)).foregroundStyle(sepiaInk.opacity(0.4))
+                            Spacer()
+                            DimLabel(text: "\(tempC)°C", fontSize: 15)
+                            if isCalcining {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundStyle(RenaissanceColors.sageGreen)
+                                    .font(.system(size: 13))
+                            }
+                            Spacer()
+                            Text("1000°C").font(.custom("EBGaramond-Regular", size: 10)).foregroundStyle(sepiaInk.opacity(0.4))
+                        }
+                        Slider(value: $temperature, in: 0...1)
+                            .tint(isCalcining ? RenaissanceColors.furnaceOrange : color)
+
+                        Text(isCalcining ? "CaCO₃(100) → CaO(56) + CO₂(44) — mass conserved" : "Drag to 900°C to trigger the reaction")
+                            .font(.custom("EBGaramond-Italic", size: 10))
+                            .foregroundStyle(sepiaInk.opacity(0.5))
+                    }
+                }
+                .padding(12)
+            }
+        }
+        .frame(height: height)
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .onChange(of: isCalcining) { _, calcining in
+            if calcining {
+                withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
+                    bubblePhase = true
+                }
+            } else {
+                bubblePhase = false
+            }
+        }
+    }
 }
+
+// MARK: - 14. Tessellation — Opus Sectile, 4 stones from 4 countries
 
 private struct TessellationPuzzleVisual: View {
     let visual: CardVisual; let color: Color; var height: CGFloat = 275
-    var body: some View { VisualContainer(title: visual.title, color: color, caption: visual.caption, height: height) {
-        Text("Tessellation puzzle — coming next").foregroundStyle(sepiaInk.opacity(0.4))
-    }}
+    @State private var step: Int = 1
+
+    private let stones: [(name: String, origin: String, c: Color)] = [
+        ("Porphyry",      "Egypt",   Color(red: 0.55, green: 0.20, blue: 0.30)),
+        ("Giallo antico", "Tunisia", Color(red: 0.80, green: 0.70, blue: 0.40)),
+        ("Pavonazzetto",  "Turkey",  Color(red: 0.90, green: 0.85, blue: 0.80)),
+        ("Granite",       "Egypt",   Color(red: 0.50, green: 0.50, blue: 0.50)),
+    ]
+    private let pattern: [[Int]] = [[0, 1, 0], [2, 3, 2], [0, 1, 0]]
+
+    private var label: String {
+        switch step {
+        case 1: return "An empty floor awaits hand-cut marble from across the empire."
+        case 2: return "Porphyry from Egypt — the imperial purple reserved for emperors."
+        case 3: return "Giallo antico (Tunisia), pavonazzetto (Turkey), granite (Egypt)."
+        default: return "4 countries, 4 stones, no mortar. The floor echoes the dome above."
+        }
+    }
+
+    var body: some View {
+        TeachingContainer(title: visual.title, color: color, totalSteps: 4, step: $step, stepLabel: label, height: height) {
+            VStack(spacing: 8) {
+                // Grid
+                VStack(spacing: 3) {
+                    ForEach(0..<3, id: \.self) { row in
+                        HStack(spacing: 3) {
+                            ForEach(0..<3, id: \.self) { col in
+                                let stoneIdx = pattern[row][col]
+                                let visible = stoneVisible(stoneIdx: stoneIdx)
+
+                                ZStack {
+                                    if visible {
+                                        RoundedRectangle(cornerRadius: 3)
+                                            .fill(stones[stoneIdx].c.opacity(0.35))
+                                        RoundedRectangle(cornerRadius: 3)
+                                            .stroke(stones[stoneIdx].c.opacity(0.6), lineWidth: 1)
+                                        if row == 1 && col == 1 {
+                                            // Center diamond accent
+                                            Path { p in
+                                                let s: CGFloat = 10
+                                                p.move(to: CGPoint(x: 22, y: 22 - s))
+                                                p.addLine(to: CGPoint(x: 22 + s, y: 22))
+                                                p.addLine(to: CGPoint(x: 22, y: 22 + s))
+                                                p.addLine(to: CGPoint(x: 22 - s, y: 22))
+                                                p.closeSubpath()
+                                            }
+                                            .fill(stones[stoneIdx].c.opacity(0.2))
+                                            .frame(width: 44, height: 44)
+                                        }
+                                    } else {
+                                        RoundedRectangle(cornerRadius: 3)
+                                            .stroke(sepiaInk.opacity(0.1), style: StrokeStyle(lineWidth: 1, dash: [3, 2]))
+                                    }
+                                }
+                                .frame(width: 44, height: 44)
+                            }
+                        }
+                    }
+                }
+
+                // Legend with origins
+                HStack(spacing: 6) {
+                    ForEach(0..<stones.count, id: \.self) { i in
+                        let visible = step >= (i == 0 ? 2 : 3)
+                        VStack(spacing: 1) {
+                            Circle()
+                                .fill(visible ? stones[i].c.opacity(0.5) : sepiaInk.opacity(0.1))
+                                .frame(width: 8, height: 8)
+                            Text(stones[i].name)
+                                .font(.custom("EBGaramond-Regular", size: 7))
+                                .foregroundStyle(visible ? sepiaInk : sepiaInk.opacity(0.3))
+                            if visible {
+                                Text(stones[i].origin)
+                                    .font(.custom("EBGaramond-Italic", size: 7))
+                                    .foregroundStyle(dimColor)
+                            }
+                        }
+                    }
+                }
+
+                if step >= 4 {
+                    FormulaText(text: "No mortar — precision cut", highlighted: true, fontSize: 11)
+                }
+            }
+        }
+    }
+
+    private func stoneVisible(stoneIdx: Int) -> Bool {
+        switch step {
+        case 1: return false
+        case 2: return stoneIdx == 0
+        case 3: return stoneIdx <= 2
+        default: return true
+        }
+    }
 }

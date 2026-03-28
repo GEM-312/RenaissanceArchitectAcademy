@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 /// Raw materials for the Workshop crafting system
 enum Material: String, CaseIterable, Identifiable, Codable {
@@ -94,6 +95,33 @@ enum Material: String, CaseIterable, Identifiable, Codable {
         }
     }
 
+    /// Asset catalog image name (Midjourney art) — nil if no image yet
+    var imageName: String? {
+        switch self {
+        case .limestone:                        return "MaterialLimestone"
+        case .volcanicAsh:                      return "MaterialVolcanicAsh"
+        case .ironOre:                          return "MaterialIronOre"
+        case .clay:                             return "MaterialClay"
+        case .timber:                           return "MaterialTimber"
+        case .lead:                             return "MaterialLead"
+        case .marble:                           return "MaterialMarble"
+        case .marbleDust:                       return "MaterialQuicklime"
+        case .sulfur:                           return "MaterialSulfur"
+        case .copper:                           return "MaterialCopper"
+        case .gold:                             return "MaterialGold"
+        case .herbs:                            return "MaterialHerbs"
+        case .letame:                           return "MaterialLetame"
+        case .charredOxHorn:                    return "MaterialOxHorn"
+        case .beeswax:                          return "MaterialBeeswax"
+        case .redOchre, .groundRedOchre:        return "PigmentRedOchre"
+        case .lapisBlue, .groundLapisBlue:      return "PigmentLapisLazuli"
+        case .verdigrisGreen, .groundVerdigris: return "PigmentVerdigris"
+        case .cinnabar, .groundCinnabar:        return "PigmentVermillion"
+        case .saffron, .groundSaffron:          return "PigmentSienna"
+        default: return nil
+        }
+    }
+
     /// Whether this is a raw pigment that can be ground at the Pigment Table
     var isRawPigment: Bool {
         switch self {
@@ -111,6 +139,26 @@ enum Material: String, CaseIterable, Identifiable, Codable {
             return true
         default:
             return false
+        }
+    }
+}
+
+// MARK: - Material Icon View (Midjourney image or emoji fallback)
+
+/// Shows Midjourney material art if available, otherwise the emoji icon
+struct MaterialIconView: View {
+    let material: Material
+    var size: CGFloat = 28
+
+    var body: some View {
+        if let name = material.imageName {
+            Image(name)
+                .resizable()
+                .scaledToFit()
+                .frame(height: size)
+        } else {
+            Text(material.icon)
+                .font(.system(size: size * 0.7))
         }
     }
 }
