@@ -966,7 +966,7 @@ struct CityMapView: View {
 
         // Create new scene
         let newScene = CityScene()
-        newScene.size = CGSize(width: 3500, height: 2500)
+        newScene.size = CGSize(width: 3500, height: 1955)
         newScene.scaleMode = .resizeFill
 
         // Set player gender before scene setup

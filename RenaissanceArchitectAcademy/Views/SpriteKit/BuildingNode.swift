@@ -262,21 +262,9 @@ class BuildingNode: SKNode {
     }
 
     /// Map buildingId to sprite asset name
+    /// Buildings are now baked into the terrain map — always use vector diamond shapes
     private func buildingSpriteImageName() -> String? {
-        switch buildingId {
-        case "aqueduct":            return "BuildingAqueduct"
-        case "pantheon":            return "BuildingPantheon"
-        case "romanRoads":          return "BuildingRomanRoads"
-        case "harbor":              return "BuildingHarbor"
-        case "siegeWorkshop":       return "BuildingSiegeWorkshop"
-        case "insula":              return "BuildingInsula"
-        case "glassworks":          return "BuildingGlassworks"
-        // Add more as sprites are created:
-        // case "colosseum":        return "BuildingColosseum"
-        // case "romanBaths":       return "BuildingRomanBaths"
-        // case "duomo":            return "BuildingDuomo"
-        default:                    return nil
-        }
+        return nil
     }
 
     /// Check if a sprite image exists in the asset catalog

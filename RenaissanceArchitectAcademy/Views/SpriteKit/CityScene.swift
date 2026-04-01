@@ -18,6 +18,8 @@ class CityScene: SKScene, ScrollZoomable {
     // MARK: - Properties
 
     private var cameraNode: SKCameraNode!
+    /// Maximum zoom-out scale = full map visible (computed in fitCameraToMap)
+    private var maxZoomOutScale: CGFloat = 3.5
     private(set) var buildingNodes: [String: BuildingNode] = [:]
     private var playerNode: PlayerNode!
 
@@ -94,13 +96,13 @@ class CityScene: SKScene, ScrollZoomable {
     /// mapSize auto-adjusts and camera panning covers all tiles.
     private let terrainTiles: [TerrainTile] = [
         // Current map
-        TerrainTile(imageName: "Terrain", origin: .zero, size: CGSize(width: 3500, height: 2500)),
+        TerrainTile(imageName: "Terrain", origin: .zero, size: CGSize(width: 3500, height: 1955)),
 
         // === Expansion tiles ===
         // Uncomment and replace nil with image name once art is created:
-        // TerrainTile(imageName: nil, origin: CGPoint(x: 3500, y: 0),    size: CGSize(width: 3500, height: 2500)),  // East
-        // TerrainTile(imageName: nil, origin: CGPoint(x: 0, y: 2500),    size: CGSize(width: 3500, height: 2500)),  // North
-        // TerrainTile(imageName: nil, origin: CGPoint(x: 3500, y: 2500), size: CGSize(width: 3500, height: 2500)),  // Northeast
+        // TerrainTile(imageName: nil, origin: CGPoint(x: 3500, y: 0),    size: CGSize(width: 3500, height: 1955)),  // East
+        // TerrainTile(imageName: nil, origin: CGPoint(x: 0, y: 1955),    size: CGSize(width: 3500, height: 1955)),  // North
+        // TerrainTile(imageName: nil, origin: CGPoint(x: 3500, y: 1955), size: CGSize(width: 3500, height: 1955)),  // Northeast
     ]
 
     /// Map size auto-computed from all terrain tiles
@@ -110,7 +112,7 @@ class CityScene: SKScene, ScrollZoomable {
             maxX = max(maxX, tile.origin.x + tile.size.width)
             maxY = max(maxY, tile.origin.y + tile.size.height)
         }
-        return CGSize(width: max(3500, maxX), height: max(2500, maxY))
+        return CGSize(width: max(3500, maxX), height: max(1955, maxY))
     }()
 
     // MARK: - Waypoint Graph (road network for pathfinding)
@@ -401,23 +403,23 @@ class CityScene: SKScene, ScrollZoomable {
         cameraNode.setScale(1.7)
     }
 
-    /// Recalculate camera scale when view resizes (.resizeFill updates scene.size)
+    /// Recalculate zoom limits when view resizes (.resizeFill updates scene.size)
     override func didChangeSize(_ oldSize: CGSize) {
         super.didChangeSize(oldSize)
-        // Don't override the initial 0.3 zoom — only re-fit if the user has zoomed out past fitScale
-        // (i.e. this is a real window resize, not the initial SpriteKit sizing)
+        let viewSize = view?.bounds.size ?? self.size
+        guard viewSize.width > 0 && viewSize.height > 0 else { return }
+        maxZoomOutScale = max(mapSize.width / viewSize.width, mapSize.height / viewSize.height)
     }
 
     /// Set camera scale so the full map is visible
     private func fitCameraToMap() {
         guard let cameraNode = cameraNode else { return }
-        // With .resizeFill, self.size = view size in points
-        // visible area = self.size * cameraScale
-        // To fit the whole map: scale = max(mapW/sizeW, mapH/sizeH)
-        let s = self.size
-        guard s.width > 0 && s.height > 0 else { return }
-        let fitScale = max(mapSize.width / s.width, mapSize.height / s.height)
+        let viewSize = view?.bounds.size ?? self.size
+        guard viewSize.width > 0 && viewSize.height > 0 else { return }
+        let fitScale = max(mapSize.width / viewSize.width, mapSize.height / viewSize.height)
+        maxZoomOutScale = fitScale
         cameraNode.setScale(fitScale)
+        cameraNode.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
     }
 
     // MARK: - Terrain
@@ -589,37 +591,39 @@ class CityScene: SKScene, ScrollZoomable {
             // ========================================
             // ANCIENT ROME
             // ========================================
-            ("aqueduct", "Aqueduct", CGPoint(x: 777, y: 1002), "rome", -2),
-            ("colosseum", "Colosseum", CGPoint(x: 550, y: 1800), "rome", 0),
-            ("romanBaths", "Roman Baths", CGPoint(x: 250, y: 1450), "rome", 0),
-            ("pantheon", "Pantheon", CGPoint(x: 1624, y: 1748), "rome", 0),
-            ("romanRoads", "Roman Roads", CGPoint(x: 2270, y: 393), "rome", -11),
-            ("harbor", "Harbor", CGPoint(x: 2898, y: 2040), "rome", 0),
-            ("siegeWorkshop", "Siege Workshop", CGPoint(x: 434, y: 1928), "rome", 0),
-            ("insula", "Insula", CGPoint(x: 148, y: 850), "rome", 0),
+            // Positions rescaled for new 3500x1955 map (Y × 0.782 from old 2500 height)
+            // Use editor mode (E) to fine-tune positions over baked-in buildings
+            ("aqueduct", "Aqueduct", CGPoint(x: 777, y: 784), "rome", 0),
+            ("colosseum", "Colosseum", CGPoint(x: 550, y: 1408), "rome", 0),
+            ("romanBaths", "Roman Baths", CGPoint(x: 250, y: 1134), "rome", 0),
+            ("pantheon", "Pantheon", CGPoint(x: 1624, y: 1367), "rome", 0),
+            ("romanRoads", "Roman Roads", CGPoint(x: 2270, y: 307), "rome", 0),
+            ("harbor", "Harbor", CGPoint(x: 2898, y: 1595), "rome", 0),
+            ("siegeWorkshop", "Siege Workshop", CGPoint(x: 434, y: 1508), "rome", 0),
+            ("insula", "Insula", CGPoint(x: 148, y: 665), "rome", 0),
 
             // ========================================
-            // RENAISSANCE ITALY (right side of map)
+            // RENAISSANCE ITALY
             // ========================================
 
-            // Florence (top right)
-            ("duomo", "Il Duomo", CGPoint(x: 2400, y: 2200), "florence", 0),
-            ("botanicalGarden", "Botanical Garden", CGPoint(x: 2700, y: 1900), "florence", 0),
+            // Florence
+            ("duomo", "Il Duomo", CGPoint(x: 2400, y: 1720), "florence", 0),
+            ("botanicalGarden", "Botanical Garden", CGPoint(x: 2700, y: 1486), "florence", 0),
 
-            // Venice (middle right, near water)
-            ("glassworks", "Glassworks", CGPoint(x: 3036, y: 1126), "venice", 0),
-            ("arsenal", "Arsenal", CGPoint(x: 2900, y: 1350), "venice", 0),
+            // Venice
+            ("glassworks", "Glassworks", CGPoint(x: 3036, y: 881), "venice", 0),
+            ("arsenal", "Arsenal", CGPoint(x: 2900, y: 1056), "venice", 0),
 
-            // Padua (center)
-            ("anatomyTheater", "Anatomy Theater", CGPoint(x: 2200, y: 1500), "padua", 0),
+            // Padua
+            ("anatomyTheater", "Anatomy Theater", CGPoint(x: 2200, y: 1173), "padua", 0),
 
-            // Milan (upper middle)
-            ("leonardoWorkshop", "Leonardo's Workshop", CGPoint(x: 1800, y: 2000), "milan", 0),
-            ("flyingMachine", "Flying Machine", CGPoint(x: 1500, y: 1700), "milan", 0),
+            // Milan
+            ("leonardoWorkshop", "Leonardo's Workshop", CGPoint(x: 1800, y: 1564), "milan", 0),
+            ("flyingMachine", "Flying Machine", CGPoint(x: 1500, y: 1330), "milan", 0),
 
-            // Rome (lower right - Renaissance Rome)
-            ("vaticanObservatory", "Vatican Observatory", CGPoint(x: 2500, y: 900), "renaissanceRome", 0),
-            ("printingPress", "Printing Press", CGPoint(x: 2100, y: 600), "renaissanceRome", 0)
+            // Renaissance Rome
+            ("vaticanObservatory", "Vatican Observatory", CGPoint(x: 2500, y: 704), "renaissanceRome", 0),
+            ("printingPress", "Printing Press", CGPoint(x: 2100, y: 469), "renaissanceRome", 0)
         ]
 
         for building in buildings {
@@ -833,7 +837,7 @@ class CityScene: SKScene, ScrollZoomable {
             // Regular scroll = zoom (works with Magic Mouse)
             let zoomFactor: CGFloat = 1.0 - (event.deltaY * 0.05)
             let newScale = cameraNode.xScale * zoomFactor
-            let clampedScale = max(0.5, min(3.5, newScale))
+            let clampedScale = max(0.5, min(maxZoomOutScale, newScale))
             cameraNode.setScale(clampedScale)
         }
         clampCamera()
@@ -844,7 +848,7 @@ class CityScene: SKScene, ScrollZoomable {
         dismissOverlaysOnInteraction()
         let zoomFactor: CGFloat = 1.0 + event.magnification
         let newScale = cameraNode.xScale / zoomFactor
-        let clampedScale = max(0.5, min(3.5, newScale))
+        let clampedScale = max(0.5, min(maxZoomOutScale, newScale))
         cameraNode.setScale(clampedScale)
         clampCamera()
     }
@@ -1171,8 +1175,14 @@ class CityScene: SKScene, ScrollZoomable {
         let scale = cameraNode.xScale
         let viewSize = view?.bounds.size ?? CGSize(width: 1024, height: 768)
 
-        // Add padding so edge buildings are fully visible
-        let padding: CGFloat = 200
+        // Recalculate min zoom from actual view size (resizeFill may change it)
+        if viewSize.width > 0 && viewSize.height > 0 {
+            maxZoomOutScale = max(mapSize.width / viewSize.width, mapSize.height / viewSize.height)
+        }
+
+        // Padding scales down as we approach max zoom-out — zero padding at full map view
+        let zoomRatio = (maxZoomOutScale - scale) / max(0.01, (maxZoomOutScale - 0.5))
+        let padding: CGFloat = 200 * min(1.0, zoomRatio * 2) // full padding when zoomed in, zero at max zoom-out
 
         // Calculate visible area at current zoom
         let visibleWidth = viewSize.width * scale
@@ -1202,7 +1212,7 @@ class CityScene: SKScene, ScrollZoomable {
 
     func handlePinch(scale: CGFloat) {
         let newScale = cameraNode.xScale / scale
-        let clampedScale = max(0.5, min(3.5, newScale))
+        let clampedScale = max(0.5, min(maxZoomOutScale, newScale))
         cameraNode.setScale(clampedScale)
         clampCamera()
     }
@@ -1213,7 +1223,7 @@ class CityScene: SKScene, ScrollZoomable {
         dismissOverlaysOnInteraction()
         let zoomFactor: CGFloat = 1.0 - (deltaY * 0.05)
         let newScale = cameraNode.xScale * zoomFactor
-        let clampedScale = max(0.5, min(3.5, newScale))
+        let clampedScale = max(0.5, min(maxZoomOutScale, newScale))
         cameraNode.setScale(clampedScale)
         clampCamera()
     }
@@ -1234,7 +1244,7 @@ class CityScene: SKScene, ScrollZoomable {
         dismissOverlaysOnInteraction()
         let zoomFactor: CGFloat = 1.0 + magnification
         let newScale = cameraNode.xScale / zoomFactor
-        let clampedScale = max(0.5, min(3.5, newScale))
+        let clampedScale = max(0.5, min(maxZoomOutScale, newScale))
         cameraNode.setScale(clampedScale)
         clampCamera()
     }
