@@ -247,7 +247,7 @@ class CityScene: SKScene, ScrollZoomable {
         }
         hasSetup = true
 
-        backgroundColor = PlatformColor(red: 0.94, green: 0.91, blue: 0.86, alpha: 1.0) // Match terrain edge color
+        backgroundColor = PlatformColor(RenaissanceColors.parchment) // #F5E6D3
 
         setupCamera()
         setupTerrain()
