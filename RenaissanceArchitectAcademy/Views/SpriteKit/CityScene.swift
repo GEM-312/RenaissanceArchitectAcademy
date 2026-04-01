@@ -1180,32 +1180,36 @@ class CityScene: SKScene, ScrollZoomable {
             maxZoomOutScale = max(mapSize.width / viewSize.width, mapSize.height / viewSize.height)
         }
 
-        // Padding scales down as we approach max zoom-out — zero padding at full map view
-        let zoomRatio = (maxZoomOutScale - scale) / max(0.01, (maxZoomOutScale - 0.5))
-        let padding: CGFloat = 200 * min(1.0, zoomRatio * 2) // full padding when zoomed in, zero at max zoom-out
-
         // Calculate visible area at current zoom
         let visibleWidth = viewSize.width * scale
         let visibleHeight = viewSize.height * scale
 
-        // Allow camera to move so all parts of map (plus padding) are reachable
-        let minX = (visibleWidth / 2) - padding
-        let maxX = mapSize.width - (visibleWidth / 2) + padding
-        let minY = (visibleHeight / 2) - padding
-        let maxY = mapSize.height - (visibleHeight / 2) + padding
+        // Padding only when zoomed in enough that map is bigger than view
+        // Zero padding when visible area >= map size (prevents seeing beyond map)
+        let xPadding: CGFloat = visibleWidth < mapSize.width ? 100 : 0
+        let yPadding: CGFloat = visibleHeight < mapSize.height ? 100 : 0
 
-        // Only clamp if the map is larger than the visible area
-        if maxX > minX {
+        let minX = (visibleWidth / 2) - xPadding
+        let maxX = mapSize.width - (visibleWidth / 2) + xPadding
+        let minY = (visibleHeight / 2) - yPadding
+        let maxY = mapSize.height - (visibleHeight / 2) + yPadding
+
+        // Clamp or center per axis
+        if visibleWidth >= mapSize.width {
+            // View is wider than map — lock to center
+            cameraNode.position.x = mapSize.width / 2
+        } else if maxX > minX {
             cameraNode.position.x = max(minX, min(maxX, cameraNode.position.x))
         } else {
-            // Map fits in view, center it
             cameraNode.position.x = mapSize.width / 2
         }
 
-        if maxY > minY {
+        if visibleHeight >= mapSize.height {
+            // View is taller than map — lock to center
+            cameraNode.position.y = mapSize.height / 2
+        } else if maxY > minY {
             cameraNode.position.y = max(minY, min(maxY, cameraNode.position.y))
         } else {
-            // Map fits in view, center it
             cameraNode.position.y = mapSize.height / 2
         }
     }
