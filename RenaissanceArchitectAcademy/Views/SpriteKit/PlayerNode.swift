@@ -40,8 +40,10 @@ class PlayerNode: SKNode {
     /// - Parameter isBoy: true for boy apprentice, false for girl apprentice
     init(isBoy: Bool = true) {
         self.isBoy = isBoy
+        let atlasName = isBoy ? "ApprenticeWalk" : "ApprenticeGirlWalk"
+        let walkAtlas = SKTextureAtlas(named: atlasName)
         let prefix = isBoy ? "ApprenticeFrame" : "ApprenticeGirlFrame"
-        self.walkTextures = (0..<15).map { SKTexture(imageNamed: String(format: "%@%02d", prefix, $0)) }
+        self.walkTextures = (0..<15).map { walkAtlas.textureNamed(String(format: "%@%02d", prefix, $0)) }
 
         // Load collecting textures if available (CollectBoyFrame00–14 / CollectGirlFrame00–14)
         let collectPrefix = isBoy ? "CollectBoyFrame" : "CollectGirlFrame"

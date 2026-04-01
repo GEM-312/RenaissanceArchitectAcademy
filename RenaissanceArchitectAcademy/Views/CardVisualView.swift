@@ -15,9 +15,23 @@ struct CardVisualView: View {
     @State private var animationPhase: CGFloat = 0
 
     var body: some View {
-        // Use interactive visual if available (Pantheon, etc.)
+        // Use interactive visual if available (Pantheon, Aqueduct, etc.)
         if PantheonInteractiveVisuals.hasInteractiveVisual(for: visual) {
             PantheonInteractiveVisuals.view(for: visual, color: color, height: visualHeight)
+        } else if AqueductInteractiveVisuals.hasInteractiveVisual(for: visual) {
+            AqueductInteractiveVisuals.view(for: visual, color: color, height: visualHeight)
+        } else if ColosseumInteractiveVisuals.hasInteractiveVisual(for: visual) {
+            ColosseumInteractiveVisuals.view(for: visual, color: color, height: visualHeight)
+        } else if RomanRoadsInteractiveVisuals.hasInteractiveVisual(for: visual) {
+            RomanRoadsInteractiveVisuals.view(for: visual, color: color, height: visualHeight)
+        } else if RomanBathsInteractiveVisuals.hasInteractiveVisual(for: visual) {
+            RomanBathsInteractiveVisuals.view(for: visual, color: color, height: visualHeight)
+        } else if InsulaInteractiveVisuals.hasInteractiveVisual(for: visual) {
+            InsulaInteractiveVisuals.view(for: visual, color: color, height: visualHeight)
+        } else if HarborInteractiveVisuals.hasInteractiveVisual(for: visual) {
+            HarborInteractiveVisuals.view(for: visual, color: color, height: visualHeight)
+        } else if SiegeWorkshopInteractiveVisuals.hasInteractiveVisual(for: visual) {
+            SiegeWorkshopInteractiveVisuals.view(for: visual, color: color, height: visualHeight)
         } else {
             legacyCanvasView
         }

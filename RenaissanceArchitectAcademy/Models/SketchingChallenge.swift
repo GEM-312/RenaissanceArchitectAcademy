@@ -175,12 +175,45 @@ struct PiantaPhaseData {
     let historicalContext: String               // Historical facts about this building
 }
 
-/// Data specific to Phase 2: Alzato (Elevation) - Future
+/// Data specific to Phase 2: Alzato (Elevation) — Bézier curve shaping
 struct AlzatoPhaseData {
     let canvasWidth: Int
     let canvasHeight: Int
+    let elements: [AlzatoElement]           // Draggable curve elements on the elevation
     let requiredOrder: ClassicalOrder
     let educationalText: String
+    let historicalContext: String
+}
+
+/// A single draggable architectural element on the elevation view
+struct AlzatoElement: Identifiable {
+    let id: String                          // "arch", "dome", "columnLeft"
+    let label: String                       // "Portico Arch"
+    let type: AlzatoElementType
+    let position: CGPoint                   // normalized 0-1 position on canvas
+    let size: CGSize                        // normalized 0-1 size on canvas
+    let initialPoints: [CGPoint]            // starting control points (wrong shape)
+    let targetPoints: [CGPoint]             // correct control points (target shape)
+    let fixedAxis: AlzatoFixedAxis          // which axis is locked during drag
+    let clampRange: ClosedRange<CGFloat>    // allowed drag range on the free axis (0-1)
+    let tolerance: CGFloat                  // max average distance to target for correct (0-1)
+    let educationalHint: String             // shown when element is correct
+}
+
+/// Which axis is locked when dragging control points
+enum AlzatoFixedAxis {
+    case horizontal     // X fixed, drag Y only (arches, domes)
+    case vertical       // Y fixed, drag X only (column entasis)
+    case free           // both axes draggable
+}
+
+/// Types of facade elements the player shapes
+enum AlzatoElementType {
+    case arch           // semicircular opening (drag keystone height)
+    case dome           // hemisphere profile (drag peak)
+    case column         // with optional entasis (drag width at midpoint)
+    case pediment       // triangular pediment (drag peak angle)
+    case wall           // rectangular section (drag height)
 }
 
 /// Data specific to Phase 3: Sezione (Cross-Section) - Future

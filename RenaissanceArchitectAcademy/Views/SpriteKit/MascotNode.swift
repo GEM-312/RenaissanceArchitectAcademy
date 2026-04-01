@@ -127,7 +127,8 @@ class MascotNode: SKNode {
         addChild(birdContainer)
 
         // Load fly-to-sit textures (BirdFlySitFrame00–14)
-        let flySitTextures = (0..<15).map { SKTexture(imageNamed: String(format: "BirdFlySitFrame%02d", $0)) }
+        let birdAtlas = SKTextureAtlas(named: "BirdFlySit")
+        let flySitTextures = (0..<15).map { birdAtlas.textureNamed(String(format: "BirdFlySitFrame%02d", $0)) }
 
         // Bird sprite — starts on first fly frame, sized to match old shape bird
         let birdSprite = SKSpriteNode(texture: flySitTextures[0], size: CGSize(width: 80, height: 70))

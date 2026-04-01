@@ -67,9 +67,99 @@ enum SketchingContent {
                     educationalText: "The Pantheon's dome spans 43.3 meters — the same as its height from floor to oculus. This 1:1 ratio creates a perfect sphere that could fit inside the building. Roman architects used this harmony of proportion to represent the cosmos.",
                     historicalContext: "Emperor Hadrian rebuilt the Pantheon around 126 AD. The original was built by Marcus Agrippa in 27 BC but burned down twice. The inscription on the portico still reads 'M·AGRIPPA·L·F·COS·TERTIVM·FECIT' — crediting Agrippa, though Hadrian designed the current building."
                 ))
+            ),
+            // Phase 2: Alzato (Elevation) — Bézier curve shaping
+            SketchingPhase(
+                phaseType: .alzato,
+                title: "Alzato: Elevation",
+                introduction: "Now shape the Pantheon's facade — the view from the front. Drag the golden handles to form the correct arch, dome, and column proportions. The Pantheon's elevation tells the story: a Greek temple portico attached to a Roman rotunda.",
+                sciencesFocused: [.geometry, .architecture, .physics],
+                phaseData: .alzato(AlzatoPhaseData(
+                    canvasWidth: 12,
+                    canvasHeight: 10,
+                    elements: [
+                        // 1. Portico Arch — drag keystone to form semicircular Roman arch
+                        AlzatoElement(
+                            id: "porticoArch",
+                            label: "Portico Arch",
+                            type: .arch,
+                            position: CGPoint(x: 0.5, y: 0.55),   // center-bottom area
+                            size: CGSize(width: 0.3, height: 0.25),
+                            initialPoints: [
+                                CGPoint(x: 0.0, y: 0.9),   // left spring
+                                CGPoint(x: 0.25, y: 0.6),  // left haunch (starts wrong — too flat)
+                                CGPoint(x: 0.5, y: 0.5),   // keystone (starts too low)
+                                CGPoint(x: 0.75, y: 0.6),  // right haunch
+                                CGPoint(x: 1.0, y: 0.9)    // right spring
+                            ],
+                            targetPoints: [
+                                CGPoint(x: 0.0, y: 0.9),   // left spring (fixed)
+                                CGPoint(x: 0.15, y: 0.3),  // left haunch — semicircular
+                                CGPoint(x: 0.5, y: 0.08),  // keystone — top of semicircle
+                                CGPoint(x: 0.85, y: 0.3),  // right haunch
+                                CGPoint(x: 1.0, y: 0.9)    // right spring (fixed)
+                            ],
+                            fixedAxis: .horizontal,         // X fixed, drag Y only
+                            clampRange: 0.0...0.95,
+                            tolerance: 0.08,
+                            educationalHint: "A perfect semicircular arch — the Roman signature. Every stone is in compression."
+                        ),
+                        // 2. Dome Profile — drag peak to form hemisphere
+                        AlzatoElement(
+                            id: "domeProfile",
+                            label: "Dome",
+                            type: .dome,
+                            position: CGPoint(x: 0.5, y: 0.25),   // top-center
+                            size: CGSize(width: 0.55, height: 0.3),
+                            initialPoints: [
+                                CGPoint(x: 0.0, y: 0.95),  // left base
+                                CGPoint(x: 0.2, y: 0.7),   // left shoulder (starts too flat)
+                                CGPoint(x: 0.5, y: 0.55),  // peak (starts too low)
+                                CGPoint(x: 0.8, y: 0.7),   // right shoulder
+                                CGPoint(x: 1.0, y: 0.95)   // right base
+                            ],
+                            targetPoints: [
+                                CGPoint(x: 0.0, y: 0.95),  // left base (fixed)
+                                CGPoint(x: 0.12, y: 0.25),  // left shoulder — hemisphere
+                                CGPoint(x: 0.5, y: 0.05),  // peak — top of hemisphere
+                                CGPoint(x: 0.88, y: 0.25),  // right shoulder
+                                CGPoint(x: 1.0, y: 0.95)   // right base (fixed)
+                            ],
+                            fixedAxis: .horizontal,
+                            clampRange: 0.0...0.98,
+                            tolerance: 0.08,
+                            educationalHint: "The dome is a perfect hemisphere — 43.3m wide, 43.3m tall. A sphere fits exactly inside."
+                        ),
+                        // 3. Column Height — drag top to match Corinthian 10:1 ratio
+                        AlzatoElement(
+                            id: "columnLeft",
+                            label: "Column (10:1)",
+                            type: .column,
+                            position: CGPoint(x: 0.25, y: 0.6),   // left side
+                            size: CGSize(width: 0.08, height: 0.35),
+                            initialPoints: [
+                                CGPoint(x: 0.5, y: 0.85),  // base (fixed)
+                                CGPoint(x: 0.5, y: 0.55),  // mid (starts too short)
+                                CGPoint(x: 0.5, y: 0.35)   // top (starts too low)
+                            ],
+                            targetPoints: [
+                                CGPoint(x: 0.5, y: 0.85),  // base
+                                CGPoint(x: 0.5, y: 0.45),  // mid — correct proportion
+                                CGPoint(x: 0.5, y: 0.08)   // top — 10:1 Corinthian height
+                            ],
+                            fixedAxis: .vertical,           // Y fixed, drag X... wait, column height = drag Y
+                            clampRange: 0.0...0.9,
+                            tolerance: 0.10,
+                            educationalHint: "Corinthian columns are 10× their diameter in height — the tallest classical order."
+                        )
+                    ],
+                    requiredOrder: .corinthian,
+                    educationalText: "The Pantheon's elevation reveals its dual nature: a Greek temple portico (8 Corinthian columns, triangular pediment) joined to a Roman rotunda crowned by the world's largest unreinforced concrete dome. The 1:1 proportional system — where dome diameter equals building height — creates perfect geometric harmony.",
+                    historicalContext: "The portico columns are 12.5m tall, carved from single Egyptian granite blocks. Each weighs 60 tons and was shipped 2,000 km from the quarries at Mons Claudianus."
+                ))
             )
         ],
-        educationalSummary: "You've designed the floor plan of one of history's most influential buildings. The Pantheon's proportional system — a perfect sphere inscribed in a cylinder — influenced architects for 2000 years, from Brunelleschi's Duomo to the US Capitol."
+        educationalSummary: "You've designed both the floor plan and elevation of one of history's most influential buildings. The Pantheon's proportional system — a perfect sphere inscribed in a cylinder — influenced architects for 2000 years, from Brunelleschi's Duomo to the US Capitol."
     )
 
     // MARK: - Colosseum

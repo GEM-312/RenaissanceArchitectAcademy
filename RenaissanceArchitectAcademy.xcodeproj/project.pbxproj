@@ -41,6 +41,14 @@
 		035 /* KnowledgeTestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 135 /* KnowledgeTestsView.swift */; };
 		036 /* PiantaCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 136 /* PiantaCanvasView.swift */; };
 		037 /* SketchingToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 137 /* SketchingToolbarView.swift */; };
+		2A3 /* BezierDragShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3 /* BezierDragShape.swift */; };
+		2A4 /* AlzatoCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4 /* AlzatoCanvasView.swift */; };
+		2A5 /* ColosseumInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5 /* ColosseumInteractiveVisuals.swift */; };
+		2A6 /* RomanRoadsInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A6 /* RomanRoadsInteractiveVisuals.swift */; };
+		2A7 /* RomanBathsInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7 /* RomanBathsInteractiveVisuals.swift */; };
+		2A8 /* InsulaInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8 /* InsulaInteractiveVisuals.swift */; };
+		2A9 /* HarborInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9 /* HarborInteractiveVisuals.swift */; };
+		2AA /* SiegeWorkshopInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AA /* SiegeWorkshopInteractiveVisuals.swift */; };
 		038 /* GameTopBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 138 /* GameTopBarView.swift */; };
 		039 /* OnboardingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 139 /* OnboardingState.swift */; };
 		040 /* OnboardingContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 140 /* OnboardingContent.swift */; };
@@ -134,6 +142,8 @@
 		0EB /* CardVisualView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EB /* CardVisualView.swift */; };
 		0F0 /* HapticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F0 /* HapticsManager.swift */; };
 		0F1 /* PantheonInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F1 /* PantheonInteractiveVisuals.swift */; };
+		0FA /* InteractiveVisualHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA /* InteractiveVisualHelpers.swift */; };
+		0FC /* AqueductInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FC /* AqueductInteractiveVisuals.swift */; };
 		0F2 /* AssetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2 /* AssetManager.swift */; };
 		0F3 /* AIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F3 /* AIService.swift */; };
 		0F4 /* AppleAIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4 /* AppleAIService.swift */; };
@@ -245,6 +255,14 @@
 		135 /* KnowledgeTestsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnowledgeTestsView.swift; sourceTree = "<group>"; };
 		136 /* PiantaCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiantaCanvasView.swift; sourceTree = "<group>"; };
 		137 /* SketchingToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchingToolbarView.swift; sourceTree = "<group>"; };
+		3A3 /* BezierDragShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BezierDragShape.swift; sourceTree = "<group>"; };
+		3A4 /* AlzatoCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlzatoCanvasView.swift; sourceTree = "<group>"; };
+		3A5 /* ColosseumInteractiveVisuals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ColosseumInteractiveVisuals.swift; path = RenaissanceArchitectAcademy/Views/ColosseumInteractiveVisuals.swift; sourceTree = SOURCE_ROOT; };
+		3A6 /* RomanRoadsInteractiveVisuals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RomanRoadsInteractiveVisuals.swift; path = RenaissanceArchitectAcademy/Views/RomanRoadsInteractiveVisuals.swift; sourceTree = SOURCE_ROOT; };
+		3A7 /* RomanBathsInteractiveVisuals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RomanBathsInteractiveVisuals.swift; path = RenaissanceArchitectAcademy/Views/RomanBathsInteractiveVisuals.swift; sourceTree = SOURCE_ROOT; };
+		3A8 /* InsulaInteractiveVisuals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InsulaInteractiveVisuals.swift; path = RenaissanceArchitectAcademy/Views/InsulaInteractiveVisuals.swift; sourceTree = SOURCE_ROOT; };
+		3A9 /* HarborInteractiveVisuals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HarborInteractiveVisuals.swift; path = RenaissanceArchitectAcademy/Views/HarborInteractiveVisuals.swift; sourceTree = SOURCE_ROOT; };
+		3AA /* SiegeWorkshopInteractiveVisuals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SiegeWorkshopInteractiveVisuals.swift; path = RenaissanceArchitectAcademy/Views/SiegeWorkshopInteractiveVisuals.swift; sourceTree = SOURCE_ROOT; };
 		138 /* GameTopBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameTopBarView.swift; sourceTree = "<group>"; };
 		139 /* OnboardingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingState.swift; sourceTree = "<group>"; };
 		140 /* OnboardingContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingContent.swift; sourceTree = "<group>"; };
@@ -338,6 +356,8 @@
 		1EB /* CardVisualView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardVisualView.swift; sourceTree = "<group>"; };
 		1F0 /* HapticsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticsManager.swift; sourceTree = "<group>"; };
 		1F1 /* PantheonInteractiveVisuals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PantheonInteractiveVisuals.swift; path = RenaissanceArchitectAcademy/Views/PantheonInteractiveVisuals.swift; sourceTree = SOURCE_ROOT; };
+		1FA /* InteractiveVisualHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InteractiveVisualHelpers.swift; path = RenaissanceArchitectAcademy/Views/InteractiveVisualHelpers.swift; sourceTree = SOURCE_ROOT; };
+		1FC /* AqueductInteractiveVisuals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AqueductInteractiveVisuals.swift; path = RenaissanceArchitectAcademy/Views/AqueductInteractiveVisuals.swift; sourceTree = SOURCE_ROOT; };
 		1F2 /* AssetManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetManager.swift; sourceTree = "<group>"; };
 		1F3 /* AIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIService.swift; sourceTree = "<group>"; };
 		1F4 /* AppleAIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleAIService.swift; sourceTree = "<group>"; };
@@ -631,6 +651,8 @@
 			children = (
 				136 /* PiantaCanvasView.swift */,
 				137 /* SketchingToolbarView.swift */,
+				3A3 /* BezierDragShape.swift */,
+				3A4 /* AlzatoCanvasView.swift */,
 			);
 			path = Sketching;
 			sourceTree = "<group>";
@@ -708,6 +730,14 @@
 			isa = PBXGroup;
 			children = (
 				1F1 /* PantheonInteractiveVisuals.swift */,
+				1FA /* InteractiveVisualHelpers.swift */,
+				1FC /* AqueductInteractiveVisuals.swift */,
+				3A5 /* ColosseumInteractiveVisuals.swift */,
+				3A6 /* RomanRoadsInteractiveVisuals.swift */,
+				3A7 /* RomanBathsInteractiveVisuals.swift */,
+				3A8 /* InsulaInteractiveVisuals.swift */,
+				3A9 /* HarborInteractiveVisuals.swift */,
+				3AA /* SiegeWorkshopInteractiveVisuals.swift */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -857,6 +887,14 @@
 				015 /* SoundManager.swift in Sources */,
 				0F0 /* HapticsManager.swift in Sources */,
 				0F1 /* PantheonInteractiveVisuals.swift in Sources */,
+				0FA /* InteractiveVisualHelpers.swift in Sources */,
+				0FC /* AqueductInteractiveVisuals.swift in Sources */,
+				2A5 /* ColosseumInteractiveVisuals.swift in Sources */,
+				2A6 /* RomanRoadsInteractiveVisuals.swift in Sources */,
+				2A7 /* RomanBathsInteractiveVisuals.swift in Sources */,
+				2A8 /* InsulaInteractiveVisuals.swift in Sources */,
+				2A9 /* HarborInteractiveVisuals.swift in Sources */,
+				2AA /* SiegeWorkshopInteractiveVisuals.swift in Sources */,
 				0F2 /* AssetManager.swift in Sources */,
 				0F3 /* AIService.swift in Sources */,
 				0F4 /* AppleAIService.swift in Sources */,
@@ -902,6 +940,8 @@
 				035 /* KnowledgeTestsView.swift in Sources */,
 				036 /* PiantaCanvasView.swift in Sources */,
 				037 /* SketchingToolbarView.swift in Sources */,
+				2A3 /* BezierDragShape.swift in Sources */,
+				2A4 /* AlzatoCanvasView.swift in Sources */,
 				038 /* GameTopBarView.swift in Sources */,
 				039 /* OnboardingState.swift in Sources */,
 				040 /* OnboardingContent.swift in Sources */,

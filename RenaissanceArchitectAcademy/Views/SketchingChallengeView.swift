@@ -254,7 +254,12 @@ struct SketchingChallengeView: View {
                     completedPhases.formUnion(phases)
                     advanceOrComplete()
                 }
-            case .alzato, .sezione, .prospettiva:
+            case .alzato(let data):
+                AlzatoCanvasView(phaseData: data) { phases in
+                    completedPhases.formUnion(phases)
+                    advanceOrComplete()
+                }
+            case .sezione, .prospettiva:
                 // Future phases — placeholder
                 VStack(spacing: 20) {
                     Spacer()
