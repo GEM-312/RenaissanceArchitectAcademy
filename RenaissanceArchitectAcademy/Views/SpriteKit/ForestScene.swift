@@ -32,6 +32,7 @@ class ForestScene: SKScene, ScrollZoomable {
 
     // Map size — standard 3500×2500 coordinate space
     private let mapSize = CGSize(width: 3500, height: 2500)
+    private var maxZoomOutScale: CGFloat = 1.0
 
     #if DEBUG
     private lazy var editorMode = SceneEditorMode(scene: self)
@@ -285,8 +286,8 @@ class ForestScene: SKScene, ScrollZoomable {
         setupPOIs()
         setupPlayer()
 
-        // Dark tint node — toggled by theme
-        let tint = SKSpriteNode(color: .black, size: mapSize)
+        // Dark tint node — toggled by theme (2x mapSize to cover edge fill area)
+        let tint = SKSpriteNode(color: .black, size: CGSize(width: mapSize.width * 2, height: mapSize.height * 2))
         tint.name = "darkTint"
         tint.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
         tint.zPosition = 12
@@ -357,27 +358,38 @@ class ForestScene: SKScene, ScrollZoomable {
     /// Standard fitCameraToMap — uses mapSize (not terrain size)
     private func fitCameraToMap() {
         guard let cameraNode = cameraNode else { return }
-        let s = self.size
-        guard s.width > 0 && s.height > 0 else { return }
-        let fitScale = max(mapSize.width / s.width, mapSize.height / s.height)
+        let viewSize = view?.bounds.size ?? self.size
+        guard viewSize.width > 0 && viewSize.height > 0 else { return }
+        let renderScale = max(viewSize.width / self.size.width, viewSize.height / self.size.height)
+        let visibleW = viewSize.width / renderScale
+        let visibleH = viewSize.height / renderScale
+        let fitScale = min(mapSize.width / visibleW, mapSize.height / visibleH)
+        maxZoomOutScale = fitScale
         cameraNode.setScale(fitScale)
     }
 
     // MARK: - Camera Clamping
 
     private func clampCamera() {
+        // Clamp SCALE first — prevents SKActions from overshooting maxZoomOutScale
+        // which causes terrain edges to flash visible for 1-2 frames during zoom-out
+        let clampedScale = max(0.3, min(maxZoomOutScale, cameraNode.xScale))
+        if cameraNode.xScale != clampedScale {
+            cameraNode.setScale(clampedScale)
+        }
+
         let scale = cameraNode.xScale
         let viewSize = view?.bounds.size ?? CGSize(width: 1024, height: 768)
 
-        let padding: CGFloat = 200
+        // For .aspectFill, compute visible area in scene coordinates
+        let renderScale = max(viewSize.width / self.size.width, viewSize.height / self.size.height)
+        let visibleWidth = (viewSize.width / renderScale) * scale
+        let visibleHeight = (viewSize.height / renderScale) * scale
 
-        let visibleWidth = viewSize.width * scale
-        let visibleHeight = viewSize.height * scale
-
-        let minX = (visibleWidth / 2) - padding
-        let maxX = mapSize.width - (visibleWidth / 2) + padding
-        let minY = (visibleHeight / 2) - padding
-        let maxY = mapSize.height - (visibleHeight / 2) + padding
+        let minX = visibleWidth / 2
+        let maxX = mapSize.width - (visibleWidth / 2)
+        let minY = visibleHeight / 2
+        let maxY = mapSize.height - (visibleHeight / 2)
 
         if maxX > minX {
             cameraNode.position.x = max(minX, min(maxX, cameraNode.position.x))
@@ -434,7 +446,7 @@ class ForestScene: SKScene, ScrollZoomable {
         walkTargetPosition = nil
 
         let mapCenter = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
-        let fitScale = max(mapSize.width / self.size.width, mapSize.height / self.size.height)
+        let fitScale = maxZoomOutScale
 
         let moveAction = SKAction.move(to: mapCenter, duration: 0.6)
         moveAction.timingMode = .easeInEaseOut
@@ -459,7 +471,8 @@ class ForestScene: SKScene, ScrollZoomable {
 
     private func setupBackground() {
         // Forest terrain — auto-generates blurred version at setup (one-time CIFilter cost)
-        terrainBlur.setup(in: self, sharp: "Forest1", mapSize: mapSize, blurRadius: 12.0)
+        // Edge fill hides faded Midjourney borders when camera follows player to map edges
+        terrainBlur.setup(in: self, sharp: "Forest1", mapSize: mapSize, blurRadius: 12.0, edgeFillColor: PlatformColor(RenaissanceColors.parchment))
     }
 
     // MARK: - Grid Lines (notebook style)
@@ -815,8 +828,10 @@ class ForestScene: SKScene, ScrollZoomable {
                 }
             }
 
-            clampCamera()
         }
+
+        // Clamp camera every frame — prevents SKActions from bypassing bounds
+        clampCamera()
 
         // Terrain blur — zoomed in = blurred, zoomed out = sharp
         if let cam = cameraNode {
@@ -897,7 +912,7 @@ class ForestScene: SKScene, ScrollZoomable {
             // Regular scroll = zoom (works with Magic Mouse)
             let zoomFactor: CGFloat = 1.0 - (event.deltaY * 0.05)
             let newScale = cameraNode.xScale * zoomFactor
-            let clampedScale = max(0.5, min(3.5, newScale))
+            let clampedScale = max(0.5, min(maxZoomOutScale, newScale))
             cameraNode.setScale(clampedScale)
         }
         clampCamera()
@@ -907,7 +922,7 @@ class ForestScene: SKScene, ScrollZoomable {
     override func magnify(with event: NSEvent) {
         let zoomFactor: CGFloat = 1.0 + event.magnification
         let newScale = cameraNode.xScale / zoomFactor
-        let clampedScale = max(0.5, min(3.5, newScale))
+        let clampedScale = max(0.5, min(maxZoomOutScale, newScale))
         cameraNode.setScale(clampedScale)
         clampCamera()
     }
@@ -949,7 +964,7 @@ class ForestScene: SKScene, ScrollZoomable {
 
     func handlePinch(scale: CGFloat) {
         let newScale = cameraNode.xScale / scale
-        let clampedScale = max(0.5, min(3.5, newScale))
+        let clampedScale = max(0.5, min(maxZoomOutScale, newScale))
         cameraNode.setScale(clampedScale)
         clampCamera()
     }
@@ -959,7 +974,7 @@ class ForestScene: SKScene, ScrollZoomable {
         guard cameraNode != nil else { return }
         let zoomFactor: CGFloat = 1.0 - (deltaY * 0.05)
         let newScale = cameraNode.xScale * zoomFactor
-        let clampedScale = max(0.5, min(3.5, newScale))
+        let clampedScale = max(0.5, min(maxZoomOutScale, newScale))
         cameraNode.setScale(clampedScale)
         clampCamera()
     }
@@ -978,7 +993,7 @@ class ForestScene: SKScene, ScrollZoomable {
         guard cameraNode != nil else { return }
         let zoomFactor: CGFloat = 1.0 + magnification
         let newScale = cameraNode.xScale / zoomFactor
-        let clampedScale = max(0.5, min(3.5, newScale))
+        let clampedScale = max(0.5, min(maxZoomOutScale, newScale))
         cameraNode.setScale(clampedScale)
         clampCamera()
     }

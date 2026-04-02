@@ -82,38 +82,10 @@ class CityScene: SKScene, ScrollZoomable {
     func editorNudge(dx: CGFloat, dy: CGFloat) { editorMode.nudge(dx: dx, dy: dy) }
     #endif
 
-    // MARK: - Terrain Tile System
+    // MARK: - Map Size
 
-    /// Terrain tile for the expandable map system
-    private struct TerrainTile {
-        let imageName: String?  // nil = placeholder (parchment, no image yet)
-        let origin: CGPoint     // bottom-left corner in map coordinates
-        let size: CGSize        // tile dimensions in points
-    }
-
-    /// Map tiles — add entries to expand the map in any direction.
-    /// The first tile is the current terrain. Add new tiles adjacent to it.
-    /// mapSize auto-adjusts and camera panning covers all tiles.
-    private let terrainTiles: [TerrainTile] = [
-        // Current map
-        TerrainTile(imageName: "Terrain", origin: .zero, size: CGSize(width: 3500, height: 1955)),
-
-        // === Expansion tiles ===
-        // Uncomment and replace nil with image name once art is created:
-        // TerrainTile(imageName: nil, origin: CGPoint(x: 3500, y: 0),    size: CGSize(width: 3500, height: 1955)),  // East
-        // TerrainTile(imageName: nil, origin: CGPoint(x: 0, y: 1955),    size: CGSize(width: 3500, height: 1955)),  // North
-        // TerrainTile(imageName: nil, origin: CGPoint(x: 3500, y: 1955), size: CGSize(width: 3500, height: 1955)),  // Northeast
-    ]
-
-    /// Map size auto-computed from all terrain tiles
-    private lazy var mapSize: CGSize = {
-        var maxX: CGFloat = 0, maxY: CGFloat = 0
-        for tile in terrainTiles {
-            maxX = max(maxX, tile.origin.x + tile.size.width)
-            maxY = max(maxY, tile.origin.y + tile.size.height)
-        }
-        return CGSize(width: max(3500, maxX), height: max(1955, maxY))
-    }()
+    /// Single terrain tile — 3500×1955
+    private let mapSize = CGSize(width: 3500, height: 1955)
 
     // MARK: - Waypoint Graph (road network for pathfinding)
 
@@ -361,9 +333,10 @@ class CityScene: SKScene, ScrollZoomable {
                     cameraNode.setScale(currentScale + (targetScale - currentScale) * 0.06)
                 }
             }
-
-            clampCamera()
         }
+
+        // Clamp camera every frame — prevents SKActions from bypassing bounds
+        clampCamera()
 
         // Terrain blur — instant swap between sharp and blurred image
         if let cam = cameraNode {
@@ -408,7 +381,8 @@ class CityScene: SKScene, ScrollZoomable {
         super.didChangeSize(oldSize)
         let viewSize = view?.bounds.size ?? self.size
         guard viewSize.width > 0 && viewSize.height > 0 else { return }
-        maxZoomOutScale = max(mapSize.width / viewSize.width, mapSize.height / viewSize.height)
+        // min ensures terrain always fills the screen (no parchment edges visible)
+        maxZoomOutScale = min(mapSize.width / viewSize.width, mapSize.height / viewSize.height)
     }
 
     /// Set camera scale so the full map is visible
@@ -416,7 +390,7 @@ class CityScene: SKScene, ScrollZoomable {
         guard let cameraNode = cameraNode else { return }
         let viewSize = view?.bounds.size ?? self.size
         guard viewSize.width > 0 && viewSize.height > 0 else { return }
-        let fitScale = max(mapSize.width / viewSize.width, mapSize.height / viewSize.height)
+        let fitScale = min(mapSize.width / viewSize.width, mapSize.height / viewSize.height)
         maxZoomOutScale = fitScale
         cameraNode.setScale(fitScale)
         cameraNode.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
@@ -425,45 +399,13 @@ class CityScene: SKScene, ScrollZoomable {
     // MARK: - Terrain
 
     private func setupTerrain() {
-        // Lay out each terrain tile
-        for tile in terrainTiles {
-            let centerX = tile.origin.x + tile.size.width / 2
-            let centerY = tile.origin.y + tile.size.height / 2
+        let centerX = mapSize.width / 2
+        let centerY = mapSize.height / 2
 
-            if tile.imageName != nil {
-                // Terrain pair handled by TerrainBlurHelper (sharp + blurred crossfade)
-                terrainBlur.setup(in: self, sharp: "Terrain", blurred: "BlurredTerrain", mapSize: tile.size)
-                // Reposition to tile center (helper places at mapSize center by default)
-                terrainBlur.terrainSprite?.position = CGPoint(x: centerX, y: centerY)
-                terrainBlur.blurredTerrainSprite?.position = CGPoint(x: centerX, y: centerY)
-            } else {
-                // Placeholder tile — parchment rectangle with dashed border
-                let placeholder = SKSpriteNode(color: PlatformColor(red: 0.96, green: 0.90, blue: 0.83, alpha: 1.0), size: tile.size)
-                placeholder.position = CGPoint(x: centerX, y: centerY)
-                placeholder.zPosition = -100
-                addChild(placeholder)
-
-                // Dashed border
-                let borderPath = CGMutablePath()
-                borderPath.addRect(CGRect(origin: CGPoint(x: -tile.size.width / 2, y: -tile.size.height / 2), size: tile.size))
-                let border = SKShapeNode(path: borderPath.copy(dashingWithPhase: 0, lengths: [20, 12]))
-                border.strokeColor = PlatformColor(RenaissanceColors.ochre.opacity(0.4))
-                border.lineWidth = 2
-                border.fillColor = .clear
-                border.position = CGPoint(x: centerX, y: centerY)
-                border.zPosition = -99
-                addChild(border)
-
-                // "Expansion Area" label
-                let label = SKLabelNode(text: "Expansion Area")
-                label.fontName = "EBGaramond-Regular"
-                label.fontSize = 28
-                label.fontColor = PlatformColor(RenaissanceColors.sepiaInk.opacity(0.25))
-                label.position = CGPoint(x: centerX, y: centerY)
-                label.zPosition = -98
-                addChild(label)
-            }
-        }
+        // Single terrain image handled by TerrainBlurHelper (sharp + blurred crossfade)
+        terrainBlur.setup(in: self, sharp: "Terrain", blurred: "BlurredTerrain", mapSize: mapSize)
+        terrainBlur.terrainSprite?.position = CGPoint(x: centerX, y: centerY)
+        terrainBlur.blurredTerrainSprite?.position = CGPoint(x: centerX, y: centerY)
 
         // Grid lines (Leonardo's notebook style)
         addGridOverlay()
@@ -593,37 +535,37 @@ class CityScene: SKScene, ScrollZoomable {
             // ========================================
             // Positions rescaled for new 3500x1955 map (Y × 0.782 from old 2500 height)
             // Use editor mode (E) to fine-tune positions over baked-in buildings
-            ("aqueduct", "Aqueduct", CGPoint(x: 777, y: 784), "rome", 0),
-            ("colosseum", "Colosseum", CGPoint(x: 550, y: 1408), "rome", 0),
-            ("romanBaths", "Roman Baths", CGPoint(x: 250, y: 1134), "rome", 0),
-            ("pantheon", "Pantheon", CGPoint(x: 1624, y: 1367), "rome", 0),
-            ("romanRoads", "Roman Roads", CGPoint(x: 2270, y: 307), "rome", 0),
-            ("harbor", "Harbor", CGPoint(x: 2898, y: 1595), "rome", 0),
-            ("siegeWorkshop", "Siege Workshop", CGPoint(x: 434, y: 1508), "rome", 0),
-            ("insula", "Insula", CGPoint(x: 148, y: 665), "rome", 0),
+            ("aqueduct", "Aqueduct", CGPoint(x: 2607, y: 1247), "rome", 0),
+            ("colosseum", "Colosseum", CGPoint(x: 799, y: 687), "rome", 0),
+            ("romanBaths", "Roman Baths", CGPoint(x: 720, y: 1757), "rome", 0),
+            ("pantheon", "Pantheon", CGPoint(x: 1635, y: 650), "rome", 0),
+            ("romanRoads", "Roman Roads", CGPoint(x: 2535, y: 723), "rome", 0),
+            ("harbor", "Harbor", CGPoint(x: 3121, y: 1366), "rome", 0),
+            ("siegeWorkshop", "Siege Workshop", CGPoint(x: 1888, y: 1455), "rome", 0),
+            ("insula", "Insula", CGPoint(x: 372, y: 966), "rome", 0),
 
             // ========================================
             // RENAISSANCE ITALY
             // ========================================
 
             // Florence
-            ("duomo", "Il Duomo", CGPoint(x: 2400, y: 1720), "florence", 0),
-            ("botanicalGarden", "Botanical Garden", CGPoint(x: 2700, y: 1486), "florence", 0),
+            ("duomo", "Il Duomo", CGPoint(x: 2040, y: 724), "florence", 0),
+            ("botanicalGarden", "Botanical Garden", CGPoint(x: 2497, y: 151), "florence", 0),
 
             // Venice
-            ("glassworks", "Glassworks", CGPoint(x: 3036, y: 881), "venice", 0),
-            ("arsenal", "Arsenal", CGPoint(x: 2900, y: 1056), "venice", 0),
+            ("glassworks", "Glassworks", CGPoint(x: 2190, y: 280), "venice", 0),
+            ("arsenal", "Arsenal", CGPoint(x: 1300, y: 113), "venice", 0),
 
             // Padua
-            ("anatomyTheater", "Anatomy Theater", CGPoint(x: 2200, y: 1173), "padua", 0),
+            ("anatomyTheater", "Anatomy Theater", CGPoint(x: 1236, y: 1285), "padua", 0),
 
             // Milan
-            ("leonardoWorkshop", "Leonardo's Workshop", CGPoint(x: 1800, y: 1564), "milan", 0),
-            ("flyingMachine", "Flying Machine", CGPoint(x: 1500, y: 1330), "milan", 0),
+            ("leonardoWorkshop", "Leonardo's Workshop", CGPoint(x: 536, y: 471), "milan", 0),
+            ("flyingMachine", "Flying Machine", CGPoint(x: 3125, y: 687), "milan", 0),
 
             // Renaissance Rome
-            ("vaticanObservatory", "Vatican Observatory", CGPoint(x: 2500, y: 704), "renaissanceRome", 0),
-            ("printingPress", "Printing Press", CGPoint(x: 2100, y: 469), "renaissanceRome", 0)
+            ("vaticanObservatory", "Vatican Observatory", CGPoint(x: 1028, y: 254), "renaissanceRome", 0),
+            ("printingPress", "Printing Press", CGPoint(x: 3339, y: 336), "renaissanceRome", 0)
         ]
 
         for building in buildings {
@@ -643,47 +585,24 @@ class CityScene: SKScene, ScrollZoomable {
     // MARK: - Decorations (trees, paths)
 
     private func setupDecorations() {
-        // Trees scattered around the map
-        let treePositions: [CGPoint] = [
-            // Ancient Rome area
-            CGPoint(x: 450, y: 2000),
-            CGPoint(x: 750, y: 1600),
-            CGPoint(x: 400, y: 1100),
-            CGPoint(x: 650, y: 800),
-            CGPoint(x: 850, y: 500),
-            // Center divider
-            CGPoint(x: 1100, y: 1800),
-            CGPoint(x: 1200, y: 1400),
-            CGPoint(x: 1000, y: 1000),
-            CGPoint(x: 1300, y: 600),
-            // Renaissance area
-            CGPoint(x: 1900, y: 2200),
-            CGPoint(x: 2100, y: 1800),
-            CGPoint(x: 2600, y: 1600),
-            CGPoint(x: 2300, y: 1200),
-            CGPoint(x: 2800, y: 800),
-            CGPoint(x: 3000, y: 1100),
-            CGPoint(x: 1700, y: 1400),
-        ]
+        // Zone labels — repositioned for 3500×1955 map
+        // Ancient Rome: buildings cluster around (372-2607, 687-1757)
+        addZoneLabel("I", at: CGPoint(x: 1400, y: 1100), for: "Ancient Rome", nodeName: "zone_ancientRome")
 
-        for (index, position) in treePositions.enumerated() {
-            let tree = createTree()
-            tree.position = position
-            tree.zPosition = 5
-            tree.name = "tree_\(index)"
-            addChild(tree)
-        }
+        // Florence: Duomo (2040,724), Botanical Garden (2497,151)
+        addZoneLabel("II", at: CGPoint(x: 2270, y: 500), for: "Florence", nodeName: "zone_florence")
 
-        // Zone labels for each region
-        // Ancient Rome
-        addZoneLabel("I", at: CGPoint(x: 450, y: 1500), for: "Ancient Rome", nodeName: "zone_ancientRome")
+        // Venice: Glassworks (2190,280), Arsenal (1300,113)
+        addZoneLabel("III", at: CGPoint(x: 1750, y: 200), for: "Venice", nodeName: "zone_venice")
 
-        // Renaissance Italy cities
-        addZoneLabel("II", at: CGPoint(x: 2550, y: 2100), for: "Florence", nodeName: "zone_florence")
-        addZoneLabel("III", at: CGPoint(x: 3000, y: 1500), for: "Venice", nodeName: "zone_venice")
-        addZoneLabel("IV", at: CGPoint(x: 2200, y: 1650), for: "Padua", nodeName: "zone_padua")
-        addZoneLabel("V", at: CGPoint(x: 1650, y: 1850), for: "Milan", nodeName: "zone_milan")
-        addZoneLabel("VI", at: CGPoint(x: 2300, y: 750), for: "Renaissance Rome", nodeName: "zone_renaissanceRome")
+        // Padua: Anatomy Theater (1236,1285)
+        addZoneLabel("IV", at: CGPoint(x: 1100, y: 1400), for: "Padua", nodeName: "zone_padua")
+
+        // Milan: Leonardo's Workshop (536,471), Flying Machine (3125,687)
+        addZoneLabel("V", at: CGPoint(x: 536, y: 580), for: "Milan", nodeName: "zone_milan")
+
+        // Renaissance Rome: Vatican Observatory (1028,254), Printing Press (3298,36)
+        addZoneLabel("VI", at: CGPoint(x: 3200, y: 150), for: "Renaissance Rome", nodeName: "zone_renaissanceRome")
 
         // Add a dividing path/road between eras
         addEraDivider()
@@ -708,27 +627,6 @@ class CityScene: SKScene, ScrollZoomable {
         renaissanceLabel.zPosition = -30
         renaissanceLabel.name = "label_renaissanceItaly"
         addChild(renaissanceLabel)
-    }
-
-    private func createTree() -> SKNode {
-        let tree = SKNode()
-
-        // Simple Leonardo-style tree sketch
-        let trunk = SKShapeNode(rectOf: CGSize(width: 8, height: 30))
-        trunk.fillColor = PlatformColor(RenaissanceColors.warmBrown)
-        trunk.strokeColor = PlatformColor(RenaissanceColors.sepiaInk)
-        trunk.lineWidth = 1
-        trunk.position = CGPoint(x: 0, y: 15)
-        tree.addChild(trunk)
-
-        let foliage = SKShapeNode(circleOfRadius: 20)
-        foliage.fillColor = PlatformColor(RenaissanceColors.sageGreen.opacity(0.7))
-        foliage.strokeColor = PlatformColor(RenaissanceColors.sepiaInk)
-        foliage.lineWidth = 1
-        foliage.position = CGPoint(x: 0, y: 40)
-        tree.addChild(foliage)
-
-        return tree
     }
 
     private func addZoneLabel(_ numeral: String, at position: CGPoint, for name: String, nodeName: String = "") {
@@ -1127,12 +1025,11 @@ class CityScene: SKScene, ScrollZoomable {
         stopWalkingTerrainEffects()
 
         let mapCenter = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
-        let fitScale = max(mapSize.width / self.size.width, mapSize.height / self.size.height)
 
         let moveAction = SKAction.move(to: mapCenter, duration: 0.6)
         moveAction.timingMode = .easeInEaseOut
 
-        let zoomAction = SKAction.scale(to: fitScale, duration: 0.6)
+        let zoomAction = SKAction.scale(to: maxZoomOutScale, duration: 0.6)
         zoomAction.timingMode = .easeInEaseOut
 
         cameraNode.run(SKAction.group([moveAction, zoomAction]), withKey: "cameraZoom")
@@ -1172,22 +1069,29 @@ class CityScene: SKScene, ScrollZoomable {
     // MARK: - Camera Control
 
     private func clampCamera() {
-        let scale = cameraNode.xScale
         let viewSize = view?.bounds.size ?? CGSize(width: 1024, height: 768)
 
-        // Recalculate min zoom from actual view size (resizeFill may change it)
+        // Recalculate min zoom from actual view size — min ensures terrain fills screen
         if viewSize.width > 0 && viewSize.height > 0 {
-            maxZoomOutScale = max(mapSize.width / viewSize.width, mapSize.height / viewSize.height)
+            maxZoomOutScale = min(mapSize.width / viewSize.width, mapSize.height / viewSize.height)
         }
+
+        // Clamp SCALE first — prevents SKActions from overshooting maxZoomOutScale
+        // which causes terrain edges to flash visible for 1-2 frames during zoom-out
+        let clampedScale = max(0.5, min(maxZoomOutScale, cameraNode.xScale))
+        if cameraNode.xScale != clampedScale {
+            cameraNode.setScale(clampedScale)
+        }
+
+        let scale = cameraNode.xScale
 
         // Calculate visible area at current zoom
         let visibleWidth = viewSize.width * scale
         let visibleHeight = viewSize.height * scale
 
-        // Padding only when zoomed in enough that map is bigger than view
-        // Zero padding when visible area >= map size (prevents seeing beyond map)
-        let xPadding: CGFloat = visibleWidth < mapSize.width ? 100 : 0
-        let yPadding: CGFloat = visibleHeight < mapSize.height ? 100 : 0
+        // No padding — terrain fills edge-to-edge, no parchment should be visible
+        let xPadding: CGFloat = 0
+        let yPadding: CGFloat = 0
 
         let minX = (visibleWidth / 2) - xPadding
         let maxX = mapSize.width - (visibleWidth / 2) + xPadding

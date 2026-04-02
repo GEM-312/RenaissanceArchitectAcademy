@@ -1323,10 +1323,10 @@ struct CityMapView: View {
                 }
                 scene.updateBuildingState(buildingId, state: state)
 
-                // Set tier badge on building node
-                if let node = scene.buildingNodes[buildingId] {
-                    node.setTierBadge(plot.building.difficultyTier.rawValue)
-                }
+                // Tier badges disabled — all buildings are apprentice level for now
+                // if let node = scene.buildingNodes[buildingId] {
+                //     node.setTierBadge(plot.building.difficultyTier.rawValue)
+                // }
             }
         }
     }

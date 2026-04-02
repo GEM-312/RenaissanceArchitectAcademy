@@ -32,6 +32,24 @@ struct CardVisualView: View {
             HarborInteractiveVisuals.view(for: visual, color: color, height: visualHeight)
         } else if SiegeWorkshopInteractiveVisuals.hasInteractiveVisual(for: visual) {
             SiegeWorkshopInteractiveVisuals.view(for: visual, color: color, height: visualHeight)
+        } else if DuomoInteractiveVisuals.hasInteractiveVisual(for: visual) {
+            DuomoInteractiveVisuals.view(for: visual, color: color, height: visualHeight)
+        } else if BotanicalGardenInteractiveVisuals.hasInteractiveVisual(for: visual) {
+            BotanicalGardenInteractiveVisuals.view(for: visual, color: color, height: visualHeight)
+        } else if GlassworksInteractiveVisuals.hasInteractiveVisual(for: visual) {
+            GlassworksInteractiveVisuals.view(for: visual, color: color, height: visualHeight)
+        } else if ArsenalInteractiveVisuals.hasInteractiveVisual(for: visual) {
+            ArsenalInteractiveVisuals.view(for: visual, color: color, height: visualHeight)
+        } else if AnatomyTheaterInteractiveVisuals.hasInteractiveVisual(for: visual) {
+            AnatomyTheaterInteractiveVisuals.view(for: visual, color: color, height: visualHeight)
+        } else if LeonardoWorkshopInteractiveVisuals.hasInteractiveVisual(for: visual) {
+            LeonardoWorkshopInteractiveVisuals.view(for: visual, color: color, height: visualHeight)
+        } else if FlyingMachineInteractiveVisuals.hasInteractiveVisual(for: visual) {
+            FlyingMachineInteractiveVisuals.view(for: visual, color: color, height: visualHeight)
+        } else if VaticanObservatoryInteractiveVisuals.hasInteractiveVisual(for: visual) {
+            VaticanObservatoryInteractiveVisuals.view(for: visual, color: color, height: visualHeight)
+        } else if PrintingPressInteractiveVisuals.hasInteractiveVisual(for: visual) {
+            PrintingPressInteractiveVisuals.view(for: visual, color: color, height: visualHeight)
         } else {
             legacyCanvasView
         }

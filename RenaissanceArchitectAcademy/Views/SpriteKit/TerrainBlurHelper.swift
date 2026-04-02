@@ -16,6 +16,8 @@ class TerrainBlurHelper {
     private(set) var terrainSprite: SKSpriteNode?
     /// The blurred (zoomed-in) terrain sprite
     private(set) var blurredTerrainSprite: SKSpriteNode?
+    /// Solid-color fill behind terrain to hide faded Midjourney edges when camera pans to map borders
+    private(set) var fillSprite: SKSpriteNode?
 
     /// Camera scale below which blurred terrain shows (instant swap, no crossfade)
     var blurThreshold: CGFloat = 0.95
@@ -24,8 +26,18 @@ class TerrainBlurHelper {
 
     /// Set up terrain pair using a pre-blurred image from the asset catalog.
     /// This is the preferred approach — zero setup cost, zero GPU cost.
-    func setup(in scene: SKScene, sharp sharpImage: String, blurred blurredImage: String, mapSize: CGSize) {
+    /// - Parameter edgeFillColor: Optional solid color placed behind terrain (2x mapSize) to hide faded Midjourney edges.
+    func setup(in scene: SKScene, sharp sharpImage: String, blurred blurredImage: String, mapSize: CGSize, edgeFillColor: PlatformColor? = nil) {
         let center = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
+
+        // Edge fill — large solid rect behind everything to cover faded terrain borders
+        if let fillColor = edgeFillColor {
+            let fill = SKSpriteNode(color: fillColor, size: CGSize(width: mapSize.width * 2, height: mapSize.height * 2))
+            fill.position = center
+            fill.zPosition = -102
+            scene.addChild(fill)
+            fillSprite = fill
+        }
 
         let sharpTexture = SKTexture(imageNamed: sharpImage)
         sharpTexture.filteringMode = .linear
@@ -52,8 +64,18 @@ class TerrainBlurHelper {
     /// Set up terrain pair by generating the blurred version at runtime.
     /// One-time CIFilter cost at scene load (~50ms for 2912x1632), then zero GPU cost.
     /// Use this when no pre-blurred asset exists (e.g. ForestScene).
-    func setup(in scene: SKScene, sharp sharpImage: String, mapSize: CGSize, blurRadius: CGFloat = 12.0) {
+    /// - Parameter edgeFillColor: Optional solid color placed behind terrain (2x mapSize) to hide faded Midjourney edges.
+    func setup(in scene: SKScene, sharp sharpImage: String, mapSize: CGSize, blurRadius: CGFloat = 12.0, edgeFillColor: PlatformColor? = nil) {
         let center = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
+
+        // Edge fill — large solid rect behind everything to cover faded terrain borders
+        if let fillColor = edgeFillColor {
+            let fill = SKSpriteNode(color: fillColor, size: CGSize(width: mapSize.width * 2, height: mapSize.height * 2))
+            fill.position = center
+            fill.zPosition = -102
+            scene.addChild(fill)
+            fillSprite = fill
+        }
 
         let sharpTexture = SKTexture(imageNamed: sharpImage)
         sharpTexture.filteringMode = .linear
@@ -99,6 +121,7 @@ class TerrainBlurHelper {
     func cleanup() {
         terrainSprite = nil
         blurredTerrainSprite = nil
+        fillSprite = nil
     }
 
     // MARK: - Blur Generation

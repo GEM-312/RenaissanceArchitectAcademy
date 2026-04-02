@@ -19,6 +19,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
     // Camera control
     private var lastPanLocation: CGPoint?
+    private var maxZoomOutScale: CGFloat = 1.0
 
     // Map size — matches city's 3500×2500 so terrain renders at same density
     private let mapSize = CGSize(width: 3500, height: 2500)
@@ -260,8 +261,8 @@ class WorkshopScene: SKScene, ScrollZoomable {
         setupStations()
         setupPlayer()
 
-        // Dark tint node — toggled by theme
-        let tint = SKSpriteNode(color: .black, size: mapSize)
+        // Dark tint node — toggled by theme (2x mapSize to cover edge fill area)
+        let tint = SKSpriteNode(color: .black, size: CGSize(width: mapSize.width * 2, height: mapSize.height * 2))
         tint.name = "darkTint"
         tint.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
         tint.zPosition = 12
@@ -323,11 +324,14 @@ class WorkshopScene: SKScene, ScrollZoomable {
     /// Set camera scale so the full map is visible
     private func fitCameraToMap() {
         guard let cameraNode = cameraNode else { return }
-        // With .aspectFill, self.size = initial scene size (stays constant)
-        // Camera scale determines visible area
-        let s = self.size
-        guard s.width > 0 && s.height > 0 else { return }
-        let fitScale = max(mapSize.width / s.width, mapSize.height / s.height)
+        let viewSize = view?.bounds.size ?? self.size
+        guard viewSize.width > 0 && viewSize.height > 0 else { return }
+        // For .aspectFill: compute visible area at scale 1.0, then find max scale where terrain fills
+        let renderScale = max(viewSize.width / self.size.width, viewSize.height / self.size.height)
+        let visibleW = viewSize.width / renderScale
+        let visibleH = viewSize.height / renderScale
+        let fitScale = min(mapSize.width / visibleW, mapSize.height / visibleH)
+        maxZoomOutScale = fitScale
         cameraNode.setScale(fitScale)
     }
 
@@ -335,7 +339,8 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
     private func setupBackground() {
         // Workshop terrain — sharp/blurred pair with smooth lerp crossfade
-        terrainBlur.setup(in: self, sharp: "WorkshopTerrain", blurred: "BlurredWorkshopTerrain", mapSize: mapSize)
+        // Edge fill hides faded Midjourney borders when camera follows player to map edges
+        terrainBlur.setup(in: self, sharp: "WorkshopTerrain", blurred: "BlurredWorkshopTerrain", mapSize: mapSize, edgeFillColor: PlatformColor(RenaissanceColors.parchment))
     }
 
     // MARK: - Grid Lines (notebook style)
@@ -486,9 +491,10 @@ class WorkshopScene: SKScene, ScrollZoomable {
                     cameraNode.setScale(currentScale + (targetScale - currentScale) * 0.06)
                 }
             }
-
-            clampCamera()
         }
+
+        // Clamp camera every frame — prevents SKActions from bypassing bounds
+        clampCamera()
 
         // Terrain blur — zoomed in = blurred, zoomed out = sharp
         if let cam = cameraNode {
@@ -573,7 +579,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
             // Regular scroll = zoom (works with Magic Mouse)
             let zoomFactor: CGFloat = 1.0 - (event.deltaY * 0.05)
             let newScale = cameraNode.xScale * zoomFactor
-            let clampedScale = max(0.3, min(3.5, newScale))
+            let clampedScale = max(0.3, min(maxZoomOutScale, newScale))
             cameraNode.setScale(clampedScale)
         }
         clampCamera()
@@ -584,7 +590,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
         dismissOverlaysOnInteraction()
         let zoomFactor: CGFloat = 1.0 + event.magnification
         let newScale = cameraNode.xScale / zoomFactor
-        let clampedScale = max(0.3, min(3.5, newScale))
+        let clampedScale = max(0.3, min(maxZoomOutScale, newScale))
         cameraNode.setScale(clampedScale)
         clampCamera()
     }
@@ -895,7 +901,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
         walkTargetPosition = nil
 
         let mapCenter = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
-        let fitScale = max(mapSize.width / self.size.width, mapSize.height / self.size.height)
+        let fitScale = maxZoomOutScale
 
         let moveAction = SKAction.move(to: mapCenter, duration: 0.6)
         moveAction.timingMode = .easeInEaseOut
@@ -929,20 +935,25 @@ class WorkshopScene: SKScene, ScrollZoomable {
     // MARK: - Camera Clamping
 
     private func clampCamera() {
+        // Clamp SCALE first — prevents SKActions from overshooting maxZoomOutScale
+        // which causes terrain edges to flash visible for 1-2 frames during zoom-out
+        let clampedScale = max(0.3, min(maxZoomOutScale, cameraNode.xScale))
+        if cameraNode.xScale != clampedScale {
+            cameraNode.setScale(clampedScale)
+        }
+
         let scale = cameraNode.xScale
         let viewSize = view?.bounds.size ?? CGSize(width: 1024, height: 768)
 
-        let padding: CGFloat = 200
+        // For .aspectFill, compute visible area in scene coordinates
+        let renderScale = max(viewSize.width / self.size.width, viewSize.height / self.size.height)
+        let visibleWidth = (viewSize.width / renderScale) * scale
+        let visibleHeight = (viewSize.height / renderScale) * scale
 
-        // Calculate visible area at current zoom
-        let visibleWidth = viewSize.width * scale
-        let visibleHeight = viewSize.height * scale
-
-        // Allow camera to move so all parts of map (plus padding) are reachable
-        let minX = (visibleWidth / 2) - padding
-        let maxX = mapSize.width - (visibleWidth / 2) + padding
-        let minY = (visibleHeight / 2) - padding
-        let maxY = mapSize.height - (visibleHeight / 2) + padding
+        let minX = visibleWidth / 2
+        let maxX = mapSize.width - (visibleWidth / 2)
+        let minY = visibleHeight / 2
+        let maxY = mapSize.height - (visibleHeight / 2)
 
         // Only clamp if the map is larger than the visible area
         if maxX > minX {
@@ -962,7 +973,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
     func handlePinch(scale: CGFloat) {
         let newScale = cameraNode.xScale / scale
-        let clampedScale = max(0.3, min(3.5, newScale))
+        let clampedScale = max(0.3, min(maxZoomOutScale, newScale))
         cameraNode.setScale(clampedScale)
         clampCamera()
     }
@@ -972,7 +983,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
         guard cameraNode != nil else { return }
         let zoomFactor: CGFloat = 1.0 - (deltaY * 0.05)
         let newScale = cameraNode.xScale * zoomFactor
-        let clampedScale = max(0.3, min(3.5, newScale))
+        let clampedScale = max(0.3, min(maxZoomOutScale, newScale))
         cameraNode.setScale(clampedScale)
         clampCamera()
     }
@@ -993,7 +1004,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
         dismissOverlaysOnInteraction()
         let zoomFactor: CGFloat = 1.0 + magnification
         let newScale = cameraNode.xScale / zoomFactor
-        let clampedScale = max(0.3, min(3.5, newScale))
+        let clampedScale = max(0.3, min(maxZoomOutScale, newScale))
         cameraNode.setScale(clampedScale)
         clampCamera()
     }

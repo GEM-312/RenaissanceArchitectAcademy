@@ -35,6 +35,7 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
 
     // Camera control
     private var lastPanLocation: CGPoint?
+    private var maxZoomOutScale: CGFloat = 1.0
 
     // Map size — matches all scenes' 3500x2500 standard
     private let mapSize = CGSize(width: 3500, height: 2500)
@@ -154,15 +155,27 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
 
     private func fitCameraToMap() {
         guard let cameraNode = cameraNode else { return }
-        let s = self.size
-        guard s.width > 0 && s.height > 0 else { return }
-        let fitScale = max(mapSize.width / s.width, mapSize.height / s.height)
+        let viewSize = view?.bounds.size ?? self.size
+        guard viewSize.width > 0 && viewSize.height > 0 else { return }
+        let renderScale = max(viewSize.width / self.size.width, viewSize.height / self.size.height)
+        let visibleW = viewSize.width / renderScale
+        let visibleH = viewSize.height / renderScale
+        let fitScale = min(mapSize.width / visibleW, mapSize.height / visibleH)
+        maxZoomOutScale = fitScale
         cameraNode.setScale(fitScale)
     }
 
     // MARK: - Background
 
     private func setupBackground() {
+        let center = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
+
+        // Edge fill — large solid rect behind terrain to hide faded Midjourney borders
+        let fill = SKSpriteNode(color: PlatformColor(RenaissanceColors.parchment), size: CGSize(width: mapSize.width * 2, height: mapSize.height * 2))
+        fill.position = center
+        fill.zPosition = -102
+        addChild(fill)
+
         let terrainTexture = SKTexture(imageNamed: "WorkshopBackground")
         let terrain = SKSpriteNode(texture: terrainTexture)
         // Scale to fill the map while preserving aspect ratio (no distortion)
@@ -171,7 +184,7 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
         let scaleY = mapSize.height / imageSize.height
         let fillScale = max(scaleX, scaleY)  // fill, not fit — covers the whole map
         terrain.size = CGSize(width: imageSize.width * fillScale, height: imageSize.height * fillScale)
-        terrain.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
+        terrain.position = center
         terrain.zPosition = -100
         addChild(terrain)
     }
@@ -304,6 +317,8 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
 
     override func update(_ currentTime: TimeInterval) {
         updatePlayerScreenPosition()
+        // Clamp camera every frame — prevents SKActions from bypassing bounds
+        clampCamera()
     }
 
     // MARK: - Input Handling
@@ -379,7 +394,7 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
             // Regular scroll = zoom (works with Magic Mouse)
             let zoomFactor: CGFloat = 1.0 - (event.deltaY * 0.05)
             let newScale = cameraNode.xScale * zoomFactor
-            let clampedScale = max(0.5, min(3.5, newScale))
+            let clampedScale = max(0.5, min(maxZoomOutScale, newScale))
             cameraNode.setScale(clampedScale)
         }
         clampCamera()
@@ -388,7 +403,7 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
     override func magnify(with event: NSEvent) {
         let zoomFactor: CGFloat = 1.0 + event.magnification
         let newScale = cameraNode.xScale / zoomFactor
-        let clampedScale = max(0.5, min(3.5, newScale))
+        let clampedScale = max(0.5, min(maxZoomOutScale, newScale))
         cameraNode.setScale(clampedScale)
         clampCamera()
     }
@@ -592,17 +607,25 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
     // MARK: - Camera Clamping
 
     private func clampCamera() {
+        // Clamp SCALE first — prevents SKActions from overshooting maxZoomOutScale
+        // which causes terrain edges to flash visible for 1-2 frames during zoom-out
+        let clampedScale = max(0.5, min(maxZoomOutScale, cameraNode.xScale))
+        if cameraNode.xScale != clampedScale {
+            cameraNode.setScale(clampedScale)
+        }
+
         let scale = cameraNode.xScale
         let viewSize = view?.bounds.size ?? CGSize(width: 1024, height: 768)
 
-        let padding: CGFloat = 200
-        let visibleWidth = viewSize.width * scale
-        let visibleHeight = viewSize.height * scale
+        // For .aspectFill, compute visible area in scene coordinates
+        let renderScale = max(viewSize.width / self.size.width, viewSize.height / self.size.height)
+        let visibleWidth = (viewSize.width / renderScale) * scale
+        let visibleHeight = (viewSize.height / renderScale) * scale
 
-        let minX = (visibleWidth / 2) - padding
-        let maxX = mapSize.width - (visibleWidth / 2) + padding
-        let minY = (visibleHeight / 2) - padding
-        let maxY = mapSize.height - (visibleHeight / 2) + padding
+        let minX = visibleWidth / 2
+        let maxX = mapSize.width - (visibleWidth / 2)
+        let minY = visibleHeight / 2
+        let maxY = mapSize.height - (visibleHeight / 2)
 
         if maxX > minX {
             cameraNode.position.x = max(minX, min(maxX, cameraNode.position.x))
@@ -619,7 +642,7 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
 
     func handlePinch(scale: CGFloat) {
         let newScale = cameraNode.xScale / scale
-        let clampedScale = max(0.5, min(3.5, newScale))
+        let clampedScale = max(0.5, min(maxZoomOutScale, newScale))
         cameraNode.setScale(clampedScale)
         clampCamera()
     }
@@ -629,7 +652,7 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
         guard cameraNode != nil else { return }
         let zoomFactor: CGFloat = 1.0 - (deltaY * 0.05)
         let newScale = cameraNode.xScale * zoomFactor
-        let clampedScale = max(0.5, min(3.5, newScale))
+        let clampedScale = max(0.5, min(maxZoomOutScale, newScale))
         cameraNode.setScale(clampedScale)
         clampCamera()
     }
@@ -648,7 +671,7 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
         guard cameraNode != nil else { return }
         let zoomFactor: CGFloat = 1.0 + magnification
         let newScale = cameraNode.xScale / zoomFactor
-        let clampedScale = max(0.5, min(3.5, newScale))
+        let clampedScale = max(0.5, min(maxZoomOutScale, newScale))
         cameraNode.setScale(clampedScale)
         clampCamera()
     }

@@ -31,7 +31,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "No centering", definition: "Built without temporary wooden support frame"),
                 ],
                 activity: .numberFishing(question: "How wide (meters) is the Duomo's dome opening?", correctAnswer: 42, decoys: [28, 35, 50, 60, 72]),
-                notebookSummary: "Brunelleschi won 1418 competition. 42m dome built WITHOUT centering. No one had done it since the Pantheon. Genius = seeing what's missed."
+                notebookSummary: "Brunelleschi won 1418 competition. 42m dome built WITHOUT centering. No one had done it since the Pantheon. Genius = seeing what's missed.",
+                visual: CardVisual(type: .crossSection, title: "Brunelleschi's Genius", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -49,7 +50,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Stress distribution", definition: "8 corners share load vs 4 (square) or ∞ (circle)"),
                 ],
                 activity: .multipleChoice(question: "Why is an octagonal dome better than a circular one for stone construction?", options: ["More decorative", "Flat walls are easier to build than curves", "Uses less material", "Taller profile"], correctIndex: 1),
-                notebookSummary: "Octagon: 8 sides share load (vs 4 for square). Flat walls easier than curves. Each side = flat arch pushing inward. Better than circle or square."
+                notebookSummary: "Octagon: 8 sides share load (vs 4 for square). Flat walls easier than curves. Each side = flat arch pushing inward. Better than circle or square.",
+                visual: CardVisual(type: .crossSection, title: "Step 1: Octagonal Drum", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -68,7 +70,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "25% lighter", definition: "Weight savings vs a single solid dome"),
                 ],
                 activity: .trueFalse(statement: "Brunelleschi's double-shell dome is 25% lighter than a single solid dome would be", isTrue: true),
-                notebookSummary: "Double shell: inner 2.1m (structure) + outer 0.6m (weather). 463-step staircase between. 25% lighter than solid. Eggs use the same trick."
+                notebookSummary: "Double shell: inner 2.1m (structure) + outer 0.6m (weather). 463-step staircase between. 25% lighter than solid. Eggs use the same trick.",
+                visual: CardVisual(type: .crossSection, title: "Step 2: Double Shell", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -87,7 +90,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Structural pattern", definition: "Looks decorative but serves engineering purpose"),
                 ],
                 activity: .wordScramble(word: "HERRINGBONE", hint: "Zigzag brick pattern that makes the dome self-supporting"),
-                notebookSummary: "Herringbone: vertical bricks at alternating angles create wedges. Each ring is self-supporting as laid. No centering needed."
+                notebookSummary: "Herringbone: vertical bricks at alternating angles create wedges. Each ring is self-supporting as laid. No centering needed.",
+                visual: CardVisual(type: .crossSection, title: "Step 4: Herringbone Brick", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -106,7 +110,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Verrocchio", definition: "Added the bronze ball after Brunelleschi's death"),
                 ],
                 activity: .numberFishing(question: "How much does the Duomo's lantern weigh (tons)?", correctAnswer: 800, decoys: [200, 400, 1200, 1800, 2500]),
-                notebookSummary: "Lantern: 800 tons of marble. Weight compresses the dome ring — prevents splaying. Heaviest piece makes everything stronger."
+                notebookSummary: "Lantern: 800 tons of marble. Weight compresses the dome ring — prevents splaying. Heaviest piece makes everything stronger.",
+                visual: CardVisual(type: .crossSection, title: "Step 7: The Lantern", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             // ── WORKSHOP (4 cards) ─────────────────────────────
@@ -127,7 +132,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Soap sledges", definition: "Greased wooden slides for moving blocks downhill"),
                 ],
                 activity: .hangman(word: "CARRARA", hint: "Italian quarry producing the world's whitest marble"),
-                notebookSummary: "Duomo facade: 3 marbles — white (Carrara, 99% pure), green (Prato), pink (Maremma). Quarries at 1,000m altitude."
+                notebookSummary: "Duomo facade: 3 marbles — white (Carrara, 99% pure), green (Prato), pink (Maremma). Quarries at 1,000m altitude.",
+                visual: CardVisual(type: .crossSection, title: "Step 8: Carrara Marble", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -146,7 +152,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Maker's mark", definition: "Stamp for quality control — reject bad batches"),
                 ],
                 activity: .numberFishing(question: "How many bricks are in the Duomo's dome?", correctAnswer: 4000000, decoys: [500000, 1000000, 2000000, 6000000, 10000000]),
-                notebookSummary: "4 million bricks from Impruneta. Iron-rich clay = red color. Each stamped with maker's mark. Failed batches rejected entirely."
+                notebookSummary: "4 million bricks from Impruneta. Iron-rich clay = red color. Each stamped with maker's mark. Failed batches rejected entirely.",
+                visual: CardVisual(type: .crossSection, title: "Step 4 Material: Bricks", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -165,7 +172,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "70 tons", definition: "Total weight of iron chains"),
                 ],
                 activity: .wordScramble(word: "CATENA", hint: "Hidden iron chains encircling the dome to contain hoop stress"),
-                notebookSummary: "Catena: 70 tons of iron chains at 3 levels inside the dome. Contain hoop stress (outward push). Invisible. Pure engineering."
+                notebookSummary: "Catena: 70 tons of iron chains at 3 levels inside the dome. Contain hoop stress (outward push). Invisible. Pure engineering.",
+                visual: CardVisual(type: .crossSection, title: "Step 5: Iron Chains", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -184,7 +192,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Metal oxides", definition: "Each metal creates a different glass color"),
                 ],
                 activity: .multipleChoice(question: "Which metal oxide creates blue stained glass?", options: ["Copper", "Gold", "Cobalt", "Manganese"], correctIndex: 2),
-                notebookSummary: "Blue stained glass: 2% cobalt oxide absorbs red/green, transmits blue. Cobalt from Saxony. Each metal oxide = different color."
+                notebookSummary: "Blue stained glass: 2% cobalt oxide absorbs red/green, transmits blue. Cobalt from Saxony. Each metal oxide = different color.",
+                visual: CardVisual(type: .crossSection, title: "Step 8: Stained Glass", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             // ── CRAFTING ROOM (5 cards) ────────────────────────
@@ -205,7 +214,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Horizontal bricks", definition: "Used standard slow-set lime mortar"),
                 ],
                 activity: .numberFishing(question: "How many minutes for gypsum mortar to set?", correctAnswer: 15, decoys: [2, 5, 30, 60, 120]),
-                notebookSummary: "Herringbone mortar: quicklime + gypsum = 15 min set (vs 3 days). Gypsum for vertical bricks only. Standard lime for horizontal."
+                notebookSummary: "Herringbone mortar: quicklime + gypsum = 15 min set (vs 3 days). Gypsum for vertical bricks only. Standard lime for horizontal.",
+                visual: CardVisual(type: .crossSection, title: "Step 4: Herringbone Mortar", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -224,7 +234,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Kiln atmosphere", definition: "Oxygen level determines final brick color"),
                 ],
                 activity: .fillInBlanks(text: "Iron oxide (___) at ___°C with oxygen = red. At ___°C without oxygen = brown", blanks: ["Fe₂O₃", "900", "1000"], distractors: ["CaCO₃", "600", "1200"]),
-                notebookSummary: "Red brick: Fe₂O₃ + 900°C + oxygen. Restrict oxygen at 1,000°C → dark brown. Color = chemistry + kiln control."
+                notebookSummary: "Red brick: Fe₂O₃ + 900°C + oxygen. Restrict oxygen at 1,000°C → dark brown. Color = chemistry + kiln control.",
+                visual: CardVisual(type: .crossSection, title: "Step 4: Brick Firing", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -243,7 +254,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Lime water", definition: "Binder that locks pigment into wet plaster"),
                 ],
                 activity: .wordScramble(word: "SINOPIA", hint: "Red ochre preliminary drawing on plaster — named after the city of Sinop"),
-                notebookSummary: "Sinopia: red ochre (Fe₂O₃ from Sinop, Turkey) drawn on wet plaster as first draft. Ground with muller, mixed with lime water."
+                notebookSummary: "Sinopia: red ochre (Fe₂O₃ from Sinop, Turkey) drawn on wet plaster as first draft. Ground with muller, mixed with lime water.",
+                visual: CardVisual(type: .crossSection, title: "Step 4: Sinopia Drawing", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -262,7 +274,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Self-supporting", definition: "Steep curve enables construction without centering"),
                 ],
                 activity: .hangman(word: "QUINTO", hint: "The 'pointed fifth' curve that makes Brunelleschi's dome self-supporting"),
-                notebookSummary: "Quinto acuto: dome curve centered at 4/5 height. Steeper than hemisphere → less outward thrust → no centering needed."
+                notebookSummary: "Quinto acuto: dome curve centered at 4/5 height. Steeper than hemisphere → less outward thrust → no centering needed.",
+                visual: CardVisual(type: .crossSection, title: "Step 6: Quinto Acuto", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -281,7 +294,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "500+ cames", definition: "Lead strips in a single rose window"),
                 ],
                 activity: .trueFalse(statement: "Stained glass is held together by H-shaped lead strips called cames", isTrue: true),
-                notebookSummary: "Cames: H-shaped lead strips gripping glass on both sides. 500+ per window. Sealed with linseed putty. Structure = lead."
+                notebookSummary: "Cames: H-shaped lead strips gripping glass on both sides. 500+ per window. Sealed with linseed putty. Structure = lead.",
+                visual: CardVisual(type: .crossSection, title: "Step 8: Lead Cames", values: [:], labels: [], steps: 3, caption: "")
             ),
         ]
     }
@@ -310,7 +324,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Still existing", definition: "Oldest botanical garden in its original location"),
                 ],
                 activity: .numberFishing(question: "What year did the first academic botanical garden open in Padua?", correctAnswer: 1545, decoys: [1400, 1480, 1520, 1610, 1700]),
-                notebookSummary: "Padua 1545: world's first academic botanical garden. Funded by Venice for medical students. Still there today. Medicine = botany."
+                notebookSummary: "Padua 1545: world's first academic botanical garden. Funded by Venice for medical students. Still there today. Medicine = botany.",
+                visual: CardVisual(type: .crossSection, title: "Padua 1545", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -329,7 +344,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Four elements", definition: "Earth, water, air, fire — symbolic layout"),
                 ],
                 activity: .numberFishing(question: "What is the diameter (meters) of Padua's circular garden?", correctAnswer: 84, decoys: [40, 60, 100, 120, 150]),
-                notebookSummary: "Circular garden: 84m diameter, 4 quadrants (compass-aligned), 16 beds each. Circle = world. Quadrants = 4 elements."
+                notebookSummary: "Circular garden: 84m diameter, 4 quadrants (compass-aligned), 16 beds each. Circle = world. Quadrants = 4 elements.",
+                visual: CardVisual(type: .crossSection, title: "Step 1: Circular Layout", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -348,7 +364,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Herbarium", definition: "Collection of pressed, labeled plant specimens"),
                 ],
                 activity: .wordScramble(word: "TAXONOMY", hint: "The science of classifying living things by shared features"),
-                notebookSummary: "Taxonomy born at Padua: 6,000 species organized by traits. Luca Ghini invented the herbarium. Pressed plants = first biology database."
+                notebookSummary: "Taxonomy born at Padua: 6,000 species organized by traits. Luca Ghini invented the herbarium. Pressed plants = first biology database.",
+                visual: CardVisual(type: .crossSection, title: "Step 5: Taxonomy", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -367,7 +384,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Open source", definition: "Free sharing of botanical knowledge"),
                 ],
                 activity: .hangman(word: "SEMINUM", hint: "Latin for 'of seeds' — the Index ___ was Europe's seed exchange catalog"),
-                notebookSummary: "Padua recorded everything. Index Seminum exchanged seeds with 60+ gardens. Horti Academici catalogs = Europe's botanical reference."
+                notebookSummary: "Padua recorded everything. Index Seminum exchanged seeds with 60+ gardens. Horti Academici catalogs = Europe's botanical reference.",
+                visual: CardVisual(type: .crossSection, title: "Step 7: Records", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             // ── WORKSHOP (3 cards) ─────────────────────────────
@@ -388,7 +406,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Thermal battery", definition: "Wall stores and releases heat energy"),
                 ],
                 activity: .trueFalse(statement: "The garden's trachyte wall acted as a thermal battery, keeping nearby plants 2°C warmer", isTrue: true),
-                notebookSummary: "Wall: Euganean trachyte — absorbs sun by day, radiates heat at night. Plants 2°C warmer. Security wall = first greenhouse."
+                notebookSummary: "Wall: Euganean trachyte — absorbs sun by day, radiates heat at night. Plants 2°C warmer. Security wall = first greenhouse.",
+                visual: CardVisual(type: .crossSection, title: "Step 4: Boundary Wall", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -407,7 +426,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "5 continents", definition: "Source range of Padua's 6,000 plant species"),
                 ],
                 activity: .wordScramble(word: "SLUICE", hint: "Adjustable gate controlling water flow to each garden bed"),
-                notebookSummary: "Gravity irrigation: Bacchiglione River → cistern → 4 quadrants. Sluice gates per bed. 6,000 plants from 5 continents, each watered differently."
+                notebookSummary: "Gravity irrigation: Bacchiglione River → cistern → 4 quadrants. Sluice gates per bed. 6,000 plants from 5 continents, each watered differently.",
+                visual: CardVisual(type: .crossSection, title: "Step 3: Irrigation", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -426,7 +446,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Calcium release", definition: "Gravel dissolving → natural soil fertilizer"),
                 ],
                 activity: .multipleChoice(question: "Why were garden paths made from limestone gravel?", options: ["Cheapest option", "Dissolves to fertilize soil with calcium", "Easiest to walk on", "Matched the marble walls"], correctIndex: 1),
-                notebookSummary: "Limestone gravel paths dissolve in rain → release calcium → lime soil → perfect pH for Mediterranean herbs. Paths = fertilizer."
+                notebookSummary: "Limestone gravel paths dissolve in rain → release calcium → lime soil → perfect pH for Mediterranean herbs. Paths = fertilizer.",
+                visual: CardVisual(type: .crossSection, title: "Step 8: Observation Path", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             // ── CRAFTING ROOM (3 cards) ────────────────────────
@@ -447,7 +468,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Greenhouse effect", definition: "Light enters, heat stays — glass trap"),
                 ],
                 activity: .trueFalse(statement: "Greenhouse glass works by transmitting UV light for photosynthesis while trapping infrared heat", isTrue: true),
-                notebookSummary: "Murano greenhouse glass: 80% light transmission. UV passes through (photosynthesis), infrared trapped (heat). Same lead cames as stained glass."
+                notebookSummary: "Murano greenhouse glass: 80% light transmission. UV passes through (photosynthesis), infrared trapped (heat). Same lead cames as stained glass.",
+                visual: CardVisual(type: .crossSection, title: "Step 6: Cold House Glass", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -466,7 +488,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Night release", definition: "Stored heat radiates when temperature drops"),
                 ],
                 activity: .numberFishing(question: "How many times more heat does brick absorb compared to wood?", correctAnswer: 4, decoys: [2, 3, 6, 8, 10]),
-                notebookSummary: "Greenhouse heating: underfloor warm air pipes + brick thermal mass (4× wood). Target: above 10°C in winter. Heat stored by day, released at night."
+                notebookSummary: "Greenhouse heating: underfloor warm air pipes + brick thermal mass (4× wood). Target: above 10°C in winter. Heat stored by day, released at night.",
+                visual: CardVisual(type: .crossSection, title: "Step 6: Cold House Heat", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -485,7 +508,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Custom mixes", definition: "Sand/compost, clay/peat, pure gravel by plant type"),
                 ],
                 activity: .wordScramble(word: "BIOCHAR", hint: "Charcoal added to soil for drainage — discovered by Renaissance gardeners"),
-                notebookSummary: "Custom substrates per plant. Charcoal (biochar) prevents root rot — 500 years before the term. First soil scientists were gardeners."
+                notebookSummary: "Custom substrates per plant. Charcoal (biochar) prevents root rot — 500 years before the term. First soil scientists were gardeners.",
+                visual: CardVisual(type: .crossSection, title: "Step 2: Soil Beds", values: [:], labels: [], steps: 3, caption: "")
             ),
         ]
     }
@@ -514,7 +538,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "State secrets", definition: "Recipes protected by threat of death"),
                 ],
                 activity: .numberFishing(question: "In what year were Venetian glassmakers moved to Murano?", correctAnswer: 1291, decoys: [1100, 1200, 1350, 1450, 1550]),
-                notebookSummary: "1291: Venice moved glassmakers to Murano. Recipes = state secrets. Masters who fled faced death. 300 years of world's finest glass."
+                notebookSummary: "1291: Venice moved glassmakers to Murano. Recipes = state secrets. Masters who fled faced death. 300 years of world's finest glass.",
+                visual: CardVisual(type: .crossSection, title: "Murano's Secrets", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -533,7 +558,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Thermal shock", definition: "Cracking from temperature change — never shut down"),
                 ],
                 activity: .multipleChoice(question: "How did Murano masters measure furnace temperature?", options: ["Mercury thermometer", "By the color of the glow", "Water boiling rate", "Clay test pieces"], correctIndex: 1),
-                notebookSummary: "Furnace: 1,100°C, never shut down (thermal shock). Temperature by color: red→orange→yellow-white. 6 tons wood/day. Eye = instrument."
+                notebookSummary: "Furnace: 1,100°C, never shut down (thermal shock). Temperature by color: red→orange→yellow-white. 6 tons wood/day. Eye = instrument.",
+                visual: CardVisual(type: .crossSection, title: "Step 1: The Furnace", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -552,7 +578,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Natural convection", definition: "Heat rises — 3 zones from 1 fire"),
                 ],
                 activity: .fillInBlanks(text: "Three chambers: ___ (bottom, fire), ___ (middle, melting), ___ (top, cooling)", blanks: ["firebox", "crucible", "lehr"], distractors: ["kiln", "furnace", "oven"]),
-                notebookSummary: "3 vertical chambers: firebox (bottom) → crucible (middle, 1,100°C) → lehr (top, cooling). Heat rises naturally. One fire, three jobs."
+                notebookSummary: "3 vertical chambers: firebox (bottom) → crucible (middle, 1,100°C) → lehr (top, cooling). Heat rises naturally. One fire, three jobs.",
+                visual: CardVisual(type: .crossSection, title: "Step 2: Three Chambers", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -571,7 +598,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Cristallo", definition: "Clear glass — balanced, not pure"),
                 ],
                 activity: .wordScramble(word: "MANGANESE", hint: "The 'glassmaker's soap' that removes green tint from glass"),
-                notebookSummary: "Green glass = iron impurities. MnO₂ (manganese) absorbs green → clear. 'Glassmaker's soap.' Too much → purple. Cristallo = balanced impurities."
+                notebookSummary: "Green glass = iron impurities. MnO₂ (manganese) absorbs green → clear. 'Glassmaker's soap.' Too much → purple. Cristallo = balanced impurities.",
+                visual: CardVisual(type: .crossSection, title: "Step 8: Cristallo", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -590,7 +618,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Internal stress", definition: "Tension from uneven cooling — causes shattering"),
                 ],
                 activity: .numberFishing(question: "What cooling rate (°C per minute) is used for annealing glass?", correctAnswer: 1, decoys: [5, 10, 20, 50, 100]),
-                notebookSummary: "Annealing: start at 500°C, cool 1°C/min for 24 hours. Slow cooling relieves internal stress. Rushed = shatters. Patience = structure."
+                notebookSummary: "Annealing: start at 500°C, cool 1°C/min for 24 hours. Slow cooling relieves internal stress. Rushed = shatters. Patience = structure.",
+                visual: CardVisual(type: .crossSection, title: "Step 7: Annealing", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             // ── WORKSHOP (3 cards) ─────────────────────────────
@@ -611,7 +640,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Water-soluble", definition: "Too much flux dissolves the glass"),
                 ],
                 activity: .numberFishing(question: "Pure silica melts at what temperature (°C)?", correctAnswer: 1700, decoys: [800, 1100, 1400, 2000, 2500]),
-                notebookSummary: "Limestone (CaCO₃) is a flux: drops silica's melting point from 1,700°C to 1,100°C. Too much = water-soluble glass. 10% is the sweet spot."
+                notebookSummary: "Limestone (CaCO₃) is a flux: drops silica's melting point from 1,700°C to 1,100°C. Too much = water-soluble glass. 10% is the sweet spot.",
+                visual: CardVisual(type: .crossSection, title: "Step 3: Limestone Flux", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -630,7 +660,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "3 weeks", definition: "Time to make a single crucible"),
                 ],
                 activity: .hangman(word: "CRUCIBLE", hint: "Clay container holding molten glass at 1,100°C for months"),
-                notebookSummary: "Refractory crucible: alumina-rich clay from Vicenza. Melting point >1,500°C. 3 weeks to make, 6 months lifespan. Harder to make than glass."
+                notebookSummary: "Refractory crucible: alumina-rich clay from Vicenza. Melting point >1,500°C. 3 weeks to make, 6 months lifespan. Harder to make than glass.",
+                visual: CardVisual(type: .crossSection, title: "Step 4: Crucibles", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -649,7 +680,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "2 kg gather", definition: "Weight of molten glass on the pipe tip"),
                 ],
                 activity: .trueFalse(statement: "Glassblowing pipes are bronze because it conducts heat slowly, keeping the handle cool", isTrue: true),
-                notebookSummary: "Blowpipe: 1.5m bronze tube. Bronze = slow heat, no rust, rigid. Constant rotation prevents gravity distortion. Tool spins continuously."
+                notebookSummary: "Blowpipe: 1.5m bronze tube. Bronze = slow heat, no rust, rigid. Constant rotation prevents gravity distortion. Tool spins continuously.",
+                visual: CardVisual(type: .crossSection, title: "Step 6: Blowpipes", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             // ── FOREST (2 cards) ───────────────────────────────
@@ -670,7 +702,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Dalmatian coast", definition: "Deforested to feed Murano's furnaces"),
                 ],
                 activity: .numberFishing(question: "How many tons of wood did one Murano furnace burn per day?", correctAnswer: 6, decoys: [1, 3, 10, 15, 20]),
-                notebookSummary: "6 tons oak/day per furnace. 2,000 tons/year. Oak log burns 45 min. Dalmatian coast deforested. Glass reshaped landscapes."
+                notebookSummary: "6 tons oak/day per furnace. 2,000 tons/year. Oak log burns 45 min. Dalmatian coast deforested. Glass reshaped landscapes.",
+                visual: CardVisual(type: .crossSection, title: "Step 1 Support: Fuel", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -689,7 +722,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Chestnut frames", definition: "Light and salt-resistant for open walls"),
                 ],
                 activity: .multipleChoice(question: "What created the cooling cross-draft in Murano workshops?", options: ["Hand fans", "Natural convection from the furnace", "Water sprinklers", "Underground tunnels"], correctIndex: 1),
-                notebookSummary: "Convection: furnace heat rises → pulls cool sea air in sides. Workers in cross-draft zone. Without it: 50°C lethal. Chestnut frames the openings."
+                notebookSummary: "Convection: furnace heat rises → pulls cool sea air in sides. Workers in cross-draft zone. Without it: 50°C lethal. Chestnut frames the openings.",
+                visual: CardVisual(type: .crossSection, title: "Step 5: Ventilation", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             // ── CRAFTING ROOM (2 cards) ────────────────────────
@@ -710,7 +744,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "30 minutes", definition: "Mixing time for a uniform batch"),
                 ],
                 activity: .fillInBlanks(text: "Glass batch: ___% silica, ___% soda, ___% lime, 15% cullet", blanks: ["60", "15", "10"], distractors: ["40", "20", "25"]),
-                notebookSummary: "Glass batch: 60 silica + 15 soda + 10 lime (seashells) + 15 cullet. Mix dry 30 min. Cullet ensures uniform melting."
+                notebookSummary: "Glass batch: 60 silica + 15 soda + 10 lime (seashells) + 15 cullet. Mix dry 30 min. Cullet ensures uniform melting.",
+                visual: CardVisual(type: .crossSection, title: "Step 3: Glass Batch", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -729,7 +764,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "18 hours", definition: "Duration at each temperature stage"),
                 ],
                 activity: .numberFishing(question: "How many days to pre-heat a new crucible safely?", correctAnswer: 3, decoys: [1, 2, 5, 7, 10]),
-                notebookSummary: "New crucible: 3-day pre-heat in 4 stages (200→500→800→1,100°C), 18 hours each. Thermal shock shatters if rushed."
+                notebookSummary: "New crucible: 3-day pre-heat in 4 stages (200→500→800→1,100°C), 18 hours each. Thermal shock shatters if rushed.",
+                visual: CardVisual(type: .crossSection, title: "Step 4: Crucible Prep", values: [:], labels: [], steps: 3, caption: "")
             ),
         ]
     }
@@ -758,7 +794,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Superpower", definition: "The fleet made Venice master of the Mediterranean"),
                 ],
                 activity: .numberFishing(question: "How many workers did the Venetian Arsenal employ?", correctAnswer: 16000, decoys: [2000, 5000, 8000, 25000, 50000]),
-                notebookSummary: "Arsenal: 16,000 arsenalotti. One galley per day at peak. Each worker a specialist. A city inside a city."
+                notebookSummary: "Arsenal: 16,000 arsenalotti. One galley per day at peak. Each worker a specialist. A city inside a city.",
+                visual: CardVisual(type: .crossSection, title: "16,000 Workers", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -777,7 +814,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Walking backward", definition: "How rope makers twisted fibers along the walk"),
                 ],
                 activity: .numberFishing(question: "How long (meters) was the Arsenal's rope walk?", correctAnswer: 316, decoys: [100, 200, 400, 500, 800]),
-                notebookSummary: "Tana: 316m rope walk. 800 fibers → strands → rope → cable. S-twist + Z-twist prevents unraveling. Spiral geometry."
+                notebookSummary: "Tana: 316m rope walk. 800 fibers → strands → rope → cable. S-twist + Z-twist prevents unraveling. Spiral geometry.",
+                visual: CardVisual(type: .crossSection, title: "Step 2: Rope Walk", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -796,7 +834,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "300 years before Ford", definition: "Venice invented the assembly line concept"),
                 ],
                 activity: .trueFalse(statement: "The Venetian Arsenal used an assembly line concept 300 years before Henry Ford", isTrue: true),
-                notebookSummary: "Assembly line: hull floated past 5 stations (masts → rigging → oars → weapons → provisions). One warship per day. 300 years before Ford."
+                notebookSummary: "Assembly line: hull floated past 5 stations (masts → rigging → oars → weapons → provisions). One warship per day. 300 years before Ford.",
+                visual: CardVisual(type: .crossSection, title: "Step 4: Assembly Line", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -815,7 +854,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Waterline", definition: "Model must float here before full-scale build"),
                 ],
                 activity: .hangman(word: "BUOYANCY", hint: "Archimedes' principle — a ship floats by displacing its weight in water"),
-                notebookSummary: "Archimedes: ship displaces its weight in water. 150-ton galley = 150 tons displaced. Tested at 1:10 scale in water tanks."
+                notebookSummary: "Archimedes: ship displaces its weight in water. 150-ton galley = 150 tons displaced. Tested at 1:10 scale in water tanks.",
+                visual: CardVisual(type: .crossSection, title: "Step 8: Sea Trial", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -834,7 +874,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "No launch", definition: "Ship already floating — no slipway needed"),
                 ],
                 activity: .multipleChoice(question: "What is the advantage of a wet dock over a dry dock?", options: ["Ship already floats — no dangerous launch needed", "Cheaper to build", "Uses less wood", "Better for painting"], correctIndex: 0),
-                notebookSummary: "Wet docks: ships float during construction. No slipway launch. Gates control water level. Safer than dry docks."
+                notebookSummary: "Wet docks: ships float during construction. No slipway launch. Gates control water level. Safer than dry docks.",
+                visual: CardVisual(type: .crossSection, title: "Step 1: Wet Docks", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             // ── WORKSHOP (4 cards) ─────────────────────────────
@@ -854,7 +895,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "3× harder", definition: "Than marble — despite similar appearance"),
                 ],
                 activity: .trueFalse(statement: "Istrian stone resists salt because its grain is too tight for salt crystals to penetrate", isTrue: true),
-                notebookSummary: "Istrian stone: dense white limestone from Croatia. Salt can't penetrate tight grain. Looks like marble, 3× harder. Venice's foundation stone."
+                notebookSummary: "Istrian stone: dense white limestone from Croatia. Salt can't penetrate tight grain. Looks like marble, 3× harder. Venice's foundation stone.",
+                visual: CardVisual(type: .crossSection, title: "Step 1: Dock Stone", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -872,7 +914,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "500 years", definition: "Arsenal foundations still sound today"),
                 ],
                 activity: .wordScramble(word: "POZZOLANIC", hint: "Type of volcanic ash concrete that lasts centuries in saltwater"),
-                notebookSummary: "Arsenal concrete: pozzolana (Phlegraean Fields) + crushed brick + seawater + lime. 500 years in saltwater. Roman recipe + Venetian innovation."
+                notebookSummary: "Arsenal concrete: pozzolana (Phlegraean Fields) + crushed brick + seawater + lime. 500 years in saltwater. Roman recipe + Venetian innovation.",
+                visual: CardVisual(type: .crossSection, title: "Step 1: Marine Concrete", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -891,7 +934,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "500 blows", definition: "Hammer strikes to forge one anchor"),
                 ],
                 activity: .numberFishing(question: "At what angle (degrees) were anchor arms curved for best grip?", correctAnswer: 40, decoys: [15, 25, 55, 70, 90]),
-                notebookSummary: "Anchor: 200 kg, 4 bars faggot-welded, 500 hammer blows. Arms at 40° for max seabed grip. Geometry + force = hold."
+                notebookSummary: "Anchor: 200 kg, 4 bars faggot-welded, 500 hammer blows. Arms at 40° for max seabed grip. Geometry + force = hold.",
+                visual: CardVisual(type: .crossSection, title: "Step 6: Forge Anchors", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -910,7 +954,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Airfoil", definition: "Curved shape generating lift — same as airplane wing"),
                 ],
                 activity: .trueFalse(statement: "A sail generates forward pull through low pressure on its curved surface, like an airplane wing", isTrue: true),
-                notebookSummary: "Sails pull (not push): curved shape = low pressure = lift. Lateen (triangular) sails closer to wind. Twill linen holds shape."
+                notebookSummary: "Sails pull (not push): curved shape = low pressure = lift. Lateen (triangular) sails closer to wind. Twill linen holds shape.",
+                visual: CardVisual(type: .crossSection, title: "Step 7: Sail Canvas", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             // ── FOREST (2 cards) ───────────────────────────────
@@ -931,7 +976,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Open-air sheds", definition: "Seasoning method — airflow removes moisture"),
                 ],
                 activity: .numberFishing(question: "How many years was Arsenal oak seasoned before use?", correctAnswer: 3, decoys: [1, 2, 5, 7, 10]),
-                notebookSummary: "Oak seasoned 3 years: 80% → 15% moisture. Venice kept 100,000 logs in reserve, labeled by cut date. First timber inventory."
+                notebookSummary: "Oak seasoned 3 years: 80% → 15% moisture. Venice kept 100,000 logs in reserve, labeled by cut date. First timber inventory.",
+                visual: CardVisual(type: .crossSection, title: "Step 5: Timber Stores", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -950,7 +996,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Per meccanismi", definition: "Arsenal label — walnut reserved for mechanisms"),
                 ],
                 activity: .wordScramble(word: "SHEAVE", hint: "The wheel inside a pulley — walnut spins with natural lubrication"),
-                notebookSummary: "Walnut: pulleys, tillers, compass housings. Natural oils = self-lubricating. 40 pulleys per galley. Reserved 'per meccanismi.'"
+                notebookSummary: "Walnut: pulleys, tillers, compass housings. Natural oils = self-lubricating. 40 pulleys per galley. Reserved 'per meccanismi.'",
+                visual: CardVisual(type: .crossSection, title: "Step 3: Ship Fittings", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             // ── CRAFTING ROOM (2 cards) ────────────────────────
@@ -971,7 +1018,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Hot pitch", definition: "Final seal over the caulked seam"),
                 ],
                 activity: .hangman(word: "OAKUM", hint: "Tarred hemp fibers hammered between ship planks to prevent leaks"),
-                notebookSummary: "Oakum: untwisted hemp + pine tar. Hammered into 200m of seams per galley. Sealed with hot pitch. Work between planks = most important."
+                notebookSummary: "Oakum: untwisted hemp + pine tar. Hammered into 200m of seams per galley. Sealed with hot pitch. Work between planks = most important.",
+                visual: CardVisual(type: .crossSection, title: "Step 3: Oakum Caulking", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -990,7 +1038,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Carbon trapping", definition: "Rapid cooling locks carbon in iron lattice"),
                 ],
                 activity: .fillInBlanks(text: "Quench iron at ___°C in ___°C seawater — salt ___ heat transfer", blanks: ["800", "40", "increases"], distractors: ["600", "20", "decreases"]),
-                notebookSummary: "Quenching: 800°C iron into 40°C seawater. Salt increases cooling speed. Traps carbon = harder. Bath temperature matters."
+                notebookSummary: "Quenching: 800°C iron into 40°C seawater. Salt increases cooling speed. Traps carbon = harder. Bath temperature matters.",
+                visual: CardVisual(type: .crossSection, title: "Step 6: Iron Quenching", values: [:], labels: [], steps: 3, caption: "")
             ),
         ]
     }
@@ -1019,7 +1068,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "De Fabrica", definition: "700-page book with revolutionary anatomy illustrations"),
                 ],
                 activity: .numberFishing(question: "In what year did Vesalius publish De Humani Corporis Fabrica?", correctAnswer: 1543, decoys: [1400, 1480, 1520, 1600, 1650]),
-                notebookSummary: "1543: Vesalius published De Fabrica. Proved Galen wrong (dissected animals, not humans). 700 pages. The anatomy theater made seeing possible."
+                notebookSummary: "1543: Vesalius published De Fabrica. Proved Galen wrong (dissected animals, not humans). 700 pages. The anatomy theater made seeing possible.",
+                visual: CardVisual(type: .crossSection, title: "Vesalius's Revolution", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1038,7 +1088,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "1594", definition: "Year the permanent theater was built"),
                 ],
                 activity: .numberFishing(question: "How many students could the anatomy theater hold?", correctAnswer: 300, decoys: [50, 100, 500, 800, 1000]),
-                notebookSummary: "Built 1594: inverted funnel, 6 oval tiers, 300 standing students in 11m diameter. Everyone looks down at the dissection table."
+                notebookSummary: "Built 1594: inverted funnel, 6 oval tiers, 300 standing students in 11m diameter. Everyone looks down at the dissection table.",
+                visual: CardVisual(type: .crossSection, title: "Step 1: Funnel Shape", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1057,7 +1108,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Ring light", definition: "Modern version of the same all-around principle"),
                 ],
                 activity: .trueFalse(statement: "Students held candles at 45° angles, creating shadowless illumination from all directions", isTrue: true),
-                notebookSummary: "Winter dissections, 3 days. 300 candles at 45° = shadowless light from every direction. Students = the lighting system. Same as modern ring lights."
+                notebookSummary: "Winter dissections, 3 days. 300 candles at 45° = shadowless light from every direction. Students = the lighting system. Same as modern ring lights.",
+                visual: CardVisual(type: .crossSection, title: "Step 5: Candlelight", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1076,7 +1128,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Zero dead angles", definition: "Every position has unobstructed view"),
                 ],
                 activity: .numberFishing(question: "How tall (cm) were the railings for optimal sight lines?", correctAnswer: 90, decoys: [50, 70, 100, 120, 150]),
-                notebookSummary: "Sight lines: 30cm rise + 40cm setback per tier. 90cm railings. 300 students, zero dead angles. Geometry = everyone sees."
+                notebookSummary: "Sight lines: 30cm rise + 40cm setback per tier. 90cm railings. 300 students, zero dead angles. Geometry = everyone sees.",
+                visual: CardVisual(type: .crossSection, title: "Step 2: Sight Lines", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             // ── WORKSHOP (3 cards) ─────────────────────────────
@@ -1097,7 +1150,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Silent rotation", definition: "Bronze-on-bronze with weekly oiling"),
                 ],
                 activity: .wordScramble(word: "PIVOT", hint: "Rotating mechanism that turns the dissection table to face any tier"),
-                notebookSummary: "Dissection table on bronze pivot — tapered cone bearing from Roman hinge design. Silent rotation, weekly oiling. Simple mechanism, complex science."
+                notebookSummary: "Dissection table on bronze pivot — tapered cone bearing from Roman hinge design. Silent rotation, weekly oiling. Simple mechanism, complex science.",
+                visual: CardVisual(type: .crossSection, title: "Step 4: Bronze Pivot", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1116,7 +1170,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Bronze handle", definition: "Won't rust from exposure to blood"),
                 ],
                 activity: .numberFishing(question: "At what angle (degrees) was a Renaissance scalpel edge ground?", correctAnswer: 15, decoys: [5, 10, 25, 30, 45]),
-                notebookSummary: "Scalpel: 1.5% carbon steel (Rockwell 60), 15° edge (half a butcher's knife). Bronze handle resists blood corrosion. Precision > strength."
+                notebookSummary: "Scalpel: 1.5% carbon steel (Rockwell 60), 15° edge (half a butcher's knife). Bronze handle resists blood corrosion. Precision > strength.",
+                visual: CardVisual(type: .crossSection, title: "Step 7: Scalpel Steel", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1135,7 +1190,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "18 months total", definition: "Preparation time before carving begins"),
                 ],
                 activity: .numberFishing(question: "Total months to prepare walnut for carving (soak + dry)?", correctAnswer: 18, decoys: [3, 6, 12, 24, 36]),
-                notebookSummary: "Walnut prep: 6 months river soak (removes sap/tannins) + 12 months air-dry = 18 months before carving. Preparation > skill."
+                notebookSummary: "Walnut prep: 6 months river soak (removes sap/tannins) + 12 months air-dry = 18 months before carving. Preparation > skill.",
+                visual: CardVisual(type: .crossSection, title: "Step 3: Timber Prep", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             // ── FOREST (3 cards) ───────────────────────────────
@@ -1156,7 +1212,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Isotropic", definition: "Same properties in every direction"),
                 ],
                 activity: .hangman(word: "WALNUT", hint: "The only wood that carves equally well in all directions"),
-                notebookSummary: "All theater carvings: walnut. Uniform grain = carves in any direction. 3mm scrollwork still sharp after 400 years. Best carving = longest lasting."
+                notebookSummary: "All theater carvings: walnut. Uniform grain = carves in any direction. 3mm scrollwork still sharp after 400 years. Best carving = longest lasting.",
+                visual: CardVisual(type: .crossSection, title: "Step 8: Walnut Carvings", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1175,7 +1232,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Hidden inside", definition: "Structure concealed behind decorative walnut"),
                 ],
                 activity: .trueFalse(statement: "The anatomy theater's structural oak posts are hidden inside walnut-clad walls", isTrue: true),
-                notebookSummary: "Hidden oak posts: 20cm square, carry 50 students each. Oak = compression. Walnut = decoration. Same wall, different jobs."
+                notebookSummary: "Hidden oak posts: 20cm square, carry 50 students each. Oak = compression. Walnut = decoration. Same wall, different jobs.",
+                visual: CardVisual(type: .crossSection, title: "Step 3: Oak Structure", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1194,7 +1252,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "3-day dissections", definition: "Duration requiring odor management"),
                 ],
                 activity: .wordScramble(word: "CYPRESS", hint: "Aromatic wood whose natural oils mask decomposition and repel insects"),
-                notebookSummary: "Cypress ceiling: thujone + cedrol oils repel insects, resist fungus, mask decomposition. 3-day dissections needed odor control. Death's tree for death's study."
+                notebookSummary: "Cypress ceiling: thujone + cedrol oils repel insects, resist fungus, mask decomposition. 3-day dissections needed odor control. Death's tree for death's study.",
+                visual: CardVisual(type: .crossSection, title: "Step 6: Cypress Ventilation", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             // ── CRAFTING ROOM (1 card) ─────────────────────────
@@ -1215,7 +1274,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "2 weeks", definition: "Carving time per decorative panel"),
                 ],
                 activity: .numberFishing(question: "How many different chisel profiles did Renaissance carvers use?", correctAnswer: 30, decoys: [5, 10, 15, 50, 100]),
-                notebookSummary: "Carving: 30 chisel profiles. Design → carbon transfer → gouge → detail → 3-grit sand → walnut oil seal. 2 weeks per panel."
+                notebookSummary: "Carving: 30 chisel profiles. Design → carbon transfer → gouge → detail → 3-grit sand → walnut oil seal. 2 weeks per panel.",
+                visual: CardVisual(type: .crossSection, title: "Step 8: Carving Tools", values: [:], labels: [], steps: 3, caption: "")
             ),
         ]
     }
@@ -1244,7 +1304,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "6 apprentices", definition: "Size of Leonardo's Milan workshop"),
                 ],
                 activity: .wordScramble(word: "BOTTEGA", hint: "Renaissance workshop where master and apprentices lived together"),
-                notebookSummary: "Bottega: live-in workshop. Start age 12 grinding pigments. By 20, own commissions. Leonardo's Milan shop: 6 apprentices. Family that builds."
+                notebookSummary: "Bottega: live-in workshop. Start age 12 grinding pigments. By 20, own commissions. Leonardo's Milan shop: 6 apprentices. Family that builds.",
+                visual: CardVisual(type: .crossSection, title: "The Bottega System", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1263,7 +1324,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "True form", definition: "Objects appear accurately without harsh highlights"),
                 ],
                 activity: .multipleChoice(question: "Why did Leonardo's workshop face north?", options: ["Warmer in winter", "Better ventilation", "Consistent, shadowless light all day", "Traditional placement"], correctIndex: 2),
-                notebookSummary: "North light: indirect, consistent, cool, no moving shadows. Leonardo chose it for painting accuracy. Best light doesn't change."
+                notebookSummary: "North light: indirect, consistent, cool, no moving shadows. Leonardo chose it for painting accuracy. Best light doesn't change.",
+                visual: CardVisual(type: .crossSection, title: "Step 1: North Light", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1282,7 +1344,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Peripheral vision", definition: "More sensitive to soft transitions than direct gaze"),
                 ],
                 activity: .hangman(word: "SFUMATO", hint: "Leonardo's painting technique — blending until edges vanish like smoke"),
-                notebookSummary: "Sfumato: 20-30 translucent layers, applied by fingertips. Edges vanish like smoke. Mona Lisa's smile appears in peripheral vision."
+                notebookSummary: "Sfumato: 20-30 translucent layers, applied by fingertips. Edges vanish like smoke. Mona Lisa's smile appears in peripheral vision.",
+                visual: CardVisual(type: .crossSection, title: "Step 8: Sfumato", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1301,7 +1364,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Vortex", definition: "Spinning water pattern Leonardo documented"),
                 ],
                 activity: .numberFishing(question: "How many water flow drawings are in Leonardo's notebooks?", correctAnswer: 730, decoys: [50, 200, 400, 1000, 2000]),
-                notebookSummary: "Glass water tanks for fluid dynamics. 730 drawings of vortices, turbulence, eddies. Workshop = physics lab with paint on walls."
+                notebookSummary: "Glass water tanks for fluid dynamics. 730 drawings of vortices, turbulence, eddies. Workshop = physics lab with paint on walls.",
+                visual: CardVisual(type: .crossSection, title: "Step 6: Water Tank", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1320,7 +1384,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Alloy experiments", definition: "Testing metal mixtures at the forge"),
                 ],
                 activity: .trueFalse(statement: "Leonardo designed a double-chamber bellows for continuous airflow instead of puffs", isTrue: true),
-                notebookSummary: "Workshop forge: bronze casting, mechanisms, alloy experiments. Double bellows = continuous air. Art needs infrastructure."
+                notebookSummary: "Workshop forge: bronze casting, mechanisms, alloy experiments. Double bellows = continuous air. Art needs infrastructure.",
+                visual: CardVisual(type: .crossSection, title: "Step 3: The Forge", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             // ── WORKSHOP (4 cards) ─────────────────────────────
@@ -1340,7 +1405,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "North light + white", definition: "Combination for natural studio brightness"),
                 ],
                 activity: .numberFishing(question: "What percentage of light does lime plaster reflect?", correctAnswer: 85, decoys: [40, 55, 70, 90, 99]),
-                notebookSummary: "Lime plaster: 3 coats, reflects 85% of light. + North windows = bright studio without candles. Whitest wall = best workspace."
+                notebookSummary: "Lime plaster: 3 coats, reflects 85% of light. + North windows = bright studio without candles. Whitest wall = best workspace.",
+                visual: CardVisual(type: .crossSection, title: "Step 1: White Walls", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1359,7 +1425,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Mechanical lion", definition: "Gear-driven automaton for Francis I"),
                 ],
                 activity: .wordScramble(word: "INVOLUTE", hint: "Curved gear tooth profile that meshes smoothly at any angle"),
-                notebookSummary: "200+ gear mechanisms. Involute tooth profiles mesh smoothly (vs straight teeth that jam). Bronze cast. Mechanical lion for Francis I."
+                notebookSummary: "200+ gear mechanisms. Involute tooth profiles mesh smoothly (vs straight teeth that jam). Bronze cast. Mechanical lion for Francis I.",
+                visual: CardVisual(type: .crossSection, title: "Step 5: Bronze Gears", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1378,7 +1445,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Mountain sand", definition: "Pure quartz for lens polishing"),
                 ],
                 activity: .multipleChoice(question: "Why did Leonardo use different sand sources for casting vs polishing?", options: ["Cost difference", "Casting needs clay; polishing needs pure silica", "Color preference", "Superstition"], correctIndex: 1),
-                notebookSummary: "Arno sand (clay-rich) for casting molds. Mountain sand (pure silica) for polishing. Same mineral, different sources, different jobs."
+                notebookSummary: "Arno sand (clay-rich) for casting molds. Mountain sand (pure silica) for polishing. Same mineral, different sources, different jobs.",
+                visual: CardVisual(type: .crossSection, title: "Step 3: Casting Sand", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1397,7 +1465,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Self-sufficiency", definition: "Making your own tools = no external limits"),
                 ],
                 activity: .hangman(word: "CARBURIZE", hint: "Hardening process — pack iron in charcoal and heat"),
-                notebookSummary: "Leonardo made his own tools: 50+ designs. Wire-drawing dies for springs. Carburized (charcoal-hardened). Self-sufficient craftsman."
+                notebookSummary: "Leonardo made his own tools: 50+ designs. Wire-drawing dies for springs. Carburized (charcoal-hardened). Self-sufficient craftsman.",
+                visual: CardVisual(type: .crossSection, title: "Step 5: Custom Tools", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             // ── FOREST (2 cards) ───────────────────────────────
@@ -1418,7 +1487,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Precision surface", definition: "Table flatness = accurate drawing"),
                 ],
                 activity: .numberFishing(question: "At what angle (degrees) was Leonardo's drawing table tilted?", correctAnswer: 30, decoys: [10, 15, 45, 60, 75]),
-                notebookSummary: "Drawing table: oak (no warp), 30° tilt, planed with bronze scraper. Precision surface = accurate lines. Table is an instrument."
+                notebookSummary: "Drawing table: oak (no warp), 30° tilt, planed with bronze scraper. Precision surface = accurate lines. Table is an instrument.",
+                visual: CardVisual(type: .crossSection, title: "Step 2: Drawing Tables", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1437,7 +1507,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Minimal grain", definition: "Won't show through thin paint layers"),
                 ],
                 activity: .trueFalse(statement: "The Mona Lisa is painted on a poplar wood panel, sealed with gesso", isTrue: true),
-                notebookSummary: "Mona Lisa: poplar panel 77×53cm. Light, cheap, minimal grain. Gesso (chalk + rabbit-skin glue) seals both sides. Humblest wood, greatest painting."
+                notebookSummary: "Mona Lisa: poplar panel 77×53cm. Light, cheap, minimal grain. Gesso (chalk + rabbit-skin glue) seals both sides. Humblest wood, greatest painting.",
+                visual: CardVisual(type: .crossSection, title: "Step 8: Poplar Panels", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             // ── CRAFTING ROOM (2 cards) ────────────────────────
@@ -1458,7 +1529,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Lapis lazuli", definition: "Semi-precious stone ground for blue pigment"),
                 ],
                 activity: .numberFishing(question: "How many hours to grind lapis lazuli into ultramarine?", correctAnswer: 3, decoys: [1, 2, 5, 8, 12]),
-                notebookSummary: "Leonardo ground pigments himself. 3 hours for ultramarine, 1 for ochre. Particle size controls color. + Linseed oil = paint."
+                notebookSummary: "Leonardo ground pigments himself. 3 hours for ultramarine, 1 for ochre. Particle size controls color. + Linseed oil = paint.",
+                visual: CardVisual(type: .crossSection, title: "Step 8: Pigment Grinding", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1477,7 +1549,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "70 tons", definition: "Bronze for Leonardo's giant horse (unfinished)"),
                 ],
                 activity: .fillInBlanks(text: "Lost-wax: wax → ___ layers ceramic → fire ___°C → pour bronze ___°C", blanks: ["6", "700", "1050"], distractors: ["3", "500", "800"]),
-                notebookSummary: "Lost-wax: wax → 6 ceramic layers (24hr each) → fire 700°C → pour bronze 1,050°C. Giant horse: 70 tons (never completed)."
+                notebookSummary: "Lost-wax: wax → 6 ceramic layers (24hr each) → fire 700°C → pour bronze 1,050°C. Giant horse: 70 tons (never completed).",
+                visual: CardVisual(type: .crossSection, title: "Step 3: Bronze Casting", values: [:], labels: [], steps: 3, caption: "")
             ),
         ]
     }
@@ -1506,7 +1579,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Face-down cradle", definition: "Pilot position for pedal-powered flight"),
                 ],
                 activity: .wordScramble(word: "ORNITHOPTER", hint: "Leonardo's flapping-wing flying machine — powered by human pedaling"),
-                notebookSummary: "Ornithopter: flapping-wing machine. 500 sketches, 35,000 words. 12m wingspan. Face-down pilot pedaling. Never flew — but most researched."
+                notebookSummary: "Ornithopter: flapping-wing machine. 500 sketches, 35,000 words. 12m wingspan. Face-down pilot pedaling. Never flew — but most researched.",
+                visual: CardVisual(type: .crossSection, title: "The Ornithopter", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1525,7 +1599,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Wing twist", definition: "Downstroke for thrust, upstroke reduces drag"),
                 ],
                 activity: .trueFalse(statement: "Leonardo discovered that a wing's curved upper surface creates lower pressure than the flat underside, producing lift", isTrue: true),
-                notebookSummary: "30+ bird dissections. Curved top (camber) = low pressure = lift. Wings twist: downstroke for thrust, upstroke reduces drag."
+                notebookSummary: "30+ bird dissections. Curved top (camber) = low pressure = lift. Wings twist: downstroke for thrust, upstroke reduces drag.",
+                visual: CardVisual(type: .crossSection, title: "Step 1: Bird Anatomy", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1544,7 +1619,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "1 W/kg (human)", definition: "Power output per kg — humans (10× too weak)"),
                 ],
                 activity: .numberFishing(question: "How many m² of wing area does a 90 kg flyer need?", correctAnswer: 18, decoys: [5, 10, 25, 36, 50]),
-                notebookSummary: "Wing math: 0.1 m²/kg. 90 kg → 18 m². Correct! But humans = 1 W/kg vs birds = 10 W/kg. 10× too weak. Math right, physics wrong."
+                notebookSummary: "Wing math: 0.1 m²/kg. 90 kg → 18 m². Correct! But humans = 1 W/kg vs birds = 10 W/kg. 10× too weak. Math right, physics wrong.",
+                visual: CardVisual(type: .crossSection, title: "Step 2: Wing Area Math", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1563,7 +1639,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Power limit", definition: "Humans produce 1/10 the power birds do"),
                 ],
                 activity: .multipleChoice(question: "Why did Leonardo shift from flapping wings to gliders?", options: ["Materials weren't strong enough", "Humans can't generate enough power to flap", "Wind was unreliable", "The Pope forbade it"], correctIndex: 1),
-                notebookSummary: "Humans = 1/10 bird power. Leonardo pivoted to gliders (1505). Fixed wings + thermals. Hang glider design = nearly identical to modern ones."
+                notebookSummary: "Humans = 1/10 bird power. Leonardo pivoted to gliders (1505). Fixed wings + thermals. Hang glider design = nearly identical to modern ones.",
+                visual: CardVisual(type: .crossSection, title: "Step 5: Power Ratio", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1582,7 +1659,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Tommaso Masini", definition: "Possible test pilot — may have broken his leg"),
                 ],
                 activity: .hangman(word: "CECERI", hint: "Monte ___ — the hilltop where Leonardo planned humanity's first flight"),
-                notebookSummary: "Monte Ceceri: 400m above Florence. 1505: Leonardo predicted first flight. Possibly attempted — Masini may have broken his leg. First launch attempt."
+                notebookSummary: "Monte Ceceri: 400m above Florence. 1505: Leonardo predicted first flight. Possibly attempted — Masini may have broken his leg. First launch attempt.",
+                visual: CardVisual(type: .crossSection, title: "Step 7: Monte Ceceri", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             // ── WORKSHOP (3 cards) ─────────────────────────────
@@ -1603,7 +1681,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "2 kg per wing", definition: "Weight of silk wing covering"),
                 ],
                 activity: .trueFalse(statement: "Leonardo chose silk taffeta for wing covering because it's the strongest natural fiber per unit weight", isTrue: true),
-                notebookSummary: "Silk taffeta: strongest natural fiber per weight. + Linseed oil = airtight. 2 kg covering resists 50 kg air pressure. Nature's answer."
+                notebookSummary: "Silk taffeta: strongest natural fiber per weight. + Linseed oil = airtight. 2 kg covering resists 50 kg air pressure. Nature's answer.",
+                visual: CardVisual(type: .crossSection, title: "Step 3: Silk Covering", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1622,7 +1701,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Leather washers", definition: "Seal against dust and reduce friction"),
                 ],
                 activity: .numberFishing(question: "How many pivot joints did each ornithopter wing have?", correctAnswer: 6, decoys: [2, 4, 8, 10, 12]),
-                notebookSummary: "6 pivot joints per wing: bronze bearings + leather washers + grease channels. Bronze doesn't gall like iron. Smooth flapping."
+                notebookSummary: "6 pivot joints per wing: bronze bearings + leather washers + grease channels. Bronze doesn't gall like iron. Smooth flapping.",
+                visual: CardVisual(type: .crossSection, title: "Step 5: Bronze Pivots", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1641,7 +1721,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Diameter calculation", definition: "Balance between strength and weight"),
                 ],
                 activity: .multipleChoice(question: "Why is drawn wire stronger than cast iron?", options: ["Different alloy", "Work hardening from the drawing process", "Thicker cross-section", "Heat treatment after drawing"], correctIndex: 1),
-                notebookSummary: "Iron wire drawn through dies: work hardening doubles tensile strength. Connects pedals to wings. Thinner + stronger = ideal cables."
+                notebookSummary: "Iron wire drawn through dies: work hardening doubles tensile strength. Connects pedals to wings. Thinner + stronger = ideal cables.",
+                visual: CardVisual(type: .crossSection, title: "Step 5: Iron Cables", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             // ── FOREST (2 cards) ───────────────────────────────
@@ -1662,7 +1743,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "40% lighter", definition: "Poplar vs oak weight advantage"),
                 ],
                 activity: .numberFishing(question: "How many ribs did each ornithopter wing have?", correctAnswer: 20, decoys: [5, 10, 15, 30, 40]),
-                notebookSummary: "Wing ribs: poplar (40% lighter than oak). Steam-bent to airfoil curve. 20 ribs per wing, 3m × 2cm each. Skeleton of flight."
+                notebookSummary: "Wing ribs: poplar (40% lighter than oak). Steam-bent to airfoil curve. 20 ribs per wing, 3m × 2cm each. Skeleton of flight.",
+                visual: CardVisual(type: .crossSection, title: "Step 3: Wing Ribs", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1681,7 +1763,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Iron brackets", definition: "Reinforcement at critical harness joints"),
                 ],
                 activity: .wordScramble(word: "HARNESS", hint: "Oak frame that holds the ornithopter pilot face-down"),
-                notebookSummary: "Harness: oak cradle, pilot face-down. Bears weight + lift + torsion. Iron brackets reinforce joints. Weakest link determines everything."
+                notebookSummary: "Harness: oak cradle, pilot face-down. Bears weight + lift + torsion. Iron brackets reinforce joints. Weakest link determines everything.",
+                visual: CardVisual(type: .crossSection, title: "Step 4: Oak Harness", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             // ── CRAFTING ROOM (1 card) ─────────────────────────
@@ -1702,7 +1785,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Linseed seal", definition: "Final coat making the wing airtight"),
                 ],
                 activity: .fillInBlanks(text: "Wing assembly: cut silk, soak in ___ water, stretch, ___ thread through holes, dry, seal with ___", blanks: ["warm", "waxed", "linseed"], distractors: ["cold", "cotton", "pine"]),
-                notebookSummary: "Silk wing assembly: soak → stretch on ribs → waxed thread → dry (contracts drum-tight) → linseed oil seal. 3 days per wing."
+                notebookSummary: "Silk wing assembly: soak → stretch on ribs → waxed thread → dry (contracts drum-tight) → linseed oil seal. 3 days per wing.",
+                visual: CardVisual(type: .crossSection, title: "Step 3: Silk Assembly", values: [:], labels: [], steps: 3, caption: "")
             ),
         ]
     }
@@ -1731,7 +1815,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Vatican Observatory", definition: "Church eventually embraced astronomy"),
                 ],
                 activity: .numberFishing(question: "In what year did Galileo discover Jupiter's moons?", correctAnswer: 1610, decoys: [1543, 1580, 1632, 1680, 1700]),
-                notebookSummary: "1610: Galileo saw 4 Jupiter moons — proof of heliocentrism. Church resisted, convicted him. Vatican eventually built its own observatory."
+                notebookSummary: "1610: Galileo saw 4 Jupiter moons — proof of heliocentrism. Church resisted, convicted him. Vatican eventually built its own observatory.",
+                visual: CardVisual(type: .crossSection, title: "Galileo's Revolution", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1750,7 +1835,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "100 lenses → 2", definition: "Galileo's rejection rate for quality optics"),
                 ],
                 activity: .trueFalse(statement: "Galileo ground over 100 lenses to find just 2 that worked properly", isTrue: true),
-                notebookSummary: "Telescope: convex objective + concave eyepiece. Parabolic grinding. 2 weeks per lens. 100 ground, 2 used. Optics = 98% rejection."
+                notebookSummary: "Telescope: convex objective + concave eyepiece. Parabolic grinding. 2 weeks per lens. 100 ground, 2 used. Optics = 98% rejection.",
+                visual: CardVisual(type: .crossSection, title: "Step 3: Lens Grinding", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1769,7 +1855,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Gnomonic hole", definition: "Opening in the roof projecting sunlight"),
                 ],
                 activity: .numberFishing(question: "What is Earth's axial tilt in degrees, measured by meridian lines?", correctAnswer: 23, decoys: [10, 15, 30, 35, 45]),
-                notebookSummary: "Meridian line: brass strip N-S on floor. Sun through roof hole = dot that marks noon, seasons, and Earth's 23.5° tilt. Brass measures universe."
+                notebookSummary: "Meridian line: brass strip N-S on floor. Sun through roof hole = dot that marks noon, seasons, and Earth's 23.5° tilt. Brass measures universe.",
+                visual: CardVisual(type: .crossSection, title: "Step 5: Meridian Line", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1788,7 +1875,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Star positions", definition: "Required accurate time measurement"),
                 ],
                 activity: .wordScramble(word: "PENDULUM", hint: "Its swing period depends only on length — Galileo's timekeeping discovery"),
-                notebookSummary: "Pendulum isochronism: period depends only on length. 1m = 1 second. Huygens built first clock (1656). Time measurement enabled astronomy."
+                notebookSummary: "Pendulum isochronism: period depends only on length. 1m = 1 second. Huygens built first clock (1656). Time measurement enabled astronomy.",
+                visual: CardVisual(type: .crossSection, title: "Step 6: Pendulum Clock", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1807,7 +1895,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Orbital tables", definition: "Nightly position tracking — first systematic data"),
                 ],
                 activity: .hangman(word: "GANYMEDE", hint: "Largest moon in the solar system — one of Galileo's 4 Jovian discoveries"),
-                notebookSummary: "4 Galilean moons: Io, Europa, Ganymede (largest), Callisto. Orbits proved moons orbit planets. Systematic data defeated dogma."
+                notebookSummary: "4 Galilean moons: Io, Europa, Ganymede (largest), Callisto. Orbits proved moons orbit planets. Systematic data defeated dogma.",
+                visual: CardVisual(type: .crossSection, title: "Step 8: First Discovery", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             // ── WORKSHOP (4 cards) ─────────────────────────────
@@ -1828,7 +1917,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Rotating dome", definition: "Heavy lead helps maintain smooth rotation"),
                 ],
                 activity: .numberFishing(question: "What is lead's density in g/cm³?", correctAnswer: 11, decoys: [3, 5, 8, 15, 20]),
-                notebookSummary: "Observatory dome: lead sheets (11.3 g/cm³). 5cm overlap + solder. Waterproof, flexible, and heavy = smooth rotation on track."
+                notebookSummary: "Observatory dome: lead sheets (11.3 g/cm³). 5cm overlap + solder. Waterproof, flexible, and heavy = smooth rotation on track.",
+                visual: CardVisual(type: .crossSection, title: "Step 2: Lead Dome", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1847,7 +1937,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Carrara marble", definition: "Whitest, flattest stone available"),
                 ],
                 activity: .trueFalse(statement: "Marble was used for meridian lines because its thermal expansion is only 0.006 mm per °C per meter", isTrue: true),
-                notebookSummary: "Meridian: Carrara marble planed to 0.5mm tolerance. Brass inlaid in 2mm groove. Marble expands just 0.006mm/°C/m. Floor = instrument."
+                notebookSummary: "Meridian: Carrara marble planed to 0.5mm tolerance. Brass inlaid in 2mm groove. Marble expands just 0.006mm/°C/m. Floor = instrument.",
+                visual: CardVisual(type: .crossSection, title: "Step 5: Marble Floor", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1866,7 +1957,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "5-day cooling", definition: "Slow annealing for optical quality"),
                 ],
                 activity: .numberFishing(question: "What percentage of a glass batch yielded lens-quality blanks?", correctAnswer: 2, decoys: [10, 20, 30, 50, 75]),
-                notebookSummary: "Lens glass: cristallo, 24hr stirring, 5-day cooling. 10 kg batch → 200g usable (2% yield). Clearest glass = most rejected."
+                notebookSummary: "Lens glass: cristallo, 24hr stirring, 5-day cooling. 10 kg batch → 200g usable (2% yield). Clearest glass = most rejected.",
+                visual: CardVisual(type: .crossSection, title: "Step 3: Pure Glass", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1885,7 +1977,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "More than gold", definition: "Ultramarine's cost per gram"),
                 ],
                 activity: .wordScramble(word: "ULTRAMARINE", hint: "Blue pigment from lapis lazuli — more expensive than gold"),
-                notebookSummary: "Lapis lazuli from Afghanistan (Sar-i Sang, 6,000 km). Costlier than gold. Crush + wax + lye + weeks of kneading = ultramarine."
+                notebookSummary: "Lapis lazuli from Afghanistan (Sar-i Sang, 6,000 km). Costlier than gold. Crush + wax + lye + weeks of kneading = ultramarine.",
+                visual: CardVisual(type: .crossSection, title: "Step 2: Ultramarine Fresco", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             // ── CRAFTING ROOM (4 cards) ────────────────────────
@@ -1906,7 +1999,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Leather shims", definition: "Wrapped around lenses for precise fit"),
                 ],
                 activity: .numberFishing(question: "What magnification did Galileo's best telescope achieve?", correctAnswer: 20, decoys: [5, 10, 50, 100, 200]),
-                notebookSummary: "Telescope: convex objective + concave eyepiece in lead tube. 20× magnification. Alignment within 0.1mm. Two lenses revealed the universe."
+                notebookSummary: "Telescope: convex objective + concave eyepiece in lead tube. 20× magnification. Alignment within 0.1mm. Two lenses revealed the universe.",
+                visual: CardVisual(type: .crossSection, title: "Step 4: Telescope Tube", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1925,7 +2019,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Cylindrical precision", definition: "Oval tube misaligns the lenses"),
                 ],
                 activity: .fillInBlanks(text: "Lead tube: pour at ___°C around a wooden ___, cool ___ minutes, ream smooth", blanks: ["327", "mandrel", "15"], distractors: ["450", "cylinder", "60"]),
-                notebookSummary: "Telescope tube: lead poured at 327°C around wooden mandrel. Cool 15 min. Ream smooth inside. Must be perfectly cylindrical."
+                notebookSummary: "Telescope tube: lead poured at 327°C around wooden mandrel. Cool 15 min. Ream smooth inside. Must be perfectly cylindrical.",
+                visual: CardVisual(type: .crossSection, title: "Step 4: Lead Tube", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1944,7 +2039,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "3 extractions", definition: "Deep blue → pale → grey from one stone"),
                 ],
                 activity: .numberFishing(question: "How many weeks of kneading to extract ultramarine from lapis?", correctAnswer: 3, decoys: [1, 2, 5, 8, 12]),
-                notebookSummary: "Ultramarine extraction: crush lapis + pine resin + wax + lye. Knead 3 weeks. 3 extractions: deep blue → pale → grey."
+                notebookSummary: "Ultramarine extraction: crush lapis + pine resin + wax + lye. Knead 3 weeks. 3 extractions: deep blue → pale → grey.",
+                visual: CardVisual(type: .crossSection, title: "Step 2: Grind Ultramarine", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -1963,7 +2059,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Tycho Brahe", definition: "Cataloged 1,000 stars before telescopes existed"),
                 ],
                 activity: .hangman(word: "DECLINATION", hint: "North-south coordinate for star positions, measured in degrees"),
-                notebookSummary: "Star coordinates: right ascension (hours, east-west) + declination (degrees, north-south). Tycho's 1,000-star catalog: 1 arcminute accuracy."
+                notebookSummary: "Star coordinates: right ascension (hours, east-west) + declination (degrees, north-south). Tycho's 1,000-star catalog: 1 arcminute accuracy.",
+                visual: CardVisual(type: .crossSection, title: "Step 7: Star Charts", values: [:], labels: [], steps: 3, caption: "")
             ),
         ]
     }
@@ -1992,7 +2089,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "1465", definition: "Printing press arrived in Italy"),
                 ],
                 activity: .numberFishing(question: "How many print shops operated in Venice by 1500?", correctAnswer: 150, decoys: [20, 50, 75, 300, 500]),
-                notebookSummary: "Gutenberg: 180 Bibles in 3 years (vs 1 per 2 years by hand). Italy 1465. Venice: 150 shops by 1500. Copies = survival."
+                notebookSummary: "Gutenberg: 180 Bibles in 3 years (vs 1 per 2 years by hand). Italy 1465. Venice: 150 shops by 1500. Copies = survival.",
+                visual: CardVisual(type: .crossSection, title: "Gutenberg's Revolution", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -2011,7 +2109,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "3,140 kg", definition: "Pressure on the page from 10 kg pull"),
                 ],
                 activity: .numberFishing(question: "How many times does the screw press multiply force?", correctAnswer: 314, decoys: [10, 50, 100, 500, 1000]),
-                notebookSummary: "Screw press: 314× force multiplication. 10 kg pull → 3,140 kg on platen. Adapted from wine press. Gentle pull = perfect impression."
+                notebookSummary: "Screw press: 314× force multiplication. 10 kg pull → 3,140 kg on platen. Adapted from wine press. Gentle pull = perfect impression.",
+                visual: CardVisual(type: .crossSection, title: "Step 1: Screw Press", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -2030,7 +2129,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Tin", definition: "Improves molten metal flow into the mold"),
                 ],
                 activity: .fillInBlanks(text: "Type metal: ___% lead, ___% antimony, ___% tin — expands 1% on cooling", blanks: ["80", "15", "5"], distractors: ["60", "25", "10"]),
-                notebookSummary: "Type metal: 80% Pb + 15% Sb + 5% Sn. Expands 1% on cooling → fills every mold detail. Recipe unchanged for 500 years."
+                notebookSummary: "Type metal: 80% Pb + 15% Sb + 5% Sn. Expands 1% on cooling → fills every mold detail. Recipe unchanged for 500 years.",
+                visual: CardVisual(type: .crossSection, title: "Step 2: Type Metal", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -2049,7 +2149,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Oil-based", definition: "Sticks to metal (water-based beads off)"),
                 ],
                 activity: .multipleChoice(question: "Why did Gutenberg switch from water-based to oil-based ink?", options: ["Cheaper ingredients", "Water-based ink beads off metal type", "Oil ink is blacker", "Church preference"], correctIndex: 1),
-                notebookSummary: "Oil-based ink: lampblack + linseed oil + turpentine. Clings to metal type, dries by oxidation (no smearing). Press gets credit, ink does work."
+                notebookSummary: "Oil-based ink: lampblack + linseed oil + turpentine. Clings to metal type, dries by oxidation (no smearing). Press gets credit, ink does work.",
+                visual: CardVisual(type: .crossSection, title: "Step 4: Oil-Based Ink", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -2068,7 +2169,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "500 copies/day", definition: "Print output from one set page"),
                 ],
                 activity: .numberFishing(question: "How many characters per hour could a skilled compositor set?", correctAnswer: 1500, decoys: [200, 500, 800, 3000, 5000]),
-                notebookSummary: "Compositor: 1,500 chars/hour, backward + mirrored. One page = 2 hours to set. Then 500 copies/day. Composition is the bottleneck."
+                notebookSummary: "Compositor: 1,500 chars/hour, backward + mirrored. One page = 2 hours to set. Then 500 copies/day. Composition is the bottleneck.",
+                visual: CardVisual(type: .crossSection, title: "Step 7: Compose a Page", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             // ── WORKSHOP (3 cards) ─────────────────────────────
@@ -2089,7 +2191,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "500 impressions", definition: "Minimum lifespan of a single type piece"),
                 ],
                 activity: .hangman(word: "ANTIMONY", hint: "Metal from stibnite ore — hardens lead in type alloy"),
-                notebookSummary: "Type metals: lead (galena), tin (cassiterite), antimony (stibnite). Each smelted separately, combined precisely. 500 impressions per piece."
+                notebookSummary: "Type metals: lead (galena), tin (cassiterite), antimony (stibnite). Each smelted separately, combined precisely. 500 impressions per piece.",
+                visual: CardVisual(type: .crossSection, title: "Step 2: Type Alloy", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -2108,7 +2211,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Drying lines", definition: "Printed sheets hung from ceiling"),
                 ],
                 activity: .numberFishing(question: "What moisture percentage is ideal for printing paper?", correctAnswer: 25, decoys: [5, 10, 40, 60, 80]),
-                notebookSummary: "Paper dampened to 20-25% moisture between wet felts overnight. Too wet = bleed. Too dry = smear. Sheets dry on ceiling lines."
+                notebookSummary: "Paper dampened to 20-25% moisture between wet felts overnight. Too wet = bleed. Too dry = smear. Sheets dry on ceiling lines.",
+                visual: CardVisual(type: .crossSection, title: "Step 6: Dampen Paper", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -2127,7 +2231,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Floor + ceiling bolts", definition: "Frame anchored to building structure"),
                 ],
                 activity: .trueFalse(statement: "Italian printers replaced wooden press frames with 200 kg cast-iron ones for rigidity", isTrue: true),
-                notebookSummary: "Iron press frame: 200 kg, resists 3,000+ kg. Bolted to floor and ceiling. Rigidity = even pressure = clear print edge to edge."
+                notebookSummary: "Iron press frame: 200 kg, resists 3,000+ kg. Bolted to floor and ceiling. Rigidity = even pressure = clear print edge to edge.",
+                visual: CardVisual(type: .crossSection, title: "Step 1: Iron Frame", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             // ── FOREST (2 cards) ───────────────────────────────
@@ -2148,7 +2253,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Replaceable screw", definition: "Oak screw cheaper to replace than iron"),
                 ],
                 activity: .numberFishing(question: "Compression load (kg) each oak upright carries?", correctAnswer: 1500, decoys: [500, 800, 2500, 4000, 6000]),
-                notebookSummary: "Oak press: 15×15cm uprights, 1,500 kg each. Bronze bushing in screw hole. Oak screw cheaper to replace when worn."
+                notebookSummary: "Oak press: 15×15cm uprights, 1,500 kg each. Bronze bushing in screw hole. Oak screw cheaper to replace when worn.",
+                visual: CardVisual(type: .crossSection, title: "Step 1: Oak Press", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -2167,7 +2273,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Muscle memory", definition: "Compositor reaches by feel, not sight"),
                 ],
                 activity: .multipleChoice(question: "Where does the term 'uppercase' come from?", options: ["Font size terminology", "The physical position of capital letter trays", "Latin grammar rules", "Gutenberg's personal preference"], correctIndex: 1),
-                notebookSummary: "Walnut type cases: upper case (capitals, top) + lower case (small letters, bottom). Terms survive in language. Furniture became vocabulary."
+                notebookSummary: "Walnut type cases: upper case (capitals, top) + lower case (small letters, bottom). Terms survive in language. Furniture became vocabulary.",
+                visual: CardVisual(type: .crossSection, title: "Step 3: Type Cases", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             // ── CRAFTING ROOM (2 cards) ────────────────────────
@@ -2188,7 +2295,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "3-step process", definition: "Punch → matrix → type — unique to infinite"),
                 ],
                 activity: .wordScramble(word: "MATRIX", hint: "Copper mold struck from a steel punch — used to cast thousands of type pieces"),
-                notebookSummary: "Punch (steel, relief) → Matrix (copper, reverse) → Type (metal, relief). 1 punch → ∞ matrices → ∞ type. Three steps to infinity."
+                notebookSummary: "Punch (steel, relief) → Matrix (copper, reverse) → Type (metal, relief). 1 punch → ∞ matrices → ∞ type. Three steps to infinity.",
+                visual: CardVisual(type: .crossSection, title: "Step 2: Punch to Matrix", values: [:], labels: [], steps: 3, caption: "")
             ),
 
             KnowledgeCard(
@@ -2207,7 +2315,8 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Mirror-reversed", definition: "Type reads backward — prints forward"),
                 ],
                 activity: .numberFishing(question: "How many type pieces could a skilled caster produce per day?", correctAnswer: 4000, decoys: [500, 1000, 2000, 6000, 10000]),
-                notebookSummary: "Type metal: 240°C, 10-second cooling. 1% expansion fills every serif. 4,000 pieces/day. Every letter identical. Uniformity = the point."
+                notebookSummary: "Type metal: 240°C, 10-second cooling. 1% expansion fills every serif. 4,000 pieces/day. Every letter identical. Uniformity = the point.",
+                visual: CardVisual(type: .crossSection, title: "Step 2: Cast Type", values: [:], labels: [], steps: 3, caption: "")
             ),
         ]
     }
