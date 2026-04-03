@@ -139,7 +139,7 @@ private struct ColumnsCountVisual: View {
                         DimLine(from: CGPoint(x: startX - colW / 2, y: baseY + 8),
                                 to: CGPoint(x: startX + colW / 2, y: baseY + 8))
                             .stroke(dimColor, lineWidth: 1)
-                        DimLabel(text: "1.5m", fontSize: 9)
+                        DimLabel(text: "1.5m", fontSize: 15)
                             .position(x: startX, y: baseY + 18)
                     }
 
@@ -148,19 +148,19 @@ private struct ColumnsCountVisual: View {
                         ForEach(0..<colCount, id: \.self) { i in
                             let cx = startX + spacing * CGFloat(i)
                             Image(systemName: "arrow.down")
-                                .font(.system(size: 8, weight: .bold))
+                                .font(.system(size: 13, weight: .bold))
                                 .foregroundStyle(Color.red.opacity(0.5))
                                 .position(x: cx, y: topY + 14)
                         }
                         Text("60t each")
-                            .font(.custom("EBGaramond-SemiBold", size: 10))
+                            .font(.custom("EBGaramond-SemiBold", size: 15))
                             .foregroundStyle(Color.red.opacity(0.6))
                             .position(x: w / 2, y: topY + 24)
                     }
 
                     // Step 4: formula
                     if step >= 4 {
-                        FormulaText(text: "16 × 60t = 960 tons", highlighted: true, fontSize: 13)
+                        FormulaText(text: "16 × 60t = 960 tons", highlighted: true, fontSize: 15)
                             .position(x: w / 2, y: baseY - 12)
                     }
                 }
@@ -199,7 +199,7 @@ private struct LayerDigVisual: View {
                     }
                     .stroke(Color.brown.opacity(0.5), lineWidth: 2)
                     Text("Ground level")
-                        .font(.custom("EBGaramond-Italic", size: 9))
+                        .font(.custom("EBGaramond-Italic", size: 15))
                         .foregroundStyle(sepiaInk.opacity(0.4))
                         .position(x: w * 0.8, y: groundY - 8)
 
@@ -223,7 +223,7 @@ private struct LayerDigVisual: View {
                             .position(x: w / 2, y: (groundY + trenchBottom) / 2)
 
                         Text("Soft clay")
-                            .font(.custom("EBGaramond-Italic", size: 9))
+                            .font(.custom("EBGaramond-Italic", size: 15))
                             .foregroundStyle(sepiaInk.opacity(0.4))
                             .position(x: w / 2, y: (groundY + trenchBottom) / 2)
 
@@ -244,7 +244,7 @@ private struct LayerDigVisual: View {
                             .position(x: w / 2, y: trenchBottom - ringH / 2)
 
                         Text("Concrete ring")
-                            .font(.custom("EBGaramond-SemiBold", size: 9))
+                            .font(.custom("EBGaramond-SemiBold", size: 15))
                             .foregroundStyle(.white)
                             .shadow(color: .black.opacity(0.5), radius: 1)
                             .position(x: w / 2, y: trenchBottom - ringH / 2)
@@ -261,12 +261,12 @@ private struct LayerDigVisual: View {
                     if step >= 4 {
                         ForEach([0.3, 0.4, 0.5, 0.6, 0.7], id: \.self) { frac in
                             Image(systemName: "arrow.down")
-                                .font(.system(size: 8, weight: .bold))
+                                .font(.system(size: 13, weight: .bold))
                                 .foregroundStyle(Color.red.opacity(0.4))
                                 .position(x: w * frac, y: groundY - 16)
                         }
                         Text("Dome weight distributed →")
-                            .font(.custom("EBGaramond-Italic", size: 9))
+                            .font(.custom("EBGaramond-Italic", size: 15))
                             .foregroundStyle(Color.red.opacity(0.5))
                             .position(x: w / 2, y: groundY - 26)
                     }
@@ -346,7 +346,7 @@ private struct SphereSliderVisual: View {
                         DimLabel(text: "43.3m")
                             .position(x: cx, y: baseY + 18)
 
-                        FormulaText(text: "Height = Diameter = 43.3m", fontSize: 11)
+                        FormulaText(text: "Height = Diameter = 43.3m", fontSize: 15)
                             .position(x: cx, y: baseY - wallH - 8)
                     }
 
@@ -359,7 +359,7 @@ private struct SphereSliderVisual: View {
                             .position(x: cx, y: baseY - sphereR)
 
                         Text("Perfect sphere")
-                            .font(.custom("EBGaramond-Italic", size: 10))
+                            .font(.custom("EBGaramond-Italic", size: 15))
                             .foregroundStyle(color)
                             .position(x: cx, y: baseY - sphereR)
                     }
@@ -372,7 +372,7 @@ private struct SphereSliderVisual: View {
                         let dimY = baseY - wallH * 0.15
                         DimLine(from: CGPoint(x: lwLeft, y: dimY), to: CGPoint(x: lwRight, y: dimY))
                             .stroke(dimColor, lineWidth: 1)
-                        DimLabel(text: "6m", fontSize: 9)
+                        DimLabel(text: "6m", fontSize: 15)
                             .position(x: (lwLeft + lwRight) / 2, y: dimY - 8)
 
                         // Right wall thickness
@@ -380,10 +380,10 @@ private struct SphereSliderVisual: View {
                         let rwRight = cx + innerW / 2 + wallW
                         DimLine(from: CGPoint(x: rwLeft, y: dimY), to: CGPoint(x: rwRight, y: dimY))
                             .stroke(dimColor, lineWidth: 1)
-                        DimLabel(text: "6m", fontSize: 9)
+                        DimLabel(text: "6m", fontSize: 15)
                             .position(x: (rwLeft + rwRight) / 2, y: dimY - 8)
 
-                        FormulaText(text: "Height = Diameter ∴ sphere fits", highlighted: true, fontSize: 11)
+                        FormulaText(text: "Height = Diameter ∴ sphere fits", highlighted: true, fontSize: 15)
                             .position(x: cx, y: baseY - wallH - 8)
                     }
                 }
@@ -469,7 +469,7 @@ private struct CofferTapVisual: View {
                         }
 
                         Text("−2,400t")
-                            .font(.custom("EBGaramond-Bold", size: 14))
+                            .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(color)
                             .position(x: cx, y: baseY - domeR * 0.45)
                     }
@@ -477,9 +477,9 @@ private struct CofferTapVisual: View {
                     // Step 3: formula
                     if step >= 3 {
                         VStack(spacing: 1) {
-                            FormulaText(text: "2,400 ÷ 4,535 = 53%", highlighted: true, fontSize: 12)
+                            FormulaText(text: "2,400 ÷ 4,535 = 53%", highlighted: true, fontSize: 15)
                             Text("Remaining: 2,135 tons")
-                                .font(.custom("EBGaramond-SemiBold", size: 10))
+                                .font(.custom("EBGaramond-SemiBold", size: 15))
                                 .foregroundStyle(sepiaInk.opacity(0.5))
                         }
                         .position(x: cx, y: baseY - domeR * 0.2)
@@ -489,12 +489,12 @@ private struct CofferTapVisual: View {
                     if step >= 4 {
                         ForEach([-1.0, 1.0], id: \.self) { dir in
                             Image(systemName: dir > 0 ? "arrow.right" : "arrow.left")
-                                .font(.system(size: 10, weight: .bold))
+                                .font(.system(size: 13, weight: .bold))
                                 .foregroundStyle(RenaissanceColors.sageGreen.opacity(0.6))
                                 .position(x: cx + dir * (domeR + 18), y: baseY - 10)
                         }
                         Text("Less thrust!")
-                            .font(.custom("EBGaramond-Italic", size: 9))
+                            .font(.custom("EBGaramond-Italic", size: 15))
                             .foregroundStyle(RenaissanceColors.sageGreen)
                             .position(x: cx, y: baseY + 10)
                     }
@@ -563,12 +563,12 @@ private struct OculusCompressionVisual: View {
                             let ax = cx - domeR * 0.6 * cos(rad)
                             let ay = baseY - domeR * 0.6 * sin(rad)
                             Image(systemName: deg > 90 ? "arrow.left" : "arrow.right")
-                                .font(.system(size: 9, weight: .bold))
+                                .font(.system(size: 13, weight: .bold))
                                 .foregroundStyle(Color.red.opacity(0.5))
                                 .position(x: ax + (deg > 90 ? -10 : 10), y: ay)
                         }
                         Text("Outward thrust")
-                            .font(.custom("EBGaramond-Italic", size: 9))
+                            .font(.custom("EBGaramond-Italic", size: 15))
                             .foregroundStyle(Color.red.opacity(0.5))
                             .position(x: cx, y: baseY - domeR * 0.3)
                     }
@@ -581,20 +581,20 @@ private struct OculusCompressionVisual: View {
                             let ax = cx + arrowR * cos(angle)
                             let ay = oculusY + arrowR * sin(angle)
                             Image(systemName: "arrow.right")
-                                .font(.system(size: 8, weight: .bold))
+                                .font(.system(size: 13, weight: .bold))
                                 .foregroundStyle(Color.orange.opacity(0.7))
                                 .rotationEffect(.radians(angle + .pi))
                                 .position(x: ax, y: ay)
                         }
                         Text("Compression →")
-                            .font(.custom("EBGaramond-SemiBold", size: 9))
+                            .font(.custom("EBGaramond-SemiBold", size: 15))
                             .foregroundStyle(Color.orange)
                             .position(x: cx + oculusR * 3, y: oculusY)
                     }
 
                     // Step 4: highlighted formula
                     if step >= 4 {
-                        FormulaText(text: "Hole = stronger dome", highlighted: true, fontSize: 12)
+                        FormulaText(text: "Hole = stronger dome", highlighted: true, fontSize: 15)
                             .position(x: cx, y: baseY - domeR * 0.35)
                     }
                 }
@@ -648,11 +648,11 @@ private struct HeatTransformVisual: View {
                         .position(x: leftX, y: centerY)
 
                     Text("Limestone")
-                        .font(.custom("EBGaramond-SemiBold", size: 10))
+                        .font(.custom("EBGaramond-SemiBold", size: 15))
                         .foregroundStyle(sepiaInk)
                         .position(x: leftX, y: centerY + blockSize / 2 + 12)
 
-                    FormulaText(text: "CaCO₃", fontSize: 13)
+                    FormulaText(text: "CaCO₃", fontSize: 15)
                         .position(x: leftX, y: centerY + blockSize / 2 + 24)
 
                     // Step 2+: heat + pressure arrows + temperature
@@ -663,12 +663,12 @@ private struct HeatTransformVisual: View {
                             .position(x: w / 2, y: centerY)
 
                         Text("900°C")
-                            .font(.custom("EBGaramond-Bold", size: 12))
+                            .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(RenaissanceColors.furnaceOrange)
                             .position(x: w / 2, y: centerY - 14)
 
                         Text("+ pressure")
-                            .font(.custom("EBGaramond-Italic", size: 9))
+                            .font(.custom("EBGaramond-Italic", size: 15))
                             .foregroundStyle(RenaissanceColors.furnaceOrange.opacity(0.7))
                             .position(x: w / 2, y: centerY + 14)
                     }
@@ -678,7 +678,7 @@ private struct HeatTransformVisual: View {
                         // Arrow showing grain transformation
                         VStack(spacing: 2) {
                             Text("Random → Aligned")
-                                .font(.custom("EBGaramond-Italic", size: 8))
+                                .font(.custom("EBGaramond-Italic", size: 15))
                                 .foregroundStyle(color)
                         }
                         .position(x: w / 2, y: h * 0.82)
@@ -707,17 +707,17 @@ private struct HeatTransformVisual: View {
                             .position(x: rightX, y: centerY)
 
                         Text("Marble")
-                            .font(.custom("EBGaramond-SemiBold", size: 10))
+                            .font(.custom("EBGaramond-SemiBold", size: 15))
                             .foregroundStyle(sepiaInk)
                             .position(x: rightX, y: centerY + blockSize / 2 + 12)
 
-                        FormulaText(text: "CaCO₃", fontSize: 13)
+                        FormulaText(text: "CaCO₃", fontSize: 15)
                             .position(x: rightX, y: centerY + blockSize / 2 + 24)
                     }
 
                     // Step 4: highlighted formula
                     if step >= 4 {
-                        FormulaText(text: "Same CaCO₃ — different structure", highlighted: true, fontSize: 11)
+                        FormulaText(text: "Same CaCO₃ — different structure", highlighted: true, fontSize: 15)
                             .position(x: w / 2, y: h * 0.1)
                     }
                 }
@@ -762,11 +762,11 @@ private struct TimelineAgingVisual: View {
                                 .overlay(RoundedRectangle(cornerRadius: 6).stroke(sepiaInk.opacity(0.3), lineWidth: 1))
                         }
                         Text("Roman")
-                            .font(.custom("EBGaramond-SemiBold", size: 11))
+                            .font(.custom("EBGaramond-SemiBold", size: 15))
                             .foregroundStyle(sepiaInk)
                         if step >= 3 {
                             Text(yearSlider > 0.5 ? "STRONGER" : "Pozzolana + lime")
-                                .font(.custom("EBGaramond-Italic", size: 9))
+                                .font(.custom("EBGaramond-Italic", size: 15))
                                 .foregroundStyle(yearSlider > 0.5 ? RenaissanceColors.sageGreen : sepiaInk.opacity(0.5))
                         }
                     }
@@ -790,11 +790,11 @@ private struct TimelineAgingVisual: View {
                             }
                         }
                         Text("Modern")
-                            .font(.custom("EBGaramond-SemiBold", size: 11))
+                            .font(.custom("EBGaramond-SemiBold", size: 15))
                             .foregroundStyle(sepiaInk)
                         if step >= 3 {
                             Text(yearSlider > 0.5 ? "CRACKING" : "Portland cement")
-                                .font(.custom("EBGaramond-Italic", size: 9))
+                                .font(.custom("EBGaramond-Italic", size: 15))
                                 .foregroundStyle(yearSlider > 0.5 ? Color.red.opacity(0.7) : sepiaInk.opacity(0.5))
                         }
                     }
@@ -804,11 +804,11 @@ private struct TimelineAgingVisual: View {
                 if step >= 3 {
                     VStack(spacing: 2) {
                         HStack {
-                            Text("Year 0").font(.custom("EBGaramond-Regular", size: 9)).foregroundStyle(sepiaInk.opacity(0.4))
+                            Text("Year 0").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.4))
                             Spacer()
-                            DimLabel(text: "\(Int(yearSlider * 2000)) years", fontSize: 12)
+                            DimLabel(text: "\(Int(yearSlider * 2000)) years", fontSize: 15)
                             Spacer()
-                            Text("2,000").font(.custom("EBGaramond-Regular", size: 9)).foregroundStyle(sepiaInk.opacity(0.4))
+                            Text("2,000").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.4))
                         }
                         Slider(value: $yearSlider, in: 0...1).tint(color)
                     }
@@ -899,7 +899,7 @@ private struct PourRingsVisual: View {
                         let lx = cx + labelR * cos(midDeg * .pi / 180)
                         let ly = baseY + labelR * sin(midDeg * .pi / 180)
                         Text(rings[i].density)
-                            .font(.custom("EBGaramond-SemiBold", size: 8))
+                            .font(.custom("EBGaramond-SemiBold", size: 15))
                             .foregroundStyle(.white)
                             .shadow(color: .black.opacity(0.6), radius: 1)
                             .position(x: lx, y: ly)
@@ -907,7 +907,7 @@ private struct PourRingsVisual: View {
 
                     // Step 4: gradient formula
                     if step >= 4 {
-                        FormulaText(text: "2,400 → 1,350 kg/m³", highlighted: true, fontSize: 11)
+                        FormulaText(text: "2,400 → 1,350 kg/m³", highlighted: true, fontSize: 15)
                             .position(x: cx, y: baseY - domeR * 0.4)
                     }
                 }
@@ -988,7 +988,7 @@ private struct DoorSwingVisual: View {
                                     .position(x: cx + doorW + 2, y: py)
                             }
                             Text("Bronze pivots")
-                                .font(.custom("EBGaramond-Italic", size: 9))
+                                .font(.custom("EBGaramond-Italic", size: 15))
                                 .foregroundStyle(sepiaInk.opacity(0.5))
                                 .position(x: cx - doorW - 30, y: floorY - doorH / 2)
                         }
@@ -1013,7 +1013,7 @@ private struct DoorSwingVisual: View {
                             .position(x: cx, y: planY)
 
                         Text("PLAN VIEW (top-down)")
-                            .font(.custom("EBGaramond-Italic", size: 8))
+                            .font(.custom("EBGaramond-Italic", size: 15))
                             .foregroundStyle(sepiaInk.opacity(0.3))
                             .position(x: cx, y: h * 0.08)
 
@@ -1048,7 +1048,7 @@ private struct DoorSwingVisual: View {
 
                         // Angle label
                         Text("\(Int(doorSlider * 90))°")
-                            .font(.custom("EBGaramond-Bold", size: 14))
+                            .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(color)
                             .position(x: cx, y: planY + 30)
 
@@ -1056,9 +1056,9 @@ private struct DoorSwingVisual: View {
                         VStack(spacing: 2) {
                             Slider(value: $doorSlider, in: 0...1).tint(color)
                             HStack {
-                                Text("Closed").font(.custom("EBGaramond-Regular", size: 9)).foregroundStyle(sepiaInk.opacity(0.4))
+                                Text("Closed").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.4))
                                 Spacer()
-                                Text("Open").font(.custom("EBGaramond-Regular", size: 9)).foregroundStyle(sepiaInk.opacity(0.4))
+                                Text("Open").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.4))
                             }
                         }
                         .position(x: cx, y: h * 0.78)
@@ -1066,7 +1066,7 @@ private struct DoorSwingVisual: View {
 
                         // Formula
                         FormulaText(text: step >= 4 ? "2,000 years on original pivots" : "Torque = Force × Distance",
-                                    highlighted: step >= 4, fontSize: 11)
+                                    highlighted: step >= 4, fontSize: 15)
                             .position(x: cx, y: h * 0.93)
                     }
                 }
@@ -1141,7 +1141,7 @@ private struct CenteringBuildVisual: View {
                         }
 
                         Text("Oak centering")
-                            .font(.custom("EBGaramond-SemiBold", size: 10))
+                            .font(.custom("EBGaramond-SemiBold", size: 15))
                             .foregroundStyle(Color.brown)
                             .position(x: cx, y: baseY - archR * 0.4)
                     }
@@ -1168,20 +1168,20 @@ private struct CenteringBuildVisual: View {
                             ForEach([50.0, 90.0, 130.0], id: \.self) { deg in
                                 let rad = deg * .pi / 180
                                 Image(systemName: "arrow.down")
-                                    .font(.system(size: 8, weight: .bold))
+                                    .font(.system(size: 13, weight: .bold))
                                     .foregroundStyle(Color.red.opacity(0.5))
                                     .position(x: cx - archR * cos(rad), y: baseY - archR * sin(rad) - 10)
                             }
-                            DimLabel(text: "4,535 tons", fontSize: 11)
+                            DimLabel(text: "4,535 tons", fontSize: 15)
                                 .position(x: cx, y: baseY - archR - 10)
-                            DimLabel(text: "3 weeks cure", fontSize: 10)
+                            DimLabel(text: "3 weeks cure", fontSize: 15)
                                 .position(x: cx, y: baseY - archR * 0.5)
                         }
                     }
 
                     // Step 4: centering removed
                     if step >= 4 {
-                        FormulaText(text: "Self-supporting through compression!", highlighted: true, fontSize: 11)
+                        FormulaText(text: "Self-supporting through compression!", highlighted: true, fontSize: 15)
                             .position(x: cx, y: baseY - archR * 0.4)
                     }
                 }
@@ -1268,14 +1268,14 @@ private struct ScaffoldClimbVisual: View {
                         .stroke(Color.brown.opacity(0.5), lineWidth: 1.5)
 
                         // Height tick mark
-                        DimLabel(text: heights[level], fontSize: 9)
+                        DimLabel(text: heights[level], fontSize: 15)
                             .position(x: scaffR + 22, y: tierTop)
                     }
 
                     // Step 3: poplar formula
                     if step >= 3 {
                         Text("Poplar: 3m/year")
-                            .font(.custom("EBGaramond-Italic", size: 9))
+                            .font(.custom("EBGaramond-Italic", size: 15))
                             .foregroundStyle(color.opacity(0.6))
                             .position(x: scaffL - 10, y: groundY - tierH * 2)
                     }
@@ -1292,7 +1292,7 @@ private struct ScaffoldClimbVisual: View {
                                 .position(x: hx, y: hy)
                         }
                         Text("Putlog holes")
-                            .font(.custom("EBGaramond-Italic", size: 8))
+                            .font(.custom("EBGaramond-Italic", size: 15))
                             .foregroundStyle(sepiaInk.opacity(0.5))
                             .position(x: cx, y: groundY - domeR - 6)
                     }
@@ -1342,7 +1342,7 @@ private struct MixRecipeVisual: View {
                             .frame(height: 24)
                             .overlay(
                                 Text(scoopsAdded >= 1 ? "Lime" : "")
-                                    .font(.custom("EBGaramond-SemiBold", size: 11))
+                                    .font(.custom("EBGaramond-SemiBold", size: 15))
                                     .foregroundStyle(sepiaInk.opacity(0.6))
                             )
 
@@ -1353,7 +1353,7 @@ private struct MixRecipeVisual: View {
                                 .frame(height: 24)
                                 .overlay(
                                     Text(scoopsAdded >= i + 2 ? "Pozz" : "")
-                                        .font(.custom("EBGaramond-SemiBold", size: 11))
+                                        .font(.custom("EBGaramond-SemiBold", size: 15))
                                         .foregroundStyle(.white.opacity(0.8))
                                 )
                         }
@@ -1362,7 +1362,7 @@ private struct MixRecipeVisual: View {
 
                     // Ratio label
                     Text("Ratio: \(scoopsAdded >= 1 ? "1" : "—") : \(max(0, scoopsAdded - 1))")
-                        .font(.custom("EBGaramond-SemiBold", size: 14))
+                        .font(.custom("EBGaramond-SemiBold", size: 15))
                         .foregroundStyle(isDone ? RenaissanceColors.sageGreen : color)
                         .padding(.top, 8)
 
@@ -1392,13 +1392,13 @@ private struct MixRecipeVisual: View {
                                                 .foregroundStyle(sepiaInk)
                                             if isLimeTurn {
                                                 Text("TAP")
-                                                    .font(.custom("EBGaramond-SemiBold", size: 11))
+                                                    .font(.custom("EBGaramond-SemiBold", size: 15))
                                                     .foregroundStyle(color)
                                             }
                                         }
                                     )
                                 Text("Lime — 1 part")
-                                    .font(.custom("EBGaramond-SemiBold", size: 13))
+                                    .font(.custom("EBGaramond-SemiBold", size: 15))
                                     .foregroundStyle(sepiaInk)
                             }
                         }
@@ -1427,13 +1427,13 @@ private struct MixRecipeVisual: View {
                                                 .foregroundStyle(sepiaInk)
                                             if isPozzTurn {
                                                 Text("TAP ×\(4 - scoopsAdded)")
-                                                    .font(.custom("EBGaramond-SemiBold", size: 11))
+                                                    .font(.custom("EBGaramond-SemiBold", size: 15))
                                                     .foregroundStyle(color)
                                             }
                                         }
                                     )
                                 Text("Pozzolana — 3 parts")
-                                    .font(.custom("EBGaramond-SemiBold", size: 13))
+                                    .font(.custom("EBGaramond-SemiBold", size: 15))
                                     .foregroundStyle(sepiaInk)
                             }
                         }
@@ -1447,12 +1447,12 @@ private struct MixRecipeVisual: View {
                     // Status
                     if isDone {
                         Text("Perfect 1:3 ratio! The recipe that outlasts empires.")
-                            .font(.custom("EBGaramond-Bold", size: 14))
+                            .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(RenaissanceColors.sageGreen)
                             .multilineTextAlignment(.center)
                     } else {
                         Text(isLimeTurn ? "Tap lime to add 1 part binder" : "Tap pozzolana to add volcanic ash (\(scoopsAdded - 1)/3)")
-                            .font(.custom("EBGaramond-Italic", size: 13))
+                            .font(.custom("EBGaramond-Italic", size: 15))
                             .foregroundStyle(sepiaInk.opacity(0.5))
                     }
 
@@ -1544,7 +1544,7 @@ private struct CalcinationSliderVisual: View {
                                 .overlay(RoundedRectangle(cornerRadius: 8).stroke(sepiaInk.opacity(0.4), lineWidth: 1.5))
                                 .animation(.spring(response: 0.5), value: isCalcining)
 
-                            DimLabel(text: isCalcining ? "56g (CaO)" : "100g (CaCO₃)", fontSize: 13)
+                            DimLabel(text: isCalcining ? "56g (CaO)" : "100g (CaCO₃)", fontSize: 15)
                         }
 
                         // CO₂ bubbles
@@ -1563,7 +1563,7 @@ private struct CalcinationSliderVisual: View {
                                 }
                                 .frame(width: 50, height: h * 0.25)
 
-                                DimLabel(text: "44g CO₂↑", fontSize: 13)
+                                DimLabel(text: "44g CO₂↑", fontSize: 15)
                             }
                             .padding(.leading, 20)
                             .transition(.opacity)
@@ -1577,7 +1577,7 @@ private struct CalcinationSliderVisual: View {
                     // Temperature slider — full width
                     VStack(spacing: 3) {
                         HStack {
-                            Text("0°C").font(.custom("EBGaramond-Regular", size: 10)).foregroundStyle(sepiaInk.opacity(0.4))
+                            Text("0°C").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.4))
                             Spacer()
                             DimLabel(text: "\(tempC)°C", fontSize: 15)
                             if isCalcining {
@@ -1586,13 +1586,13 @@ private struct CalcinationSliderVisual: View {
                                     .font(.system(size: 13))
                             }
                             Spacer()
-                            Text("1000°C").font(.custom("EBGaramond-Regular", size: 10)).foregroundStyle(sepiaInk.opacity(0.4))
+                            Text("1000°C").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.4))
                         }
                         Slider(value: $temperature, in: 0...1)
                             .tint(isCalcining ? RenaissanceColors.furnaceOrange : color)
 
                         Text(isCalcining ? "CaCO₃(100) → CaO(56) + CO₂(44) — mass conserved" : "Drag to 900°C to trigger the reaction")
-                            .font(.custom("EBGaramond-Italic", size: 10))
+                            .font(.custom("EBGaramond-Italic", size: 15))
                             .foregroundStyle(sepiaInk.opacity(0.5))
                     }
                 }
@@ -1686,11 +1686,11 @@ private struct TessellationPuzzleVisual: View {
                                 .fill(visible ? stones[i].c.opacity(0.5) : sepiaInk.opacity(0.1))
                                 .frame(width: 8, height: 8)
                             Text(stones[i].name)
-                                .font(.custom("EBGaramond-Regular", size: 7))
+                                .font(.custom("EBGaramond-Regular", size: 15))
                                 .foregroundStyle(visible ? sepiaInk : sepiaInk.opacity(0.3))
                             if visible {
                                 Text(stones[i].origin)
-                                    .font(.custom("EBGaramond-Italic", size: 7))
+                                    .font(.custom("EBGaramond-Italic", size: 15))
                                     .foregroundStyle(dimColor)
                             }
                         }
@@ -1698,7 +1698,7 @@ private struct TessellationPuzzleVisual: View {
                 }
 
                 if step >= 4 {
-                    FormulaText(text: "No mortar — precision cut", highlighted: true, fontSize: 11)
+                    FormulaText(text: "No mortar — precision cut", highlighted: true, fontSize: 15)
                 }
             }
         }

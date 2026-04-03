@@ -84,8 +84,9 @@ struct CityMapView: View {
     /// Controls the "build this building?" bird prompt (shown when player walks to building)
     @State private var showBuildingPrompt = false
 
-    /// Building's screen position (normalized 0–1) for positioning the dialog bubble
-    @State private var buildingScreenPos: CGPoint = CGPoint(x: 0.5, y: 0.5)
+    /// Building's screen position (normalized 0–1) — isolated in @Observable so updates
+    /// only re-render the bubble, not the entire CityMapView body.
+    @State private var positionTracker = BuildingPositionTracker()
 
     /// Controls the Workshop sheet (opened from post-quiz prompt)
     @State private var showWorkshopSheet = false
@@ -144,12 +145,15 @@ struct CityMapView: View {
     @ObservedObject private var assetManager = AssetManager.shared
 
     var body: some View {
+        #if DEBUG
+        let _ = Self._printChanges()  // Prints which @State/@ObservedObject caused re-render
+        #endif
         GeometryReader { geometry in
             ZStack {
                 // Wait for city assets on iOS (macOS: always ready)
                 if assetManager.isReady(AssetManager.cityScene) {
                     // The SpriteKit scene (the actual game map — fills full width)
-                    GameSpriteView(scene: makeScene(), options: [])
+                    GameSpriteView(scene: makeScene(), options: [.ignoresSiblingOrder])
                         .ignoresSafeArea()
                 } else {
                     ODRLoadingView(tag: AssetManager.cityScene, message: "Preparing the city...")
@@ -166,84 +170,27 @@ struct CityMapView: View {
                 .padding(Spacing.md)
 
             // Bird prompt — positioned above the building on the map
+            // Extracted to child view so position updates only re-render the bubble, not all of CityMapView
             if showBuildingPrompt, let plot = selectedPlot {
-                GeometryReader { geo in
-                    let bx = buildingScreenPos.x * geo.size.width
-                    let by = buildingScreenPos.y * geo.size.height
-
-                    VStack(spacing: 0) {
-                        HStack(alignment: .top, spacing: 10) {
-                            // Bird on the left
-                            BirdCharacter(isSitting: true)
-                                .frame(width: 55, height: 55)
-                                .offset(x: -4, y: -8)
-
-                            VStack(alignment: .leading, spacing: 7) {
-                                Text(plot.building.name)
-                                    .font(.custom("Cinzel-Bold", size: 17))
-                                    .foregroundStyle(RenaissanceColors.sepiaInk)
-
-                                Text("Work on this building?")
-                                    .font(RenaissanceFont.dialogSubtitle)
-                                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
-
-                                HStack(spacing: 12) {
-                                    Button {
-                                        withAnimation {
-                                            showBuildingPrompt = false
-                                        }
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                            handleBuildingAction(for: plot)
-                                        }
-                                    } label: {
-                                        Text("Yes, let's build!")
-                                            .font(.custom("EBGaramond-SemiBold", size: 14))
-                                            .foregroundStyle(.white)
-                                            .padding(.horizontal, 14)
-                                            .padding(.vertical, 7)
-                                            .background(
-                                                Capsule()
-                                                    .fill(RenaissanceColors.warmBrown)
-                                            )
-                                    }
-                                    .buttonStyle(.plain)
-
-                                    Button {
-                                        withAnimation {
-                                            showBuildingPrompt = false
-                                            selectedPlot = nil
-                                        }
-                                        sceneHolder.scene?.resetMascot()
-                                    } label: {
-                                        Text("Not this one")
-                                            .font(RenaissanceFont.caption)
-                                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
-                                    }
-                                    .buttonStyle(.plain)
-                                }
-                            }
+                BuildingPromptBubble(
+                    plot: plot,
+                    positionTracker: positionTracker,
+                    onAccept: {
+                        withAnimation {
+                            showBuildingPrompt = false
                         }
-                        .padding(14)
-                        .background(
-                            RoundedRectangle(cornerRadius: 14)
-                                .fill(RenaissanceColors.parchment)
-                                .shadow(color: .black.opacity(0.2), radius: 6, y: 3)
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 14)
-                                .stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1)
-                        )
-
-                        // Triangle pointing down toward the building
-                        Triangle()
-                            .fill(RenaissanceColors.parchment)
-                            .frame(width: 18, height: 11)
-                            .rotationEffect(.degrees(180))
-                            .offset(y: -1)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                            handleBuildingAction(for: plot)
+                        }
+                    },
+                    onDismiss: {
+                        withAnimation {
+                            showBuildingPrompt = false
+                            selectedPlot = nil
+                        }
+                        sceneHolder.scene?.resetMascot()
                     }
-                    .frame(width: 286)
-                    .position(x: bx, y: by - 170)
-                }
+                )
                 .allowsHitTesting(true)
                 .transition(.scale(scale: 0.8).combined(with: .opacity))
             }
@@ -966,7 +913,7 @@ struct CityMapView: View {
 
         // Create new scene
         let newScene = CityScene()
-        newScene.size = CGSize(width: 3500, height: 1955)
+        newScene.size = CGSize(width: 4048, height: 2144)
         newScene.scaleMode = .resizeFill
 
         // Set player gender before scene setup
@@ -1008,8 +955,9 @@ struct CityMapView: View {
         }
 
         // Receive building screen position for dialog placement
-        newScene.onBuildingScreenPosition = { [self] normalizedPos in
-            buildingScreenPos = normalizedPos
+        // Updates the @Observable tracker — only the bubble view re-renders, not CityMapView
+        newScene.onBuildingScreenPosition = { [positionTracker] normalizedPos in
+            positionTracker.screenPos = normalizedPos
         }
 
         // Dismiss all dialogs when player starts walking to a new building
@@ -1454,6 +1402,95 @@ struct CityMapView: View {
             return .glass
         default:
             return .limeMortar  // Default fallback
+        }
+    }
+}
+
+// MARK: - Building Position Tracker
+
+/// Isolates per-frame position updates from CityMapView's body.
+/// Only views that read `screenPos` re-render — not the whole map.
+@Observable
+class BuildingPositionTracker {
+    var screenPos: CGPoint = CGPoint(x: 0.5, y: 0.5)
+}
+
+// MARK: - Building Prompt Bubble
+
+/// Bird prompt bubble that follows a building on the map.
+/// Separated from CityMapView so position updates only re-render this small view.
+struct BuildingPromptBubble: View {
+    let plot: BuildingPlot
+    var positionTracker: BuildingPositionTracker
+    var onAccept: () -> Void
+    var onDismiss: () -> Void
+
+    var body: some View {
+        GeometryReader { geo in
+            let bx = positionTracker.screenPos.x * geo.size.width
+            let by = positionTracker.screenPos.y * geo.size.height
+
+            VStack(spacing: 0) {
+                HStack(alignment: .top, spacing: 10) {
+                    BirdCharacter(isSitting: true)
+                        .frame(width: 55, height: 55)
+                        .offset(x: -4, y: -8)
+
+                    VStack(alignment: .leading, spacing: 7) {
+                        Text(plot.building.name)
+                            .font(.custom("Cinzel-Bold", size: 17))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
+
+                        Text("Work on this building?")
+                            .font(RenaissanceFont.dialogSubtitle)
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
+
+                        HStack(spacing: 12) {
+                            Button {
+                                onAccept()
+                            } label: {
+                                Text("Yes, let's build!")
+                                    .font(.custom("EBGaramond-SemiBold", size: 14))
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 14)
+                                    .padding(.vertical, 7)
+                                    .background(
+                                        Capsule()
+                                            .fill(RenaissanceColors.warmBrown)
+                                    )
+                            }
+                            .buttonStyle(.plain)
+
+                            Button {
+                                onDismiss()
+                            } label: {
+                                Text("Not this one")
+                                    .font(RenaissanceFont.caption)
+                                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+                .padding(14)
+                .background(
+                    RoundedRectangle(cornerRadius: 14)
+                        .fill(RenaissanceColors.parchment)
+                        .shadow(color: .black.opacity(0.2), radius: 6, y: 3)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14)
+                        .stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1)
+                )
+
+                Triangle()
+                    .fill(RenaissanceColors.parchment)
+                    .frame(width: 18, height: 11)
+                    .rotationEffect(.degrees(180))
+                    .offset(y: -1)
+            }
+            .frame(width: 286)
+            .position(x: bx, y: by - 170)
         }
     }
 }

@@ -87,7 +87,7 @@ private struct BottegaVisual: View {
                 HStack(spacing: 12) {
                     VStack(spacing: 2) {
                         Circle().fill(color.opacity(0.5)).frame(width: 18, height: 18)
-                        Text("Master").font(.custom("Cinzel-Bold", size: 8)).foregroundStyle(color)
+                        Text("Master").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(color)
                     }
                     ForEach(0..<(step >= 3 ? 6 : step >= 1 ? 3 : 0), id: \.self) { _ in
                         Circle().fill(sepiaInk.opacity(0.25)).frame(width: 12, height: 12)
@@ -112,13 +112,13 @@ private struct BottegaVisual: View {
     }
     @ViewBuilder private func ageLabel(_ age: String, task: String) -> some View {
         VStack(spacing: 1) {
-            Text(age).font(.custom("EBGaramond-Bold", size: 12)).foregroundStyle(dimColor)
-            Text(task).font(.custom("EBGaramond-Regular", size: 8)).foregroundStyle(sepiaInk.opacity(0.6))
+            Text(age).font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(dimColor)
+            Text(task).font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.6))
         }
     }
     @ViewBuilder private func disciplinePill(_ text: String, icon: String) -> some View {
         Label(text, systemImage: icon)
-            .font(.custom("EBGaramond-Regular", size: 8))
+            .font(.custom("EBGaramond-Regular", size: 15))
             .foregroundStyle(color.opacity(0.7))
             .padding(.horizontal, 6).padding(.vertical, 3)
             .background(RoundedRectangle(cornerRadius: 3).fill(color.opacity(0.06)))
@@ -286,7 +286,7 @@ private struct WaterTankVisual: View {
             .overlay(alignment: .bottom) {
                 if step >= 3 {
                     Text("730 drawings")
-                        .font(.custom("EBGaramond-Bold", size: 12))
+                        .font(.custom("EBGaramond-Bold", size: 15))
                         .foregroundStyle(color)
                         .offset(y: -28)
                 }
@@ -368,17 +368,17 @@ private struct WhiteWallsVisual: View {
                         .fill(Color(red: 0.55, green: 0.52, blue: 0.48).opacity(0.5))
                         .frame(width: 55, height: 50)
                     Text("Stone")
-                        .font(.custom("Cinzel-Bold", size: 8))
+                        .font(.custom("Cinzel-Bold", size: 16))
                         .foregroundStyle(sepiaInk.opacity(step >= 2 ? 0.4 : 0.3))
                     if step >= 2 {
                         Text("40%")
-                            .font(.custom("EBGaramond-Bold", size: 11))
+                            .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(dimColor.opacity(0.5))
                     }
                 }
                 if step >= 2 {
                     Text("vs")
-                        .font(.custom("EBGaramond-Regular", size: 10))
+                        .font(.custom("EBGaramond-Regular", size: 15))
                         .foregroundStyle(sepiaInk.opacity(0.3))
                 }
                 // Lime plaster
@@ -388,11 +388,11 @@ private struct WhiteWallsVisual: View {
                         .frame(width: 55, height: 50)
                         .shadow(color: step >= 3 ? Color.yellow.opacity(0.15) : .clear, radius: 8)
                     Text("Lime")
-                        .font(.custom("Cinzel-Bold", size: 8))
+                        .font(.custom("Cinzel-Bold", size: 16))
                         .foregroundStyle(step >= 1 ? sepiaInk : sepiaInk.opacity(0.3))
                     if step >= 2 {
                         Text("85%")
-                            .font(.custom("EBGaramond-Bold", size: 11))
+                            .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(color)
                     }
                 }
@@ -476,14 +476,14 @@ private struct CastingSandVisual: View {
                         .fill(Color(red: 0.72, green: 0.62, blue: 0.45).opacity(step >= 1 ? 0.5 : 0.15))
                         .frame(height: 55)
                     Text("Arno Sand")
-                        .font(.custom("Cinzel-Bold", size: 9))
+                        .font(.custom("Cinzel-Bold", size: 16))
                         .foregroundStyle(step >= 1 ? sepiaInk : sepiaInk.opacity(0.3))
                     Text("Clay-rich")
-                        .font(.custom("EBGaramond-Regular", size: 8))
+                        .font(.custom("EBGaramond-Regular", size: 15))
                         .foregroundStyle(step >= 2 ? dimColor : dimColor.opacity(0.3))
                     if step >= 2 {
                         Text("→ Casting")
-                            .font(.custom("EBGaramond-Bold", size: 9))
+                            .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(color)
                     }
                 }
@@ -494,14 +494,14 @@ private struct CastingSandVisual: View {
                         .fill(Color(red: 0.85, green: 0.82, blue: 0.75).opacity(step >= 1 ? 0.5 : 0.15))
                         .frame(height: 55)
                     Text("Mountain")
-                        .font(.custom("Cinzel-Bold", size: 9))
+                        .font(.custom("Cinzel-Bold", size: 16))
                         .foregroundStyle(step >= 1 ? sepiaInk : sepiaInk.opacity(0.3))
                     Text("Pure SiO₂")
-                        .font(.custom("EBGaramond-Regular", size: 8))
+                        .font(.custom("EBGaramond-Regular", size: 15))
                         .foregroundStyle(step >= 3 ? dimColor : dimColor.opacity(0.3))
                     if step >= 3 {
                         Text("→ Polishing")
-                            .font(.custom("EBGaramond-Bold", size: 9))
+                            .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(color)
                     }
                 }
@@ -545,19 +545,19 @@ private struct CustomToolsVisual: View {
                                 .frame(width: diameter, height: diameter)
                         }
                         Image(systemName: "arrow.right")
-                            .font(.system(size: 8))
+                            .font(.system(size: 13))
                             .foregroundStyle(sepiaInk.opacity(0.3))
                         RoundedRectangle(cornerRadius: 1)
                             .fill(color.opacity(0.4))
                             .frame(width: 30, height: 2)
                     }
                     Text("Wire die → uniform wire")
-                        .font(.custom("EBGaramond-Regular", size: 9))
+                        .font(.custom("EBGaramond-Regular", size: 15))
                         .foregroundStyle(dimColor)
                 }
                 if step >= 3 {
                     Text("Carburize: Fe + C → hardened")
-                        .font(.custom("EBGaramond-Bold", size: 11))
+                        .font(.custom("EBGaramond-Bold", size: 15))
                         .foregroundStyle(color)
                 }
             }
@@ -636,7 +636,7 @@ private struct PoplarPanelVisual: View {
                             .frame(width: 59, height: 79)
                             .overlay(
                                 Text("Gesso")
-                                    .font(.custom("EBGaramond-Regular", size: 8))
+                                    .font(.custom("EBGaramond-Regular", size: 15))
                                     .foregroundStyle(sepiaInk.opacity(0.3))
                             )
                     }
@@ -649,12 +649,12 @@ private struct PoplarPanelVisual: View {
 
                 if step >= 1 {
                     Text("77 × 53 cm")
-                        .font(.custom("EBGaramond-Bold", size: 11))
+                        .font(.custom("EBGaramond-Bold", size: 15))
                         .foregroundStyle(dimColor)
                 }
                 if step >= 3 {
                     Text("Poplar — humblest wood")
-                        .font(.custom("EBGaramond-Regular", size: 10))
+                        .font(.custom("EBGaramond-Regular", size: 15))
                         .foregroundStyle(color)
                 }
             }
@@ -680,11 +680,11 @@ private struct PigmentGrindVisual: View {
                         .fill(ultraBlue.opacity(step >= 1 ? 0.5 : 0.15))
                         .frame(width: 35, height: 35)
                     Text("Lapis")
-                        .font(.custom("Cinzel-Bold", size: 8))
+                        .font(.custom("Cinzel-Bold", size: 16))
                         .foregroundStyle(step >= 1 ? ultraBlue : ultraBlue.opacity(0.3))
                     if step >= 2 {
                         Text("3 hours")
-                            .font(.custom("EBGaramond-Bold", size: 10))
+                            .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(dimColor)
                     }
                 }
@@ -695,11 +695,11 @@ private struct PigmentGrindVisual: View {
                         .fill(ochreYellow.opacity(step >= 1 ? 0.5 : 0.15))
                         .frame(width: 35, height: 35)
                     Text("Ochre")
-                        .font(.custom("Cinzel-Bold", size: 8))
+                        .font(.custom("Cinzel-Bold", size: 16))
                         .foregroundStyle(step >= 1 ? ochreYellow : ochreYellow.opacity(0.3))
                     if step >= 2 {
                         Text("1 hour")
-                            .font(.custom("EBGaramond-Bold", size: 10))
+                            .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(dimColor)
                     }
                 }
@@ -707,13 +707,13 @@ private struct PigmentGrindVisual: View {
                 if step >= 3 {
                     VStack(spacing: 2) {
                         Text("+")
-                            .font(.custom("Cinzel-Bold", size: 14))
+                            .font(.custom("Cinzel-Bold", size: 16))
                             .foregroundStyle(sepiaInk.opacity(0.3))
                         Text("Linseed")
-                            .font(.custom("EBGaramond-Regular", size: 8))
+                            .font(.custom("EBGaramond-Regular", size: 15))
                             .foregroundStyle(dimColor)
                         Text("= Paint")
-                            .font(.custom("EBGaramond-Bold", size: 10))
+                            .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(color)
                     }
                 }
@@ -740,14 +740,14 @@ private struct LostWaxVisual: View {
                     ForEach(Array(stages.enumerated()), id: \.offset) { i, stage in
                         let active = (step == 1 && i < 2) || (step == 2 && i < 4) || step >= 3
                         Text(stage)
-                            .font(.custom("EBGaramond-Regular", size: 7))
+                            .font(.custom("EBGaramond-Regular", size: 15))
                             .foregroundStyle(active ? sepiaInk : sepiaInk.opacity(0.2))
                             .padding(.horizontal, 4).padding(.vertical, 3)
                             .background(RoundedRectangle(cornerRadius: 2).fill(active ? color.opacity(0.08) : Color.clear))
 
                         if i < stages.count - 1 {
                             Image(systemName: "chevron.right")
-                                .font(.system(size: 5))
+                                .font(.system(size: 13))
                                 .foregroundStyle(active ? sepiaInk.opacity(0.2) : .clear)
                         }
                     }
@@ -755,7 +755,7 @@ private struct LostWaxVisual: View {
 
                 if step >= 3 {
                     Text("70 tons planned for the Giant Horse")
-                        .font(.custom("EBGaramond-Bold", size: 10))
+                        .font(.custom("EBGaramond-Bold", size: 15))
                         .foregroundStyle(bronzeGold)
                 }
             }

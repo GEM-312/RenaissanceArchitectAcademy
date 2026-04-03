@@ -24,8 +24,9 @@ class TerrainBlurHelper {
 
     // MARK: - Setup with pre-blurred asset
 
-    /// Set up terrain pair using a pre-blurred image from the asset catalog.
-    /// This is the preferred approach — zero setup cost, zero GPU cost.
+    /// Set up terrain with a pre-sharpened overlay for zoom-in clarity.
+    /// Sharp terrain is always visible. Sharpened version fades in when zoomed in
+    /// to counteract the softness of bilinear filtering at magnification.
     /// - Parameter edgeFillColor: Optional solid color placed behind terrain (2x mapSize) to hide faded Midjourney edges.
     func setup(in scene: SKScene, sharp sharpImage: String, blurred blurredImage: String, mapSize: CGSize, edgeFillColor: PlatformColor? = nil) {
         let center = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
@@ -48,15 +49,15 @@ class TerrainBlurHelper {
         scene.addChild(sharp)
         terrainSprite = sharp
 
-        let blurredTexture = SKTexture(imageNamed: blurredImage)
-        blurredTexture.filteringMode = .linear
-        let blurred = SKSpriteNode(texture: blurredTexture)
-        blurred.size = mapSize
-        blurred.position = center
-        blurred.zPosition = -99
-        blurred.alpha = 0
-        scene.addChild(blurred)
-        blurredTerrainSprite = blurred
+        // Generate a pre-sharpened version for zoom-in clarity (~100-200ms one-time cost)
+        let sharpenedTexture = Self.sharpenTexture(sharpTexture, sharpness: 0.6)
+        let sharpened = SKSpriteNode(texture: sharpenedTexture)
+        sharpened.size = mapSize
+        sharpened.position = center
+        sharpened.zPosition = -99
+        sharpened.alpha = 0
+        scene.addChild(sharpened)
+        blurredTerrainSprite = sharpened  // Reuse the slot — now holds sharpened, not blurred
     }
 
     // MARK: - Setup with auto-generated blur
@@ -100,17 +101,16 @@ class TerrainBlurHelper {
 
     // MARK: - Update (call every frame)
 
-    /// Smooth crossfade between sharp and blurred terrain based on camera zoom.
-    /// Call this in the scene's `update(_:)` method.
-    /// Instant swap: sharp when zoomed out, blurred when zoomed in. No crossfade.
+    /// Fade terrain slightly when zoomed in to create depth-of-field feel during walking.
+    /// Terrain dims to 0.6 opacity at max zoom, stays full at overview.
     func updateBlur(cameraScale: CGFloat) {
+        blurredTerrainSprite?.alpha = 0  // Sharpened overlay not used during walking
+
         if cameraScale < blurThreshold {
-            // Zoomed in — show blurred
-            blurredTerrainSprite?.alpha = 1
-            terrainSprite?.alpha = 0
+            // Smoothly fade terrain as we zoom closer — depth-of-field effect
+            let t = max(0, min(1, (blurThreshold - cameraScale) / blurThreshold))
+            terrainSprite?.alpha = 1.0 - t * 0.4  // Fades to 0.6 at max zoom
         } else {
-            // Zoomed out — show sharp
-            blurredTerrainSprite?.alpha = 0
             terrainSprite?.alpha = 1
         }
     }
@@ -142,5 +142,29 @@ class TerrainBlurHelper {
         }
 
         return SKTexture(cgImage: blurredCGImage)
+    }
+
+    // MARK: - Sharpen Generation
+
+    /// Pre-sharpen a texture using CISharpenLuminance (one-time operation at load).
+    /// Sharpens luminance channel only — preserves watercolor colors.
+    /// Cost: ~100-200ms for 7000x3910 image, then zero per-frame cost.
+    static func sharpenTexture(_ texture: SKTexture, sharpness: CGFloat = 0.6) -> SKTexture {
+        let cgImage = texture.cgImage()
+        let ciImage = CIImage(cgImage: cgImage)
+
+        guard let filter = CIFilter(name: "CISharpenLuminance") else { return texture }
+        filter.setValue(ciImage, forKey: kCIInputImageKey)
+        filter.setValue(sharpness, forKey: "inputSharpness")
+
+        let context = CIContext()
+        guard let outputImage = filter.outputImage,
+              let sharpCGImage = context.createCGImage(outputImage, from: ciImage.extent) else {
+            return texture
+        }
+
+        let result = SKTexture(cgImage: sharpCGImage)
+        result.filteringMode = .linear
+        return result
     }
 }

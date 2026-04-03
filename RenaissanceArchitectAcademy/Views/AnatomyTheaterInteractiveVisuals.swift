@@ -68,83 +68,151 @@ private typealias DimLine = IVDimLine
 // MARK: - 1. Vesalius Revolution
 
 private struct VesaliusVisual: View {
-    let visual: CardVisual; let color: Color; var height: CGFloat = 275
+    let visual: CardVisual; let color: Color; var height: CGFloat = 340
     @State private var step: Int = 1
 
-    private let labels = ["1543: Vesalius publishes De Humani Corporis Fabrica",
-                          "Galen dissected animals — wrong about humans for 1,300 years",
+    private let dogmaBlue = Color(red: 0.28, green: 0.35, blue: 0.52)
+    private let observationRed = Color(red: 0.65, green: 0.22, blue: 0.18)
+    private let sageGreen = Color(red: 0.30, green: 0.58, blue: 0.32)
+
+    private let labels = ["1543 — Vesalius publishes De Humani Corporis Fabrica",
+                          "Galen dissected pigs and monkeys — wrong about humans for 1,300 years",
                           "700 pages of woodcut illustrations changed medicine forever"]
 
     var body: some View {
         TeachingContainer(title: visual.title, color: color, totalSteps: 3, step: $step,
                           stepLabel: labels[step - 1], height: height) {
-            VStack(spacing: 8) {
-                HStack(spacing: 20) {
-                    // Galen (old, wrong)
-                    VStack(spacing: 4) {
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(step >= 2 ? Color.red.opacity(0.1) : sepiaInk.opacity(0.05))
-                            .frame(width: 55, height: 50)
+            VStack(spacing: 0) {
+                // Top split: OLD DOGMA vs NEW OBSERVATION
+                HStack(spacing: 0) {
+                    // Left — Galen / Old Dogma
+                    VStack(spacing: 6) {
+                        Text("THE OLD DOGMA")
+                            .font(.custom("Cinzel-Bold", size: 15))
+                            .foregroundStyle(dogmaBlue)
+                        Text("(Pre-1543)")
+                            .font(.custom("EBGaramond-Regular", size: 15))
+                            .foregroundStyle(dogmaBlue.opacity(0.6))
+
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(dogmaBlue.opacity(step >= 2 ? 0.12 : 0.06))
+                            .frame(height: 70)
                             .overlay {
-                                Text("🐒")
-                                    .font(.system(size: 20))
-                                    .opacity(step >= 2 ? 0.7 : 0.2)
+                                VStack(spacing: 4) {
+                                    Text("🐒")
+                                        .font(.system(size: 30))
+                                        .opacity(step >= 2 ? 1.0 : 0.3)
+                                    Text("Animal Myths")
+                                        .font(.custom("EBGaramond-SemiBold", size: 15))
+                                        .foregroundStyle(dogmaBlue)
+                                }
                             }
                             .overlay(alignment: .topTrailing) {
                                 if step >= 2 {
                                     Image(systemName: "xmark.circle.fill")
-                                        .font(.system(size: 12))
-                                        .foregroundStyle(.red.opacity(0.5))
-                                        .offset(x: 4, y: -4)
+                                        .font(.system(size: 18))
+                                        .foregroundStyle(.red.opacity(0.6))
+                                        .offset(x: 6, y: -6)
                                 }
                             }
-                        Text("Galen")
-                            .font(.custom("Cinzel-Bold", size: 9))
-                            .foregroundStyle(step >= 2 ? .red.opacity(0.5) : sepiaInk.opacity(0.3))
-                        Text("Animals")
-                            .font(.custom("EBGaramond-Regular", size: 8))
-                            .foregroundStyle(sepiaInk.opacity(0.4))
-                    }
 
-                    if step >= 1 {
-                        Image(systemName: "arrow.right")
-                            .font(.system(size: 10))
-                            .foregroundStyle(sepiaInk.opacity(0.3))
+                        if step >= 2 {
+                            Text("Galen dissected\npigs & monkeys")
+                                .font(.custom("EBGaramond-Regular", size: 15))
+                                .foregroundStyle(sepiaInk.opacity(0.6))
+                                .multilineTextAlignment(.center)
+                                .lineLimit(2)
+                                .transition(.opacity)
+                        }
                     }
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 6)
 
-                    // Vesalius (new, correct)
-                    VStack(spacing: 4) {
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(step >= 1 ? color.opacity(0.1) : sepiaInk.opacity(0.05))
-                            .frame(width: 55, height: 50)
+                    // Center divider
+                    Rectangle()
+                        .fill(sepiaInk.opacity(0.15))
+                        .frame(width: 1.5)
+                        .padding(.vertical, 8)
+
+                    // Right — Vesalius / New Observation
+                    VStack(spacing: 6) {
+                        Text("NEW OBSERVATION")
+                            .font(.custom("Cinzel-Bold", size: 15))
+                            .foregroundStyle(observationRed)
+                        Text("(Vesalius)")
+                            .font(.custom("EBGaramond-Regular", size: 15))
+                            .foregroundStyle(observationRed.opacity(0.6))
+
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(observationRed.opacity(step >= 1 ? 0.12 : 0.06))
+                            .frame(height: 70)
                             .overlay {
-                                Text("🫀")
-                                    .font(.system(size: 20))
-                                    .opacity(step >= 1 ? 0.7 : 0.2)
+                                VStack(spacing: 4) {
+                                    Text("🫀")
+                                        .font(.system(size: 30))
+                                        .opacity(step >= 1 ? 1.0 : 0.3)
+                                    Text("Human Reality")
+                                        .font(.custom("EBGaramond-SemiBold", size: 15))
+                                        .foregroundStyle(observationRed)
+                                }
                             }
                             .overlay(alignment: .topTrailing) {
-                                if step >= 3 {
+                                if step >= 1 {
                                     Image(systemName: "checkmark.circle.fill")
-                                        .font(.system(size: 12))
-                                        .foregroundStyle(Color(red: 0.30, green: 0.58, blue: 0.32).opacity(0.7))
-                                        .offset(x: 4, y: -4)
+                                        .font(.system(size: 18))
+                                        .foregroundStyle(sageGreen.opacity(0.7))
+                                        .offset(x: 6, y: -6)
                                 }
                             }
-                        Text("Vesalius")
-                            .font(.custom("Cinzel-Bold", size: 9))
-                            .foregroundStyle(step >= 1 ? color : sepiaInk.opacity(0.3))
-                        Text("Humans")
-                            .font(.custom("EBGaramond-Regular", size: 8))
-                            .foregroundStyle(step >= 1 ? sepiaInk : sepiaInk.opacity(0.4))
-                    }
-                }
 
+                        if step >= 1 {
+                            Text("Seeing is\nCorrecting")
+                                .font(.custom("EBGaramond-SemiBold", size: 15))
+                                .foregroundStyle(sepiaInk.opacity(0.7))
+                                .multilineTextAlignment(.center)
+                                .lineLimit(2)
+                                .transition(.opacity)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 6)
+                }
+                .padding(.top, 4)
+
+                Spacer().frame(height: 10)
+
+                // Bottom: 700 pages callout
                 if step >= 3 {
-                    Text("700 pages · 1543")
-                        .font(.custom("EBGaramond-Bold", size: 12))
-                        .foregroundStyle(color)
+                    VStack(spacing: 4) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "book.pages")
+                                .font(.system(size: 20))
+                                .foregroundStyle(color)
+                            Text("700")
+                                .font(.custom("Cinzel-Bold", size: 28))
+                                .foregroundStyle(color)
+                            Text("Pages")
+                                .font(.custom("EBGaramond-Regular", size: 18))
+                                .foregroundStyle(sepiaInk)
+                        }
+                        Text("of Revolutionary Science")
+                            .font(.custom("EBGaramond-Italic", size: 16))
+                            .foregroundStyle(sepiaInk.opacity(0.6))
+                    }
+                    .padding(.vertical, 6)
+                    .padding(.horizontal, 16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(color.opacity(0.06))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .strokeBorder(color.opacity(0.15), lineWidth: 1)
+                            )
+                    )
+                    .transition(.scale(scale: 0.9).combined(with: .opacity))
                 }
             }
+            .animation(.easeInOut(duration: 0.4), value: step)
         }
     }
 }
@@ -152,62 +220,166 @@ private struct VesaliusVisual: View {
 // MARK: - 2. Funnel Shape — Inverted Cone
 
 private struct FunnelShapeVisual: View {
-    let visual: CardVisual; let color: Color; var height: CGFloat = 275
+    let visual: CardVisual; let color: Color; var height: CGFloat = 340
     @State private var step: Int = 1
 
-    private let labels = ["Inverted funnel: narrow at bottom, wide at top",
-                          "6 oval tiers — everyone stands, looking down",
-                          "300 students in 11 meters diameter"]
+    private let labels = ["The inverted funnel — narrow at bottom, wide at top",
+                          "6 concentric oval tiers — 300 students stand and look down",
+                          "11 meters wide at top, just 2 meters at the dissection table"]
 
     var body: some View {
         TeachingContainer(title: visual.title, color: color, totalSteps: 3, step: $step,
                           stepLabel: labels[step - 1], height: height) {
             Canvas { ctx, size in
                 let cx = size.width / 2
-                let baseY = size.height * 0.7
-                let topY = size.height * 0.08
                 let tiers = 6
-                let minW: CGFloat = 30
-                let maxW: CGFloat = size.width * 0.8
-                let tierH = (baseY - topY) / CGFloat(tiers)
+                let topY: CGFloat = size.height * 0.04
+                let bottomY: CGFloat = size.height * 0.78
+                let minW: CGFloat = size.width * 0.14  // Bottom tier (2m)
+                let maxW: CGFloat = size.width * 0.75   // Top tier (11m)
+                let tierH = (bottomY - topY) / CGFloat(tiers)
+                let railColor = walnutBrown
 
-                // Table at bottom
-                let tableRect = CGRect(x: cx - 12, y: baseY - 5, width: 24, height: 8)
-                ctx.fill(Path(roundedRect: tableRect, cornerRadius: 2), with: .color(walnutBrown.opacity(0.5)))
+                // Arched alcove behind dissection table
+                let alcoveW: CGFloat = minW * 1.6
+                let alcoveH: CGFloat = tierH * 1.3
+                let alcoveY = bottomY - 2
+                var alcove = Path()
+                alcove.move(to: CGPoint(x: cx - alcoveW / 2, y: alcoveY + alcoveH))
+                alcove.addLine(to: CGPoint(x: cx - alcoveW / 2, y: alcoveY + alcoveH * 0.3))
+                alcove.addQuadCurve(to: CGPoint(x: cx + alcoveW / 2, y: alcoveY + alcoveH * 0.3),
+                                    control: CGPoint(x: cx, y: alcoveY - alcoveH * 0.1))
+                alcove.addLine(to: CGPoint(x: cx + alcoveW / 2, y: alcoveY + alcoveH))
+                alcove.closeSubpath()
+                ctx.fill(alcove, with: .color(Color(red: 0.88, green: 0.80, blue: 0.68).opacity(0.4)))
+                ctx.stroke(alcove, with: .color(sepiaInk.opacity(0.2)), lineWidth: 0.8)
 
+                // Dissection table
+                let tableW: CGFloat = minW * 0.7
+                let tableH: CGFloat = 6.0
+                let tableY = alcoveY + alcoveH * 0.6
+                let tableRect = CGRect(x: cx - tableW / 2, y: tableY, width: tableW, height: tableH)
+                ctx.fill(Path(roundedRect: tableRect, cornerRadius: 1.5), with: .color(walnutBrown.opacity(0.6)))
+                // Table legs
+                let legW: CGFloat = 2
+                ctx.fill(Path(CGRect(x: cx - tableW / 2 + 4, y: tableY + tableH, width: legW, height: 8)),
+                         with: .color(walnutBrown.opacity(0.4)))
+                ctx.fill(Path(CGRect(x: cx + tableW / 2 - 6, y: tableY + tableH, width: legW, height: 8)),
+                         with: .color(walnutBrown.opacity(0.4)))
+
+                // 6 tiers — drawn from bottom (narrow) to top (wide)
                 for i in 0..<tiers {
-                    let showTier = step >= 2 || i < 2
+                    let showTier = step >= 2 || i < 3
                     guard showTier else { continue }
 
-                    let t = CGFloat(i) / CGFloat(tiers - 1)
+                    let t = CGFloat(i) / CGFloat(tiers - 1)  // 0 = bottom, 1 = top
                     let w = minW + t * (maxW - minW)
-                    let y = baseY - CGFloat(i + 1) * tierH
+                    let y = bottomY - CGFloat(i + 1) * tierH
 
-                    let tierRect = CGRect(x: cx - w / 2, y: y, width: w, height: tierH * 0.7)
-                    ctx.fill(Path(roundedRect: tierRect, cornerRadius: 2),
-                             with: .color(walnutBrown.opacity(0.12 + t * 0.1)))
-                    ctx.stroke(Path(roundedRect: tierRect, cornerRadius: 2),
-                               with: .color(sepiaInk.opacity(0.2)), lineWidth: 0.5)
+                    // Tier platform (3D-ish trapezoid)
+                    let tierDepth: CGFloat = tierH * 0.55
+                    let nextW = i < tiers - 1 ? minW + CGFloat(i + 1) / CGFloat(tiers - 1) * (maxW - minW) : w
+                    var tierPath = Path()
+                    tierPath.move(to: CGPoint(x: cx - w / 2, y: y + tierDepth))
+                    tierPath.addLine(to: CGPoint(x: cx - w / 2, y: y))
+                    tierPath.addLine(to: CGPoint(x: cx + w / 2, y: y))
+                    tierPath.addLine(to: CGPoint(x: cx + w / 2, y: y + tierDepth))
+                    tierPath.closeSubpath()
 
-                    // People dots on tier
-                    if step >= 3 {
-                        let people = 3 + i * 2
+                    let tierFill = Color(red: 0.72 - t * 0.08, green: 0.58 - t * 0.06, blue: 0.38 - t * 0.04)
+                    ctx.fill(tierPath, with: .color(tierFill.opacity(0.25 + t * 0.1)))
+                    ctx.stroke(tierPath, with: .color(sepiaInk.opacity(0.25)), lineWidth: 0.8)
+
+                    // Railing at top edge of each tier
+                    let railY = y + 2
+                    var rail = Path()
+                    rail.move(to: CGPoint(x: cx - w / 2 + 2, y: railY))
+                    rail.addLine(to: CGPoint(x: cx + w / 2 - 2, y: railY))
+                    ctx.stroke(rail, with: .color(railColor.opacity(0.4)), lineWidth: 1.2)
+
+                    // Railing posts
+                    let postCount = 3 + i * 2
+                    for p in 0..<postCount {
+                        let px = cx - w * 0.42 + CGFloat(p) * (w * 0.84 / CGFloat(max(1, postCount - 1)))
+                        var post = Path()
+                        post.move(to: CGPoint(x: px, y: railY))
+                        post.addLine(to: CGPoint(x: px, y: railY + tierDepth * 0.5))
+                        ctx.stroke(post, with: .color(railColor.opacity(0.25)), lineWidth: 0.6)
+                    }
+
+                    // People silhouettes on tier
+                    if step >= 2 {
+                        let people = 2 + i * 2
                         for p in 0..<people {
-                            let px = cx - w * 0.4 + CGFloat(p) * (w * 0.8 / CGFloat(people - 1))
-                            let dot = Path(ellipseIn: CGRect(x: px - 1.5, y: y + 2, width: 3, height: 3))
-                            ctx.fill(dot, with: .color(sepiaInk.opacity(0.3)))
+                            let px = cx - w * 0.38 + CGFloat(p) * (w * 0.76 / CGFloat(max(1, people - 1)))
+                            let personY = y + 4
+                            // Head
+                            let head = Path(ellipseIn: CGRect(x: px - 2.5, y: personY, width: 5, height: 5))
+                            ctx.fill(head, with: .color(sepiaInk.opacity(0.25)))
+                            // Body
+                            var body = Path()
+                            body.move(to: CGPoint(x: px, y: personY + 5))
+                            body.addLine(to: CGPoint(x: px - 3, y: personY + tierDepth * 0.7))
+                            body.addLine(to: CGPoint(x: px + 3, y: personY + tierDepth * 0.7))
+                            body.closeSubpath()
+                            ctx.fill(body, with: .color(sepiaInk.opacity(0.15)))
                         }
                     }
                 }
 
-                // Dimension
+                // --- Dimension lines & labels ---
                 if step >= 3 {
-                    let dimY = topY - 5
-                    ctx.stroke(IVDimLine(from: CGPoint(x: cx - maxW / 2, y: dimY),
-                                         to: CGPoint(x: cx + maxW / 2, y: dimY)).path(in: .zero),
-                               with: .color(dimColor), lineWidth: 0.5)
+                    let topTierY = bottomY - CGFloat(tiers) * tierH
+                    // Top dimension: 11 meters
+                    ctx.stroke(IVDimLine(from: CGPoint(x: cx - maxW / 2, y: topTierY - 8),
+                                         to: CGPoint(x: cx + maxW / 2, y: topTierY - 8), tickSize: 4).path(in: .zero),
+                               with: .color(dimColor), lineWidth: 0.8)
+                    let topLabel = ctx.resolve(Text("11 m").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(dimColor))
+                    ctx.draw(topLabel, at: CGPoint(x: cx, y: topTierY - 16))
+
+                    // Bottom dimension: 2 meters
+                    let botDimY = bottomY + 4
+                    ctx.stroke(IVDimLine(from: CGPoint(x: cx - minW / 2, y: botDimY),
+                                         to: CGPoint(x: cx + minW / 2, y: botDimY), tickSize: 3).path(in: .zero),
+                               with: .color(dimColor), lineWidth: 0.8)
+                    let botLabel = ctx.resolve(Text("2 m").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(dimColor))
+                    ctx.draw(botLabel, at: CGPoint(x: cx, y: botDimY + 10))
+                }
+
+                // --- Callout labels ---
+                if step >= 1 {
+                    // "Standing Room Only" — left side
+                    let calloutFont = Font.custom("EBGaramond-SemiBold", size: 15)
+                    let standingLabel = ctx.resolve(Text("Standing\nRoom Only")
+                        .font(calloutFont).foregroundColor(sepiaInk.opacity(0.7)))
+                    let midTierY = bottomY - 3.5 * tierH
+                    ctx.draw(standingLabel, at: CGPoint(x: size.width * 0.08, y: midTierY), anchor: .leading)
+
+                    // Leader line from label to tier
+                    let midTierW = minW + 2.5 / CGFloat(tiers - 1) * (maxW - minW)
+                    var leader = Path()
+                    leader.move(to: CGPoint(x: size.width * 0.22, y: midTierY))
+                    leader.addLine(to: CGPoint(x: cx - midTierW / 2 - 2, y: midTierY))
+                    ctx.stroke(leader, with: .color(sepiaInk.opacity(0.3)), lineWidth: 0.6)
+                }
+
+                if step >= 2 {
+                    // "Bird's-Eye View" — right side
+                    let calloutFont = Font.custom("EBGaramond-SemiBold", size: 15)
+                    let birdLabel = ctx.resolve(Text("Bird's-Eye\nView ↓")
+                        .font(calloutFont).foregroundColor(sepiaInk.opacity(0.7)))
+                    let upperTierY = bottomY - 4.5 * tierH
+                    ctx.draw(birdLabel, at: CGPoint(x: size.width * 0.92, y: upperTierY), anchor: .trailing)
+                }
+
+                if step >= 1 {
+                    // "Dissection Table" label below alcove
+                    let tableLabel = ctx.resolve(Text("Central Dissection Table")
+                        .font(.custom("EBGaramond-Regular", size: 15)).foregroundColor(sepiaInk.opacity(0.5)))
+                    ctx.draw(tableLabel, at: CGPoint(x: cx, y: bottomY + (step >= 3 ? 22 : 14)))
                 }
             }
+            .animation(.easeInOut(duration: 0.4), value: step)
         }
     }
 }
@@ -466,7 +638,7 @@ private struct ScalpelSteelVisual: View {
             .overlay(alignment: .bottom) {
                 if step >= 1 {
                     Text("Fe + 1.5% C → Rockwell 60")
-                        .font(.custom("EBGaramond-Bold", size: 11))
+                        .font(.custom("EBGaramond-Bold", size: 15))
                         .foregroundStyle(color)
                         .offset(y: -28)
                 }
@@ -500,16 +672,16 @@ private struct TimberPrepVisual: View {
                             .frame(width: 25, height: 35)
                     }
                     Text("6 mo")
-                        .font(.custom("EBGaramond-Bold", size: 10))
+                        .font(.custom("EBGaramond-Bold", size: 15))
                         .foregroundStyle(step >= 1 ? waterBlue : waterBlue.opacity(0.3))
                     Text("Soak")
-                        .font(.custom("Cinzel-Bold", size: 8))
+                        .font(.custom("Cinzel-Bold", size: 16))
                         .foregroundStyle(step >= 1 ? sepiaInk : sepiaInk.opacity(0.3))
                 }
 
                 if step >= 2 {
                     Image(systemName: "arrow.right")
-                        .font(.system(size: 9))
+                        .font(.system(size: 13))
                         .foregroundStyle(sepiaInk.opacity(0.3))
                 }
 
@@ -529,15 +701,15 @@ private struct TimberPrepVisual: View {
                                 .frame(width: 25, height: 35)
                         }
                         Text("12 mo")
-                            .font(.custom("EBGaramond-Bold", size: 10))
+                            .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(dimColor)
                         Text("Air Dry")
-                            .font(.custom("Cinzel-Bold", size: 8))
+                            .font(.custom("Cinzel-Bold", size: 16))
                             .foregroundStyle(sepiaInk)
                     }
 
                     Image(systemName: "arrow.right")
-                        .font(.system(size: 9))
+                        .font(.system(size: 13))
                         .foregroundStyle(sepiaInk.opacity(0.3))
 
                     // Ready to carve
@@ -546,10 +718,10 @@ private struct TimberPrepVisual: View {
                             .font(.system(size: 22))
                             .foregroundStyle(Color(red: 0.30, green: 0.58, blue: 0.32).opacity(0.6))
                         Text("18 mo")
-                            .font(.custom("EBGaramond-Bold", size: 10))
+                            .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(color)
                         Text("Ready")
-                            .font(.custom("Cinzel-Bold", size: 8))
+                            .font(.custom("Cinzel-Bold", size: 16))
                             .foregroundStyle(color)
                     }
                 }
@@ -735,12 +907,12 @@ private struct CypressVentVisual: View {
                 HStack(spacing: 16) {
                     if step >= 1 {
                         Text("Thujone")
-                            .font(.custom("EBGaramond-Bold", size: 10))
+                            .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(cypressGreen)
                     }
                     if step >= 1 {
                         Text("Cedrol")
-                            .font(.custom("EBGaramond-Bold", size: 10))
+                            .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(cypressGreen)
                     }
                 }
@@ -748,16 +920,16 @@ private struct CypressVentVisual: View {
                 if step >= 2 {
                     HStack(spacing: 12) {
                         Label("No insects", systemImage: "ant.fill")
-                            .font(.custom("EBGaramond-Regular", size: 9))
+                            .font(.custom("EBGaramond-Regular", size: 15))
                         Label("No fungus", systemImage: "leaf.fill")
-                            .font(.custom("EBGaramond-Regular", size: 9))
+                            .font(.custom("EBGaramond-Regular", size: 15))
                     }
                     .foregroundStyle(color.opacity(0.7))
                 }
 
                 if step >= 3 {
                     Text("3-day dissection odor control")
-                        .font(.custom("EBGaramond-Bold", size: 11))
+                        .font(.custom("EBGaramond-Bold", size: 15))
                         .foregroundStyle(color)
                 }
             }
@@ -829,7 +1001,7 @@ private struct CarvingToolsVisual: View {
                         ForEach(Array(toolSteps.enumerated()), id: \.offset) { i, s in
                             let active = step >= 3 || i < 5
                             Text(s)
-                                .font(.custom("EBGaramond-Regular", size: 8))
+                                .font(.custom("EBGaramond-Regular", size: 15))
                                 .foregroundStyle(active ? (i == 5 && step >= 3 ? color : sepiaInk) : sepiaInk.opacity(0.3))
                                 .padding(.horizontal, 4)
                                 .padding(.vertical, 2)
@@ -840,7 +1012,7 @@ private struct CarvingToolsVisual: View {
 
                             if i < toolSteps.count - 1 {
                                 Image(systemName: "chevron.right")
-                                    .font(.system(size: 6))
+                                    .font(.system(size: 13))
                                     .foregroundStyle(sepiaInk.opacity(0.2))
                             }
                         }
@@ -849,7 +1021,7 @@ private struct CarvingToolsVisual: View {
 
                 if step >= 3 {
                     Text("2 weeks carving + walnut oil seal")
-                        .font(.custom("EBGaramond-Bold", size: 10))
+                        .font(.custom("EBGaramond-Bold", size: 15))
                         .foregroundStyle(walnutBrown)
                 }
             }

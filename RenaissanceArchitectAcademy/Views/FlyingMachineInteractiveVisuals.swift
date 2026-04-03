@@ -122,7 +122,7 @@ private struct OrnithopterVisual: View {
             .overlay(alignment: .bottom) {
                 if step >= 2 {
                     Text("12m wingspan")
-                        .font(.custom("EBGaramond-Bold", size: 11))
+                        .font(.custom("EBGaramond-Bold", size: 15))
                         .foregroundStyle(dimColor)
                         .offset(y: step >= 3 ? -45 : -28)
                 }
@@ -130,7 +130,7 @@ private struct OrnithopterVisual: View {
             .overlay(alignment: .bottom) {
                 if step >= 3 {
                     Text("500 sketches · 35,000 words")
-                        .font(.custom("EBGaramond-Bold", size: 10))
+                        .font(.custom("EBGaramond-Bold", size: 15))
                         .foregroundStyle(color)
                         .offset(y: -28)
                 }
@@ -228,7 +228,7 @@ private struct WingAreaMathVisual: View {
                 // Formula
                 if step >= 1 {
                     Text("0.1 m² / kg × 90 kg = 18 m²")
-                        .font(.custom("EBGaramond-Bold", size: 14))
+                        .font(.custom("EBGaramond-Bold", size: 15))
                         .foregroundStyle(step >= 2 ? color : sepiaInk)
                 }
                 // Power comparison
@@ -238,24 +238,24 @@ private struct WingAreaMathVisual: View {
                             Text("🐦")
                                 .font(.system(size: 20))
                             Text("10 W/kg")
-                                .font(.custom("EBGaramond-Bold", size: 11))
+                                .font(.custom("EBGaramond-Bold", size: 15))
                                 .foregroundStyle(color)
                         }
                         VStack(spacing: 2) {
                             Text("vs")
-                                .font(.custom("EBGaramond-Regular", size: 10))
+                                .font(.custom("EBGaramond-Regular", size: 15))
                                 .foregroundStyle(sepiaInk.opacity(0.3))
                         }
                         VStack(spacing: 2) {
                             Text("🧑")
                                 .font(.system(size: 20))
                             Text("1 W/kg")
-                                .font(.custom("EBGaramond-Bold", size: 11))
+                                .font(.custom("EBGaramond-Bold", size: 15))
                                 .foregroundStyle(.red.opacity(0.6))
                         }
                     }
                     Text("10× too weak to flap")
-                        .font(.custom("EBGaramond-Bold", size: 11))
+                        .font(.custom("EBGaramond-Bold", size: 15))
                         .foregroundStyle(.red.opacity(0.5))
                 }
             }
@@ -425,22 +425,22 @@ private struct SilkCoveringVisual: View {
 
                 if step >= 1 {
                     Text("Silk taffeta")
-                        .font(.custom("Cinzel-Bold", size: 10))
+                        .font(.custom("Cinzel-Bold", size: 16))
                         .foregroundStyle(sepiaInk)
                 }
 
                 if step >= 3 {
                     HStack(spacing: 16) {
                         VStack(spacing: 1) {
-                            Text("2 kg").font(.custom("EBGaramond-Bold", size: 13)).foregroundStyle(color)
-                            Text("weight").font(.custom("EBGaramond-Regular", size: 8)).foregroundStyle(dimColor)
+                            Text("2 kg").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color)
+                            Text("weight").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(dimColor)
                         }
                         Text("resists")
-                            .font(.custom("EBGaramond-Regular", size: 9))
+                            .font(.custom("EBGaramond-Regular", size: 15))
                             .foregroundStyle(sepiaInk.opacity(0.4))
                         VStack(spacing: 1) {
-                            Text("50 kg").font(.custom("EBGaramond-Bold", size: 13)).foregroundStyle(color)
-                            Text("pressure").font(.custom("EBGaramond-Regular", size: 8)).foregroundStyle(dimColor)
+                            Text("50 kg").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color)
+                            Text("pressure").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(dimColor)
                         }
                     }
                 }
@@ -512,7 +512,7 @@ private struct IronCablesVisual: View {
                                 .frame(width: diameter, height: diameter)
                         }
                         Image(systemName: "arrow.right")
-                            .font(.system(size: 8))
+                            .font(.system(size: 13))
                             .foregroundStyle(sepiaInk.opacity(0.3))
                         Rectangle()
                             .fill(ironWire.opacity(0.6))
@@ -523,20 +523,20 @@ private struct IronCablesVisual: View {
                 if step >= 3 {
                     HStack(spacing: 16) {
                         VStack(spacing: 2) {
-                            Text("Cast").font(.custom("Cinzel-Bold", size: 9)).foregroundStyle(sepiaInk.opacity(0.5))
+                            Text("Cast").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(sepiaInk.opacity(0.5))
                             RoundedRectangle(cornerRadius: 2).fill(ironWire.opacity(0.3)).frame(width: 40, height: 20)
-                            Text("1×").font(.custom("EBGaramond-Bold", size: 11)).foregroundStyle(sepiaInk.opacity(0.5))
+                            Text("1×").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(sepiaInk.opacity(0.5))
                         }
                         VStack(spacing: 2) {
-                            Text("Drawn").font(.custom("Cinzel-Bold", size: 9)).foregroundStyle(color)
+                            Text("Drawn").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(color)
                             RoundedRectangle(cornerRadius: 2).fill(ironWire.opacity(0.5)).frame(width: 40, height: 40)
-                            Text("2×").font(.custom("EBGaramond-Bold", size: 11)).foregroundStyle(color)
+                            Text("2×").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color)
                         }
                     }
                 }
                 if step == 1 {
                     Text("Pedals → cables → wing tips")
-                        .font(.custom("EBGaramond-Bold", size: 11))
+                        .font(.custom("EBGaramond-Bold", size: 15))
                         .foregroundStyle(sepiaInk)
                 }
             }
@@ -667,13 +667,13 @@ private struct SilkAssemblyVisual: View {
                     ForEach(Array(stages.enumerated()), id: \.offset) { i, stage in
                         let active = (step == 1 && i < 2) || (step == 2 && i < 4) || step >= 3
                         Text(stage)
-                            .font(.custom("EBGaramond-Regular", size: 8))
+                            .font(.custom("EBGaramond-Regular", size: 15))
                             .foregroundStyle(active ? sepiaInk : sepiaInk.opacity(0.2))
                             .padding(.horizontal, 4).padding(.vertical, 3)
                             .background(RoundedRectangle(cornerRadius: 2).fill(active ? color.opacity(0.06) : Color.clear))
                         if i < stages.count - 1 {
                             Image(systemName: "chevron.right")
-                                .font(.system(size: 5))
+                                .font(.system(size: 13))
                                 .foregroundStyle(active ? sepiaInk.opacity(0.2) : .clear)
                         }
                     }
@@ -681,7 +681,7 @@ private struct SilkAssemblyVisual: View {
 
                 if step >= 3 {
                     Text("3 days per wing")
-                        .font(.custom("EBGaramond-Bold", size: 12))
+                        .font(.custom("EBGaramond-Bold", size: 15))
                         .foregroundStyle(color)
                 }
             }

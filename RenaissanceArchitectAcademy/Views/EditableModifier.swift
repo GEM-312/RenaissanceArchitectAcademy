@@ -1,5 +1,6 @@
-#if DEBUG
 import SwiftUI
+
+#if DEBUG
 
 // MARK: - Editable View Modifier
 

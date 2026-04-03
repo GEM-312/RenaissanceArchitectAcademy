@@ -151,7 +151,7 @@ private struct CrowdFlowVisual: View {
                                 let arrowX = cx + (rx + 18) * cos(angle)
                                 let arrowY = cy + (ry + 18) * sin(angle)
                                 Image(systemName: "arrow.right")
-                                    .font(.system(size: 8))
+                                    .font(.system(size: 13))
                                     .foregroundStyle(RenaissanceColors.sageGreen)
                                     .rotationEffect(.radians(Double(angle)))
                                     .position(x: arrowX, y: arrowY)
@@ -167,14 +167,14 @@ private struct CrowdFlowVisual: View {
                             .monospacedDigit()
                             .foregroundStyle(sepiaInk)
                         Text("inside")
-                            .font(.custom("EBGaramond-Regular", size: 9))
+                            .font(.custom("EBGaramond-Regular", size: 15))
                             .foregroundStyle(sepiaInk.opacity(0.5))
                     }
                     .position(x: cx, y: cy)
 
                     // Final formula
                     if step >= 3 {
-                        FormulaText(text: "76 exits × 15 minutes = zero crushes", highlighted: true, fontSize: 11)
+                        FormulaText(text: "76 exits × 15 minutes = zero crushes", highlighted: true, fontSize: 15)
                             .position(x: cx, y: h * 0.88)
                             .transition(.opacity)
                     }
@@ -240,7 +240,7 @@ private struct DrainFoundationVisual: View {
                                 .frame(width: 4, height: h * 0.3)
                                 .position(x: px, y: groundY + h * 0.2)
                         }
-                        DimLabel(text: "Oak piles", fontSize: 9)
+                        DimLabel(text: "Oak piles", fontSize: 15)
                             .position(x: w * 0.82, y: groundY + h * 0.15)
                     }
 
@@ -251,7 +251,7 @@ private struct DrainFoundationVisual: View {
                             .frame(width: w * 0.55, height: h * 0.08)
                             .position(x: cx, y: groundY + h * 0.06)
 
-                        DimLabel(text: "13m concrete raft", fontSize: 9)
+                        DimLabel(text: "13m concrete raft", fontSize: 15)
                             .position(x: w * 0.82, y: groundY + h * 0.06)
                     }
 
@@ -269,8 +269,8 @@ private struct DrainFoundationVisual: View {
                             }
                         } label: {
                             HStack(spacing: 4) {
-                                Image(systemName: "arrow.down.to.line").font(.system(size: 10))
-                                Text("Drain the Lake").font(.custom("EBGaramond-SemiBold", size: 12))
+                                Image(systemName: "arrow.down.to.line").font(.system(size: 13))
+                                Text("Drain the Lake").font(.custom("EBGaramond-SemiBold", size: 15))
                             }
                             .foregroundStyle(waterBlue)
                             .padding(.horizontal, 12).padding(.vertical, 6)
@@ -286,12 +286,12 @@ private struct DrainFoundationVisual: View {
                         DimLine(from: CGPoint(x: w * 0.18, y: groundY),
                                 to: CGPoint(x: w * 0.18, y: groundY + h * 0.38))
                             .stroke(dimColor, lineWidth: 0.8)
-                        DimLabel(text: "13 m", fontSize: 10)
+                        DimLabel(text: "13 m", fontSize: 15)
                             .position(x: w * 0.12, y: groundY + h * 0.19)
                     }
 
                     if step >= 4 {
-                        FormulaText(text: "Foundation > Building cost", highlighted: true, fontSize: 12)
+                        FormulaText(text: "Foundation > Building cost", highlighted: true, fontSize: 15)
                             .position(x: cx, y: h * 0.88)
                             .transition(.opacity)
                     }
@@ -350,7 +350,7 @@ private struct ColumnOrdersVisual: View {
 
                         // Floor number
                         Text("\(i + 1)")
-                            .font(.custom("EBGaramond-Regular", size: 9))
+                            .font(.custom("EBGaramond-Regular", size: 15))
                             .foregroundStyle(sepiaInk.opacity(0.3))
                             .position(x: cx - w * 0.3, y: y - floorH * 0.5)
                     }
@@ -377,7 +377,7 @@ private struct ColumnOrdersVisual: View {
 
                         // Order label
                         Text(orders[orderIdx])
-                            .font(.custom("Cinzel-Bold", size: 9))
+                            .font(.custom("Cinzel-Bold", size: 16))
                             .foregroundStyle(sepiaInk.opacity(0.6))
                             .position(x: cx + w * 0.32, y: y - floorH * 0.5)
                     }
@@ -400,7 +400,7 @@ private struct ColumnOrdersVisual: View {
                                     }
                                 } label: {
                                     Text(orders[i])
-                                        .font(.custom("EBGaramond-SemiBold", size: 10))
+                                        .font(.custom("EBGaramond-SemiBold", size: 15))
                                         .padding(.horizontal, 8).padding(.vertical, 4)
                                         .background(isPlaced ? stoneGray.opacity(0.1) : (isNext ? color.opacity(0.15) : stoneGray.opacity(0.05)))
                                         .cornerRadius(4)
@@ -415,7 +415,7 @@ private struct ColumnOrdersVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "Heavy → Light = Visual stability", highlighted: true, fontSize: 11)
+                        FormulaText(text: "Heavy → Light = Visual stability", highlighted: true, fontSize: 15)
                             .position(x: cx, y: h * 0.08)
                             .transition(.opacity)
                     }
@@ -506,11 +506,11 @@ private struct AcousticBowlVisual: View {
                                 .tint(isOptimal ? RenaissanceColors.sageGreen : color)
                                 .frame(width: w * 0.5)
                             HStack {
-                                Text("20°").font(.custom("EBGaramond-Regular", size: 8))
+                                Text("20°").font(.custom("EBGaramond-Regular", size: 15))
                                 Spacer()
-                                Text("37°").font(.custom("EBGaramond-Regular", size: 8)).foregroundStyle(RenaissanceColors.sageGreen)
+                                Text("37°").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(RenaissanceColors.sageGreen)
                                 Spacer()
-                                Text("50°").font(.custom("EBGaramond-Regular", size: 8))
+                                Text("50°").font(.custom("EBGaramond-Regular", size: 15))
                             }
                             .foregroundStyle(sepiaInk.opacity(0.4))
                             .frame(width: w * 0.5)
@@ -519,7 +519,7 @@ private struct AcousticBowlVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "37° = optimal sightline + sound focus", highlighted: true, fontSize: 11)
+                        FormulaText(text: "37° = optimal sightline + sound focus", highlighted: true, fontSize: 15)
                             .position(x: cx, y: h * 0.12)
                             .transition(.opacity)
                     }
@@ -564,7 +564,7 @@ private struct HypogeumElevatorVisual: View {
                     .stroke(stoneGray, lineWidth: 2)
 
                     Text("Arena Floor")
-                        .font(.custom("EBGaramond-Regular", size: 8))
+                        .font(.custom("EBGaramond-Regular", size: 15))
                         .foregroundStyle(sepiaInk.opacity(0.4))
                         .position(x: w * 0.82, y: arenaY - 8)
 
@@ -584,7 +584,7 @@ private struct HypogeumElevatorVisual: View {
                         .stroke(stoneGray.opacity(0.2), style: StrokeStyle(lineWidth: 0.5, dash: [3, 3]))
 
                         Text(level == 0 ? "Animal cages" : "Storage tunnels")
-                            .font(.custom("EBGaramond-Regular", size: 7))
+                            .font(.custom("EBGaramond-Regular", size: 15))
                             .foregroundStyle(sepiaInk.opacity(0.3))
                             .position(x: cx + shaftW * 0.8 + 30, y: ly)
                     }
@@ -639,7 +639,7 @@ private struct HypogeumElevatorVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "80 elevators — invisible infrastructure", highlighted: true, fontSize: 11)
+                        FormulaText(text: "80 elevators — invisible infrastructure", highlighted: true, fontSize: 15)
                             .position(x: cx, y: h * 0.92)
                             .transition(.opacity)
                     }
@@ -679,7 +679,7 @@ private struct TravertineQuarryVisual: View {
                     // Travertine block (left)
                     VStack(spacing: 4) {
                         Text("TRAVERTINE")
-                            .font(.custom("Cinzel-Bold", size: 9)).tracking(0.5)
+                            .font(.custom("Cinzel-Bold", size: 16)).tracking(0.5)
                             .foregroundStyle(sepiaInk.opacity(0.5))
 
                         ZStack {
@@ -703,8 +703,8 @@ private struct TravertineQuarryVisual: View {
 
                         if cracked {
                             VStack(spacing: 1) {
-                                Text("30% lighter").font(.custom("EBGaramond-SemiBold", size: 10)).foregroundStyle(RenaissanceColors.sageGreen)
-                                Text("Clamps grip holes").font(.custom("EBGaramond-Regular", size: 9)).foregroundStyle(sepiaInk.opacity(0.5))
+                                Text("30% lighter").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundStyle(RenaissanceColors.sageGreen)
+                                Text("Clamps grip holes").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.5))
                             }
                             .transition(.opacity)
                         }
@@ -714,7 +714,7 @@ private struct TravertineQuarryVisual: View {
                     // Marble block (right)
                     VStack(spacing: 4) {
                         Text("MARBLE")
-                            .font(.custom("Cinzel-Bold", size: 9)).tracking(0.5)
+                            .font(.custom("Cinzel-Bold", size: 16)).tracking(0.5)
                             .foregroundStyle(sepiaInk.opacity(0.5))
 
                         RoundedRectangle(cornerRadius: 4)
@@ -727,8 +727,8 @@ private struct TravertineQuarryVisual: View {
 
                         if cracked {
                             VStack(spacing: 1) {
-                                Text("Dense, heavy").font(.custom("EBGaramond-SemiBold", size: 10)).foregroundStyle(RenaissanceColors.errorRed.opacity(0.7))
-                                Text("Clamps slip off").font(.custom("EBGaramond-Regular", size: 9)).foregroundStyle(sepiaInk.opacity(0.5))
+                                Text("Dense, heavy").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundStyle(RenaissanceColors.errorRed.opacity(0.7))
+                                Text("Clamps slip off").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.5))
                             }
                             .transition(.opacity)
                         }
@@ -743,8 +743,8 @@ private struct TravertineQuarryVisual: View {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { withAnimation { step = 3 } }
                         } label: {
                             HStack(spacing: 4) {
-                                Image(systemName: "hammer.fill").font(.system(size: 10))
-                                Text("Crack the Stone").font(.custom("EBGaramond-SemiBold", size: 12))
+                                Image(systemName: "hammer.fill").font(.system(size: 13))
+                                Text("Crack the Stone").font(.custom("EBGaramond-SemiBold", size: 15))
                             }
                             .foregroundStyle(color)
                             .padding(.horizontal, 12).padding(.vertical, 6)
@@ -755,7 +755,7 @@ private struct TravertineQuarryVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "Lighter + grippy = perfect for clamps", highlighted: true, fontSize: 11)
+                        FormulaText(text: "Lighter + grippy = perfect for clamps", highlighted: true, fontSize: 15)
                             .position(x: w * 0.5, y: h * 0.85)
                             .transition(.opacity)
                     }
@@ -848,7 +848,7 @@ private struct IronClampVisual: View {
                                 .position(x: cx + side * blockW * 0.22, y: blockY)
                         }
 
-                        DimLabel(text: "Molten lead", fontSize: 9)
+                        DimLabel(text: "Molten lead", fontSize: 15)
                             .position(x: cx, y: blockY + blockH * 0.5 + 12)
                     }
 
@@ -860,8 +860,8 @@ private struct IronClampVisual: View {
                                 SoundManager.shared.play(.tapSoft)
                             } label: {
                                 HStack(spacing: 4) {
-                                    Image(systemName: "link").font(.system(size: 10))
-                                    Text("Place Clamp").font(.custom("EBGaramond-SemiBold", size: 12))
+                                    Image(systemName: "link").font(.system(size: 13))
+                                    Text("Place Clamp").font(.custom("EBGaramond-SemiBold", size: 15))
                                 }
                                 .foregroundStyle(ironDark)
                                 .padding(.horizontal, 12).padding(.vertical, 6)
@@ -876,8 +876,8 @@ private struct IronClampVisual: View {
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { withAnimation { step = 3 } }
                             } label: {
                                 HStack(spacing: 4) {
-                                    Image(systemName: "flame.fill").font(.system(size: 10))
-                                    Text("Pour Lead").font(.custom("EBGaramond-SemiBold", size: 12))
+                                    Image(systemName: "flame.fill").font(.system(size: 13))
+                                    Text("Pour Lead").font(.custom("EBGaramond-SemiBold", size: 15))
                                 }
                                 .foregroundStyle(.orange)
                                 .padding(.horizontal, 12).padding(.vertical, 6)
@@ -889,7 +889,7 @@ private struct IronClampVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "Iron flexes — mortar cracks", highlighted: true, fontSize: 12)
+                        FormulaText(text: "Iron flexes — mortar cracks", highlighted: true, fontSize: 15)
                             .position(x: cx, y: h * 0.85)
                             .transition(.opacity)
                     }
@@ -987,9 +987,9 @@ private struct VelariumCanvasVisual: View {
                                     }
                                 }
                             HStack {
-                                Text("Retracted").font(.custom("EBGaramond-Regular", size: 8))
+                                Text("Retracted").font(.custom("EBGaramond-Regular", size: 15))
                                 Spacer()
-                                Text("Extended").font(.custom("EBGaramond-Regular", size: 8))
+                                Text("Extended").font(.custom("EBGaramond-Regular", size: 15))
                             }
                             .foregroundStyle(sepiaInk.opacity(0.4))
                             .frame(width: w * 0.5)
@@ -998,7 +998,7 @@ private struct VelariumCanvasVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "1,000 sailors + 240 masts = shade for 50,000", highlighted: true, fontSize: 10)
+                        FormulaText(text: "1,000 sailors + 240 masts = shade for 50,000", highlighted: true, fontSize: 15)
                             .position(x: cx, y: h * 0.12)
                             .transition(.opacity)
                     }
@@ -1059,7 +1059,7 @@ private struct CuringTimeLapseVisual: View {
                     if timeProgress > 0.1 && timeProgress < 0.9 {
                         ForEach(0..<3, id: \.self) { i in
                             Image(systemName: "drop.fill")
-                                .font(.system(size: 8))
+                                .font(.system(size: 13))
                                 .foregroundStyle(waterBlue.opacity(0.5))
                                 .position(
                                     x: cx + CGFloat(i - 1) * blockW * 0.3,
@@ -1086,7 +1086,7 @@ private struct CuringTimeLapseVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "Water + Lime → Calcium hydroxide crystals", highlighted: true, fontSize: 11)
+                        FormulaText(text: "Water + Lime → Calcium hydroxide crystals", highlighted: true, fontSize: 15)
                             .position(x: cx, y: h * 0.85)
                             .transition(.opacity)
                     }
@@ -1159,8 +1159,8 @@ private struct GradedConcreteVisual: View {
 
                         // Layer label
                         HStack(spacing: 4) {
-                            Text(layers[i].0).font(.custom("Cinzel-Bold", size: 9))
-                            Text(layers[i].1).font(.custom("EBGaramond-Regular", size: 8)).foregroundStyle(sepiaInk.opacity(0.5))
+                            Text(layers[i].0).font(.custom("Cinzel-Bold", size: 16))
+                            Text(layers[i].1).font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.5))
                         }
                         .foregroundStyle(sepiaInk)
                         .position(x: cx + vaultW * 0.5 + 40, y: y - layerH * 0.5)
@@ -1176,8 +1176,8 @@ private struct GradedConcreteVisual: View {
                             }
                         } label: {
                             HStack(spacing: 4) {
-                                Image(systemName: "arrow.down.circle").font(.system(size: 10))
-                                Text("Pour \(layers[layersPoured].0)").font(.custom("EBGaramond-SemiBold", size: 12))
+                                Image(systemName: "arrow.down.circle").font(.system(size: 13))
+                                Text("Pour \(layers[layersPoured].0)").font(.custom("EBGaramond-SemiBold", size: 15))
                             }
                             .foregroundStyle(layers[layersPoured].2)
                             .padding(.horizontal, 12).padding(.vertical, 6)
@@ -1188,7 +1188,7 @@ private struct GradedConcreteVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "Same binder + graded stone = structural genius", highlighted: true, fontSize: 11)
+                        FormulaText(text: "Same binder + graded stone = structural genius", highlighted: true, fontSize: 15)
                             .position(x: cx, y: h * 0.12)
                             .transition(.opacity)
                     }
@@ -1271,7 +1271,7 @@ private struct MarblePolishVisual: View {
                                     .fill(i < polishStage ? RenaissanceColors.sageGreen : stoneGray.opacity(0.2))
                                     .frame(width: 10, height: 10)
                                 Text(stages[i].0)
-                                    .font(.custom("EBGaramond-Regular", size: 8))
+                                    .font(.custom("EBGaramond-Regular", size: 15))
                                     .foregroundStyle(i < polishStage ? sepiaInk : sepiaInk.opacity(0.3))
                             }
                         }
@@ -1288,8 +1288,8 @@ private struct MarblePolishVisual: View {
                             }
                         } label: {
                             HStack(spacing: 4) {
-                                Image(systemName: "sparkle").font(.system(size: 10))
-                                Text("Apply \(stages[polishStage].0)").font(.custom("EBGaramond-SemiBold", size: 12))
+                                Image(systemName: "sparkle").font(.system(size: 13))
+                                Text("Apply \(stages[polishStage].0)").font(.custom("EBGaramond-SemiBold", size: 15))
                             }
                             .foregroundStyle(color)
                             .padding(.horizontal, 12).padding(.vertical, 6)
@@ -1300,7 +1300,7 @@ private struct MarblePolishVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "Coarse → Fine → Mirror", highlighted: true, fontSize: 12)
+                        FormulaText(text: "Coarse → Fine → Mirror", highlighted: true, fontSize: 15)
                             .position(x: cx, y: h * 0.85)
                             .transition(.opacity)
                     }
@@ -1361,8 +1361,8 @@ private struct SeatingMathVisual: View {
 
                             // Tier label
                             HStack(spacing: 4) {
-                                Text(tiers[i].0).font(.custom("Cinzel-Bold", size: 8))
-                                Text(tiers[i].1).font(.custom("EBGaramond-Regular", size: 7)).foregroundStyle(sepiaInk.opacity(0.4))
+                                Text(tiers[i].0).font(.custom("Cinzel-Bold", size: 16))
+                                Text(tiers[i].1).font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.4))
                             }
                             .foregroundStyle(sepiaInk)
                             .position(x: cx, y: y)
@@ -1377,7 +1377,7 @@ private struct SeatingMathVisual: View {
 
                     // Arena floor at center-bottom
                     Text("Arena")
-                        .font(.custom("EBGaramond-Regular", size: 9))
+                        .font(.custom("EBGaramond-Regular", size: 15))
                         .foregroundStyle(sepiaInk.opacity(0.3))
                         .position(x: cx, y: h * 0.16)
 
@@ -1391,8 +1391,8 @@ private struct SeatingMathVisual: View {
                             }
                         } label: {
                             HStack(spacing: 4) {
-                                Image(systemName: "person.fill").font(.system(size: 10))
-                                Text("Seat \(tiers[assignedTiers].0)").font(.custom("EBGaramond-SemiBold", size: 12))
+                                Image(systemName: "person.fill").font(.system(size: 13))
+                                Text("Seat \(tiers[assignedTiers].0)").font(.custom("EBGaramond-SemiBold", size: 15))
                             }
                             .foregroundStyle(tiers[assignedTiers].3)
                             .padding(.horizontal, 12).padding(.vertical, 6)
@@ -1403,7 +1403,7 @@ private struct SeatingMathVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "Rank = distance from the action", highlighted: true, fontSize: 12)
+                        FormulaText(text: "Rank = distance from the action", highlighted: true, fontSize: 15)
                             .position(x: cx, y: h * 0.85)
                             .transition(.opacity)
                     }
@@ -1485,9 +1485,9 @@ private struct VelariumTensionVisual: View {
                     // Wind indicator
                     HStack(spacing: 4) {
                         Image(systemName: "wind")
-                            .font(.system(size: 12))
+                            .font(.system(size: 13))
                         Text("\(windKmh) km/h")
-                            .font(.custom("EBGaramond-Bold", size: 14))
+                            .font(.custom("EBGaramond-Bold", size: 15))
                             .monospacedDigit()
                     }
                     .foregroundStyle(isDangerous ? RenaissanceColors.errorRed : sepiaInk)
@@ -1497,7 +1497,7 @@ private struct VelariumTensionVisual: View {
                     if windSpeed > 0.3 {
                         ForEach([-1.0, 1.0], id: \.self) { side in
                             Image(systemName: "arrow.left.and.right")
-                                .font(.system(size: 10))
+                                .font(.system(size: 13))
                                 .foregroundStyle(isDangerous ? RenaissanceColors.errorRed.opacity(0.5) : color.opacity(0.4))
                                 .position(x: cx + side * w * 0.2, y: mastY - mastH * 0.3)
                         }
@@ -1510,9 +1510,9 @@ private struct VelariumTensionVisual: View {
                                 .tint(isDangerous ? RenaissanceColors.errorRed : color)
                                 .frame(width: w * 0.5)
                             HStack {
-                                Text("Calm").font(.custom("EBGaramond-Regular", size: 8))
+                                Text("Calm").font(.custom("EBGaramond-Regular", size: 15))
                                 Spacer()
-                                Text("Storm").font(.custom("EBGaramond-Regular", size: 8))
+                                Text("Storm").font(.custom("EBGaramond-Regular", size: 15))
                             }
                             .foregroundStyle(sepiaInk.opacity(0.4))
                             .frame(width: w * 0.5)
@@ -1522,7 +1522,7 @@ private struct VelariumTensionVisual: View {
 
                     if isDangerous && step >= 2 {
                         Text("RETRACT!")
-                            .font(.custom("Cinzel-Bold", size: 12))
+                            .font(.custom("Cinzel-Bold", size: 16))
                             .foregroundStyle(RenaissanceColors.errorRed)
                             .position(x: cx, y: h * 0.2)
                     }

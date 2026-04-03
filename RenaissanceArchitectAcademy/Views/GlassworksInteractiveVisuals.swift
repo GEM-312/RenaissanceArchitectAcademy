@@ -184,11 +184,11 @@ private struct FurnaceColorVisual: View {
                             .shadow(color: active && i == 3 ? moltenYellow.opacity(0.3) : .clear, radius: 6)
 
                         Text(temp.0)
-                            .font(.custom("EBGaramond-Bold", size: 10))
+                            .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(active ? dimColor : dimColor.opacity(0.3))
 
                         Text(temp.2)
-                            .font(.custom("EBGaramond-Regular", size: 8))
+                            .font(.custom("EBGaramond-Regular", size: 15))
                             .foregroundStyle(active ? sepiaInk : sepiaInk.opacity(0.3))
                     }
                     .frame(maxWidth: .infinity)
@@ -284,10 +284,10 @@ private struct CristalloChemVisual: View {
                                 .strokeBorder(glassGreen.opacity(step >= 1 ? 0.6 : 0.1), lineWidth: 1.5)
                         )
                     Text("Raw")
-                        .font(.custom("Cinzel-Bold", size: 9))
+                        .font(.custom("Cinzel-Bold", size: 16))
                         .foregroundStyle(step >= 1 ? sepiaInk : sepiaInk.opacity(0.3))
                     Text("Fe → green")
-                        .font(.custom("EBGaramond-Regular", size: 8))
+                        .font(.custom("EBGaramond-Regular", size: 15))
                         .foregroundStyle(step >= 1 ? glassGreen : glassGreen.opacity(0.3))
                 }
 
@@ -298,7 +298,7 @@ private struct CristalloChemVisual: View {
                             .font(.custom("Cinzel-Bold", size: 16))
                             .foregroundStyle(sepiaInk.opacity(0.4))
                         Text("MnO₂")
-                            .font(.custom("EBGaramond-Bold", size: 11))
+                            .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(Color.purple.opacity(0.6))
                     }
                 }
@@ -306,7 +306,7 @@ private struct CristalloChemVisual: View {
                 // Arrow
                 if step >= 2 {
                     Image(systemName: "arrow.right")
-                        .font(.system(size: 12))
+                        .font(.system(size: 13))
                         .foregroundStyle(sepiaInk.opacity(0.3))
                 }
 
@@ -322,10 +322,10 @@ private struct CristalloChemVisual: View {
                             )
                             .shadow(color: crystalClear.opacity(0.2), radius: 4)
                         Text("Cristallo")
-                            .font(.custom("Cinzel-Bold", size: 9))
+                            .font(.custom("Cinzel-Bold", size: 16))
                             .foregroundStyle(color)
                         Text("Clear")
-                            .font(.custom("EBGaramond-Regular", size: 8))
+                            .font(.custom("EBGaramond-Regular", size: 15))
                             .foregroundStyle(sepiaInk)
                     }
                 }
@@ -429,10 +429,10 @@ private struct FluxMeltingVisual: View {
                                 .frame(width: 35, height: 90)
                         }
                         Text("1,700°C")
-                            .font(.custom("EBGaramond-Bold", size: 11))
+                            .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(step >= 1 ? cherryRed : cherryRed.opacity(0.3))
                         Text("SiO₂")
-                            .font(.custom("Cinzel-Bold", size: 9))
+                            .font(.custom("Cinzel-Bold", size: 16))
                             .foregroundStyle(step >= 1 ? sepiaInk : sepiaInk.opacity(0.3))
                     }
 
@@ -440,17 +440,17 @@ private struct FluxMeltingVisual: View {
                     if step >= 2 {
                         VStack(spacing: 2) {
                             Text("+10%")
-                                .font(.custom("EBGaramond-Bold", size: 10))
+                                .font(.custom("EBGaramond-Bold", size: 15))
                                 .foregroundStyle(dimColor)
                             Text("CaCO₃")
-                                .font(.custom("EBGaramond-Regular", size: 9))
+                                .font(.custom("EBGaramond-Regular", size: 15))
                                 .foregroundStyle(dimColor)
                         }
                     }
 
                     if step >= 3 {
                         Image(systemName: "arrow.right")
-                            .font(.system(size: 10))
+                            .font(.system(size: 13))
                             .foregroundStyle(sepiaInk.opacity(0.3))
 
                         VStack(spacing: 4) {
@@ -463,10 +463,10 @@ private struct FluxMeltingVisual: View {
                                     .frame(width: 35, height: 58)  // ~65% of 90
                             }
                             Text("1,100°C")
-                                .font(.custom("EBGaramond-Bold", size: 11))
+                                .font(.custom("EBGaramond-Bold", size: 15))
                                 .foregroundStyle(color)
                             Text("+ Flux")
-                                .font(.custom("Cinzel-Bold", size: 9))
+                                .font(.custom("Cinzel-Bold", size: 16))
                                 .foregroundStyle(color)
                         }
                     }
@@ -612,7 +612,7 @@ private struct FuelConsumptionVisual: View {
                     ForEach(0..<(step >= 2 ? 6 : step >= 1 ? 1 : 0), id: \.self) { _ in
                         VStack(spacing: 2) {
                             Image(systemName: "flame.fill")
-                                .font(.system(size: 12))
+                                .font(.system(size: 13))
                                 .foregroundStyle(furnaceOrange.opacity(0.6))
                             RoundedRectangle(cornerRadius: 2)
                                 .fill(Color(red: 0.50, green: 0.35, blue: 0.20).opacity(0.5))
@@ -623,19 +623,19 @@ private struct FuelConsumptionVisual: View {
 
                 if step >= 1 {
                     Text("1 log = 45 min")
-                        .font(.custom("EBGaramond-Regular", size: 11))
+                        .font(.custom("EBGaramond-Regular", size: 15))
                         .foregroundStyle(dimColor)
                 }
 
                 if step >= 2 {
                     Text("6 tons / day")
-                        .font(.custom("EBGaramond-Bold", size: 14))
+                        .font(.custom("EBGaramond-Bold", size: 15))
                         .foregroundStyle(color)
                 }
 
                 if step >= 3 {
                     Text("2,000 tons / year")
-                        .font(.custom("Cinzel-Bold", size: 12))
+                        .font(.custom("Cinzel-Bold", size: 16))
                         .foregroundStyle(cherryRed.opacity(0.7))
                 }
             }
@@ -764,9 +764,9 @@ private struct GlassBatchVisual: View {
                                 .overlay {
                                     VStack(spacing: 1) {
                                         Text(ing.1)
-                                            .font(.custom("EBGaramond-Bold", size: 10))
+                                            .font(.custom("EBGaramond-Bold", size: 15))
                                         Text(ing.0)
-                                            .font(.custom("EBGaramond-Regular", size: 7))
+                                            .font(.custom("EBGaramond-Regular", size: 15))
                                     }
                                     .foregroundStyle(active ? sepiaInk : .clear)
                                 }
@@ -779,7 +779,7 @@ private struct GlassBatchVisual: View {
 
                 if step >= 3 {
                     Text("Mix 30 min → furnace")
-                        .font(.custom("EBGaramond-Bold", size: 11))
+                        .font(.custom("EBGaramond-Bold", size: 15))
                         .foregroundStyle(color)
                 }
             }
@@ -822,12 +822,12 @@ private struct CruciblePreheatVisual: View {
                             )
 
                         Text(stage.0)
-                            .font(.custom("EBGaramond-Bold", size: 9))
+                            .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(active ? dimColor : dimColor.opacity(0.2))
 
                         if step >= 3 {
                             Text("18h")
-                                .font(.custom("EBGaramond-Regular", size: 8))
+                                .font(.custom("EBGaramond-Regular", size: 15))
                                 .foregroundStyle(color.opacity(0.7))
                         }
                     }
@@ -835,7 +835,7 @@ private struct CruciblePreheatVisual: View {
 
                     if i < stages.count - 1 {
                         Image(systemName: "arrow.right")
-                            .font(.system(size: 8))
+                            .font(.system(size: 13))
                             .foregroundStyle(active ? sepiaInk.opacity(0.3) : .clear)
                     }
                 }

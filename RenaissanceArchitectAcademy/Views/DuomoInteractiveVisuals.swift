@@ -205,7 +205,7 @@ private struct OctagonStressVisual: View {
         .frame(maxWidth: .infinity)
         .overlay(alignment: .bottom) {
             Text(label)
-                .font(.custom("Cinzel-Bold", size: 10))
+                .font(.custom("Cinzel-Bold", size: 16))
                 .foregroundStyle(active ? color : sepiaInk.opacity(0.4))
         }
     }
@@ -235,7 +235,7 @@ private struct OctagonStressVisual: View {
         .frame(maxWidth: .infinity)
         .overlay(alignment: .bottom) {
             Text("∞")
-                .font(.custom("Cinzel-Bold", size: 10))
+                .font(.custom("Cinzel-Bold", size: 16))
                 .foregroundStyle(active ? color : sepiaInk.opacity(0.4))
         }
     }
@@ -524,10 +524,10 @@ private struct CarraraMarbleVisual: View {
                 }
 
             Text(label)
-                .font(.custom("Cinzel-Bold", size: 9))
+                .font(.custom("Cinzel-Bold", size: 16))
                 .foregroundStyle(active ? sepiaInk : sepiaInk.opacity(0.3))
             Text(sublabel)
-                .font(.custom("EBGaramond-Regular", size: 8))
+                .font(.custom("EBGaramond-Regular", size: 15))
                 .foregroundStyle(active ? dimColor : dimColor.opacity(0.3))
         }
     }
@@ -583,7 +583,7 @@ private struct BrickProductionVisual: View {
             .overlay(alignment: .bottom) {
                 if step >= 3 {
                     Text("4,000,000")
-                        .font(.custom("Cinzel-Bold", size: 14))
+                        .font(.custom("Cinzel-Bold", size: 16))
                         .foregroundStyle(color)
                         .offset(y: -42)
                 }
@@ -734,7 +734,7 @@ private struct StainedGlassVisual: View {
             .overlay(alignment: .bottom) {
                 if step >= 3 {
                     Text("2% CoO → deep blue")
-                        .font(.custom("EBGaramond-Bold", size: 12))
+                        .font(.custom("EBGaramond-Bold", size: 15))
                         .foregroundStyle(cobaltBlue)
                         .offset(y: -28)
                 }
@@ -764,15 +764,15 @@ private struct MortarSetVisual: View {
                         .frame(height: 60)
                         .overlay {
                             Text("☁ 3 days")
-                                .font(.custom("EBGaramond-Bold", size: 13))
+                                .font(.custom("EBGaramond-Bold", size: 15))
                                 .foregroundStyle(step == 1 ? sepiaInk : sepiaInk.opacity(0.3))
                         }
                     Text("Lime")
-                        .font(.custom("Cinzel-Bold", size: 9))
+                        .font(.custom("Cinzel-Bold", size: 16))
                         .foregroundStyle(step == 1 || step == 3 ? sepiaInk : sepiaInk.opacity(0.3))
                     if step >= 3 {
                         Text("→ horizontal")
-                            .font(.custom("EBGaramond-Regular", size: 9))
+                            .font(.custom("EBGaramond-Regular", size: 15))
                             .foregroundStyle(color)
                     }
                 }
@@ -784,15 +784,15 @@ private struct MortarSetVisual: View {
                         .frame(height: 60)
                         .overlay {
                             Text("⚡ 15 min")
-                                .font(.custom("EBGaramond-Bold", size: 13))
+                                .font(.custom("EBGaramond-Bold", size: 15))
                                 .foregroundStyle(step >= 2 ? color : sepiaInk.opacity(0.3))
                         }
                     Text("Gypsum")
-                        .font(.custom("Cinzel-Bold", size: 9))
+                        .font(.custom("Cinzel-Bold", size: 16))
                         .foregroundStyle(step >= 2 ? sepiaInk : sepiaInk.opacity(0.3))
                     if step >= 3 {
                         Text("→ vertical")
-                            .font(.custom("EBGaramond-Regular", size: 9))
+                            .font(.custom("EBGaramond-Regular", size: 15))
                             .foregroundStyle(color)
                     }
                 }
@@ -827,10 +827,10 @@ private struct BrickFiringVisual: View {
                                     .strokeBorder(sepiaInk.opacity(0.3), lineWidth: 1)
                             )
                         Text("900°C + O₂")
-                            .font(.custom("EBGaramond-Bold", size: 10))
+                            .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(step >= 2 ? dimColor : dimColor.opacity(0.3))
                         Text("Red")
-                            .font(.custom("Cinzel-Bold", size: 9))
+                            .font(.custom("Cinzel-Bold", size: 16))
                             .foregroundStyle(step >= 2 ? brickRed : brickRed.opacity(0.3))
                     }
 
@@ -844,10 +844,10 @@ private struct BrickFiringVisual: View {
                                     .strokeBorder(sepiaInk.opacity(0.3), lineWidth: 1)
                             )
                         Text("1000°C − O₂")
-                            .font(.custom("EBGaramond-Bold", size: 10))
+                            .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(step >= 3 ? dimColor : dimColor.opacity(0.3))
                         Text("Brown")
-                            .font(.custom("Cinzel-Bold", size: 9))
+                            .font(.custom("Cinzel-Bold", size: 16))
                             .foregroundStyle(step >= 3 ? Color(red: 0.4, green: 0.28, blue: 0.2) : Color.gray.opacity(0.3))
                     }
                 }
@@ -1000,7 +1000,7 @@ private struct QuintoAcutoVisual: View {
             .overlay {
                 if step >= 2 {
                     Text("4/5")
-                        .font(.custom("EBGaramond-Bold", size: 11))
+                        .font(.custom("EBGaramond-Bold", size: 15))
                         .foregroundStyle(dimColor)
                         .position(x: 999, y: 999) // positioned via canvas
                 }

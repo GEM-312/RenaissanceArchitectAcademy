@@ -141,8 +141,8 @@ private struct OnagerLaunchVisual: View {
                                 }
                         )
                     }
-                    DimLabel(text: "300m range", fontSize: 9).position(x: w * 0.75, y: baseY + 8)
-                    if step >= 3 { FormulaText(text: "E = ½kx² — elastic energy", highlighted: true, fontSize: 11).position(x: w * 0.5, y: h * 0.88).transition(.opacity) }
+                    DimLabel(text: "300m range", fontSize: 15).position(x: w * 0.75, y: baseY + 8)
+                    if step >= 3 { FormulaText(text: "E = ½kx² — elastic energy", highlighted: true, fontSize: 15).position(x: w * 0.5, y: h * 0.88).transition(.opacity) }
                 }
             }
         }
@@ -179,12 +179,12 @@ private struct LaunchAngleVisual: View {
                     // Angle label
                     Text("\(degrees)°").font(.custom("EBGaramond-Bold", size: 16)).foregroundStyle(isOptimal ? RenaissanceColors.sageGreen : sepiaInk).position(x: cx + 30, y: baseY - 20)
                     // Range label
-                    DimLabel(text: "\(Int(range / w * 300))m", fontSize: 10).position(x: cx + range * 0.5, y: baseY + 14)
+                    DimLabel(text: "\(Int(range / w * 300))m", fontSize: 15).position(x: cx + range * 0.5, y: baseY + 14)
                     if step >= 2 {
                         Slider(value: $angle, in: 0...1).tint(isOptimal ? RenaissanceColors.sageGreen : color).frame(width: w * 0.5).position(x: w * 0.5, y: h * 0.88)
                             .onChange(of: angle) { _, _ in if isOptimal { withAnimation { step = 3 } } }
                     }
-                    if step >= 3 { FormulaText(text: "45° = maximum range", highlighted: true, fontSize: 12).position(x: w * 0.5, y: h * 0.12).transition(.opacity) }
+                    if step >= 3 { FormulaText(text: "45° = maximum range", highlighted: true, fontSize: 15).position(x: w * 0.5, y: h * 0.12).transition(.opacity) }
                 }
             }
         }
@@ -219,12 +219,12 @@ private struct TorsionSpringVisual: View {
                             .frame(width: w * 0.5 * twists, height: 16)
                     }.position(x: cx, y: h * 0.65)
                     Text("\(power)× power").font(.custom("EBGaramond-Bold", size: 16)).foregroundStyle(isDangerous ? RenaissanceColors.errorRed : sepiaInk).position(x: cx, y: h * 0.12)
-                    if isDangerous { Text("⚠️ SNAP RISK").font(.custom("Cinzel-Bold", size: 10)).foregroundStyle(RenaissanceColors.errorRed).position(x: cx, y: h * 0.22) }
+                    if isDangerous { Text("⚠️ SNAP RISK").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(RenaissanceColors.errorRed).position(x: cx, y: h * 0.22) }
                     if step >= 2 {
                         Slider(value: $twists, in: 0.1...0.95).tint(isDangerous ? RenaissanceColors.errorRed : color).frame(width: w * 0.5).position(x: cx, y: h * 0.78)
                             .onChange(of: twists) { _, v in if v > 0.7 { withAnimation { step = 3 } } }
                     }
-                    if step >= 3 { FormulaText(text: "2× twists = 4× power (square law)", highlighted: true, fontSize: 11).position(x: cx, y: h * 0.88).transition(.opacity) }
+                    if step >= 3 { FormulaText(text: "2× twists = 4× power (square law)", highlighted: true, fontSize: 15).position(x: cx, y: h * 0.88).transition(.opacity) }
                 }
             }
         }
@@ -264,7 +264,7 @@ private struct BatteringRamVisual: View {
                     RoundedRectangle(cornerRadius: 2).fill(stoneGray).frame(width: 12, height: h * 0.35)
                         .position(x: w * 0.82, y: h * 0.5)
                     // Force counter
-                    Text("Force: \(swingCount * 6) men").font(.custom("EBGaramond-Bold", size: 12)).foregroundStyle(sepiaInk).position(x: cx, y: h * 0.78)
+                    Text("Force: \(swingCount * 6) men").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(sepiaInk).position(x: cx, y: h * 0.78)
                     // Tap area
                     if step >= 2 && swingCount < 5 {
                         Button {
@@ -272,11 +272,11 @@ private struct BatteringRamVisual: View {
                             withAnimation(.easeInOut(duration: 0.4)) { swingPhase += .pi }
                             if swingCount >= 5 { DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { withAnimation { step = 3 } } }
                         } label: {
-                            Text("SWING").font(.custom("Cinzel-Bold", size: 14)).foregroundStyle(color)
+                            Text("SWING").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(color)
                                 .padding(.horizontal, 20).padding(.vertical, 10).background(color.opacity(0.1)).cornerRadius(8)
                         }.buttonStyle(.plain).position(x: cx, y: h * 0.9)
                     }
-                    if step >= 3 { FormulaText(text: "Rhythm beats raw strength", highlighted: true, fontSize: 11).position(x: cx, y: h * 0.9).transition(.opacity) }
+                    if step >= 3 { FormulaText(text: "Rhythm beats raw strength", highlighted: true, fontSize: 15).position(x: cx, y: h * 0.9).transition(.opacity) }
                 }
             }
         }
@@ -300,7 +300,7 @@ private struct SiegeTowerVisual: View {
                 ZStack {
                     // Enemy wall
                     RoundedRectangle(cornerRadius: 2).fill(stoneGray).frame(width: 10, height: h * 0.5).position(x: w * 0.82, y: h * 0.45)
-                    Text("Wall").font(.custom("EBGaramond-Regular", size: 7)).foregroundStyle(sepiaInk.opacity(0.3)).position(x: w * 0.82, y: h * 0.15)
+                    Text("Wall").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.3)).position(x: w * 0.82, y: h * 0.15)
                     // Tower levels
                     ForEach(0..<levelsBuilt, id: \.self) { i in
                         let y = baseY - CGFloat(i) * floorH
@@ -325,12 +325,12 @@ private struct SiegeTowerVisual: View {
                     if step >= 2 && levelsBuilt < 6 {
                         Button { withAnimation(.spring(response: 0.3)) { levelsBuilt += 1 }; SoundManager.shared.play(.tapSoft)
                             if levelsBuilt >= 6 { DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { withAnimation { step = 3 } } }
-                        } label: { Text("Build \(levels[levelsBuilt])").font(.custom("EBGaramond-SemiBold", size: 12)).foregroundStyle(color)
+                        } label: { Text("Build \(levels[levelsBuilt])").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundStyle(color)
                             .padding(.horizontal, 12).padding(.vertical, 6).background(color.opacity(0.1)).cornerRadius(6) }
                             .buttonStyle(.plain).position(x: cx, y: h * 0.88)
                     }
-                    DimLabel(text: "20m", fontSize: 9).position(x: cx - towerW * 0.5 - 14, y: h * 0.4)
-                    if step >= 3 { FormulaText(text: "Engineering under maximum pressure", highlighted: true, fontSize: 10).position(x: cx, y: h * 0.88).transition(.opacity) }
+                    DimLabel(text: "20m", fontSize: 15).position(x: cx - towerW * 0.5 - 14, y: h * 0.4)
+                    if step >= 3 { FormulaText(text: "Engineering under maximum pressure", highlighted: true, fontSize: 15).position(x: cx, y: h * 0.88).transition(.opacity) }
                 }
             }
         }
@@ -353,7 +353,7 @@ private struct SiegeTilesVisual: View {
                     Text("\(tempC)°C").font(.custom("EBGaramond-Bold", size: 16)).foregroundStyle(vitrified ? RenaissanceColors.sageGreen : sepiaInk).monospacedDigit().position(x: cx, y: h * 0.15)
                     if step >= 2 { Slider(value: $temperature, in: 0...1).tint(vitrified ? RenaissanceColors.sageGreen : .orange).frame(width: w*0.5).position(x: cx, y: h*0.65)
                         .onChange(of: temperature) { _, _ in if vitrified { withAnimation { step = 3 } } } }
-                    if vitrified { FormulaText(text: "500 tiles × 2kg = 1 ton of fire armor", highlighted: true, fontSize: 10).position(x: cx, y: h*0.82) }
+                    if vitrified { FormulaText(text: "500 tiles × 2kg = 1 ton of fire armor", highlighted: true, fontSize: 15).position(x: cx, y: h*0.82) }
                 }
             }
         }
@@ -372,10 +372,10 @@ private struct BloomerySmelterVisual: View {
                     RoundedRectangle(cornerRadius: 4).fill(isSmelting ? ironDark.opacity(0.8) : Color.brown.opacity(0.3 + temperature * 0.3))
                         .frame(width: 55, height: 40).shadow(color: tempC > 800 ? hotRed.opacity(0.3) : .clear, radius: 8).position(x: cx, y: h * 0.35)
                     Text("\(tempC)°C").font(.custom("EBGaramond-Bold", size: 16)).foregroundStyle(isSmelting ? RenaissanceColors.sageGreen : sepiaInk).monospacedDigit().position(x: cx, y: h * 0.15)
-                    Text(isSmelting ? "Iron bloom" : tempC > 600 ? "Heating..." : "Iron ore").font(.custom("EBGaramond-Regular", size: 10)).foregroundStyle(sepiaInk.opacity(0.6)).position(x: cx, y: h * 0.52)
+                    Text(isSmelting ? "Iron bloom" : tempC > 600 ? "Heating..." : "Iron ore").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.6)).position(x: cx, y: h * 0.52)
                     if step >= 2 { Slider(value: $temperature, in: 0...1).tint(isSmelting ? RenaissanceColors.sageGreen : .orange).frame(width: w*0.5).position(x: cx, y: h*0.68)
                         .onChange(of: temperature) { _, _ in if isSmelting { withAnimation { step = 3 } } } }
-                    if isSmelting { FormulaText(text: "10 folds = 1,024 layers", highlighted: true, fontSize: 11).position(x: cx, y: h*0.85) }
+                    if isSmelting { FormulaText(text: "10 folds = 1,024 layers", highlighted: true, fontSize: 15).position(x: cx, y: h*0.85) }
                 }
             }
         }
@@ -401,19 +401,19 @@ private struct BronzeGearVisual: View {
                     }
                     HStack(spacing: 16) {
                         Button { guard !copperAdded else { return }; withAnimation(.spring(response: 0.3)) { copperAdded = true }; SoundManager.shared.play(.tapSoft) } label: {
-                            VStack { Text("90%").font(.custom("EBGaramond-Bold", size: 14)); Text("Copper").font(.custom("EBGaramond-Regular", size: 9)) }
+                            VStack { Text("90%").font(.custom("EBGaramond-Bold", size: 15)); Text("Copper").font(.custom("EBGaramond-Regular", size: 15)) }
                                 .frame(width: 55, height: 40).background(copperAdded ? stoneGray.opacity(0.1) : Color(red: 0.80, green: 0.55, blue: 0.35).opacity(0.2)).cornerRadius(6)
                                 .overlay(RoundedRectangle(cornerRadius: 6).stroke(!copperAdded ? color : stoneGray.opacity(0.2), lineWidth: !copperAdded ? 2 : 0.5))
                         }.buttonStyle(.plain).opacity(copperAdded ? 0.4 : 1).foregroundStyle(sepiaInk)
                         Button { guard copperAdded && !tinAdded else { return }; withAnimation(.spring(response: 0.3)) { tinAdded = true }; SoundManager.shared.play(.tapSoft)
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { withAnimation { step = 3 } }
                         } label: {
-                            VStack { Text("10%").font(.custom("EBGaramond-Bold", size: 14)); Text("Tin").font(.custom("EBGaramond-Regular", size: 9)) }
+                            VStack { Text("10%").font(.custom("EBGaramond-Bold", size: 15)); Text("Tin").font(.custom("EBGaramond-Regular", size: 15)) }
                                 .frame(width: 55, height: 40).background(tinAdded ? stoneGray.opacity(0.1) : stoneGray.opacity(0.15)).cornerRadius(6)
                                 .overlay(RoundedRectangle(cornerRadius: 6).stroke(copperAdded && !tinAdded ? color : stoneGray.opacity(0.2), lineWidth: copperAdded && !tinAdded ? 2 : 0.5))
                         }.buttonStyle(.plain).opacity(tinAdded ? 0.4 : 1).foregroundStyle(sepiaInk)
                     }.position(x: cx, y: h * 0.65)
-                    if step >= 3 { FormulaText(text: "Precision starts in wax", highlighted: true, fontSize: 11).position(x: cx, y: h * 0.85).transition(.opacity) }
+                    if step >= 3 { FormulaText(text: "Precision starts in wax", highlighted: true, fontSize: 15).position(x: cx, y: h * 0.85).transition(.opacity) }
                 }
             }
         }
@@ -430,30 +430,30 @@ private struct WetDryWoodVisual: View {
                 ZStack {
                     HStack(spacing: w * 0.06) {
                         VStack(spacing: 4) {
-                            Text("SOAKED").font(.custom("Cinzel-Bold", size: 9)).foregroundStyle(sepiaInk.opacity(0.5))
+                            Text("SOAKED").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(sepiaInk.opacity(0.5))
                             RoundedRectangle(cornerRadius: 4).fill(oakBrown.opacity(0.7)).frame(width: w*0.25, height: h*0.2)
                                 .overlay { if tested { Image(systemName: "checkmark").foregroundStyle(RenaissanceColors.sageGreen) } }
-                            if tested { Text("Flexes").font(.custom("EBGaramond-Bold", size: 10)).foregroundStyle(RenaissanceColors.sageGreen) }
+                            if tested { Text("Flexes").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(RenaissanceColors.sageGreen) }
                         }
                         VStack(spacing: 4) {
-                            Text("DRY").font(.custom("Cinzel-Bold", size: 9)).foregroundStyle(sepiaInk.opacity(0.5))
+                            Text("DRY").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(sepiaInk.opacity(0.5))
                             ZStack {
                                 RoundedRectangle(cornerRadius: 4).fill(oakBrown.opacity(tested ? 0.3 : 0.5)).frame(width: w*0.25, height: h*0.2)
                                 if tested { ForEach(0..<3, id: \.self) { i in
                                     Path { p in p.move(to: CGPoint(x: CGFloat(i*20+5), y: 3)); p.addLine(to: CGPoint(x: CGFloat(i*15+8), y: h*0.2-3)) }
                                         .stroke(RenaissanceColors.errorRed.opacity(0.5), lineWidth: 1).frame(width: w*0.25, height: h*0.2) } }
                             }
-                            if tested { Text("Shatters").font(.custom("EBGaramond-Bold", size: 10)).foregroundStyle(RenaissanceColors.errorRed) }
+                            if tested { Text("Shatters").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(RenaissanceColors.errorRed) }
                         }
                     }.position(x: w * 0.5, y: h * 0.4)
                     if step >= 2 && !tested {
                         Button { withAnimation(.spring(response: 0.3)) { tested = true }; SoundManager.shared.play(.tapSoft)
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { withAnimation { step = 3 } }
-                        } label: { HStack(spacing: 4) { Image(systemName: "hammer.fill").font(.system(size: 10)); Text("Impact Test").font(.custom("EBGaramond-SemiBold", size: 12)) }
+                        } label: { HStack(spacing: 4) { Image(systemName: "hammer.fill").font(.system(size: 13)); Text("Impact Test").font(.custom("EBGaramond-SemiBold", size: 15)) }
                             .foregroundStyle(color).padding(.horizontal, 12).padding(.vertical, 6).background(color.opacity(0.1)).cornerRadius(6) }
                             .buttonStyle(.plain).position(x: w * 0.5, y: h * 0.75)
                     }
-                    if step >= 3 { FormulaText(text: "Wet absorbs shock — dry transfers it", highlighted: true, fontSize: 11).position(x: w*0.5, y: h*0.85).transition(.opacity) }
+                    if step >= 3 { FormulaText(text: "Wet absorbs shock — dry transfers it", highlighted: true, fontSize: 15).position(x: w*0.5, y: h*0.85).transition(.opacity) }
                 }
             }
         }
@@ -470,19 +470,19 @@ private struct GreenOakVisual: View {
                 ZStack {
                     HStack(spacing: w * 0.06) {
                         VStack(spacing: 4) {
-                            Text("GREEN OAK").font(.custom("Cinzel-Bold", size: 8)).foregroundStyle(sepiaInk.opacity(0.5))
+                            Text("GREEN OAK").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(sepiaInk.opacity(0.5))
                             RoundedRectangle(cornerRadius: 4).fill(RenaissanceColors.sageGreen.opacity(0.3)).frame(width: w*0.25, height: h*0.2)
-                            Text("500 shots").font(.custom("EBGaramond-Bold", size: 10)).foregroundStyle(RenaissanceColors.sageGreen)
-                            Text("Flexible").font(.custom("EBGaramond-Regular", size: 8)).foregroundStyle(sepiaInk.opacity(0.4))
+                            Text("500 shots").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(RenaissanceColors.sageGreen)
+                            Text("Flexible").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.4))
                         }
                         VStack(spacing: 4) {
-                            Text("DRY OAK").font(.custom("Cinzel-Bold", size: 8)).foregroundStyle(sepiaInk.opacity(0.5))
+                            Text("DRY OAK").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(sepiaInk.opacity(0.5))
                             RoundedRectangle(cornerRadius: 4).fill(oakBrown.opacity(0.3)).frame(width: w*0.25, height: h*0.2)
-                            Text("50 shots").font(.custom("EBGaramond-Bold", size: 10)).foregroundStyle(RenaissanceColors.errorRed)
-                            Text("Brittle").font(.custom("EBGaramond-Regular", size: 8)).foregroundStyle(sepiaInk.opacity(0.4))
+                            Text("50 shots").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(RenaissanceColors.errorRed)
+                            Text("Brittle").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.4))
                         }
                     }.position(x: w * 0.5, y: h * 0.4)
-                    if step >= 2 { FormulaText(text: "10× lifespan — moisture = flexibility", highlighted: true, fontSize: 11).position(x: w*0.5, y: h*0.75) }
+                    if step >= 2 { FormulaText(text: "10× lifespan — moisture = flexibility", highlighted: true, fontSize: 15).position(x: w*0.5, y: h*0.75) }
                 }
             }
         }
@@ -499,26 +499,26 @@ private struct WalnutPrecisionVisual: View {
                 ZStack {
                     HStack(spacing: w * 0.06) {
                         VStack(spacing: 4) {
-                            Text("WALNUT").font(.custom("Cinzel-Bold", size: 9)).foregroundStyle(sepiaInk.opacity(0.5))
+                            Text("WALNUT").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(sepiaInk.opacity(0.5))
                             RoundedRectangle(cornerRadius: 4).fill(Color(red: 0.45, green: 0.32, blue: 0.22)).frame(width: w*0.25, height: h*0.2)
                                 .overlay { if tested { Image(systemName: "checkmark.circle.fill").foregroundStyle(RenaissanceColors.sageGreen) } }
-                            if tested { Text("Stable").font(.custom("EBGaramond-Bold", size: 10)).foregroundStyle(RenaissanceColors.sageGreen) }
+                            if tested { Text("Stable").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(RenaissanceColors.sageGreen) }
                         }
                         VStack(spacing: 4) {
-                            Text("OTHER").font(.custom("Cinzel-Bold", size: 9)).foregroundStyle(sepiaInk.opacity(0.5))
+                            Text("OTHER").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(sepiaInk.opacity(0.5))
                             RoundedRectangle(cornerRadius: 4).fill(oakBrown.opacity(0.3)).frame(width: w*0.25, height: h*0.2)
                                 .overlay { if tested { Image(systemName: "xmark.circle.fill").foregroundStyle(RenaissanceColors.errorRed.opacity(0.5)) } }
-                            if tested { Text("Swells").font(.custom("EBGaramond-Bold", size: 10)).foregroundStyle(RenaissanceColors.errorRed) }
+                            if tested { Text("Swells").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(RenaissanceColors.errorRed) }
                         }
                     }.position(x: w * 0.5, y: h * 0.38)
                     if step >= 2 && !tested {
                         Button { withAnimation(.spring(response: 0.3)) { tested = true }; SoundManager.shared.play(.tapSoft)
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { withAnimation { step = 3 } }
-                        } label: { Text("Oil Test").font(.custom("EBGaramond-SemiBold", size: 12)).foregroundStyle(color)
+                        } label: { Text("Oil Test").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundStyle(color)
                             .padding(.horizontal, 14).padding(.vertical, 6).background(color.opacity(0.1)).cornerRadius(6) }
                             .buttonStyle(.plain).position(x: w * 0.5, y: h * 0.68)
                     }
-                    if step >= 3 { FormulaText(text: "The wood that doesn't change = the one you trust", highlighted: true, fontSize: 10).position(x: w*0.5, y: h*0.85).transition(.opacity) }
+                    if step >= 3 { FormulaText(text: "The wood that doesn't change = the one you trust", highlighted: true, fontSize: 15).position(x: w*0.5, y: h*0.85).transition(.opacity) }
                 }
             }
         }
@@ -551,8 +551,8 @@ private struct MilitaryJointsVisual: View {
                                 .frame(width: w * 0.15, height: 18)
                             if revealed {
                                 VStack(alignment: .leading, spacing: 1) {
-                                    Text(joints[i].0).font(.custom("Cinzel-Bold", size: 8)).foregroundStyle(sepiaInk)
-                                    Text(joints[i].1).font(.custom("EBGaramond-Regular", size: 7)).foregroundStyle(sepiaInk.opacity(0.5))
+                                    Text(joints[i].0).font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(sepiaInk)
+                                    Text(joints[i].1).font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.5))
                                 }.transition(.opacity)
                             }
                         }.position(x: cx, y: y)
@@ -562,7 +562,7 @@ private struct MilitaryJointsVisual: View {
                                 if jointsRevealed >= 3 { DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { withAnimation { step = 3 } } }
                             }
                     }
-                    if step >= 3 { FormulaText(text: "Modularity before the word existed", highlighted: true, fontSize: 11).position(x: cx, y: h*0.85).transition(.opacity) }
+                    if step >= 3 { FormulaText(text: "Modularity before the word existed", highlighted: true, fontSize: 15).position(x: cx, y: h*0.85).transition(.opacity) }
                 }
             }
         }
@@ -586,18 +586,18 @@ private struct TemperingCycleVisual: View {
                         ForEach(0..<3, id: \.self) { i in
                             VStack(spacing: 2) {
                                 Circle().fill(i < phase ? phases[i].2 : stoneGray.opacity(0.2)).frame(width: 10, height: 10)
-                                Text(phases[i].0).font(.custom("EBGaramond-Regular", size: 7)).foregroundStyle(i < phase ? sepiaInk : sepiaInk.opacity(0.3))
+                                Text(phases[i].0).font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(i < phase ? sepiaInk : sepiaInk.opacity(0.3))
                             }
                         }
                     }.position(x: cx, y: h * 0.55)
                     if step >= 2 && phase < 3 {
                         Button { withAnimation(.spring(response: 0.3)) { phase += 1 }; SoundManager.shared.play(.tapSoft)
                             if phase >= 3 { DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { withAnimation { step = 3 } } }
-                        } label: { Text(phases[phase].0).font(.custom("EBGaramond-SemiBold", size: 12)).foregroundStyle(phases[phase].2)
+                        } label: { Text(phases[phase].0).font(.custom("EBGaramond-SemiBold", size: 15)).foregroundStyle(phases[phase].2)
                             .padding(.horizontal, 14).padding(.vertical, 6).background(phases[phase].2.opacity(0.1)).cornerRadius(6) }
                             .buttonStyle(.plain).position(x: cx, y: h * 0.75)
                     }
-                    if step >= 3 { FormulaText(text: "Hard to pierce + tough not to shatter", highlighted: true, fontSize: 10).position(x: cx, y: h*0.88).transition(.opacity) }
+                    if step >= 3 { FormulaText(text: "Hard to pierce + tough not to shatter", highlighted: true, fontSize: 15).position(x: cx, y: h*0.88).transition(.opacity) }
                 }
             }
         }

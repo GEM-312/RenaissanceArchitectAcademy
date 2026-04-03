@@ -37,6 +37,9 @@ struct ContentView: View {
     @State private var sessionStartDate: Date? = nil
 
     var body: some View {
+        #if DEBUG
+        let _ = Self._printChanges()
+        #endif
         ZStack {
             // Parchment background
             RenaissanceColors.parchment

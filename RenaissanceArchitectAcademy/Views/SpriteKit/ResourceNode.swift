@@ -78,6 +78,9 @@ class ResourceNode: SKNode {
     private var spriteNode: SKSpriteNode?
     private var labelNode: SKLabelNode!
 
+    /// Hide station sprites to reposition on new terrain — keep tap targets + labels
+    static var hideSprites = true
+
     /// Size for station sprite images (points)
     private let spriteSize: CGFloat = 420
 
@@ -103,6 +106,17 @@ class ResourceNode: SKNode {
     // MARK: - Visual Setup (image sprite or da Vinci sketch fallback)
 
     private func setupVisual() {
+        // When hideSprites is on: skip all sprite art, just keep invisible hit area.
+        // The existing setupLabel() pill labels still show — those are the station titles.
+        if Self.hideSprites {
+            bodyShape = SKShapeNode(circleOfRadius: 80)
+            bodyShape.fillColor = .clear
+            bodyShape.strokeColor = .clear
+            bodyShape.zPosition = 0
+            addChild(bodyShape)
+            return
+        }
+
         // Try image sprite first
         if let imageName = stationType.imageName {
             let texture = SKTexture(imageNamed: imageName)

@@ -14,7 +14,7 @@ struct IVVisualTitle: View {
     let color: Color
     var body: some View {
         Text(text)
-            .font(.custom("Cinzel-Bold", size: 12))
+            .font(.custom("Cinzel-Bold", size: 16))
             .tracking(1)
             .foregroundStyle(color)
     }
@@ -50,7 +50,7 @@ struct IVTeachingContainer<Content: View>: View {
     let totalSteps: Int
     @Binding var step: Int
     let stepLabel: String
-    var height: CGFloat = 275
+    var height: CGFloat = 340
     @ViewBuilder let content: () -> Content
 
     var body: some View {
@@ -74,7 +74,7 @@ struct IVTeachingContainer<Content: View>: View {
                 IVStepControls(totalSteps: totalSteps, currentStep: $step, color: color)
                     .padding(.horizontal, 8)
                 Text(stepLabel)
-                    .font(.custom("EBGaramond-Regular", size: 10))
+                    .font(.custom("EBGaramond-Regular", size: 15))
                     .foregroundStyle(ivSepiaInk.opacity(0.7))
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
@@ -106,9 +106,9 @@ struct IVStepControls: View {
                     withAnimation(.easeInOut(duration: 0.3)) { currentStep -= 1 }
                     SoundManager.shared.play(.tapSoft)
                 } label: {
-                    HStack(spacing: 2) {
-                        Image(systemName: "chevron.left").font(.system(size: 9))
-                        Text("Back").font(.custom("EBGaramond-Regular", size: 11))
+                    HStack(spacing: 3) {
+                        Image(systemName: "chevron.left").font(.system(size: 13))
+                        Text("Back").font(.custom("EBGaramond-Regular", size: 15))
                     }
                     .foregroundStyle(color.opacity(0.6))
                 }
@@ -120,7 +120,7 @@ struct IVStepControls: View {
             ForEach(1...totalSteps, id: \.self) { s in
                 Circle()
                     .fill(s <= currentStep ? color : color.opacity(0.2))
-                    .frame(width: 5, height: 5)
+                    .frame(width: 8, height: 8)
             }
             Spacer()
             if currentStep < totalSteps {
@@ -128,9 +128,9 @@ struct IVStepControls: View {
                     withAnimation(.easeInOut(duration: 0.3)) { currentStep += 1 }
                     SoundManager.shared.play(.tapSoft)
                 } label: {
-                    HStack(spacing: 2) {
-                        Text("Next").font(.custom("EBGaramond-Regular", size: 11))
-                        Image(systemName: "chevron.right").font(.system(size: 9))
+                    HStack(spacing: 3) {
+                        Text("Next").font(.custom("EBGaramond-Regular", size: 15))
+                        Image(systemName: "chevron.right").font(.system(size: 13))
                     }
                     .foregroundStyle(color)
                 }
@@ -148,7 +148,7 @@ struct IVStepControls: View {
 
 struct IVDimLabel: View {
     let text: String
-    var fontSize: CGFloat = 11
+    var fontSize: CGFloat = 15
     var body: some View {
         Text(text)
             .font(.custom("EBGaramond-SemiBold", size: fontSize))
@@ -161,7 +161,7 @@ struct IVDimLabel: View {
 struct IVFormulaText: View {
     let text: String
     var highlighted: Bool = false
-    var fontSize: CGFloat = 14
+    var fontSize: CGFloat = 15
     var body: some View {
         Text(text)
             .font(.custom("EBGaramond-Bold", size: fontSize))

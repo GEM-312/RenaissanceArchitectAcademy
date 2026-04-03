@@ -452,7 +452,7 @@ private struct IstrianStoneVisual: View {
                                 .strokeBorder(sepiaInk.opacity(0.3), lineWidth: 1)
                         )
                     Text("Istrian")
-                        .font(.custom("Cinzel-Bold", size: 9))
+                        .font(.custom("Cinzel-Bold", size: 16))
                         .foregroundStyle(step >= 1 ? sepiaInk : sepiaInk.opacity(0.3))
                 }
 
@@ -463,7 +463,7 @@ private struct IstrianStoneVisual: View {
                             .font(.custom("Cinzel-Bold", size: 16))
                             .foregroundStyle(color)
                         Text("harder")
-                            .font(.custom("EBGaramond-Regular", size: 10))
+                            .font(.custom("EBGaramond-Regular", size: 15))
                             .foregroundStyle(dimColor)
                     }
                 }
@@ -479,7 +479,7 @@ private struct IstrianStoneVisual: View {
                                     .strokeBorder(sepiaInk.opacity(0.15), lineWidth: 1)
                             )
                         Text("Marble")
-                            .font(.custom("Cinzel-Bold", size: 9))
+                            .font(.custom("Cinzel-Bold", size: 16))
                             .foregroundStyle(sepiaInk.opacity(0.5))
                     }
                 }
@@ -488,7 +488,7 @@ private struct IstrianStoneVisual: View {
 
             if step >= 2 {
                 Text("Salt ✕ → tight grain")
-                    .font(.custom("EBGaramond-Bold", size: 11))
+                    .font(.custom("EBGaramond-Bold", size: 15))
                     .foregroundStyle(color)
             }
         }
@@ -522,10 +522,10 @@ private struct MarineConcreteVisual: View {
                 if step >= 3 {
                     HStack(spacing: 4) {
                         Image(systemName: "drop.fill")
-                            .font(.system(size: 10))
+                            .font(.system(size: 13))
                             .foregroundStyle(waterBlue.opacity(0.5))
                         Text("500 years in saltwater")
-                            .font(.custom("EBGaramond-Bold", size: 12))
+                            .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(color)
                     }
                 }
@@ -537,10 +537,10 @@ private struct MarineConcreteVisual: View {
     private func ingredientPill(_ label: String, icon: String, active: Bool) -> some View {
         VStack(spacing: 2) {
             Text(icon)
-                .font(.system(size: 14))
+                .font(.system(size: 15))
                 .opacity(active ? 1 : 0.2)
             Text(label)
-                .font(.custom("EBGaramond-Regular", size: 9))
+                .font(.custom("EBGaramond-Regular", size: 15))
                 .foregroundStyle(active ? sepiaInk : sepiaInk.opacity(0.3))
         }
         .padding(.horizontal, 6)
@@ -716,25 +716,25 @@ private struct TimberSeasonVisual: View {
                             .overlay {
                                 if step >= 1 {
                                     Image(systemName: "drop.fill")
-                                        .font(.system(size: 10))
+                                        .font(.system(size: 13))
                                         .foregroundStyle(waterBlue.opacity(0.5))
                                 }
                             }
                         Text("80%")
-                            .font(.custom("EBGaramond-Bold", size: 11))
+                            .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(step >= 1 ? waterBlue : waterBlue.opacity(0.3))
                         Text("Fresh")
-                            .font(.custom("Cinzel-Bold", size: 8))
+                            .font(.custom("Cinzel-Bold", size: 16))
                             .foregroundStyle(step >= 1 ? sepiaInk : sepiaInk.opacity(0.3))
                     }
 
                     if step >= 2 {
                         VStack(spacing: 2) {
                             Image(systemName: "arrow.right")
-                                .font(.system(size: 10))
+                                .font(.system(size: 13))
                                 .foregroundStyle(sepiaInk.opacity(0.3))
                             Text("3 yrs")
-                                .font(.custom("EBGaramond-Regular", size: 9))
+                                .font(.custom("EBGaramond-Regular", size: 15))
                                 .foregroundStyle(dimColor)
                         }
                     }
@@ -746,10 +746,10 @@ private struct TimberSeasonVisual: View {
                                 .fill(Color(red: 0.65, green: 0.50, blue: 0.32).opacity(0.6))
                                 .frame(width: 40, height: 30)
                             Text("15%")
-                                .font(.custom("EBGaramond-Bold", size: 11))
+                                .font(.custom("EBGaramond-Bold", size: 15))
                                 .foregroundStyle(color)
                             Text("Seasoned")
-                                .font(.custom("Cinzel-Bold", size: 8))
+                                .font(.custom("Cinzel-Bold", size: 16))
                                 .foregroundStyle(sepiaInk)
                         }
                     }
@@ -757,7 +757,7 @@ private struct TimberSeasonVisual: View {
 
                 if step >= 3 {
                     Text("100,000 logs in reserve")
-                        .font(.custom("EBGaramond-Bold", size: 12))
+                        .font(.custom("EBGaramond-Bold", size: 15))
                         .foregroundStyle(color)
                 }
             }

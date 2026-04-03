@@ -131,7 +131,7 @@ private struct GardenOriginVisual: View {
             .overlay {
                 if step >= 1 {
                     Text("1545")
-                        .font(.custom("Cinzel-Bold", size: 14))
+                        .font(.custom("Cinzel-Bold", size: 16))
                         .foregroundStyle(color)
                         .position(x: 999, y: 999) // Canvas draws it
                 }
@@ -633,7 +633,7 @@ private struct LimestonePathVisual: View {
             .overlay(alignment: .bottom) {
                 if step >= 3 {
                     Text("CaCO₃ → Ca²⁺ + alkaline pH")
-                        .font(.custom("EBGaramond-Bold", size: 11))
+                        .font(.custom("EBGaramond-Bold", size: 15))
                         .foregroundStyle(color)
                         .offset(y: -28)
                 }
@@ -812,7 +812,7 @@ private struct UnderfloorHeatVisual: View {
             .overlay(alignment: .top) {
                 if step >= 3 {
                     Text("> 10°C")
-                        .font(.custom("EBGaramond-Bold", size: 13))
+                        .font(.custom("EBGaramond-Bold", size: 15))
                         .foregroundStyle(color)
                         .padding(.top, 8)
                 }
@@ -868,7 +868,7 @@ private struct SoilSubstrateVisual: View {
                         .frame(height: 22)
                         .overlay {
                             Text(layer.0)
-                                .font(.custom("EBGaramond-Regular", size: 8))
+                                .font(.custom("EBGaramond-Regular", size: 15))
                                 .foregroundStyle(active ? .white.opacity(0.8) : .clear)
                         }
                 }
@@ -880,7 +880,7 @@ private struct SoilSubstrateVisual: View {
                         .frame(height: 12)
                         .overlay {
                             Text("Biochar")
-                                .font(.custom("EBGaramond-Regular", size: 7))
+                                .font(.custom("EBGaramond-Regular", size: 15))
                                 .foregroundStyle(.white.opacity(0.7))
                         }
                 }
@@ -893,7 +893,7 @@ private struct SoilSubstrateVisual: View {
             )
 
             Text(label)
-                .font(.custom("Cinzel-Bold", size: 7))
+                .font(.custom("Cinzel-Bold", size: 16))
                 .foregroundStyle(active ? sepiaInk : sepiaInk.opacity(0.3))
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
