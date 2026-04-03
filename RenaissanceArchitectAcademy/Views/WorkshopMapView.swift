@@ -55,6 +55,9 @@ struct WorkshopMapView: View {
     // Track which station sent player to market — so bird guides BACK there after buying tool
     @State private var returnToStationAfterMarket: ResourceStationType?
 
+    // Quick Collect choice (before mini-game)
+    @State private var showQuickCollectChoice = false
+
     // Station mini-games
     @State private var showQuarryMiniGame = false
     @State private var showVolcanoMiniGame = false
@@ -64,6 +67,9 @@ struct WorkshopMapView: View {
 
     // Avatar box: portrait visible only when player hasn't moved yet
     @State private var avatarInBox = true
+
+    // Track where the player is standing (persists after overlay dismiss, unlike activeStation)
+    @State private var lastVisitedStation: ResourceStationType?
 
     // Bird guidance — tells player where to go next
     @State private var showArrivalGuidance = false
@@ -355,6 +361,12 @@ struct WorkshopMapView: View {
                     .transition(.opacity)
                 }
 
+                // Layer 8d: Quick Collect choice (before mini-game)
+                if showQuickCollectChoice, let station = activeStation {
+                    quickCollectChoiceOverlay(for: station)
+                        .transition(.opacity.combined(with: .scale(scale: 0.95)))
+                }
+
                 // Layer 9: Quarry mini-game
                 if showQuarryMiniGame {
                     QuarryMiniGameView(
@@ -364,6 +376,7 @@ struct WorkshopMapView: View {
                             sceneHolder.scene?.playPlayerCelebrateAnimation()
                             sceneHolder.scene?.showCollectionEffect(at: .quarry)
                             recentlyCollectedStations.insert(.quarry)
+                            refreshStationBadges()
 
                             if workshop.currentJob != nil && workshop.currentJob?.craftTarget == nil {
                                 if workshop.checkJobCompletion() {
@@ -411,6 +424,7 @@ struct WorkshopMapView: View {
                             sceneHolder.scene?.playPlayerCelebrateAnimation()
                             sceneHolder.scene?.showCollectionEffect(at: .volcano)
                             recentlyCollectedStations.insert(.volcano)
+                            refreshStationBadges()
 
                             if workshop.currentJob != nil && workshop.currentJob?.craftTarget == nil {
                                 if workshop.checkJobCompletion() {
@@ -458,6 +472,7 @@ struct WorkshopMapView: View {
                             sceneHolder.scene?.playPlayerCelebrateAnimation()
                             sceneHolder.scene?.showCollectionEffect(at: .river)
                             recentlyCollectedStations.insert(.river)
+                            refreshStationBadges()
 
                             if workshop.currentJob != nil && workshop.currentJob?.craftTarget == nil {
                                 if workshop.checkJobCompletion() {
@@ -505,6 +520,7 @@ struct WorkshopMapView: View {
                             sceneHolder.scene?.playPlayerCelebrateAnimation()
                             sceneHolder.scene?.showCollectionEffect(at: .clayPit)
                             recentlyCollectedStations.insert(.clayPit)
+                            refreshStationBadges()
 
                             if workshop.currentJob != nil && workshop.currentJob?.craftTarget == nil {
                                 if workshop.checkJobCompletion() {
@@ -552,6 +568,7 @@ struct WorkshopMapView: View {
                             sceneHolder.scene?.playPlayerCelebrateAnimation()
                             sceneHolder.scene?.showCollectionEffect(at: .farm)
                             recentlyCollectedStations.insert(.farm)
+                            refreshStationBadges()
 
                             if workshop.currentJob != nil && workshop.currentJob?.craftTarget == nil {
                                 if workshop.checkJobCompletion() {
@@ -603,6 +620,7 @@ struct WorkshopMapView: View {
 
                    !showCollectionOverlay,
                    !showHintBubble,
+                   !showQuickCollectChoice,
                    !showWorkbenchOverlay,
                    !showFurnaceOverlay,
                    !workshop.showEducationalPopup,
@@ -617,6 +635,7 @@ struct WorkshopMapView: View {
 
                    !showCollectionOverlay,
                    !showHintBubble,
+                   !showQuickCollectChoice,
                    !showWorkbenchOverlay,
                    !showFurnaceOverlay,
                    !workshop.showEducationalPopup,
@@ -645,11 +664,16 @@ struct WorkshopMapView: View {
         }
         .onAppear {
             recentlyCollectedStations.removeAll()
+            lastVisitedStation = nil
             if workshop.currentAssignment == nil {
                 workshop.generateNewAssignment()
             }
             // Show bird guidance if player has an active building with workshop cards
             checkArrivalGuidance()
+            // Show material-need badges on stations
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                refreshStationBadges()
+            }
         }
         .onDisappear {
             // Release scene to free SpriteKit texture memory when navigating away
@@ -703,6 +727,7 @@ struct WorkshopMapView: View {
         // Station reached — show knowledge card first, then tool check / mini-game
         newScene.onStationReached = { stationType in
             self.activeStation = stationType
+            self.lastVisitedStation = stationType
             dismissAllOverlays()
 
             switch stationType {
@@ -731,9 +756,13 @@ struct WorkshopMapView: View {
                     skipCardForMarket = false
                     showSingleStationOverlay()
                 } else if sentToCollect {
-                    // Player was sent back to collect materials — go straight to mini-game
+                    // Player was sent back to collect materials — go straight to mini-game (skip choice dialog)
                     returnToStationAfterMarket = nil
-                    showSingleStationOverlay()
+                    if Self.miniGameStations.contains(stationType) && workshop.hasTool(for: stationType) {
+                        launchMiniGame(for: stationType)
+                    } else {
+                        showSingleStationOverlay()
+                    }
                 } else if hasKnowledgeCard(at: stationType) {
                     // Show card first, then proceed to tool/minigame after card is dismissed
                     pendingStationAfterCard = stationType
@@ -757,7 +786,8 @@ struct WorkshopMapView: View {
         // Don't show if another overlay is active (unless force-refreshing after tool purchase)
         if !forceRefresh {
             guard !showCollectionOverlay && !showHintBubble && !showWorkbenchOverlay
-                    && !showFurnaceOverlay && !showStationKnowledgeCards else { return }
+                    && !showFurnaceOverlay && !showStationKnowledgeCards
+                    && !showQuickCollectChoice else { return }
         }
 
         let florins = vm.goldFlorins
@@ -882,14 +912,18 @@ struct WorkshopMapView: View {
 
         // PRIORITY 3: Fresh station (not recently visited) with needed materials
         if let station = freshStations.first {
-            let stationMats = station.materials
-            if let needed = stationMats.first(where: { neededRaw[$0, default: 0] > 0 }) {
-                let progressHint = materialProgressHint(needed, neededRaw: neededRaw, building: building)
-                guidanceMessage = "Head to the \(station.label) — you need \(needed.rawValue)\(progressHint) for the \(buildingName)!"
-                guidanceDestination = nil
-                guidanceStationType = station
-                withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
-                return
+            // Suppress if player is already at this station — let Quick Collect handle it
+            if station == lastVisitedStation { /* skip — already here */ }
+            else {
+                let stationMats = station.materials
+                if let needed = stationMats.first(where: { neededRaw[$0, default: 0] > 0 }) {
+                    let progressHint = materialProgressHint(needed, neededRaw: neededRaw, building: building)
+                    guidanceMessage = "Head to the \(station.label) — you need \(needed.rawValue)\(progressHint) for the \(buildingName)!"
+                    guidanceDestination = nil
+                    guidanceStationType = station
+                    withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
+                    return
+                }
             }
         }
 
@@ -908,11 +942,16 @@ struct WorkshopMapView: View {
 
         // PRIORITY 5: Workshop knowledge cards (learn + earn florins toward tools)
         if let card = workshopCards.first {
-            guidanceMessage = "Head to the \(card.stationKey.capitalized) — discover a knowledge card about the \(buildingName)!"
-            guidanceDestination = nil
-            guidanceStationType = stationTypeFromKey(card.stationKey)
-            withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
-            return
+            let cardStation = stationTypeFromKey(card.stationKey)
+            // Suppress if player is already at the card's station
+            if cardStation == lastVisitedStation { /* skip — already here */ }
+            else {
+                guidanceMessage = "Head to the \(card.stationKey.capitalized) — discover a knowledge card about the \(buildingName)!"
+                guidanceDestination = nil
+                guidanceStationType = cardStation
+                withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
+                return
+            }
         }
 
         // PRIORITY 6: Need tools but can't afford — tell player HOW to earn florins
@@ -929,18 +968,22 @@ struct WorkshopMapView: View {
             // Count total materials still needed across all stations
             let totalNeeded = neededRaw.values.reduce(0, +)
             if let station = allReadyStations.first {
-                let stationMats = station.materials
-                if let needed = stationMats.first(where: { neededRaw[$0, default: 0] > 0 }) {
-                    let progressHint = materialProgressHint(needed, neededRaw: neededRaw, building: building)
-                    if allReadyStations.count == 1 && totalNeeded <= 3 {
-                        guidanceMessage = "Almost there! \(neededRaw[needed, default: 0]) more \(needed.rawValue) to go!"
-                    } else {
-                        guidanceMessage = "Back to the \(station.label) — \(needed.rawValue)\(progressHint) still needed!"
+                // Suppress if player is already at this station — badges show what's needed
+                if station == lastVisitedStation { /* skip — already here, badges visible */ }
+                else {
+                    let stationMats = station.materials
+                    if let needed = stationMats.first(where: { neededRaw[$0, default: 0] > 0 }) {
+                        let progressHint = materialProgressHint(needed, neededRaw: neededRaw, building: building)
+                        if allReadyStations.count == 1 && totalNeeded <= 3 {
+                            guidanceMessage = "Almost there! \(neededRaw[needed, default: 0]) more \(needed.rawValue) to go!"
+                        } else {
+                            guidanceMessage = "Back to the \(station.label) — \(needed.rawValue)\(progressHint) still needed!"
+                        }
+                        guidanceDestination = nil
+                        guidanceStationType = station
+                        withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
+                        return
                     }
-                    guidanceDestination = nil
-                    guidanceStationType = station
-                    withAnimation(.spring(response: 0.4)) { showArrivalGuidance = true }
-                    return
                 }
             }
         }
@@ -1100,6 +1143,19 @@ struct WorkshopMapView: View {
     }
 
     /// Check for guidance on initial appear (called from onAppear)
+    /// Push material-needed badges to all station nodes in the SpriteKit scene
+    private func refreshStationBadges() {
+        guard let building = viewModel?.activeBuildingId.flatMap({ id in
+            viewModel?.buildingPlots.first(where: { $0.id == id })?.building
+        }) else {
+            // No active building — clear all badges
+            sceneHolder.scene?.updateStationBadges(neededMaterials: [:])
+            return
+        }
+        let neededRaw = rawMaterialsStillNeeded(for: building)
+        sceneHolder.scene?.updateStationBadges(neededMaterials: neededRaw)
+    }
+
     private func checkArrivalGuidance() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
             showNextGuidance()
@@ -1112,6 +1168,8 @@ struct WorkshopMapView: View {
         showWorkbenchOverlay = false
         showFurnaceOverlay = false
         showStationLesson = false
+        showQuickCollectChoice = false
+        quickCollectSelectedMaterial = nil
         showQuarryMiniGame = false
         showVolcanoMiniGame = false
         showRiverMiniGame = false
@@ -1120,49 +1178,20 @@ struct WorkshopMapView: View {
         showArrivalGuidance = false
     }
 
+    /// The 5 stations that have mini-games
+    private static let miniGameStations: Set<ResourceStationType> = [.quarry, .volcano, .river, .clayPit, .farm]
+
     /// Show a single overlay based on tool ownership:
     /// - No tool → tool requirement dialog (collectionOverlay)
-    /// - Has tool → station mini-game (if available) or hint bubble with collection buttons
+    /// - Has tool + mini-game station → Quick Collect choice dialog
+    /// - Has tool + other station → hint bubble with collection buttons
     private func showSingleStationOverlay() {
         guard let station = activeStation else { return }
 
-        // Station mini-games (replace simple collection for specific stations)
-        if station == .quarry && workshop.hasTool(for: station) {
-            sceneHolder.scene?.nudgeCameraUp(by: 0.2)
+        // Mini-game stations: show Quick Collect vs Play choice first
+        if Self.miniGameStations.contains(station) && workshop.hasTool(for: station) {
             withAnimation(.spring(response: 0.3)) {
-                showQuarryMiniGame = true
-            }
-            return
-        }
-
-        if station == .volcano && workshop.hasTool(for: station) {
-            sceneHolder.scene?.nudgeCameraUp(by: 0.2)
-            withAnimation(.spring(response: 0.3)) {
-                showVolcanoMiniGame = true
-            }
-            return
-        }
-
-        if station == .river && workshop.hasTool(for: station) {
-            sceneHolder.scene?.nudgeCameraUp(by: 0.2)
-            withAnimation(.spring(response: 0.3)) {
-                showRiverMiniGame = true
-            }
-            return
-        }
-
-        if station == .clayPit && workshop.hasTool(for: station) {
-            sceneHolder.scene?.nudgeCameraUp(by: 0.2)
-            withAnimation(.spring(response: 0.3)) {
-                showClayPitMiniGame = true
-            }
-            return
-        }
-
-        if station == .farm && workshop.hasTool(for: station) {
-            sceneHolder.scene?.nudgeCameraUp(by: 0.2)
-            withAnimation(.spring(response: 0.3)) {
-                showFarmMiniGame = true
+                showQuickCollectChoice = true
             }
             return
         }
@@ -1174,6 +1203,223 @@ struct WorkshopMapView: View {
         } else {
             withAnimation(.spring(response: 0.3)) {
                 showCollectionOverlay = true
+            }
+        }
+    }
+
+    /// Launch the mini-game for a mini-game station
+    private func launchMiniGame(for station: ResourceStationType) {
+        sceneHolder.scene?.nudgeCameraUp(by: 0.2)
+        withAnimation(.spring(response: 0.3)) {
+            switch station {
+            case .quarry:  showQuarryMiniGame = true
+            case .volcano: showVolcanoMiniGame = true
+            case .river:   showRiverMiniGame = true
+            case .clayPit: showClayPitMiniGame = true
+            case .farm:    showFarmMiniGame = true
+            default: break
+            }
+        }
+    }
+
+    /// Quick Collect: award 1 random material from the station, 0 bonus florins
+    private func quickCollect(from station: ResourceStationType, material: Material) {
+        workshop.rawMaterials[material, default: 0] += 1
+        sceneHolder.scene?.playPlayerCelebrateAnimation()
+        sceneHolder.scene?.showCollectionEffect(at: station)
+        SoundManager.shared.play(.correctChime)
+        recentlyCollectedStations.insert(station)
+        refreshStationBadges()
+
+        // Check job completion
+        if workshop.currentJob != nil && workshop.currentJob?.craftTarget == nil {
+            if workshop.checkJobCompletion() {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    withAnimation(.spring(response: 0.3)) {
+                        showQuickCollectChoice = false
+                        activeStation = nil
+                    }
+                    completeCurrentJob()
+                }
+                return
+            }
+        }
+
+        withAnimation(.spring(response: 0.3)) {
+            showQuickCollectChoice = false
+            activeStation = nil
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            showNextGuidance(forceRefresh: true)
+        }
+    }
+
+    // MARK: - Quick Collect Choice Overlay
+
+    /// Two-button choice: Quick Collect (instant, 0 florins) vs Play Mini-Game (bonus florins)
+    private func quickCollectChoiceOverlay(for station: ResourceStationType) -> some View {
+        ZStack {
+            // Dimming backdrop
+            RenaissanceColors.overlayDimming
+                .ignoresSafeArea()
+                .onTapGesture {
+                    withAnimation(.spring(response: 0.3)) {
+                        showQuickCollectChoice = false
+                        quickCollectSelectedMaterial = nil
+                        activeStation = nil
+                    }
+                }
+
+            VStack(spacing: Spacing.md) {
+                // Station name + bird
+                HStack(spacing: 10) {
+                    BirdCharacter(isSitting: true)
+                        .frame(width: 44, height: 44)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(station.label)
+                            .font(.custom("Cinzel-Bold", size: 18))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                        Text("How would you like to collect?")
+                            .font(RenaissanceFont.bodySmall)
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
+                    }
+                }
+
+                // Material choices — player picks which material, then Quick or Play
+                let materials = station.materials
+                if materials.count == 1 {
+                    // Single material — show both buttons directly
+                    quickCollectButtons(station: station, material: materials[0])
+                } else {
+                    // Multiple materials — show grid then buttons
+                    Text("Choose material:")
+                        .font(RenaissanceFont.caption)
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+
+                    let columns = Array(repeating: GridItem(.flexible(), spacing: 8), count: min(materials.count, 3))
+                    LazyVGrid(columns: columns, spacing: 8) {
+                        ForEach(materials, id: \.self) { material in
+                            Button {
+                                quickCollectSelectedMaterial = material
+                            } label: {
+                                VStack(spacing: 4) {
+                                    MaterialIconView(material: material, size: 36)
+                                    Text(material.rawValue)
+                                        .font(RenaissanceFont.caption)
+                                        .foregroundStyle(settings.cardTextColor)
+                                        .lineLimit(1)
+                                        .minimumScaleFactor(0.8)
+                                }
+                                .padding(8)
+                                .frame(maxWidth: .infinity)
+                                .background(
+                                    RoundedRectangle(cornerRadius: CornerRadius.sm)
+                                        .fill(quickCollectSelectedMaterial == material
+                                              ? RenaissanceColors.ochre.opacity(0.2)
+                                              : settings.itemBadgeBackground)
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: CornerRadius.sm)
+                                        .strokeBorder(quickCollectSelectedMaterial == material
+                                                      ? RenaissanceColors.ochre
+                                                      : settings.cardBorderColor, lineWidth: 1)
+                                )
+                            }
+                        }
+                    }
+
+                    if let selected = quickCollectSelectedMaterial {
+                        quickCollectButtons(station: station, material: selected)
+                    }
+                }
+
+                // Close button
+                Button {
+                    withAnimation(.spring(response: 0.3)) {
+                        showQuickCollectChoice = false
+                        activeStation = nil
+                        quickCollectSelectedMaterial = nil
+                    }
+                } label: {
+                    Text("Close")
+                        .font(RenaissanceFont.captionSmall)
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
+                }
+            }
+            .padding(Spacing.dialogPadding)
+            .frame(maxWidth: 320)
+            .background(
+                RoundedRectangle(cornerRadius: CornerRadius.lg)
+                    .fill(RenaissanceColors.parchment)
+                    .shadow(color: .black.opacity(0.15), radius: 12, y: 4)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: CornerRadius.lg)
+                    .strokeBorder(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1)
+            )
+        }
+    }
+
+    @State private var quickCollectSelectedMaterial: Material? = nil
+
+    /// Two action buttons for Quick Collect vs Play Mini-Game
+    private func quickCollectButtons(station: ResourceStationType, material: Material) -> some View {
+        VStack(spacing: 10) {
+            // Quick Collect button
+            Button {
+                quickCollectSelectedMaterial = nil
+                quickCollect(from: station, material: material)
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "bolt.fill")
+                        .font(.system(size: 14))
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text("Quick Collect")
+                            .font(.custom("EBGaramond-SemiBold", size: 16))
+                        Text("+1 \(material.rawValue) · no bonus")
+                            .font(RenaissanceFont.captionSmall)
+                            .opacity(0.7)
+                    }
+                    Spacer()
+                }
+                .foregroundStyle(.white)
+                .padding(.horizontal, Spacing.md)
+                .padding(.vertical, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: CornerRadius.sm)
+                        .fill(RenaissanceColors.warmBrown)
+                )
+            }
+
+            // Play Mini-Game button
+            Button {
+                quickCollectSelectedMaterial = nil
+                withAnimation(.spring(response: 0.3)) {
+                    showQuickCollectChoice = false
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    launchMiniGame(for: station)
+                }
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "gamecontroller.fill")
+                        .font(.system(size: 14))
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text("Play Mini-Game")
+                            .font(.custom("EBGaramond-SemiBold", size: 16))
+                        Text("+1 material · +2-5 bonus florins")
+                            .font(RenaissanceFont.captionSmall)
+                            .opacity(0.7)
+                    }
+                    Spacer()
+                }
+                .foregroundStyle(.white)
+                .padding(.horizontal, Spacing.md)
+                .padding(.vertical, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: CornerRadius.sm)
+                        .fill(RenaissanceColors.renaissanceBlue)
+                )
             }
         }
     }

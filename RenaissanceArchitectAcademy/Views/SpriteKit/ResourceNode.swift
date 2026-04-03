@@ -77,6 +77,7 @@ class ResourceNode: SKNode {
     private var bodyShape: SKShapeNode!
     private var spriteNode: SKSpriteNode?
     private var labelNode: SKLabelNode!
+    private var needsBadgeNode: SKNode?
 
     /// Hide station sprites to reposition on new terrain — keep tap targets + labels
     static var hideSprites = true
@@ -612,6 +613,79 @@ class ResourceNode: SKNode {
         addChild(pill)
 
         labelNode = pill.children.compactMap { $0 as? SKLabelNode }.first ?? SKLabelNode()
+    }
+
+    // MARK: - Needs Badge
+
+    /// Show/update a badge below the station label with materials still needed for the active building.
+    /// Pass an empty dict (or all-zero) to hide the badge.
+    func updateNeededBadge(materials: [Material: Int]) {
+        // Filter to materials with count > 0
+        let needed = materials.filter { $0.value > 0 }
+
+        // Hide if nothing needed
+        if needed.isEmpty {
+            needsBadgeNode?.removeFromParent()
+            needsBadgeNode = nil
+            return
+        }
+
+        // Build display string: "🪨×2  💧×3"
+        let parts = needed.sorted(by: { $0.key.rawValue < $1.key.rawValue }).map { mat, count in
+            "\(mat.icon)×\(count)"
+        }
+        let text = parts.joined(separator: "  ")
+
+        // Remove old badge if exists
+        needsBadgeNode?.removeFromParent()
+
+        let dark = GameSettings.shared.isDarkMode
+        let fontSize: CGFloat = 22
+        let container = SKNode()
+        container.name = "needsBadge"
+        container.position = CGPoint(x: 0, y: -200)
+        container.zPosition = 9
+
+        let textColor: PlatformColor = dark
+            ? PlatformColor(red: 1.0, green: 0.85, blue: 0.5, alpha: 1.0)
+            : PlatformColor(RenaissanceColors.sepiaInk)
+
+        let bgColor: PlatformColor = dark
+            ? PlatformColor(red: 0.18, green: 0.16, blue: 0.13, alpha: 0.75)
+            : PlatformColor(red: 0.961, green: 0.902, blue: 0.827, alpha: 0.75)
+
+        let label = SKLabelNode()
+        label.fontName = "EBGaramond-SemiBold"
+        label.fontSize = fontSize
+        label.fontColor = textColor
+        label.verticalAlignmentMode = .center
+        label.horizontalAlignmentMode = .center
+        label.position = CGPoint(x: 0, y: -1)
+        label.zPosition = 2
+        label.text = text
+        container.addChild(label)
+
+        // Capsule background
+        let textWidth = label.frame.width
+        let hPad: CGFloat = fontSize * 0.6
+        let pillWidth = textWidth + hPad * 2
+        let pillHeight = fontSize * 1.5
+        let cornerRadius = pillHeight / 2
+
+        let pillPath = CGPath(roundedRect: CGRect(
+            x: -pillWidth / 2, y: -pillHeight / 2,
+            width: pillWidth, height: pillHeight
+        ), cornerWidth: cornerRadius, cornerHeight: cornerRadius, transform: nil)
+
+        let bg = SKShapeNode(path: pillPath)
+        bg.fillColor = bgColor
+        bg.strokeColor = .clear
+        bg.lineWidth = 0
+        bg.zPosition = 1
+        container.addChild(bg)
+
+        addChild(container)
+        needsBadgeNode = container
     }
 
     // MARK: - Theme Update

@@ -1016,6 +1016,17 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
     // MARK: - Public Methods
 
+    /// Update material-needed badges on all resource stations.
+    /// `neededMaterials` is the full dict of raw materials the building still needs.
+    func updateStationBadges(neededMaterials: [Material: Int]) {
+        for (stationType, node) in resourceNodes {
+            // Filter to materials this station provides
+            let stationMats = Set(stationType.materials)
+            let filtered = neededMaterials.filter { stationMats.contains($0.key) }
+            node.updateNeededBadge(materials: filtered)
+        }
+    }
+
     /// Show collection burst on a station
     func showCollectionEffect(at stationType: ResourceStationType) {
         resourceNodes[stationType]?.showCollectionBurst()
