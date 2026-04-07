@@ -611,6 +611,7 @@ struct CityMapView: View {
                     sequence: sequence,
                     onComplete: {
                         // Puzzle complete — award florins and finish the building
+                        SoundManager.shared.play(.levelUp)
                         viewModel.buildingProgressMap[plot.id, default: BuildingProgress()].constructionSequenceCompleted = true
                         viewModel.completeChallenge(for: plot.id)
                         viewModel.earnFlorins(GameRewards.buildCompleteFlorins + GameRewards.constructionSequenceFlorins)

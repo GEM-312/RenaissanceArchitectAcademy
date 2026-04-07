@@ -1510,6 +1510,7 @@ struct ForestMapView: View {
     // MARK: - Truffle Sale
 
     private func sellTruffle(_ truffle: ForestScene.TruffleFind) {
+        SoundManager.shared.play(.florinsEarned)
         viewModel?.earnFlorins(truffle.value)
         sceneHolder.scene?.playPlayerCelebrateAnimation()
 
@@ -1540,6 +1541,7 @@ struct ForestMapView: View {
 
         let florinsEarned = collected * GameRewards.timberCollectFlorins
         if florinsEarned > 0 {
+            SoundManager.shared.play(.timberChop)
             viewModel?.earnFlorins(florinsEarned)
             sceneHolder.scene?.playPlayerCelebrateAnimation()
         }

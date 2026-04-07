@@ -1517,6 +1517,7 @@ struct BuildingLessonView: View {
     // MARK: - Navigation
 
     private func advance() {
+        SoundManager.shared.play(.pageTurn)
         resetSectionState()
         if currentIndex < pages.count - 1 {
             currentIndex += 1
@@ -1529,6 +1530,7 @@ struct BuildingLessonView: View {
 
     private func goBack() {
         guard currentIndex > 0 else { return }
+        SoundManager.shared.play(.pageTurn)
         resetSectionState()
         currentIndex -= 1
         freezeWordBankIfNeeded()

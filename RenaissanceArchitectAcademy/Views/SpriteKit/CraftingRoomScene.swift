@@ -37,19 +37,19 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
     private var lastPanLocation: CGPoint?
     private var maxZoomOutScale: CGFloat = 1.0
 
-    // Map size — matches all scenes' 3500x2500 standard
-    private let mapSize = CGSize(width: 3500, height: 2500)
+    // Map size — wider than standard 3500x2500 to fit WorkshopBackground image (7149x4032, ratio 1.77:1)
+    private let mapSize = CGSize(width: 4433, height: 2500)
 
     #if DEBUG
     private lazy var editorMode = SceneEditorMode(scene: self)
     #endif
 
-    // Furniture positions in 3500x2500 coordinate space
+    // Furniture positions in 4433x2500 coordinate space (scaled from 3500→4433 on x axis)
     private let furniturePositions: [CraftingStation: CGPoint] = [
-        .workbench:    CGPoint(x: 83,  y: 918),
-        .furnace:      CGPoint(x: 1225, y: 1234),
-        .pigmentTable: CGPoint(x: 3432, y: 300),
-        .shelf:        CGPoint(x: 617, y: 1309),
+        .workbench:    CGPoint(x: 105,  y: 918),
+        .furnace:      CGPoint(x: 1552, y: 1234),
+        .pigmentTable: CGPoint(x: 4347, y: 300),
+        .shelf:        CGPoint(x: 781, y: 1309),
     ]
 
     /// Sprite display size for furniture images (smaller than outdoor — interior perspective)
@@ -58,20 +58,20 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
     // MARK: - Waypoint Graph (simple indoor paths)
 
     private var waypoints: [CGPoint] = [
-        /* 0  */ CGPoint(x: 1282, y: 890),   // door (player spawn)
-        /* 1  */ CGPoint(x: 1315, y: 500),   // bottom-center
-        /* 2  */ CGPoint(x: 1684, y: 596),   // center-left
-        /* 3  */ CGPoint(x: 2333, y: 341),   // center
-        /* 4  */ CGPoint(x: 1690, y: 412),   // center-right
-        /* 5  */ CGPoint(x: 875,  y: 1500),   // workbench
-        /* 6  */ CGPoint(x: 785, y: 485),   // pigment table
-        /* 7  */ CGPoint(x: 905, y: 791),   // furnace
-        /* 8  */ CGPoint(x: 1126, y: 1028),    // shelf
-        /* 9  */ CGPoint(x: 2600, y: 1400),   // right connector
-        /* 10 */ CGPoint(x: 1249, y: 978),   // left connector
+        /* 0  */ CGPoint(x: 1624, y: 890),   // door (player spawn)
+        /* 1  */ CGPoint(x: 1665, y: 500),   // bottom-center
+        /* 2  */ CGPoint(x: 2133, y: 596),   // center-left
+        /* 3  */ CGPoint(x: 2955, y: 341),   // center
+        /* 4  */ CGPoint(x: 2141, y: 412),   // center-right
+        /* 5  */ CGPoint(x: 1108, y: 1500),   // workbench
+        /* 6  */ CGPoint(x: 994, y: 485),   // pigment table
+        /* 7  */ CGPoint(x: 1146, y: 791),   // furnace
+        /* 8  */ CGPoint(x: 1427, y: 1028),    // shelf
+        /* 9  */ CGPoint(x: 3293, y: 1400),   // right connector
+        /* 10 */ CGPoint(x: 1582, y: 978),   // left connector
 
         // --- Home: avatar box (bottom-left corner) ---
-        /* 11 */ CGPoint(x: 200,  y: 200),   // avatar box spawn
+        /* 11 */ CGPoint(x: 253,  y: 200),   // avatar box spawn
     ]
 
     private let waypointEdges: [[Int]] = [

@@ -1133,6 +1133,7 @@ struct RiverMiniGameView: View {
             }
 
             Button {
+                SoundManager.shared.play(.materialPickup)
                 onComplete(selectedMaterial, currentBonusFlorins)
             } label: {
                 HStack(spacing: 8) {

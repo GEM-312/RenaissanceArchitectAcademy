@@ -1318,6 +1318,7 @@ struct ClayPitMiniGameView: View {
             }
 
             Button {
+                SoundManager.shared.play(.clayDig)
                 onComplete(.clay, bonusFlorins)
             } label: {
                 HStack(spacing: 8) {

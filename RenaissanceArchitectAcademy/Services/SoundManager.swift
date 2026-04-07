@@ -40,6 +40,7 @@ class SoundManager: ObservableObject {
         case buildingComplete = "building_complete"
         case buildingTap = "building_tap"
         case sealStamp = "seal_stamp"
+        case levelUp = "level_up"
 
         // Cards
         case cardsAppear = "cards_appear"
@@ -55,14 +56,44 @@ class SoundManager: ObservableObject {
         case tapSoft = "tap_soft"
         case waterPlop = "water_plop"
         case pageFlip = "page_flip"
+        case overlayOpen = "overlay_open"
+        case overlayClose = "overlay_close"
+        case pageTurn = "page_turn"
+        case sceneTransition = "scene_transition"
+
+        // Station Collection
+        case stoneHit = "stone_hit"
+        case clayDig = "clay_dig"
+        case miningHammer = "mining_hammer"
+        case timberChop = "timber_chop"
+        case farmCollect = "farm_collect"
+        case herbPick = "herb_pick"
+        case pigmentGrind = "pigment_grind"
+        case materialPickup = "material_pickup"
+
+        // Crafting
+        case workbenchMix = "workbench_mix"
+        case furnaceWoosh = "furnace_woosh"
+        case furnaceCrackling = "furnace_crackling"
+        case anvilStrike = "anvil_strike"
+        case craftingComplete = "crafting_complete"
+
+        // Rewards
+        case florinsEarned = "florins_earned"
 
         // Walking (wav format)
         case footstep = "footstep"
 
-        /// File extension — most are mp3, footstep is wav
+        /// File extension — new station/crafting/UI sounds are wav, originals are mp3
         var ext: String {
             switch self {
-            case .footstep: return "wav"
+            case .footstep, .sealStamp, .levelUp,
+                 .overlayOpen, .overlayClose, .pageTurn, .sceneTransition,
+                 .stoneHit, .clayDig, .miningHammer, .timberChop,
+                 .farmCollect, .herbPick, .pigmentGrind, .materialPickup,
+                 .workbenchMix, .furnaceWoosh, .furnaceCrackling, .anvilStrike,
+                 .craftingComplete, .florinsEarned:
+                return "wav"
             default: return "mp3"
             }
         }
@@ -78,9 +109,12 @@ class SoundManager: ObservableObject {
         case .wrongBuzz, .hangmanWrong: HapticsManager.shared.play(.wrongAnswer)
         case .cardFlip:      HapticsManager.shared.play(.cardFlip)
         case .cardComplete:  HapticsManager.shared.play(.craftingComplete)
-        case .buildingComplete: HapticsManager.shared.play(.buildingComplete)
-        case .buildingTap:   HapticsManager.shared.play(.buttonTap)
-        case .tapSoft:       HapticsManager.shared.play(.buttonTap)
+        case .buildingComplete, .levelUp: HapticsManager.shared.play(.buildingComplete)
+        case .buildingTap, .tapSoft: HapticsManager.shared.play(.buttonTap)
+        case .craftingComplete: HapticsManager.shared.play(.craftingComplete)
+        case .stoneHit, .miningHammer, .anvilStrike: HapticsManager.shared.play(.materialCollected)
+        case .materialPickup, .farmCollect, .herbPick, .timberChop, .clayDig, .pigmentGrind: HapticsManager.shared.play(.materialCollected)
+        case .florinsEarned: HapticsManager.shared.play(.correctAnswer)
         default: break
         }
 

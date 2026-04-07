@@ -374,6 +374,7 @@ class CityViewModel: ObservableObject {
 
     func earnFlorins(_ amount: Int) {
         goldFlorins += amount
+        SoundManager.shared.play(.florinsEarned)
         persistPlayerSave()
     }
 

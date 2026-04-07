@@ -1222,12 +1222,28 @@ struct WorkshopMapView: View {
         }
     }
 
+    /// Station-specific collection sound
+    private func stationSound(for station: ResourceStationType) -> SoundManager.Sound {
+        switch station {
+        case .quarry:       return .stoneHit
+        case .volcano:      return .materialPickup
+        case .river:        return .materialPickup
+        case .clayPit:      return .clayDig
+        case .mine:         return .miningHammer
+        case .forest:       return .timberChop
+        case .farm:         return .farmCollect
+        case .pigmentTable: return .pigmentGrind
+        case .market:       return .materialPickup
+        default:            return .materialPickup
+        }
+    }
+
     /// Quick Collect: award 1 random material from the station, 0 bonus florins
     private func quickCollect(from station: ResourceStationType, material: Material) {
         workshop.rawMaterials[material, default: 0] += 1
         sceneHolder.scene?.playPlayerCelebrateAnimation()
         sceneHolder.scene?.showCollectionEffect(at: station)
-        SoundManager.shared.play(.correctChime)
+        SoundManager.shared.play(stationSound(for: station))
         recentlyCollectedStations.insert(station)
         refreshStationBadges()
 
@@ -1859,6 +1875,7 @@ struct WorkshopMapView: View {
                                 return
                             }
                             if workshop.collectFromStation(station, material: material) {
+                                SoundManager.shared.play(stationSound(for: station))
                                 vm.goldFlorins -= material.cost
                                 sceneHolder.scene?.showCollectionEffect(at: station)
                                 sceneHolder.scene?.playPlayerCelebrateAnimation()
@@ -2014,6 +2031,7 @@ struct WorkshopMapView: View {
                         return
                     }
                     if workshop.collectFromStation(.market, material: material) {
+                        SoundManager.shared.play(.materialPickup)
                         vm.goldFlorins -= material.cost
                         sceneHolder.scene?.showCollectionEffect(at: .market)
                         sceneHolder.scene?.playPlayerCelebrateAnimation()

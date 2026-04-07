@@ -276,7 +276,7 @@ struct CraftingRoomMapView: View {
         if let existing = sceneHolder.scene { return existing }
 
         let newScene = CraftingRoomScene()
-        newScene.size = CGSize(width: 3500, height: 2500)
+        newScene.size = CGSize(width: 4433, height: 2500)
         newScene.scaleMode = .aspectFill
         newScene.apprenticeIsBoy = onboardingState?.apprenticeGender == .boy || onboardingState == nil
 
@@ -804,6 +804,7 @@ struct CraftingRoomMapView: View {
                             // Consume ingredients from workbench
                             workshop.workbenchSlots = [nil, nil, nil, nil]
                             if workshop.craftTool(toolRecipe.output) {
+                                SoundManager.shared.play(.anvilStrike)
                                 viewModel?.earnFlorins(GameRewards.toolCraftFlorins)
                                 sceneHolder.scene?.playPlayerCelebrateAnimation()
                                 workshop.educationalText = toolRecipe.educationalText
@@ -831,6 +832,7 @@ struct CraftingRoomMapView: View {
                         // Normal recipe: "Mix!" button
                         Button("Mix!") {
                             if workshop.mixIngredients() {
+                                SoundManager.shared.play(.workbenchMix)
                                 workshop.statusMessage = "Mixed! Now tap the Furnace to fire it."
                                 dismissOverlay()
                             }
@@ -1617,6 +1619,7 @@ struct CraftingRoomMapView: View {
     }
 
     private func fireFurnace() {
+        SoundManager.shared.play(.furnaceWoosh)
         workshop.startProcessing()
         guard workshop.isProcessing,
               let recipe = workshop.currentRecipe else { return }
@@ -1628,6 +1631,7 @@ struct CraftingRoomMapView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + recipe.processingTime) {
             let craftedItem = recipe.output
             workshop.completeProcessing()
+            SoundManager.shared.play(.craftingComplete)
 
             viewModel?.earnFlorins(GameRewards.craftCompleteFlorins)
             sceneHolder.scene?.playPlayerCelebrateAnimation()

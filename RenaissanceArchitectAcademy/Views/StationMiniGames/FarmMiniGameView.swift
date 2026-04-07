@@ -530,6 +530,7 @@ struct FarmMiniGameView: View {
             }
 
             Button {
+                SoundManager.shared.play(.farmCollect)
                 onComplete(selectedMaterial, bonusFlorins)
             } label: {
                 HStack(spacing: 8) {

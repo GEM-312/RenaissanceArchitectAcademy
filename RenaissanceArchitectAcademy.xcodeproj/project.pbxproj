@@ -95,6 +95,26 @@
 		089 /* water_plop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 189 /* water_plop.mp3 */; };
 		090 /* building_tap.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 190 /* building_tap.mp3 */; };
 		091 /* cards_appear.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 191 /* cards_appear.mp3 */; };
+		AA1 /* anvil_strike.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA1 /* anvil_strike.wav */; };
+		AA2 /* clay_dig.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA2 /* clay_dig.wav */; };
+		AA3 /* crafting_complete.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA3 /* crafting_complete.wav */; };
+		AA4 /* farm_collect.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA4 /* farm_collect.wav */; };
+		AA5 /* florins_earned.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA5 /* florins_earned.wav */; };
+		AA6 /* furnace_crackling.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA6 /* furnace_crackling.wav */; };
+		AA7 /* furnace_woosh.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA7 /* furnace_woosh.wav */; };
+		AA8 /* herb_pick.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA8 /* herb_pick.wav */; };
+		AA9 /* level_up.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA9 /* level_up.wav */; };
+		AB0 /* material_pickup.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB0 /* material_pickup.wav */; };
+		AB1 /* mining_hammer.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB1 /* mining_hammer.wav */; };
+		AB2 /* overlay_close.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB2 /* overlay_close.wav */; };
+		AB3 /* overlay_open.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB3 /* overlay_open.wav */; };
+		AB4 /* page_turn.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB4 /* page_turn.wav */; };
+		AB5 /* pigment_grind.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB5 /* pigment_grind.wav */; };
+		AB6 /* scene_transition.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB6 /* scene_transition.wav */; };
+		AB7 /* seal_stamp.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB7 /* seal_stamp.wav */; };
+		AB8 /* stone_hit.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB8 /* stone_hit.wav */; };
+		AB9 /* timber_chop.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB9 /* timber_chop.wav */; };
+		AC0 /* workbench_mix.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC0 /* workbench_mix.wav */; };
 		092 /* KnowledgeCardsOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192 /* KnowledgeCardsOverlay.swift */; };
 		093 /* GameSceneKitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193 /* GameSceneKitView.swift */; };
 		096 /* Tool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 196 /* Tool.swift */; };
@@ -317,6 +337,26 @@
 		189 /* water_plop.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = water_plop.mp3; sourceTree = "<group>"; };
 		190 /* building_tap.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = building_tap.mp3; sourceTree = "<group>"; };
 		191 /* cards_appear.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = cards_appear.mp3; sourceTree = "<group>"; };
+		BA1 /* anvil_strike.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = anvil_strike.wav; sourceTree = "<group>"; };
+		BA2 /* clay_dig.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = clay_dig.wav; sourceTree = "<group>"; };
+		BA3 /* crafting_complete.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = crafting_complete.wav; sourceTree = "<group>"; };
+		BA4 /* farm_collect.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = farm_collect.wav; sourceTree = "<group>"; };
+		BA5 /* florins_earned.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = florins_earned.wav; sourceTree = "<group>"; };
+		BA6 /* furnace_crackling.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = furnace_crackling.wav; sourceTree = "<group>"; };
+		BA7 /* furnace_woosh.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = furnace_woosh.wav; sourceTree = "<group>"; };
+		BA8 /* herb_pick.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = herb_pick.wav; sourceTree = "<group>"; };
+		BA9 /* level_up.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = level_up.wav; sourceTree = "<group>"; };
+		BB0 /* material_pickup.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = material_pickup.wav; sourceTree = "<group>"; };
+		BB1 /* mining_hammer.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = mining_hammer.wav; sourceTree = "<group>"; };
+		BB2 /* overlay_close.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = overlay_close.wav; sourceTree = "<group>"; };
+		BB3 /* overlay_open.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = overlay_open.wav; sourceTree = "<group>"; };
+		BB4 /* page_turn.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = page_turn.wav; sourceTree = "<group>"; };
+		BB5 /* pigment_grind.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = pigment_grind.wav; sourceTree = "<group>"; };
+		BB6 /* scene_transition.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = scene_transition.wav; sourceTree = "<group>"; };
+		BB7 /* seal_stamp.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = seal_stamp.wav; sourceTree = "<group>"; };
+		BB8 /* stone_hit.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = stone_hit.wav; sourceTree = "<group>"; };
+		BB9 /* timber_chop.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = timber_chop.wav; sourceTree = "<group>"; };
+		BC0 /* workbench_mix.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = workbench_mix.wav; sourceTree = "<group>"; };
 		192 /* KnowledgeCardsOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnowledgeCardsOverlay.swift; sourceTree = "<group>"; };
 		193 /* GameSceneKitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSceneKitView.swift; sourceTree = "<group>"; };
 		196 /* Tool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tool.swift; sourceTree = "<group>"; };
@@ -505,6 +545,26 @@
 				189 /* water_plop.mp3 */,
 				190 /* building_tap.mp3 */,
 				191 /* cards_appear.mp3 */,
+				BA1 /* anvil_strike.wav */,
+				BA2 /* clay_dig.wav */,
+				BA3 /* crafting_complete.wav */,
+				BA4 /* farm_collect.wav */,
+				BA5 /* florins_earned.wav */,
+				BA6 /* furnace_crackling.wav */,
+				BA7 /* furnace_woosh.wav */,
+				BA8 /* herb_pick.wav */,
+				BA9 /* level_up.wav */,
+				BB0 /* material_pickup.wav */,
+				BB1 /* mining_hammer.wav */,
+				BB2 /* overlay_close.wav */,
+				BB3 /* overlay_open.wav */,
+				BB4 /* page_turn.wav */,
+				BB5 /* pigment_grind.wav */,
+				BB6 /* scene_transition.wav */,
+				BB7 /* seal_stamp.wav */,
+				BB8 /* stone_hit.wav */,
+				BB9 /* timber_chop.wav */,
+				BC0 /* workbench_mix.wav */,
 				147 /* BoyAvatarTransition.mp4 */,
 				148 /* GirlAvatarTransition.mp4 */,
 				303 /* Views */,
@@ -863,6 +923,26 @@
 				089 /* water_plop.mp3 in Resources */,
 				090 /* building_tap.mp3 in Resources */,
 				091 /* cards_appear.mp3 in Resources */,
+				AA1 /* anvil_strike.wav in Resources */,
+				AA2 /* clay_dig.wav in Resources */,
+				AA3 /* crafting_complete.wav in Resources */,
+				AA4 /* farm_collect.wav in Resources */,
+				AA5 /* florins_earned.wav in Resources */,
+				AA6 /* furnace_crackling.wav in Resources */,
+				AA7 /* furnace_woosh.wav in Resources */,
+				AA8 /* herb_pick.wav in Resources */,
+				AA9 /* level_up.wav in Resources */,
+				AB0 /* material_pickup.wav in Resources */,
+				AB1 /* mining_hammer.wav in Resources */,
+				AB2 /* overlay_close.wav in Resources */,
+				AB3 /* overlay_open.wav in Resources */,
+				AB4 /* page_turn.wav in Resources */,
+				AB5 /* pigment_grind.wav in Resources */,
+				AB6 /* scene_transition.wav in Resources */,
+				AB7 /* seal_stamp.wav in Resources */,
+				AB8 /* stone_hit.wav in Resources */,
+				AB9 /* timber_chop.wav in Resources */,
+				AC0 /* workbench_mix.wav in Resources */,
 				543AD36C2F60C199001895ED /* GirlIntroAudio.m4a in Resources */,
 				047 /* BoyAvatarTransition.mp4 in Resources */,
 				048 /* GirlAvatarTransition.mp4 in Resources */,

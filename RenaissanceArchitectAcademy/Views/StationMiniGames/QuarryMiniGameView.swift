@@ -698,6 +698,7 @@ struct QuarryMiniGameView: View {
             }
 
             Button {
+                SoundManager.shared.play(.stoneHit)
                 onComplete(selectedMaterial, bonusFlorins)
             } label: {
                 HStack(spacing: 8) {

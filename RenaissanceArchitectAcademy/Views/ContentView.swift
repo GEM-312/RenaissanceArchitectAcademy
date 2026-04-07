@@ -233,6 +233,7 @@ struct ContentView: View {
 
     /// Navigate to a destination from any screen
     private func navigateTo(_ destination: SidebarDestination) {
+        SoundManager.shared.play(.sceneTransition)
         withAnimation(.easeInOut(duration: 0.3)) {
             selectedDestination = destination
         }

@@ -1298,6 +1298,7 @@ struct VolcanoMiniGameView: View {
             }
 
             Button {
+                SoundManager.shared.play(.materialPickup)
                 onComplete(selectedMaterial, bonusFlorins)
             } label: {
                 HStack(spacing: 8) {
