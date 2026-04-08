@@ -160,7 +160,7 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
         let renderScale = max(viewSize.width / self.size.width, viewSize.height / self.size.height)
         let visibleW = viewSize.width / renderScale
         let visibleH = viewSize.height / renderScale
-        let fitScale = min(mapSize.width / visibleW, mapSize.height / visibleH)
+        let fitScale = max(mapSize.width / visibleW, mapSize.height / visibleH)
         maxZoomOutScale = fitScale
         cameraNode.setScale(fitScale)
     }
@@ -238,9 +238,8 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
         for station in CraftingStation.allCases {
             guard let pos = furniturePositions[station] else { continue }
 
-            let texture = SKTexture(imageNamed: station.imageName)
-            let sprite = SKSpriteNode(texture: texture)
-            sprite.size = furnitureSpriteSize
+            // Transparent tap target — furniture is baked into the background image
+            let sprite = SKSpriteNode(color: .clear, size: furnitureSpriteSize)
             sprite.position = pos
             sprite.zPosition = 10
             sprite.name = "furniture_\(station.rawValue)"
@@ -256,13 +255,6 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
                 zPosition: 10
             )
             sprite.addChild(pill)
-
-            // Subtle pulse animation
-            let scaleUp = SKAction.scale(to: 1.03, duration: 1.5)
-            scaleUp.timingMode = .easeInEaseOut
-            let scaleDown = SKAction.scale(to: 1.0, duration: 1.5)
-            scaleDown.timingMode = .easeInEaseOut
-            sprite.run(SKAction.repeatForever(SKAction.sequence([scaleUp, scaleDown])), withKey: "pulse")
         }
     }
 
