@@ -44,62 +44,52 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
     private lazy var editorMode = SceneEditorMode(scene: self)
     #endif
 
-    // Furniture positions in 4433x2500 coordinate space (scaled from 3500→4433 on x axis)
+    // Furniture positions in 4433x2500 space (tap targets — art is baked into background)
     private let furniturePositions: [CraftingStation: CGPoint] = [
-        .workbench:    CGPoint(x: 105,  y: 918),
-        .furnace:      CGPoint(x: 1552, y: 1234),
-        .pigmentTable: CGPoint(x: 4347, y: 300),
-        .shelf:        CGPoint(x: 781, y: 1309),
+        .furnace:      CGPoint(x: 560,  y: 1820),
+        .workbench:    CGPoint(x: 1930, y: 1645),
+        .pigmentTable: CGPoint(x: 2843, y: 940),
+        .shelf:        CGPoint(x: 4038, y: 1146),
     ]
 
-    /// Sprite display size for furniture images (smaller than outdoor — interior perspective)
+    /// Sprite display size for furniture tap targets
     private let furnitureSpriteSize = CGSize(width: 760, height: 760)
 
-    // MARK: - Waypoint Graph (simple indoor paths)
+    /// Floor-level positions where the apprentice stands in front of each station.
+    /// Furniture is on walls/tables (high y), but player walks on the floor (low y).
+    private let floorTargets: [CraftingStation: CGPoint] = [
+        .furnace:      CGPoint(x: 656,  y: 915),
+        .workbench:    CGPoint(x: 1648, y: 760),
+        .pigmentTable: CGPoint(x: 2296, y: 21),
+        .shelf:        CGPoint(x: 3819, y: 268),
+    ]
+
+    // MARK: - Waypoint Graph (floor-level paths)
 
     private var waypoints: [CGPoint] = [
-        /* 0  */ CGPoint(x: 1624, y: 890),   // door (player spawn)
-        /* 1  */ CGPoint(x: 1665, y: 500),   // bottom-center
-        /* 2  */ CGPoint(x: 2133, y: 596),   // center-left
-        /* 3  */ CGPoint(x: 2955, y: 341),   // center
-        /* 4  */ CGPoint(x: 2141, y: 412),   // center-right
-        /* 5  */ CGPoint(x: 1108, y: 1500),   // workbench
-        /* 6  */ CGPoint(x: 994, y: 485),   // pigment table
-        /* 7  */ CGPoint(x: 1146, y: 791),   // furnace
-        /* 8  */ CGPoint(x: 1427, y: 1028),    // shelf
-        /* 9  */ CGPoint(x: 3293, y: 1400),   // right connector
-        /* 10 */ CGPoint(x: 1582, y: 978),   // left connector
-
-        // --- Home: avatar box (bottom-left corner) ---
-        /* 11 */ CGPoint(x: 253,  y: 200),   // avatar box spawn
+        /* 0  */ CGPoint(x: 253,  y: 200),   // avatar box spawn (home)
+        /* 1  */ CGPoint(x: 656,  y: 915),   // near furnace
+        /* 2  */ CGPoint(x: 1184, y: 747),   // left corridor
+        /* 3  */ CGPoint(x: 1648, y: 760),   // center
+        /* 4  */ CGPoint(x: 1945, y: 435),   // right of center
+        /* 5  */ CGPoint(x: 2296, y: 21),    // at pigment table
+        /* 6  */ CGPoint(x: 3779, y: 49),    // right corridor
+        /* 7  */ CGPoint(x: 3819, y: 268),   // at storage
     ]
 
     private let waypointEdges: [[Int]] = [
-        // Door → bottom center
-        [0, 1],
-        // Bottom center → branches
-        [1, 2], [1, 3], [1, 6], [1, 10],
-        // Center connections
-        [2, 3], [2, 5], [2, 10],
-        [3, 4], [3, 6],
-        // Right side
-        [4, 7], [4, 9],
-        [9, 7], [9, 8],
-        [7, 8],
-        // Left side
-        [10, 5], [10, 6],
-        // Cross links
-        [6, 3], [5, 10],
-        // Avatar box (home) connections
-        [11, 0], [11, 1], [11, 6],
+        // Main floor corridor (left to right)
+        [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7],
+        // Skip connections for shorter paths
+        [0, 2], [1, 3], [2, 4], [3, 5], [4, 6], [5, 7],
     ]
 
     /// Which waypoints each station connects to
     private let stationWaypoints: [CraftingStation: [Int]] = [
-        .workbench:    [5, 2, 10],
-        .furnace:      [7, 4, 9],
-        .pigmentTable: [6, 1, 3],
-        .shelf:        [8, 9, 7],
+        .furnace:      [1, 2],
+        .workbench:    [3, 4],
+        .pigmentTable: [5, 4],
+        .shelf:        [7, 6],
     ]
 
     // MARK: - Callbacks to SwiftUI
@@ -268,13 +258,13 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
         playerNode.setScale(5.0)
         addChild(playerNode)
         // Start at the avatar box waypoint (bottom-left of map)
-        playerNode.position = waypoints[11]
+        playerNode.position = waypoints[0]
         updatePlayerScreenPosition()
     }
 
     /// Move the player back to the avatar box waypoint (bottom-left of map)
     func positionPlayerAtAvatarBox() {
-        playerNode.position = waypoints[11]
+        playerNode.position = waypoints[0]
         updatePlayerScreenPosition()
     }
 
@@ -549,7 +539,8 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
         }
 
         let stationPos = sprite.position
-        let targetPos = CGPoint(x: stationPos.x - 200, y: stationPos.y - 65)
+        // Walk to floor-level target (not the furniture itself — it's on the wall/table)
+        let targetPos = floorTargets[station] ?? CGPoint(x: stationPos.x, y: 300)
         let playerPos = playerNode.position
 
         let onArrival: () -> Void = { [weak self] in

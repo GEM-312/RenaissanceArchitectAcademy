@@ -91,7 +91,21 @@ class SceneEditorMode {
     func handleTapDown(at point: CGPoint) -> Bool {
         guard isActive else { return false }
 
-        // Find closest registered node within 80pt
+        // Priority 1: check if tap is INSIDE a large sprite's frame (furniture etc.)
+        for entry in registeredNodes {
+            if let sprite = entry.node as? SKSpriteNode, sprite.size.width > 100 {
+                let localPoint = sprite.convert(point, from: sprite.parent ?? sprite.scene!)
+                let halfW = sprite.size.width / 2
+                let halfH = sprite.size.height / 2
+                if localPoint.x >= -halfW && localPoint.x <= halfW &&
+                   localPoint.y >= -halfH && localPoint.y <= halfH {
+                    select(entry.name, node: entry.node)
+                    return true
+                }
+            }
+        }
+
+        // Priority 2: find closest registered node within 80pt (waypoints, small nodes)
         var bestDist: CGFloat = 80
         var bestEntry: (name: String, node: SKNode)?
 

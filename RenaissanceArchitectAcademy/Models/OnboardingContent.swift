@@ -91,19 +91,34 @@ enum OnboardingContent {
             backgroundFramePrefix: "WorkshopWelcomeFrame"
         ),
         StoryPage(
-            title: "The Bird Companion",
+            title: "Leonardo's Bird",
             text: """
             A small bird lands on your shoulder — bright-eyed and ancient beyond its years. \
             It cocks its head and speaks:
 
-            "I have guided apprentices since the days of Vitruvius. I watched the Romans pour \
-            concrete that still stands two thousand years later. I perched on Brunelleschi's \
-            scaffolding as he raised the dome of Florence."
+            "Ciao, apprendista! Maestro Leonardo da Vinci sent me to guide you. I have perched \
+            on Brunelleschi's scaffolding as he raised the dome, and watched the Romans pour \
+            concrete that still stands two thousand years later."
 
-            "I will teach you the thirteen sciences behind the greatest structures ever built. \
-            Are you ready, young architect?"
+            "Leonardo says you have the eye of an architect. I will teach you the thirteen \
+            sciences behind the greatest structures ever built. Are you ready?"
             """,
             showBird: true
+        ),
+        StoryPage(
+            title: "The Road Ahead",
+            text: """
+            Before you stretches the ancient world — Rome's mighty aqueducts, its towering \
+            Colosseum, the perfect dome of the Pantheon. You will study them all.
+
+            And when you have mastered the apprentice's craft and earned the Architect's Seal, \
+            a greater journey awaits: the Giardino di San Marco in Florence — Lorenzo de' Medici's \
+            legendary school, where Michelangelo once studied and the spirit of Brunelleschi lives \
+            in every stone.
+
+            But first, the workshop calls. There is much to learn.
+            """,
+            showBird: false
         ),
     ]
 

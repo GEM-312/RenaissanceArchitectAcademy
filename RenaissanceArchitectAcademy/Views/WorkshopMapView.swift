@@ -98,8 +98,10 @@ struct WorkshopMapView: View {
             ZStack {
                 // Layer 1: SpriteKit scene (wait for ODR on iOS)
                 if assetManager.isReady(AssetManager.workshopScene) {
+                    let hasModalOverlay = showDiscoveryCard || showNPCEncounter || showStationKnowledgeCards || showStationLesson || showQuickCollectChoice
                     GameSpriteView(scene: makeScene(), options: [.allowsTransparency])
                         .ignoresSafeArea()
+                        .allowsHitTesting(!hasModalOverlay)
                 } else {
                     ODRLoadingView(tag: AssetManager.workshopScene, message: "Preparing the workshop...")
                 }
@@ -150,6 +152,7 @@ struct WorkshopMapView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(Spacing.md)
+                .allowsHitTesting(!(showDiscoveryCard || showNPCEncounter || showStationKnowledgeCards || showStationLesson))
 
                 // Status message overlay
                 if let status = workshop.statusMessage {
@@ -355,8 +358,17 @@ struct WorkshopMapView: View {
                             npcDisplayData = nil
                             npcPortrait = nil
                         }
-                        // Continue with normal guidance after NPC dismissed
-                        showNextGuidance(forceRefresh: true)
+                        // After NPC: proceed to knowledge card or station overlay
+                        if let station = activeStation {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                                if hasKnowledgeCard(at: station) {
+                                    pendingStationAfterCard = station
+                                    showKnowledgeCardForStation(station)
+                                } else {
+                                    showSingleStationOverlay()
+                                }
+                            }
+                        }
                     }
                     .transition(.opacity)
                 }
@@ -730,6 +742,15 @@ struct WorkshopMapView: View {
             self.lastVisitedStation = stationType
             dismissAllOverlays()
 
+            // Prewarm NPC generation while card/overlay displays (iOS 26+)
+            if #available(iOS 26.0, macOS 26.0, *) {
+                if let vm = self.viewModel, let buildingId = vm.activeBuildingId {
+                    let bName = vm.buildingPlots.first(where: { $0.id == buildingId })?.building.name ?? ""
+                    let sciences = vm.buildingPlots.first(where: { $0.id == buildingId })?.building.sciences.map(\.rawValue) ?? []
+                    NPCEncounterManager.shared.prewarmForStation(stationType.rawValue, buildingName: bName, sciences: sciences)
+                }
+            }
+
             switch stationType {
             case .craftingRoom:
                 // Transition to interior crafting room
@@ -763,12 +784,9 @@ struct WorkshopMapView: View {
                     } else {
                         showSingleStationOverlay()
                     }
-                } else if hasKnowledgeCard(at: stationType) {
-                    // Show card first, then proceed to tool/minigame after card is dismissed
-                    pendingStationAfterCard = stationType
-                    showKnowledgeCardForStation(stationType)
                 } else {
-                    showSingleStationOverlay()
+                    // Try NPC encounter (first visit), then knowledge card or station overlay
+                    tryNPCBeforeStation(for: stationType)
                 }
             }
         }
@@ -3033,12 +3051,14 @@ struct WorkshopMapView: View {
 
     // MARK: - NPC Encounter (Foundation Models)
 
-    /// Try to show an NPC encounter after station interaction.
-    /// If available and not yet seen this session, shows the NPC overlay.
-    /// Otherwise falls through to normal guidance.
-    private func tryShowNPCEncounter(for station: ResourceStationType) {
+    /// Try to show an NPC encounter on first visit to a station.
+    /// If NPC is available (iOS 26+, active building, not yet seen this session):
+    ///   shows NPC → on dismiss → proceeds to knowledge card or station overlay.
+    /// Otherwise falls through directly to card or station overlay.
+    private func tryNPCBeforeStation(for station: ResourceStationType) {
         guard let vm = viewModel, let buildingId = vm.activeBuildingId else {
-            showNextGuidance(forceRefresh: true)
+            // No active building — skip NPC, proceed normally
+            proceedToCardOrStation(for: station)
             return
         }
 
@@ -3048,7 +3068,7 @@ struct WorkshopMapView: View {
         if #available(iOS 26.0, macOS 26.0, *) {
             let manager = NPCEncounterManager.shared
             guard manager.shouldShowNPC(station: station.rawValue, buildingId: buildingId) else {
-                showNextGuidance(forceRefresh: true)
+                proceedToCardOrStation(for: station)
                 return
             }
 
@@ -3064,12 +3084,23 @@ struct WorkshopMapView: View {
                     withAnimation(.spring(response: 0.3)) {
                         showNPCEncounter = true
                     }
+                    // NPC dismiss handler (in body) proceeds to card or station overlay
                 } else {
-                    showNextGuidance(forceRefresh: true)
+                    proceedToCardOrStation(for: station)
                 }
             }
         } else {
-            showNextGuidance(forceRefresh: true)
+            proceedToCardOrStation(for: station)
+        }
+    }
+
+    /// After NPC (or if no NPC): show knowledge card if available, otherwise station overlay.
+    private func proceedToCardOrStation(for station: ResourceStationType) {
+        if hasKnowledgeCard(at: station) {
+            pendingStationAfterCard = station
+            showKnowledgeCardForStation(station)
+        } else {
+            showSingleStationOverlay()
         }
     }
 }

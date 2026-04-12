@@ -48,15 +48,15 @@ class MockAIService: ObservableObject, AIService {
         let building = context.buildingName
 
         if q.contains("why") || q.contains("how come") {
-            return "The Romans didn't just build the \(building) — they tested everything first. They'd build small models, test materials for months, and only then start construction. That patience is why it still stands after nearly 2,000 years."
+            return "The Romans didn't just build the \(building) — they tested everything first. Leonardo taught me that patience is the architect's greatest tool. They'd build small models, test materials for months, and only then start construction. That patience is why it still stands after nearly 2,000 years."
         } else if q.contains("how") || q.contains("what") {
-            return "The \(context.sciences.first ?? "engineering") behind the \(building) is fascinating! Every measurement was calculated to distribute weight perfectly. Roman engineers understood forces that wouldn't be formally described until Newton, 1,500 years later."
+            return "The \(context.sciences.first ?? "engineering") behind the \(building) is fascinating! The Maestro would say: every measurement was calculated to distribute weight perfectly. Roman engineers understood forces that wouldn't be formally described until Newton, 1,500 years later."
         } else if q.contains("math") || q.contains("calcul") || q.contains("number") {
-            return "Here's a math challenge: the \(building) dome's diameter is 43.3 meters. If height equals diameter, how tall is the interior? That's right — 43.3 meters! A perfect sphere fits inside. The Romans encoded geometry into architecture."
+            return "Leonardo loved this kind of puzzle! The \(building) dome's diameter is 43.3 meters. If height equals diameter, how tall is the interior? That's right — 43.3 meters! A perfect sphere fits inside. The Romans encoded geometry into architecture."
         } else if q.contains("cool") || q.contains("awesome") || q.contains("wow") {
-            return "What's even more incredible — the \(building) was built without modern tools! No cranes, no computers, no steel reinforcement. Just human ingenuity, Roman concrete, and mathematics. And it's lasted longer than most modern buildings ever will."
+            return "What's even more incredible — the \(building) was built without modern tools! No cranes, no computers, no steel reinforcement. Just human ingenuity, Roman concrete, and mathematics. Leonardo always said the ancients were the greatest engineers."
         } else {
-            return "Great question about the \(building)! The science of \(context.sciences.first ?? "architecture") teaches us that every great building is really a puzzle — each piece must support the others. What specific part interests you most?"
+            return "Great question about the \(building)! The Maestro always told me: every great building is really a puzzle — each piece must support the others. What specific part interests you most?"
         }
     }
 }

@@ -254,6 +254,10 @@ class GenerationService: ObservableObject {
             Generate historically accurate Italian Renaissance characters who work in specific \
             trades. Characters should be warm, knowledgeable, and passionate about their craft. \
             Use real historical details from 1400-1550 Italy. \
+            IMPORTANT: Write ALL text in English. The character has an Italian name and \
+            Italian trade title, but their greeting, historical fact, and science tip must \
+            be in English. They may use occasional Italian words naturally (like "Buongiorno!" \
+            or "Bene!") but the sentences must be in English so students can understand. \
             The building being constructed is: \(buildingName). \
             Sciences involved: \(sciences.joined(separator: ", ")).
             """
@@ -261,7 +265,8 @@ class GenerationService: ObservableObject {
         let prompt = """
             Create a Renaissance \(stationType) worker who helps build the \(buildingName). \
             They should know about \(sciences.joined(separator: " and ")). \
-            Make them feel like a real person from 1485 Florence.
+            Make them feel like a real person from 1485 Florence. \
+            Write the greeting, historical fact, and science tip in English.
             """
 
         return try await generate(

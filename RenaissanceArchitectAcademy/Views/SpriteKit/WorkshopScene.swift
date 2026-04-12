@@ -1238,7 +1238,13 @@ class WorkshopScene: SKScene, ScrollZoomable {
         let diameter = Int(radius * 2)
         let colorSpace = CGColorSpaceCreateDeviceRGB()
         var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
-        color.getRed(&r, green: &g, blue: &b, alpha: &a)
+        // Convert to RGB — macOS .white is grayscale, getRed() crashes on non-RGB colors
+        #if os(macOS)
+        let rgbColor = color.usingColorSpace(.deviceRGB) ?? color
+        #else
+        let rgbColor = color
+        #endif
+        rgbColor.getRed(&r, green: &g, blue: &b, alpha: &a)
         let colors = [
             PlatformColor(red: r, green: g, blue: b, alpha: 0.6).cgColor,
             PlatformColor(red: r, green: g, blue: b, alpha: 0.0).cgColor

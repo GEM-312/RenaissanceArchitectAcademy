@@ -42,15 +42,15 @@ struct RenaissanceNPC: Equatable {
     var trade: String
 
     /// A short in-character greeting referencing their craft
-    @Guide(description: "A brief in-character greeting, 1-2 sentences, mentioning their craft and showing personality")
+    @Guide(description: "A brief in-character greeting IN ENGLISH, 1-2 sentences, mentioning their craft and showing personality. May include one Italian word like 'Buongiorno!' but the rest must be English.")
     var greeting: String
 
     /// A real historical fact about their trade in Renaissance Italy
-    @Guide(description: "One verified historical fact about this trade in Renaissance Italy, under 50 words")
+    @Guide(description: "One verified historical fact about this trade in Renaissance Italy IN ENGLISH, under 50 words")
     var historicalFact: String
 
     /// A science or engineering concept related to their work
-    @Guide(description: "One science or engineering concept related to their work, educational for ages 12-18, under 40 words")
+    @Guide(description: "One science or engineering concept related to their work IN ENGLISH, educational for ages 12-18, under 40 words")
     var scienceTip: String
 
     /// Image Playground prompt for generating their trade emblem (NOT a person — Image Playground cannot generate people)
