@@ -21,6 +21,18 @@ struct WorkshopView: View {
 
     @State private var activeInterior: WorkshopInterior = .outdoor
 
+    // Interior transition overlay state
+    @State private var isTransitioning = false
+    @State private var pendingInterior: WorkshopInterior?
+
+    /// Switch interior with ink-wash transition
+    private func switchInterior(to interior: WorkshopInterior) {
+        guard !isTransitioning else { return }
+        SoundManager.shared.play(.sceneTransition)
+        pendingInterior = interior
+        isTransitioning = true
+    }
+
     var body: some View {
         ZStack {
             switch activeInterior {
@@ -31,36 +43,28 @@ struct WorkshopView: View {
                     notebookState: notebookState,
                     onNavigate: onNavigate,
                     onBackToMenu: onBackToMenu,
-                    onEnterInterior: {
-                        withAnimation(.easeInOut(duration: 0.4)) {
-                            activeInterior = .craftingRoom
-                        }
-                    },
-                    onEnterGoldsmith: {
-                        withAnimation(.easeInOut(duration: 0.4)) {
-                            activeInterior = .goldsmith
-                        }
-                    },
+                    onEnterInterior: { switchInterior(to: .craftingRoom) },
+                    onEnterGoldsmith: { switchInterior(to: .goldsmith) },
                     onboardingState: onboardingState,
                     returnToLessonPlotId: $returnToLessonPlotId
                 )
-                .transition(.move(edge: .leading))
 
             case .craftingRoom:
                 CraftingRoomMapView(workshop: workshop, viewModel: viewModel, onNavigate: onNavigate, onBackToMenu: onBackToMenu, onboardingState: onboardingState, returnToLessonPlotId: $returnToLessonPlotId, notebookState: notebookState) {
-                    withAnimation(.easeInOut(duration: 0.4)) {
-                        activeInterior = .outdoor
-                    }
+                    switchInterior(to: .outdoor)
                 }
-                .transition(.move(edge: .trailing))
 
             case .goldsmith:
                 GoldsmithMapView(workshop: workshop, viewModel: viewModel, onNavigate: onNavigate, onBackToMenu: onBackToMenu, onboardingState: onboardingState, returnToLessonPlotId: $returnToLessonPlotId, notebookState: notebookState) {
-                    withAnimation(.easeInOut(duration: 0.4)) {
-                        activeInterior = .outdoor
-                    }
+                    switchInterior(to: .outdoor)
                 }
-                .transition(.move(edge: .trailing))
+            }
+        }
+        .sceneTransition(isActive: $isTransitioning) {
+            // Midpoint: swap interior while screen is covered
+            if let pending = pendingInterior {
+                activeInterior = pending
+                pendingInterior = nil
             }
         }
     }

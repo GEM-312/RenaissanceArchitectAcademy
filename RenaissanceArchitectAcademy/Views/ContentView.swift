@@ -36,6 +36,10 @@ struct ContentView: View {
     // Play time tracking
     @State private var sessionStartDate: Date? = nil
 
+    // Scene transition overlay state
+    @State private var isTransitioning = false
+    @State private var pendingDestination: SidebarDestination?
+
     var body: some View {
         #if DEBUG
         let _ = Self._printChanges()
@@ -86,6 +90,11 @@ struct ContentView: View {
             } else {
                 // Full-width detail view — no sidebar
                 detailView
+                    .sceneTransition(isActive: $isTransitioning) {
+                        // Midpoint: swap scene while screen is covered
+                        selectedDestination = pendingDestination
+                        pendingDestination = nil
+                    }
             }
             #if DEBUG
             // Visual Editor — toggle button (top-right) + bottom panel
@@ -231,12 +240,13 @@ struct ContentView: View {
         print("[PLAYER SWITCH] After load — florins: \(cityViewModel.goldFlorins), materials: \(workshopState.rawMaterials)")
     }
 
-    /// Navigate to a destination from any screen
+    /// Navigate to a destination from any screen (ink-wash transition)
     private func navigateTo(_ destination: SidebarDestination) {
+        guard !isTransitioning else { return } // Ignore rapid taps
         SoundManager.shared.play(.sceneTransition)
-        withAnimation(.easeInOut(duration: 0.3)) {
-            selectedDestination = destination
-        }
+        pendingDestination = destination
+        isTransitioning = true
+        // Scene swap happens at midpoint via sceneTransition overlay
     }
 
     /// Save accumulated play time since session start
