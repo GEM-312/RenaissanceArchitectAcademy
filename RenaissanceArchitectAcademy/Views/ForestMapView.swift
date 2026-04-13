@@ -98,6 +98,16 @@ struct ForestMapView: View {
                 .frame(maxWidth: .infinity)
                 .padding(Spacing.md)
 
+                #if DEBUG
+                SceneEditorButtons(
+                    isActive: sceneHolder.scene?.isEditorActive == true,
+                    onToggle: { sceneHolder.scene?.toggleEditorMode() },
+                    onRotateLeft: { sceneHolder.scene?.editorRotateLeft() },
+                    onRotateRight: { sceneHolder.scene?.editorRotateRight() },
+                    onNudge: { dx, dy in sceneHolder.scene?.editorNudge(dx: dx, dy: dy) }
+                )
+                #endif
+
                 // Layer 4: Tree info + collect timber overlay
                 if let poiIndex = selectedPOIIndex,
                    let poi = sceneHolder.scene?.getPOI(at: poiIndex) {
@@ -153,62 +163,19 @@ struct ForestMapView: View {
 
                 // Bird guidance — tells player where to go next
                 if showGuidance {
-                    VStack {
-                        Spacer()
-                        HStack(alignment: .top, spacing: 10) {
-                            BirdCharacter(isSitting: true)
-                                .frame(width: 44, height: 44)
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text(guidanceMessage)
-                                    .font(.custom("Cinzel-Bold", size: 14))
-                                    .foregroundStyle(RenaissanceColors.sepiaInk)
-                                    .fixedSize(horizontal: false, vertical: true)
-                                if let vm = viewModel, let bid = vm.activeBuildingId {
-                                    let progress = vm.cardProgress(for: bid)
-                                    Text("\(progress.completed)/\(progress.total) cards collected")
-                                        .font(RenaissanceFont.caption)
-                                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
-                                }
-                                if let dest = guidanceDestination, onNavigate != nil {
-                                    Button {
-                                        withAnimation(.easeOut(duration: 0.2)) { showGuidance = false }
-                                        onNavigate?(dest)
-                                    } label: {
-                                        HStack(spacing: 5) {
-                                            Image(systemName: dest == .workshop ? "hammer.fill" : "building.columns.fill")
-                                                .font(.system(size: 12))
-                                            Text("Go!")
-                                                .font(.custom("EBGaramond-SemiBold", size: 14))
-                                        }
-                                        .foregroundStyle(.white)
-                                        .padding(.horizontal, 14)
-                                        .padding(.vertical, 6)
-                                        .background(Capsule().fill(RenaissanceColors.renaissanceBlue))
-                                    }
-                                    .buttonStyle(.plain)
-                                }
-                            }
-                            Spacer()
-                            Button {
-                                withAnimation(.easeOut(duration: 0.3)) { showGuidance = false }
-                            } label: {
-                                Image(systemName: "xmark")
-                                    .font(.system(size: 12, weight: .bold))
-                                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
-                                    .padding(6)
-                            }
-                            .buttonStyle(.plain)
-                        }
-                        .padding(Spacing.md)
-                        .background(
-                            RoundedRectangle(cornerRadius: CornerRadius.lg)
-                                .fill(RenaissanceColors.parchment.opacity(0.95))
+                    BottomDialogPanel(bottomPadding: Spacing.xl) {
+                        BirdGuidanceContent(
+                            message: guidanceMessage,
+                            progressText: {
+                                guard let vm = viewModel, let bid = vm.activeBuildingId else { return nil }
+                                let p = vm.cardProgress(for: bid)
+                                return "\(p.completed)/\(p.total) cards collected"
+                            }(),
+                            onDismiss: { withAnimation { showGuidance = false } },
+                            destination: guidanceDestination,
+                            onNavigate: onNavigate
                         )
-                        .borderWorkshop()
-                        .padding(.horizontal, Spacing.lg)
-                        .padding(.bottom, Spacing.xl)
                     }
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
                     .zIndex(50)
                 }
             }
@@ -1635,8 +1602,8 @@ struct ForestMapView: View {
                     Text("Italian Forest")
                         .font(RenaissanceFont.dialogTitle)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 10)
+                        .padding(.horizontal, Spacing.lg)
+                        .padding(.vertical, Spacing.xs)
                         .glassButton(shape: Capsule())
                 }
             }
@@ -1712,93 +1679,7 @@ struct ForestMapView: View {
     // MARK: - Inventory Bar
 
     private var inventoryBar: some View {
-        HStack(spacing: 0) {
-            // Tools (ochre badges)
-            let ownedTools = Tool.allCases.filter { (workshop.tools[$0] ?? 0) > 0 }
-            if !ownedTools.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 6) {
-                        ForEach(ownedTools) { tool in
-                            ToolIconView(tool: tool, size: 56)
-                                .padding(.horizontal, 5)
-                                .padding(.vertical, 4)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 6)
-                                        .fill(RenaissanceColors.ochre.opacity(0.15))
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 6)
-                                                .strokeBorder(RenaissanceColors.ochre.opacity(0.4), lineWidth: 1)
-                                        )
-                                )
-                        }
-                    }
-                }
-
-                Divider()
-                    .frame(height: 30)
-                    .padding(.horizontal, 6)
-            }
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    ForEach(Material.allCases) { material in
-                        let count = workshop.rawMaterials[material] ?? 0
-                        if count > 0 {
-                            HStack(spacing: 3) {
-                                Text(material.icon)
-                                    .font(.caption)
-                                Text("\(count)")
-                                    .font(.custom("EBGaramond-Regular", size: 12))
-                                    .foregroundStyle(RenaissanceColors.sepiaInk)
-                            }
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 4)
-                            .background(
-                                RoundedRectangle(cornerRadius: 6)
-                                    .fill(RenaissanceColors.parchment.opacity(0.8))
-                            )
-                        }
-                    }
-                }
-            }
-
-            Divider()
-                .frame(height: 30)
-                .padding(.horizontal, Spacing.xs)
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    ForEach(CraftedItem.allCases) { item in
-                        let count = workshop.craftedMaterials[item] ?? 0
-                        if count > 0 {
-                            HStack(spacing: 3) {
-                                Text(item.icon)
-                                    .font(.caption)
-                                Text("\(count)")
-                                    .font(.custom("EBGaramond-Regular", size: 12))
-                                    .foregroundStyle(RenaissanceColors.sageGreen)
-                            }
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 4)
-                            .background(
-                                RoundedRectangle(cornerRadius: 6)
-                                    .fill(RenaissanceColors.goldSuccess.opacity(0.1))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 6)
-                                            .strokeBorder(RenaissanceColors.goldSuccess.opacity(0.4), lineWidth: 1)
-                                    )
-                            )
-                        }
-                    }
-                }
-            }
-        }
-        .padding(.horizontal, Spacing.sm)
-        .padding(.vertical, Spacing.xs)
-        .background(
-            RoundedRectangle(cornerRadius: CornerRadius.md)
-                .fill(RenaissanceColors.parchment.opacity(0.92))
-        )
+        InventoryBarView(workshop: workshop)
     }
 
     // MARK: - Scene Setup

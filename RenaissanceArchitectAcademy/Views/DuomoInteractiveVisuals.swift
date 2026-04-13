@@ -812,51 +812,59 @@ private struct BrickFiringVisual: View {
                           "900°C + oxygen → warm red",
                           "1,000°C restricted oxygen → dark brown"]
 
+    private var brickSize: CGFloat { max(60, height * 0.18) }
+    private var brickHeight: CGFloat { brickSize * 0.7 }
+
     var body: some View {
         TeachingContainer(title: visual.title, color: color, totalSteps: 3, step: $step,
                           stepLabel: labels[step - 1], height: height) {
-            VStack(spacing: 12) {
-                HStack(spacing: 20) {
+            VStack(spacing: height * 0.04) {
+                Spacer()
+
+                // Temperature label
+                if step >= 1 {
+                    Text("Fe₂O₃")
+                        .font(.custom("EBGaramond-Bold", size: 20))
+                        .foregroundStyle(brickRed.opacity(0.7))
+                }
+
+                HStack(spacing: height * 0.06) {
                     // Red brick
-                    VStack(spacing: 4) {
-                        RoundedRectangle(cornerRadius: 4)
+                    VStack(spacing: 6) {
+                        RoundedRectangle(cornerRadius: 6)
                             .fill(brickRed.opacity(step >= 2 ? 0.8 : 0.2))
-                            .frame(width: 60, height: 40)
+                            .frame(width: brickSize, height: brickHeight)
                             .overlay(
-                                RoundedRectangle(cornerRadius: 4)
+                                RoundedRectangle(cornerRadius: 6)
                                     .strokeBorder(sepiaInk.opacity(0.3), lineWidth: 1)
                             )
                         Text("900°C + O₂")
                             .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(step >= 2 ? dimColor : dimColor.opacity(0.3))
                         Text("Red")
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(.custom("Cinzel-Bold", size: 18))
                             .foregroundStyle(step >= 2 ? brickRed : brickRed.opacity(0.3))
                     }
 
                     // Dark brick
-                    VStack(spacing: 4) {
-                        RoundedRectangle(cornerRadius: 4)
+                    VStack(spacing: 6) {
+                        RoundedRectangle(cornerRadius: 6)
                             .fill(Color(red: 0.4, green: 0.28, blue: 0.2).opacity(step >= 3 ? 0.8 : 0.2))
-                            .frame(width: 60, height: 40)
+                            .frame(width: brickSize, height: brickHeight)
                             .overlay(
-                                RoundedRectangle(cornerRadius: 4)
+                                RoundedRectangle(cornerRadius: 6)
                                     .strokeBorder(sepiaInk.opacity(0.3), lineWidth: 1)
                             )
                         Text("1000°C − O₂")
                             .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(step >= 3 ? dimColor : dimColor.opacity(0.3))
                         Text("Brown")
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(.custom("Cinzel-Bold", size: 18))
                             .foregroundStyle(step >= 3 ? Color(red: 0.4, green: 0.28, blue: 0.2) : Color.gray.opacity(0.3))
                     }
                 }
 
-                if step >= 1 {
-                    Text("Fe₂O₃")
-                        .font(.custom("EBGaramond-Bold", size: 16))
-                        .foregroundStyle(brickRed.opacity(0.7))
-                }
+                Spacer()
             }
         }
     }

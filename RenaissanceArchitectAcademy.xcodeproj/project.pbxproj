@@ -169,6 +169,13 @@
 		0FC /* AqueductInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FC /* AqueductInteractiveVisuals.swift */; };
 		0FD /* NPCDialogueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD /* NPCDialogueView.swift */; };
 		0FE /* NPCEncounterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE /* NPCEncounterManager.swift */; };
+		3C0 /* BottomDialogPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0 /* BottomDialogPanel.swift */; };
+		3C1 /* BirdGuidanceContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1 /* BirdGuidanceContent.swift */; };
+		3C2 /* SceneTransitionOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2 /* SceneTransitionOverlay.swift */; };
+		3C3 /* InventoryBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3 /* InventoryBarView.swift */; };
+		3C4 /* SceneEditorButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4 /* SceneEditorButtons.swift */; };
+		3C5 /* HistoricalNPCContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5 /* HistoricalNPCContent.swift */; };
+		3C6 /* FurnaceFireView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6 /* FurnaceFireView.swift */; };
 		2A0 /* VisualEditorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0 /* VisualEditorState.swift */; };
 		2A1 /* EditableModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1 /* EditableModifier.swift */; };
 		2A2 /* EditorBottomPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A2 /* EditorBottomPanel.swift */; };
@@ -411,6 +418,13 @@
 		1FC /* AqueductInteractiveVisuals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AqueductInteractiveVisuals.swift; path = RenaissanceArchitectAcademy/Views/AqueductInteractiveVisuals.swift; sourceTree = SOURCE_ROOT; };
 		1FD /* NPCDialogueView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NPCDialogueView.swift; sourceTree = "<group>"; };
 		1FE /* NPCEncounterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NPCEncounterManager.swift; sourceTree = "<group>"; };
+		2C0 /* BottomDialogPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomDialogPanel.swift; sourceTree = "<group>"; };
+		2C1 /* BirdGuidanceContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdGuidanceContent.swift; sourceTree = "<group>"; };
+		2C2 /* SceneTransitionOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneTransitionOverlay.swift; sourceTree = "<group>"; };
+		2C3 /* InventoryBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryBarView.swift; sourceTree = "<group>"; };
+		2C4 /* SceneEditorButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneEditorButtons.swift; sourceTree = "<group>"; };
+		2C5 /* HistoricalNPCContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalNPCContent.swift; sourceTree = "<group>"; };
+		2C6 /* FurnaceFireView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FurnaceFireView.swift; sourceTree = "<group>"; };
 		3A0 /* VisualEditorState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEditorState.swift; sourceTree = "<group>"; };
 		3A1 /* EditableModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableModifier.swift; sourceTree = "<group>"; };
 		3A2 /* EditorBottomPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorBottomPanel.swift; sourceTree = "<group>"; };
@@ -628,6 +642,12 @@
 				1E9 /* DiscoveryCardOverlay.swift */,
 				1EB /* CardVisualView.swift */,
 				1FD /* NPCDialogueView.swift */,
+				2C0 /* BottomDialogPanel.swift */,
+				2C1 /* BirdGuidanceContent.swift */,
+				2C2 /* SceneTransitionOverlay.swift */,
+				2C3 /* InventoryBarView.swift */,
+				2C4 /* SceneEditorButtons.swift */,
+				2C6 /* FurnaceFireView.swift */,
 				3A1 /* EditableModifier.swift */,
 				3A2 /* EditorBottomPanel.swift */,
 				308 /* Sketching */,
@@ -678,6 +698,7 @@
 				177 /* ScienceCardContent.swift */,
 				172 /* LessonRecord.swift */,
 				178 /* ConstructionPhase.swift */,
+				2C5 /* HistoricalNPCContent.swift */,
 				180 /* KnowledgeCard.swift */,
 				196 /* Tool.swift */,
 				197 /* ToolRecipe.swift */,
@@ -1032,6 +1053,13 @@
 				0FB /* GameTools.swift in Sources */,
 				0FD /* NPCDialogueView.swift in Sources */,
 				0FE /* NPCEncounterManager.swift in Sources */,
+				3C0 /* BottomDialogPanel.swift in Sources */,
+				3C1 /* BirdGuidanceContent.swift in Sources */,
+				3C2 /* SceneTransitionOverlay.swift in Sources */,
+				3C3 /* InventoryBarView.swift in Sources */,
+				3C4 /* SceneEditorButtons.swift in Sources */,
+				3C5 /* HistoricalNPCContent.swift in Sources */,
+				3C6 /* FurnaceFireView.swift in Sources */,
 				016 /* BloomEffectView.swift in Sources */,
 				544299A72F369AB700F92073 /* MascotDialogueView.swift in Sources */,
 				544299A82F369AB700F92073 /* MaterialPuzzleView.swift in Sources */,

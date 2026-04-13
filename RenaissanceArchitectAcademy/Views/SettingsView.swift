@@ -81,6 +81,33 @@ struct SettingsView: View {
                 Divider()
                     .overlay(RenaissanceColors.warmBrown.opacity(0.3))
 
+                // Language
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Language")
+                        .font(.custom("Cinzel-Bold", size: 16))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+
+                    HStack(spacing: 6) {
+                        Image(systemName: "globe")
+                            .font(.caption)
+                            .foregroundStyle(RenaissanceColors.warmBrown)
+                        Picker("Language", selection: $settings.preferredLanguage) {
+                            ForEach(AppLanguage.allCases, id: \.rawValue) { lang in
+                                Text(lang.rawValue).tag(lang)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .tint(RenaissanceColors.ochre)
+                    }
+
+                    Text("Controls AI-generated content (NPC dialogue, bird chat)")
+                        .font(.custom("EBGaramond-Regular", size: 12))
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                }
+
+                Divider()
+                    .overlay(RenaissanceColors.warmBrown.opacity(0.3))
+
                 // Volume sliders
                 VStack(alignment: .leading, spacing: 14) {
                     Text("Audio")

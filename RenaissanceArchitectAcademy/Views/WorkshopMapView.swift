@@ -38,7 +38,7 @@ struct WorkshopMapView: View {
     @State private var showHintBubble = false
     @State private var showCollectionOverlay = false
     @State private var showWorkbenchOverlay = false
-    @State private var showFurnaceOverlay = false
+    // furnace overlay removed — furnace is in CraftingRoomMapView only
 
     // Knowledge cards at workshop stations
     @State private var showStationKnowledgeCards = false
@@ -98,7 +98,7 @@ struct WorkshopMapView: View {
             ZStack {
                 // Layer 1: SpriteKit scene (wait for ODR on iOS)
                 if assetManager.isReady(AssetManager.workshopScene) {
-                    let hasModalOverlay = showDiscoveryCard || showNPCEncounter || showStationKnowledgeCards || showStationLesson || showQuickCollectChoice
+                    let hasModalOverlay = showDiscoveryCard || showStationKnowledgeCards || showStationLesson || showQuickCollectChoice
                     GameSpriteView(scene: makeScene(), options: [.allowsTransparency])
                         .ignoresSafeArea()
                         .allowsHitTesting(!hasModalOverlay)
@@ -152,7 +152,17 @@ struct WorkshopMapView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(Spacing.md)
-                .allowsHitTesting(!(showDiscoveryCard || showNPCEncounter || showStationKnowledgeCards || showStationLesson))
+                .allowsHitTesting(!(showDiscoveryCard || showStationKnowledgeCards || showStationLesson))
+
+                #if DEBUG
+                SceneEditorButtons(
+                    isActive: sceneHolder.scene?.isEditorActive == true,
+                    onToggle: { sceneHolder.scene?.toggleEditorMode() },
+                    onRotateLeft: { sceneHolder.scene?.editorRotateLeft() },
+                    onRotateRight: { sceneHolder.scene?.editorRotateRight() },
+                    onNudge: { dx, dy in sceneHolder.scene?.editorNudge(dx: dx, dy: dy) }
+                )
+                #endif
 
                 // Status message overlay
                 if let status = workshop.statusMessage {
@@ -172,92 +182,41 @@ struct WorkshopMapView: View {
                     .allowsHitTesting(false)
                 }
 
-                // Bird guidance — tells player where to go next
-                if showArrivalGuidance {
-                    VStack {
-                        Spacer()
-                        HStack(alignment: .top, spacing: 10) {
-                            BirdCharacter(isSitting: true)
-                                .frame(width: 44, height: 44)
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text(guidanceMessage)
-                                    .font(.custom("Cinzel-Bold", size: 14))
-                                    .foregroundStyle(RenaissanceColors.sepiaInk)
-                                    .fixedSize(horizontal: false, vertical: true)
-                                if let vm = viewModel, let bid = vm.activeBuildingId {
-                                    let progress = vm.cardProgress(for: bid)
-                                    Text("\(progress.completed)/\(progress.total) cards collected")
-                                        .font(RenaissanceFont.caption)
-                                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
-                                }
-
-                                HStack(spacing: 8) {
-                                    // "Go to Station" button — walks player to the suggested station
-                                    if let station = guidanceStationType {
-                                        Button {
-                                            withAnimation(.easeOut(duration: 0.2)) { showArrivalGuidance = false }
-                                            sceneHolder.scene?.walkToStation(station)
-                                        } label: {
-                                            HStack(spacing: 5) {
-                                                Image(systemName: "figure.walk")
-                                                    .font(.system(size: 12))
-                                                Text("Go!")
-                                                    .font(.custom("EBGaramond-SemiBold", size: 14))
-                                            }
-                                            .foregroundStyle(.white)
-                                            .padding(.horizontal, 14)
-                                            .padding(.vertical, 6)
-                                            .background(Capsule().fill(RenaissanceColors.warmBrown))
-                                        }
-                                        .buttonStyle(.plain)
-                                    }
-
-                                    // "Go!" button if guidance points to another environment
-                                    if let dest = guidanceDestination, onNavigate != nil {
-                                        Button {
-                                            withAnimation(.easeOut(duration: 0.2)) { showArrivalGuidance = false }
-                                            onNavigate?(dest)
-                                        } label: {
-                                            HStack(spacing: 5) {
-                                                Image(systemName: dest == .forest ? "tree.fill" : dest == .cityMap ? "building.columns.fill" : "hammer.fill")
-                                                    .font(.system(size: 12))
-                                                Text("Go!")
-                                                    .font(.custom("EBGaramond-SemiBold", size: 14))
-                                            }
-                                            .foregroundStyle(.white)
-                                            .padding(.horizontal, 14)
-                                            .padding(.vertical, 6)
-                                            .background(Capsule().fill(RenaissanceColors.renaissanceBlue))
-                                        }
-                                        .buttonStyle(.plain)
-                                    }
-                                }
-                            }
-                            Spacer()
-                            Button {
-                                withAnimation(.easeOut(duration: 0.3)) { showArrivalGuidance = false }
-                            } label: {
-                                Image(systemName: "xmark")
-                                    .font(.system(size: 12, weight: .bold))
-                                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
-                                    .padding(6)
-                            }
-                            .buttonStyle(.plain)
+                // Unified bottom dialog — bird guidance OR NPC encounter
+                if showArrivalGuidance || showNPCEncounter {
+                    ZStack {
+                        // Light dimming when NPC is showing (scene stays visible)
+                        if showNPCEncounter {
+                            Color.black.opacity(0.15)
+                                .ignoresSafeArea()
+                                .allowsHitTesting(false)
+                                .transition(.opacity)
                         }
-                        .padding(Spacing.md)
-                        .background(
-                            RoundedRectangle(cornerRadius: CornerRadius.md)
-                                .fill(RenaissanceColors.parchment.opacity(0.95))
-                                .shadow(color: .black.opacity(0.1), radius: 6, y: 2)
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: CornerRadius.md)
-                                .stroke(RenaissanceColors.renaissanceBlue.opacity(0.2), lineWidth: 1)
-                        )
-                        .padding(.horizontal, Spacing.lg)
-                        .padding(.bottom, 90) // above inventory bar
+
+                        BottomDialogPanel {
+                            if showNPCEncounter, let npc = npcDisplayData {
+                                NPCDialogContent(
+                                    npc: npc,
+                                    portrait: npcPortrait,
+                                    stationName: activeStation?.rawValue ?? "Workshop",
+                                    onDismiss: { dismissNPCFromPanel() }
+                                )
+                                .transition(.opacity)
+                            } else {
+                                BirdGuidanceContent(
+                                    message: guidanceMessage,
+                                    progressText: cardProgressText,
+                                    onDismiss: { withAnimation { showArrivalGuidance = false } },
+                                    stationType: guidanceStationType,
+                                    onWalkToStation: { station in sceneHolder.scene?.walkToStation(station) },
+                                    destination: guidanceDestination,
+                                    onNavigate: onNavigate
+                                )
+                                .transition(.opacity)
+                            }
+                        }
                     }
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .animation(.easeInOut(duration: 0.3), value: showNPCEncounter)
                 }
 
                 // (dialog is now inside GameTopBarView's avatar card)
@@ -269,10 +228,6 @@ struct WorkshopMapView: View {
                 }
 
                 // Layer 7: Furnace overlay (temperature + fire)
-                if showFurnaceOverlay {
-                    furnaceOverlay
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
-                }
 
                 // Layer 8: Knowledge cards at workshop stations
                 if showStationKnowledgeCards, !stationKnowledgeCards.isEmpty, let vm = viewModel, let bid = vm.activeBuildingId {
@@ -343,33 +298,6 @@ struct WorkshopMapView: View {
                         },
                         playerName: onboardingState?.apprenticeName ?? "Apprentice"
                     )
-                    .transition(.opacity)
-                }
-
-                // Layer 8c: NPC encounter (Foundation Models — iOS 26+)
-                if showNPCEncounter, let npc = npcDisplayData {
-                    NPCDialogueView(
-                        npc: npc,
-                        portrait: npcPortrait,
-                        stationName: activeStation?.rawValue ?? "Workshop"
-                    ) {
-                        withAnimation(.spring(response: 0.3)) {
-                            showNPCEncounter = false
-                            npcDisplayData = nil
-                            npcPortrait = nil
-                        }
-                        // After NPC: proceed to knowledge card or station overlay
-                        if let station = activeStation {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-                                if hasKnowledgeCard(at: station) {
-                                    pendingStationAfterCard = station
-                                    showKnowledgeCardForStation(station)
-                                } else {
-                                    showSingleStationOverlay()
-                                }
-                            }
-                        }
-                    }
                     .transition(.opacity)
                 }
 
@@ -634,8 +562,7 @@ struct WorkshopMapView: View {
                    !showHintBubble,
                    !showQuickCollectChoice,
                    !showWorkbenchOverlay,
-                   !showFurnaceOverlay,
-                   !workshop.showEducationalPopup,
+                                      !workshop.showEducationalPopup,
                    !workshop.showJobBoard,
                    !workshop.showJobComplete {
                     jobProgressCard(job: job)
@@ -649,8 +576,7 @@ struct WorkshopMapView: View {
                    !showHintBubble,
                    !showQuickCollectChoice,
                    !showWorkbenchOverlay,
-                   !showFurnaceOverlay,
-                   !workshop.showEducationalPopup,
+                                      !workshop.showEducationalPopup,
                    !workshop.showJobBoard,
                    !workshop.showJobComplete {
                     masterTaskCard(assignment: assignment)
@@ -804,7 +730,7 @@ struct WorkshopMapView: View {
         // Don't show if another overlay is active (unless force-refreshing after tool purchase)
         if !forceRefresh {
             guard !showCollectionOverlay && !showHintBubble && !showWorkbenchOverlay
-                    && !showFurnaceOverlay && !showStationKnowledgeCards
+                    && !showStationKnowledgeCards
                     && !showQuickCollectChoice else { return }
         }
 
@@ -1184,7 +1110,6 @@ struct WorkshopMapView: View {
         showHintBubble = false
         showCollectionOverlay = false
         showWorkbenchOverlay = false
-        showFurnaceOverlay = false
         showStationLesson = false
         showQuickCollectChoice = false
         quickCollectSelectedMaterial = nil
@@ -1501,7 +1426,7 @@ struct WorkshopMapView: View {
                         .font(RenaissanceFont.dialogTitle)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .padding(.horizontal, Spacing.lg)
-                        .padding(.vertical, 10)
+                        .padding(.vertical, Spacing.xs)
                         .glassButton(shape: Capsule())
                 }
             }
@@ -1509,126 +1434,7 @@ struct WorkshopMapView: View {
     }
 
     private var inventoryBar: some View {
-        HStack(spacing: 0) {
-            // Tools (ochre badges)
-            let ownedTools = Tool.allCases.filter { (workshop.tools[$0] ?? 0) > 0 }
-            if !ownedTools.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 6) {
-                        ForEach(ownedTools) { tool in
-                            ToolIconView(tool: tool, size: 56)
-                                .padding(.horizontal, 5)
-                                .padding(.vertical, Spacing.xxs)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 6)
-                                        .fill(RenaissanceColors.ochre.opacity(0.15))
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 6)
-                                                .strokeBorder(RenaissanceColors.ochre.opacity(0.4), lineWidth: 1)
-                                        )
-                                )
-                        }
-                    }
-                }
-
-                Divider()
-                    .frame(height: 30)
-                    .padding(.horizontal, 6)
-            }
-
-            // Raw materials (compact)
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    ForEach(Material.allCases) { material in
-                        let count = workshop.rawMaterials[material] ?? 0
-                        if count > 0 {
-                            HStack(spacing: 3) {
-                                MaterialIconView(material: material, size: 20)
-                                Text("\(count)")
-                                    .font(.custom("EBGaramond-Regular", size: 12))
-                                    .foregroundStyle(settings.cardTextColor)
-                            }
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, Spacing.xxs)
-                            .background(
-                                RoundedRectangle(cornerRadius: 6)
-                                    .fill(settings.itemBadgeBackground)
-                            )
-                        }
-                    }
-                }
-            }
-
-            Divider()
-                .frame(height: 30)
-                .padding(.horizontal, Spacing.xs)
-
-            // Crafted items
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    ForEach(CraftedItem.allCases) { item in
-                        let count = workshop.craftedMaterials[item] ?? 0
-                        if count > 0 {
-                            HStack(spacing: 3) {
-                                Text(item.icon)
-                                    .font(.caption)
-                                Text("\(count)")
-                                    .font(.custom("EBGaramond-Regular", size: 12))
-                                    .foregroundStyle(RenaissanceColors.sageGreen)
-                            }
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, Spacing.xxs)
-                            .background(
-                                RoundedRectangle(cornerRadius: 6)
-                                    .fill(RenaissanceColors.goldSuccess.opacity(0.1))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 6)
-                                            .strokeBorder(RenaissanceColors.goldSuccess.opacity(0.4), lineWidth: 1)
-                                    )
-                            )
-                        }
-                    }
-                }
-            }
-        }
-        .padding(.horizontal, Spacing.sm)
-        .padding(.vertical, Spacing.xs)
-        .background(
-            ZStack {
-                // Wood plank texture — warm brown gradient with grain lines
-                RoundedRectangle(cornerRadius: CornerRadius.md)
-                    .fill(
-                        settings.isDarkMode
-                            ? Color(red: 0.18, green: 0.16, blue: 0.13).opacity(0.65)
-                            : Color(red: 0.58, green: 0.44, blue: 0.30).opacity(0.25)
-                    )
-
-                // Subtle horizontal grain lines
-                VStack(spacing: 0) {
-                    ForEach(0..<3, id: \.self) { _ in
-                        Spacer()
-                        Rectangle()
-                            .fill(
-                                settings.isDarkMode
-                                    ? RenaissanceColors.ochre.opacity(0.08)
-                                    : RenaissanceColors.warmBrown.opacity(0.08)
-                            )
-                            .frame(height: 0.5)
-                    }
-                    Spacer()
-                }
-                .clipShape(RoundedRectangle(cornerRadius: CornerRadius.md))
-            }
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: CornerRadius.md)
-                .strokeBorder(
-                    settings.isDarkMode
-                        ? RenaissanceColors.ochre.opacity(0.2)
-                        : RenaissanceColors.warmBrown.opacity(0.2),
-                    lineWidth: 1
-                )
-        )
+        InventoryBarView(workshop: workshop)
     }
 
     // MARK: - Layer 4: Hint Bubble
@@ -2308,121 +2114,6 @@ struct WorkshopMapView: View {
         }
     }
 
-    // MARK: - Layer 7: Furnace Overlay
-
-    private let furnaceOrange = RenaissanceColors.furnaceOrange
-
-    private var furnaceOverlay: some View {
-        VStack {
-            Spacer()
-
-            VStack(spacing: 14) {
-                Text("Furnace")
-                    .font(.custom("EBGaramond-SemiBold", size: 20))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
-
-                // Furnace contents
-                ZStack {
-                    RoundedRectangle(cornerRadius: CornerRadius.md)
-                        .fill(RenaissanceColors.terracotta.opacity(0.3))
-                        .frame(height: 80)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: CornerRadius.md)
-                                .strokeBorder(RenaissanceColors.terracotta, lineWidth: 2)
-                        )
-
-                    if workshop.isProcessing {
-                        RoundedRectangle(cornerRadius: CornerRadius.md)
-                            .fill(furnaceOrange.opacity(0.25))
-                            .frame(height: 80)
-                            .blur(radius: 8)
-                    }
-
-                    if let input = workshop.furnaceInput {
-                        VStack(spacing: 4) {
-                            HStack(spacing: 4) {
-                                ForEach(Array(input.keys.sorted(by: { $0.rawValue < $1.rawValue })), id: \.self) { material in
-                                    HStack(spacing: 2) {
-                                        MaterialIconView(material: material, size: 16)
-                                        Text("×\(input[material]!)")
-                                            .font(RenaissanceFont.caption)
-                                    }
-                                }
-                            }
-                            if let recipe = workshop.currentRecipe {
-                                Text("→ \(recipe.output.icon) \(recipe.output.rawValue)")
-                                    .font(RenaissanceFont.caption)
-                                    .foregroundStyle(RenaissanceColors.sepiaInk)
-                            }
-                        }
-                    } else {
-                        Text("Mix ingredients at the Workbench first")
-                            .font(RenaissanceFont.dialogSubtitle)
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
-                    }
-                }
-
-                // Temperature picker
-                VStack(spacing: 4) {
-                    Text("Temperature")
-                        .font(RenaissanceFont.caption)
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
-
-                    Picker("Temperature", selection: $workshop.furnaceTemperature) {
-                        ForEach(Recipe.Temperature.allCases, id: \.self) { temp in
-                            Text(temp.rawValue).tag(temp)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                }
-
-                // Progress bar
-                if workshop.isProcessing {
-                    ProgressView(value: workshop.processProgress)
-                        .tint(furnaceOrange)
-                }
-
-                // Buttons
-                HStack(spacing: 16) {
-                    Button {
-                        fireFurnace()
-                    } label: {
-                        Text("FIRE!")
-                            .font(RenaissanceFont.button)
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, Spacing.xxl)
-                            .padding(.vertical, 10)
-                            .background(
-                                RoundedRectangle(cornerRadius: CornerRadius.sm)
-                                    .fill(workshop.furnaceInput != nil && !workshop.isProcessing
-                                          ? furnaceOrange
-                                          : RenaissanceColors.stoneGray.opacity(0.4))
-                            )
-                    }
-                    .disabled(workshop.furnaceInput == nil || workshop.isProcessing)
-
-                    Spacer()
-
-                    Button("Close") {
-                        withAnimation(.spring(response: 0.3)) {
-                            showFurnaceOverlay = false
-                            activeStation = nil
-                        }
-                    }
-                    .font(RenaissanceFont.bodySmall)
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
-                }
-            }
-            .padding(Spacing.lg)
-            .background(
-                RoundedRectangle(cornerRadius: CornerRadius.lg)
-                    .fill(RenaissanceColors.parchment.opacity(0.95))
-            )
-            .padding(.horizontal, Spacing.xl)
-            .padding(.bottom, 60)
-        }
-    }
-
     // MARK: - Educational Overlay
 
     private var educationalOverlay: some View {
@@ -3007,44 +2698,31 @@ struct WorkshopMapView: View {
 
     // MARK: - Actions
 
-    private func fireFurnace() {
-        workshop.startProcessing()
-        guard workshop.isProcessing,
-              let recipe = workshop.currentRecipe else { return }
+    // MARK: - Bottom Dialog Helpers
 
-        withAnimation(.linear(duration: recipe.processingTime)) {
-            workshop.processProgress = 1.0
+    /// Card progress text for the bird guidance panel (e.g. "3/14 cards collected")
+    private var cardProgressText: String? {
+        guard let vm = viewModel, let bid = vm.activeBuildingId else { return nil }
+        let progress = vm.cardProgress(for: bid)
+        return "\(progress.completed)/\(progress.total) cards collected"
+    }
+
+    /// Dismiss NPC from the unified bottom panel and proceed to card or station overlay.
+    private func dismissNPCFromPanel() {
+        withAnimation(.easeOut(duration: 0.2)) {
+            showNPCEncounter = false
+            npcDisplayData = nil
+            npcPortrait = nil
         }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + recipe.processingTime) {
-            let craftedItem = recipe.output
-            workshop.completeProcessing()
-
-            // Award crafting florins
-            viewModel?.earnFlorins(GameRewards.craftCompleteFlorins)
-            var bonusText = ""
-
-            // Check master assignment
-            if workshop.checkAssignmentCompletion(craftedItem: craftedItem) {
-                viewModel?.earnFlorins(GameRewards.masterAssignmentFlorins)
-                bonusText = "\n\nMaster's Task complete! +\(GameRewards.masterAssignmentFlorins) bonus florins!"
-                workshop.generateNewAssignment()
-            }
-
-            // Check Bottega job completion for craft-required jobs
-            if workshop.currentJob != nil && workshop.checkJobCompletion(craftedItem: craftedItem) {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    self.completeCurrentJob()
+        // After NPC: proceed to knowledge card or station overlay
+        if let station = activeStation {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                if hasKnowledgeCard(at: station) {
+                    pendingStationAfterCard = station
+                    showKnowledgeCardForStation(station)
+                } else {
+                    showSingleStationOverlay()
                 }
-            }
-
-            // Append reward info to educational popup
-            workshop.educationalText += "\n\n+\(GameRewards.craftCompleteFlorins) florins earned!" + bonusText
-
-            // Close furnace after educational popup
-            withAnimation(.spring(response: 0.3)) {
-                showFurnaceOverlay = false
-                activeStation = nil
             }
         }
     }

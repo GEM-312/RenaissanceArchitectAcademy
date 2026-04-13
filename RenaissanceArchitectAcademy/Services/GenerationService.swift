@@ -243,31 +243,53 @@ class GenerationService: ObservableObject {
     // MARK: - Convenience: NPC Generation
 
     /// Generate a Renaissance NPC for a specific station and building context.
+    /// Uses HistoricalFigureMapping to ground the NPC in a real historical person.
     func generateNPC(
         stationType: String,
         buildingName: String,
         sciences: [String]
     ) async throws -> RenaissanceNPC {
         let contextId = "npc_\(stationType)_\(buildingName)"
+        let languageInstruction = GameSettings.shared.preferredLanguage.aiInstruction
+
+        // Inject real historical figure if available
+        let figureContext: String
+        if let figure = HistoricalFigureMapping.figure(for: buildingName) {
+            figureContext = """
+                IMPORTANT: This NPC must be the real historical figure \(figure.name), \
+                who was a \(figure.italianTitle) during \(figure.era). \
+                Personality: \(figure.persona) \
+                Use their REAL name and REAL title. Do NOT invent a fictional character.
+                """
+        } else {
+            figureContext = "Create a historically plausible character for this era."
+        }
+
         let instructions = """
-            You are a creative writer for an educational game about Renaissance architecture. \
-            Generate historically accurate Italian Renaissance characters who work in specific \
-            trades. Characters should be warm, knowledgeable, and passionate about their craft. \
-            Use real historical details from 1400-1550 Italy. \
-            IMPORTANT: Write ALL text in English. The character has an Italian name and \
-            Italian trade title, but their greeting, historical fact, and science tip must \
-            be in English. They may use occasional Italian words naturally (like "Buongiorno!" \
-            or "Bene!") but the sentences must be in English so students can understand. \
+            You are a creative writer for an educational game about Renaissance and Roman architecture. \
+            Generate historically accurate characters who are passionate about their craft. \
+            Use real historical details. \
+            Language: \(languageInstruction) \
+            \(figureContext) \
             The building being constructed is: \(buildingName). \
-            Sciences involved: \(sciences.joined(separator: ", ")).
+            Sciences involved: \(sciences.joined(separator: ", ")). \
+            The player is visiting the \(stationType) station to collect materials.
             """
 
-        let prompt = """
-            Create a Renaissance \(stationType) worker who helps build the \(buildingName). \
-            They should know about \(sciences.joined(separator: " and ")). \
-            Make them feel like a real person from 1485 Florence. \
-            Write the greeting, historical fact, and science tip in English.
-            """
+        let prompt: String
+        if let figure = HistoricalFigureMapping.figure(for: buildingName) {
+            prompt = """
+                Generate dialogue for \(figure.name) (\(figure.italianTitle), \(figure.era)) \
+                at the \(stationType) while helping build the \(buildingName). \
+                They should explain how \(sciences.joined(separator: " and ")) relate to \
+                collecting materials at this station. Stay in character.
+                """
+        } else {
+            prompt = """
+                Create a worker at the \(stationType) who helps build the \(buildingName). \
+                They should know about \(sciences.joined(separator: " and ")).
+                """
+        }
 
         return try await generate(
             RenaissanceNPC.self,

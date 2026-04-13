@@ -31,37 +31,32 @@ struct WorkshopView: View {
                     notebookState: notebookState,
                     onNavigate: onNavigate,
                     onBackToMenu: onBackToMenu,
-                    onEnterInterior: {
-                        withAnimation(.easeInOut(duration: 0.4)) {
-                            activeInterior = .craftingRoom
-                        }
-                    },
-                    onEnterGoldsmith: {
-                        withAnimation(.easeInOut(duration: 0.4)) {
-                            activeInterior = .goldsmith
-                        }
-                    },
+                    onEnterInterior: { transitionTo(.craftingRoom) },
+                    onEnterGoldsmith: { transitionTo(.goldsmith) },
                     onboardingState: onboardingState,
                     returnToLessonPlotId: $returnToLessonPlotId
                 )
-                .transition(.move(edge: .leading))
+                .transition(.blurReplace)
 
             case .craftingRoom:
                 CraftingRoomMapView(workshop: workshop, viewModel: viewModel, onNavigate: onNavigate, onBackToMenu: onBackToMenu, onboardingState: onboardingState, returnToLessonPlotId: $returnToLessonPlotId, notebookState: notebookState) {
-                    withAnimation(.easeInOut(duration: 0.4)) {
-                        activeInterior = .outdoor
-                    }
+                    transitionTo(.outdoor)
                 }
-                .transition(.move(edge: .trailing))
+                .transition(.blurReplace)
 
             case .goldsmith:
                 GoldsmithMapView(workshop: workshop, viewModel: viewModel, onNavigate: onNavigate, onBackToMenu: onBackToMenu, onboardingState: onboardingState, returnToLessonPlotId: $returnToLessonPlotId, notebookState: notebookState) {
-                    withAnimation(.easeInOut(duration: 0.4)) {
-                        activeInterior = .outdoor
-                    }
+                    transitionTo(.outdoor)
                 }
-                .transition(.move(edge: .trailing))
+                .transition(.blurReplace)
             }
+        }
+    }
+
+    private func transitionTo(_ interior: WorkshopInterior) {
+        SoundManager.shared.play(.sceneTransition)
+        withAnimation(.easeInOut(duration: 0.4)) {
+            activeInterior = interior
         }
     }
 }

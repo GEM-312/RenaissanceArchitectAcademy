@@ -64,6 +64,12 @@ class GoldsmithScene: SKScene, ScrollZoomable {
 
     #if DEBUG
     private lazy var editorMode = SceneEditorMode(scene: self)
+
+    func toggleEditorMode() { editorMode.toggle() }
+    var isEditorActive: Bool { editorMode.isActive }
+    func editorRotateLeft() { editorMode.rotateLeft() }
+    func editorRotateRight() { editorMode.rotateRight() }
+    func editorNudge(dx: CGFloat, dy: CGFloat) { editorMode.nudge(dx: dx, dy: dy) }
     #endif
 
     // Furniture positions in 3500x2500 coordinate space

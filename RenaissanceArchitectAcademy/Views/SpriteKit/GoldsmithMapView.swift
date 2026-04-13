@@ -46,6 +46,16 @@ struct GoldsmithMapView: View {
                     }
                 }
 
+                #if DEBUG
+                SceneEditorButtons(
+                    isActive: sceneHolder.scene?.isEditorActive == true,
+                    onToggle: { sceneHolder.scene?.toggleEditorMode() },
+                    onRotateLeft: { sceneHolder.scene?.editorRotateLeft() },
+                    onRotateRight: { sceneHolder.scene?.editorRotateRight() },
+                    onNudge: { dx, dy in sceneHolder.scene?.editorNudge(dx: dx, dy: dy) }
+                )
+                #endif
+
                 // Layer 3: Station info overlay
                 if let station = activeStation {
                     stationOverlay(for: station, in: geometry)
@@ -57,21 +67,14 @@ struct GoldsmithMapView: View {
                     HStack {
                         Button(action: onBack) {
                             HStack(spacing: 6) {
-                                Image(systemName: "arrow.left")
+                                Image(systemName: "chevron.left")
                                 Text("Back to Workshop")
                             }
                             .font(.custom("EBGaramond-Regular", size: 16))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(
-                                Capsule()
-                                    .fill(RenaissanceColors.parchment.opacity(0.92))
-                                    .overlay(
-                                        Capsule()
-                                            .stroke(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 1.5)
-                                    )
-                            )
+                            .padding(.horizontal, Spacing.md)
+                            .padding(.vertical, Spacing.xs)
+                            .glassButton(shape: Capsule())
                         }
                         .buttonStyle(.plain)
                         .padding(20)
@@ -156,7 +159,7 @@ struct GoldsmithMapView: View {
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(RenaissanceColors.parchment)
-                .shadow(color: .black.opacity(0.2), radius: 12, y: 4)
+                .shadow(color: .black.opacity(0.15), radius: 12, y: 6)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 16)

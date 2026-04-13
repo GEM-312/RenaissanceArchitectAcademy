@@ -17,7 +17,7 @@ struct DiscoveryCardOverlay: View {
     var body: some View {
         ZStack {
             // Dimmed background
-            Color.black.opacity(0.5)
+            RenaissanceColors.overlayDimming
                 .ignoresSafeArea()
                 .onTapGesture { onDismiss() }
 
@@ -121,7 +121,7 @@ struct DiscoveryCardOverlay: View {
                     RoundedRectangle(cornerRadius: 16)
                         .strokeBorder(card.color.opacity(0.4), lineWidth: 2)
                 )
-                .shadow(color: .black.opacity(0.2), radius: 12, y: 6)
+                .renaissanceShadow(.modal)
 
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 16) {
@@ -146,7 +146,7 @@ struct DiscoveryCardOverlay: View {
                         Text("DISCOVERY")
                             .font(.custom("Cinzel-Bold", size: 9))
                             .tracking(1.5)
-                            .foregroundStyle(.white)
+                            .foregroundStyle(RenaissanceColors.parchment)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
                             .background(card.color.opacity(0.8), in: Capsule())
@@ -168,7 +168,7 @@ struct DiscoveryCardOverlay: View {
                         // Fun fact callout
                         HStack(alignment: .top, spacing: 8) {
                             Image(systemName: "lightbulb.fill")
-                                .foregroundStyle(.yellow)
+                                .foregroundStyle(RenaissanceColors.ochre)
                                 .font(.system(size: 16))
 
                             Text(card.funFact)
@@ -225,10 +225,10 @@ struct DiscoveryCardOverlay: View {
                                     Text("Choose a Building")
                                         .font(.custom("Cinzel-Bold", size: 13))
                                 }
-                                .foregroundStyle(.white)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 10)
-                                .background(card.color, in: RoundedRectangle(cornerRadius: 10))
+                                .foregroundStyle(RenaissanceColors.parchment)
+                                .padding(.horizontal, Spacing.md)
+                                .padding(.vertical, Spacing.xs)
+                                .background(card.color, in: RoundedRectangle(cornerRadius: CornerRadius.sm))
                             }
 
                             // Continue exploring button
@@ -238,10 +238,10 @@ struct DiscoveryCardOverlay: View {
                                 Text("Keep Exploring")
                                     .font(.custom("EBGaramond-Regular", size: 14))
                                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 10)
+                                    .padding(.horizontal, Spacing.sm)
+                                    .padding(.vertical, Spacing.xs)
                                     .background(
-                                        RoundedRectangle(cornerRadius: 10)
+                                        RoundedRectangle(cornerRadius: CornerRadius.sm)
                                             .strokeBorder(RenaissanceColors.sepiaInk.opacity(0.2), lineWidth: 1)
                                     )
                             }

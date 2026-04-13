@@ -1,5 +1,24 @@
 import SwiftUI
 
+/// Language for AI-generated content (NPC dialogue, bird chat, commissions)
+enum AppLanguage: String, CaseIterable, Codable {
+    case english = "English"
+    // Future: case spanish = "Español"
+    // Future: case italian = "Italiano"
+    // Future: case french = "Français"
+
+    /// Instruction injected into Foundation Models prompts
+    var aiInstruction: String {
+        switch self {
+        case .english:
+            return "Respond entirely in English. You may use occasional Italian words naturally (like 'Buongiorno!') but sentences must be in English."
+        }
+    }
+
+    /// SF Symbol for the language picker
+    var icon: String { "globe" }
+}
+
 /// Light vs Dark visual theme for the game
 enum AppTheme: String, CaseIterable {
     case light
@@ -34,6 +53,12 @@ class GameSettings {
     }
 
     var hasChosenAIProvider: Bool = false {
+        didSet { save() }
+    }
+
+    // MARK: - Language
+
+    var preferredLanguage: AppLanguage = .english {
         didSet { save() }
     }
 
@@ -132,6 +157,7 @@ class GameSettings {
     private static let sfxVolumeKey = "gameSettings_sfxVolume"
     private static let aiProviderKey = "gameSettings_aiProvider"
     private static let aiChosenKey = "gameSettings_aiChosen"
+    private static let languageKey = "gameSettings_language"
 
     /// Shared instance — used by SpriteKit scenes that can't access SwiftUI Environment
     static let shared = GameSettings()
@@ -159,6 +185,10 @@ class GameSettings {
             preferredAIProvider = p
         }
         hasChosenAIProvider = UserDefaults.standard.bool(forKey: Self.aiChosenKey)
+        if let raw = UserDefaults.standard.string(forKey: Self.languageKey),
+           let lang = AppLanguage(rawValue: raw) {
+            preferredLanguage = lang
+        }
     }
 
     private func save() {
@@ -167,6 +197,7 @@ class GameSettings {
         UserDefaults.standard.set(sfxVolume, forKey: Self.sfxVolumeKey)
         UserDefaults.standard.set(preferredAIProvider.rawValue, forKey: Self.aiProviderKey)
         UserDefaults.standard.set(hasChosenAIProvider, forKey: Self.aiChosenKey)
+        UserDefaults.standard.set(preferredLanguage.rawValue, forKey: Self.languageKey)
     }
 }
 

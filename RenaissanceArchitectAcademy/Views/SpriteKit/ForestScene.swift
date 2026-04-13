@@ -36,6 +36,12 @@ class ForestScene: SKScene, ScrollZoomable {
 
     #if DEBUG
     private lazy var editorMode = SceneEditorMode(scene: self)
+
+    func toggleEditorMode() { editorMode.toggle() }
+    var isEditorActive: Bool { editorMode.isActive }
+    func editorRotateLeft() { editorMode.rotateLeft() }
+    func editorRotateRight() { editorMode.rotateRight() }
+    func editorNudge(dx: CGFloat, dy: CGFloat) { editorMode.nudge(dx: dx, dy: dy) }
     #endif
 
     /// Points of interest — Renaissance timber trees the player can tap to learn about

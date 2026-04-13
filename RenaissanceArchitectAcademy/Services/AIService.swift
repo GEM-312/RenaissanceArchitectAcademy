@@ -9,6 +9,7 @@ struct BirdContext {
     let cardLesson: String
     let playerName: String
     let masteryLevel: String
+    var preferredLanguage: AppLanguage = .english
 
     /// System prompt for this context — used by all AI providers
     var systemPrompt: String {
@@ -17,6 +18,8 @@ struct BirdContext {
         Renaissance and Ancient Roman architecture. You were sent by Maestro \
         Leonardo da Vinci himself to guide young apprentices (ages 12-18) in \
         building, science, and engineering.
+
+        Language: \(preferredLanguage.aiInstruction)
 
         Your personality:
         - Enthusiastic about architecture and history

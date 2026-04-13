@@ -54,6 +54,13 @@ struct CraftingRoomMapView: View {
                     ODRLoadingView(tag: AssetManager.craftingRoom, message: "Preparing the crafting room...")
                 }
 
+                // Furnace fire glow — positioned over the furnace in the background
+                if workshop.isProcessing {
+                    FurnaceFireView(width: geometry.size.width * 0.22, height: geometry.size.height * 0.3)
+                        .position(x: geometry.size.width * 0.12, y: geometry.size.height * 0.32)
+                        .allowsHitTesting(false)
+                }
+
                 // Layer 2: Nav + inventory
                 VStack(spacing: 0) {
                     navigationPanel
@@ -63,6 +70,16 @@ struct CraftingRoomMapView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(Spacing.md)
+
+                #if DEBUG
+                SceneEditorButtons(
+                    isActive: sceneHolder.scene?.isEditorActive == true,
+                    onToggle: { sceneHolder.scene?.toggleEditorMode() },
+                    onRotateLeft: { sceneHolder.scene?.editorRotateLeft() },
+                    onRotateRight: { sceneHolder.scene?.editorRotateRight() },
+                    onNudge: { dx, dy in sceneHolder.scene?.editorNudge(dx: dx, dy: dy) }
+                )
+                #endif
 
                 // Status message overlay
                 if let status = workshop.statusMessage {
@@ -148,67 +165,26 @@ struct CraftingRoomMapView: View {
 
                 // Bird guidance — tells player where to go next
                 if showGuidance {
-                    VStack {
-                        Spacer()
-                        HStack(alignment: .top, spacing: 10) {
-                            BirdCharacter(isSitting: true)
-                                .frame(width: 44, height: 44)
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text(guidanceMessage)
-                                    .font(.custom("Cinzel-Bold", size: 14))
-                                    .foregroundStyle(RenaissanceColors.sepiaInk)
-                                    .fixedSize(horizontal: false, vertical: true)
-                                if let vm = viewModel, let bid = vm.activeBuildingId {
-                                    let progress = vm.cardProgress(for: bid)
-                                    Text("\(progress.completed)/\(progress.total) cards collected")
-                                        .font(RenaissanceFont.caption)
-                                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
-                                }
-                                if let dest = guidanceDestination {
-                                    Button {
-                                        withAnimation(.easeOut(duration: 0.2)) { showGuidance = false }
-                                        if dest == .workshop {
-                                            // Crafting room is inside workshop — use back button
-                                            onBack()
-                                        } else {
-                                            onNavigate?(dest)
-                                        }
-                                    } label: {
-                                        HStack(spacing: 5) {
-                                            Image(systemName: dest == .forest ? "tree.fill" : dest == .workshop ? "hammer.fill" : "building.columns.fill")
-                                                .font(.system(size: 12))
-                                            Text("Go!")
-                                                .font(.custom("EBGaramond-SemiBold", size: 14))
-                                        }
-                                        .foregroundStyle(.white)
-                                        .padding(.horizontal, 14)
-                                        .padding(.vertical, 6)
-                                        .background(Capsule().fill(RenaissanceColors.renaissanceBlue))
-                                    }
-                                    .buttonStyle(.plain)
+                    BottomDialogPanel(bottomPadding: Spacing.xl) {
+                        BirdGuidanceContent(
+                            message: guidanceMessage,
+                            progressText: {
+                                guard let vm = viewModel, let bid = vm.activeBuildingId else { return nil }
+                                let p = vm.cardProgress(for: bid)
+                                return "\(p.completed)/\(p.total) cards collected"
+                            }(),
+                            onDismiss: { withAnimation { showGuidance = false } },
+                            destination: guidanceDestination,
+                            onNavigate: { dest in
+                                // Crafting room is inside workshop — use back button for workshop
+                                if dest == .workshop {
+                                    onBack()
+                                } else {
+                                    onNavigate?(dest)
                                 }
                             }
-                            Spacer()
-                            Button {
-                                withAnimation(.easeOut(duration: 0.3)) { showGuidance = false }
-                            } label: {
-                                Image(systemName: "xmark")
-                                    .font(.system(size: 12, weight: .bold))
-                                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
-                                    .padding(6)
-                            }
-                            .buttonStyle(.plain)
-                        }
-                        .padding(Spacing.md)
-                        .background(
-                            RoundedRectangle(cornerRadius: CornerRadius.lg)
-                                .fill(RenaissanceColors.parchment.opacity(0.95))
                         )
-                        .borderWorkshop()
-                        .padding(.horizontal, Spacing.lg)
-                        .padding(.bottom, Spacing.xl)
                     }
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
                     .zIndex(50)
                 }
 
@@ -578,27 +554,21 @@ struct CraftingRoomMapView: View {
                 VStack(spacing: 8) {
                     Button(action: onBack) {
                         HStack(spacing: 6) {
-                            Image(systemName: "arrow.left")
+                            Image(systemName: "chevron.left")
                             Text("Back")
                         }
                         .font(.custom("EBGaramond-Regular", size: 16))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .padding(.horizontal, Spacing.md)
                         .padding(.vertical, Spacing.xs)
-                        .background(
-                            Capsule()
-                                .fill(RenaissanceColors.parchment.opacity(0.95))
-                        )
+                        .glassButton(shape: Capsule())
                     }
                     Text("Crafting Room")
                         .font(RenaissanceFont.dialogTitle)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .padding(.horizontal, Spacing.lg)
-                        .padding(.vertical, 10)
-                        .background(
-                            Capsule()
-                                .fill(RenaissanceColors.parchment.opacity(0.95))
-                        )
+                        .padding(.vertical, Spacing.xs)
+                        .glassButton(shape: Capsule())
                 }
             }
         }
@@ -607,87 +577,7 @@ struct CraftingRoomMapView: View {
     // MARK: - Inventory Bar
 
     private var inventoryBar: some View {
-        HStack(spacing: 0) {
-            // Tools (ochre badges)
-            let ownedTools = Tool.allCases.filter { (workshop.tools[$0] ?? 0) > 0 }
-            if !ownedTools.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 6) {
-                        ForEach(ownedTools) { tool in
-                            ToolIconView(tool: tool, size: 56)
-                                .padding(.horizontal, 5)
-                                .padding(.vertical, Spacing.xxs)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 6)
-                                        .fill(RenaissanceColors.ochre.opacity(0.15))
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 6)
-                                                .strokeBorder(RenaissanceColors.ochre.opacity(0.4), lineWidth: 1)
-                                        )
-                                )
-                        }
-                    }
-                }
-
-                Divider().frame(height: 30).padding(.horizontal, 6)
-            }
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    ForEach(Material.allCases) { material in
-                        let count = workshop.rawMaterials[material] ?? 0
-                        if count > 0 {
-                            HStack(spacing: 3) {
-                                MaterialIconView(material: material, size: 18)
-                                Text("\(count)")
-                                    .font(.custom("EBGaramond-Regular", size: 12))
-                                    .foregroundStyle(RenaissanceColors.sepiaInk)
-                            }
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, Spacing.xxs)
-                            .background(
-                                RoundedRectangle(cornerRadius: 6)
-                                    .fill(RenaissanceColors.parchment.opacity(0.8))
-                            )
-                        }
-                    }
-                }
-            }
-
-            Divider().frame(height: 30).padding(.horizontal, Spacing.xs)
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    ForEach(CraftedItem.allCases) { item in
-                        let count = workshop.craftedMaterials[item] ?? 0
-                        if count > 0 {
-                            HStack(spacing: 3) {
-                                Text(item.icon).font(.caption)
-                                Text("\(count)")
-                                    .font(.custom("EBGaramond-Regular", size: 12))
-                                    .foregroundStyle(RenaissanceColors.sageGreen)
-                            }
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, Spacing.xxs)
-                            .background(
-                                RoundedRectangle(cornerRadius: 6)
-                                    .fill(RenaissanceColors.goldSuccess.opacity(0.1))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 6)
-                                            .strokeBorder(RenaissanceColors.goldSuccess.opacity(0.4), lineWidth: 1)
-                                    )
-                            )
-                        }
-                    }
-                }
-            }
-        }
-        .padding(.horizontal, Spacing.sm)
-        .padding(.vertical, Spacing.xs)
-        .background(
-            RoundedRectangle(cornerRadius: CornerRadius.md)
-                .fill(RenaissanceColors.parchment.opacity(0.92))
-        )
+        InventoryBarView(workshop: workshop)
     }
 
     // MARK: - Workbench Overlay
@@ -927,10 +817,7 @@ struct CraftingRoomMapView: View {
                         )
 
                     if workshop.isProcessing {
-                        RoundedRectangle(cornerRadius: CornerRadius.md)
-                            .fill(furnaceOrange.opacity(0.25))
-                            .frame(height: 80)
-                            .blur(radius: 8)
+                        FurnaceFireView(width: 300, height: 80)
                     }
 
                     if let input = workshop.furnaceInput {

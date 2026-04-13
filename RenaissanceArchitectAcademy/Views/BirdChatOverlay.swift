@@ -51,7 +51,7 @@ struct BirdChatOverlay: View {
                 .background(RenaissanceColors.parchment)
                 .clipShape(RoundedRectangle(cornerRadius: 20))
                 .borderModal(radius: 20)
-                .shadow(color: .black.opacity(0.3), radius: 20, y: 8)
+                .renaissanceShadow(.modal)
                 .padding(.horizontal, 24)
                 .padding(.bottom, 40)
                 .frame(maxHeight: 520)

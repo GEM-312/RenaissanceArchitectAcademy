@@ -433,62 +433,19 @@ struct CityMapView: View {
 
             // Bird guidance — tells player where to go next
             if showGuidance {
-                VStack {
-                    Spacer()
-                    HStack(alignment: .top, spacing: 10) {
-                        BirdCharacter(isSitting: true)
-                            .frame(width: 44, height: 44)
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text(guidanceMessage)
-                                .font(.custom("Cinzel-Bold", size: 14))
-                                .foregroundStyle(RenaissanceColors.sepiaInk)
-                                .fixedSize(horizontal: false, vertical: true)
-                            if let bid = viewModel.activeBuildingId {
-                                let progress = viewModel.cardProgress(for: bid)
-                                Text("\(progress.completed)/\(progress.total) cards collected")
-                                    .font(RenaissanceFont.caption)
-                                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
-                            }
-                            if let dest = guidanceDestination, onNavigate != nil {
-                                Button {
-                                    withAnimation(.easeOut(duration: 0.2)) { showGuidance = false }
-                                    onNavigate?(dest)
-                                } label: {
-                                    HStack(spacing: 5) {
-                                        Image(systemName: dest == .forest ? "tree.fill" : dest == .workshop ? "hammer.fill" : "building.columns.fill")
-                                            .font(.system(size: 12))
-                                        Text("Go!")
-                                            .font(.custom("EBGaramond-SemiBold", size: 14))
-                                    }
-                                    .foregroundStyle(.white)
-                                    .padding(.horizontal, 14)
-                                    .padding(.vertical, 6)
-                                    .background(Capsule().fill(RenaissanceColors.renaissanceBlue))
-                                }
-                                .buttonStyle(.plain)
-                            }
-                        }
-                        Spacer()
-                        Button {
-                            withAnimation(.easeOut(duration: 0.3)) { showGuidance = false }
-                        } label: {
-                            Image(systemName: "xmark")
-                                .font(.system(size: 12, weight: .bold))
-                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
-                                .padding(6)
-                        }
-                        .buttonStyle(.plain)
-                    }
-                    .padding(Spacing.md)
-                    .background(
-                        RoundedRectangle(cornerRadius: CornerRadius.lg)
-                            .fill(RenaissanceColors.parchment.opacity(0.95))
+                BottomDialogPanel(bottomPadding: Spacing.xl) {
+                    BirdGuidanceContent(
+                        message: guidanceMessage,
+                        progressText: {
+                            guard let bid = viewModel.activeBuildingId else { return nil }
+                            let p = viewModel.cardProgress(for: bid)
+                            return "\(p.completed)/\(p.total) cards collected"
+                        }(),
+                        onDismiss: { withAnimation { showGuidance = false } },
+                        destination: guidanceDestination,
+                        onNavigate: onNavigate
                     )
-                    .borderWorkshop()
-                    .padding(.horizontal, Spacing.lg)
-                    .padding(.bottom, Spacing.xl)
                 }
-                .transition(.move(edge: .bottom).combined(with: .opacity))
                 .zIndex(50)
             }
 
@@ -734,91 +691,15 @@ struct CityMapView: View {
                 )
                 .transition(.opacity)
             }
-            // Debug buttons (temporary — remove when done testing)
-            VStack {
-                HStack {
-                    Spacer()
-                    VStack(spacing: 8) {
-                        // Building sprite toggle
-                        Button {
-                            BuildingNode.debugShowAllComplete.toggle()
-                            if let scene = sceneHolder.scene {
-                                for child in scene.children {
-                                    if let bn = child as? BuildingNode {
-                                        bn.updateState(bn.currentState)
-                                    }
-                                }
-                            }
-                        } label: {
-                            Text(BuildingNode.debugShowAllComplete ? "🏛 Complete" : "👻 Ghost")
-                                .font(.custom("Cinzel-Bold", size: 13))
-                                .foregroundStyle(RenaissanceColors.sepiaInk)
-                                .padding(.horizontal, 14)
-                                .padding(.vertical, 8)
-                                .background(RenaissanceColors.ochre.opacity(0.9))
-                                .cornerRadius(8)
-                        }
-                        .buttonStyle(.plain)
-
-                        // Editor mode toggle (drag buildings to reposition)
-                        #if DEBUG
-                        Button {
-                            sceneHolder.scene?.toggleEditorMode()
-                        } label: {
-                            Text(sceneHolder.scene?.isEditorActive == true ? "📐 Editing" : "📐 Editor")
-                                .font(.custom("Cinzel-Bold", size: 13))
-                                .foregroundStyle(.white)
-                                .padding(.horizontal, 14)
-                                .padding(.vertical, 8)
-                                .background(sceneHolder.scene?.isEditorActive == true ? Color.red.opacity(0.8) : RenaissanceColors.warmBrown.opacity(0.9))
-                                .cornerRadius(8)
-                        }
-                        .buttonStyle(.plain)
-
-                        // Editor controls (visible when editing)
-                        if sceneHolder.scene?.isEditorActive == true {
-                            VStack(spacing: 4) {
-                                // Rotate
-                                HStack(spacing: 4) {
-                                    Button { sceneHolder.scene?.editorRotateLeft() } label: {
-                                        Text("↺").font(.system(size: 18)).frame(width: 36, height: 32)
-                                            .background(Color.white.opacity(0.9)).cornerRadius(6)
-                                    }.buttonStyle(.plain)
-                                    Button { sceneHolder.scene?.editorRotateRight() } label: {
-                                        Text("↻").font(.system(size: 18)).frame(width: 36, height: 32)
-                                            .background(Color.white.opacity(0.9)).cornerRadius(6)
-                                    }.buttonStyle(.plain)
-                                }
-                                // Nudge
-                                Button { sceneHolder.scene?.editorNudge(dx: 0, dy: 5) } label: {
-                                    Text("▲").font(.system(size: 14)).frame(width: 36, height: 28)
-                                        .background(Color.white.opacity(0.9)).cornerRadius(6)
-                                }.buttonStyle(.plain)
-                                HStack(spacing: 4) {
-                                    Button { sceneHolder.scene?.editorNudge(dx: -5, dy: 0) } label: {
-                                        Text("◀").font(.system(size: 14)).frame(width: 36, height: 28)
-                                            .background(Color.white.opacity(0.9)).cornerRadius(6)
-                                    }.buttonStyle(.plain)
-                                    Button { sceneHolder.scene?.editorNudge(dx: 5, dy: 0) } label: {
-                                        Text("▶").font(.system(size: 14)).frame(width: 36, height: 28)
-                                            .background(Color.white.opacity(0.9)).cornerRadius(6)
-                                    }.buttonStyle(.plain)
-                                }
-                                Button { sceneHolder.scene?.editorNudge(dx: 0, dy: -5) } label: {
-                                    Text("▼").font(.system(size: 14)).frame(width: 36, height: 28)
-                                        .background(Color.white.opacity(0.9)).cornerRadius(6)
-                                }.buttonStyle(.plain)
-                            }
-                        }
-                        #endif
-                    }
-                    .shadow(color: .black.opacity(0.3), radius: 6, y: 3)
-                    .padding(.trailing, 16)
-                    .padding(.top, 50)
-                }
-                Spacer()
-            }
-            .zIndex(100)
+            #if DEBUG
+            SceneEditorButtons(
+                isActive: sceneHolder.scene?.isEditorActive == true,
+                onToggle: { sceneHolder.scene?.toggleEditorMode() },
+                onRotateLeft: { sceneHolder.scene?.editorRotateLeft() },
+                onRotateRight: { sceneHolder.scene?.editorRotateRight() },
+                onNudge: { dx, dy in sceneHolder.scene?.editorNudge(dx: dx, dy: dy) }
+            )
+            #endif
 
             } // end ZStack
         } // end GeometryReader

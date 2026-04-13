@@ -106,52 +106,53 @@ class NPCEncounterManager: ObservableObject {
             return nil
         }
 
-        // Check disk cache
+        // Check disk cache first (previously generated)
         if let cached = loadFromCache(key: key) {
             currentNPC = cached
             npcSeenThisSession.insert(key)
-            // Load portrait from image cache in background
-            // Portrait placeholder — Midjourney art assets to be added later
             return cached
         }
 
-        // Generate new NPC
-        guard GenerationService.isAvailable else { return nil }
+        // Try AI generation with real historical figure context
+        if GenerationService.isAvailable {
+            isGenerating = true
+            defer { isGenerating = false }
 
-        isGenerating = true
-        defer { isGenerating = false }
+            do {
+                let generated = try await GenerationService.shared.generateNPC(
+                    stationType: station,
+                    buildingName: buildingName,
+                    sciences: sciences
+                )
 
-        do {
-            let generated = try await GenerationService.shared.generateNPC(
-                stationType: station,
-                buildingName: buildingName,
-                sciences: sciences
-            )
+                let displayData = NPCDisplayData(
+                    name: generated.name,
+                    trade: generated.trade,
+                    greeting: generated.greeting,
+                    historicalFact: generated.historicalFact,
+                    scienceTip: generated.scienceTip,
+                    portraitPrompt: generated.portraitPrompt
+                )
 
-            // Convert to display data
-            let displayData = NPCDisplayData(
-                name: generated.name,
-                trade: generated.trade,
-                greeting: generated.greeting,
-                historicalFact: generated.historicalFact,
-                scienceTip: generated.scienceTip,
-                portraitPrompt: generated.portraitPrompt
-            )
+                saveToCache(npc: displayData, key: key)
+                currentNPC = displayData
+                npcSeenThisSession.insert(key)
+                return displayData
 
-            // Cache to disk
-            saveToCache(npc: displayData, key: key)
-
-            // Generate portrait in background
-            // Portrait placeholder — Midjourney art assets to be added later
-
-            currentNPC = displayData
-            npcSeenThisSession.insert(key)
-            return displayData
-
-        } catch {
-            print("[NPCEncounterManager] Generation failed: \(error)")
-            return nil
+            } catch {
+                print("[NPCEncounterManager] AI generation failed, using fallback: \(error)")
+            }
         }
+
+        // Fallback: pre-written historical NPC (offline / AI unavailable)
+        if let historical = HistoricalNPCContent.npc(for: buildingName) {
+            currentNPC = historical
+            npcSeenThisSession.insert(key)
+            return historical
+        }
+
+        print("[NPCEncounterManager] No NPC available for \(buildingName)")
+        return nil
     }
 
     /// Check if an NPC encounter should happen for this station.

@@ -118,7 +118,10 @@ enum Material: String, CaseIterable, Identifiable, Codable {
         case .verdigrisGreen, .groundVerdigris: return "PigmentVerdigris"
         case .cinnabar, .groundCinnabar:        return "PigmentVermillion"
         case .saffron, .groundSaffron:          return "PigmentSienna"
-        default: return nil
+        case .sand:                             return "MaterialSand"
+        case .water:                            return "MaterialWater"
+        case .silk:                             return "MaterialSilk"
+        case .eggs:                             return "MaterialEggs"
         }
     }
 
@@ -151,7 +154,7 @@ struct MaterialIconView: View {
     var size: CGFloat = 28
 
     var body: some View {
-        if let name = material.imageName {
+        if let name = material.imageName, imageExists(name) {
             Image(name)
                 .resizable()
                 .scaledToFit()
@@ -160,5 +163,14 @@ struct MaterialIconView: View {
             Text(material.icon)
                 .font(.system(size: size * 0.7))
         }
+    }
+
+    /// Check if an image exists in the asset catalog
+    private func imageExists(_ name: String) -> Bool {
+        #if os(iOS)
+        return UIImage(named: name) != nil
+        #else
+        return NSImage(named: name) != nil
+        #endif
     }
 }

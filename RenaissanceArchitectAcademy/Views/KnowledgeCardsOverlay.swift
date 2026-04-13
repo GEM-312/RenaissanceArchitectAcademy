@@ -525,8 +525,8 @@ struct KnowledgeCardsOverlay: View {
                 }
             }
             .foregroundStyle(color)
-            .padding(.top, Spacing.sm)
-            .padding(.bottom, 6)
+            .padding(.top, Spacing.xs)
+            .padding(.bottom, Spacing.xxs)
             .padding(.horizontal, Spacing.xxs)
             .editable("card-header", fontSize: 16)
 
@@ -550,7 +550,8 @@ struct KnowledgeCardsOverlay: View {
             }
             .animation(.easeInOut(duration: 0.4), value: isActivity)
         }
-        .padding(Spacing.xl)
+        .padding(.horizontal, Spacing.lg)
+        .padding(.vertical, Spacing.md)
         .background(
             RoundedRectangle(cornerRadius: 14).fill(RenaissanceColors.parchment)
         )
@@ -565,15 +566,15 @@ struct KnowledgeCardsOverlay: View {
     private func readingContent(card: KnowledgeCard, isCompleted: Bool) -> some View {
         VStack(spacing: 0) {
             // Keyword circles
-            HStack(spacing: Spacing.md) {
+            HStack(spacing: Spacing.sm) {
                 ForEach(card.keywords.prefix(4)) { pair in
-                    VStack(spacing: 4) {
+                    VStack(spacing: 2) {
                         Circle()
                             .fill(card.color.opacity(0.1))
-                            .frame(width: 40, height: 40)
+                            .frame(width: 32, height: 32)
                             .overlay(
                                 Image(systemName: card.icon)
-                                    .font(.system(size: 15))
+                                    .font(.system(size: 13))
                                     .foregroundStyle(card.color.opacity(0.5))
                             )
                         Text(pair.keyword)
@@ -583,7 +584,7 @@ struct KnowledgeCardsOverlay: View {
                     }
                 }
             }
-            .padding(.vertical, Spacing.sm)
+            .padding(.vertical, Spacing.xs)
             .opacity(showFlippedContent ? 1 : 0)
             .editable("keyword-circles", fontSize: 10)
 
@@ -595,25 +596,25 @@ struct KnowledgeCardsOverlay: View {
 
             // Lesson text
             ScrollView(.vertical, showsIndicators: false) {
-                VStack(spacing: Spacing.md) {
+                VStack(spacing: Spacing.sm) {
                     highlightedLessonText(card: card)
-                        .lineSpacing(6)
-                        .padding(.top, Spacing.xs)
+                        .lineSpacing(5)
+                        .padding(.top, Spacing.xxs)
                         .opacity(animateFlippedStory ? 1 : 0)
                         .editable("lesson-text", paddingV: Spacing.xs)
 
                     // Interactive science visual
                     if let visual = card.visual {
                         CardVisualView(visual: visual, color: card.color, containerHeight: flippedH)
+                            .frame(minHeight: flippedH * 0.4)
                             .opacity(animateFlippedStory ? 1 : 0)
-                            .editable("card-visual", height: flippedH * 0.35)
                     }
 
                     // Fun fact lightbulb callout
                     if let funFact = card.funFact {
                         HStack(alignment: .top, spacing: 8) {
                             Image(systemName: "lightbulb.fill")
-                                .foregroundStyle(.yellow)
+                                .foregroundStyle(RenaissanceColors.ochre)
                                 .font(.system(size: 16))
                             Text(funFact)
                                 .font(RenaissanceFont.italicSmall)
@@ -1738,9 +1739,9 @@ struct KnowledgeCardsOverlay: View {
                 .fill(
                     RadialGradient(
                         colors: [
-                            Color(red: 1.0, green: 0.85, blue: 0.3),
+                            RenaissanceColors.ochre,
                             RenaissanceColors.goldSuccess,
-                            Color(red: 0.75, green: 0.55, blue: 0.1)
+                            RenaissanceColors.warmBrown
                         ],
                         center: .topLeading,
                         startRadius: 0,
@@ -1749,11 +1750,11 @@ struct KnowledgeCardsOverlay: View {
                 )
                 .frame(width: size, height: size)
             Circle()
-                .stroke(Color(red: 0.65, green: 0.5, blue: 0.1), lineWidth: 1.5)
+                .stroke(RenaissanceColors.warmBrown, lineWidth: 1.5)
                 .frame(width: size, height: size)
             Text("⚜")
                 .font(.system(size: size * 0.45))
-                .foregroundStyle(Color(red: 0.65, green: 0.5, blue: 0.1).opacity(0.7))
+                .foregroundStyle(RenaissanceColors.warmBrown.opacity(0.7))
         }
         .shadow(color: RenaissanceColors.goldSuccess.opacity(0.5), radius: 4, y: 2)
     }
@@ -1970,7 +1971,7 @@ struct KnowledgeCardsOverlay: View {
         .background(
             RoundedRectangle(cornerRadius: CornerRadius.md)
                 .fill(RenaissanceColors.parchment)
-                .shadow(color: .black.opacity(0.12), radius: 8, y: 3)
+                .shadow(color: .black.opacity(0.08), radius: 4, y: 2)
         )
         .overlay(
             RoundedRectangle(cornerRadius: CornerRadius.md)
