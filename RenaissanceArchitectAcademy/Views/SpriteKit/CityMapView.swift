@@ -202,7 +202,6 @@ struct CityMapView: View {
                     viewModel: viewModel,
                     workshopState: workshopState,
                     notebookState: notebookState,
-                    heroNamespace: buildingNameHero,
                     onOpenNotebook: { buildingId in
                         withAnimation {
                             showMascotDialogue = false
@@ -211,6 +210,7 @@ struct CityMapView: View {
                         sceneHolder.scene?.resetMascot()
                         onNavigate?(.notebook(buildingId))
                     },
+                    heroNamespace: buildingNameHero,
                     onChoice: { choice in
                         challengeEntryPath = choice
 
