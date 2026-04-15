@@ -18,6 +18,7 @@ struct ConstructionSequenceView: View {
 
     @Environment(\.horizontalSizeClass) private var sizeClass
     private var isLargeScreen: Bool { sizeClass == .regular }
+    private var settings: GameSettings { GameSettings.shared }
 
     var body: some View {
         ZStack {
@@ -50,7 +51,7 @@ struct ConstructionSequenceView: View {
 
             Text("Construction Sequence")
                 .font(.custom("Cinzel-Bold", size: 24))
-                .foregroundStyle(RenaissanceColors.sepiaInk)
+                .foregroundStyle(settings.cardTextColor)
 
             Text(sequence.buildingName)
                 .font(.custom("Cinzel-Regular", size: 18))
@@ -63,14 +64,14 @@ struct ConstructionSequenceView: View {
 
             Text(sequence.introduction)
                 .font(.custom("EBGaramond-Regular", size: 16))
-                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                .foregroundStyle(settings.cardTextColor.opacity(0.8))
                 .multilineTextAlignment(.center)
                 .lineSpacing(5)
                 .padding(.horizontal, 20)
 
             Text("Arrange the 8 construction steps in the correct order — from first to last.")
                 .font(.custom("EBGaramond-Regular", size: 14))
-                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                .foregroundStyle(settings.cardTextColor.opacity(0.5))
                 .multilineTextAlignment(.center)
 
             Button {
@@ -93,7 +94,7 @@ struct ConstructionSequenceView: View {
         .adaptiveWidth(500)
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(RenaissanceColors.parchment)
+                .fill(settings.dialogBackground)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 20)
@@ -115,14 +116,14 @@ struct ConstructionSequenceView: View {
                         Text("Close")
                     }
                     .font(.custom("EBGaramond-Regular", size: 14))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                    .foregroundStyle(settings.cardTextColor.opacity(0.5))
                 }
 
                 Spacer()
 
                 Text(sequence.buildingName)
                     .font(.custom("Cinzel-Bold", size: 20))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .foregroundStyle(settings.cardTextColor)
 
                 Spacer()
 
@@ -194,7 +195,7 @@ struct ConstructionSequenceView: View {
                         } label: {
                             Text("Show Answer")
                                 .font(.custom("EBGaramond-Regular", size: 14))
-                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                                .foregroundStyle(settings.cardTextColor.opacity(0.5))
                                 .padding(.vertical, 12)
                                 .padding(.horizontal, 16)
                         }
@@ -209,7 +210,7 @@ struct ConstructionSequenceView: View {
         .frame(maxHeight: 700)
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(RenaissanceColors.parchment)
+                .fill(settings.dialogBackground)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 20)
@@ -245,7 +246,7 @@ struct ConstructionSequenceView: View {
                         .foregroundStyle(scienceColor)
                     Text(step.name)
                         .font(.custom("EBGaramond-SemiBold", size: 15))
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .foregroundStyle(settings.cardTextColor)
                 }
 
                 Text(step.italianName)
@@ -256,7 +257,7 @@ struct ConstructionSequenceView: View {
                 if isCorrect {
                     Text(step.description)
                         .font(.custom("EBGaramond-Regular", size: 12))
-                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
+                        .foregroundStyle(settings.cardTextColor.opacity(0.7))
                         .lineSpacing(3)
                         .padding(.top, 2)
                 }
@@ -268,7 +269,7 @@ struct ConstructionSequenceView: View {
             if !isCorrect {
                 Image(systemName: "line.3.horizontal")
                     .font(.system(size: 16))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.25))
+                    .foregroundStyle(settings.cardTextColor.opacity(0.25))
             } else {
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 18))
@@ -282,7 +283,7 @@ struct ConstructionSequenceView: View {
                 .fill(
                     isWrong ? RenaissanceColors.errorRed.opacity(0.15)
                     : isCorrect ? RenaissanceColors.sageGreen.opacity(0.08)
-                    : Color.white.opacity(0.5)
+                    : settings.dialogBackground.opacity(0.5)
                 )
         )
         .overlay(
@@ -301,13 +302,13 @@ struct ConstructionSequenceView: View {
                     .foregroundStyle(scienceColor)
                 Text(step.name)
                     .font(.custom("EBGaramond-SemiBold", size: 14))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .foregroundStyle(settings.cardTextColor)
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 8)
             .background(
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(RenaissanceColors.parchment)
+                    .fill(settings.dialogBackground)
                     .shadow(color: scienceColor.opacity(0.3), radius: 8)
             )
         }
@@ -339,7 +340,7 @@ struct ConstructionSequenceView: View {
 
             Text("Construction Complete!")
                 .font(.custom("Cinzel-Bold", size: 24))
-                .foregroundStyle(RenaissanceColors.sepiaInk)
+                .foregroundStyle(settings.cardTextColor)
 
             Text(sequence.buildingName)
                 .font(.custom("Cinzel-Regular", size: 18))
@@ -352,7 +353,7 @@ struct ConstructionSequenceView: View {
 
             Text(sequence.completionText)
                 .font(.custom("EBGaramond-Italic", size: 17))
-                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                .foregroundStyle(settings.cardTextColor.opacity(0.8))
                 .multilineTextAlignment(.center)
                 .lineSpacing(5)
                 .padding(.horizontal, 20)
@@ -390,7 +391,7 @@ struct ConstructionSequenceView: View {
         .adaptiveWidth(500)
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(RenaissanceColors.parchment)
+                .fill(settings.dialogBackground)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 20)

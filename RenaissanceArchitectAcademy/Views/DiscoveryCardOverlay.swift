@@ -10,6 +10,8 @@ struct DiscoveryCardOverlay: View {
     let onChooseBuilding: () -> Void  // Navigate to city map to pick a building
     var playerName: String = "Apprentice"
 
+    private var settings: GameSettings { GameSettings.shared }
+
     @State private var isFlipped = false
     @State private var showContent = false
     @State private var animateStory = false
@@ -64,7 +66,7 @@ struct DiscoveryCardOverlay: View {
             RoundedRectangle(cornerRadius: 16)
                 .fill(
                     LinearGradient(
-                        colors: [card.color.opacity(0.15), RenaissanceColors.parchment],
+                        colors: [card.color.opacity(0.15), settings.dialogBackground],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
@@ -91,13 +93,13 @@ struct DiscoveryCardOverlay: View {
                 // Station name
                 Text(card.stationName)
                     .font(.custom("Cinzel-Bold", size: 18))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .foregroundStyle(settings.cardTextColor)
                     .multilineTextAlignment(.center)
 
                 // Italian name
                 Text(card.italianName)
                     .font(.custom("EBGaramond-Italic", size: 14))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+                    .foregroundStyle(settings.cardTextColor.opacity(0.6))
 
                 Spacer().frame(height: 8)
 
@@ -116,7 +118,7 @@ struct DiscoveryCardOverlay: View {
         ZStack {
             // Background
             RoundedRectangle(cornerRadius: 16)
-                .fill(RenaissanceColors.parchment)
+                .fill(settings.dialogBackground)
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
                         .strokeBorder(card.color.opacity(0.4), lineWidth: 2)
@@ -134,10 +136,10 @@ struct DiscoveryCardOverlay: View {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(card.stationName)
                                 .font(.custom("Cinzel-Bold", size: 18))
-                                .foregroundStyle(RenaissanceColors.sepiaInk)
+                                .foregroundStyle(settings.cardTextColor)
                             Text(card.italianName)
                                 .font(.custom("EBGaramond-Italic", size: 13))
-                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+                                .foregroundStyle(settings.cardTextColor.opacity(0.6))
                         }
 
                         Spacer()
@@ -162,7 +164,7 @@ struct DiscoveryCardOverlay: View {
                         Text(card.storyText)
                             .font(.custom("EBGaramond-Regular", size: 16))
                             .lineSpacing(6)
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                            .foregroundStyle(settings.cardTextColor)
                             .opacity(animateStory ? 1 : 0)
 
                         // Fun fact callout
@@ -173,7 +175,7 @@ struct DiscoveryCardOverlay: View {
 
                             Text(card.funFact)
                                 .font(.custom("EBGaramond-Italic", size: 14))
-                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                                .foregroundStyle(settings.cardTextColor.opacity(0.8))
                                 .lineSpacing(4)
                         }
                         .padding(12)
@@ -186,7 +188,7 @@ struct DiscoveryCardOverlay: View {
                         // Building teaser
                         Text(card.buildingTeaser)
                             .font(.custom("EBGaramond-Regular", size: 13))
-                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+                            .foregroundStyle(settings.cardTextColor.opacity(0.6))
                             .multilineTextAlignment(.center)
                             .opacity(animateStory ? 1 : 0)
 
@@ -199,7 +201,7 @@ struct DiscoveryCardOverlay: View {
 
                             Text("Interesting, \(playerName)! To collect this station's knowledge cards and earn florins, choose a building to work on first!")
                                 .font(.custom("EBGaramond-Regular", size: 14))
-                                .foregroundStyle(RenaissanceColors.sepiaInk)
+                                .foregroundStyle(settings.cardTextColor)
                                 .lineSpacing(4)
                         }
                         .padding(12)
@@ -237,12 +239,12 @@ struct DiscoveryCardOverlay: View {
                             } label: {
                                 Text("Keep Exploring")
                                     .font(.custom("EBGaramond-Regular", size: 14))
-                                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
+                                    .foregroundStyle(settings.cardTextColor.opacity(0.7))
                                     .padding(.horizontal, Spacing.sm)
                                     .padding(.vertical, Spacing.xs)
                                     .background(
                                         RoundedRectangle(cornerRadius: CornerRadius.sm)
-                                            .strokeBorder(RenaissanceColors.sepiaInk.opacity(0.2), lineWidth: 1)
+                                            .strokeBorder(settings.cardTextColor.opacity(0.2), lineWidth: 1)
                                     )
                             }
                         }

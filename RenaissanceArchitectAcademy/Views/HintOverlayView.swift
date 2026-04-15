@@ -34,6 +34,7 @@ struct HintOverlayView: View {
 
     @Environment(\.horizontalSizeClass) private var sizeClass
     private var isLargeScreen: Bool { sizeClass == .regular }
+    private var settings: GameSettings { GameSettings.shared }
 
     private var totalMaterials: Int {
         workshopState?.rawMaterials.values.reduce(0, +) ?? 0
@@ -128,7 +129,7 @@ struct HintOverlayView: View {
                             Text("\(step)")
                                 .font(.custom("EBGaramond-Regular", size: 15))
                                 .foregroundStyle(
-                                    step == activeStep ? .white : RenaissanceColors.sepiaInk.opacity(0.6)
+                                    step == activeStep ? .white : settings.cardTextColor.opacity(0.6)
                                 )
                         }
                     }
@@ -142,7 +143,7 @@ struct HintOverlayView: View {
                                 ? RenaissanceColors.goldSuccess
                                 : step < activeStep
                                     ? RenaissanceColors.sageGreen
-                                    : RenaissanceColors.sepiaInk.opacity(0.5)
+                                    : settings.cardTextColor.opacity(0.5)
                         )
                 }
             }
@@ -197,12 +198,12 @@ struct HintOverlayView: View {
                     .foregroundStyle(RenaissanceColors.goldSuccess)
                 Text("A Riddle for You...")
                     .font(.custom("EBGaramond-SemiBold", size: 20))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .foregroundStyle(settings.cardTextColor)
             }
 
             Text(hintData.riddle)
                 .font(.custom("EBGaramond-Regular", size: 18))
-                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.9))
+                .foregroundStyle(settings.cardTextColor.opacity(0.9))
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
                 .padding(.horizontal, 8)
@@ -240,7 +241,7 @@ struct HintOverlayView: View {
         VStack(spacing: 16) {
             Text("How would you like your hint?")
                 .font(.custom("EBGaramond-SemiBold", size: 20))
-                .foregroundStyle(RenaissanceColors.sepiaInk)
+                .foregroundStyle(settings.cardTextColor)
 
             // Craft option
             Button {
@@ -252,19 +253,19 @@ struct HintOverlayView: View {
             } label: {
                 HStack(spacing: 12) {
                     Image(systemName: "hammer.fill")
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .foregroundStyle(settings.cardTextColor)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Craft a Hint Scroll")
                             .font(.custom("EBGaramond-Regular", size: 17, relativeTo: .body))
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                            .foregroundStyle(settings.cardTextColor)
                         Text("Costs 2 raw materials")
                             .font(.custom("EBGaramond-Regular", size: 13))
-                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+                            .foregroundStyle(settings.cardTextColor.opacity(0.6))
                     }
                     Spacer()
                     if totalMaterials >= 2 {
                         Image(systemName: "chevron.right")
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                            .foregroundStyle(settings.cardTextColor)
                     } else {
                         Text("Not enough")
                             .font(.custom("EBGaramond-Regular", size: 12))
@@ -275,7 +276,7 @@ struct HintOverlayView: View {
                 .padding(.vertical, 14)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(totalMaterials >= 2 ? RenaissanceColors.parchment : RenaissanceColors.parchment.opacity(0.5))
+                        .fill(totalMaterials >= 2 ? settings.dialogBackground : settings.dialogBackground.opacity(0.5))
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
@@ -296,24 +297,24 @@ struct HintOverlayView: View {
             } label: {
                 HStack(spacing: 12) {
                     Image(systemName: "brain.head.profile")
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .foregroundStyle(settings.cardTextColor)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Earn by Activity")
                             .font(.custom("EBGaramond-Regular", size: 17, relativeTo: .body))
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                            .foregroundStyle(settings.cardTextColor)
                         Text("Answer correctly to earn 3 materials")
                             .font(.custom("EBGaramond-Regular", size: 13))
-                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+                            .foregroundStyle(settings.cardTextColor.opacity(0.6))
                     }
                     Spacer()
                     Image(systemName: "chevron.right")
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .foregroundStyle(settings.cardTextColor)
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 14)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(RenaissanceColors.parchment)
+                        .fill(settings.dialogBackground)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
@@ -332,7 +333,7 @@ struct HintOverlayView: View {
         VStack(spacing: 24) {
             Text("Crafting Hint Scroll...")
                 .font(.custom("EBGaramond-SemiBold", size: 22))
-                .foregroundStyle(RenaissanceColors.sepiaInk)
+                .foregroundStyle(settings.cardTextColor)
 
             ZStack {
                 ForEach(Array(craftingMaterials.enumerated()), id: \.offset) { index, item in
@@ -344,7 +345,7 @@ struct HintOverlayView: View {
 
                 Image(systemName: "scroll.fill")
                     .font(.custom("EBGaramond-Regular", size: 48, relativeTo: .title3))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .foregroundStyle(settings.cardTextColor)
                     .scaleEffect(showScrollReveal ? 1 : 0)
                     .opacity(showScrollReveal ? 1 : 0)
             }
@@ -363,12 +364,12 @@ struct HintOverlayView: View {
         VStack(spacing: 16) {
             Text("Quick Question!")
                 .font(.custom("EBGaramond-SemiBold", size: 20))
-                .foregroundStyle(RenaissanceColors.sepiaInk)
+                .foregroundStyle(settings.cardTextColor)
 
             if case .trueFalse(let statement, _, let explanation) = hintData.activityType {
                 Text(statement)
                     .font(.custom("EBGaramond-Regular", size: 17, relativeTo: .body))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.9))
+                    .foregroundStyle(settings.cardTextColor.opacity(0.9))
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
                     .padding(.horizontal, 8)
@@ -378,14 +379,14 @@ struct HintOverlayView: View {
                     HStack(spacing: 4) {
                         Text("Reward:")
                             .font(.custom("EBGaramond-Regular", size: 14))
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                            .foregroundStyle(settings.cardTextColor)
                         ForEach(pendingEarnReward, id: \.0) { material, count in
                             HStack(spacing: 2) {
                                 Text(material.icon)
                                     .font(.custom("EBGaramond-Regular", size: 18, relativeTo: .body))
                                 Text("×\(count)")
                                     .font(.custom("EBGaramond-Regular", size: 15))
-                                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
+                                    .foregroundStyle(settings.cardTextColor.opacity(0.7))
                             }
                         }
                     }
@@ -418,21 +419,21 @@ struct HintOverlayView: View {
         VStack(spacing: 20) {
             Image(systemName: "scroll.fill")
                 .font(.custom("EBGaramond-Regular", size: 40, relativeTo: .title3))
-                .foregroundStyle(RenaissanceColors.sepiaInk)
+                .foregroundStyle(settings.cardTextColor)
                 .scaleEffect(showScrollReveal ? 1 : 0.5)
                 .opacity(showScrollReveal ? 1 : 0)
 
             VStack(spacing: 16) {
                 Text("Hint Scroll")
                     .font(.custom("EBGaramond-SemiBold", size: 22))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .foregroundStyle(settings.cardTextColor)
 
                 Divider()
                     .background(RenaissanceColors.ochre.opacity(0.3))
 
                 Text(hintData.detailedHint)
                     .font(.custom("EBGaramond-Regular", size: 17, relativeTo: .body))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.9))
+                    .foregroundStyle(settings.cardTextColor.opacity(0.9))
                     .multilineTextAlignment(.center)
                     .lineSpacing(5)
                     .padding(.horizontal, 8)
@@ -445,7 +446,7 @@ struct HintOverlayView: View {
                     VStack(spacing: 6) {
                         Text("You spent:")
                             .font(.custom("EBGaramond-Regular", size: 14))
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                            .foregroundStyle(settings.cardTextColor)
 
                         HStack(spacing: 12) {
                             ForEach(transactionMaterials, id: \.0) { material, count in
@@ -454,7 +455,7 @@ struct HintOverlayView: View {
                                         .font(.custom("EBGaramond-Regular", size: 20, relativeTo: .title3))
                                     Text("×\(count)")
                                         .font(.custom("EBGaramond-Regular", size: 16))
-                                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                                        .foregroundStyle(settings.cardTextColor.opacity(0.8))
                                 }
                             }
                         }
@@ -471,7 +472,7 @@ struct HintOverlayView: View {
             .padding(24)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(RenaissanceColors.parchment)
+                    .fill(settings.dialogBackground)
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
                             .stroke(RenaissanceColors.goldSuccess.opacity(0.5), lineWidth: 2)
@@ -493,17 +494,17 @@ struct HintOverlayView: View {
                 .foregroundStyle(color)
             Text(text)
                 .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
-                .foregroundStyle(RenaissanceColors.sepiaInk)
+                .foregroundStyle(settings.cardTextColor)
             Spacer()
             Image(systemName: "chevron.right")
                 .font(.caption)
-                .foregroundStyle(RenaissanceColors.sepiaInk)
+                .foregroundStyle(settings.cardTextColor)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
         .background(
             RoundedRectangle(cornerRadius: 10)
-                .fill(RenaissanceColors.parchment)
+                .fill(settings.dialogBackground)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 10)
@@ -544,7 +545,7 @@ struct HintOverlayView: View {
                 .foregroundStyle(
                     hasAnswered && wasSelected
                         ? .white
-                        : RenaissanceColors.sepiaInk
+                        : settings.cardTextColor
                 )
                 .frame(width: 100, height: 44)
                 .background(

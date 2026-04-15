@@ -16,12 +16,12 @@ struct SettingsView: View {
                 HStack {
                     Text("Settings")
                         .font(.custom("Cinzel-Bold", size: 24))
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .foregroundStyle(settings.cardTextColor)
                     Spacer()
                     Button { onDismiss() } label: {
                         Image(systemName: "xmark.circle.fill")
                             .font(.title2)
-                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                            .foregroundStyle(settings.cardTextColor.opacity(0.5))
                     }
                     .buttonStyle(.plain)
                 }
@@ -33,7 +33,7 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Appearance")
                         .font(.custom("Cinzel-Bold", size: 16))
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .foregroundStyle(settings.cardTextColor)
 
                     HStack(spacing: 12) {
                         ForEach(AppTheme.allCases, id: \.rawValue) { theme in
@@ -70,7 +70,7 @@ struct SettingsView: View {
 
                                     Text(theme.displayName)
                                         .font(.custom("EBGaramond-Medium", size: 14))
-                                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                                        .foregroundStyle(settings.cardTextColor)
                                 }
                             }
                             .buttonStyle(.plain)
@@ -85,7 +85,7 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Language")
                         .font(.custom("Cinzel-Bold", size: 16))
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .foregroundStyle(settings.cardTextColor)
 
                     HStack(spacing: 6) {
                         Image(systemName: "globe")
@@ -102,7 +102,7 @@ struct SettingsView: View {
 
                     Text("Controls AI-generated content (NPC dialogue, bird chat)")
                         .font(.custom("EBGaramond-Regular", size: 12))
-                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                        .foregroundStyle(settings.cardTextColor.opacity(0.5))
                 }
 
                 Divider()
@@ -112,7 +112,7 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 14) {
                     Text("Audio")
                         .font(.custom("Cinzel-Bold", size: 16))
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .foregroundStyle(settings.cardTextColor)
 
                     volumeRow(label: "Music", icon: "music.note", value: $settings.musicVolume)
                     volumeRow(label: "Sound Effects", icon: "speaker.wave.2.fill", value: $settings.sfxVolume)
@@ -124,7 +124,7 @@ struct SettingsView: View {
             .frame(width: 340)
             .background(
                 RoundedRectangle(cornerRadius: 18)
-                    .fill(RenaissanceColors.parchment.opacity(0.96))
+                    .fill(settings.dialogBackground.opacity(0.96))
             )
             .borderModal(radius: 18)
         }
@@ -138,7 +138,7 @@ struct SettingsView: View {
                     .foregroundStyle(RenaissanceColors.warmBrown)
                 Text(label)
                     .font(.custom("EBGaramond-Regular", size: 14))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .foregroundStyle(settings.cardTextColor)
             }
             HStack(spacing: 10) {
                 Image(systemName: "speaker.fill")

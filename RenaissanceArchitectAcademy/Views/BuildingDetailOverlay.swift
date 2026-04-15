@@ -9,6 +9,8 @@ struct BuildingDetailOverlay: View {
     var isLargeScreen: Bool = false
     var heroNamespace: Namespace.ID? = nil
 
+    private var settings: GameSettings { GameSettings.shared }
+
     @State private var showContent = false
 
     // Adaptive sizing
@@ -40,7 +42,7 @@ struct BuildingDetailOverlay: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(plot.building.name)
                             .font(.custom("Cinzel-Regular", size: titleSize, relativeTo: .title))
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                            .foregroundStyle(settings.cardTextColor)
                             .heroEffect(id: "bldg-name-\(plot.id)", namespace: heroNamespace)
 
                         HStack(spacing: 8) {
@@ -49,7 +51,7 @@ struct BuildingDetailOverlay: View {
                             Text(plot.building.era.rawValue)
                                 .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 20 : 16, relativeTo: .subheadline))
                         }
-                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
+                        .foregroundStyle(settings.cardTextColor.opacity(0.7))
                         .heroEffect(id: "bldg-icon-\(plot.id)", namespace: heroNamespace)
                     }
 
@@ -71,7 +73,7 @@ struct BuildingDetailOverlay: View {
                     Button(action: onDismiss) {
                         Image(systemName: "xmark.circle.fill")
                             .font(isLargeScreen ? .title : .title2)
-                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                            .foregroundStyle(settings.cardTextColor.opacity(0.5))
                     }
                     .buttonStyle(.plain)
                     #if os(macOS)
@@ -96,10 +98,10 @@ struct BuildingDetailOverlay: View {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
                         Image(systemName: "books.vertical.fill")
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                            .foregroundStyle(settings.cardTextColor)
                         Text("Sciences Required")
                             .font(.custom("EBGaramond-SemiBold", size: isLargeScreen ? 17 : 15, relativeTo: .caption))
-                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
+                            .foregroundStyle(settings.cardTextColor.opacity(0.7))
                     }
 
                     FlowLayout(spacing: isLargeScreen ? 12 : 8) {
@@ -113,15 +115,15 @@ struct BuildingDetailOverlay: View {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Image(systemName: "scroll.fill")
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                            .foregroundStyle(settings.cardTextColor)
                         Text("Description")
                             .font(.custom("EBGaramond-SemiBold", size: isLargeScreen ? 17 : 15, relativeTo: .caption))
-                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
+                            .foregroundStyle(settings.cardTextColor.opacity(0.7))
                     }
 
                     Text(plot.building.description)
                         .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 16 : 14, relativeTo: .body))
-                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                        .foregroundStyle(settings.cardTextColor.opacity(0.8))
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
 
@@ -151,7 +153,7 @@ struct BuildingDetailOverlay: View {
                 ZStack {
                     // Main card background
                     RoundedRectangle(cornerRadius: isLargeScreen ? 20 : 16)
-                        .fill(RenaissanceColors.parchment)
+                        .fill(settings.dialogBackground)
 
                     // Decorative border
                     RoundedRectangle(cornerRadius: isLargeScreen ? 20 : 16)

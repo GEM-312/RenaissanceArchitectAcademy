@@ -10,6 +10,7 @@ struct StationLessonOverlay: View {
     @State private var revealedCharCount = 0
     @State private var showButton = false
     @State private var typewriterTimer: Timer?
+    private var settings: GameSettings { GameSettings.shared }
 
     private let charsPerTick = 2
     private let tickInterval: TimeInterval = 0.03
@@ -36,11 +37,11 @@ struct StationLessonOverlay: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(lesson.stationLabel)
                             .font(.custom("EBGaramond-Regular", size: 14))
-                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+                            .foregroundStyle(settings.cardTextColor.opacity(0.6))
 
                         Text(lesson.title)
                             .font(.custom("EBGaramond-SemiBold", size: 22))
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                            .foregroundStyle(settings.cardTextColor)
                     }
                 }
 
@@ -50,7 +51,7 @@ struct StationLessonOverlay: View {
                 // Typewriter text
                 Text(revealedText)
                     .font(.custom("EBGaramond-Regular", size: 17, relativeTo: .body))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
+                    .foregroundStyle(settings.cardTextColor.opacity(0.85))
                     .multilineTextAlignment(.leading)
                     .lineSpacing(5)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -102,7 +103,7 @@ struct StationLessonOverlay: View {
             .adaptiveWidth(480)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(RenaissanceColors.parchment)
+                    .fill(settings.dialogBackground)
             )
             .padding(.horizontal, 32)
             .opacity(showContent ? 1 : 0)

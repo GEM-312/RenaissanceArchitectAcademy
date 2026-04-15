@@ -11,6 +11,7 @@ struct BirdChatOverlay: View {
     @State private var inputText = ""
     @State private var showContent = false
     @FocusState private var isInputFocused: Bool
+    private var settings: GameSettings { GameSettings.shared }
 
     /// Suggested questions based on card content
     private var suggestedQuestions: [String] {
@@ -48,7 +49,7 @@ struct BirdChatOverlay: View {
                     // Input or suggestions
                     inputView
                 }
-                .background(RenaissanceColors.parchment)
+                .background(settings.dialogBackground)
                 .clipShape(RoundedRectangle(cornerRadius: 20))
                 .borderModal(radius: 20)
                 .renaissanceShadow(.modal)
@@ -86,7 +87,7 @@ struct BirdChatOverlay: View {
 
                 Text(card.title)
                     .font(RenaissanceFont.captionSmall)
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+                    .foregroundStyle(settings.cardTextColor.opacity(0.6))
                     .lineLimit(1)
             }
 
@@ -159,7 +160,7 @@ struct BirdChatOverlay: View {
                                 .foregroundStyle(RenaissanceColors.ochre)
                             Text(error)
                                 .font(RenaissanceFont.captionSmall)
-                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
+                                .foregroundStyle(settings.cardTextColor.opacity(0.7))
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
@@ -197,7 +198,7 @@ struct BirdChatOverlay: View {
 
             Text(text)
                 .font(RenaissanceFont.bodySmall)
-                .foregroundStyle(RenaissanceColors.sepiaInk)
+                .foregroundStyle(settings.cardTextColor)
                 .lineSpacing(LineHeight.normal)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
@@ -262,7 +263,7 @@ struct BirdChatOverlay: View {
             HStack(spacing: 10) {
                 TextField("Ask a question...", text: $inputText, axis: .vertical)
                     .font(RenaissanceFont.bodySmall)
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .foregroundStyle(settings.cardTextColor)
                     .lineLimit(1...3)
                     .focused($isInputFocused)
                     .textFieldStyle(.plain)
@@ -283,7 +284,7 @@ struct BirdChatOverlay: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
-            .background(RenaissanceColors.sepiaInk.opacity(0.04))
+            .background(settings.cardTextColor.opacity(0.04))
             .clipShape(RoundedRectangle(cornerRadius: 14))
             .padding(.horizontal, 12)
         }
