@@ -4,7 +4,7 @@ import SwiftUI
 /// Each button has its own small background, no big panel
 struct GameTopBarView: View {
     let title: String
-    @ObservedObject var viewModel: CityViewModel
+    var viewModel: CityViewModel
     var onNavigate: (SidebarDestination) -> Void
     var showBackButton: Bool = false
     var onBack: (() -> Void)? = nil

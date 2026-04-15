@@ -9,7 +9,7 @@ import Foundation
 ///
 /// Cost: ~$0.05 per 100 bird questions using Haiku 4.5
 @MainActor
-class ClaudeService: ObservableObject, AIService {
+@Observable class ClaudeService: AIService {
 
     // API key loaded from APIKeys.swift (not committed to repo)
     static let apiKey = APIKeys.claude
@@ -28,9 +28,9 @@ class ClaudeService: ObservableObject, AIService {
 
     // MARK: - State
 
-    @Published var messages: [ChatMessage] = []
-    @Published var isLoading = false
-    @Published var error: String?
+    var messages: [ChatMessage] = []
+    var isLoading = false
+    var error: String?
 
     /// Current context for the bird companion
     private var currentContext: BirdContext?

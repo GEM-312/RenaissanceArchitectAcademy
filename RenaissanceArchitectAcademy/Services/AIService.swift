@@ -74,7 +74,7 @@ struct GameToolContext {
 }
 
 /// Protocol for AI chat services — Claude API, Apple Intelligence, or Mock
-/// All implementations must be @MainActor ObservableObject for SwiftUI binding
+/// All implementations must be @MainActor @Observable for SwiftUI binding
 protocol AIService: AnyObject {
     var messages: [ChatMessage] { get }
     var isLoading: Bool { get }

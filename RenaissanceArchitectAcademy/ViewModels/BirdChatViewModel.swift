@@ -3,21 +3,21 @@ import SwiftUI
 /// Coordinates AI service selection for the bird chat
 /// Manages: provider choice, service lifecycle, tool configuration, subscription checks
 @MainActor
-class BirdChatViewModel: ObservableObject {
+@Observable class BirdChatViewModel {
 
-    // MARK: - Published State (forwarded from active service)
+    // MARK: - State (forwarded from active service)
 
-    @Published var messages: [ChatMessage] = []
-    @Published var isLoading = false
-    @Published var error: String?
+    var messages: [ChatMessage] = []
+    var isLoading = false
+    var error: String?
 
     /// Whether the user needs to pick an AI provider (first time)
-    @Published var showProviderPicker = false
+    var showProviderPicker = false
 
     // MARK: - Active Service
 
-    private var activeService: (any AIService)?
-    private var currentContext: BirdContext?
+    @ObservationIgnored private var activeService: (any AIService)?
+    @ObservationIgnored private var currentContext: BirdContext?
 
     /// Game state for tool calling — set before starting a session
     var gameToolContext: GameToolContext?
@@ -80,23 +80,24 @@ class BirdChatViewModel: ObservableObject {
             service.startSession(context: context)
         }
 
-        // Observe the service's state — poll since we can't use Combine across protocol
+        // Observe the service's state via withObservationTracking (bridges protocol existential)
         observeService(service)
     }
 
-    /// Forward messages from the active service
+    /// Forward state from the active service using observation tracking.
+    /// Replaces the old 100ms polling loop — fires once per change, event-driven.
     private func observeService(_ service: any AIService) {
-        // Use a timer to sync state from the active service
-        // This is needed because @Published across protocol existentials
-        // doesn't trigger SwiftUI updates automatically
-        Task {
-            while activeService != nil {
-                if let svc = activeService {
-                    self.messages = svc.messages
-                    self.isLoading = svc.isLoading
-                    self.error = svc.error
-                }
-                try? await Task.sleep(for: .milliseconds(100))
+        withObservationTracking {
+            _ = service.messages
+            _ = service.isLoading
+            _ = service.error
+        } onChange: {
+            Task { @MainActor [weak self] in
+                guard let self, self.activeService != nil else { return }
+                self.messages = service.messages
+                self.isLoading = service.isLoading
+                self.error = service.error
+                self.observeService(service)  // re-register for next change
             }
         }
     }

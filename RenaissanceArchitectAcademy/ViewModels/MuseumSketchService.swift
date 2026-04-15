@@ -2,18 +2,18 @@ import SwiftUI
 
 /// Fetches and caches Metropolitan Museum of Art images for the sketch study system
 @MainActor
-class MuseumSketchService: ObservableObject {
+@Observable class MuseumSketchService {
 
     static let shared = MuseumSketchService()
 
     /// In-memory image cache keyed by Met object ID
-    @Published private(set) var imageCache: [Int: Image] = [:]
-    @Published private(set) var loadingIDs: Set<Int> = []
+    private(set) var imageCache: [Int: Image] = [:]
+    private(set) var loadingIDs: Set<Int> = []
     /// Aspect ratios (width/height) for loaded images
     private(set) var aspectRatios: [Int: CGFloat] = [:]
 
-    private let urlSession: URLSession
-    private var diskCacheURL: URL? {
+    @ObservationIgnored private let urlSession: URLSession
+    @ObservationIgnored private var diskCacheURL: URL? {
         FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first?
             .appendingPathComponent("MuseumSketches", isDirectory: true)
     }

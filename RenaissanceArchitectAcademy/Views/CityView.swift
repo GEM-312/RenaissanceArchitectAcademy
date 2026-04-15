@@ -3,7 +3,7 @@ import SwiftUI
 /// City View - Leonardo's Notebook aesthetic
 /// Displays building plots in an isometric grid with blueprint overlays
 struct CityView: View {
-    @ObservedObject var viewModel: CityViewModel
+    var viewModel: CityViewModel
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     // Challenge navigation state

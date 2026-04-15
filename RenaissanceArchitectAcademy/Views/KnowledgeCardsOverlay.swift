@@ -45,7 +45,7 @@ struct KnowledgeCardsOverlay: View {
 
     let cards: [KnowledgeCard]
     let buildingId: Int
-    @ObservedObject var viewModel: CityViewModel
+    var viewModel: CityViewModel
     var notebookState: NotebookState? = nil
     let onDismiss: () -> Void
     /// Called when all cards in this set are complete
@@ -133,7 +133,7 @@ struct KnowledgeCardsOverlay: View {
     @State private var guidanceBubbleCard: KnowledgeCard? = nil
 
     // Bird chat (manual "Ask the Bird" only)
-    @StateObject private var chatViewModel = BirdChatViewModel()
+    @State private var chatViewModel = BirdChatViewModel()
     @State private var showBirdChat = false
     @State private var showAIPicker = false
     @State private var birdChatCard: KnowledgeCard? = nil

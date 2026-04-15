@@ -30,11 +30,11 @@ import FoundationModels
 /// - Content safety checks
 @available(iOS 26.0, macOS 26.0, *)
 @MainActor
-class AppleAIService: ObservableObject, AIService {
+@Observable class AppleAIService: AIService {
 
-    @Published var messages: [ChatMessage] = []
-    @Published var isLoading = false
-    @Published var error: String?
+    var messages: [ChatMessage] = []
+    var isLoading = false
+    var error: String?
 
     private var session: LanguageModelSession?
     private var currentContext: BirdContext?

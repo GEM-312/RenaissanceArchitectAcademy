@@ -20,7 +20,7 @@ struct CityMapView: View {
     // MARK: - Properties
 
     /// ViewModel holds all building data (shared with CityView)
-    @ObservedObject var viewModel: CityViewModel
+    var viewModel: CityViewModel
 
     /// Shared workshop state for hint crafting cost
     var workshopState: WorkshopState
