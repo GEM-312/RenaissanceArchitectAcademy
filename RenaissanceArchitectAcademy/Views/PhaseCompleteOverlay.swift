@@ -10,6 +10,8 @@ struct PhaseCompleteOverlay: View {
 
     var viewModel: CityViewModel? = nil
 
+    private var settings: GameSettings { GameSettings.shared }
+
     @State private var showContent = false
     @State private var birdEntered = false
 
@@ -50,7 +52,7 @@ struct PhaseCompleteOverlay: View {
     var body: some View {
         ZStack {
             // Dimming background — tap to dismiss
-            Color.black.opacity(0.4)
+            RenaissanceColors.overlayDimming
                 .ignoresSafeArea()
                 .onTapGesture { onDismiss() }
 
@@ -70,7 +72,7 @@ struct PhaseCompleteOverlay: View {
                     // Title
                     Text("\(completedPhase.displayName) Phase Complete!")
                         .font(RenaissanceFont.title)
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .foregroundStyle(settings.cardTextColor)
                         .multilineTextAlignment(.center)
 
                     // Divider line
@@ -82,7 +84,7 @@ struct PhaseCompleteOverlay: View {
                     // Message
                     Text(celebrationMessage)
                         .font(RenaissanceFont.body)
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .foregroundStyle(settings.cardTextColor)
                         .multilineTextAlignment(.center)
                         .lineSpacing(LineHeight.relaxed)
                         .padding(.horizontal, Spacing.md)
@@ -107,7 +109,7 @@ struct PhaseCompleteOverlay: View {
                         let progress = vm.cardProgress(for: bid)
                         Text("\(progress.completed)/\(progress.total) knowledge cards collected")
                             .font(RenaissanceFont.caption)
-                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                            .foregroundStyle(settings.cardTextColor.opacity(0.5))
                     }
 
                     // Navigate button
@@ -139,7 +141,7 @@ struct PhaseCompleteOverlay: View {
                 .padding(Spacing.dialogPadding)
                 .background(
                     RoundedRectangle(cornerRadius: CornerRadius.lg)
-                        .fill(RenaissanceColors.parchment)
+                        .fill(settings.dialogBackground)
                 )
                 .borderModal(radius: CornerRadius.lg)
                 .renaissanceShadow(.modal)
@@ -170,15 +172,15 @@ struct PhaseCompleteOverlay: View {
                         .frame(width: 14, height: 14)
                         .overlay(
                             Circle()
-                                .stroke(RenaissanceColors.sepiaInk.opacity(0.2), lineWidth: 1)
+                                .stroke(settings.cardTextColor.opacity(0.2), lineWidth: 1)
                         )
 
                     Text(phase.displayName)
                         .font(RenaissanceFont.captionSmall)
                         .foregroundStyle(
                             phase <= completedPhase
-                                ? RenaissanceColors.sepiaInk
-                                : RenaissanceColors.sepiaInk.opacity(0.3)
+                                ? settings.cardTextColor
+                                : settings.cardTextColor.opacity(0.3)
                         )
                 }
             }

@@ -10,6 +10,8 @@ struct BuildingChecklistView: View {
     let onDismiss: () -> Void
     var heroNamespace: Namespace.ID? = nil
 
+    private var settings: GameSettings { GameSettings.shared }
+
     @Environment(\.horizontalSizeClass) private var sizeClass
     private var isLargeScreen: Bool { sizeClass == .regular }
 
@@ -37,12 +39,12 @@ struct BuildingChecklistView: View {
 
                         Text(plot.building.name)
                             .font(.custom("EBGaramond-SemiBold", size: 26))
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                            .foregroundStyle(settings.cardTextColor)
                             .heroEffect(id: "building-name-\(plot.id)", namespace: heroNamespace)
 
                         Text("Construction Requirements")
                             .font(.custom("EBGaramond-Regular", size: 17))
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                            .foregroundStyle(settings.cardTextColor)
                     }
 
                     Divider()
@@ -61,10 +63,10 @@ struct BuildingChecklistView: View {
                             HStack(spacing: 8) {
                                 Image(systemName: "minus.circle")
                                     .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
-                                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                                    .foregroundStyle(settings.cardTextColor.opacity(0.5))
                                 Text("No lesson available yet")
                                     .font(.custom("EBGaramond-Regular", size: 14))
-                                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                                    .foregroundStyle(settings.cardTextColor)
                             }
                         }
                     }
@@ -99,7 +101,7 @@ struct BuildingChecklistView: View {
                                     HStack(spacing: 10) {
                                         Image(systemName: "circle")
                                             .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
-                                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                                            .foregroundStyle(settings.cardTextColor.opacity(0.5))
 
                                         Image(systemName: "pencil.and.outline")
                                             .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
@@ -107,7 +109,7 @@ struct BuildingChecklistView: View {
 
                                         Text("Floor Plan (Pianta)")
                                             .font(.custom("EBGaramond-Regular", size: 15))
-                                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                                            .foregroundStyle(settings.cardTextColor)
 
                                         Spacer()
 
@@ -125,10 +127,10 @@ struct BuildingChecklistView: View {
                             HStack(spacing: 8) {
                                 Image(systemName: "minus.circle")
                                     .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
-                                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                                    .foregroundStyle(settings.cardTextColor.opacity(0.5))
                                 Text("Not required for this building")
                                     .font(.custom("EBGaramond-Regular", size: 14))
-                                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                                    .foregroundStyle(settings.cardTextColor)
                             }
                         }
                     }
@@ -140,14 +142,14 @@ struct BuildingChecklistView: View {
                             HStack(spacing: 10) {
                                 Image(systemName: have >= needed ? "checkmark.circle.fill" : "circle")
                                     .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
-                                    .foregroundStyle(have >= needed ? RenaissanceColors.sageGreen : RenaissanceColors.sepiaInk.opacity(0.5))
+                                    .foregroundStyle(have >= needed ? RenaissanceColors.sageGreen : settings.cardTextColor.opacity(0.5))
 
                                 Text(item.icon)
                                     .font(.custom("EBGaramond-Regular", size: 18, relativeTo: .body))
 
                                 Text(item.rawValue)
                                     .font(.custom("EBGaramond-Regular", size: 15))
-                                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                                    .foregroundStyle(settings.cardTextColor)
 
                                 Spacer()
 
@@ -181,11 +183,11 @@ struct BuildingChecklistView: View {
                                     .foregroundStyle(RenaissanceColors.goldSuccess)
                             }
                         }
-                        .foregroundStyle(allRequirementsMet ? RenaissanceColors.sepiaInk : RenaissanceColors.sepiaInk)
+                        .foregroundStyle(allRequirementsMet ? settings.cardTextColor : settings.cardTextColor)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
                         .background(
-                            RenaissanceColors.parchment.opacity(allRequirementsMet ? 0.95 : 0.6)
+                            settings.dialogBackground.opacity(allRequirementsMet ? 0.95 : 0.6)
                         )
                         .overlay(EngineeringBorder())
                         .opacity(allRequirementsMet ? 1.0 : 0.6)
@@ -199,14 +201,14 @@ struct BuildingChecklistView: View {
                     } label: {
                         Text("Close")
                             .font(.custom("EBGaramond-Regular", size: 16))
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                            .foregroundStyle(settings.cardTextColor)
                     }
                     .buttonStyle(.plain)
                 }
                 .padding(24)
                 .background(
                     RoundedRectangle(cornerRadius: 20)
-                        .fill(RenaissanceColors.parchment)
+                        .fill(settings.dialogBackground)
                 )
                 .borderModal(radius: 20)
                 .adaptivePadding(.horizontal, regular: 32, compact: 12)
@@ -222,10 +224,10 @@ struct BuildingChecklistView: View {
             HStack(spacing: 6) {
                 Image(systemName: icon)
                     .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .foregroundStyle(settings.cardTextColor)
                 Text(title)
                     .font(.custom("EBGaramond-Regular", size: 16))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .foregroundStyle(settings.cardTextColor)
             }
 
             content()
@@ -234,7 +236,7 @@ struct BuildingChecklistView: View {
         .padding(12)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(RenaissanceColors.parchment.opacity(0.5))
+                .fill(settings.dialogBackground.opacity(0.5))
                 .borderCard(radius: 12)
         )
     }
@@ -243,7 +245,7 @@ struct BuildingChecklistView: View {
         HStack(spacing: 10) {
             Image(systemName: isMet ? "checkmark.circle.fill" : "circle")
                 .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
-                .foregroundStyle(isMet ? RenaissanceColors.sageGreen : RenaissanceColors.sepiaInk.opacity(0.5))
+                .foregroundStyle(isMet ? RenaissanceColors.sageGreen : settings.cardTextColor.opacity(0.5))
 
             if let imageName = customImage {
                 Image(imageName)
@@ -254,12 +256,12 @@ struct BuildingChecklistView: View {
             } else {
                 Image(systemName: icon)
                     .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .foregroundStyle(settings.cardTextColor)
             }
 
             Text(label)
                 .font(.custom("EBGaramond-Regular", size: 15))
-                .foregroundStyle(isMet ? RenaissanceColors.sepiaInk : RenaissanceColors.sepiaInk.opacity(0.6))
+                .foregroundStyle(isMet ? settings.cardTextColor : settings.cardTextColor.opacity(0.6))
 
             Spacer()
 

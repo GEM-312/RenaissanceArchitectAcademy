@@ -7,6 +7,7 @@ struct AIProviderPickerView: View {
 
     @Environment(\.horizontalSizeClass) private var sizeClass
     private var isLargeScreen: Bool { sizeClass == .regular }
+    private var settings: GameSettings { GameSettings.shared }
 
     var body: some View {
         ZStack {
@@ -21,11 +22,11 @@ struct AIProviderPickerView: View {
                 VStack(spacing: 6) {
                     Text("Choose Your AI")
                         .font(.custom("Cinzel-Bold", size: isLargeScreen ? 22 : 18))
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .foregroundStyle(settings.cardTextColor)
 
                     Text("You can change this anytime in Settings")
                         .font(.custom("EBGaramond-Italic", size: 14))
-                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                        .foregroundStyle(settings.cardTextColor.opacity(0.5))
                 }
 
                 VStack(spacing: 12) {
@@ -52,7 +53,7 @@ struct AIProviderPickerView: View {
             .frame(maxWidth: isLargeScreen ? 380 : .infinity)
             .background(
                 RoundedRectangle(cornerRadius: CornerRadius.lg)
-                    .fill(RenaissanceColors.parchment)
+                    .fill(settings.dialogBackground)
             )
             .borderModal(radius: CornerRadius.lg)
             .renaissanceShadow(.modal)
@@ -75,11 +76,11 @@ struct AIProviderPickerView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(provider.displayName)
                         .font(.custom("EBGaramond-SemiBold", size: 17))
-                        .foregroundStyle(available ? RenaissanceColors.sepiaInk : RenaissanceColors.stoneGray)
+                        .foregroundStyle(available ? settings.cardTextColor : RenaissanceColors.stoneGray)
 
                     Text(provider.description)
                         .font(.custom("EBGaramond-Regular", size: 13))
-                        .foregroundStyle(available ? RenaissanceColors.sepiaInk.opacity(0.6) : RenaissanceColors.stoneGray.opacity(0.5))
+                        .foregroundStyle(available ? settings.cardTextColor.opacity(0.6) : RenaissanceColors.stoneGray.opacity(0.5))
 
                     if let subtitle {
                         Text(subtitle)
@@ -100,7 +101,7 @@ struct AIProviderPickerView: View {
             .padding(14)
             .background(
                 RoundedRectangle(cornerRadius: CornerRadius.md)
-                    .fill(RenaissanceColors.parchment)
+                    .fill(settings.dialogBackground)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: CornerRadius.md)

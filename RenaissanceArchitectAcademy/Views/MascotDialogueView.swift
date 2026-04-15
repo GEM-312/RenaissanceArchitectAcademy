@@ -12,6 +12,8 @@ struct MascotDialogueView: View {
     let onChoice: (BuildingCardChoice) -> Void
     let onDismiss: () -> Void
 
+    private var settings: GameSettings { GameSettings.shared }
+
     @Environment(\.horizontalSizeClass) private var sizeClass
 
     @State private var showMascot = false
@@ -638,15 +640,17 @@ struct Triangle: Shape {
 }
 
 struct DialogueBubble: View {
+    private var settings: GameSettings { GameSettings.shared }
+
     var body: some View {
         ZStack {
             // Main bubble
             RoundedRectangle(cornerRadius: 20)
-                .fill(RenaissanceColors.parchment)
+                .fill(settings.dialogBackground)
 
             // Border
             RoundedRectangle(cornerRadius: 20)
-                .stroke(RenaissanceColors.ochre.opacity(0.5), lineWidth: 2)
+                .stroke(settings.cardBorderColor, lineWidth: 2)
 
             // Decorative corner flourishes
             VStack {
