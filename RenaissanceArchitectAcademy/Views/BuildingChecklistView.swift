@@ -8,6 +8,7 @@ struct BuildingChecklistView: View {
     let onBeginConstruction: () -> Void
     let onBeginSketching: (() -> Void)?
     let onDismiss: () -> Void
+    var heroNamespace: Namespace.ID? = nil
 
     @Environment(\.horizontalSizeClass) private var sizeClass
     private var isLargeScreen: Bool { sizeClass == .regular }
@@ -37,6 +38,7 @@ struct BuildingChecklistView: View {
                         Text(plot.building.name)
                             .font(.custom("EBGaramond-SemiBold", size: 26))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
+                            .heroEffect(id: "building-name-\(plot.id)", namespace: heroNamespace)
 
                         Text("Construction Requirements")
                             .font(.custom("EBGaramond-Regular", size: 17))

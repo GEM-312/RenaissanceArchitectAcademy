@@ -8,6 +8,7 @@ struct MascotDialogueView: View {
     var workshopState: WorkshopState
     var notebookState: NotebookState? = nil
     var onOpenNotebook: ((Int) -> Void)? = nil
+    var heroNamespace: Namespace.ID? = nil
     let onChoice: (BuildingCardChoice) -> Void
     let onDismiss: () -> Void
 
@@ -51,6 +52,7 @@ struct MascotDialogueView: View {
                         .tracking(Tracking.label)
                         .foregroundColor(RenaissanceColors.ochre)
                         .shadow(color: .black.opacity(0.6), radius: 4, y: 2)
+                        .heroEffect(id: "building-name-\(plot.id)", namespace: heroNamespace)
 
                     // Science icons row
                     HStack(spacing: isCompact ? 4 : 6) {

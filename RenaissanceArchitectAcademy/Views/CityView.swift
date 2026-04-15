@@ -5,6 +5,7 @@ import SwiftUI
 struct CityView: View {
     var viewModel: CityViewModel
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Namespace private var buildingHero
 
     @State private var showWorkshop = false
 
@@ -77,9 +78,12 @@ struct CityView: View {
                             ForEach(filteredPlots) { plot in
                                 BuildingPlotView(
                                     plot: plot,
-                                    isLargeScreen: horizontalSizeClass == .regular
+                                    isLargeScreen: horizontalSizeClass == .regular,
+                                    heroNamespace: buildingHero
                                 ) {
-                                    viewModel.selectPlot(plot)
+                                    withAnimation(.spring(response: 0.45, dampingFraction: 0.8)) {
+                                        viewModel.selectPlot(plot)
+                                    }
                                 }
                                 .bloomOnComplete(plot.isCompleted)
                             }
@@ -93,7 +97,11 @@ struct CityView: View {
                 if let selected = viewModel.selectedPlot {
                     BuildingDetailOverlay(
                         plot: selected,
-                        onDismiss: { viewModel.selectedPlot = nil },
+                        onDismiss: {
+                            withAnimation(.spring(response: 0.45, dampingFraction: 0.8)) {
+                                viewModel.selectedPlot = nil
+                            }
+                        },
                         onBeginChallenge: {
                             // Check for sketching challenge
                             if let sketchChallenge = SketchingContent.sketchingChallenge(for: selected.building.name) {
@@ -102,7 +110,8 @@ struct CityView: View {
                                 showingSketching = true
                             }
                         },
-                        isLargeScreen: horizontalSizeClass == .regular
+                        isLargeScreen: horizontalSizeClass == .regular,
+                        heroNamespace: buildingHero
                     )
                     #if os(macOS)
                     .onExitCommand { viewModel.selectedPlot = nil }
