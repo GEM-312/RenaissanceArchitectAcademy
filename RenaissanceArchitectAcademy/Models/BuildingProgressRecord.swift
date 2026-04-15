@@ -7,7 +7,6 @@ final class BuildingProgressRecord {
     var playerName: String = ""
     var scienceBadgesRaw: [String] = []
     var sketchCompleted: Bool = false
-    var quizPassed: Bool = false
     var lessonRead: Bool = false
     var lessonSectionIndex: Int = 0
     var isCompleted: Bool = false
@@ -59,7 +58,6 @@ final class BuildingProgressRecord {
         var progress = BuildingProgress()
         progress.scienceBadgesEarned = scienceBadgesEarned
         progress.sketchCompleted = sketchCompleted
-        progress.quizPassed = quizPassed
         progress.lessonRead = lessonRead
         progress.lessonSectionIndex = lessonSectionIndex
         progress.constructionSequenceCompleted = constructionSequenceCompleted
@@ -71,7 +69,6 @@ final class BuildingProgressRecord {
     func update(from progress: BuildingProgress) {
         scienceBadgesEarned = progress.scienceBadgesEarned
         sketchCompleted = progress.sketchCompleted
-        quizPassed = progress.quizPassed
         lessonRead = progress.lessonRead
         lessonSectionIndex = progress.lessonSectionIndex
         constructionSequenceCompleted = progress.constructionSequenceCompleted

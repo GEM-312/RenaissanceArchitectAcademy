@@ -62,7 +62,6 @@ enum BuildingCardChoice: String, CaseIterable {
 struct BuildingProgress {
     var scienceBadgesEarned: Set<Science> = []
     var sketchCompleted: Bool = false
-    var quizPassed: Bool = false
     var lessonRead: Bool = false
     var lessonSectionIndex: Int = 0  // Bookmark: which section the student is on
     var constructionSequenceCompleted: Bool = false
@@ -134,7 +133,6 @@ struct BuildingProgress {
 /// Reward constants for the game economy
 enum GameRewards {
     static let lessonReadFlorins = 10
-    static let quizPassFlorins = 25
     static let sketchCompleteFlorins = 15
     static let buildCompleteFlorins = 50
     static let timberCollectFlorins = 1

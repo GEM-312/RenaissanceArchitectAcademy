@@ -6,9 +6,6 @@ struct CityView: View {
     var viewModel: CityViewModel
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
-    // Challenge navigation state
-    @State private var showingChallenge = false
-    @State private var activeChallenge: InteractiveChallenge? = nil
     @State private var showWorkshop = false
 
     // Sketching navigation state
@@ -98,15 +95,11 @@ struct CityView: View {
                         plot: selected,
                         onDismiss: { viewModel.selectedPlot = nil },
                         onBeginChallenge: {
-                            // Check for sketching challenge first, then fall back to quiz
+                            // Check for sketching challenge
                             if let sketchChallenge = SketchingContent.sketchingChallenge(for: selected.building.name) {
                                 activeSketchingChallenge = sketchChallenge
                                 viewModel.selectedPlot = nil
                                 showingSketching = true
-                            } else if let challenge = ChallengeContent.interactiveChallenge(for: selected.building.name) {
-                                activeChallenge = challenge
-                                viewModel.selectedPlot = nil
-                                showingChallenge = true
                             }
                         },
                         isLargeScreen: horizontalSizeClass == .regular
@@ -114,26 +107,6 @@ struct CityView: View {
                     #if os(macOS)
                     .onExitCommand { viewModel.selectedPlot = nil }
                     #endif
-                }
-
-                // Interactive Challenge view (full screen)
-                if showingChallenge, let challenge = activeChallenge {
-                    InteractiveChallengeView(
-                        challenge: challenge,
-                        onComplete: { correct, total in
-                            // Find the plot and mark it complete
-                            if let plot = viewModel.buildingPlots.first(where: { $0.building.name == challenge.buildingName }) {
-                                viewModel.completeChallenge(for: plot.id)
-                            }
-                            showingChallenge = false
-                            activeChallenge = nil
-                        },
-                        onDismiss: {
-                            showingChallenge = false
-                            activeChallenge = nil
-                        }
-                    )
-                    .transition(.move(edge: .trailing))
                 }
 
                 // Sketching Challenge view (full screen)

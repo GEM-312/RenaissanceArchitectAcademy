@@ -156,27 +156,6 @@ struct BuildingChecklistView: View {
                         }
                     }
 
-                    // Quiz section
-                    let hasQuiz = ChallengeContent.interactiveChallenge(for: plot.building.name) != nil
-                    requirementSection(title: "Knowledge Test", icon: "questionmark.circle.fill") {
-                        if hasQuiz {
-                            checklistRow(
-                                icon: "checkmark.seal.fill",
-                                label: "Quiz Passed",
-                                isMet: progress.quizPassed
-                            )
-                        } else {
-                            HStack(spacing: 8) {
-                                Image(systemName: "minus.circle")
-                                    .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
-                                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
-                                Text("No quiz available yet")
-                                    .font(.custom("EBGaramond-Regular", size: 14))
-                                    .foregroundStyle(RenaissanceColors.sepiaInk)
-                            }
-                        }
-                    }
-
                     Divider()
                         .overlay(RenaissanceColors.ochre.opacity(0.3))
 

@@ -13,7 +13,7 @@ import SpriteKit
 /// 1. User taps building in SpriteKit → CityScene calls onBuildingSelected
 /// 2. We find the matching BuildingPlot from CityViewModel
 /// 3. We show BuildingDetailOverlay (pure SwiftUI) as a sheet
-/// 4. User taps "Begin Challenge" → we show InteractiveChallengeView
+/// 4. User taps building → knowledge cards, lessons, and construction sequence
 ///
 struct CityMapView: View {
 
@@ -45,9 +45,6 @@ struct CityMapView: View {
 
     /// Controls the building detail sheet
     @State private var showBuildingDetail = false
-
-    /// Controls the challenge view
-    @State private var showChallenge = false
 
     /// Controls the sketching challenge view
     @State private var showSketching = false
@@ -652,9 +649,7 @@ struct CityMapView: View {
                         withAnimation {
                             showMaterialPuzzle = false
                         }
-                        // Reset mascot and show challenge
                         sceneHolder.scene?.resetMascot()
-                        showChallenge = true
                     },
                     onDismiss: {
                         withAnimation {
@@ -685,7 +680,6 @@ struct CityMapView: View {
                     },
                     onBeginChallenge: {
                         showBuildingDetail = false
-                        showChallenge = true
                     },
                     isLargeScreen: true
                 )
@@ -730,39 +724,6 @@ struct CityMapView: View {
         .onDisappear {
             // Release scene to free SpriteKit texture memory when navigating away
             sceneHolder.scene = nil
-        }
-        .sheet(isPresented: $showChallenge) {
-            if let plot = selectedPlot,
-               let challenge = ChallengeContent.interactiveChallenge(for: plot.building.name) {
-                InteractiveChallengeView(
-                    challenge: challenge,
-                    workshopState: workshopState,
-                    onComplete: { correctAnswers, totalQuestions in
-                        // Mark as complete if they got most questions right
-                        let passThreshold = totalQuestions / 2
-                        if correctAnswers > passThreshold {
-                            viewModel.completeChallenge(for: plot.id)
-                            // Update the SpriteKit building state
-                            if let buildingId = buildingIdToPlotId.first(where: { $0.value == plot.id })?.key {
-                                sceneHolder.scene?.updateBuildingState(buildingId, state: .complete)
-                            }
-                        }
-                        // Close the challenge sheet
-                        showChallenge = false
-
-                        selectedPlot = nil
-                    },
-                    onDismiss: {
-                        showChallenge = false
-                        selectedPlot = nil
-                    }
-                )
-            } else {
-                // Fallback if no challenge exists yet
-                Text("Challenge coming soon!")
-                    .font(.custom("EBGaramond-Regular", size: 24))
-                    .foregroundColor(RenaissanceColors.sepiaInk)
-            }
         }
         #if os(iOS)
         .fullScreenCover(isPresented: $showSketching) {

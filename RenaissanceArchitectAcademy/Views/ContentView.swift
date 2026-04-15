@@ -231,8 +231,6 @@ struct ContentView: View {
             WorkshopView(workshop: workshopState, viewModel: cityViewModel, notebookState: notebookState, onNavigate: navigateTo, onBackToMenu: backToMenu, onboardingState: onboardingState, returnToLessonPlotId: $returnToLessonPlotId)
         case .forest:
             ForestMapView(workshop: workshopState, viewModel: cityViewModel, onNavigate: navigateTo, onBackToWorkshop: { navigateTo(.workshop) }, onBackToMenu: backToMenu, onboardingState: onboardingState, returnToLessonPlotId: $returnToLessonPlotId)
-        case .knowledgeTests:
-            KnowledgeTestsView(viewModel: cityViewModel, workshopState: workshopState)
         case .notebook(let buildingId):
             if let plot = cityViewModel.buildingPlots.first(where: { $0.id == buildingId }) {
                 NotebookView(

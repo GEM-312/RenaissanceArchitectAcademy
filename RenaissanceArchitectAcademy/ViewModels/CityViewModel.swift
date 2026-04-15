@@ -410,15 +410,6 @@ import SwiftUI
         }
     }
 
-    func markQuizPassed(for plotId: Int) {
-        var progress = buildingProgressMap[plotId] ?? BuildingProgress()
-        guard !progress.quizPassed else { return }
-        progress.quizPassed = true
-        buildingProgressMap[plotId] = progress
-        persistBuildingProgress(for: plotId)
-        earnFlorins(GameRewards.quizPassFlorins)
-    }
-
     func markSketchCompleted(for plotId: Int) {
         var progress = buildingProgressMap[plotId] ?? BuildingProgress()
         guard !progress.sketchCompleted else { return }
@@ -462,12 +453,11 @@ import SwiftUI
         let lessonOk = LessonContent.lesson(for: plot.building.name) == nil || progress.lessonRead
         let allSciencesBadged = plot.building.sciences.allSatisfy { progress.scienceBadgesEarned.contains($0) }
         let sketchOk = SketchingContent.sketchingChallenge(for: plot.building.name) == nil || progress.sketchCompleted
-        let quizOk = ChallengeContent.interactiveChallenge(for: plot.building.name) == nil || progress.quizPassed
         let materialsOk = plot.building.requiredMaterials.allSatisfy { item, needed in
             (workshopState.craftedMaterials[item] ?? 0) >= needed
         }
 
-        return lessonOk && allSciencesBadged && sketchOk && quizOk && materialsOk
+        return lessonOk && allSciencesBadged && sketchOk && materialsOk
     }
 
     // MARK: - Knowledge Card Tracking

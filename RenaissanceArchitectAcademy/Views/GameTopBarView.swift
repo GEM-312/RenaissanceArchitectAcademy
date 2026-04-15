@@ -168,7 +168,6 @@ struct GameTopBarView: View {
         case (.cityMap, .cityMap): return true
         case (.workshop, .workshop): return true
         case (.forest, .forest): return true
-        case (.knowledgeTests, .knowledgeTests): return true
         case (.allBuildings, .allBuildings): return true
         case (.era(let a), .era(let b)) where a == b: return true
         default: return false
@@ -193,7 +192,6 @@ struct GameTopBarView: View {
             NavItem(icon: "paintpalette.fill", label: "Ren.", destination: .era(.renaissance)) { [onNavigate] in onNavigate(.era(.renaissance)) },
             NavItem(icon: "hammer.fill", label: "Workshop", destination: .workshop) { [onNavigate] in onNavigate(.workshop) },
             NavItem(icon: "leaf.fill", label: "Forest", destination: .forest) { [onNavigate] in onNavigate(.forest) },
-            NavItem(icon: "book.fill", label: "Tests", destination: .knowledgeTests) { [onNavigate] in onNavigate(.knowledgeTests) },
             NavItem(icon: "book.closed.fill", label: "Notes", destination: .notebook(4)) { [onNavigate] in onNavigate(.notebook(4)) },
         ]
 

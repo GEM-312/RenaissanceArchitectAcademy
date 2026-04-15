@@ -59,12 +59,6 @@ struct ProfileView: View {
             totalMilestones += 1
             if progress.lessonRead { doneMilestones += 1 }
 
-            // Quiz (only buildings with quiz content)
-            if ChallengeContent.interactiveChallenge(for: plot.building.name) != nil {
-                totalMilestones += 1
-                if progress.quizPassed { doneMilestones += 1 }
-            }
-
             // Sketch (only buildings with sketching content)
             if SketchingContent.sketchingChallenge(for: plot.building.name) != nil {
                 totalMilestones += 1
@@ -791,9 +785,6 @@ struct ProfileNavRow: View {
                     }
                     profileNavButton(icon: "hammer.fill", label: "Workshop") {
                         onNavigate(.workshop)
-                    }
-                    profileNavButton(icon: "book.fill", label: "Tests") {
-                        onNavigate(.knowledgeTests)
                     }
                     profileNavButton(icon: "book.closed.fill", label: "Notes") {
                         onNavigate(.notebook(4))

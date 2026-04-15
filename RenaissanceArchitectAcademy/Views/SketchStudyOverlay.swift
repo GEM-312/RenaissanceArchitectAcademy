@@ -11,7 +11,7 @@ struct SketchStudyOverlay: View {
     let onDismiss: () -> Void
     let onComplete: (Int) -> Void  // florins earned
 
-    private var sketchService = MuseumSketchService.shared
+    var sketchService = MuseumSketchService.shared
 
     // Shared state
     @State private var wrongAttempts = 0

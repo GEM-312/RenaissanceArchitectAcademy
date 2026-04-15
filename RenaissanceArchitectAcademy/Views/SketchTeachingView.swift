@@ -21,7 +21,7 @@ struct SketchTeachingView: View {
     @State private var incorrectTaps = 0
     @State private var lastTapPosition: CGPoint? = nil
     @State private var showWrongFlash = false
-    private var sketchService = MuseumSketchService.shared
+    var sketchService = MuseumSketchService.shared
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     private var isLargeScreen: Bool { horizontalSizeClass == .regular }

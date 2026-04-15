@@ -329,10 +329,7 @@ struct MascotDialogueView: View {
         // 3. Sketch
         let hasSketchContent = SketchingContent.sketchingChallenge(for: plot.building.name) != nil
         if !hasSketchContent || progress.sketchCompleted { met += 1 }
-        // 4. Quiz
-        let hasQuizContent = ChallengeContent.interactiveChallenge(for: plot.building.name) != nil
-        if !hasQuizContent || progress.quizPassed { met += 1 }
-        // 5. Materials
+        // 4. Materials
         let materialsOk = plot.building.requiredMaterials.allSatisfy { item, needed in
             (workshopState.craftedMaterials[item] ?? 0) >= needed
         }
@@ -341,7 +338,7 @@ struct MascotDialogueView: View {
     }
 
     private func totalRequirements() -> Int {
-        return 5 // lesson, sciences, sketch, quiz, materials
+        return 4 // lesson, sciences, sketch, materials
     }
 }
 
