@@ -112,6 +112,8 @@ struct CityMapView: View {
     /// re-evaluation without triggering re-renders (unlike @State which causes infinite loops)
     @State private var sceneHolder = SceneHolder<CityScene>()
 
+    /// Hero animation namespace — building name morphs through prompt → mascot → destination
+    @Namespace private var buildingNameHero
 
     /// Environment for navigation
     @Environment(\.dismiss) private var dismiss
@@ -175,11 +177,12 @@ struct CityMapView: View {
                 BuildingPromptBubble(
                     plot: plot,
                     positionTracker: positionTracker,
+                    heroNamespace: buildingNameHero,
                     onAccept: {
-                        withAnimation {
+                        withAnimation(.spring(response: 0.45, dampingFraction: 0.8)) {
                             showBuildingPrompt = false
                         }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
                             handleBuildingAction(for: plot)
                         }
                     },
@@ -202,6 +205,7 @@ struct CityMapView: View {
                     viewModel: viewModel,
                     workshopState: workshopState,
                     notebookState: notebookState,
+                    heroNamespace: buildingNameHero,
                     onOpenNotebook: { buildingId in
                         withAnimation {
                             showMascotDialogue = false
@@ -211,10 +215,20 @@ struct CityMapView: View {
                         onNavigate?(.notebook(buildingId))
                     },
                     onChoice: { choice in
+                        challengeEntryPath = choice
+
+                        // Ready to Build: simultaneous dismiss + show for hero animation
+                        if choice == .readyToBuild {
+                            withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                                showMascotDialogue = false
+                                showBuildingChecklist = true
+                            }
+                            return
+                        }
+
                         withAnimation {
                             showMascotDialogue = false
                         }
-                        challengeEntryPath = choice
                         switch choice {
                         case .readToEarn:
                             // Check if building has an uncompleted city-map knowledge card
@@ -255,12 +269,7 @@ struct CityMapView: View {
                                 }
                             }
                         case .readyToBuild:
-                            // Show building checklist
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                withAnimation(.spring(response: 0.3)) {
-                                    showBuildingChecklist = true
-                                }
-                            }
+                            break // handled above
                         }
                     },
                     onDismiss: {
@@ -556,7 +565,8 @@ struct CityMapView: View {
                             selectedPlot = nil
                         }
                         sceneHolder.scene?.resetMascot()
-                    }
+                    },
+                    heroNamespace: buildingNameHero
                 )
                 .transition(.opacity)
             }
@@ -1304,6 +1314,7 @@ class BuildingPositionTracker {
 struct BuildingPromptBubble: View {
     let plot: BuildingPlot
     var positionTracker: BuildingPositionTracker
+    var heroNamespace: Namespace.ID? = nil
     var onAccept: () -> Void
     var onDismiss: () -> Void
 
@@ -1322,6 +1333,7 @@ struct BuildingPromptBubble: View {
                         Text(plot.building.name)
                             .font(.custom("Cinzel-Bold", size: 17))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
+                            .heroEffect(id: "building-name-\(plot.id)", namespace: heroNamespace)
 
                         Text("Work on this building?")
                             .font(RenaissanceFont.dialogSubtitle)

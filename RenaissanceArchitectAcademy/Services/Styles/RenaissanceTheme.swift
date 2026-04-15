@@ -340,3 +340,18 @@ extension View {
         }
     }
 }
+
+// MARK: - Hero Animation (matchedGeometryEffect)
+
+extension View {
+    /// Conditionally applies matchedGeometryEffect when a namespace is provided.
+    /// Allows views to opt into hero animations without breaking when used standalone (e.g. previews).
+    @ViewBuilder
+    func heroEffect(id: String, namespace: Namespace.ID?, properties: MatchedGeometryProperties = .frame) -> some View {
+        if let namespace {
+            self.matchedGeometryEffect(id: id, in: namespace, properties: properties)
+        } else {
+            self
+        }
+    }
+}

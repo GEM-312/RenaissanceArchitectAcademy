@@ -5,6 +5,7 @@ import SwiftUI
 struct BuildingPlotView: View {
     let plot: BuildingPlot
     var isLargeScreen: Bool = false
+    var heroNamespace: Namespace.ID? = nil
     let onTap: () -> Void
 
     @State private var isHovered = false
@@ -66,6 +67,7 @@ struct BuildingPlotView: View {
                                 )
                         }
                     }
+                    .heroEffect(id: "bldg-icon-\(plot.id)", namespace: heroNamespace)
 
                     // Building name
                     Text(plot.building.name)
@@ -74,6 +76,7 @@ struct BuildingPlotView: View {
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
+                        .heroEffect(id: "bldg-name-\(plot.id)", namespace: heroNamespace)
 
                     // Era badge with wax seal style
                     HStack(spacing: 4) {

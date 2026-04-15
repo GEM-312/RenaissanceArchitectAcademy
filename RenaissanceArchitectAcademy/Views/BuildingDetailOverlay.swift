@@ -7,6 +7,7 @@ struct BuildingDetailOverlay: View {
     let onDismiss: () -> Void
     let onBeginChallenge: () -> Void  // NEW: Callback to start challenge
     var isLargeScreen: Bool = false
+    var heroNamespace: Namespace.ID? = nil
 
     @State private var showContent = false
 
@@ -40,6 +41,7 @@ struct BuildingDetailOverlay: View {
                         Text(plot.building.name)
                             .font(.custom("Cinzel-Regular", size: titleSize, relativeTo: .title))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
+                            .heroEffect(id: "bldg-name-\(plot.id)", namespace: heroNamespace)
 
                         HStack(spacing: 8) {
                             Image(systemName: plot.building.era == .ancientRome ? "building.columns" : "paintpalette")
@@ -48,6 +50,7 @@ struct BuildingDetailOverlay: View {
                                 .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 20 : 16, relativeTo: .subheadline))
                         }
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
+                        .heroEffect(id: "bldg-icon-\(plot.id)", namespace: heroNamespace)
                     }
 
                     Spacer()
