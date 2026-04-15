@@ -40,7 +40,7 @@ private extension Array where Element == LessonSection {
 /// fill-in-the-blanks, fun fact cards, and environment prompts
 struct BuildingLessonView: View {
     let plot: BuildingPlot
-    @ObservedObject var viewModel: CityViewModel
+    var viewModel: CityViewModel
     var workshopState: WorkshopState?
     var notebookState: NotebookState? = nil
     var onNavigate: ((SidebarDestination) -> Void)?

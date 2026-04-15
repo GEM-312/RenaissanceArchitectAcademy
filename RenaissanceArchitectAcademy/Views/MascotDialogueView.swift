@@ -4,7 +4,7 @@ import SwiftUI
 /// Appears when user taps a building — Learn, Explore, Build
 struct MascotDialogueView: View {
     let plot: BuildingPlot
-    @ObservedObject var viewModel: CityViewModel
+    var viewModel: CityViewModel
     var workshopState: WorkshopState
     var notebookState: NotebookState? = nil
     var onOpenNotebook: ((Int) -> Void)? = nil

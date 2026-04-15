@@ -1,16 +1,16 @@
 import SwiftUI
 
 @MainActor
-class CityViewModel: ObservableObject {
-    @Published var buildingPlots: [BuildingPlot]
-    @Published var selectedPlot: BuildingPlot?
-    @Published var goldFlorins: Int = 0
-    @Published var earnedScienceBadges: Set<Science> = []
-    @Published var buildingProgressMap: [Int: BuildingProgress] = [:]
-    @Published var totalPlayTime: TimeInterval = 0
-    @Published var activeBuildingId: Int? = nil  // Which building the player is currently working on
+@Observable class CityViewModel {
+    var buildingPlots: [BuildingPlot]
+    var selectedPlot: BuildingPlot?
+    var goldFlorins: Int = 0
+    var earnedScienceBadges: Set<Science> = []
+    var buildingProgressMap: [Int: BuildingProgress] = [:]
+    var totalPlayTime: TimeInterval = 0
+    var activeBuildingId: Int? = nil  // Which building the player is currently working on
 
-    var persistenceManager: PersistenceManager?
+    @ObservationIgnored var persistenceManager: PersistenceManager?
 
     init() {
         // Initialize with 17 building plots (8 Ancient Rome + 9 Renaissance Italy)

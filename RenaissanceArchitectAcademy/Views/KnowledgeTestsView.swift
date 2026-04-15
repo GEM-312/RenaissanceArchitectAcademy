@@ -3,7 +3,7 @@ import SwiftUI
 /// Lists all buildings with quiz challenges
 /// Relocated from building card flow — quizzes are now a separate "Knowledge Tests" section
 struct KnowledgeTestsView: View {
-    @ObservedObject var viewModel: CityViewModel
+    var viewModel: CityViewModel
     var workshopState: WorkshopState
 
     @State private var showingChallenge = false

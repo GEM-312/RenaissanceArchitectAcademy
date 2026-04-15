@@ -3,7 +3,7 @@ import SwiftUI
 /// Card 3 destination — requirements checklist for building construction
 struct BuildingChecklistView: View {
     let plot: BuildingPlot
-    @ObservedObject var viewModel: CityViewModel
+    var viewModel: CityViewModel
     var workshopState: WorkshopState
     let onBeginConstruction: () -> Void
     let onBeginSketching: (() -> Void)?

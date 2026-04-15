@@ -3,11 +3,11 @@ import SwiftUI
 /// Offline fallback AI service — contextual pre-written responses
 /// Used when neither Apple Intelligence nor Claude subscription is available
 @MainActor
-class MockAIService: ObservableObject, AIService {
+@Observable class MockAIService: AIService {
 
-    @Published var messages: [ChatMessage] = []
-    @Published var isLoading = false
-    @Published var error: String?
+    var messages: [ChatMessage] = []
+    var isLoading = false
+    var error: String?
 
     private var currentContext: BirdContext?
 

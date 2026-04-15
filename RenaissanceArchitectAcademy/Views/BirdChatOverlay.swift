@@ -5,7 +5,7 @@ import SwiftUI
 struct BirdChatOverlay: View {
     let card: KnowledgeCard
     let playerName: String
-    @ObservedObject var chatViewModel: BirdChatViewModel
+    var chatViewModel: BirdChatViewModel
     let onDismiss: () -> Void
 
     @State private var inputText = ""

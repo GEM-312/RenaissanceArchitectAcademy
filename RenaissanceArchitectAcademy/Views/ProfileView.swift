@@ -4,7 +4,7 @@ import SwiftUI
 /// Displays achievements, science mastery, resources, and progress
 /// Layout matches the hand-drawn sketch: Header → Materials+Achievements → Sciences → Stats+Mastery
 struct ProfileView: View {
-    @ObservedObject var viewModel: CityViewModel
+    var viewModel: CityViewModel
     var workshopState: WorkshopState
     var onboardingState: OnboardingState
     var onNavigate: ((SidebarDestination) -> Void)? = nil

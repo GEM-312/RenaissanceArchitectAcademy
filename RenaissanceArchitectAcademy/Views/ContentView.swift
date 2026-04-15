@@ -10,7 +10,7 @@ struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
 
     // Shared ViewModel - so map and era views share progress!
-    @StateObject private var cityViewModel = CityViewModel()
+    @State private var cityViewModel = CityViewModel()
 
     // Shared Workshop state - so materials persist between workshop and challenges
     @State private var workshopState = WorkshopState()
