@@ -177,6 +177,7 @@ struct BuildingDetailOverlay: View {
 struct ScienceBadge: View {
     let science: Science
     var isLargeScreen: Bool = false
+    private var settings: GameSettings { GameSettings.shared }
 
     var body: some View {
         HStack(spacing: 6) {

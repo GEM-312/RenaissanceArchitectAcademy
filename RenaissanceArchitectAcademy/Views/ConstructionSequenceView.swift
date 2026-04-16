@@ -433,20 +433,6 @@ struct ConstructionSequenceView: View {
     }
 
     private func scienceCardColor(_ science: Science) -> Color {
-        switch science {
-        case .engineering:  return RenaissanceColors.warmBrown
-        case .mathematics:  return RenaissanceColors.renaissanceBlue
-        case .physics:      return RenaissanceColors.deepTeal
-        case .chemistry:    return RenaissanceColors.terracotta
-        case .geometry:     return RenaissanceColors.ochre
-        case .architecture: return RenaissanceColors.ochre
-        case .hydraulics:   return RenaissanceColors.renaissanceBlue
-        case .geology:      return RenaissanceColors.warmBrown
-        case .materials:    return RenaissanceColors.terracotta
-        case .biology:      return RenaissanceColors.sageGreen
-        case .optics:       return RenaissanceColors.goldSuccess
-        case .acoustics:    return RenaissanceColors.deepTeal
-        case .astronomy:    return Color.indigo
-        }
+        RenaissanceColors.color(for: science)
     }
 }

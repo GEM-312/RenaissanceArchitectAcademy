@@ -52,19 +52,14 @@ struct ArsenalInteractiveVisuals {
     }
 }
 
-// MARK: - Local Aliases
+// MARK: - Local Colors
 
-private let gridColor = ivGridColor
-private let sepiaInk = ivSepiaInk
-private let waterBlue = ivWaterBlue
-private let dimColor = ivDimColor
 private let hullBrown = Color(red: 0.55, green: 0.40, blue: 0.25)
 private let ironDark = Color(red: 0.35, green: 0.33, blue: 0.30)
 private let sailCream = Color(red: 0.92, green: 0.88, blue: 0.78)
 private let ropeGold = Color(red: 0.78, green: 0.62, blue: 0.35)
 private let stoneWhite = Color(red: 0.90, green: 0.88, blue: 0.85)
 private let pitchBlack = Color(red: 0.18, green: 0.15, blue: 0.12)
-private let cherryRed = Color(red: 0.80, green: 0.25, blue: 0.20)
 
 private typealias TeachingContainer = IVTeachingContainer
 private typealias DimLabel = IVDimLabel
@@ -93,14 +88,14 @@ private struct WorkforceVisual: View {
                 let startX = (size.width - CGFloat(dotsPerRow) * spacing) / 2
                 let startY = size.height * 0.08
 
-                let specialtyColors: [Color] = [hullBrown, ropeGold, ironDark, waterBlue, color]
+                let specialtyColors: [Color] = [hullBrown, ropeGold, ironDark, IVMaterialColors.waterBlue, color]
 
                 for row in 0..<rows {
                     for col in 0..<dotsPerRow {
                         let x = startX + CGFloat(col) * spacing + spacing / 2
                         let y = startY + CGFloat(row) * spacing + spacing / 2
                         let colorIdx = step >= 2 ? (col + row) % specialtyColors.count : 0
-                        let dotColor = step >= 2 ? specialtyColors[colorIdx] : sepiaInk
+                        let dotColor = step >= 2 ? specialtyColors[colorIdx] : IVMaterialColors.sepiaInk
                         let dot = Path(ellipseIn: CGRect(x: x - dotR, y: y - dotR, width: dotR * 2, height: dotR * 2))
                         ctx.fill(dot, with: .color(dotColor.opacity(0.5)))
                     }
@@ -117,7 +112,7 @@ private struct WorkforceVisual: View {
                     hull.addLine(to: CGPoint(x: size.width * 0.2, y: shipY - 5))
                     hull.closeSubpath()
                     ctx.fill(hull, with: .color(hullBrown.opacity(0.3)))
-                    ctx.stroke(hull, with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                    ctx.stroke(hull, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
 
                     // Mast
                     var mast = Path()
@@ -150,12 +145,12 @@ private struct RopeWalkVisual: View {
                 // Building outline (long rectangle)
                 let building = CGRect(x: startX, y: ropeY - 20, width: endX - startX, height: 40)
                 ctx.fill(Path(roundedRect: building, cornerRadius: 3), with: .color(stoneWhite.opacity(0.3)))
-                ctx.stroke(Path(roundedRect: building, cornerRadius: 3), with: .color(sepiaInk.opacity(0.2)), lineWidth: 1)
+                ctx.stroke(Path(roundedRect: building, cornerRadius: 3), with: .color(IVMaterialColors.sepiaInk.opacity(0.2)), lineWidth: 1)
 
                 // Dimension
                 let dimY = ropeY + 30
                 ctx.stroke(IVDimLine(from: CGPoint(x: startX, y: dimY), to: CGPoint(x: endX, y: dimY)).path(in: .zero),
-                           with: .color(dimColor), lineWidth: 0.5)
+                           with: .color(IVMaterialColors.dimColor), lineWidth: 0.5)
 
                 // Step 2: fiber → strand → rope
                 if step >= 2 {
@@ -173,7 +168,7 @@ private struct RopeWalkVisual: View {
                     var a1 = Path()
                     a1.move(to: CGPoint(x: 80, y: fiberY + 12))
                     a1.addLine(to: CGPoint(x: 95, y: fiberY + 12))
-                    ctx.stroke(a1, with: .color(sepiaInk.opacity(0.3)), lineWidth: 0.5)
+                    ctx.stroke(a1, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 0.5)
 
                     // Twisted strand
                     let strandX: CGFloat = 105
@@ -188,7 +183,7 @@ private struct RopeWalkVisual: View {
                     var a2 = Path()
                     a2.move(to: CGPoint(x: 120, y: fiberY + 12))
                     a2.addLine(to: CGPoint(x: 135, y: fiberY + 12))
-                    ctx.stroke(a2, with: .color(sepiaInk.opacity(0.3)), lineWidth: 0.5)
+                    ctx.stroke(a2, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 0.5)
 
                     // Thick rope
                     var rope = Path()
@@ -253,9 +248,9 @@ private struct AssemblyLineVisual: View {
 
                 // Canal
                 let canal = CGRect(x: 0, y: canalY, width: size.width, height: canalH)
-                ctx.fill(Path(canal), with: .color(waterBlue.opacity(0.12)))
-                ctx.stroke(Path(CGRect(x: 0, y: canalY, width: size.width, height: 1)), with: .color(waterBlue.opacity(0.3)), lineWidth: 0.5)
-                ctx.stroke(Path(CGRect(x: 0, y: canalY + canalH, width: size.width, height: 1)), with: .color(waterBlue.opacity(0.3)), lineWidth: 0.5)
+                ctx.fill(Path(canal), with: .color(IVMaterialColors.waterBlue.opacity(0.12)))
+                ctx.stroke(Path(CGRect(x: 0, y: canalY, width: size.width, height: 1)), with: .color(IVMaterialColors.waterBlue.opacity(0.3)), lineWidth: 0.5)
+                ctx.stroke(Path(CGRect(x: 0, y: canalY + canalH, width: size.width, height: 1)), with: .color(IVMaterialColors.waterBlue.opacity(0.3)), lineWidth: 0.5)
 
                 // Stations
                 let stationCount = step >= 2 ? 5 : (step >= 1 ? 1 : 0)
@@ -279,20 +274,20 @@ private struct AssemblyLineVisual: View {
                     hull.addLine(to: CGPoint(x: shipX - 20, y: canalY + canalH - 5))
                     hull.closeSubpath()
                     ctx.fill(hull, with: .color(hullBrown.opacity(0.5)))
-                    ctx.stroke(hull, with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                    ctx.stroke(hull, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
                 }
 
                 // Flow arrow
                 var flowArrow = Path()
                 flowArrow.move(to: CGPoint(x: 10, y: canalY + canalH + 12))
                 flowArrow.addLine(to: CGPoint(x: size.width - 10, y: canalY + canalH + 12))
-                ctx.stroke(flowArrow, with: .color(sepiaInk.opacity(0.2)), lineWidth: 0.5)
+                ctx.stroke(flowArrow, with: .color(IVMaterialColors.sepiaInk.opacity(0.2)), lineWidth: 0.5)
                 var arrowHead = Path()
                 arrowHead.move(to: CGPoint(x: size.width - 10, y: canalY + canalH + 12))
                 arrowHead.addLine(to: CGPoint(x: size.width - 18, y: canalY + canalH + 8))
                 arrowHead.addLine(to: CGPoint(x: size.width - 18, y: canalY + canalH + 16))
                 arrowHead.closeSubpath()
-                ctx.fill(arrowHead, with: .color(sepiaInk.opacity(0.2)))
+                ctx.fill(arrowHead, with: .color(IVMaterialColors.sepiaInk.opacity(0.2)))
             }
         }
     }
@@ -317,12 +312,12 @@ private struct BuoyancyVisual: View {
 
                 // Water
                 let water = CGRect(x: 20, y: waterY, width: size.width - 40, height: size.height * 0.3)
-                ctx.fill(Path(water), with: .color(waterBlue.opacity(0.1)))
+                ctx.fill(Path(water), with: .color(IVMaterialColors.waterBlue.opacity(0.1)))
                 // Waterline
                 var wl = Path()
                 wl.move(to: CGPoint(x: 20, y: waterY))
                 wl.addLine(to: CGPoint(x: size.width - 20, y: waterY))
-                ctx.stroke(wl, with: .color(waterBlue.opacity(0.4)), lineWidth: 1)
+                ctx.stroke(wl, with: .color(IVMaterialColors.waterBlue.opacity(0.4)), lineWidth: 1)
 
                 // Hull cross-section
                 var hull = Path()
@@ -333,20 +328,20 @@ private struct BuoyancyVisual: View {
                                   control: CGPoint(x: cx, y: waterY + 25))
                 hull.addLine(to: CGPoint(x: cx - 35, y: waterY - 8))
                 ctx.fill(hull, with: .color(hullBrown.opacity(0.4)))
-                ctx.stroke(hull, with: .color(sepiaInk.opacity(0.4)), lineWidth: 1.5)
+                ctx.stroke(hull, with: .color(IVMaterialColors.sepiaInk.opacity(0.4)), lineWidth: 1.5)
 
                 // Step 1: weight arrow down
                 if step >= 1 {
                     var down = Path()
                     down.move(to: CGPoint(x: cx, y: waterY - 25))
                     down.addLine(to: CGPoint(x: cx, y: waterY - 12))
-                    ctx.stroke(down, with: .color(sepiaInk.opacity(0.5)), lineWidth: 1.5)
+                    ctx.stroke(down, with: .color(IVMaterialColors.sepiaInk.opacity(0.5)), lineWidth: 1.5)
 
                     // Buoyancy arrow up
                     var up = Path()
                     up.move(to: CGPoint(x: cx, y: waterY + 30))
                     up.addLine(to: CGPoint(x: cx, y: waterY + 20))
-                    ctx.stroke(up, with: .color(waterBlue.opacity(0.6)), lineWidth: 1.5)
+                    ctx.stroke(up, with: .color(IVMaterialColors.waterBlue.opacity(0.6)), lineWidth: 1.5)
                 }
 
                 // Step 2: small model
@@ -359,7 +354,7 @@ private struct BuoyancyVisual: View {
                     model.addQuadCurve(to: CGPoint(x: modelX - 10, y: modelY - 3),
                                        control: CGPoint(x: modelX, y: modelY + 8))
                     ctx.fill(model, with: .color(hullBrown.opacity(0.6)))
-                    ctx.stroke(model, with: .color(sepiaInk.opacity(0.3)), lineWidth: 0.5)
+                    ctx.stroke(model, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 0.5)
                 }
             }
         }
@@ -387,18 +382,18 @@ private struct WetDockVisual: View {
                 let wallW: CGFloat = 8
                 ctx.fill(Path(CGRect(x: 25, y: dockY, width: wallW, height: waterH)), with: .color(stoneWhite.opacity(0.6)))
                 ctx.fill(Path(CGRect(x: size.width - 33, y: dockY, width: wallW, height: waterH)), with: .color(stoneWhite.opacity(0.6)))
-                ctx.stroke(Path(CGRect(x: 25, y: dockY, width: wallW, height: waterH)), with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
-                ctx.stroke(Path(CGRect(x: size.width - 33, y: dockY, width: wallW, height: waterH)), with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                ctx.stroke(Path(CGRect(x: 25, y: dockY, width: wallW, height: waterH)), with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
+                ctx.stroke(Path(CGRect(x: size.width - 33, y: dockY, width: wallW, height: waterH)), with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
 
                 // Water in dock
                 let waterRect = CGRect(x: 33, y: dockY + 10, width: size.width - 66, height: waterH - 10)
-                ctx.fill(Path(waterRect), with: .color(waterBlue.opacity(0.12)))
+                ctx.fill(Path(waterRect), with: .color(IVMaterialColors.waterBlue.opacity(0.12)))
 
                 // Step 2: gate
                 if step >= 2 {
                     let gateRect = CGRect(x: size.width - 33, y: dockY + 5, width: 12, height: waterH - 10)
                     ctx.fill(Path(gateRect), with: .color(hullBrown.opacity(0.5)))
-                    ctx.stroke(Path(gateRect), with: .color(sepiaInk.opacity(0.4)), lineWidth: 1)
+                    ctx.stroke(Path(gateRect), with: .color(IVMaterialColors.sepiaInk.opacity(0.4)), lineWidth: 1)
                 }
 
                 // Ship floating in dock
@@ -412,7 +407,7 @@ private struct WetDockVisual: View {
                                   control: CGPoint(x: hx, y: shipY + 20))
                 hull.closeSubpath()
                 ctx.fill(hull, with: .color(hullBrown.opacity(0.4)))
-                ctx.stroke(hull, with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                ctx.stroke(hull, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
 
                 // Step 3: checkmark — safe, no launch
                 if step >= 3 {
@@ -449,11 +444,11 @@ private struct IstrianStoneVisual: View {
                         .frame(width: 65, height: 55)
                         .overlay(
                             RoundedRectangle(cornerRadius: 4)
-                                .strokeBorder(sepiaInk.opacity(0.3), lineWidth: 1)
+                                .strokeBorder(IVMaterialColors.sepiaInk.opacity(0.3), lineWidth: 1)
                         )
                     Text("Istrian")
                         .font(.custom("Cinzel-Bold", size: 16))
-                        .foregroundStyle(step >= 1 ? sepiaInk : sepiaInk.opacity(0.3))
+                        .foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                 }
 
                 // vs
@@ -464,7 +459,7 @@ private struct IstrianStoneVisual: View {
                             .foregroundStyle(color)
                         Text("harder")
                             .font(.custom("EBGaramond-Regular", size: 15))
-                            .foregroundStyle(dimColor)
+                            .foregroundStyle(IVMaterialColors.dimColor)
                     }
                 }
 
@@ -476,11 +471,11 @@ private struct IstrianStoneVisual: View {
                             .frame(width: 65, height: 55)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 4)
-                                    .strokeBorder(sepiaInk.opacity(0.15), lineWidth: 1)
+                                    .strokeBorder(IVMaterialColors.sepiaInk.opacity(0.15), lineWidth: 1)
                             )
                         Text("Marble")
                             .font(.custom("Cinzel-Bold", size: 16))
-                            .foregroundStyle(sepiaInk.opacity(0.5))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                     }
                 }
             }
@@ -511,9 +506,9 @@ private struct MarineConcreteVisual: View {
             VStack(spacing: 8) {
                 HStack(spacing: 6) {
                     ingredientPill("Pozzolana", icon: "🌋", active: step >= 1)
-                    if step >= 1 { Text("+").foregroundStyle(sepiaInk.opacity(0.3)) }
+                    if step >= 1 { Text("+").foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3)) }
                     ingredientPill("Lime", icon: "ite", active: step >= 1)
-                    if step >= 2 { Text("+").foregroundStyle(sepiaInk.opacity(0.3)) }
+                    if step >= 2 { Text("+").foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3)) }
                     if step >= 2 {
                         ingredientPill("Brick", icon: "🧱", active: true)
                     }
@@ -523,7 +518,7 @@ private struct MarineConcreteVisual: View {
                     HStack(spacing: 4) {
                         Image(systemName: "drop.fill")
                             .font(.system(size: 13))
-                            .foregroundStyle(waterBlue.opacity(0.5))
+                            .foregroundStyle(IVMaterialColors.waterBlue.opacity(0.5))
                         Text("500 years in saltwater")
                             .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(color)
@@ -541,7 +536,7 @@ private struct MarineConcreteVisual: View {
                 .opacity(active ? 1 : 0.2)
             Text(label)
                 .font(.custom("EBGaramond-Regular", size: 15))
-                .foregroundStyle(active ? sepiaInk : sepiaInk.opacity(0.3))
+                .foregroundStyle(active ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
         }
         .padding(.horizontal, 6)
         .padding(.vertical, 4)
@@ -616,7 +611,7 @@ private struct AnchorForgeVisual: View {
                     var arc = Path()
                     arc.addArc(center: arcCenter, radius: 15,
                                startAngle: .degrees(-90), endAngle: .degrees(-90 + 40), clockwise: false)
-                    ctx.stroke(arc, with: .color(dimColor.opacity(0.6)), lineWidth: 1)
+                    ctx.stroke(arc, with: .color(IVMaterialColors.dimColor.opacity(0.6)), lineWidth: 1)
                 }
             }
         }
@@ -652,7 +647,7 @@ private struct SailLiftVisual: View {
                                   control: CGPoint(x: cx + 45, y: cy))
                 sail.addLine(to: CGPoint(x: cx, y: cy - 30))
                 ctx.fill(sail, with: .color(sailCream.opacity(step >= 1 ? 0.5 : 0.15)))
-                ctx.stroke(sail, with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                ctx.stroke(sail, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
 
                 // Step 1: wind arrows
                 if step >= 1 {
@@ -661,7 +656,7 @@ private struct SailLiftVisual: View {
                         var wind = Path()
                         wind.move(to: CGPoint(x: cx - 40, y: wy))
                         wind.addLine(to: CGPoint(x: cx - 10, y: wy))
-                        ctx.stroke(wind, with: .color(waterBlue.opacity(0.4)), lineWidth: 1)
+                        ctx.stroke(wind, with: .color(IVMaterialColors.waterBlue.opacity(0.4)), lineWidth: 1)
                     }
                 }
 
@@ -686,7 +681,7 @@ private struct SailLiftVisual: View {
                     ctx.fill(Path(roundedRect: lowRect, cornerRadius: 2), with: .color(color.opacity(0.1)))
                     // High P on back
                     let hiRect = CGRect(x: cx - 45, y: cy - 5, width: 30, height: 14)
-                    ctx.fill(Path(roundedRect: hiRect, cornerRadius: 2), with: .color(cherryRed.opacity(0.1)))
+                    ctx.fill(Path(roundedRect: hiRect, cornerRadius: 2), with: .color(IVMaterialColors.cherryRed.opacity(0.1)))
                 }
             }
         }
@@ -717,25 +712,25 @@ private struct TimberSeasonVisual: View {
                                 if step >= 1 {
                                     Image(systemName: "drop.fill")
                                         .font(.system(size: 13))
-                                        .foregroundStyle(waterBlue.opacity(0.5))
+                                        .foregroundStyle(IVMaterialColors.waterBlue.opacity(0.5))
                                 }
                             }
                         Text("80%")
                             .font(.custom("EBGaramond-Bold", size: 15))
-                            .foregroundStyle(step >= 1 ? waterBlue : waterBlue.opacity(0.3))
+                            .foregroundStyle(step >= 1 ? IVMaterialColors.waterBlue : IVMaterialColors.waterBlue.opacity(0.3))
                         Text("Fresh")
                             .font(.custom("Cinzel-Bold", size: 16))
-                            .foregroundStyle(step >= 1 ? sepiaInk : sepiaInk.opacity(0.3))
+                            .foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                     }
 
                     if step >= 2 {
                         VStack(spacing: 2) {
                             Image(systemName: "arrow.right")
                                 .font(.system(size: 13))
-                                .foregroundStyle(sepiaInk.opacity(0.3))
+                                .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3))
                             Text("3 yrs")
                                 .font(.custom("EBGaramond-Regular", size: 15))
-                                .foregroundStyle(dimColor)
+                                .foregroundStyle(IVMaterialColors.dimColor)
                         }
                     }
 
@@ -750,7 +745,7 @@ private struct TimberSeasonVisual: View {
                                 .foregroundStyle(color)
                             Text("Seasoned")
                                 .font(.custom("Cinzel-Bold", size: 16))
-                                .foregroundStyle(sepiaInk)
+                                .foregroundStyle(IVMaterialColors.sepiaInk)
                         }
                     }
                 }
@@ -785,13 +780,13 @@ private struct PulleyVisual: View {
                 let housingW: CGFloat = 30, housingH: CGFloat = 45
                 let housing = CGRect(x: cx - housingW / 2, y: cy - housingH / 2, width: housingW, height: housingH)
                 ctx.fill(Path(roundedRect: housing, cornerRadius: 4), with: .color(Color(red: 0.50, green: 0.38, blue: 0.25).opacity(step >= 1 ? 0.5 : 0.15)))
-                ctx.stroke(Path(roundedRect: housing, cornerRadius: 4), with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                ctx.stroke(Path(roundedRect: housing, cornerRadius: 4), with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
 
                 // Sheave (wheel)
                 let sheaveR: CGFloat = 10
                 let sheave = Path(ellipseIn: CGRect(x: cx - sheaveR, y: cy - sheaveR, width: sheaveR * 2, height: sheaveR * 2))
                 ctx.fill(sheave, with: .color(Color(red: 0.55, green: 0.42, blue: 0.28).opacity(step >= 1 ? 0.6 : 0.2)))
-                ctx.stroke(sheave, with: .color(sepiaInk.opacity(0.4)), lineWidth: 1)
+                ctx.stroke(sheave, with: .color(IVMaterialColors.sepiaInk.opacity(0.4)), lineWidth: 1)
 
                 // Axle dot
                 let axle = Path(ellipseIn: CGRect(x: cx - 2, y: cy - 2, width: 4, height: 4))
@@ -843,7 +838,7 @@ private struct OakumCaulkVisual: View {
                     let y = plankY + CGFloat(i) * (plankH + gap)
                     let plank = CGRect(x: 20, y: y, width: size.width - 40, height: plankH)
                     ctx.fill(Path(plank), with: .color(hullBrown.opacity(0.4)))
-                    ctx.stroke(Path(plank), with: .color(sepiaInk.opacity(0.2)), lineWidth: 0.5)
+                    ctx.stroke(Path(plank), with: .color(IVMaterialColors.sepiaInk.opacity(0.2)), lineWidth: 0.5)
                 }
 
                 // Gaps highlighted
@@ -903,22 +898,22 @@ private struct QuenchingVisual: View {
                 // Iron bar
                 let barW: CGFloat = 50, barH: CGFloat = 10
                 let barY = step >= 2 ? waterY + 5 : size.height * 0.2
-                let barColor = step >= 1 ? cherryRed : ironDark
+                let barColor = step >= 1 ? IVMaterialColors.cherryRed : ironDark
                 let bar = CGRect(x: cx - barW / 2, y: barY, width: barW, height: barH)
                 ctx.fill(Path(roundedRect: bar, cornerRadius: 2), with: .color(barColor.opacity(0.7)))
-                ctx.stroke(Path(roundedRect: bar, cornerRadius: 2), with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                ctx.stroke(Path(roundedRect: bar, cornerRadius: 2), with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
 
                 // Heat glow (step 1)
                 if step == 1 {
                     let glow = Path(ellipseIn: CGRect(x: cx - barW * 0.7, y: barY - 5, width: barW * 1.4, height: barH + 10))
-                    ctx.stroke(glow, with: .color(cherryRed.opacity(0.2)), lineWidth: 2)
+                    ctx.stroke(glow, with: .color(IVMaterialColors.cherryRed.opacity(0.2)), lineWidth: 2)
                 }
 
                 // Water bath (step 2+)
                 if step >= 2 {
                     let bath = CGRect(x: cx - 45, y: waterY, width: 90, height: 35)
-                    ctx.fill(Path(roundedRect: bath, cornerRadius: 4), with: .color(waterBlue.opacity(0.15)))
-                    ctx.stroke(Path(roundedRect: bath, cornerRadius: 4), with: .color(waterBlue.opacity(0.4)), lineWidth: 1)
+                    ctx.fill(Path(roundedRect: bath, cornerRadius: 4), with: .color(IVMaterialColors.waterBlue.opacity(0.15)))
+                    ctx.stroke(Path(roundedRect: bath, cornerRadius: 4), with: .color(IVMaterialColors.waterBlue.opacity(0.4)), lineWidth: 1)
 
                     // Steam bubbles
                     let bubbles: [CGPoint] = [
@@ -928,7 +923,7 @@ private struct QuenchingVisual: View {
                     ]
                     for b in bubbles {
                         let bubble = Path(ellipseIn: CGRect(x: b.x - 3, y: b.y - 3, width: 6, height: 6))
-                        ctx.stroke(bubble, with: .color(waterBlue.opacity(0.3)), lineWidth: 0.5)
+                        ctx.stroke(bubble, with: .color(IVMaterialColors.waterBlue.opacity(0.3)), lineWidth: 0.5)
                     }
                 }
 

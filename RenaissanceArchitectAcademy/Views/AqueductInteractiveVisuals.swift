@@ -51,15 +51,9 @@ struct AqueductInteractiveVisuals {
     }
 }
 
-// MARK: - Local Aliases
+// MARK: - Local Colors (unique to Aqueduct)
 
-private let gridColor = ivGridColor
-private let sepiaInk = ivSepiaInk
-private let waterBlue = ivWaterBlue
-private let dimColor = ivDimColor
-private let stoneGray = Color(red: 0.65, green: 0.63, blue: 0.60)
 private let mortarTan = Color(red: 0.80, green: 0.75, blue: 0.65)
-private let leadGray = Color(red: 0.50, green: 0.52, blue: 0.55)
 private let pozzolanaRed = Color(red: 0.65, green: 0.40, blue: 0.30)
 
 private typealias VisualTitle = IVVisualTitle
@@ -110,12 +104,12 @@ private struct MortarVsConcreteVisual: View {
                         Text("MORTAR")
                             .font(.custom("Cinzel-Bold", size: 16))
                             .tracking(1)
-                            .foregroundStyle(sepiaInk.opacity(0.5))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
 
                         // Stone blocks with gaps
                         ZStack {
                             RoundedRectangle(cornerRadius: 4)
-                                .fill(stoneGray.opacity(0.3))
+                                .fill(IVMaterialColors.stoneGray.opacity(0.3))
                                 .frame(width: panelW, height: panelH)
 
                             // Draw stone blocks
@@ -124,7 +118,7 @@ private struct MortarVsConcreteVisual: View {
                                     HStack(spacing: 3) {
                                         ForEach(0..<(row % 2 == 0 ? 3 : 2), id: \.self) { _ in
                                             RoundedRectangle(cornerRadius: 2)
-                                                .fill(stoneGray)
+                                                .fill(IVMaterialColors.stoneGray)
                                                 .frame(height: panelH * 0.25)
                                         }
                                     }
@@ -155,7 +149,7 @@ private struct MortarVsConcreteVisual: View {
                         if mortarApplied {
                             Text("Lime + Sand")
                                 .font(.custom("EBGaramond-Regular", size: 15))
-                                .foregroundStyle(sepiaInk.opacity(0.6))
+                                .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
                                 .transition(.opacity)
                         }
                     }
@@ -168,12 +162,12 @@ private struct MortarVsConcreteVisual: View {
                         Text("CONCRETE")
                             .font(.custom("Cinzel-Bold", size: 16))
                             .tracking(1)
-                            .foregroundStyle(sepiaInk.opacity(0.5))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
 
                         ZStack(alignment: .bottom) {
                             // Pit outline
                             RoundedRectangle(cornerRadius: 4)
-                                .strokeBorder(stoneGray, lineWidth: 2)
+                                .strokeBorder(IVMaterialColors.stoneGray, lineWidth: 2)
                                 .frame(width: panelW, height: panelH)
 
                             // Earth sides
@@ -187,13 +181,13 @@ private struct MortarVsConcreteVisual: View {
                             // Concrete fill
                             if concreteApplied {
                                 RoundedRectangle(cornerRadius: 2)
-                                    .fill(stoneGray.opacity(0.5))
+                                    .fill(IVMaterialColors.stoneGray.opacity(0.5))
                                     .frame(width: panelW - 8, height: panelH * 0.85)
                                     .overlay {
                                         // Aggregate dots
                                         ForEach(0..<8, id: \.self) { i in
                                             Circle()
-                                                .fill(stoneGray)
+                                                .fill(IVMaterialColors.stoneGray)
                                                 .frame(width: CGFloat.random(in: 4...8))
                                                 .offset(
                                                     x: CGFloat.random(in: -panelW * 0.3...panelW * 0.3),
@@ -208,7 +202,7 @@ private struct MortarVsConcreteVisual: View {
                         if concreteApplied {
                             Text("Lime + Ash + Aggregate")
                                 .font(.custom("EBGaramond-Regular", size: 15))
-                                .foregroundStyle(sepiaInk.opacity(0.6))
+                                .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
                                 .transition(.opacity)
                         }
                     }
@@ -241,9 +235,9 @@ private struct MortarVsConcreteVisual: View {
                                     Text("Pour Concrete")
                                         .font(.custom("EBGaramond-SemiBold", size: 15))
                                         .padding(.horizontal, 12).padding(.vertical, 6)
-                                        .background(stoneGray.opacity(0.3))
+                                        .background(IVMaterialColors.stoneGray.opacity(0.3))
                                         .cornerRadius(6)
-                                        .overlay(RoundedRectangle(cornerRadius: 6).stroke(stoneGray, lineWidth: 1))
+                                        .overlay(RoundedRectangle(cornerRadius: 6).stroke(IVMaterialColors.stoneGray, lineWidth: 1))
                                 }
                                 .buttonStyle(.plain)
                             }
@@ -299,11 +293,11 @@ private struct SpecusCrossSectionVisual: View {
                     let stoneW = chW + 24
                     let stoneH = chH + 12
                     RoundedRectangle(cornerRadius: 4)
-                        .fill(revealedLayers.contains(0) ? stoneGray : stoneGray.opacity(0.15))
+                        .fill(revealedLayers.contains(0) ? IVMaterialColors.stoneGray : IVMaterialColors.stoneGray.opacity(0.15))
                         .frame(width: stoneW, height: stoneH)
                         .overlay(
                             RoundedRectangle(cornerRadius: 4)
-                                .strokeBorder(stoneGray, lineWidth: revealedLayers.contains(0) ? 2 : 1)
+                                .strokeBorder(IVMaterialColors.stoneGray, lineWidth: revealedLayers.contains(0) ? 2 : 1)
                         )
                         .position(x: cx, y: cy)
                         .onTapGesture {
@@ -322,7 +316,7 @@ private struct SpecusCrossSectionVisual: View {
                         .overlay(
                             RoundedRectangle(cornerRadius: 3)
                                 .strokeBorder(
-                                    revealedLayers.contains(1) ? RenaissanceColors.terracotta : stoneGray.opacity(0.3),
+                                    revealedLayers.contains(1) ? RenaissanceColors.terracotta : IVMaterialColors.stoneGray.opacity(0.3),
                                     lineWidth: revealedLayers.contains(1) ? 2 : 1
                                 )
                         )
@@ -337,12 +331,12 @@ private struct SpecusCrossSectionVisual: View {
                     // Water channel
                     ZStack(alignment: .bottom) {
                         RoundedRectangle(cornerRadius: 2)
-                            .fill(revealedLayers.contains(2) ? waterBlue.opacity(0.15) : Color.clear)
+                            .fill(revealedLayers.contains(2) ? IVMaterialColors.waterBlue.opacity(0.15) : Color.clear)
                             .frame(width: chW, height: chH - 16)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 2)
                                     .strokeBorder(
-                                        revealedLayers.contains(2) ? waterBlue : stoneGray.opacity(0.2),
+                                        revealedLayers.contains(2) ? IVMaterialColors.waterBlue : IVMaterialColors.stoneGray.opacity(0.2),
                                         lineWidth: revealedLayers.contains(2) ? 1.5 : 0.5
                                     )
                             )
@@ -350,7 +344,7 @@ private struct SpecusCrossSectionVisual: View {
                         // Water fill (step 3+)
                         if step >= 3 {
                             RoundedRectangle(cornerRadius: 2)
-                                .fill(waterBlue.opacity(0.5))
+                                .fill(IVMaterialColors.waterBlue.opacity(0.5))
                                 .frame(width: chW - 2, height: (chH - 18) * waterLevel)
                         }
                     }
@@ -386,14 +380,14 @@ private struct SpecusCrossSectionVisual: View {
                         // Width dimension
                         DimLine(from: CGPoint(x: cx - chW * 0.5, y: cy + chH * 0.5 + 12),
                                 to: CGPoint(x: cx + chW * 0.5, y: cy + chH * 0.5 + 12))
-                            .stroke(dimColor, lineWidth: 0.8)
+                            .stroke(IVMaterialColors.dimColor, lineWidth: 0.8)
                         DimLabel(text: "0.9 m", fontSize: 15)
                             .position(x: cx, y: cy + chH * 0.5 + 22)
 
                         // Height dimension
                         DimLine(from: CGPoint(x: cx - chW * 0.5 - 16, y: cy - chH * 0.5 + 6),
                                 to: CGPoint(x: cx - chW * 0.5 - 16, y: cy + chH * 0.5 - 2))
-                            .stroke(dimColor, lineWidth: 0.8)
+                            .stroke(IVMaterialColors.dimColor, lineWidth: 0.8)
                         DimLabel(text: "1.5 m", fontSize: 15)
                             .rotationEffect(.degrees(-90))
                             .position(x: cx - chW * 0.5 - 30, y: cy)
@@ -403,7 +397,7 @@ private struct SpecusCrossSectionVisual: View {
                     if step >= 3 {
                         Image(systemName: "arrow.right")
                             .font(.system(size: 14, weight: .bold))
-                            .foregroundStyle(waterBlue)
+                            .foregroundStyle(IVMaterialColors.waterBlue)
                             .position(x: cx, y: cy - chH * 0.35)
                     }
 
@@ -411,22 +405,22 @@ private struct SpecusCrossSectionVisual: View {
                     if step >= 4 {
                         HStack(spacing: 8) {
                             VStack(spacing: 2) {
-                                Image(systemName: "drop.fill").font(.system(size: 13)).foregroundStyle(waterBlue)
+                                Image(systemName: "drop.fill").font(.system(size: 13)).foregroundStyle(IVMaterialColors.waterBlue)
                                 Text("Fountains").font(.custom("EBGaramond-Regular", size: 15))
                                 Text("1st").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color)
                             }
                             VStack(spacing: 2) {
-                                Image(systemName: "humidity.fill").font(.system(size: 13)).foregroundStyle(waterBlue.opacity(0.7))
+                                Image(systemName: "humidity.fill").font(.system(size: 13)).foregroundStyle(IVMaterialColors.waterBlue.opacity(0.7))
                                 Text("Baths").font(.custom("EBGaramond-Regular", size: 15))
                                 Text("2nd").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color)
                             }
                             VStack(spacing: 2) {
-                                Image(systemName: "house.fill").font(.system(size: 13)).foregroundStyle(waterBlue.opacity(0.4))
+                                Image(systemName: "house.fill").font(.system(size: 13)).foregroundStyle(IVMaterialColors.waterBlue.opacity(0.4))
                                 Text("Homes").font(.custom("EBGaramond-Regular", size: 15))
                                 Text("3rd").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color)
                             }
                         }
-                        .foregroundStyle(sepiaInk)
+                        .foregroundStyle(IVMaterialColors.sepiaInk)
                         .position(x: cx, y: h * 0.12)
                         .transition(.opacity)
                     }
@@ -520,7 +514,7 @@ private struct UndergroundRevealVisual: View {
 
                         // Above-ground sections: solid with arch supports
                         aqueductPath(w: w, h: h, margin: margin, underground: false)
-                            .stroke(stoneGray, lineWidth: 2.5)
+                            .stroke(IVMaterialColors.stoneGray, lineWidth: 2.5)
 
                         // Draw arch piers under above-ground sections
                         archPiers(w: w, h: h, margin: margin)
@@ -538,7 +532,7 @@ private struct UndergroundRevealVisual: View {
                         .position(x: margin + 8, y: h * 0.08)
                     Text("Springs")
                         .font(.custom("EBGaramond-Regular", size: 15))
-                        .foregroundStyle(sepiaInk.opacity(0.5))
+                        .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                         .position(x: margin + 8, y: h * 0.16)
 
                     Image(systemName: "building.columns.fill")
@@ -547,7 +541,7 @@ private struct UndergroundRevealVisual: View {
                         .position(x: w - margin - 8, y: h * 0.32)
                     Text("Rome")
                         .font(.custom("EBGaramond-Regular", size: 15))
-                        .foregroundStyle(sepiaInk.opacity(0.5))
+                        .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                         .position(x: w - margin - 8, y: h * 0.40)
 
                     // Tappable sections (step 2+)
@@ -584,7 +578,7 @@ private struct UndergroundRevealVisual: View {
                                 // Label: tunnel or arches
                                 Text(isUnderground[i] ? "tunnel" : "arches")
                                     .font(.custom("EBGaramond-Regular", size: 15))
-                                    .foregroundStyle(isUnderground[i] ? Color.brown.opacity(0.5) : stoneGray)
+                                    .foregroundStyle(isUnderground[i] ? Color.brown.opacity(0.5) : IVMaterialColors.stoneGray)
                                     .position(x: x, y: h * 0.75)
                                     .transition(.scale.combined(with: .opacity))
                             }
@@ -603,7 +597,7 @@ private struct UndergroundRevealVisual: View {
                                     DimLabel(text: "53 km underground", fontSize: 15)
                                 }
                                 HStack(spacing: 4) {
-                                    Rectangle().fill(stoneGray).frame(width: 16, height: 2)
+                                    Rectangle().fill(IVMaterialColors.stoneGray).frame(width: 16, height: 2)
                                     DimLabel(text: "16 km on arches", fontSize: 15)
                                 }
                             }
@@ -677,7 +671,7 @@ private struct UndergroundRevealVisual: View {
                     var pier = Path()
                     pier.move(to: CGPoint(x: px, y: aqY))
                     pier.addLine(to: CGPoint(x: px, y: terrY))
-                    context.stroke(pier, with: .color(stoneGray.opacity(0.5)), lineWidth: 1.5)
+                    context.stroke(pier, with: .color(IVMaterialColors.stoneGray.opacity(0.5)), lineWidth: 1.5)
 
                     // Small arch between piers
                     if p < pierCount - 1 {
@@ -688,7 +682,7 @@ private struct UndergroundRevealVisual: View {
                             to: CGPoint(x: nextPx, y: aqY + 2),
                             control: CGPoint(x: (px + nextPx) / 2, y: aqY + (terrY - aqY) * 0.25)
                         )
-                        context.stroke(arch, with: .color(stoneGray.opacity(0.4)), lineWidth: 1)
+                        context.stroke(arch, with: .color(IVMaterialColors.stoneGray.opacity(0.4)), lineWidth: 1)
                     }
                 }
             }
@@ -717,7 +711,7 @@ private struct UndergroundRevealVisual: View {
                     let dropY = p0.y + (p1.y - p0.y) * segFrac
 
                     let rect = CGRect(x: dropX - 2.5, y: dropY - 2.5, width: 5, height: 5)
-                    context.fill(Path(ellipseIn: rect), with: .color(waterBlue.opacity(0.8)))
+                    context.fill(Path(ellipseIn: rect), with: .color(IVMaterialColors.waterBlue.opacity(0.8)))
                 }
             }
         }
@@ -818,7 +812,7 @@ private struct ChorobatesTiltVisual: View {
 
                             // Water surface (counter-rotates to stay level)
                             RoundedRectangle(cornerRadius: 1)
-                                .fill(waterBlue.opacity(0.6))
+                                .fill(IVMaterialColors.waterBlue.opacity(0.6))
                                 .frame(width: beamW * 0.8, height: 3)
                                 .rotationEffect(.degrees(-beamTilt * 8))
                         }
@@ -846,7 +840,7 @@ private struct ChorobatesTiltVisual: View {
                     // Dimension line
                     DimLine(from: CGPoint(x: cx - beamW * 0.38, y: cy + legH * 0.6),
                             to: CGPoint(x: cx + beamW * 0.38, y: cy + legH * 0.6))
-                        .stroke(dimColor, lineWidth: 0.8)
+                        .stroke(IVMaterialColors.dimColor, lineWidth: 0.8)
                     DimLabel(text: "6 m")
                         .position(x: cx, y: cy + legH * 0.6 + 12)
 
@@ -908,7 +902,7 @@ private struct GradientSliderVisual: View {
                         p.addLine(to: CGPoint(x: leftX, y: leftY + 8))
                         p.closeSubpath()
                     }
-                    .fill(stoneGray.opacity(0.3))
+                    .fill(IVMaterialColors.stoneGray.opacity(0.3))
 
                     Path { p in
                         p.move(to: CGPoint(x: leftX, y: leftY - 8))
@@ -917,7 +911,7 @@ private struct GradientSliderVisual: View {
                         p.addLine(to: CGPoint(x: leftX, y: leftY + 8))
                         p.closeSubpath()
                     }
-                    .stroke(stoneGray, lineWidth: 1.5)
+                    .stroke(IVMaterialColors.stoneGray, lineWidth: 1.5)
 
                     // Water drops flowing
                     if step >= 2 {
@@ -928,7 +922,7 @@ private struct GradientSliderVisual: View {
                             let dropX = leftX + (rightX - leftX) * progress
                             let dropY = leftY + (rightY - leftY) * progress
                             Circle()
-                                .fill(waterBlue)
+                                .fill(IVMaterialColors.waterBlue)
                                 .frame(width: 6, height: 6)
                                 .position(x: dropX, y: dropY)
                                 .opacity(slopeValue < 0.25 ? 0.2 : 0.8)
@@ -959,9 +953,9 @@ private struct GradientSliderVisual: View {
                                 .tint(slopeValue < 0.3 || slopeValue > 0.7 ? RenaissanceColors.errorRed : color)
                                 .frame(width: w * 0.7)
                             HStack {
-                                Text("Gentle").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.4))
+                                Text("Gentle").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                                 Spacer()
-                                Text("Steep").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.4))
+                                Text("Steep").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                             }
                             .frame(width: w * 0.7)
                         }
@@ -1028,11 +1022,11 @@ private struct VoussoirArchBuildVisual: View {
                 ZStack {
                     // Support piers
                     RoundedRectangle(cornerRadius: 2)
-                        .fill(stoneGray)
+                        .fill(IVMaterialColors.stoneGray)
                         .frame(width: pierW, height: pierH)
                         .position(x: cx - archRadius - pierW / 2, y: archCenterY + pierH * 0.2)
                     RoundedRectangle(cornerRadius: 2)
-                        .fill(stoneGray)
+                        .fill(IVMaterialColors.stoneGray)
                         .frame(width: pierW, height: pierH)
                         .position(x: cx + archRadius + pierW / 2, y: archCenterY + pierH * 0.2)
 
@@ -1072,12 +1066,12 @@ private struct VoussoirArchBuildVisual: View {
 
                             // Stone wedge
                             RoundedRectangle(cornerRadius: 2)
-                                .fill(placed ? (isKeystone ? color.opacity(0.6) : stoneGray) : stoneGray.opacity(0.1))
+                                .fill(placed ? (isKeystone ? color.opacity(0.6) : IVMaterialColors.stoneGray) : IVMaterialColors.stoneGray.opacity(0.1))
                                 .frame(width: 18, height: 24)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 2)
                                         .strokeBorder(
-                                            placed ? stoneGray : (canPlace ? color : stoneGray.opacity(0.2)),
+                                            placed ? IVMaterialColors.stoneGray : (canPlace ? color : IVMaterialColors.stoneGray.opacity(0.2)),
                                             lineWidth: canPlace && !placed ? 2 : 1
                                         )
                                 )
@@ -1159,7 +1153,7 @@ private struct UnderwaterComparisonVisual: View {
                         Text("Normal Mortar")
                             .font(.custom("Cinzel-Bold", size: 16))
                             .tracking(0.5)
-                            .foregroundStyle(sepiaInk.opacity(0.5))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
 
                         ZStack {
                             RoundedRectangle(cornerRadius: 4)
@@ -1194,7 +1188,7 @@ private struct UnderwaterComparisonVisual: View {
                         Text("Pozzolanic")
                             .font(.custom("Cinzel-Bold", size: 16))
                             .tracking(0.5)
-                            .foregroundStyle(sepiaInk.opacity(0.5))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
 
                         ZStack {
                             RoundedRectangle(cornerRadius: 4)
@@ -1221,7 +1215,7 @@ private struct UnderwaterComparisonVisual: View {
                     // Water fill
                     if waterPoured {
                         Rectangle()
-                            .fill(waterBlue.opacity(0.25))
+                            .fill(IVMaterialColors.waterBlue.opacity(0.25))
                             .frame(width: w, height: h * waterLevel)
                             .position(x: w * 0.5, y: h - h * waterLevel * 0.5)
 
@@ -1231,7 +1225,7 @@ private struct UnderwaterComparisonVisual: View {
                             p.move(to: CGPoint(x: 0, y: surfaceY))
                             p.addLine(to: CGPoint(x: w, y: surfaceY))
                         }
-                        .stroke(waterBlue.opacity(0.5), lineWidth: 1)
+                        .stroke(IVMaterialColors.waterBlue.opacity(0.5), lineWidth: 1)
                     }
 
                     // Pour button (step 2, before pouring)
@@ -1252,7 +1246,7 @@ private struct UnderwaterComparisonVisual: View {
                             }
                             .foregroundStyle(.white)
                             .padding(.horizontal, 16).padding(.vertical, 8)
-                            .background(waterBlue)
+                            .background(IVMaterialColors.waterBlue)
                             .cornerRadius(8)
                         }
                         .buttonStyle(.plain)
@@ -1313,11 +1307,11 @@ private struct OpusSigninumCoatsVisual: View {
                 ZStack {
                     // Base stone wall
                     RoundedRectangle(cornerRadius: 4)
-                        .fill(stoneGray.opacity(0.3))
+                        .fill(IVMaterialColors.stoneGray.opacity(0.3))
                         .frame(width: wallW, height: wallH)
                         .overlay(
                             RoundedRectangle(cornerRadius: 4)
-                                .strokeBorder(stoneGray, lineWidth: 1.5)
+                                .strokeBorder(IVMaterialColors.stoneGray, lineWidth: 1.5)
                         )
                         .position(x: cx, y: cy)
 
@@ -1350,19 +1344,19 @@ private struct OpusSigninumCoatsVisual: View {
                     if step >= 2 {
                         VStack(alignment: .leading, spacing: 8) {
                             HStack(spacing: 4) {
-                                Circle().fill(coatsApplied >= 1 ? coatColors[0] : stoneGray.opacity(0.2)).frame(width: 8, height: 8)
+                                Circle().fill(coatsApplied >= 1 ? coatColors[0] : IVMaterialColors.stoneGray.opacity(0.2)).frame(width: 8, height: 8)
                                 Text("Coarse").font(.custom("EBGaramond-Regular", size: 15))
-                                    .foregroundStyle(coatsApplied >= 1 ? sepiaInk : sepiaInk.opacity(0.3))
+                                    .foregroundStyle(coatsApplied >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                             }
                             HStack(spacing: 4) {
-                                Circle().fill(coatsApplied >= 2 ? coatColors[1] : stoneGray.opacity(0.2)).frame(width: 8, height: 8)
+                                Circle().fill(coatsApplied >= 2 ? coatColors[1] : IVMaterialColors.stoneGray.opacity(0.2)).frame(width: 8, height: 8)
                                 Text("Medium").font(.custom("EBGaramond-Regular", size: 15))
-                                    .foregroundStyle(coatsApplied >= 2 ? sepiaInk : sepiaInk.opacity(0.3))
+                                    .foregroundStyle(coatsApplied >= 2 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                             }
                             HStack(spacing: 4) {
-                                Circle().fill(coatsApplied >= 3 ? coatColors[2] : stoneGray.opacity(0.2)).frame(width: 8, height: 8)
+                                Circle().fill(coatsApplied >= 3 ? coatColors[2] : IVMaterialColors.stoneGray.opacity(0.2)).frame(width: 8, height: 8)
                                 Text("Finest").font(.custom("EBGaramond-Regular", size: 15))
-                                    .foregroundStyle(coatsApplied >= 3 ? sepiaInk : sepiaInk.opacity(0.3))
+                                    .foregroundStyle(coatsApplied >= 3 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                             }
                         }
                         .position(x: cx + wallW * 0.5 + 36, y: cy)
@@ -1440,13 +1434,13 @@ private struct FistulaPipeFabVisual: View {
                     if step == 1 {
                         // Side view of flat sheet
                         RoundedRectangle(cornerRadius: 2)
-                            .fill(leadGray)
+                            .fill(IVMaterialColors.leadGray)
                             .frame(width: w * 0.6, height: 8)
                             .position(x: cx, y: cy)
 
                         DimLine(from: CGPoint(x: cx - w * 0.3, y: cy + 20),
                                 to: CGPoint(x: cx + w * 0.3, y: cy + 20))
-                            .stroke(dimColor, lineWidth: 0.8)
+                            .stroke(IVMaterialColors.dimColor, lineWidth: 0.8)
                         DimLabel(text: "Lead sheet")
                             .position(x: cx, y: cy + 32)
                     }
@@ -1460,7 +1454,7 @@ private struct FistulaPipeFabVisual: View {
                                 control: CGPoint(x: cx, y: cy + pipeSize * 0.5)
                             )
                         }
-                        .stroke(leadGray, lineWidth: 6)
+                        .stroke(IVMaterialColors.leadGray, lineWidth: 6)
 
                         // Wood core (dashed circle inside)
                         Circle()
@@ -1476,7 +1470,7 @@ private struct FistulaPipeFabVisual: View {
                     // Step 3: Complete circle (soldered)
                     if step == 3 {
                         Circle()
-                            .stroke(leadGray, lineWidth: 6)
+                            .stroke(IVMaterialColors.leadGray, lineWidth: 6)
                             .frame(width: pipeSize * 0.7, height: pipeSize * 0.7)
                             .position(x: cx, y: cy)
 
@@ -1501,11 +1495,11 @@ private struct FistulaPipeFabVisual: View {
                     if step == 4 {
                         // Side view of pipe
                         RoundedRectangle(cornerRadius: pipeSize * 0.15)
-                            .fill(leadGray.opacity(0.4))
+                            .fill(IVMaterialColors.leadGray.opacity(0.4))
                             .frame(width: w * 0.55, height: pipeSize * 0.35)
                             .overlay(
                                 RoundedRectangle(cornerRadius: pipeSize * 0.15)
-                                    .strokeBorder(leadGray, lineWidth: 1.5)
+                                    .strokeBorder(IVMaterialColors.leadGray, lineWidth: 1.5)
                             )
                             .position(x: cx, y: cy)
 
@@ -1513,7 +1507,7 @@ private struct FistulaPipeFabVisual: View {
                         Text("IMP · CLAVDIVS")
                             .font(.custom("Cinzel-Bold", size: 16))
                             .tracking(2)
-                            .foregroundStyle(sepiaInk.opacity(0.5))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             .position(x: cx, y: cy)
 
                         FormulaText(text: "10 standard sizes", highlighted: true, fontSize: 15)
@@ -1565,33 +1559,33 @@ private struct AqueductMortarRecipeVisual: View {
                     HStack(spacing: 2) {
                         // Lime portion
                         RoundedRectangle(cornerRadius: 3)
-                            .fill(ingredientsAdded >= 1 ? Color.white.opacity(0.8) : stoneGray.opacity(0.15))
+                            .fill(ingredientsAdded >= 1 ? Color.white.opacity(0.8) : IVMaterialColors.stoneGray.opacity(0.15))
                             .frame(width: barW * (1.0 / totalParts))
                             .overlay {
                                 if ingredientsAdded >= 1 {
-                                    Text("1").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(sepiaInk)
+                                    Text("1").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk)
                                 }
                             }
 
                         // Sand portion
                         RoundedRectangle(cornerRadius: 3)
                             .fill(ingredientsAdded >= 3 ? Color.yellow.opacity(0.3) :
-                                    ingredientsAdded >= 2 ? Color.yellow.opacity(0.15) : stoneGray.opacity(0.15))
+                                    ingredientsAdded >= 2 ? Color.yellow.opacity(0.15) : IVMaterialColors.stoneGray.opacity(0.15))
                             .frame(width: barW * (2.0 / totalParts))
                             .overlay {
                                 if ingredientsAdded >= 2 {
                                     Text(ingredientsAdded >= 3 ? "2" : "1")
-                                        .font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(sepiaInk)
+                                        .font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk)
                                 }
                             }
 
                         // Pozzolana portion
                         RoundedRectangle(cornerRadius: 3)
-                            .fill(ingredientsAdded >= 4 ? pozzolanaRed.opacity(0.4) : stoneGray.opacity(0.15))
+                            .fill(ingredientsAdded >= 4 ? pozzolanaRed.opacity(0.4) : IVMaterialColors.stoneGray.opacity(0.15))
                             .frame(width: barW * (0.5 / totalParts))
                             .overlay {
                                 if ingredientsAdded >= 4 {
-                                    Text("½").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(sepiaInk)
+                                    Text("½").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk)
                                 }
                             }
                     }
@@ -1613,10 +1607,10 @@ private struct AqueductMortarRecipeVisual: View {
                             Text("Lime").font(.custom("EBGaramond-Regular", size: 15))
                         }
                         .frame(width: 60, height: 50)
-                        .background(ingredientsAdded >= 1 ? stoneGray.opacity(0.1) : Color.white.opacity(0.5))
+                        .background(ingredientsAdded >= 1 ? IVMaterialColors.stoneGray.opacity(0.1) : Color.white.opacity(0.5))
                         .cornerRadius(6)
                         .overlay(RoundedRectangle(cornerRadius: 6).stroke(
-                            ingredientsAdded == 0 ? color : stoneGray.opacity(0.3), lineWidth: ingredientsAdded == 0 ? 2 : 1))
+                            ingredientsAdded == 0 ? color : IVMaterialColors.stoneGray.opacity(0.3), lineWidth: ingredientsAdded == 0 ? 2 : 1))
                     }
                     .buttonStyle(.plain)
                     .opacity(ingredientsAdded >= 1 ? 0.4 : 1)
@@ -1632,10 +1626,10 @@ private struct AqueductMortarRecipeVisual: View {
                             Text("Sand").font(.custom("EBGaramond-Regular", size: 15))
                         }
                         .frame(width: 60, height: 50)
-                        .background(ingredientsAdded >= 3 ? stoneGray.opacity(0.1) : Color.yellow.opacity(0.15))
+                        .background(ingredientsAdded >= 3 ? IVMaterialColors.stoneGray.opacity(0.1) : Color.yellow.opacity(0.15))
                         .cornerRadius(6)
                         .overlay(RoundedRectangle(cornerRadius: 6).stroke(
-                            (ingredientsAdded >= 1 && ingredientsAdded <= 2) ? color : stoneGray.opacity(0.3),
+                            (ingredientsAdded >= 1 && ingredientsAdded <= 2) ? color : IVMaterialColors.stoneGray.opacity(0.3),
                             lineWidth: (ingredientsAdded >= 1 && ingredientsAdded <= 2) ? 2 : 1))
                     }
                     .buttonStyle(.plain)
@@ -1652,10 +1646,10 @@ private struct AqueductMortarRecipeVisual: View {
                             Text("Pozzolana").font(.custom("EBGaramond-Regular", size: 15))
                         }
                         .frame(width: 70, height: 50)
-                        .background(ingredientsAdded >= 4 ? stoneGray.opacity(0.1) : pozzolanaRed.opacity(0.15))
+                        .background(ingredientsAdded >= 4 ? IVMaterialColors.stoneGray.opacity(0.1) : pozzolanaRed.opacity(0.15))
                         .cornerRadius(6)
                         .overlay(RoundedRectangle(cornerRadius: 6).stroke(
-                            ingredientsAdded == 3 ? color : stoneGray.opacity(0.3),
+                            ingredientsAdded == 3 ? color : IVMaterialColors.stoneGray.opacity(0.3),
                             lineWidth: ingredientsAdded == 3 ? 2 : 1))
                     }
                     .buttonStyle(.plain)
@@ -1687,7 +1681,7 @@ private struct AqueductMortarRecipeVisual: View {
                 // Status text
                 Text(statusText)
                     .font(.custom("EBGaramond-Regular", size: 15))
-                    .foregroundStyle(sepiaInk.opacity(0.6))
+                    .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
                     .multilineTextAlignment(.center)
 
                 Spacer()
@@ -1738,11 +1732,11 @@ private struct TerracottaFiringVisual: View {
                 HStack(spacing: 4) {
                     Image(systemName: "thermometer.medium")
                         .font(.system(size: 14))
-                        .foregroundStyle(tempC > 600 ? .orange : sepiaInk.opacity(0.4))
+                        .foregroundStyle(tempC > 600 ? .orange : IVMaterialColors.sepiaInk.opacity(0.4))
                     Text("\(tempC)°C")
                         .font(.custom("EBGaramond-Bold", size: 18))
                         .foregroundStyle(tempC > 900 ? RenaissanceColors.errorRed :
-                                            inFiringRange ? RenaissanceColors.sageGreen : sepiaInk)
+                                            inFiringRange ? RenaissanceColors.sageGreen : IVMaterialColors.sepiaInk)
                         .monospacedDigit()
                 }
                 .padding(.top, 8)
@@ -1797,14 +1791,14 @@ private struct TerracottaFiringVisual: View {
                         Spacer()
                         Text("1100°C").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(RenaissanceColors.errorRed)
                     }
-                    .foregroundStyle(sepiaInk.opacity(0.4))
+                    .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                     .frame(width: 200)
                 }
 
                 // Status text
                 Text(statusText)
                     .font(.custom("EBGaramond-Regular", size: 15))
-                    .foregroundStyle(sepiaInk.opacity(0.7))
+                    .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.7))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 16)
 
@@ -1857,17 +1851,17 @@ private struct DailyFlowVisual: View {
                         p.move(to: CGPoint(x: cx - basinW * 0.7, y: basinY - basinH * 0.2))
                         p.addLine(to: CGPoint(x: cx - basinW * 0.5, y: basinY - basinH * 0.2))
                     }
-                    .stroke(leadGray, lineWidth: 4)
+                    .stroke(IVMaterialColors.leadGray, lineWidth: 4)
 
                     // Basin outline
                     RoundedRectangle(cornerRadius: 4)
-                        .strokeBorder(stoneGray, lineWidth: 2)
+                        .strokeBorder(IVMaterialColors.stoneGray, lineWidth: 2)
                         .frame(width: basinW, height: basinH)
                         .position(x: cx, y: basinY)
 
                     // Water fill
                     RoundedRectangle(cornerRadius: 3)
-                        .fill(waterBlue.opacity(0.4))
+                        .fill(IVMaterialColors.waterBlue.opacity(0.4))
                         .frame(width: basinW - 4, height: (basinH - 4) * fillLevel)
                         .position(x: cx, y: basinY + (basinH - (basinH - 4) * fillLevel) / 2 - 2)
 
@@ -1876,11 +1870,11 @@ private struct DailyFlowVisual: View {
                         Text("\(counterValue)")
                             .font(.custom("EBGaramond-Bold", size: counterValue > 0 ? 18 : 14))
                             .monospacedDigit()
-                            .foregroundStyle(fillLevel > 0.5 ? .white : sepiaInk)
+                            .foregroundStyle(fillLevel > 0.5 ? .white : IVMaterialColors.sepiaInk)
                         if counterValue > 0 {
                             Text("m³ / day")
                                 .font(.custom("EBGaramond-Regular", size: 15))
-                                .foregroundStyle(fillLevel > 0.5 ? .white.opacity(0.8) : sepiaInk.opacity(0.5))
+                                .foregroundStyle(fillLevel > 0.5 ? .white.opacity(0.8) : IVMaterialColors.sepiaInk.opacity(0.5))
                         }
                     }
                     .position(x: cx, y: basinY)
@@ -1897,7 +1891,7 @@ private struct DailyFlowVisual: View {
                             }
                             .foregroundStyle(.white)
                             .padding(.horizontal, 16).padding(.vertical, 8)
-                            .background(waterBlue)
+                            .background(IVMaterialColors.waterBlue)
                             .cornerRadius(8)
                         }
                         .buttonStyle(.plain)
@@ -1909,7 +1903,7 @@ private struct DailyFlowVisual: View {
                         HStack(spacing: 8) {
                             Image(systemName: "person.fill")
                                 .font(.system(size: 13))
-                                .foregroundStyle(sepiaInk.opacity(0.4))
+                                .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                             FormulaText(text: "190 liters / person / day", highlighted: true, fontSize: 15)
                         }
                         .position(x: cx, y: h * 0.82)

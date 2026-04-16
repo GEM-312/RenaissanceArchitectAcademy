@@ -56,7 +56,6 @@ class CityScene: SKScene, ScrollZoomable {
     private var playerSpotlight: SKSpriteNode?
 
     /// Animated river shape nodes (for cleanup + theme)
-    private var riverNodes: [SKShapeNode] = []
 
     /// Whether the player is currently walking to a building
     private(set) var isPlayerWalking = false
@@ -306,7 +305,6 @@ class CityScene: SKScene, ScrollZoomable {
         removeAllActions()
         removeAllChildren()
         terrainBlur.cleanup()
-        riverNodes.removeAll()
         playerNode = nil
         hasSetup = false
         // Break retain cycles from closures capturing SwiftUI views
@@ -465,182 +463,6 @@ class CityScene: SKScene, ScrollZoomable {
         gridNode.zPosition = -90
         gridNode.isAntialiased = false  // Crisp 1px lines, no blending blur
         addChild(gridNode)
-    }
-
-    // MARK: - Rivers
-
-    private func setupRiver() {
-        // Shared water flow shader — compiled once, reused by all 3 rivers
-        let waterShader = SKShader(fileNamed: "WaterFlow")
-
-        // --- Tiber River (Ancient Rome side, flows south) ---
-        let tiberPath = CGMutablePath()
-        tiberPath.move(to: CGPoint(x: 50, y: mapSize.height))
-        tiberPath.addCurve(
-            to: CGPoint(x: 100, y: mapSize.height * 0.6),
-            control1: CGPoint(x: 80, y: mapSize.height * 0.85),
-            control2: CGPoint(x: 30, y: mapSize.height * 0.7)
-        )
-        tiberPath.addCurve(
-            to: CGPoint(x: 50, y: 0),
-            control1: CGPoint(x: 150, y: mapSize.height * 0.4),
-            control2: CGPoint(x: 80, y: mapSize.height * 0.2)
-        )
-        addAnimatedRiver(
-            centerline: tiberPath, width: 50,
-            color: RenaissanceColors.renaissanceBlue,
-            flowAngle: -.pi / 2,  // flows south
-            shader: waterShader,
-            name: "river_tiber"
-        )
-        addRiverLabel("Tiber", at: CGPoint(x: 80, y: 1200), rotation: .pi / 8)
-
-        // --- Grand Canal (Venice area, flows diagonal south-right) ---
-        let canalPath = CGMutablePath()
-        canalPath.move(to: CGPoint(x: 3200, y: 1800))
-        canalPath.addCurve(
-            to: CGPoint(x: 3400, y: 1200),
-            control1: CGPoint(x: 3350, y: 1650),
-            control2: CGPoint(x: 3300, y: 1400)
-        )
-        canalPath.addLine(to: CGPoint(x: 3500, y: 900))
-        addAnimatedRiver(
-            centerline: canalPath, width: 35,
-            color: RenaissanceColors.deepTeal,
-            flowAngle: -.pi / 4,  // flows diagonal
-            shader: waterShader,
-            name: "river_canal"
-        )
-        addRiverLabel("Grand Canal", at: CGPoint(x: 3350, y: 1400), rotation: -.pi / 4)
-
-        // --- Arno River (Florence area, flows east) ---
-        let arnoPath = CGMutablePath()
-        arnoPath.move(to: CGPoint(x: 2100, y: 2400))
-        arnoPath.addCurve(
-            to: CGPoint(x: 2800, y: 2000),
-            control1: CGPoint(x: 2300, y: 2350),
-            control2: CGPoint(x: 2600, y: 2150)
-        )
-        addAnimatedRiver(
-            centerline: arnoPath, width: 30,
-            color: RenaissanceColors.renaissanceBlue,
-            flowAngle: -.pi / 7,  // gentle eastward
-            shader: waterShader,
-            name: "river_arno"
-        )
-        addRiverLabel("Arno", at: CGPoint(x: 2450, y: 2180), rotation: -.pi / 10)
-    }
-
-    /// Convert a stroked centerline into a filled ribbon with animated water shader
-    private func addAnimatedRiver(centerline: CGPath, width: CGFloat, color: Color, flowAngle: CGFloat, shader: SKShader, name: String) {
-        // Convert stroke path → filled polygon ribbon
-        let ribbonPath = centerline.copy(
-            strokingWithWidth: width,
-            lineCap: .round,
-            lineJoin: .round,
-            miterLimit: 10
-        )
-
-        let river = SKShapeNode(path: ribbonPath)
-        river.fillColor = .white  // Required for fillShader to render
-        river.strokeColor = .clear
-        river.zPosition = -50
-        river.name = name
-
-        // Extract RGB from SwiftUI Color
-        let platformColor = PlatformColor(color)
-        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
-        platformColor.getRed(&r, green: &g, blue: &b, alpha: &a)
-
-        // Each river gets its own shader copy with unique uniforms
-        let riverShader = shader.copy() as! SKShader
-        riverShader.uniforms = [
-            SKUniform(name: "u_base_color", vectorFloat3: vector_float3(Float(r), Float(g), Float(b))),
-            SKUniform(name: "u_flow_angle", float: Float(flowAngle))
-        ]
-        river.fillShader = riverShader
-
-        addChild(river)
-        riverNodes.append(river)
-    }
-
-    private func addRiverLabel(_ name: String, at position: CGPoint, rotation: CGFloat) {
-        let label = SKLabelNode(text: name)
-        label.fontName = "EBGaramond-Regular"
-        label.fontSize = 20
-        label.fontColor = PlatformColor(RenaissanceColors.renaissanceBlue.opacity(0.8))
-        label.position = position
-        label.zRotation = rotation
-        label.zPosition = -40
-        addChild(label)
-    }
-
-    // MARK: - River Shimmer Overlay
-
-    /// Animated shimmer overlay on painted terrain rivers — additive blend brightens water
-    private func setupRiverShimmer() {
-        let shimmerShader = SKShader(fileNamed: "RiverShimmer")
-
-        // Tiber River (Ancient Rome side, flows south)
-        let tiberPath = CGMutablePath()
-        tiberPath.move(to: CGPoint(x: 50, y: mapSize.height))
-        tiberPath.addCurve(
-            to: CGPoint(x: 100, y: mapSize.height * 0.6),
-            control1: CGPoint(x: 80, y: mapSize.height * 0.85),
-            control2: CGPoint(x: 30, y: mapSize.height * 0.7)
-        )
-        tiberPath.addCurve(
-            to: CGPoint(x: 50, y: 0),
-            control1: CGPoint(x: 150, y: mapSize.height * 0.4),
-            control2: CGPoint(x: 80, y: mapSize.height * 0.2)
-        )
-        addRiverShimmerOverlay(centerline: tiberPath, width: 55, flowAngle: -.pi / 2, intensity: 0.5, shader: shimmerShader)
-
-        // Grand Canal (Venice, flows diagonal)
-        let canalPath = CGMutablePath()
-        canalPath.move(to: CGPoint(x: 3200, y: 1800))
-        canalPath.addCurve(
-            to: CGPoint(x: 3400, y: 1200),
-            control1: CGPoint(x: 3350, y: 1650),
-            control2: CGPoint(x: 3300, y: 1400)
-        )
-        canalPath.addLine(to: CGPoint(x: 3500, y: 900))
-        addRiverShimmerOverlay(centerline: canalPath, width: 40, flowAngle: -.pi / 4, intensity: 0.6, shader: shimmerShader)
-
-        // Arno River (Florence, flows east)
-        let arnoPath = CGMutablePath()
-        arnoPath.move(to: CGPoint(x: 2100, y: 2400))
-        arnoPath.addCurve(
-            to: CGPoint(x: 2800, y: 2000),
-            control1: CGPoint(x: 2300, y: 2350),
-            control2: CGPoint(x: 2600, y: 2150)
-        )
-        addRiverShimmerOverlay(centerline: arnoPath, width: 35, flowAngle: -.pi / 7, intensity: 0.5, shader: shimmerShader)
-    }
-
-    private func addRiverShimmerOverlay(centerline: CGPath, width: CGFloat, flowAngle: CGFloat, intensity: Float, shader: SKShader) {
-        let ribbonPath = centerline.copy(
-            strokingWithWidth: width,
-            lineCap: .round,
-            lineJoin: .round,
-            miterLimit: 10
-        )
-
-        let shimmer = SKShapeNode(path: ribbonPath)
-        shimmer.fillColor = .white
-        shimmer.strokeColor = .clear
-        shimmer.zPosition = -95  // Above terrain (-100), below grid (-90)
-        shimmer.blendMode = .add  // Brightens painted river underneath
-
-        let riverShader = shader.copy() as! SKShader
-        riverShader.uniforms = [
-            SKUniform(name: "u_flow_angle", float: Float(flowAngle)),
-            SKUniform(name: "u_intensity", float: intensity)
-        ]
-        shimmer.fillShader = riverShader
-
-        addChild(shimmer)
-        riverNodes.append(shimmer)
     }
 
     // MARK: - Buildings (positions from sketch)

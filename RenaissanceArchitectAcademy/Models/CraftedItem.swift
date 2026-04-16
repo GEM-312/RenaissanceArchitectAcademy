@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 /// Items that can be crafted in the Workshop from raw materials
 enum CraftedItem: String, CaseIterable, Identifiable, Codable {
@@ -56,5 +57,52 @@ enum CraftedItem: String, CaseIterable, Identifiable, Codable {
         case .architectSeal: return "🏛️"
         case .masterSeal: return "🏆"
         }
+    }
+
+    /// Asset catalog image name — nil if no image yet
+    var imageName: String? {
+        switch self {
+        case .limeMortar:             return "MaterialMortar"
+        case .bronzeFittings:         return "MaterialBronze"
+        case .rawBronze:              return "MaterialRawBronze"
+        case .castingMold:            return "MaterialCastingMold"
+        case .temperaPaint:           return "MaterialTemperaPaint"
+        case .redFrescoPigment:       return "PigmentRedOchre"
+        case .blueFrescoPigment:      return "PigmentLapisLazuli"
+        case .cinnabarFrescoPigment:  return "PigmentVermillion"
+        case .saffronIllumination:    return "PigmentSienna"
+        case .greenFrescoPigment:     return "PigmentVerdigris"
+        case .fumigationIncense:      return "CraftedFumigation"
+        case .goldLeaf:               return "CraftedGoldLeaf"
+        case .timberBeams:            return "CraftedTimberBeams"
+        default:                      return nil
+        }
+    }
+}
+
+// MARK: - Crafted Item Icon View (Midjourney image or emoji fallback)
+
+struct CraftedItemIconView: View {
+    let item: CraftedItem
+    var size: CGFloat = 28
+
+    var body: some View {
+        if let name = item.imageName, imageExists(name) {
+            Image(name)
+                .resizable()
+                .scaledToFit()
+                .frame(height: size)
+        } else {
+            Text(item.icon)
+                .font(.system(size: size * 0.7))
+        }
+    }
+
+    private func imageExists(_ name: String) -> Bool {
+        #if os(iOS)
+        return UIImage(named: name) != nil
+        #else
+        return NSImage(named: name) != nil
+        #endif
     }
 }

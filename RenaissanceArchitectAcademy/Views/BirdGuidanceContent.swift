@@ -52,7 +52,7 @@ struct BirdGuidanceContent: View {
                             .foregroundStyle(.white)
                             .padding(.horizontal, 14)
                             .padding(.vertical, 6)
-                            .background(Capsule().fill(RenaissanceColors.warmBrown))
+                            .parchmentCapsule(color: RenaissanceColors.warmBrown)
                         }
                         .buttonStyle(.plain)
                     }
@@ -72,7 +72,7 @@ struct BirdGuidanceContent: View {
                             .foregroundStyle(.white)
                             .padding(.horizontal, 14)
                             .padding(.vertical, 6)
-                            .background(Capsule().fill(RenaissanceColors.renaissanceBlue))
+                            .parchmentCapsule(color: RenaissanceColors.renaissanceBlue)
                         }
                         .buttonStyle(.plain)
                     }

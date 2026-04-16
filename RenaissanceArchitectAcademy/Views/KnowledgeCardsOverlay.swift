@@ -648,9 +648,7 @@ struct KnowledgeCardsOverlay: View {
                         .foregroundStyle(.white)
                         .padding(.vertical, Spacing.sm)
                         .frame(maxWidth: .infinity)
-                        .background(
-                            RoundedRectangle(cornerRadius: 9).fill(card.color)
-                        )
+                        .parchmentButton(color: card.color, radius: 9)
                 }
                 .buttonStyle(.plain)
                 .opacity(animateFlippedStory ? 1 : 0)
@@ -1953,7 +1951,7 @@ struct KnowledgeCardsOverlay: View {
                     .foregroundStyle(.white)
                     .padding(.horizontal, 18)
                     .padding(.vertical, 9)
-                    .background(Capsule().fill(RenaissanceColors.renaissanceBlue))
+                    .parchmentCapsule(color: RenaissanceColors.renaissanceBlue)
                 }
                 .buttonStyle(.plain)
 

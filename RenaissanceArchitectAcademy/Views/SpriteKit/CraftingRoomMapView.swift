@@ -605,7 +605,7 @@ struct CraftingRoomMapView: View {
                         if let toolRecipe = ToolRecipe.detectRecipe(from: workshop.workbenchIngredients) {
                             let owned = (workshop.tools[toolRecipe.output] ?? 0) > 0
                             HStack(spacing: 6) {
-                                Text(toolRecipe.output.icon)
+                                ToolIconView(tool: toolRecipe.output, size: 20)
                                 Text(toolRecipe.output.displayName)
                                     .font(RenaissanceFont.bodySmall)
                                     .foregroundStyle(owned ? RenaissanceColors.stoneGray : RenaissanceColors.ochre)
@@ -621,7 +621,7 @@ struct CraftingRoomMapView: View {
                             }
                         } else if let recipe = workshop.detectedRecipe {
                             HStack(spacing: 6) {
-                                Text(recipe.output.icon)
+                                CraftedItemIconView(item: recipe.output, size: 20)
                                 Text(recipe.output.rawValue)
                                     .font(RenaissanceFont.bodySmall)
                                     .foregroundStyle(RenaissanceColors.sageGreen)
@@ -839,11 +839,12 @@ struct CraftingRoomMapView: View {
                                 HStack(spacing: 4) {
                                     Image(systemName: "arrow.right")
                                         .font(.caption)
-                                    Text(recipe.output.icon)
+                                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                                    CraftedItemIconView(item: recipe.output, size: 16)
                                     Text(recipe.output.rawValue)
                                         .font(RenaissanceFont.caption)
+                                        .foregroundStyle(RenaissanceColors.sepiaInk)
                                 }
-                                .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                         }
                     } else {
@@ -968,8 +969,7 @@ struct CraftingRoomMapView: View {
                         // Output preview
                         if let recipe = workshop.detectedPigmentRecipe {
                             VStack(spacing: 4) {
-                                Text(recipe.output.icon)
-                                    .font(.title2)
+                                MaterialIconView(material: recipe.output, size: 28)
                                 Text(recipe.italianName)
                                     .font(.custom("EBGaramond-Italic", size: 12))
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
@@ -1148,8 +1148,7 @@ struct CraftingRoomMapView: View {
         } label: {
             VStack(spacing: 2) {
                 if let mat = material {
-                    Text(mat.icon)
-                        .font(.title2)
+                    MaterialIconView(material: mat, size: 28)
                     Text(mat.rawValue)
                         .font(.custom("EBGaramond-Regular", size: 10))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
@@ -1179,8 +1178,7 @@ struct CraftingRoomMapView: View {
 
     private func grindingRecipeRow(recipe: PigmentRecipe) -> some View {
         HStack(spacing: 8) {
-            Text(recipe.output.icon)
-                .font(.body)
+            MaterialIconView(material: recipe.output, size: 20)
 
             Text(recipe.italianName)
                 .font(.custom("EBGaramond-Italic", size: 14))
@@ -1292,8 +1290,7 @@ struct CraftingRoomMapView: View {
                             ForEach(craftedWithStock) { item in
                                 let count = workshop.craftedMaterials[item] ?? 0
                                 VStack(spacing: 2) {
-                                    Text(item.icon)
-                                        .font(.title2)
+                                    CraftedItemIconView(item: item, size: 28)
                                     Text(item.rawValue)
                                         .font(.custom("EBGaramond-Regular", size: 10))
                                         .foregroundStyle(RenaissanceColors.sepiaInk)

@@ -52,19 +52,13 @@ struct LeonardoWorkshopInteractiveVisuals {
     }
 }
 
-// MARK: - Local Aliases
+// MARK: - Local Colors
 
-private let gridColor = ivGridColor
-private let sepiaInk = ivSepiaInk
-private let waterBlue = ivWaterBlue
-private let dimColor = ivDimColor
-private let bronzeGold = Color(red: 0.72, green: 0.55, blue: 0.32)
 private let forgeOrange = Color(red: 0.90, green: 0.50, blue: 0.15)
 private let ultraBlue = Color(red: 0.22, green: 0.28, blue: 0.65)
 private let ochreYellow = Color(red: 0.78, green: 0.62, blue: 0.28)
 private let limeWhite = Color(red: 0.94, green: 0.92, blue: 0.88)
 private let poplarLight = Color(red: 0.82, green: 0.75, blue: 0.62)
-private let oakBrown = Color(red: 0.55, green: 0.42, blue: 0.28)
 
 private typealias TeachingContainer = IVTeachingContainer
 private typealias DimLabel = IVDimLabel
@@ -90,7 +84,7 @@ private struct BottegaVisual: View {
                         Text("Master").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(color)
                     }
                     ForEach(0..<(step >= 3 ? 6 : step >= 1 ? 3 : 0), id: \.self) { _ in
-                        Circle().fill(sepiaInk.opacity(0.25)).frame(width: 12, height: 12)
+                        Circle().fill(IVMaterialColors.sepiaInk.opacity(0.25)).frame(width: 12, height: 12)
                     }
                 }
                 if step >= 2 {
@@ -112,8 +106,8 @@ private struct BottegaVisual: View {
     }
     @ViewBuilder private func ageLabel(_ age: String, task: String) -> some View {
         VStack(spacing: 1) {
-            Text(age).font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(dimColor)
-            Text(task).font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.6))
+            Text(age).font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.dimColor)
+            Text(task).font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
         }
     }
     @ViewBuilder private func disciplinePill(_ text: String, icon: String) -> some View {
@@ -140,12 +134,12 @@ private struct NorthLightVisual: View {
                 let cx = size.width / 2, roomY = size.height * 0.2
                 let roomW = size.width * 0.6, roomH = size.height * 0.5
                 let room = CGRect(x: cx - roomW / 2, y: roomY, width: roomW, height: roomH)
-                ctx.stroke(Path(room), with: .color(sepiaInk.opacity(0.2)), lineWidth: 1)
+                ctx.stroke(Path(room), with: .color(IVMaterialColors.sepiaInk.opacity(0.2)), lineWidth: 1)
                 // Window on top (north)
                 let winW: CGFloat = 30
                 let winRect = CGRect(x: cx - winW / 2, y: roomY - 3, width: winW, height: 6)
-                ctx.fill(Path(winRect), with: .color(step >= 1 ? Color.cyan.opacity(0.2) : sepiaInk.opacity(0.05)))
-                ctx.stroke(Path(winRect), with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                ctx.fill(Path(winRect), with: .color(step >= 1 ? Color.cyan.opacity(0.2) : IVMaterialColors.sepiaInk.opacity(0.05)))
+                ctx.stroke(Path(winRect), with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
                 // Light rays spreading down
                 if step >= 1 {
                     for i in 0..<5 {
@@ -163,10 +157,10 @@ private struct NorthLightVisual: View {
                     easel.move(to: CGPoint(x: easelX - 8, y: easelY + 20))
                     easel.addLine(to: CGPoint(x: easelX, y: easelY - 10))
                     easel.addLine(to: CGPoint(x: easelX + 8, y: easelY + 20))
-                    ctx.stroke(easel, with: .color(oakBrown.opacity(0.4)), lineWidth: 1.5)
+                    ctx.stroke(easel, with: .color(IVMaterialColors.oakBrown.opacity(0.4)), lineWidth: 1.5)
                     let canvas = CGRect(x: easelX - 8, y: easelY - 10, width: 16, height: 14)
                     ctx.fill(Path(canvas), with: .color(limeWhite.opacity(0.5)))
-                    ctx.stroke(Path(canvas), with: .color(sepiaInk.opacity(0.2)), lineWidth: 0.5)
+                    ctx.stroke(Path(canvas), with: .color(IVMaterialColors.sepiaInk.opacity(0.2)), lineWidth: 0.5)
                 }
                 // Step 3: "N" compass at top
                 if step >= 3 {
@@ -214,12 +208,12 @@ private struct SfumatoVisual: View {
                 if step >= 2 {
                     // Hard edge (left)
                     let hardRect = CGRect(x: 20, y: cy + 30, width: 30, height: 20)
-                    ctx.fill(Path(hardRect), with: .color(sepiaInk.opacity(0.3)))
+                    ctx.fill(Path(hardRect), with: .color(IVMaterialColors.sepiaInk.opacity(0.3)))
                     // Soft edge (right) — gradient simulation
                     for j in 0..<10 {
                         let t = CGFloat(j) / 9
                         let softRect = CGRect(x: size.width - 55 + t * 30, y: cy + 30, width: 4, height: 20)
-                        ctx.fill(Path(softRect), with: .color(sepiaInk.opacity(0.3 * (1 - t))))
+                        ctx.fill(Path(softRect), with: .color(IVMaterialColors.sepiaInk.opacity(0.3 * (1 - t))))
                     }
                 }
                 // Step 3: eye icon
@@ -254,8 +248,8 @@ private struct WaterTankVisual: View {
                 let tankW = size.width * 0.6, tankH = size.height * 0.5
                 // Tank
                 let tank = CGRect(x: cx - tankW / 2, y: tankY, width: tankW, height: tankH)
-                ctx.fill(Path(tank), with: .color(waterBlue.opacity(0.06)))
-                ctx.stroke(Path(tank), with: .color(waterBlue.opacity(0.3)), lineWidth: 1.5)
+                ctx.fill(Path(tank), with: .color(IVMaterialColors.waterBlue.opacity(0.06)))
+                ctx.stroke(Path(tank), with: .color(IVMaterialColors.waterBlue.opacity(0.3)), lineWidth: 1.5)
                 // Step 2: vortex spirals
                 if step >= 2 {
                     let vortices: [(CGPoint, CGFloat)] = [
@@ -311,7 +305,7 @@ private struct ForgeVisual: View {
                 // Forge body
                 let forgeRect = CGRect(x: cx - 25, y: forgeY, width: 50, height: 35)
                 ctx.fill(Path(roundedRect: forgeRect, cornerRadius: 4), with: .color(forgeOrange.opacity(step >= 1 ? 0.4 : 0.1)))
-                ctx.stroke(Path(roundedRect: forgeRect, cornerRadius: 4), with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                ctx.stroke(Path(roundedRect: forgeRect, cornerRadius: 4), with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
                 // Flame
                 if step >= 1 {
                     var flame = Path()
@@ -327,13 +321,13 @@ private struct ForgeVisual: View {
                         let compressed = i == 0 // one compressed, one expanded
                         let bw: CGFloat = compressed ? 15 : 22
                         let bellows = CGRect(x: bx - bw / 2, y: bY - 10, width: bw, height: 20)
-                        ctx.fill(Path(roundedRect: bellows, cornerRadius: 2), with: .color(oakBrown.opacity(0.3)))
-                        ctx.stroke(Path(roundedRect: bellows, cornerRadius: 2), with: .color(sepiaInk.opacity(0.3)), lineWidth: 0.5)
+                        ctx.fill(Path(roundedRect: bellows, cornerRadius: 2), with: .color(IVMaterialColors.oakBrown.opacity(0.3)))
+                        ctx.stroke(Path(roundedRect: bellows, cornerRadius: 2), with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 0.5)
                         // Air pipe to forge
                         var pipe = Path()
                         pipe.move(to: CGPoint(x: bx - side * bw / 2, y: bY))
                         pipe.addLine(to: CGPoint(x: cx + side * 25, y: bY))
-                        ctx.stroke(pipe, with: .color(sepiaInk.opacity(0.2)), lineWidth: 1)
+                        ctx.stroke(pipe, with: .color(IVMaterialColors.sepiaInk.opacity(0.2)), lineWidth: 1)
                     }
                 }
                 // Step 3: continuous air arrow
@@ -369,17 +363,17 @@ private struct WhiteWallsVisual: View {
                         .frame(width: 55, height: 50)
                     Text("Stone")
                         .font(.custom("Cinzel-Bold", size: 16))
-                        .foregroundStyle(sepiaInk.opacity(step >= 2 ? 0.4 : 0.3))
+                        .foregroundStyle(IVMaterialColors.sepiaInk.opacity(step >= 2 ? 0.4 : 0.3))
                     if step >= 2 {
                         Text("40%")
                             .font(.custom("EBGaramond-Bold", size: 15))
-                            .foregroundStyle(dimColor.opacity(0.5))
+                            .foregroundStyle(IVMaterialColors.dimColor.opacity(0.5))
                     }
                 }
                 if step >= 2 {
                     Text("vs")
                         .font(.custom("EBGaramond-Regular", size: 15))
-                        .foregroundStyle(sepiaInk.opacity(0.3))
+                        .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3))
                 }
                 // Lime plaster
                 VStack(spacing: 4) {
@@ -389,7 +383,7 @@ private struct WhiteWallsVisual: View {
                         .shadow(color: step >= 3 ? Color.yellow.opacity(0.15) : .clear, radius: 8)
                     Text("Lime")
                         .font(.custom("Cinzel-Bold", size: 16))
-                        .foregroundStyle(step >= 1 ? sepiaInk : sepiaInk.opacity(0.3))
+                        .foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                     if step >= 2 {
                         Text("85%")
                             .font(.custom("EBGaramond-Bold", size: 15))
@@ -418,11 +412,11 @@ private struct BronzeGearsVisual: View {
                 // Large gear
                 let gearR: CGFloat = 28
                 drawGear(ctx: &ctx, center: CGPoint(x: cx - 18, y: cy), radius: gearR, teeth: 10,
-                         color: step >= 1 ? bronzeGold : Color.gray.opacity(0.1))
+                         color: step >= 1 ? IVMaterialColors.bronzeGold : Color.gray.opacity(0.1))
                 // Small meshing gear
                 if step >= 2 {
                     drawGear(ctx: &ctx, center: CGPoint(x: cx + 22, y: cy - 5), radius: gearR * 0.6, teeth: 6,
-                             color: bronzeGold.opacity(0.7))
+                             color: IVMaterialColors.bronzeGold.opacity(0.7))
                 }
                 // Step 3: worm gear hint
                 if step >= 3 {
@@ -436,7 +430,7 @@ private struct BronzeGearsVisual: View {
                         if i == 0 { helix.move(to: CGPoint(x: x, y: y)) }
                         else { helix.addLine(to: CGPoint(x: x, y: y)) }
                     }
-                    ctx.stroke(helix, with: .color(bronzeGold), lineWidth: 2)
+                    ctx.stroke(helix, with: .color(IVMaterialColors.bronzeGold), lineWidth: 2)
                 }
             }
         }
@@ -477,10 +471,10 @@ private struct CastingSandVisual: View {
                         .frame(height: 55)
                     Text("Arno Sand")
                         .font(.custom("Cinzel-Bold", size: 16))
-                        .foregroundStyle(step >= 1 ? sepiaInk : sepiaInk.opacity(0.3))
+                        .foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                     Text("Clay-rich")
                         .font(.custom("EBGaramond-Regular", size: 15))
-                        .foregroundStyle(step >= 2 ? dimColor : dimColor.opacity(0.3))
+                        .foregroundStyle(step >= 2 ? IVMaterialColors.dimColor : IVMaterialColors.dimColor.opacity(0.3))
                     if step >= 2 {
                         Text("→ Casting")
                             .font(.custom("EBGaramond-Bold", size: 15))
@@ -495,10 +489,10 @@ private struct CastingSandVisual: View {
                         .frame(height: 55)
                     Text("Mountain")
                         .font(.custom("Cinzel-Bold", size: 16))
-                        .foregroundStyle(step >= 1 ? sepiaInk : sepiaInk.opacity(0.3))
+                        .foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                     Text("Pure SiO₂")
                         .font(.custom("EBGaramond-Regular", size: 15))
-                        .foregroundStyle(step >= 3 ? dimColor : dimColor.opacity(0.3))
+                        .foregroundStyle(step >= 3 ? IVMaterialColors.dimColor : IVMaterialColors.dimColor.opacity(0.3))
                     if step >= 3 {
                         Text("→ Polishing")
                             .font(.custom("EBGaramond-Bold", size: 15))
@@ -541,19 +535,19 @@ private struct CustomToolsVisual: View {
                     HStack(spacing: 3) {
                         ForEach([12, 10, 8, 6, 4] as [CGFloat], id: \.self) { diameter in
                             Circle()
-                                .strokeBorder(sepiaInk.opacity(0.4), lineWidth: 1)
+                                .strokeBorder(IVMaterialColors.sepiaInk.opacity(0.4), lineWidth: 1)
                                 .frame(width: diameter, height: diameter)
                         }
                         Image(systemName: "arrow.right")
                             .font(.system(size: 13))
-                            .foregroundStyle(sepiaInk.opacity(0.3))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3))
                         RoundedRectangle(cornerRadius: 1)
                             .fill(color.opacity(0.4))
                             .frame(width: 30, height: 2)
                     }
                     Text("Wire die → uniform wire")
                         .font(.custom("EBGaramond-Regular", size: 15))
-                        .foregroundStyle(dimColor)
+                        .foregroundStyle(IVMaterialColors.dimColor)
                 }
                 if step >= 3 {
                     Text("Carburize: Fe + C → hardened")
@@ -585,19 +579,19 @@ private struct DrawingTableVisual: View {
                 var rightLeg = Path()
                 rightLeg.move(to: CGPoint(x: cx + 35, y: baseY - 15))
                 rightLeg.addLine(to: CGPoint(x: cx + 40, y: baseY + 25))
-                ctx.stroke(leftLeg, with: .color(oakBrown.opacity(0.5)), lineWidth: 2)
-                ctx.stroke(rightLeg, with: .color(oakBrown.opacity(0.5)), lineWidth: 2)
+                ctx.stroke(leftLeg, with: .color(IVMaterialColors.oakBrown.opacity(0.5)), lineWidth: 2)
+                ctx.stroke(rightLeg, with: .color(IVMaterialColors.oakBrown.opacity(0.5)), lineWidth: 2)
                 // Table surface at 30°
                 var surface = Path()
                 surface.move(to: CGPoint(x: cx - 40, y: baseY))
                 surface.addLine(to: CGPoint(x: cx + 40, y: baseY - 22))
-                ctx.stroke(surface, with: .color(oakBrown.opacity(step >= 1 ? 0.7 : 0.3)), lineWidth: 4)
+                ctx.stroke(surface, with: .color(IVMaterialColors.oakBrown.opacity(step >= 1 ? 0.7 : 0.3)), lineWidth: 4)
                 // Angle arc
                 if step >= 1 {
                     var arc = Path()
                     arc.addArc(center: CGPoint(x: cx - 40, y: baseY),
                                radius: 20, startAngle: .degrees(0), endAngle: .degrees(-30), clockwise: true)
-                    ctx.stroke(arc, with: .color(dimColor.opacity(0.5)), lineWidth: 1)
+                    ctx.stroke(arc, with: .color(IVMaterialColors.dimColor.opacity(0.5)), lineWidth: 1)
                 }
                 // Step 2: paper on table
                 if step >= 2 {
@@ -637,20 +631,20 @@ private struct PoplarPanelVisual: View {
                             .overlay(
                                 Text("Gesso")
                                     .font(.custom("EBGaramond-Regular", size: 15))
-                                    .foregroundStyle(sepiaInk.opacity(0.3))
+                                    .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3))
                             )
                     }
                 }
                 .overlay(
                     RoundedRectangle(cornerRadius: 4)
-                        .strokeBorder(sepiaInk.opacity(0.2), lineWidth: 1)
+                        .strokeBorder(IVMaterialColors.sepiaInk.opacity(0.2), lineWidth: 1)
                         .frame(width: 65, height: 85)
                 )
 
                 if step >= 1 {
                     Text("77 × 53 cm")
                         .font(.custom("EBGaramond-Bold", size: 15))
-                        .foregroundStyle(dimColor)
+                        .foregroundStyle(IVMaterialColors.dimColor)
                 }
                 if step >= 3 {
                     Text("Poplar — humblest wood")
@@ -685,7 +679,7 @@ private struct PigmentGrindVisual: View {
                     if step >= 2 {
                         Text("3 hours")
                             .font(.custom("EBGaramond-Bold", size: 15))
-                            .foregroundStyle(dimColor)
+                            .foregroundStyle(IVMaterialColors.dimColor)
                     }
                 }
 
@@ -700,7 +694,7 @@ private struct PigmentGrindVisual: View {
                     if step >= 2 {
                         Text("1 hour")
                             .font(.custom("EBGaramond-Bold", size: 15))
-                            .foregroundStyle(dimColor)
+                            .foregroundStyle(IVMaterialColors.dimColor)
                     }
                 }
 
@@ -708,10 +702,10 @@ private struct PigmentGrindVisual: View {
                     VStack(spacing: 2) {
                         Text("+")
                             .font(.custom("Cinzel-Bold", size: 16))
-                            .foregroundStyle(sepiaInk.opacity(0.3))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3))
                         Text("Linseed")
                             .font(.custom("EBGaramond-Regular", size: 15))
-                            .foregroundStyle(dimColor)
+                            .foregroundStyle(IVMaterialColors.dimColor)
                         Text("= Paint")
                             .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(color)
@@ -741,14 +735,14 @@ private struct LostWaxVisual: View {
                         let active = (step == 1 && i < 2) || (step == 2 && i < 4) || step >= 3
                         Text(stage)
                             .font(.custom("EBGaramond-Regular", size: 15))
-                            .foregroundStyle(active ? sepiaInk : sepiaInk.opacity(0.2))
+                            .foregroundStyle(active ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.2))
                             .padding(.horizontal, 4).padding(.vertical, 3)
                             .background(RoundedRectangle(cornerRadius: 2).fill(active ? color.opacity(0.08) : Color.clear))
 
                         if i < stages.count - 1 {
                             Image(systemName: "chevron.right")
                                 .font(.system(size: 13))
-                                .foregroundStyle(active ? sepiaInk.opacity(0.2) : .clear)
+                                .foregroundStyle(active ? IVMaterialColors.sepiaInk.opacity(0.2) : .clear)
                         }
                     }
                 }
@@ -756,7 +750,7 @@ private struct LostWaxVisual: View {
                 if step >= 3 {
                     Text("70 tons planned for the Giant Horse")
                         .font(.custom("EBGaramond-Bold", size: 15))
-                        .foregroundStyle(bronzeGold)
+                        .foregroundStyle(IVMaterialColors.bronzeGold)
                 }
             }
             .padding(.horizontal, 4)

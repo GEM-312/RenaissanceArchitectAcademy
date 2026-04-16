@@ -152,7 +152,7 @@ struct GoldsmithMapView: View {
             .foregroundStyle(.white)
             .padding(.horizontal, 24)
             .padding(.vertical, 8)
-            .background(Capsule().fill(RenaissanceColors.warmBrown))
+            .parchmentCapsule(color: RenaissanceColors.warmBrown)
         }
         .padding(24)
         .adaptiveWidth(420)

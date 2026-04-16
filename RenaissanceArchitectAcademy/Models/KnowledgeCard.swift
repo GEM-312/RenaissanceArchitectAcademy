@@ -137,30 +137,11 @@ struct KnowledgeCard: Identifiable {
     var funFact: String? = nil        // Optional fun fact shown in lightbulb callout
     var visual: CardVisual? = nil     // Optional interactive science visual below lesson text
 
-    /// Color based on science
+    /// Color based on science — single source of truth in RenaissanceColors.color(for:)
     var color: Color {
-        scienceColor(science)
+        RenaissanceColors.color(for: science)
     }
 
-}
-
-/// Color mapping for sciences (used on card fronts/backs)
-func scienceColor(_ science: Science) -> Color {
-    switch science {
-    case .engineering:  return RenaissanceColors.warmBrown
-    case .mathematics:  return RenaissanceColors.renaissanceBlue
-    case .physics:      return RenaissanceColors.deepTeal
-    case .chemistry:    return RenaissanceColors.terracotta
-    case .geometry:     return RenaissanceColors.ochre
-    case .architecture: return RenaissanceColors.ochre
-    case .hydraulics:   return RenaissanceColors.renaissanceBlue
-    case .geology:      return RenaissanceColors.warmBrown
-    case .materials:    return RenaissanceColors.terracotta
-    case .biology:      return RenaissanceColors.sageGreen
-    case .optics:       return RenaissanceColors.goldSuccess
-    case .acoustics:    return RenaissanceColors.deepTeal
-    case .astronomy:    return Color.indigo
-    }
 }
 
 // MARK: - Content Router

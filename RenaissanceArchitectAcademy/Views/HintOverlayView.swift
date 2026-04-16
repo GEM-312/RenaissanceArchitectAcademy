@@ -382,8 +382,7 @@ struct HintOverlayView: View {
                             .foregroundStyle(settings.cardTextColor)
                         ForEach(pendingEarnReward, id: \.0) { material, count in
                             HStack(spacing: 2) {
-                                Text(material.icon)
-                                    .font(.custom("EBGaramond-Regular", size: 18, relativeTo: .body))
+                                MaterialIconView(material: material, size: 18)
                                 Text("×\(count)")
                                     .font(.custom("EBGaramond-Regular", size: 15))
                                     .foregroundStyle(settings.cardTextColor.opacity(0.7))
@@ -451,8 +450,7 @@ struct HintOverlayView: View {
                         HStack(spacing: 12) {
                             ForEach(transactionMaterials, id: \.0) { material, count in
                                 HStack(spacing: 4) {
-                                    Text(material.icon)
-                                        .font(.custom("EBGaramond-Regular", size: 20, relativeTo: .title3))
+                                    MaterialIconView(material: material, size: 20)
                                     Text("×\(count)")
                                         .font(.custom("EBGaramond-Regular", size: 16))
                                         .foregroundStyle(settings.cardTextColor.opacity(0.8))

@@ -47,18 +47,11 @@ struct FlyingMachineInteractiveVisuals {
     }
 }
 
-// MARK: - Local Aliases
+// MARK: - Local Colors
 
-private let gridColor = ivGridColor
-private let sepiaInk = ivSepiaInk
-private let waterBlue = ivWaterBlue
-private let dimColor = ivDimColor
 private let silkCream = Color(red: 0.95, green: 0.92, blue: 0.85)
-private let bronzeGold = Color(red: 0.72, green: 0.55, blue: 0.32)
 private let skyBlue = Color(red: 0.55, green: 0.72, blue: 0.88)
 private let ironWire = Color(red: 0.48, green: 0.48, blue: 0.50)
-private let oakBrown = Color(red: 0.55, green: 0.42, blue: 0.28)
-private let poplarLight = Color(red: 0.78, green: 0.72, blue: 0.58)
 
 private typealias TeachingContainer = IVTeachingContainer
 private typealias DimLabel = IVDimLabel
@@ -88,7 +81,7 @@ private struct OrnithopterVisual: View {
                 leftWing.addQuadCurve(to: CGPoint(x: cx, y: cy + 5),
                                       control: CGPoint(x: cx - wingSpan / 4, y: cy + 3))
                 ctx.fill(leftWing, with: .color(silkCream.opacity(step >= 1 ? 0.4 : 0.1)))
-                ctx.stroke(leftWing, with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                ctx.stroke(leftWing, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
                 // Right wing (mirror)
                 var rightWing = Path()
                 rightWing.move(to: CGPoint(x: cx, y: cy))
@@ -98,19 +91,19 @@ private struct OrnithopterVisual: View {
                 rightWing.addQuadCurve(to: CGPoint(x: cx, y: cy + 5),
                                        control: CGPoint(x: cx + wingSpan / 4, y: cy + 3))
                 ctx.fill(rightWing, with: .color(silkCream.opacity(step >= 1 ? 0.4 : 0.1)))
-                ctx.stroke(rightWing, with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                ctx.stroke(rightWing, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
                 // Body/cradle
                 let cradle = CGRect(x: cx - 8, y: cy - 3, width: 16, height: 20)
-                ctx.fill(Path(roundedRect: cradle, cornerRadius: 3), with: .color(oakBrown.opacity(0.4)))
+                ctx.fill(Path(roundedRect: cradle, cornerRadius: 3), with: .color(IVMaterialColors.oakBrown.opacity(0.4)))
                 // Pilot head
                 let head = Path(ellipseIn: CGRect(x: cx - 4, y: cy - 8, width: 8, height: 8))
-                ctx.fill(head, with: .color(sepiaInk.opacity(0.3)))
+                ctx.fill(head, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)))
                 // Step 2: wingspan dimension
                 if step >= 2 {
                     let dimY = cy + 30
                     ctx.stroke(IVDimLine(from: CGPoint(x: cx - wingSpan / 2, y: dimY),
                                          to: CGPoint(x: cx + wingSpan / 2, y: dimY)).path(in: .zero),
-                               with: .color(dimColor), lineWidth: 0.5)
+                               with: .color(IVMaterialColors.dimColor), lineWidth: 0.5)
                 }
                 // Step 3: notebook sketches count
                 if step >= 3 {
@@ -123,7 +116,7 @@ private struct OrnithopterVisual: View {
                 if step >= 2 {
                     Text("12m wingspan")
                         .font(.custom("EBGaramond-Bold", size: 15))
-                        .foregroundStyle(dimColor)
+                        .foregroundStyle(IVMaterialColors.dimColor)
                         .offset(y: step >= 3 ? -45 : -28)
                 }
             }
@@ -162,14 +155,14 @@ private struct BirdAnatomyVisual: View {
                 // Flat bottom (back to start)
                 airfoil.addQuadCurve(to: CGPoint(x: cx - airfoilW / 2, y: cy),
                                      control: CGPoint(x: cx, y: cy + 5))
-                ctx.fill(airfoil, with: .color(sepiaInk.opacity(step >= 1 ? 0.1 : 0.03)))
-                ctx.stroke(airfoil, with: .color(sepiaInk.opacity(0.4)), lineWidth: 1.5)
+                ctx.fill(airfoil, with: .color(IVMaterialColors.sepiaInk.opacity(step >= 1 ? 0.1 : 0.03)))
+                ctx.stroke(airfoil, with: .color(IVMaterialColors.sepiaInk.opacity(0.4)), lineWidth: 1.5)
                 // Step 1: camber label
                 if step >= 1 {
                     var camberLine = Path()
                     camberLine.move(to: CGPoint(x: cx, y: cy - 20))
                     camberLine.addLine(to: CGPoint(x: cx + 30, y: cy - 30))
-                    ctx.stroke(camberLine, with: .color(dimColor.opacity(0.5)), lineWidth: 0.5)
+                    ctx.stroke(camberLine, with: .color(IVMaterialColors.dimColor.opacity(0.5)), lineWidth: 0.5)
                 }
                 // Step 2: airflow arrows + pressure labels
                 if step >= 2 {
@@ -206,7 +199,7 @@ private struct BirdAnatomyVisual: View {
                     var us = Path()
                     us.move(to: CGPoint(x: cx + 10, y: dsY + 15))
                     us.addLine(to: CGPoint(x: cx + 30, y: dsY))
-                    ctx.stroke(us, with: .color(sepiaInk.opacity(0.3)), style: StrokeStyle(lineWidth: 1, dash: [3, 2]))
+                    ctx.stroke(us, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), style: StrokeStyle(lineWidth: 1, dash: [3, 2]))
                 }
             }
         }
@@ -229,7 +222,7 @@ private struct WingAreaMathVisual: View {
                 if step >= 1 {
                     Text("0.1 m² / kg × 90 kg = 18 m²")
                         .font(.custom("EBGaramond-Bold", size: 15))
-                        .foregroundStyle(step >= 2 ? color : sepiaInk)
+                        .foregroundStyle(step >= 2 ? color : IVMaterialColors.sepiaInk)
                 }
                 // Power comparison
                 if step >= 3 {
@@ -244,7 +237,7 @@ private struct WingAreaMathVisual: View {
                         VStack(spacing: 2) {
                             Text("vs")
                                 .font(.custom("EBGaramond-Regular", size: 15))
-                                .foregroundStyle(sepiaInk.opacity(0.3))
+                                .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3))
                         }
                         VStack(spacing: 2) {
                             Text("🧑")
@@ -282,7 +275,7 @@ private struct PowerRatioVisual: View {
                     wing.move(to: CGPoint(x: cx - 40, y: cy - 15))
                     wing.addQuadCurve(to: CGPoint(x: cx + 40, y: cy - 15),
                                       control: CGPoint(x: cx, y: cy - 35))
-                    ctx.stroke(wing, with: .color(sepiaInk.opacity(0.3)), lineWidth: 1.5)
+                    ctx.stroke(wing, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1.5)
                     // Red X
                     var xMark = Path()
                     xMark.move(to: CGPoint(x: cx - 15, y: cy - 25))
@@ -305,14 +298,14 @@ private struct PowerRatioVisual: View {
                     var pilot = Path()
                     pilot.move(to: CGPoint(x: cx, y: cy + 8))
                     pilot.addLine(to: CGPoint(x: cx, y: cy + 25))
-                    ctx.stroke(pilot, with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                    ctx.stroke(pilot, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
                     let pilotDot = Path(ellipseIn: CGRect(x: cx - 3, y: cy + 23, width: 6, height: 6))
-                    ctx.fill(pilotDot, with: .color(sepiaInk.opacity(0.3)))
+                    ctx.fill(pilotDot, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)))
                     // Control bar
                     var bar = Path()
                     bar.move(to: CGPoint(x: cx - 12, y: cy + 18))
                     bar.addLine(to: CGPoint(x: cx + 12, y: cy + 18))
-                    ctx.stroke(bar, with: .color(oakBrown.opacity(0.5)), lineWidth: 1.5)
+                    ctx.stroke(bar, with: .color(IVMaterialColors.oakBrown.opacity(0.5)), lineWidth: 1.5)
                 }
                 // Step 3: thermals (rising air)
                 if step >= 3 {
@@ -354,13 +347,13 @@ private struct MonteCeceriVisual: View {
                 mountain.addQuadCurve(to: CGPoint(x: size.width - 10, y: baseY),
                                       control: CGPoint(x: cx * 1.5, y: baseY - size.height * 0.2))
                 ctx.fill(mountain, with: .color(Color(red: 0.65, green: 0.58, blue: 0.48).opacity(0.2)))
-                ctx.stroke(mountain, with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                ctx.stroke(mountain, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
                 // Step 1: height dimension
                 if step >= 1 {
                     let peakY = baseY - size.height * 0.45
                     ctx.stroke(IVDimLine(from: CGPoint(x: size.width - 25, y: baseY),
                                          to: CGPoint(x: size.width - 25, y: peakY)).path(in: .zero),
-                               with: .color(dimColor), lineWidth: 0.5)
+                               with: .color(IVMaterialColors.dimColor), lineWidth: 0.5)
                 }
                 // Step 2: glider at peak
                 if step >= 2 {
@@ -404,7 +397,7 @@ private struct SilkCoveringVisual: View {
                     .frame(height: 50)
                     .overlay(
                         RoundedRectangle(cornerRadius: 6)
-                            .strokeBorder(sepiaInk.opacity(0.2), lineWidth: 1)
+                            .strokeBorder(IVMaterialColors.sepiaInk.opacity(0.2), lineWidth: 1)
                     )
                     .overlay {
                         if step >= 2 {
@@ -412,11 +405,11 @@ private struct SilkCoveringVisual: View {
                             Canvas { ctx, size in
                                 for i in stride(from: CGFloat(0), through: size.width, by: 6) {
                                     var v = Path(); v.move(to: CGPoint(x: i, y: 0)); v.addLine(to: CGPoint(x: i, y: size.height))
-                                    ctx.stroke(v, with: .color(sepiaInk.opacity(0.04)), lineWidth: 0.5)
+                                    ctx.stroke(v, with: .color(IVMaterialColors.sepiaInk.opacity(0.04)), lineWidth: 0.5)
                                 }
                                 for j in stride(from: CGFloat(0), through: size.height, by: 6) {
                                     var h = Path(); h.move(to: CGPoint(x: 0, y: j)); h.addLine(to: CGPoint(x: size.width, y: j))
-                                    ctx.stroke(h, with: .color(sepiaInk.opacity(0.04)), lineWidth: 0.5)
+                                    ctx.stroke(h, with: .color(IVMaterialColors.sepiaInk.opacity(0.04)), lineWidth: 0.5)
                                 }
                             }
                         }
@@ -426,21 +419,21 @@ private struct SilkCoveringVisual: View {
                 if step >= 1 {
                     Text("Silk taffeta")
                         .font(.custom("Cinzel-Bold", size: 16))
-                        .foregroundStyle(sepiaInk)
+                        .foregroundStyle(IVMaterialColors.sepiaInk)
                 }
 
                 if step >= 3 {
                     HStack(spacing: 16) {
                         VStack(spacing: 1) {
                             Text("2 kg").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color)
-                            Text("weight").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(dimColor)
+                            Text("weight").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.dimColor)
                         }
                         Text("resists")
                             .font(.custom("EBGaramond-Regular", size: 15))
-                            .foregroundStyle(sepiaInk.opacity(0.4))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                         VStack(spacing: 1) {
                             Text("50 kg").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color)
-                            Text("pressure").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(dimColor)
+                            Text("pressure").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.dimColor)
                         }
                     }
                 }
@@ -466,7 +459,7 @@ private struct BronzePivotsVisual: View {
                 var wing = Path()
                 wing.move(to: CGPoint(x: cx - 10, y: cy))
                 wing.addLine(to: CGPoint(x: cx + size.width * 0.35, y: cy - 8))
-                ctx.stroke(wing, with: .color(sepiaInk.opacity(0.3)), lineWidth: 1.5)
+                ctx.stroke(wing, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1.5)
                 // 6 pivot dots along wing
                 let pivotCount = step >= 1 ? 6 : 0
                 for i in 0..<pivotCount {
@@ -475,14 +468,14 @@ private struct BronzePivotsVisual: View {
                     let py = cy - t * 8
                     let pivotR: CGFloat = step >= 2 ? 5 : 3
                     let pivot = Path(ellipseIn: CGRect(x: px - pivotR, y: py - pivotR, width: pivotR * 2, height: pivotR * 2))
-                    ctx.fill(pivot, with: .color(bronzeGold.opacity(0.6)))
-                    ctx.stroke(pivot, with: .color(sepiaInk.opacity(0.3)), lineWidth: 0.5)
+                    ctx.fill(pivot, with: .color(IVMaterialColors.bronzeGold.opacity(0.6)))
+                    ctx.stroke(pivot, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 0.5)
                     // Step 3: grease channel lines
                     if step >= 3 {
                         var channel = Path()
                         channel.addArc(center: CGPoint(x: px, y: py), radius: pivotR + 2,
                                        startAngle: .degrees(-45), endAngle: .degrees(135), clockwise: false)
-                        ctx.stroke(channel, with: .color(bronzeGold.opacity(0.3)),
+                        ctx.stroke(channel, with: .color(IVMaterialColors.bronzeGold.opacity(0.3)),
                                    style: StrokeStyle(lineWidth: 0.5, dash: [2, 1]))
                     }
                 }
@@ -513,7 +506,7 @@ private struct IronCablesVisual: View {
                         }
                         Image(systemName: "arrow.right")
                             .font(.system(size: 13))
-                            .foregroundStyle(sepiaInk.opacity(0.3))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3))
                         Rectangle()
                             .fill(ironWire.opacity(0.6))
                             .frame(width: 40, height: 2)
@@ -523,9 +516,9 @@ private struct IronCablesVisual: View {
                 if step >= 3 {
                     HStack(spacing: 16) {
                         VStack(spacing: 2) {
-                            Text("Cast").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(sepiaInk.opacity(0.5))
+                            Text("Cast").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             RoundedRectangle(cornerRadius: 2).fill(ironWire.opacity(0.3)).frame(width: 40, height: 20)
-                            Text("1×").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(sepiaInk.opacity(0.5))
+                            Text("1×").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                         }
                         VStack(spacing: 2) {
                             Text("Drawn").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(color)
@@ -537,7 +530,7 @@ private struct IronCablesVisual: View {
                 if step == 1 {
                     Text("Pedals → cables → wing tips")
                         .font(.custom("EBGaramond-Bold", size: 15))
-                        .foregroundStyle(sepiaInk)
+                        .foregroundStyle(IVMaterialColors.sepiaInk)
                 }
             }
         }
@@ -562,7 +555,7 @@ private struct WingRibsVisual: View {
                 wingOutline.move(to: CGPoint(x: 15, y: cy + 5))
                 wingOutline.addQuadCurve(to: CGPoint(x: size.width - 15, y: cy + 5),
                                          control: CGPoint(x: cx, y: cy - 30))
-                ctx.stroke(wingOutline, with: .color(sepiaInk.opacity(0.15)), lineWidth: 0.5)
+                ctx.stroke(wingOutline, with: .color(IVMaterialColors.sepiaInk.opacity(0.15)), lineWidth: 0.5)
                 // Ribs (curved lines)
                 let ribCount = step >= 3 ? 10 : step >= 1 ? 5 : 0
                 for i in 0..<ribCount {
@@ -572,7 +565,7 @@ private struct WingRibsVisual: View {
                     rib.move(to: CGPoint(x: startX, y: cy + 5))
                     rib.addQuadCurve(to: CGPoint(x: startX + 2, y: cy - 15 - t * 10),
                                      control: CGPoint(x: startX + 5, y: cy - 5))
-                    ctx.stroke(rib, with: .color(poplarLight.opacity(step >= 1 ? 0.6 : 0.2)), lineWidth: 1.5)
+                    ctx.stroke(rib, with: .color(IVMaterialColors.poplarLight.opacity(step >= 1 ? 0.6 : 0.2)), lineWidth: 1.5)
                 }
                 // Step 2: steam bending process
                 if step >= 2 {
@@ -605,12 +598,12 @@ private struct OakHarnessVisual: View {
                 // Cradle frame
                 let frameW: CGFloat = 50, frameH: CGFloat = 25
                 let frame = CGRect(x: cx - frameW / 2, y: cy - frameH / 2, width: frameW, height: frameH)
-                ctx.fill(Path(roundedRect: frame, cornerRadius: 3), with: .color(oakBrown.opacity(step >= 1 ? 0.4 : 0.1)))
-                ctx.stroke(Path(roundedRect: frame, cornerRadius: 3), with: .color(sepiaInk.opacity(0.3)), lineWidth: 1.5)
+                ctx.fill(Path(roundedRect: frame, cornerRadius: 3), with: .color(IVMaterialColors.oakBrown.opacity(step >= 1 ? 0.4 : 0.1)))
+                ctx.stroke(Path(roundedRect: frame, cornerRadius: 3), with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1.5)
                 // Pilot (face down)
                 if step >= 1 {
                     let head = Path(ellipseIn: CGRect(x: cx - 4, y: cy - frameH / 2 - 8, width: 8, height: 8))
-                    ctx.fill(head, with: .color(sepiaInk.opacity(0.25)))
+                    ctx.fill(head, with: .color(IVMaterialColors.sepiaInk.opacity(0.25)))
                     // Straps
                     for offset: CGFloat in [-12, 0, 12] {
                         var strap = Path()
@@ -668,13 +661,13 @@ private struct SilkAssemblyVisual: View {
                         let active = (step == 1 && i < 2) || (step == 2 && i < 4) || step >= 3
                         Text(stage)
                             .font(.custom("EBGaramond-Regular", size: 15))
-                            .foregroundStyle(active ? sepiaInk : sepiaInk.opacity(0.2))
+                            .foregroundStyle(active ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.2))
                             .padding(.horizontal, 4).padding(.vertical, 3)
                             .background(RoundedRectangle(cornerRadius: 2).fill(active ? color.opacity(0.06) : Color.clear))
                         if i < stages.count - 1 {
                             Image(systemName: "chevron.right")
                                 .font(.system(size: 13))
-                                .foregroundStyle(active ? sepiaInk.opacity(0.2) : .clear)
+                                .foregroundStyle(active ? IVMaterialColors.sepiaInk.opacity(0.2) : .clear)
                         }
                     }
                 }

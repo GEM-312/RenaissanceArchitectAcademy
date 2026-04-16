@@ -203,7 +203,7 @@ struct VolcanoMiniGameView: View {
 
                 Text(difficulty)
                     .font(RenaissanceFont.bodySemibold)
-                    .foregroundStyle(difficultyColor(difficulty))
+                    .foregroundStyle(miniGameDifficultyColor(difficulty))
 
                 Image(systemName: "chevron.right")
                     .font(.body)
@@ -218,131 +218,28 @@ struct VolcanoMiniGameView: View {
         }
     }
 
-    private func difficultyColor(_ d: String) -> Color {
-        switch d {
-        case "Easy":   return RenaissanceColors.sageGreen
-        case "Medium": return RenaissanceColors.ochre
-        case "Hard":   return RenaissanceColors.terracotta
-        default:       return RenaissanceColors.stoneGray
-        }
-    }
-
-    // MARK: - Shared Helpers
-
-    private func ruleRow(icon: String, text: String, color: Color) -> some View {
-        HStack(spacing: 12) {
-            Image(systemName: icon)
-                .font(.body)
-                .foregroundStyle(color)
-                .frame(width: 32, height: 32)
-                .background(
-                    RoundedRectangle(cornerRadius: CornerRadius.sm)
-                        .fill(color.opacity(0.1))
-                )
-
-            Text(text)
-                .font(.custom("EBGaramond-Regular", size: 14))
-                .foregroundStyle(RenaissanceColors.sepiaInk)
-
-            Spacer()
-        }
-        .padding(Spacing.sm)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(RenaissanceColors.parchment.opacity(0.6))
-                .borderWorkshop(radius: 10)
-        )
-    }
-
-    private func introCardShell<Content: View>(
-        icon: String,
-        title: String,
-        subtitle: String,
-        bodyText: String,
-        buttonLabel: String,
-        buttonColor: Color,
-        startAction: @escaping () -> Void,
-        @ViewBuilder rules: () -> Content
-    ) -> some View {
-        VStack(spacing: 20) {
-            HStack(spacing: 12) {
-                Image(systemName: icon)
-                    .font(.system(size: 24))
-                    .foregroundStyle(RenaissanceColors.furnaceOrange)
-                    .frame(width: 44, height: 44)
-                    .background(
-                        RoundedRectangle(cornerRadius: CornerRadius.sm)
-                            .fill(RenaissanceColors.furnaceOrange.opacity(0.1))
-                    )
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(title)
-                        .font(.custom("Cinzel-Bold", size: 22))
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
-                    Text(subtitle)
-                        .font(RenaissanceFont.dialogSubtitle)
-                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
-                }
-            }
-
-            Text(bodyText)
-                .font(.custom("EBGaramond-Regular", size: 16))
-                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
-                .fixedSize(horizontal: false, vertical: true)
-
-            rules()
-
-            Button {
-                startAction()
-            } label: {
-                HStack(spacing: 8) {
-                    Image(systemName: icon)
-                        .font(.caption)
-                    Text(buttonLabel)
-                        .font(.custom("EBGaramond-SemiBold", size: 16))
-                }
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, Spacing.sm)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(buttonColor)
-                )
-            }
-
-            Button("Back") {
-                withAnimation { phase = .choose }
-            }
-            .font(RenaissanceFont.bodySmall)
-            .foregroundStyle(RenaissanceColors.sepiaInk)
-        }
-        .padding(Spacing.xl)
-        .adaptiveWidth(400)
-        .background(
-            RoundedRectangle(cornerRadius: CornerRadius.lg)
-                .fill(RenaissanceColors.parchment)
-        )
-        .borderWorkshop()
-    }
+    // MARK: - Shared Helpers (migrated to MiniGameSharedComponents.swift)
 
     // ═══════════════════════════════════════════════════════════════
     // MARK: - 1. POZZOLANA GAME — "La Pozzolana"
     // ═══════════════════════════════════════════════════════════════
 
     private var introAshCard: some View {
-        introCardShell(
+        MiniGameIntroCard(
             icon: "mountain.2.fill",
+            iconColor: RenaissanceColors.furnaceOrange,
             title: "La Pozzolana",
             subtitle: "Identify the Volcanic Ash",
             bodyText: "Rake through the cooled lava field with your ash rake. Near Pozzuoli, workers searched for the right ash. Not all volcanic material works — only pozzolana rich in silica and alumina reacts with lime to form concrete that hardens underwater. Romans discovered this by accident. 2,000 years later, their harbors still stand.",
             buttonLabel: "Begin Collecting",
             buttonColor: RenaissanceColors.furnaceOrange,
-            startAction: { startAshGame() }
+            startAction: { startAshGame() },
+            backAction: { withAnimation { phase = .choose } }
         ) {
             VStack(spacing: 10) {
-                ruleRow(icon: "hand.tap.fill", text: "Tap reddish-brown pozzolana samples", color: RenaissanceColors.furnaceOrange)
-                ruleRow(icon: "xmark.circle", text: "Avoid regular soil, rock, and pumice — \(ashMaxMisses) mistakes allowed", color: RenaissanceColors.errorRed)
-                ruleRow(icon: "star.fill", text: "No mistakes = bonus florins", color: RenaissanceColors.goldSuccess)
+                MiniGameRuleRow(icon: "hand.tap.fill", text: "Tap reddish-brown pozzolana samples", color: RenaissanceColors.furnaceOrange)
+                MiniGameRuleRow(icon: "xmark.circle", text: "Avoid regular soil, rock, and pumice — \(ashMaxMisses) mistakes allowed", color: RenaissanceColors.errorRed)
+                MiniGameRuleRow(icon: "star.fill", text: "No mistakes = bonus florins", color: RenaissanceColors.goldSuccess)
             }
         }
     }
@@ -612,19 +509,21 @@ struct VolcanoMiniGameView: View {
     // ═══════════════════════════════════════════════════════════════
 
     private var introCinnabarCard: some View {
-        introCardShell(
+        MiniGameIntroCard(
             icon: "sparkles",
+            iconColor: RenaissanceColors.furnaceOrange,
             title: "Il Cinabro",
             subtitle: "Extract the Red Crystals",
             bodyText: "Use the rake handle to chip red crystals from the rock. Cinnabar — mercury sulfide, HgS — forms in volcanic vents where mercury vapor meets sulfur deposits. The most prized pigment in Rome: vermillion red. Too hard a strike shatters the crystal into worthless dust. Too gentle and it stays locked in stone.",
             buttonLabel: "Begin Extraction",
             buttonColor: Color(red: 0.75, green: 0.15, blue: 0.15),
-            startAction: { startCinnabarGame() }
+            startAction: { startCinnabarGame() },
+            backAction: { withAnimation { phase = .choose } }
         ) {
             VStack(spacing: 10) {
-                ruleRow(icon: "hand.tap.fill", text: "Tap red crystal veins gently — 2 taps to extract", color: Color(red: 0.75, green: 0.15, blue: 0.15))
-                ruleRow(icon: "xmark.circle", text: "Tap grey rock = crack! \(maxCracks) cracks and the wall collapses", color: RenaissanceColors.errorRed)
-                ruleRow(icon: "star.fill", text: "No cracks = perfect extraction bonus", color: RenaissanceColors.goldSuccess)
+                MiniGameRuleRow(icon: "hand.tap.fill", text: "Tap red crystal veins gently — 2 taps to extract", color: Color(red: 0.75, green: 0.15, blue: 0.15))
+                MiniGameRuleRow(icon: "xmark.circle", text: "Tap grey rock = crack! \(maxCracks) cracks and the wall collapses", color: RenaissanceColors.errorRed)
+                MiniGameRuleRow(icon: "star.fill", text: "No cracks = perfect extraction bonus", color: RenaissanceColors.goldSuccess)
             }
         }
     }
@@ -883,19 +782,21 @@ struct VolcanoMiniGameView: View {
     // ═══════════════════════════════════════════════════════════════
 
     private var introSulfurCard: some View {
-        introCardShell(
+        MiniGameIntroCard(
             icon: "flame.fill",
+            iconColor: RenaissanceColors.furnaceOrange,
             title: "Lo Zolfo",
             subtitle: "Rake Between the Gas Clouds",
             bodyText: "Rake sulfur crystals to safety between gas bursts. Sicilian sulfur miners worked at fumaroles — volcanic vents spewing SO₂ and H₂S at lethal concentrations. Sulfur crystallizes in brilliant yellow formations around the vent opening. Breathe wrong and your lungs burn. Hesitate and the crystal re-sublimates back to gas.",
             buttonLabel: "Begin Collecting",
             buttonColor: Color(red: 0.75, green: 0.70, blue: 0.15),
-            startAction: { startSulfurGame() }
+            startAction: { startSulfurGame() },
+            backAction: { withAnimation { phase = .choose } }
         ) {
             VStack(spacing: 10) {
-                ruleRow(icon: "hand.tap.fill", text: "Tap yellow crystals when the air is clear", color: Color(red: 0.75, green: 0.70, blue: 0.15))
-                ruleRow(icon: "cloud.fill", text: "Wait for gas clouds to pass — can't grab in fog", color: Color(red: 0.55, green: 0.65, blue: 0.40))
-                ruleRow(icon: "timer", text: "Crystals vanish fast — miss \(sulfurMaxMissed) and you fail", color: RenaissanceColors.errorRed)
+                MiniGameRuleRow(icon: "hand.tap.fill", text: "Tap yellow crystals when the air is clear", color: Color(red: 0.75, green: 0.70, blue: 0.15))
+                MiniGameRuleRow(icon: "cloud.fill", text: "Wait for gas clouds to pass — can't grab in fog", color: Color(red: 0.55, green: 0.65, blue: 0.40))
+                MiniGameRuleRow(icon: "timer", text: "Crystals vanish fast — miss \(sulfurMaxMissed) and you fail", color: RenaissanceColors.errorRed)
             }
         }
     }

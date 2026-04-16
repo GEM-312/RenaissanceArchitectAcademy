@@ -53,16 +53,11 @@ struct InsulaInteractiveVisuals {
     }
 }
 
-// MARK: - Local Aliases
+// MARK: - Local Colors (unique to Insula)
 
-private let sepiaInk = ivSepiaInk
-private let waterBlue = ivWaterBlue
-private let dimColor = ivDimColor
-private let stoneGray = Color(red: 0.65, green: 0.63, blue: 0.60)
 private let brickRed = Color(red: 0.72, green: 0.42, blue: 0.32)
 private let oakBrown = Color(red: 0.55, green: 0.40, blue: 0.28)
 private let poplarLight = Color(red: 0.78, green: 0.70, blue: 0.55)
-private let limeTan = Color(red: 0.88, green: 0.84, blue: 0.76)
 
 private typealias TeachingContainer = IVTeachingContainer
 private typealias DimLabel = IVDimLabel
@@ -77,7 +72,7 @@ private struct ApartmentFloorsVisual: View {
     @State private var floorsBuilt: Int = 0
 
     private let floors: [(name: String, desc: String, color: Color)] = [
-        ("Shops", "Tabernae — street level", stoneGray),
+        ("Shops", "Tabernae — street level", IVMaterialColors.stoneGray),
         ("Rich", "Large apartments, running water", Color(red: 0.80, green: 0.70, blue: 0.50)),
         ("Middle", "Smaller rooms, no water", Color(red: 0.70, green: 0.62, blue: 0.48)),
         ("Middle", "Cramped, shared kitchen", Color(red: 0.65, green: 0.58, blue: 0.46)),
@@ -130,7 +125,7 @@ private struct ApartmentFloorsVisual: View {
                         // Floor label
                         Text(floors[i].name)
                             .font(.custom("EBGaramond-Regular", size: 15))
-                            .foregroundStyle(sepiaInk.opacity(0.5))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             .position(x: cx + buildingW * 0.5 + 22, y: y)
                     }
 
@@ -248,7 +243,7 @@ private struct HeightLimitVisual: View {
                     // Height label
                     Text("\(meters)m")
                         .font(.custom("EBGaramond-Bold", size: 16))
-                        .foregroundStyle(overAugustus ? RenaissanceColors.errorRed : sepiaInk)
+                        .foregroundStyle(overAugustus ? RenaissanceColors.errorRed : IVMaterialColors.sepiaInk)
                         .position(x: cx, y: baseY - buildH - 12)
 
                     if overAugustus {
@@ -312,7 +307,7 @@ private struct TabernaShopVisual: View {
                 ZStack {
                     // Shop outline
                     RoundedRectangle(cornerRadius: 4)
-                        .strokeBorder(stoneGray, lineWidth: 2)
+                        .strokeBorder(IVMaterialColors.stoneGray, lineWidth: 2)
                         .frame(width: shopW, height: shopH)
                         .position(x: cx, y: h * 0.38)
 
@@ -351,7 +346,7 @@ private struct TabernaShopVisual: View {
 
                             Text("Mezzanine bedroom")
                                 .font(.custom("EBGaramond-Regular", size: 15))
-                                .foregroundStyle(sepiaInk.opacity(0.5))
+                                .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                                 .position(x: cx, y: h * 0.38 - shopH * 0.25)
                                 .transition(.opacity)
                         }
@@ -515,13 +510,13 @@ private struct SpiralStaircaseVisual: View {
                 ZStack {
                     // Outer circle (stairwell wall)
                     Circle()
-                        .strokeBorder(stoneGray, lineWidth: 2)
+                        .strokeBorder(IVMaterialColors.stoneGray, lineWidth: 2)
                         .frame(width: radius * 2, height: radius * 2)
                         .position(x: cx, y: cy)
 
                     // Center column
                     Circle()
-                        .fill(stoneGray.opacity(0.4))
+                        .fill(IVMaterialColors.stoneGray.opacity(0.4))
                         .frame(width: 12, height: 12)
                         .position(x: cx, y: cy)
 
@@ -540,7 +535,7 @@ private struct SpiralStaircaseVisual: View {
                                     clockwise: false)
                             p.closeSubpath()
                         }
-                        .fill(stoneGray.opacity(i % 2 == 0 ? 0.25 : 0.15))
+                        .fill(IVMaterialColors.stoneGray.opacity(i % 2 == 0 ? 0.25 : 0.15))
 
                         Path { p in
                             p.move(to: CGPoint(x: cx, y: cy))
@@ -549,7 +544,7 @@ private struct SpiralStaircaseVisual: View {
                                 y: cy + (radius - 2) * sin(angle)
                             ))
                         }
-                        .stroke(stoneGray.opacity(0.4), lineWidth: 0.8)
+                        .stroke(IVMaterialColors.stoneGray.opacity(0.4), lineWidth: 0.8)
                     }
 
                     // Drag gesture (step 2)
@@ -573,7 +568,7 @@ private struct SpiralStaircaseVisual: View {
                     // Dimension
                     DimLine(from: CGPoint(x: cx - radius, y: cy + radius + 12),
                             to: CGPoint(x: cx + radius, y: cy + radius + 12))
-                        .stroke(dimColor, lineWidth: 0.8)
+                        .stroke(IVMaterialColors.dimColor, lineWidth: 0.8)
                     DimLabel(text: "2 m diameter", fontSize: 15)
                         .position(x: cx, y: cy + radius + 22)
 
@@ -618,10 +613,10 @@ private struct CheapMortarVisual: View {
                         VStack(spacing: 4) {
                             Text("INSULA 1:4")
                                 .font(.custom("Cinzel-Bold", size: 16)).tracking(0.5)
-                                .foregroundStyle(sepiaInk.opacity(0.5))
+                                .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             ZStack {
                                 RoundedRectangle(cornerRadius: 4)
-                                    .fill(limeTan.opacity(tested ? 0.3 : 0.6))
+                                    .fill(IVMaterialColors.limeTan.opacity(tested ? 0.3 : 0.6))
                                     .frame(width: w * 0.28, height: h * 0.25)
                                 if tested {
                                     // Crack lines
@@ -639,16 +634,16 @@ private struct CheapMortarVisual: View {
                                 Text("Crumbles").font(.custom("EBGaramond-Bold", size: 15))
                                     .foregroundStyle(RenaissanceColors.errorRed)
                             }
-                            Text("No pozzolana").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.4))
+                            Text("No pozzolana").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                         }
 
                         // Roman concrete block
                         VStack(spacing: 4) {
                             Text("ROMAN 1:3")
                                 .font(.custom("Cinzel-Bold", size: 16)).tracking(0.5)
-                                .foregroundStyle(sepiaInk.opacity(0.5))
+                                .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             RoundedRectangle(cornerRadius: 4)
-                                .fill(stoneGray.opacity(0.5))
+                                .fill(IVMaterialColors.stoneGray.opacity(0.5))
                                 .frame(width: w * 0.28, height: h * 0.25)
                                 .overlay {
                                     if tested {
@@ -660,7 +655,7 @@ private struct CheapMortarVisual: View {
                                 Text("Holds").font(.custom("EBGaramond-Bold", size: 15))
                                     .foregroundStyle(RenaissanceColors.sageGreen)
                             }
-                            Text("With pozzolana").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.4))
+                            Text("With pozzolana").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                         }
                     }
                     .position(x: w * 0.5, y: h * 0.4)
@@ -783,11 +778,11 @@ private struct TileInterlockVisual: View {
                     HStack(spacing: 12) {
                         HStack(spacing: 4) {
                             RoundedRectangle(cornerRadius: 1).fill(brickRed.opacity(0.4)).frame(width: 12, height: 8)
-                            Text("Tegula").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.5))
+                            Text("Tegula").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                         }
                         HStack(spacing: 4) {
                             Capsule().fill(brickRed.opacity(0.6)).frame(width: 4, height: 10)
-                            Text("Imbrix").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.5))
+                            Text("Imbrix").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                         }
                     }
                     .position(x: cx, y: h * 0.2)
@@ -835,20 +830,20 @@ private struct GlassMicaVisual: View {
                 ZStack {
                     // Glass window (left)
                     VStack(spacing: 4) {
-                        Text("GLASS").font(.custom("Cinzel-Bold", size: 16)).tracking(0.5).foregroundStyle(sepiaInk.opacity(0.5))
+                        Text("GLASS").font(.custom("Cinzel-Bold", size: 16)).tracking(0.5).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(tappedGlass ? Color(red: 0.85, green: 0.92, blue: 0.95).opacity(0.6) : stoneGray.opacity(0.1))
+                            .fill(tappedGlass ? Color(red: 0.85, green: 0.92, blue: 0.95).opacity(0.6) : IVMaterialColors.stoneGray.opacity(0.1))
                             .frame(width: winW, height: winH)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 4)
-                                    .strokeBorder(stoneGray, lineWidth: 1.5)
+                                    .strokeBorder(IVMaterialColors.stoneGray, lineWidth: 1.5)
                             )
                             .overlay {
                                 if tappedGlass {
                                     // Window grid
                                     VStack(spacing: winH * 0.3) {
                                         ForEach(0..<2, id: \.self) { _ in
-                                            Rectangle().fill(stoneGray.opacity(0.3)).frame(height: 1)
+                                            Rectangle().fill(IVMaterialColors.stoneGray.opacity(0.3)).frame(height: 1)
                                         }
                                     }
                                     .padding(4)
@@ -869,13 +864,13 @@ private struct GlassMicaVisual: View {
 
                     // Mica window (right)
                     VStack(spacing: 4) {
-                        Text("MICA").font(.custom("Cinzel-Bold", size: 16)).tracking(0.5).foregroundStyle(sepiaInk.opacity(0.5))
+                        Text("MICA").font(.custom("Cinzel-Bold", size: 16)).tracking(0.5).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(tappedMica ? Color(red: 0.85, green: 0.82, blue: 0.75).opacity(0.4) : stoneGray.opacity(0.1))
+                            .fill(tappedMica ? Color(red: 0.85, green: 0.82, blue: 0.75).opacity(0.4) : IVMaterialColors.stoneGray.opacity(0.1))
                             .frame(width: winW, height: winH)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 4)
-                                    .strokeBorder(stoneGray, lineWidth: 1.5)
+                                    .strokeBorder(IVMaterialColors.stoneGray, lineWidth: 1.5)
                             )
                             .overlay {
                                 if tappedMica {
@@ -954,7 +949,7 @@ private struct BeamDepthVisual: View {
                     // Support walls
                     ForEach([-1.0, 1.0], id: \.self) { side in
                         RoundedRectangle(cornerRadius: 2)
-                            .fill(stoneGray.opacity(0.4))
+                            .fill(IVMaterialColors.stoneGray.opacity(0.4))
                             .frame(width: 8, height: h * 0.25)
                             .position(x: cx + side * beamW * 0.52, y: beamY + h * 0.13)
                     }
@@ -968,7 +963,7 @@ private struct BeamDepthVisual: View {
                     // Span dimension
                     DimLine(from: CGPoint(x: cx - beamW * 0.5, y: beamY + beamH + 10),
                             to: CGPoint(x: cx + beamW * 0.5, y: beamY + beamH + 10))
-                        .stroke(dimColor, lineWidth: 0.8)
+                        .stroke(IVMaterialColors.dimColor, lineWidth: 0.8)
                     DimLabel(text: String(format: "%.1fm span", spanM), fontSize: 15)
                         .position(x: cx, y: beamY + beamH + 22)
 
@@ -1026,7 +1021,7 @@ private struct OakPoplarFireVisual: View {
                     HStack(spacing: w * 0.08) {
                         // Oak block
                         VStack(spacing: 4) {
-                            Text("OAK").font(.custom("Cinzel-Bold", size: 16)).tracking(0.5).foregroundStyle(sepiaInk.opacity(0.5))
+                            Text("OAK").font(.custom("Cinzel-Bold", size: 16)).tracking(0.5).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             RoundedRectangle(cornerRadius: 4)
                                 .fill(oakBrown)
                                 .frame(width: w * 0.25, height: h * 0.3)
@@ -1039,7 +1034,7 @@ private struct OakPoplarFireVisual: View {
                                             .offset(y: -h * 0.12)
                                     }
                                 }
-                            Text("Lower floors").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.4))
+                            Text("Lower floors").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                             if fireStarted {
                                 Text("Resists").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(RenaissanceColors.sageGreen)
                                     .transition(.opacity)
@@ -1048,7 +1043,7 @@ private struct OakPoplarFireVisual: View {
 
                         // Poplar block
                         VStack(spacing: 4) {
-                            Text("POPLAR").font(.custom("Cinzel-Bold", size: 16)).tracking(0.5).foregroundStyle(sepiaInk.opacity(0.5))
+                            Text("POPLAR").font(.custom("Cinzel-Bold", size: 16)).tracking(0.5).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             ZStack {
                                 RoundedRectangle(cornerRadius: 4)
                                     .fill(poplarLight.opacity(1.0 - burnProgress * 0.6))
@@ -1061,7 +1056,7 @@ private struct OakPoplarFireVisual: View {
                                         .offset(y: -h * 0.08)
                                 }
                             }
-                            Text("Upper floors").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.4))
+                            Text("Upper floors").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                             if fireStarted {
                                 Text("Burns!").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(RenaissanceColors.errorRed)
                                     .transition(.opacity)
@@ -1134,12 +1129,12 @@ private struct AgedLimeVisual: View {
                 ZStack {
                     // Bowl
                     Ellipse()
-                        .fill(stoneGray.opacity(0.2))
+                        .fill(IVMaterialColors.stoneGray.opacity(0.2))
                         .frame(width: bowlW, height: bowlH)
                         .position(x: cx, y: h * 0.38)
 
                     Ellipse()
-                        .strokeBorder(stoneGray, lineWidth: 1.5)
+                        .strokeBorder(IVMaterialColors.stoneGray, lineWidth: 1.5)
                         .frame(width: bowlW, height: bowlH)
                         .position(x: cx, y: h * 0.38)
 
@@ -1156,14 +1151,14 @@ private struct AgedLimeVisual: View {
                     // Consistency label
                     Text(months < 1 ? "Runny" : months < 3 ? "Thickening..." : "Thick yogurt")
                         .font(.custom("EBGaramond-SemiBold", size: 15))
-                        .foregroundStyle(isReady ? RenaissanceColors.sageGreen : sepiaInk)
+                        .foregroundStyle(isReady ? RenaissanceColors.sageGreen : IVMaterialColors.sepiaInk)
                         .position(x: cx, y: h * 0.55)
 
                     // Month counter
                     Text("\(months) months")
                         .font(.custom("EBGaramond-Bold", size: 16))
                         .monospacedDigit()
-                        .foregroundStyle(isReady ? RenaissanceColors.sageGreen : sepiaInk)
+                        .foregroundStyle(isReady ? RenaissanceColors.sageGreen : IVMaterialColors.sepiaInk)
                         .position(x: cx, y: h * 0.15)
 
                     // Slider
@@ -1225,7 +1220,7 @@ private struct BrickFiringVisual: View {
                 Text("\(tempC)°C")
                     .font(.custom("EBGaramond-Bold", size: 20))
                     .monospacedDigit()
-                    .foregroundStyle(isPerfect ? RenaissanceColors.sageGreen : (isTooHigh ? RenaissanceColors.errorRed : sepiaInk))
+                    .foregroundStyle(isPerfect ? RenaissanceColors.sageGreen : (isTooHigh ? RenaissanceColors.errorRed : IVMaterialColors.sepiaInk))
                     .padding(.top, 8)
 
                 // Brick
@@ -1265,7 +1260,7 @@ private struct BrickFiringVisual: View {
                      isPerfect ? "Perfect — rings when tapped!" :
                      isTooHigh ? "Over-fired — brittle!" : "Warming...")
                     .font(.custom("EBGaramond-SemiBold", size: 15))
-                    .foregroundStyle(isPerfect ? RenaissanceColors.sageGreen : (isTooHigh ? RenaissanceColors.errorRed : sepiaInk))
+                    .foregroundStyle(isPerfect ? RenaissanceColors.sageGreen : (isTooHigh ? RenaissanceColors.errorRed : IVMaterialColors.sepiaInk))
 
                 // Slider
                 VStack(spacing: 2) {
@@ -1282,7 +1277,7 @@ private struct BrickFiringVisual: View {
                         Spacer()
                         Text("1200°C").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(RenaissanceColors.errorRed)
                     }
-                    .foregroundStyle(sepiaInk.opacity(0.4))
+                    .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                     .frame(width: 200)
                 }
 

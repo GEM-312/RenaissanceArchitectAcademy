@@ -164,6 +164,7 @@ struct BuildingPlotView: View {
 /// Engineering grid overlay for cards
 struct SketchLinesOverlay: View {
     let cornerRadius: CGFloat
+    private var settings: GameSettings { GameSettings.shared }
 
     var body: some View {
         GeometryReader { geometry in
@@ -221,6 +222,7 @@ struct SketchLinesOverlay: View {
 struct EngineeringCardBorder: View {
     var isCompleted: Bool = false
     var isHovered: Bool = false
+    private var settings: GameSettings { GameSettings.shared }
 
     private var borderColor: Color {
         if isCompleted {

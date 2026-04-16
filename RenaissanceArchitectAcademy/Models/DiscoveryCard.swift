@@ -210,7 +210,7 @@ enum DiscoveryCardContent {
             stationName: "The Pigment Table",
             italianName: "Il Tavolo dei Pigmenti",
             icon: "paintpalette.fill",
-            color: Color.indigo,
+            color: RenaissanceColors.deepTeal,
             storyText: "Color was currency in the Renaissance. Ultramarine from lapis lazuli cost more than gold. Red ochre from Turkey painted the Sistine Chapel's underdrawing. Cobalt from Germany colored the Duomo's stained glass. Each pigment was ground by hand on a marble slab with a muller — hours of work for a few grams of paint. The pigment table is where geology becomes art. Rocks ground to dust, mixed with oil, become immortal.",
             funFact: "Extracting ultramarine from lapis lazuli required 3 weeks of kneading the crushed stone with pine resin, wax, and lye.",
             buildingTeaser: "Pigments color: Duomo (red ochre frescoes), Vatican Observatory (ultramarine ceiling)"

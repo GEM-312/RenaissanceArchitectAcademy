@@ -54,17 +54,10 @@ struct ColosseumInteractiveVisuals {
     }
 }
 
-// MARK: - Local Aliases
+// MARK: - Local Colors (unique to Colosseum)
 
-private let gridColor = ivGridColor
-private let sepiaInk = ivSepiaInk
-private let waterBlue = ivWaterBlue
-private let dimColor = ivDimColor
-private let stoneGray = Color(red: 0.65, green: 0.63, blue: 0.60)
 private let travertineBeige = Color(red: 0.82, green: 0.76, blue: 0.66)
-private let ironDark = Color(red: 0.35, green: 0.33, blue: 0.32)
 private let leadSilver = Color(red: 0.72, green: 0.72, blue: 0.70)
-private let marbleWhite = Color(red: 0.92, green: 0.90, blue: 0.88)
 
 private typealias TeachingContainer = IVTeachingContainer
 private typealias DimLabel = IVDimLabel
@@ -110,13 +103,13 @@ private struct CrowdFlowVisual: View {
                         .position(x: cx, y: cy)
 
                     Ellipse()
-                        .strokeBorder(stoneGray, lineWidth: 2)
+                        .strokeBorder(IVMaterialColors.stoneGray, lineWidth: 2)
                         .frame(width: rx * 2, height: ry * 2)
                         .position(x: cx, y: cy)
 
                     // Inner arena floor
                     Ellipse()
-                        .strokeBorder(stoneGray.opacity(0.3), lineWidth: 1)
+                        .strokeBorder(IVMaterialColors.stoneGray.opacity(0.3), lineWidth: 1)
                         .frame(width: rx * 1.2, height: ry * 1.2)
                         .position(x: cx, y: cy)
 
@@ -130,7 +123,7 @@ private struct CrowdFlowVisual: View {
 
                             // Gate marker
                             RoundedRectangle(cornerRadius: 2)
-                                .fill(opened ? RenaissanceColors.sageGreen : stoneGray.opacity(0.3))
+                                .fill(opened ? RenaissanceColors.sageGreen : IVMaterialColors.stoneGray.opacity(0.3))
                                 .frame(width: 16, height: 10)
                                 .rotationEffect(.radians(Double(angle) + .pi / 2))
                                 .position(x: gateX, y: gateY)
@@ -165,10 +158,10 @@ private struct CrowdFlowVisual: View {
                         Text("\(Int(50000 * (1.0 - crowdProgress)))")
                             .font(.custom("EBGaramond-Bold", size: 16))
                             .monospacedDigit()
-                            .foregroundStyle(sepiaInk)
+                            .foregroundStyle(IVMaterialColors.sepiaInk)
                         Text("inside")
                             .font(.custom("EBGaramond-Regular", size: 15))
-                            .foregroundStyle(sepiaInk.opacity(0.5))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                     }
                     .position(x: cx, y: cy)
 
@@ -227,7 +220,7 @@ private struct DrainFoundationVisual: View {
 
                     // Water (drains on step 2)
                     Rectangle()
-                        .fill(waterBlue.opacity(0.3 * waterLevel))
+                        .fill(IVMaterialColors.waterBlue.opacity(0.3 * waterLevel))
                         .frame(width: w * 0.6, height: h * 0.5 * waterLevel)
                         .position(x: cx, y: groundY + h * 0.25 * waterLevel)
 
@@ -247,7 +240,7 @@ private struct DrainFoundationVisual: View {
                     // Concrete raft (step 3)
                     if concreteVisible {
                         RoundedRectangle(cornerRadius: 3)
-                            .fill(stoneGray.opacity(0.4))
+                            .fill(IVMaterialColors.stoneGray.opacity(0.4))
                             .frame(width: w * 0.55, height: h * 0.08)
                             .position(x: cx, y: groundY + h * 0.06)
 
@@ -272,9 +265,9 @@ private struct DrainFoundationVisual: View {
                                 Image(systemName: "arrow.down.to.line").font(.system(size: 13))
                                 Text("Drain the Lake").font(.custom("EBGaramond-SemiBold", size: 15))
                             }
-                            .foregroundStyle(waterBlue)
+                            .foregroundStyle(IVMaterialColors.waterBlue)
                             .padding(.horizontal, 12).padding(.vertical, 6)
-                            .background(waterBlue.opacity(0.1))
+                            .background(IVMaterialColors.waterBlue.opacity(0.1))
                             .cornerRadius(6)
                         }
                         .buttonStyle(.plain)
@@ -285,7 +278,7 @@ private struct DrainFoundationVisual: View {
                     if step >= 3 {
                         DimLine(from: CGPoint(x: w * 0.18, y: groundY),
                                 to: CGPoint(x: w * 0.18, y: groundY + h * 0.38))
-                            .stroke(dimColor, lineWidth: 0.8)
+                            .stroke(IVMaterialColors.dimColor, lineWidth: 0.8)
                         DimLabel(text: "13 m", fontSize: 15)
                             .position(x: w * 0.12, y: groundY + h * 0.19)
                     }
@@ -344,14 +337,14 @@ private struct ColumnOrdersVisual: View {
                     ForEach(0..<4, id: \.self) { i in
                         let y = baseY - CGFloat(i) * floorH
                         Rectangle()
-                            .strokeBorder(stoneGray.opacity(0.2), lineWidth: 0.5)
+                            .strokeBorder(IVMaterialColors.stoneGray.opacity(0.2), lineWidth: 0.5)
                             .frame(width: w * 0.5, height: floorH)
                             .position(x: cx, y: y - floorH * 0.5)
 
                         // Floor number
                         Text("\(i + 1)")
                             .font(.custom("EBGaramond-Regular", size: 15))
-                            .foregroundStyle(sepiaInk.opacity(0.3))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3))
                             .position(x: cx - w * 0.3, y: y - floorH * 0.5)
                     }
 
@@ -378,7 +371,7 @@ private struct ColumnOrdersVisual: View {
                         // Order label
                         Text(orders[orderIdx])
                             .font(.custom("Cinzel-Bold", size: 16))
-                            .foregroundStyle(sepiaInk.opacity(0.6))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
                             .position(x: cx + w * 0.32, y: y - floorH * 0.5)
                     }
 
@@ -402,10 +395,10 @@ private struct ColumnOrdersVisual: View {
                                     Text(orders[i])
                                         .font(.custom("EBGaramond-SemiBold", size: 15))
                                         .padding(.horizontal, 8).padding(.vertical, 4)
-                                        .background(isPlaced ? stoneGray.opacity(0.1) : (isNext ? color.opacity(0.15) : stoneGray.opacity(0.05)))
+                                        .background(isPlaced ? IVMaterialColors.stoneGray.opacity(0.1) : (isNext ? color.opacity(0.15) : IVMaterialColors.stoneGray.opacity(0.05)))
                                         .cornerRadius(4)
-                                        .overlay(RoundedRectangle(cornerRadius: 4).stroke(isNext ? color : stoneGray.opacity(0.2), lineWidth: isNext ? 2 : 0.5))
-                                        .foregroundStyle(isPlaced ? sepiaInk.opacity(0.3) : sepiaInk)
+                                        .overlay(RoundedRectangle(cornerRadius: 4).stroke(isNext ? color : IVMaterialColors.stoneGray.opacity(0.2), lineWidth: isNext ? 2 : 0.5))
+                                        .foregroundStyle(isPlaced ? IVMaterialColors.sepiaInk.opacity(0.3) : IVMaterialColors.sepiaInk)
                                 }
                                 .buttonStyle(.plain)
                                 .disabled(isPlaced || !isNext)
@@ -463,7 +456,7 @@ private struct AcousticBowlVisual: View {
                             control: CGPoint(x: cx, y: cy + depth)
                         )
                     }
-                    .stroke(stoneGray, lineWidth: 2.5)
+                    .stroke(IVMaterialColors.stoneGray, lineWidth: 2.5)
 
                     // Seating rows (lines along the bowl)
                     ForEach(0..<5, id: \.self) { row in
@@ -475,7 +468,7 @@ private struct AcousticBowlVisual: View {
                             p.move(to: CGPoint(x: cx - rowW * 0.5, y: rowY))
                             p.addLine(to: CGPoint(x: cx + rowW * 0.5, y: rowY))
                         }
-                        .stroke(stoneGray.opacity(0.3), lineWidth: 0.8)
+                        .stroke(IVMaterialColors.stoneGray.opacity(0.3), lineWidth: 0.8)
                     }
 
                     // Sound waves from center
@@ -496,7 +489,7 @@ private struct AcousticBowlVisual: View {
                     // Angle label
                     Text("\(angleDeg)°")
                         .font(.custom("EBGaramond-Bold", size: 16))
-                        .foregroundStyle(isOptimal ? RenaissanceColors.sageGreen : sepiaInk)
+                        .foregroundStyle(isOptimal ? RenaissanceColors.sageGreen : IVMaterialColors.sepiaInk)
                         .position(x: w * 0.85, y: cy)
 
                     // Slider (step 2)
@@ -512,7 +505,7 @@ private struct AcousticBowlVisual: View {
                                 Spacer()
                                 Text("50°").font(.custom("EBGaramond-Regular", size: 15))
                             }
-                            .foregroundStyle(sepiaInk.opacity(0.4))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                             .frame(width: w * 0.5)
                         }
                         .position(x: cx, y: h * 0.85)
@@ -561,16 +554,16 @@ private struct HypogeumElevatorVisual: View {
                         p.move(to: CGPoint(x: w * 0.15, y: arenaY))
                         p.addLine(to: CGPoint(x: w * 0.85, y: arenaY))
                     }
-                    .stroke(stoneGray, lineWidth: 2)
+                    .stroke(IVMaterialColors.stoneGray, lineWidth: 2)
 
                     Text("Arena Floor")
                         .font(.custom("EBGaramond-Regular", size: 15))
-                        .foregroundStyle(sepiaInk.opacity(0.4))
+                        .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                         .position(x: w * 0.82, y: arenaY - 8)
 
                     // Elevator shaft
                     Rectangle()
-                        .strokeBorder(stoneGray.opacity(0.4), lineWidth: 1)
+                        .strokeBorder(IVMaterialColors.stoneGray.opacity(0.4), lineWidth: 1)
                         .frame(width: shaftW, height: bottomY - arenaY)
                         .position(x: cx, y: (arenaY + bottomY) / 2)
 
@@ -581,11 +574,11 @@ private struct HypogeumElevatorVisual: View {
                             p.move(to: CGPoint(x: cx - shaftW * 0.8, y: ly))
                             p.addLine(to: CGPoint(x: cx + shaftW * 0.8, y: ly))
                         }
-                        .stroke(stoneGray.opacity(0.2), style: StrokeStyle(lineWidth: 0.5, dash: [3, 3]))
+                        .stroke(IVMaterialColors.stoneGray.opacity(0.2), style: StrokeStyle(lineWidth: 0.5, dash: [3, 3]))
 
                         Text(level == 0 ? "Animal cages" : "Storage tunnels")
                             .font(.custom("EBGaramond-Regular", size: 15))
-                            .foregroundStyle(sepiaInk.opacity(0.3))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3))
                             .position(x: cx + shaftW * 0.8 + 30, y: ly)
                     }
 
@@ -680,7 +673,7 @@ private struct TravertineQuarryVisual: View {
                     VStack(spacing: 4) {
                         Text("TRAVERTINE")
                             .font(.custom("Cinzel-Bold", size: 16)).tracking(0.5)
-                            .foregroundStyle(sepiaInk.opacity(0.5))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
 
                         ZStack {
                             RoundedRectangle(cornerRadius: 4)
@@ -704,7 +697,7 @@ private struct TravertineQuarryVisual: View {
                         if cracked {
                             VStack(spacing: 1) {
                                 Text("30% lighter").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundStyle(RenaissanceColors.sageGreen)
-                                Text("Clamps grip holes").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.5))
+                                Text("Clamps grip holes").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             }
                             .transition(.opacity)
                         }
@@ -715,20 +708,20 @@ private struct TravertineQuarryVisual: View {
                     VStack(spacing: 4) {
                         Text("MARBLE")
                             .font(.custom("Cinzel-Bold", size: 16)).tracking(0.5)
-                            .foregroundStyle(sepiaInk.opacity(0.5))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
 
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(marbleWhite)
+                            .fill(IVMaterialColors.marbleWhite)
                             .frame(width: blockW, height: blockH)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 4)
-                                    .strokeBorder(stoneGray.opacity(0.3), lineWidth: 0.5)
+                                    .strokeBorder(IVMaterialColors.stoneGray.opacity(0.3), lineWidth: 0.5)
                             )
 
                         if cracked {
                             VStack(spacing: 1) {
                                 Text("Dense, heavy").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundStyle(RenaissanceColors.errorRed.opacity(0.7))
-                                Text("Clamps slip off").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.5))
+                                Text("Clamps slip off").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             }
                             .transition(.opacity)
                         }
@@ -810,7 +803,7 @@ private struct IronClampVisual: View {
 
                     // Joint gap
                     Rectangle()
-                        .fill(stoneGray.opacity(0.2))
+                        .fill(IVMaterialColors.stoneGray.opacity(0.2))
                         .frame(width: 8, height: blockH)
                         .position(x: cx, y: blockY)
 
@@ -826,7 +819,7 @@ private struct IronClampVisual: View {
                             p.addLine(to: CGPoint(x: cx + cw * 0.5, y: blockY - ch * 0.5))
                             p.closeSubpath()
                         }
-                        .fill(ironDark)
+                        .fill(IVMaterialColors.ironDark)
                         .transition(.scale)
 
                         // Dovetail notches
@@ -835,7 +828,7 @@ private struct IronClampVisual: View {
                                 let nx = cx + side * blockW * 0.22
                                 p.addRect(CGRect(x: nx - 4, y: blockY - 3, width: 8, height: 6))
                             }
-                            .fill(ironDark.opacity(0.8))
+                            .fill(IVMaterialColors.ironDark.opacity(0.8))
                         }
                     }
 
@@ -863,9 +856,9 @@ private struct IronClampVisual: View {
                                     Image(systemName: "link").font(.system(size: 13))
                                     Text("Place Clamp").font(.custom("EBGaramond-SemiBold", size: 15))
                                 }
-                                .foregroundStyle(ironDark)
+                                .foregroundStyle(IVMaterialColors.ironDark)
                                 .padding(.horizontal, 12).padding(.vertical, 6)
-                                .background(ironDark.opacity(0.1)).cornerRadius(6)
+                                .background(IVMaterialColors.ironDark.opacity(0.1)).cornerRadius(6)
                             }
                             .buttonStyle(.plain)
                             .position(x: cx, y: h * 0.82)
@@ -928,7 +921,7 @@ private struct VelariumCanvasVisual: View {
                 ZStack {
                     // Arena outline
                     Ellipse()
-                        .strokeBorder(stoneGray, lineWidth: 2)
+                        .strokeBorder(IVMaterialColors.stoneGray, lineWidth: 2)
                         .frame(width: rx * 2, height: ry * 2)
                         .position(x: cx, y: cy)
 
@@ -938,7 +931,7 @@ private struct VelariumCanvasVisual: View {
                         let mx = cx + rx * cos(angle)
                         let my = cy + ry * sin(angle)
                         Circle()
-                            .fill(stoneGray)
+                            .fill(IVMaterialColors.stoneGray)
                             .frame(width: 4, height: 4)
                             .position(x: mx, y: my)
                     }
@@ -991,7 +984,7 @@ private struct VelariumCanvasVisual: View {
                                 Spacer()
                                 Text("Extended").font(.custom("EBGaramond-Regular", size: 15))
                             }
-                            .foregroundStyle(sepiaInk.opacity(0.4))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                             .frame(width: w * 0.5)
                         }
                         .position(x: cx, y: h * 0.85)
@@ -1039,7 +1032,7 @@ private struct CuringTimeLapseVisual: View {
                 ZStack {
                     // Concrete block (changes texture with time)
                     RoundedRectangle(cornerRadius: 4)
-                        .fill(stoneGray.opacity(0.3 + timeProgress * 0.5))
+                        .fill(IVMaterialColors.stoneGray.opacity(0.3 + timeProgress * 0.5))
                         .frame(width: blockW, height: blockH)
                         .position(x: cx, y: h * 0.38)
 
@@ -1060,7 +1053,7 @@ private struct CuringTimeLapseVisual: View {
                         ForEach(0..<3, id: \.self) { i in
                             Image(systemName: "drop.fill")
                                 .font(.system(size: 13))
-                                .foregroundStyle(waterBlue.opacity(0.5))
+                                .foregroundStyle(IVMaterialColors.waterBlue.opacity(0.5))
                                 .position(
                                     x: cx + CGFloat(i - 1) * blockW * 0.3,
                                     y: h * 0.38 - blockH * 0.5 - 10
@@ -1071,13 +1064,13 @@ private struct CuringTimeLapseVisual: View {
                     // Time display
                     Text("\(years) years")
                         .font(.custom("EBGaramond-Bold", size: 16))
-                        .foregroundStyle(isCured ? RenaissanceColors.sageGreen : sepiaInk)
+                        .foregroundStyle(isCured ? RenaissanceColors.sageGreen : IVMaterialColors.sepiaInk)
                         .position(x: cx, y: h * 0.12)
 
                     // Slider
                     if step >= 2 {
                         Slider(value: $timeProgress, in: 0...1)
-                            .tint(isCured ? RenaissanceColors.sageGreen : waterBlue)
+                            .tint(isCured ? RenaissanceColors.sageGreen : IVMaterialColors.waterBlue)
                             .frame(width: w * 0.6)
                             .position(x: cx, y: h * 0.72)
                             .onChange(of: timeProgress) { _, newVal in
@@ -1133,7 +1126,7 @@ private struct GradedConcreteVisual: View {
                 ZStack {
                     // Vault outline
                     RoundedRectangle(cornerRadius: 4)
-                        .strokeBorder(stoneGray.opacity(0.3), lineWidth: 1)
+                        .strokeBorder(IVMaterialColors.stoneGray.opacity(0.3), lineWidth: 1)
                         .frame(width: vaultW, height: layerH * 3 + 8)
                         .position(x: cx, y: baseY - layerH * 1.5)
 
@@ -1160,9 +1153,9 @@ private struct GradedConcreteVisual: View {
                         // Layer label
                         HStack(spacing: 4) {
                             Text(layers[i].0).font(.custom("Cinzel-Bold", size: 16))
-                            Text(layers[i].1).font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.5))
+                            Text(layers[i].1).font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                         }
-                        .foregroundStyle(sepiaInk)
+                        .foregroundStyle(IVMaterialColors.sepiaInk)
                         .position(x: cx + vaultW * 0.5 + 40, y: y - layerH * 0.5)
                     }
 
@@ -1236,14 +1229,14 @@ private struct MarblePolishVisual: View {
                     let shininess = polishStage > 0 ? stages[polishStage - 1].2 : 0.0
 
                     RoundedRectangle(cornerRadius: 4)
-                        .fill(marbleWhite.opacity(0.5 + shininess * 0.5))
+                        .fill(IVMaterialColors.marbleWhite.opacity(0.5 + shininess * 0.5))
                         .frame(width: slabW, height: slabH)
                         .overlay {
                             // Surface texture dots (fewer = smoother)
                             let dotCount = max(0, 15 - polishStage * 5)
                             ForEach(0..<dotCount, id: \.self) { i in
                                 Circle()
-                                    .fill(stoneGray.opacity(0.3))
+                                    .fill(IVMaterialColors.stoneGray.opacity(0.3))
                                     .frame(width: CGFloat(4 - polishStage))
                                     .offset(
                                         x: CGFloat(i * 47 % 100 - 50) / 100.0 * slabW * 0.8,
@@ -1268,11 +1261,11 @@ private struct MarblePolishVisual: View {
                         ForEach(0..<3, id: \.self) { i in
                             VStack(spacing: 2) {
                                 Circle()
-                                    .fill(i < polishStage ? RenaissanceColors.sageGreen : stoneGray.opacity(0.2))
+                                    .fill(i < polishStage ? RenaissanceColors.sageGreen : IVMaterialColors.stoneGray.opacity(0.2))
                                     .frame(width: 10, height: 10)
                                 Text(stages[i].0)
                                     .font(.custom("EBGaramond-Regular", size: 15))
-                                    .foregroundStyle(i < polishStage ? sepiaInk : sepiaInk.opacity(0.3))
+                                    .foregroundStyle(i < polishStage ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                             }
                         }
                     }
@@ -1362,14 +1355,14 @@ private struct SeatingMathVisual: View {
                             // Tier label
                             HStack(spacing: 4) {
                                 Text(tiers[i].0).font(.custom("Cinzel-Bold", size: 16))
-                                Text(tiers[i].1).font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.4))
+                                Text(tiers[i].1).font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                             }
-                            .foregroundStyle(sepiaInk)
+                            .foregroundStyle(IVMaterialColors.sepiaInk)
                             .position(x: cx, y: y)
                         } else {
                             // Empty slot
                             RoundedRectangle(cornerRadius: 2)
-                                .strokeBorder(stoneGray.opacity(0.2), lineWidth: 0.5)
+                                .strokeBorder(IVMaterialColors.stoneGray.opacity(0.2), lineWidth: 0.5)
                                 .frame(width: rowW, height: tierH - 3)
                                 .position(x: cx, y: y)
                         }
@@ -1378,7 +1371,7 @@ private struct SeatingMathVisual: View {
                     // Arena floor at center-bottom
                     Text("Arena")
                         .font(.custom("EBGaramond-Regular", size: 15))
-                        .foregroundStyle(sepiaInk.opacity(0.3))
+                        .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3))
                         .position(x: cx, y: h * 0.16)
 
                     // Assign button
@@ -1490,7 +1483,7 @@ private struct VelariumTensionVisual: View {
                             .font(.custom("EBGaramond-Bold", size: 15))
                             .monospacedDigit()
                     }
-                    .foregroundStyle(isDangerous ? RenaissanceColors.errorRed : sepiaInk)
+                    .foregroundStyle(isDangerous ? RenaissanceColors.errorRed : IVMaterialColors.sepiaInk)
                     .position(x: cx, y: h * 0.08)
 
                     // Tension arrows
@@ -1514,7 +1507,7 @@ private struct VelariumTensionVisual: View {
                                 Spacer()
                                 Text("Storm").font(.custom("EBGaramond-Regular", size: 15))
                             }
-                            .foregroundStyle(sepiaInk.opacity(0.4))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                             .frame(width: w * 0.5)
                         }
                         .position(x: cx, y: h * 0.88)

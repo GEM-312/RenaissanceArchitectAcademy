@@ -217,7 +217,7 @@ struct QuarryMiniGameView: View {
 
                 Text(difficulty)
                     .font(RenaissanceFont.bodySemibold)
-                    .foregroundStyle(difficultyColor(difficulty))
+                    .foregroundStyle(miniGameDifficultyColor(difficulty))
 
                 Image(systemName: "chevron.right")
                     .font(.body)
@@ -232,108 +232,24 @@ struct QuarryMiniGameView: View {
         }
     }
 
-    private func difficultyColor(_ difficulty: String) -> Color {
-        switch difficulty {
-        case "Easy":   return RenaissanceColors.sageGreen
-        case "Medium": return RenaissanceColors.ochre
-        case "Hard":   return RenaissanceColors.terracotta
-        default:       return RenaissanceColors.stoneGray
-        }
-    }
-
     // MARK: - Phase 2: Intro
 
     private var introCard: some View {
-        VStack(spacing: 20) {
-            // Header
-            HStack(spacing: 12) {
-                Image(systemName: "hammer.fill")
-                    .font(.system(size: 24))
-                    .foregroundStyle(RenaissanceColors.warmBrown)
-                    .frame(width: 44, height: 44)
-                    .background(
-                        RoundedRectangle(cornerRadius: CornerRadius.sm)
-                            .fill(RenaissanceColors.warmBrown.opacity(0.1))
-                    )
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Strike the Stone")
-                        .font(.custom("Cinzel-Bold", size: 22))
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
-                    Text(selectedMaterial.rawValue)
-                        .font(RenaissanceFont.dialogSubtitle)
-                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
-                }
-            }
-
-            Text(introText)
-                .font(.custom("EBGaramond-Regular", size: 16))
-                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
-                .fixedSize(horizontal: false, vertical: true)
-
-            // Rules as row cards
-            VStack(spacing: 10) {
-                ruleRow(icon: "target", text: "Swing your pickaxe at the glowing marks", color: RenaissanceColors.ochre)
-                ruleRow(icon: "star.fill", text: "Early taps = Perfect bonus (+2 florins)", color: RenaissanceColors.goldSuccess)
-                ruleRow(icon: "xmark.circle", text: "\(maxMisses) misses and the stone cracks wrong", color: RenaissanceColors.errorRed)
-            }
-
-            Button {
-                startGame()
-            } label: {
-                HStack(spacing: 8) {
-                    Image(systemName: "hammer.fill")
-                        .font(.caption)
-                    Text("Begin Quarrying")
-                        .font(.custom("EBGaramond-SemiBold", size: 16))
-                }
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, Spacing.sm)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(RenaissanceColors.warmBrown)
-                )
-            }
-
-            Button("Back") {
-                withAnimation { phase = .choose }
-            }
-            .font(RenaissanceFont.bodySmall)
-            .foregroundStyle(RenaissanceColors.sepiaInk)
+        MiniGameIntroCard(
+            icon: "hammer.fill",
+            iconColor: RenaissanceColors.warmBrown,
+            title: "Strike the Stone",
+            subtitle: selectedMaterial.rawValue,
+            bodyText: introText,
+            buttonLabel: "Begin Quarrying",
+            buttonColor: RenaissanceColors.warmBrown,
+            startAction: { startGame() },
+            backAction: { withAnimation { phase = .choose } }
+        ) {
+            MiniGameRuleRow(icon: "target", text: "Swing your pickaxe at the glowing marks", color: RenaissanceColors.ochre)
+            MiniGameRuleRow(icon: "star.fill", text: "Early taps = Perfect bonus (+2 florins)", color: RenaissanceColors.goldSuccess)
+            MiniGameRuleRow(icon: "xmark.circle", text: "\(maxMisses) misses and the stone cracks wrong", color: RenaissanceColors.errorRed)
         }
-        .padding(Spacing.xl)
-        .adaptiveWidth(400)
-        .background(
-            RoundedRectangle(cornerRadius: CornerRadius.lg)
-                .fill(RenaissanceColors.parchment)
-        )
-        .borderWorkshop()
-    }
-
-    private func ruleRow(icon: String, text: String, color: Color) -> some View {
-        HStack(spacing: 12) {
-            Image(systemName: icon)
-                .font(.body)
-                .foregroundStyle(color)
-                .frame(width: 32, height: 32)
-                .background(
-                    RoundedRectangle(cornerRadius: CornerRadius.sm)
-                        .fill(color.opacity(0.1))
-                )
-
-            Text(text)
-                .font(.custom("EBGaramond-Regular", size: 14))
-                .foregroundStyle(RenaissanceColors.sepiaInk)
-
-            Spacer()
-        }
-        .padding(Spacing.sm)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(RenaissanceColors.parchment.opacity(0.6))
-                .borderWorkshop(radius: 10)
-        )
     }
 
     private var introText: String {

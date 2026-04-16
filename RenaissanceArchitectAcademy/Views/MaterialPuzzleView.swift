@@ -1025,6 +1025,7 @@ struct TileView: View {
     let isNeeded: Bool
     var isHighlighted: Bool = false
     var isValidTarget: Bool = false
+    private var settings: GameSettings { GameSettings.shared }
 
     var body: some View {
         ZStack {

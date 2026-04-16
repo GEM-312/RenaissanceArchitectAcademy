@@ -47,16 +47,11 @@ struct AnatomyTheaterInteractiveVisuals {
     }
 }
 
-// MARK: - Local Aliases
+// MARK: - Local Colors
 
-private let gridColor = ivGridColor
-private let sepiaInk = ivSepiaInk
-private let waterBlue = ivWaterBlue
-private let dimColor = ivDimColor
 private let walnutBrown = Color(red: 0.45, green: 0.32, blue: 0.20)
 private let oakTan = Color(red: 0.60, green: 0.48, blue: 0.32)
 private let cypressGreen = Color(red: 0.35, green: 0.50, blue: 0.30)
-private let bronzeGold = Color(red: 0.72, green: 0.55, blue: 0.32)
 private let steelGray = Color(red: 0.55, green: 0.55, blue: 0.58)
 private let candleYellow = Color(red: 0.95, green: 0.85, blue: 0.45)
 
@@ -119,7 +114,7 @@ private struct VesaliusVisual: View {
                         if step >= 2 {
                             Text("Galen dissected\npigs & monkeys")
                                 .font(.custom("EBGaramond-Regular", size: 15))
-                                .foregroundStyle(sepiaInk.opacity(0.6))
+                                .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
                                 .multilineTextAlignment(.center)
                                 .lineLimit(2)
                                 .transition(.opacity)
@@ -130,7 +125,7 @@ private struct VesaliusVisual: View {
 
                     // Center divider
                     Rectangle()
-                        .fill(sepiaInk.opacity(0.15))
+                        .fill(IVMaterialColors.sepiaInk.opacity(0.15))
                         .frame(width: 1.5)
                         .padding(.vertical, 8)
 
@@ -168,7 +163,7 @@ private struct VesaliusVisual: View {
                         if step >= 1 {
                             Text("Seeing is\nCorrecting")
                                 .font(.custom("EBGaramond-SemiBold", size: 15))
-                                .foregroundStyle(sepiaInk.opacity(0.7))
+                                .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.7))
                                 .multilineTextAlignment(.center)
                                 .lineLimit(2)
                                 .transition(.opacity)
@@ -193,11 +188,11 @@ private struct VesaliusVisual: View {
                                 .foregroundStyle(color)
                             Text("Pages")
                                 .font(.custom("EBGaramond-Regular", size: 18))
-                                .foregroundStyle(sepiaInk)
+                                .foregroundStyle(IVMaterialColors.sepiaInk)
                         }
                         Text("of Revolutionary Science")
                             .font(.custom("EBGaramond-Italic", size: 16))
-                            .foregroundStyle(sepiaInk.opacity(0.6))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
                     }
                     .padding(.vertical, 6)
                     .padding(.horizontal, 16)
@@ -252,7 +247,7 @@ private struct FunnelShapeVisual: View {
                 alcove.addLine(to: CGPoint(x: cx + alcoveW / 2, y: alcoveY + alcoveH))
                 alcove.closeSubpath()
                 ctx.fill(alcove, with: .color(Color(red: 0.88, green: 0.80, blue: 0.68).opacity(0.4)))
-                ctx.stroke(alcove, with: .color(sepiaInk.opacity(0.2)), lineWidth: 0.8)
+                ctx.stroke(alcove, with: .color(IVMaterialColors.sepiaInk.opacity(0.2)), lineWidth: 0.8)
 
                 // Dissection table
                 let tableW: CGFloat = minW * 0.7
@@ -288,7 +283,7 @@ private struct FunnelShapeVisual: View {
 
                     let tierFill = Color(red: 0.72 - t * 0.08, green: 0.58 - t * 0.06, blue: 0.38 - t * 0.04)
                     ctx.fill(tierPath, with: .color(tierFill.opacity(0.25 + t * 0.1)))
-                    ctx.stroke(tierPath, with: .color(sepiaInk.opacity(0.25)), lineWidth: 0.8)
+                    ctx.stroke(tierPath, with: .color(IVMaterialColors.sepiaInk.opacity(0.25)), lineWidth: 0.8)
 
                     // Railing at top edge of each tier
                     let railY = y + 2
@@ -315,14 +310,14 @@ private struct FunnelShapeVisual: View {
                             let personY = y + 4
                             // Head
                             let head = Path(ellipseIn: CGRect(x: px - 2.5, y: personY, width: 5, height: 5))
-                            ctx.fill(head, with: .color(sepiaInk.opacity(0.25)))
+                            ctx.fill(head, with: .color(IVMaterialColors.sepiaInk.opacity(0.25)))
                             // Body
                             var body = Path()
                             body.move(to: CGPoint(x: px, y: personY + 5))
                             body.addLine(to: CGPoint(x: px - 3, y: personY + tierDepth * 0.7))
                             body.addLine(to: CGPoint(x: px + 3, y: personY + tierDepth * 0.7))
                             body.closeSubpath()
-                            ctx.fill(body, with: .color(sepiaInk.opacity(0.15)))
+                            ctx.fill(body, with: .color(IVMaterialColors.sepiaInk.opacity(0.15)))
                         }
                     }
                 }
@@ -333,16 +328,16 @@ private struct FunnelShapeVisual: View {
                     // Top dimension: 11 meters
                     ctx.stroke(IVDimLine(from: CGPoint(x: cx - maxW / 2, y: topTierY - 8),
                                          to: CGPoint(x: cx + maxW / 2, y: topTierY - 8), tickSize: 4).path(in: .zero),
-                               with: .color(dimColor), lineWidth: 0.8)
-                    let topLabel = ctx.resolve(Text("11 m").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(dimColor))
+                               with: .color(IVMaterialColors.dimColor), lineWidth: 0.8)
+                    let topLabel = ctx.resolve(Text("11 m").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(IVMaterialColors.dimColor))
                     ctx.draw(topLabel, at: CGPoint(x: cx, y: topTierY - 16))
 
                     // Bottom dimension: 2 meters
                     let botDimY = bottomY + 4
                     ctx.stroke(IVDimLine(from: CGPoint(x: cx - minW / 2, y: botDimY),
                                          to: CGPoint(x: cx + minW / 2, y: botDimY), tickSize: 3).path(in: .zero),
-                               with: .color(dimColor), lineWidth: 0.8)
-                    let botLabel = ctx.resolve(Text("2 m").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(dimColor))
+                               with: .color(IVMaterialColors.dimColor), lineWidth: 0.8)
+                    let botLabel = ctx.resolve(Text("2 m").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(IVMaterialColors.dimColor))
                     ctx.draw(botLabel, at: CGPoint(x: cx, y: botDimY + 10))
                 }
 
@@ -351,7 +346,7 @@ private struct FunnelShapeVisual: View {
                     // "Standing Room Only" — left side
                     let calloutFont = Font.custom("EBGaramond-SemiBold", size: 15)
                     let standingLabel = ctx.resolve(Text("Standing\nRoom Only")
-                        .font(calloutFont).foregroundColor(sepiaInk.opacity(0.7)))
+                        .font(calloutFont).foregroundColor(IVMaterialColors.sepiaInk.opacity(0.7)))
                     let midTierY = bottomY - 3.5 * tierH
                     ctx.draw(standingLabel, at: CGPoint(x: size.width * 0.08, y: midTierY), anchor: .leading)
 
@@ -360,14 +355,14 @@ private struct FunnelShapeVisual: View {
                     var leader = Path()
                     leader.move(to: CGPoint(x: size.width * 0.22, y: midTierY))
                     leader.addLine(to: CGPoint(x: cx - midTierW / 2 - 2, y: midTierY))
-                    ctx.stroke(leader, with: .color(sepiaInk.opacity(0.3)), lineWidth: 0.6)
+                    ctx.stroke(leader, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 0.6)
                 }
 
                 if step >= 2 {
                     // "Bird's-Eye View" — right side
                     let calloutFont = Font.custom("EBGaramond-SemiBold", size: 15)
                     let birdLabel = ctx.resolve(Text("Bird's-Eye\nView ↓")
-                        .font(calloutFont).foregroundColor(sepiaInk.opacity(0.7)))
+                        .font(calloutFont).foregroundColor(IVMaterialColors.sepiaInk.opacity(0.7)))
                     let upperTierY = bottomY - 4.5 * tierH
                     ctx.draw(birdLabel, at: CGPoint(x: size.width * 0.92, y: upperTierY), anchor: .trailing)
                 }
@@ -375,7 +370,7 @@ private struct FunnelShapeVisual: View {
                 if step >= 1 {
                     // "Dissection Table" label below alcove
                     let tableLabel = ctx.resolve(Text("Central Dissection Table")
-                        .font(.custom("EBGaramond-Regular", size: 15)).foregroundColor(sepiaInk.opacity(0.5)))
+                        .font(.custom("EBGaramond-Regular", size: 15)).foregroundColor(IVMaterialColors.sepiaInk.opacity(0.5)))
                     ctx.draw(tableLabel, at: CGPoint(x: cx, y: bottomY + (step >= 3 ? 22 : 14)))
                 }
             }
@@ -473,13 +468,13 @@ private struct SightLinesVisual: View {
                     // Tier step
                     let stepRect = CGRect(x: x, y: y - risePerTier, width: setbackPerTier, height: risePerTier)
                     ctx.fill(Path(stepRect), with: .color(walnutBrown.opacity(0.08 + CGFloat(i) * 0.03)))
-                    ctx.stroke(Path(stepRect), with: .color(sepiaInk.opacity(0.2)), lineWidth: 0.5)
+                    ctx.stroke(Path(stepRect), with: .color(IVMaterialColors.sepiaInk.opacity(0.2)), lineWidth: 0.5)
 
                     // Person dot
                     let personX = x + setbackPerTier * 0.5
                     let personY = y - risePerTier - 3
                     let head = Path(ellipseIn: CGRect(x: personX - 2, y: personY - 2, width: 4, height: 4))
-                    ctx.fill(head, with: .color(sepiaInk.opacity(0.35)))
+                    ctx.fill(head, with: .color(IVMaterialColors.sepiaInk.opacity(0.35)))
 
                     // Sight line to table (step 1+)
                     if step >= 1 {
@@ -506,7 +501,7 @@ private struct SightLinesVisual: View {
                     let riseX = startX - 10
                     ctx.stroke(IVDimLine(from: CGPoint(x: riseX, y: baseY),
                                          to: CGPoint(x: riseX, y: baseY - risePerTier)).path(in: .zero),
-                               with: .color(dimColor), lineWidth: 0.5)
+                               with: .color(IVMaterialColors.dimColor), lineWidth: 0.5)
                 }
             }
         }
@@ -533,13 +528,13 @@ private struct BronzePivotVisual: View {
                 let tableW: CGFloat = 60, tableH: CGFloat = 30
                 let table = Path(ellipseIn: CGRect(x: cx - tableW / 2, y: cy - tableH / 2, width: tableW, height: tableH))
                 ctx.fill(table, with: .color(walnutBrown.opacity(0.3)))
-                ctx.stroke(table, with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                ctx.stroke(table, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
 
                 // Pivot center
                 let pivotR: CGFloat = 5
                 let pivot = Path(ellipseIn: CGRect(x: cx - pivotR, y: cy - pivotR, width: pivotR * 2, height: pivotR * 2))
-                ctx.fill(pivot, with: .color(bronzeGold.opacity(step >= 1 ? 0.7 : 0.2)))
-                ctx.stroke(pivot, with: .color(sepiaInk.opacity(0.4)), lineWidth: 1)
+                ctx.fill(pivot, with: .color(IVMaterialColors.bronzeGold.opacity(step >= 1 ? 0.7 : 0.2)))
+                ctx.stroke(pivot, with: .color(IVMaterialColors.sepiaInk.opacity(0.4)), lineWidth: 1)
 
                 // Step 2: rotation arrows
                 if step >= 2 {
@@ -569,8 +564,8 @@ private struct BronzePivotVisual: View {
                     cone.addLine(to: CGPoint(x: cx, y: coneY + 25))
                     cone.addLine(to: CGPoint(x: cx + 10, y: coneY))
                     cone.closeSubpath()
-                    ctx.fill(cone, with: .color(bronzeGold.opacity(0.4)))
-                    ctx.stroke(cone, with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                    ctx.fill(cone, with: .color(IVMaterialColors.bronzeGold.opacity(0.4)))
+                    ctx.stroke(cone, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
 
                     // Socket
                     var socket = Path()
@@ -578,7 +573,7 @@ private struct BronzePivotVisual: View {
                     socket.addLine(to: CGPoint(x: cx - 2, y: coneY + 28))
                     socket.move(to: CGPoint(x: cx + 12, y: coneY))
                     socket.addLine(to: CGPoint(x: cx + 2, y: coneY + 28))
-                    ctx.stroke(socket, with: .color(sepiaInk.opacity(0.2)), lineWidth: 1)
+                    ctx.stroke(socket, with: .color(IVMaterialColors.sepiaInk.opacity(0.2)), lineWidth: 1)
                 }
             }
         }
@@ -604,9 +599,9 @@ private struct ScalpelSteelVisual: View {
                 // Handle (bronze)
                 let handleRect = CGRect(x: cx - 50, y: bladeY - 5, width: 40, height: 10)
                 ctx.fill(Path(roundedRect: handleRect, cornerRadius: 3),
-                         with: .color(step >= 3 ? bronzeGold.opacity(0.5) : sepiaInk.opacity(0.1)))
+                         with: .color(step >= 3 ? IVMaterialColors.bronzeGold.opacity(0.5) : IVMaterialColors.sepiaInk.opacity(0.1)))
                 ctx.stroke(Path(roundedRect: handleRect, cornerRadius: 3),
-                           with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                           with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
 
                 // Blade (steel)
                 var blade = Path()
@@ -617,7 +612,7 @@ private struct ScalpelSteelVisual: View {
                 blade.addLine(to: CGPoint(x: cx - 10, y: bladeY + 4))
                 blade.closeSubpath()
                 ctx.fill(blade, with: .color(steelGray.opacity(step >= 1 ? 0.6 : 0.2)))
-                ctx.stroke(blade, with: .color(sepiaInk.opacity(0.4)), lineWidth: 0.5)
+                ctx.stroke(blade, with: .color(IVMaterialColors.sepiaInk.opacity(0.4)), lineWidth: 0.5)
 
                 // Step 2: angle indicator at tip
                 if step >= 2 {
@@ -625,7 +620,7 @@ private struct ScalpelSteelVisual: View {
                     var angleArc = Path()
                     angleArc.addArc(center: CGPoint(x: CGFloat(tipX), y: CGFloat(tipY)),
                                     radius: 15, startAngle: .degrees(-15), endAngle: .degrees(15), clockwise: false)
-                    ctx.stroke(angleArc, with: .color(dimColor.opacity(0.6)), lineWidth: 1)
+                    ctx.stroke(angleArc, with: .color(IVMaterialColors.dimColor.opacity(0.6)), lineWidth: 1)
                 }
 
                 // Step 1: composition
@@ -665,7 +660,7 @@ private struct TimberPrepVisual: View {
                 VStack(spacing: 4) {
                     ZStack {
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(waterBlue.opacity(step >= 1 ? 0.15 : 0.05))
+                            .fill(IVMaterialColors.waterBlue.opacity(step >= 1 ? 0.15 : 0.05))
                             .frame(height: 50)
                         RoundedRectangle(cornerRadius: 3)
                             .fill(walnutBrown.opacity(step >= 1 ? 0.5 : 0.15))
@@ -673,16 +668,16 @@ private struct TimberPrepVisual: View {
                     }
                     Text("6 mo")
                         .font(.custom("EBGaramond-Bold", size: 15))
-                        .foregroundStyle(step >= 1 ? waterBlue : waterBlue.opacity(0.3))
+                        .foregroundStyle(step >= 1 ? IVMaterialColors.waterBlue : IVMaterialColors.waterBlue.opacity(0.3))
                     Text("Soak")
                         .font(.custom("Cinzel-Bold", size: 16))
-                        .foregroundStyle(step >= 1 ? sepiaInk : sepiaInk.opacity(0.3))
+                        .foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                 }
 
                 if step >= 2 {
                     Image(systemName: "arrow.right")
                         .font(.system(size: 13))
-                        .foregroundStyle(sepiaInk.opacity(0.3))
+                        .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3))
                 }
 
                 // Air dry
@@ -694,7 +689,7 @@ private struct TimberPrepVisual: View {
                                 .frame(height: 50)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 4)
-                                        .strokeBorder(sepiaInk.opacity(0.15), style: StrokeStyle(lineWidth: 1, dash: [3, 2]))
+                                        .strokeBorder(IVMaterialColors.sepiaInk.opacity(0.15), style: StrokeStyle(lineWidth: 1, dash: [3, 2]))
                                 )
                             RoundedRectangle(cornerRadius: 3)
                                 .fill(Color(red: 0.55, green: 0.40, blue: 0.25).opacity(0.4))
@@ -702,15 +697,15 @@ private struct TimberPrepVisual: View {
                         }
                         Text("12 mo")
                             .font(.custom("EBGaramond-Bold", size: 15))
-                            .foregroundStyle(dimColor)
+                            .foregroundStyle(IVMaterialColors.dimColor)
                         Text("Air Dry")
                             .font(.custom("Cinzel-Bold", size: 16))
-                            .foregroundStyle(sepiaInk)
+                            .foregroundStyle(IVMaterialColors.sepiaInk)
                     }
 
                     Image(systemName: "arrow.right")
                         .font(.system(size: 13))
-                        .foregroundStyle(sepiaInk.opacity(0.3))
+                        .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3))
 
                     // Ready to carve
                     VStack(spacing: 4) {
@@ -751,7 +746,7 @@ private struct WalnutCarvingVisual: View {
                 let blockW: CGFloat = 70, blockH: CGFloat = 50
                 let block = CGRect(x: cx - blockW / 2, y: cy - blockH / 2, width: blockW, height: blockH)
                 ctx.fill(Path(roundedRect: block, cornerRadius: 4), with: .color(walnutBrown.opacity(step >= 1 ? 0.4 : 0.15)))
-                ctx.stroke(Path(roundedRect: block, cornerRadius: 4), with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                ctx.stroke(Path(roundedRect: block, cornerRadius: 4), with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
 
                 // Grain lines (uniform in all directions)
                 if step >= 1 {
@@ -817,7 +812,7 @@ private struct OakStructureVisual: View {
 
                 // Walnut cladding (outer)
                 ctx.fill(Path(wallRect), with: .color(walnutBrown.opacity(step >= 3 ? 0.3 : 0.15)))
-                ctx.stroke(Path(wallRect), with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                ctx.stroke(Path(wallRect), with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
 
                 // Oak post (inner, hidden)
                 if step >= 1 {
@@ -834,14 +829,14 @@ private struct OakStructureVisual: View {
                         var arrow = Path()
                         arrow.move(to: CGPoint(x: ax, y: wallY - 12))
                         arrow.addLine(to: CGPoint(x: ax, y: wallY + 2))
-                        ctx.stroke(arrow, with: .color(sepiaInk.opacity(0.4)), lineWidth: 1)
+                        ctx.stroke(arrow, with: .color(IVMaterialColors.sepiaInk.opacity(0.4)), lineWidth: 1)
                     }
                     var head = Path()
                     head.move(to: CGPoint(x: cx, y: wallY + 2))
                     head.addLine(to: CGPoint(x: cx - 4, y: wallY - 4))
                     head.addLine(to: CGPoint(x: cx + 4, y: wallY - 4))
                     head.closeSubpath()
-                    ctx.fill(head, with: .color(sepiaInk.opacity(0.4)))
+                    ctx.fill(head, with: .color(IVMaterialColors.sepiaInk.opacity(0.4)))
                 }
 
                 // Labels
@@ -988,7 +983,7 @@ private struct CarvingToolsVisual: View {
                                     profile.addLine(to: CGPoint(x: w * 0.8, y: h))
                                 }
                                 ctx.fill(profile, with: .color(steelGray.opacity(0.4)))
-                                ctx.stroke(profile, with: .color(sepiaInk.opacity(0.3)), lineWidth: 0.5)
+                                ctx.stroke(profile, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 0.5)
                             }
                             .frame(width: 16, height: 30)
                         }
@@ -1002,7 +997,7 @@ private struct CarvingToolsVisual: View {
                             let active = step >= 3 || i < 5
                             Text(s)
                                 .font(.custom("EBGaramond-Regular", size: 15))
-                                .foregroundStyle(active ? (i == 5 && step >= 3 ? color : sepiaInk) : sepiaInk.opacity(0.3))
+                                .foregroundStyle(active ? (i == 5 && step >= 3 ? color : IVMaterialColors.sepiaInk) : IVMaterialColors.sepiaInk.opacity(0.3))
                                 .padding(.horizontal, 4)
                                 .padding(.vertical, 2)
                                 .background(
@@ -1013,7 +1008,7 @@ private struct CarvingToolsVisual: View {
                             if i < toolSteps.count - 1 {
                                 Image(systemName: "chevron.right")
                                     .font(.system(size: 13))
-                                    .foregroundStyle(sepiaInk.opacity(0.2))
+                                    .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.2))
                             }
                         }
                     }

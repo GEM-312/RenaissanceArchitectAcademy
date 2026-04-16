@@ -44,12 +44,8 @@ struct BotanicalGardenInteractiveVisuals {
     }
 }
 
-// MARK: - Local Aliases
+// MARK: - Local Colors
 
-private let gridColor = ivGridColor
-private let sepiaInk = ivSepiaInk
-private let waterBlue = ivWaterBlue
-private let dimColor = ivDimColor
 private let leafGreen = Color(red: 0.30, green: 0.58, blue: 0.32)
 private let soilBrown = Color(red: 0.52, green: 0.38, blue: 0.26)
 private let stoneGray = Color(red: 0.68, green: 0.65, blue: 0.60)
@@ -187,7 +183,7 @@ private struct CircularLayoutVisual: View {
 
                 // Step 2: quadrant coloring
                 if step >= 2 {
-                    let quadColors: [Color] = [soilBrown, waterBlue, Color.gray.opacity(0.5), infrared]
+                    let quadColors: [Color] = [soilBrown, IVMaterialColors.waterBlue, Color.gray.opacity(0.5), infrared]
                     for (i, qColor) in quadColors.enumerated() {
                         let startAngle = CGFloat(i) * .pi / 2
                         let endAngle = startAngle + .pi / 2
@@ -222,7 +218,7 @@ private struct CircularLayoutVisual: View {
                 // Dimension line
                 let dimFrom = CGPoint(x: cx - r, y: cy + r + 20)
                 let dimTo = CGPoint(x: cx + r, y: cy + r + 20)
-                ctx.stroke(IVDimLine(from: dimFrom, to: dimTo).path(in: .zero), with: .color(dimColor), lineWidth: 1)
+                ctx.stroke(IVDimLine(from: dimFrom, to: dimTo).path(in: .zero), with: .color(IVMaterialColors.dimColor), lineWidth: 1)
             }
         }
     }
@@ -293,7 +289,7 @@ private struct TaxonomyTreeVisual: View {
                     // Paper rectangle
                     let paper = CGRect(x: cx - 40, y: pressY, width: 80, height: 30)
                     ctx.fill(Path(roundedRect: paper, cornerRadius: 3), with: .color(Color(red: 0.95, green: 0.92, blue: 0.85)))
-                    ctx.stroke(Path(roundedRect: paper, cornerRadius: 3), with: .color(sepiaInk.opacity(0.2)), lineWidth: 0.5)
+                    ctx.stroke(Path(roundedRect: paper, cornerRadius: 3), with: .color(IVMaterialColors.sepiaInk.opacity(0.2)), lineWidth: 0.5)
 
                     // Pressed leaf
                     var leaf = Path()
@@ -308,7 +304,7 @@ private struct TaxonomyTreeVisual: View {
                     var labelLine = Path()
                     labelLine.move(to: CGPoint(x: cx + 5, y: pressY + 15))
                     labelLine.addLine(to: CGPoint(x: cx + 30, y: pressY + 15))
-                    ctx.stroke(labelLine, with: .color(sepiaInk.opacity(0.3)), lineWidth: 0.5)
+                    ctx.stroke(labelLine, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 0.5)
                 }
             }
         }
@@ -341,14 +337,14 @@ private struct SeedExchangeVisual: View {
                 if step == 1 {
                     let bookRect = CGRect(x: cx - 20, y: cy + 25, width: 40, height: 28)
                     ctx.fill(Path(roundedRect: bookRect, cornerRadius: 3), with: .color(Color(red: 0.92, green: 0.88, blue: 0.80)))
-                    ctx.stroke(Path(roundedRect: bookRect, cornerRadius: 3), with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                    ctx.stroke(Path(roundedRect: bookRect, cornerRadius: 3), with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
                     // Lines on book
                     for i in 0..<3 {
                         var line = Path()
                         let ly = bookRect.minY + 7 + CGFloat(i) * 7
                         line.move(to: CGPoint(x: bookRect.minX + 6, y: ly))
                         line.addLine(to: CGPoint(x: bookRect.maxX - 6, y: ly))
-                        ctx.stroke(line, with: .color(sepiaInk.opacity(0.15)), lineWidth: 0.5)
+                        ctx.stroke(line, with: .color(IVMaterialColors.sepiaInk.opacity(0.15)), lineWidth: 0.5)
                     }
                 }
 
@@ -410,7 +406,7 @@ private struct ThermalWallVisual: View {
                 // Stone wall
                 let wall = CGRect(x: wallX, y: wallTop, width: wallW, height: wallBot - wallTop)
                 ctx.fill(Path(wall), with: .color(stoneGray.opacity(0.5)))
-                ctx.stroke(Path(wall), with: .color(sepiaInk.opacity(0.4)), lineWidth: 1.5)
+                ctx.stroke(Path(wall), with: .color(IVMaterialColors.sepiaInk.opacity(0.4)), lineWidth: 1.5)
 
                 // Stone blocks pattern
                 for row in 0..<6 {
@@ -418,7 +414,7 @@ private struct ThermalWallVisual: View {
                     var line = Path()
                     line.move(to: CGPoint(x: wallX, y: y))
                     line.addLine(to: CGPoint(x: wallX + wallW, y: y))
-                    ctx.stroke(line, with: .color(sepiaInk.opacity(0.15)), lineWidth: 0.5)
+                    ctx.stroke(line, with: .color(IVMaterialColors.sepiaInk.opacity(0.15)), lineWidth: 0.5)
                 }
 
                 // Step 1: sun on left
@@ -493,7 +489,7 @@ private struct IrrigationSystemVisual: View {
                     river.addCurve(to: CGPoint(x: 30, y: size.height * 0.65),
                                    control1: CGPoint(x: 15, y: size.height * 0.3),
                                    control2: CGPoint(x: 5, y: size.height * 0.5))
-                    ctx.stroke(river, with: .color(waterBlue.opacity(0.5)), lineWidth: 8)
+                    ctx.stroke(river, with: .color(IVMaterialColors.waterBlue.opacity(0.5)), lineWidth: 8)
 
                     // Pipe from river
                     var pipe = Path()
@@ -506,8 +502,8 @@ private struct IrrigationSystemVisual: View {
                 if step >= 2 {
                     let cisternR: CGFloat = 12
                     let cistern = Path(ellipseIn: CGRect(x: cx - cisternR, y: cy - cisternR, width: cisternR * 2, height: cisternR * 2))
-                    ctx.fill(cistern, with: .color(waterBlue.opacity(0.3)))
-                    ctx.stroke(cistern, with: .color(waterBlue), lineWidth: 1.5)
+                    ctx.fill(cistern, with: .color(IVMaterialColors.waterBlue.opacity(0.3)))
+                    ctx.stroke(cistern, with: .color(IVMaterialColors.waterBlue), lineWidth: 1.5)
 
                     // 4 output channels
                     let directions: [(CGFloat, CGFloat)] = [(0, -1), (0, 1), (-1, 0), (1, 0)]
@@ -515,7 +511,7 @@ private struct IrrigationSystemVisual: View {
                         var channel = Path()
                         channel.move(to: CGPoint(x: cx + dx * cisternR, y: cy + dy * cisternR))
                         channel.addLine(to: CGPoint(x: cx + dx * 50, y: cy + dy * 40))
-                        ctx.stroke(channel, with: .color(waterBlue.opacity(0.4)), lineWidth: 2)
+                        ctx.stroke(channel, with: .color(IVMaterialColors.waterBlue.opacity(0.4)), lineWidth: 2)
                     }
                 }
 
@@ -530,7 +526,7 @@ private struct IrrigationSystemVisual: View {
                     for gp in gatePositions {
                         let gate = CGRect(x: gp.x - 4, y: gp.y - 3, width: 8, height: 6)
                         ctx.fill(Path(gate), with: .color(soilBrown.opacity(0.6)))
-                        ctx.stroke(Path(gate), with: .color(sepiaInk.opacity(0.4)), lineWidth: 0.5)
+                        ctx.stroke(Path(gate), with: .color(IVMaterialColors.sepiaInk.opacity(0.4)), lineWidth: 0.5)
                     }
 
                     // Bed rectangles at ends
@@ -572,7 +568,7 @@ private struct LimestonePathVisual: View {
                 // Gravel path
                 let pathRect = CGRect(x: 20, y: pathY, width: size.width - 40, height: pathH)
                 ctx.fill(Path(pathRect), with: .color(stoneGray.opacity(0.4)))
-                ctx.stroke(Path(pathRect), with: .color(sepiaInk.opacity(0.2)), lineWidth: 0.5)
+                ctx.stroke(Path(pathRect), with: .color(IVMaterialColors.sepiaInk.opacity(0.2)), lineWidth: 0.5)
 
                 // Gravel dots
                 for _ in 0..<15 {
@@ -597,7 +593,7 @@ private struct LimestonePathVisual: View {
                         drop.addQuadCurve(to: CGPoint(x: rx + 3, y: pathY - 5),
                                           control: CGPoint(x: rx, y: pathY - 2))
                         drop.closeSubpath()
-                        ctx.fill(drop, with: .color(waterBlue.opacity(0.4)))
+                        ctx.fill(drop, with: .color(IVMaterialColors.waterBlue.opacity(0.4)))
 
                         // Dissolving arrow downward
                         var arrow = Path()
@@ -664,7 +660,7 @@ private struct GreenhouseGlassVisual: View {
                 // Glass pane
                 let glass = CGRect(x: glassX - glassW / 2, y: topY, width: glassW, height: botY - topY)
                 ctx.fill(Path(glass), with: .color(Color.cyan.opacity(0.08)))
-                ctx.stroke(Path(glass), with: .color(sepiaInk.opacity(0.3)), lineWidth: 1.5)
+                ctx.stroke(Path(glass), with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1.5)
 
                 // Lead came frame
                 ctx.fill(Path(CGRect(x: glassX - glassW / 2 - 2, y: topY, width: 2, height: botY - topY)), with: .color(Color.gray.opacity(0.4)))
@@ -749,7 +745,7 @@ private struct UnderfloorHeatVisual: View {
                 // Floor
                 let floor = CGRect(x: 20, y: floorY, width: size.width - 40, height: floorH)
                 ctx.fill(Path(floor), with: .color(step >= 2 ? soilBrown.opacity(0.5) : soilBrown.opacity(0.3)))
-                ctx.stroke(Path(floor), with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                ctx.stroke(Path(floor), with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
 
                 // Brick pattern on floor
                 let brickW: CGFloat = 18
@@ -758,7 +754,7 @@ private struct UnderfloorHeatVisual: View {
                     var line = Path()
                     line.move(to: CGPoint(x: bx, y: floorY))
                     line.addLine(to: CGPoint(x: bx, y: floorY + floorH))
-                    ctx.stroke(line, with: .color(sepiaInk.opacity(0.1)), lineWidth: 0.5)
+                    ctx.stroke(line, with: .color(IVMaterialColors.sepiaInk.opacity(0.1)), lineWidth: 0.5)
                 }
 
                 // Underground pipes
@@ -776,7 +772,7 @@ private struct UnderfloorHeatVisual: View {
                     // Furnace on left
                     let furnace = CGRect(x: 5, y: pipeY - 8, width: 18, height: 16)
                     ctx.fill(Path(roundedRect: furnace, cornerRadius: 2), with: .color(infrared.opacity(0.3)))
-                    ctx.stroke(Path(roundedRect: furnace, cornerRadius: 2), with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                    ctx.stroke(Path(roundedRect: furnace, cornerRadius: 2), with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
                 }
 
                 // Step 2: heat arrows UP through floor
@@ -889,12 +885,12 @@ private struct SoilSubstrateVisual: View {
             .clipShape(RoundedRectangle(cornerRadius: 4))
             .overlay(
                 RoundedRectangle(cornerRadius: 4)
-                    .strokeBorder(active ? sepiaInk.opacity(0.3) : sepiaInk.opacity(0.1), lineWidth: 0.5)
+                    .strokeBorder(active ? IVMaterialColors.sepiaInk.opacity(0.3) : IVMaterialColors.sepiaInk.opacity(0.1), lineWidth: 0.5)
             )
 
             Text(label)
                 .font(.custom("Cinzel-Bold", size: 16))
-                .foregroundStyle(active ? sepiaInk : sepiaInk.opacity(0.3))
+                .foregroundStyle(active ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
         }

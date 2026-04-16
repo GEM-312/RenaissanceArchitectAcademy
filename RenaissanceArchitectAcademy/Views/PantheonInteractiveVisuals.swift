@@ -59,11 +59,6 @@ struct PantheonInteractiveVisuals {
 }
 
 // MARK: - Local Aliases (point to shared InteractiveVisualHelpers)
-
-private let gridColor = ivGridColor
-private let sepiaInk = ivSepiaInk
-private let waterBlue = ivWaterBlue
-private let dimColor = ivDimColor
 private typealias VisualTitle = IVVisualTitle
 private typealias PantheonBlueprintGrid = IVBlueprintGrid
 private typealias TeachingContainer = IVTeachingContainer
@@ -103,11 +98,11 @@ private struct ColumnsCountVisual: View {
                         p.closeSubpath()
                     }
                     .fill(color.opacity(0.06))
-                    .stroke(sepiaInk.opacity(0.3), lineWidth: 1)
+                    .stroke(IVMaterialColors.sepiaInk.opacity(0.3), lineWidth: 1)
 
                     // Entablature
                     Rectangle()
-                        .fill(sepiaInk.opacity(0.08))
+                        .fill(IVMaterialColors.sepiaInk.opacity(0.08))
                         .frame(width: w - 40, height: 5)
                         .position(x: w / 2, y: topY + 2)
 
@@ -115,8 +110,8 @@ private struct ColumnsCountVisual: View {
                     ForEach(0..<colCount, id: \.self) { i in
                         let cx = startX + spacing * CGFloat(i)
                         Rectangle()
-                            .fill(sepiaInk.opacity(0.08))
-                            .overlay(Rectangle().stroke(sepiaInk.opacity(0.4), lineWidth: 1))
+                            .fill(IVMaterialColors.sepiaInk.opacity(0.08))
+                            .overlay(Rectangle().stroke(IVMaterialColors.sepiaInk.opacity(0.4), lineWidth: 1))
                             .frame(width: colW, height: baseY - topY - 6)
                             .position(x: cx, y: (topY + 6 + baseY) / 2)
                     }
@@ -126,19 +121,19 @@ private struct ColumnsCountVisual: View {
                         p.move(to: CGPoint(x: 10, y: baseY))
                         p.addLine(to: CGPoint(x: w - 10, y: baseY))
                     }
-                    .stroke(sepiaInk.opacity(0.3), lineWidth: 1.5)
+                    .stroke(IVMaterialColors.sepiaInk.opacity(0.3), lineWidth: 1.5)
 
                     // Step 2: dimension lines
                     if step >= 2 {
                         let dimX = startX + spacing * CGFloat(colCount - 1) + 20
                         DimLine(from: CGPoint(x: dimX, y: topY + 6), to: CGPoint(x: dimX, y: baseY))
-                            .stroke(dimColor, lineWidth: 1)
+                            .stroke(IVMaterialColors.dimColor, lineWidth: 1)
                         DimLabel(text: "12m")
                             .position(x: dimX + 16, y: (topY + 6 + baseY) / 2)
 
                         DimLine(from: CGPoint(x: startX - colW / 2, y: baseY + 8),
                                 to: CGPoint(x: startX + colW / 2, y: baseY + 8))
-                            .stroke(dimColor, lineWidth: 1)
+                            .stroke(IVMaterialColors.dimColor, lineWidth: 1)
                         DimLabel(text: "1.5m", fontSize: 15)
                             .position(x: startX, y: baseY + 18)
                     }
@@ -200,7 +195,7 @@ private struct LayerDigVisual: View {
                     .stroke(Color.brown.opacity(0.5), lineWidth: 2)
                     Text("Ground level")
                         .font(.custom("EBGaramond-Italic", size: 15))
-                        .foregroundStyle(sepiaInk.opacity(0.4))
+                        .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                         .position(x: w * 0.8, y: groundY - 8)
 
                     // Step 2: trench
@@ -214,7 +209,7 @@ private struct LayerDigVisual: View {
                             p.addLine(to: CGPoint(x: trenchR, y: trenchBottom))
                             p.addLine(to: CGPoint(x: trenchR, y: groundY))
                         }
-                        .stroke(sepiaInk.opacity(0.4), lineWidth: 1.5)
+                        .stroke(IVMaterialColors.sepiaInk.opacity(0.4), lineWidth: 1.5)
 
                         // Clay fill
                         Rectangle()
@@ -224,12 +219,12 @@ private struct LayerDigVisual: View {
 
                         Text("Soft clay")
                             .font(.custom("EBGaramond-Italic", size: 15))
-                            .foregroundStyle(sepiaInk.opacity(0.4))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                             .position(x: w / 2, y: (groundY + trenchBottom) / 2)
 
                         // Depth dimension
                         DimLine(from: CGPoint(x: w - 20, y: groundY), to: CGPoint(x: w - 20, y: trenchBottom))
-                            .stroke(dimColor, lineWidth: 1)
+                            .stroke(IVMaterialColors.dimColor, lineWidth: 1)
                         DimLabel(text: "4.5m")
                             .position(x: w - 8, y: (groundY + trenchBottom) / 2)
                     }
@@ -239,7 +234,7 @@ private struct LayerDigVisual: View {
                         let trenchL = (w - ringW) / 2
                         RoundedRectangle(cornerRadius: 3)
                             .fill(Color.gray.opacity(0.35))
-                            .overlay(RoundedRectangle(cornerRadius: 3).stroke(sepiaInk.opacity(0.5), lineWidth: 1.5))
+                            .overlay(RoundedRectangle(cornerRadius: 3).stroke(IVMaterialColors.sepiaInk.opacity(0.5), lineWidth: 1.5))
                             .frame(width: ringW, height: ringH)
                             .position(x: w / 2, y: trenchBottom - ringH / 2)
 
@@ -252,7 +247,7 @@ private struct LayerDigVisual: View {
                         // Width dimension
                         DimLine(from: CGPoint(x: trenchL, y: trenchBottom + 8),
                                 to: CGPoint(x: trenchL + ringW, y: trenchBottom + 8))
-                            .stroke(dimColor, lineWidth: 1)
+                            .stroke(IVMaterialColors.dimColor, lineWidth: 1)
                         DimLabel(text: "7.3m")
                             .position(x: w / 2, y: trenchBottom + 18)
                     }
@@ -305,19 +300,19 @@ private struct SphereSliderVisual: View {
                         p.move(to: CGPoint(x: cx - innerW / 2 - wallW - 5, y: baseY))
                         p.addLine(to: CGPoint(x: cx + innerW / 2 + wallW + 5, y: baseY))
                     }
-                    .stroke(sepiaInk.opacity(0.3), lineWidth: 1.5)
+                    .stroke(IVMaterialColors.sepiaInk.opacity(0.3), lineWidth: 1.5)
 
                     // Left wall
                     Rectangle()
                         .fill(color.opacity(0.12))
-                        .overlay(Rectangle().stroke(sepiaInk.opacity(0.4), lineWidth: 1.5))
+                        .overlay(Rectangle().stroke(IVMaterialColors.sepiaInk.opacity(0.4), lineWidth: 1.5))
                         .frame(width: wallW, height: wallH)
                         .position(x: cx - innerW / 2 - wallW / 2, y: baseY - wallH / 2)
 
                     // Right wall
                     Rectangle()
                         .fill(color.opacity(0.12))
-                        .overlay(Rectangle().stroke(sepiaInk.opacity(0.4), lineWidth: 1.5))
+                        .overlay(Rectangle().stroke(IVMaterialColors.sepiaInk.opacity(0.4), lineWidth: 1.5))
                         .frame(width: wallW, height: wallH)
                         .position(x: cx + innerW / 2 + wallW / 2, y: baseY - wallH / 2)
 
@@ -327,13 +322,13 @@ private struct SphereSliderVisual: View {
                                  radius: innerW / 2 + wallW,
                                  startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
                     }
-                    .stroke(sepiaInk.opacity(0.4), lineWidth: 1.5)
+                    .stroke(IVMaterialColors.sepiaInk.opacity(0.4), lineWidth: 1.5)
 
                     // Step 1: height dimension
                     if step >= 1 {
                         let dimX = cx + innerW / 2 + wallW + 14
                         DimLine(from: CGPoint(x: dimX, y: baseY), to: CGPoint(x: dimX, y: baseY - wallH))
-                            .stroke(dimColor, lineWidth: 1)
+                            .stroke(IVMaterialColors.dimColor, lineWidth: 1)
                         DimLabel(text: "43.3m")
                             .position(x: dimX + 18, y: baseY - wallH / 2)
                     }
@@ -342,7 +337,7 @@ private struct SphereSliderVisual: View {
                     if step >= 2 {
                         DimLine(from: CGPoint(x: cx - innerW / 2, y: baseY + 8),
                                 to: CGPoint(x: cx + innerW / 2, y: baseY + 8))
-                            .stroke(dimColor, lineWidth: 1)
+                            .stroke(IVMaterialColors.dimColor, lineWidth: 1)
                         DimLabel(text: "43.3m")
                             .position(x: cx, y: baseY + 18)
 
@@ -371,7 +366,7 @@ private struct SphereSliderVisual: View {
                         let lwRight = cx - innerW / 2
                         let dimY = baseY - wallH * 0.15
                         DimLine(from: CGPoint(x: lwLeft, y: dimY), to: CGPoint(x: lwRight, y: dimY))
-                            .stroke(dimColor, lineWidth: 1)
+                            .stroke(IVMaterialColors.dimColor, lineWidth: 1)
                         DimLabel(text: "6m", fontSize: 15)
                             .position(x: (lwLeft + lwRight) / 2, y: dimY - 8)
 
@@ -379,7 +374,7 @@ private struct SphereSliderVisual: View {
                         let rwLeft = cx + innerW / 2
                         let rwRight = cx + innerW / 2 + wallW
                         DimLine(from: CGPoint(x: rwLeft, y: dimY), to: CGPoint(x: rwRight, y: dimY))
-                            .stroke(dimColor, lineWidth: 1)
+                            .stroke(IVMaterialColors.dimColor, lineWidth: 1)
                         DimLabel(text: "6m", fontSize: 15)
                             .position(x: (rwLeft + rwRight) / 2, y: dimY - 8)
 
@@ -418,7 +413,7 @@ private struct CofferTapVisual: View {
                         p.move(to: CGPoint(x: cx - domeR - 10, y: baseY))
                         p.addLine(to: CGPoint(x: cx + domeR + 10, y: baseY))
                     }
-                    .stroke(sepiaInk.opacity(0.3), lineWidth: 1.5)
+                    .stroke(IVMaterialColors.sepiaInk.opacity(0.3), lineWidth: 1.5)
 
                     // Solid dome (step 1)
                     Path { p in
@@ -434,7 +429,7 @@ private struct CofferTapVisual: View {
                                      radius: domeR,
                                      startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
                         }
-                        .stroke(sepiaInk.opacity(0.4), lineWidth: 1.5)
+                        .stroke(IVMaterialColors.sepiaInk.opacity(0.4), lineWidth: 1.5)
                     )
 
                     // Weight label
@@ -480,7 +475,7 @@ private struct CofferTapVisual: View {
                             FormulaText(text: "2,400 ÷ 4,535 = 53%", highlighted: true, fontSize: 15)
                             Text("Remaining: 2,135 tons")
                                 .font(.custom("EBGaramond-SemiBold", size: 15))
-                                .foregroundStyle(sepiaInk.opacity(0.5))
+                                .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                         }
                         .position(x: cx, y: baseY - domeR * 0.2)
                     }
@@ -532,27 +527,27 @@ private struct OculusCompressionVisual: View {
                                  radius: domeR,
                                  startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
                     }
-                    .stroke(sepiaInk.opacity(0.4), lineWidth: 2)
+                    .stroke(IVMaterialColors.sepiaInk.opacity(0.4), lineWidth: 2)
 
                     // Base
                     Path { p in
                         p.move(to: CGPoint(x: cx - domeR - 5, y: baseY))
                         p.addLine(to: CGPoint(x: cx + domeR + 5, y: baseY))
                     }
-                    .stroke(sepiaInk.opacity(0.3), lineWidth: 1.5)
+                    .stroke(IVMaterialColors.sepiaInk.opacity(0.3), lineWidth: 1.5)
 
                     // Oculus circle at top
                     let oculusY = baseY - domeR + oculusR * 0.3
                     Circle()
                         .fill(Color.white.opacity(0.7))
                         .frame(width: oculusR * 2, height: oculusR * 2)
-                        .overlay(Circle().stroke(sepiaInk.opacity(0.5), lineWidth: 2))
+                        .overlay(Circle().stroke(IVMaterialColors.sepiaInk.opacity(0.5), lineWidth: 2))
                         .position(x: cx, y: oculusY)
 
                     // Step 1: 9m dimension
                     DimLine(from: CGPoint(x: cx - oculusR, y: oculusY - oculusR - 6),
                             to: CGPoint(x: cx + oculusR, y: oculusY - oculusR - 6))
-                        .stroke(dimColor, lineWidth: 1)
+                        .stroke(IVMaterialColors.dimColor, lineWidth: 1)
                     DimLabel(text: "9m")
                         .position(x: cx, y: oculusY - oculusR - 14)
 
@@ -631,14 +626,14 @@ private struct HeatTransformVisual: View {
                         .frame(width: blockSize, height: blockSize)
                         .overlay(
                             RoundedRectangle(cornerRadius: 6)
-                                .stroke(sepiaInk.opacity(0.4), lineWidth: 1.5)
+                                .stroke(IVMaterialColors.sepiaInk.opacity(0.4), lineWidth: 1.5)
                         )
                         .overlay(
                             // Random grain dots
                             ZStack {
                                 ForEach(0..<8, id: \.self) { i in
                                     Circle()
-                                        .fill(sepiaInk.opacity(0.12))
+                                        .fill(IVMaterialColors.sepiaInk.opacity(0.12))
                                         .frame(width: 4, height: 4)
                                         .offset(x: CGFloat([-10, 8, -5, 12, -8, 3, 10, -12][i]),
                                                 y: CGFloat([5, -8, 10, -3, -10, 8, 2, -5][i]))
@@ -649,7 +644,7 @@ private struct HeatTransformVisual: View {
 
                     Text("Limestone")
                         .font(.custom("EBGaramond-SemiBold", size: 15))
-                        .foregroundStyle(sepiaInk)
+                        .foregroundStyle(IVMaterialColors.sepiaInk)
                         .position(x: leftX, y: centerY + blockSize / 2 + 12)
 
                     FormulaText(text: "CaCO₃", fontSize: 15)
@@ -691,14 +686,14 @@ private struct HeatTransformVisual: View {
                             .frame(width: blockSize, height: blockSize)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 6)
-                                    .stroke(sepiaInk.opacity(0.4), lineWidth: 1.5)
+                                    .stroke(IVMaterialColors.sepiaInk.opacity(0.4), lineWidth: 1.5)
                             )
                             .overlay(
                                 // Aligned crystal lines
                                 ZStack {
                                     ForEach(0..<5, id: \.self) { i in
                                         Rectangle()
-                                            .fill(sepiaInk.opacity(0.06))
+                                            .fill(IVMaterialColors.sepiaInk.opacity(0.06))
                                             .frame(width: blockSize * 0.7, height: 1)
                                             .rotationEffect(.degrees(Double(i) * 36))
                                     }
@@ -708,7 +703,7 @@ private struct HeatTransformVisual: View {
 
                         Text("Marble")
                             .font(.custom("EBGaramond-SemiBold", size: 15))
-                            .foregroundStyle(sepiaInk)
+                            .foregroundStyle(IVMaterialColors.sepiaInk)
                             .position(x: rightX, y: centerY + blockSize / 2 + 12)
 
                         FormulaText(text: "CaCO₃", fontSize: 15)
@@ -747,7 +742,7 @@ private struct TimelineAgingVisual: View {
                 if step >= 2 {
                     Text("Ca(OH)₂ + SiO₂ → CaSiO₃")
                         .font(.custom("EBGaramond-Bold", size: step >= 4 ? 13 : 12))
-                        .foregroundStyle(step >= 4 ? RenaissanceColors.sageGreen : sepiaInk)
+                        .foregroundStyle(step >= 4 ? RenaissanceColors.sageGreen : IVMaterialColors.sepiaInk)
                 }
 
                 // Two blocks
@@ -759,15 +754,15 @@ private struct TimelineAgingVisual: View {
                                 .fill(Color(red: 0.6, green: 0.55, blue: 0.5)
                                     .opacity(0.5 + (step >= 3 ? yearSlider * 0.5 : 0)))
                                 .frame(width: 70, height: 55)
-                                .overlay(RoundedRectangle(cornerRadius: 6).stroke(sepiaInk.opacity(0.3), lineWidth: 1))
+                                .overlay(RoundedRectangle(cornerRadius: 6).stroke(IVMaterialColors.sepiaInk.opacity(0.3), lineWidth: 1))
                         }
                         Text("Roman")
                             .font(.custom("EBGaramond-SemiBold", size: 15))
-                            .foregroundStyle(sepiaInk)
+                            .foregroundStyle(IVMaterialColors.sepiaInk)
                         if step >= 3 {
                             Text(yearSlider > 0.5 ? "STRONGER" : "Pozzolana + lime")
                                 .font(.custom("EBGaramond-Italic", size: 15))
-                                .foregroundStyle(yearSlider > 0.5 ? RenaissanceColors.sageGreen : sepiaInk.opacity(0.5))
+                                .foregroundStyle(yearSlider > 0.5 ? RenaissanceColors.sageGreen : IVMaterialColors.sepiaInk.opacity(0.5))
                         }
                     }
 
@@ -777,7 +772,7 @@ private struct TimelineAgingVisual: View {
                             RoundedRectangle(cornerRadius: 6)
                                 .fill(Color.gray.opacity(max(0.1, 0.5 - (step >= 3 ? yearSlider * 0.4 : 0))))
                                 .frame(width: 70, height: 55)
-                                .overlay(RoundedRectangle(cornerRadius: 6).stroke(sepiaInk.opacity(0.3), lineWidth: 1))
+                                .overlay(RoundedRectangle(cornerRadius: 6).stroke(IVMaterialColors.sepiaInk.opacity(0.3), lineWidth: 1))
 
                             if step >= 3 && yearSlider > 0.05 {
                                 Path { p in
@@ -791,11 +786,11 @@ private struct TimelineAgingVisual: View {
                         }
                         Text("Modern")
                             .font(.custom("EBGaramond-SemiBold", size: 15))
-                            .foregroundStyle(sepiaInk)
+                            .foregroundStyle(IVMaterialColors.sepiaInk)
                         if step >= 3 {
                             Text(yearSlider > 0.5 ? "CRACKING" : "Portland cement")
                                 .font(.custom("EBGaramond-Italic", size: 15))
-                                .foregroundStyle(yearSlider > 0.5 ? Color.red.opacity(0.7) : sepiaInk.opacity(0.5))
+                                .foregroundStyle(yearSlider > 0.5 ? Color.red.opacity(0.7) : IVMaterialColors.sepiaInk.opacity(0.5))
                         }
                     }
                 }
@@ -804,11 +799,11 @@ private struct TimelineAgingVisual: View {
                 if step >= 3 {
                     VStack(spacing: 2) {
                         HStack {
-                            Text("Year 0").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.4))
+                            Text("Year 0").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                             Spacer()
                             DimLabel(text: "\(Int(yearSlider * 2000)) years", fontSize: 15)
                             Spacer()
-                            Text("2,000").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.4))
+                            Text("2,000").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                         }
                         Slider(value: $yearSlider, in: 0...1).tint(color)
                     }
@@ -851,19 +846,19 @@ private struct PourRingsVisual: View {
                         p.move(to: CGPoint(x: cx - domeR - 10, y: baseY))
                         p.addLine(to: CGPoint(x: cx + domeR + 10, y: baseY))
                     }
-                    .stroke(sepiaInk.opacity(0.3), lineWidth: 1.5)
+                    .stroke(IVMaterialColors.sepiaInk.opacity(0.3), lineWidth: 1.5)
 
                     // Dome outline (dashed)
                     Path { p in
                         p.addArc(center: CGPoint(x: cx, y: baseY), radius: domeR,
                                  startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
                     }
-                    .stroke(sepiaInk.opacity(0.1), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                    .stroke(IVMaterialColors.sepiaInk.opacity(0.1), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
 
                     // Height dimension
                     DimLine(from: CGPoint(x: cx + domeR + 12, y: baseY),
                             to: CGPoint(x: cx + domeR + 12, y: baseY - domeR))
-                        .stroke(dimColor, lineWidth: 1)
+                        .stroke(IVMaterialColors.dimColor, lineWidth: 1)
                     DimLabel(text: "21.65m")
                         .position(x: cx + domeR + 30, y: baseY - domeR / 2)
 
@@ -890,7 +885,7 @@ private struct PourRingsVisual: View {
                                          startAngle: .degrees(endDeg), endAngle: .degrees(startDeg), clockwise: false)
                                 p.closeSubpath()
                             }
-                            .stroke(sepiaInk.opacity(0.25), lineWidth: 0.5)
+                            .stroke(IVMaterialColors.sepiaInk.opacity(0.25), lineWidth: 0.5)
                         )
 
                         // Density label
@@ -948,19 +943,19 @@ private struct DoorSwingVisual: View {
                                      radius: archR,
                                      startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
                         }
-                        .stroke(sepiaInk.opacity(0.3), lineWidth: 2)
+                        .stroke(IVMaterialColors.sepiaInk.opacity(0.3), lineWidth: 2)
 
                         // Left door
                         RoundedRectangle(cornerRadius: 2)
                             .fill(Color(red: 0.6, green: 0.45, blue: 0.25).opacity(0.35))
-                            .overlay(RoundedRectangle(cornerRadius: 2).stroke(sepiaInk.opacity(0.5), lineWidth: 1.5))
+                            .overlay(RoundedRectangle(cornerRadius: 2).stroke(IVMaterialColors.sepiaInk.opacity(0.5), lineWidth: 1.5))
                             .frame(width: doorW, height: doorH)
                             .position(x: cx - doorW / 2 - 2, y: floorY - doorH / 2)
 
                         // Right door
                         RoundedRectangle(cornerRadius: 2)
                             .fill(Color(red: 0.6, green: 0.45, blue: 0.25).opacity(0.35))
-                            .overlay(RoundedRectangle(cornerRadius: 2).stroke(sepiaInk.opacity(0.5), lineWidth: 1.5))
+                            .overlay(RoundedRectangle(cornerRadius: 2).stroke(IVMaterialColors.sepiaInk.opacity(0.5), lineWidth: 1.5))
                             .frame(width: doorW, height: doorH)
                             .position(x: cx + doorW / 2 + 2, y: floorY - doorH / 2)
 
@@ -969,12 +964,12 @@ private struct DoorSwingVisual: View {
                             p.move(to: CGPoint(x: cx - doorW * 2, y: floorY))
                             p.addLine(to: CGPoint(x: cx + doorW * 2, y: floorY))
                         }
-                        .stroke(sepiaInk.opacity(0.3), lineWidth: 1.5)
+                        .stroke(IVMaterialColors.sepiaInk.opacity(0.3), lineWidth: 1.5)
 
                         // 7m dimension
                         let dimX = cx + doorW + 16
                         DimLine(from: CGPoint(x: dimX, y: floorY), to: CGPoint(x: dimX, y: floorY - doorH))
-                            .stroke(dimColor, lineWidth: 1)
+                            .stroke(IVMaterialColors.dimColor, lineWidth: 1)
                         DimLabel(text: "7m")
                             .position(x: dimX + 14, y: floorY - doorH / 2)
 
@@ -989,7 +984,7 @@ private struct DoorSwingVisual: View {
                             }
                             Text("Bronze pivots")
                                 .font(.custom("EBGaramond-Italic", size: 15))
-                                .foregroundStyle(sepiaInk.opacity(0.5))
+                                .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                                 .position(x: cx - doorW - 30, y: floorY - doorH / 2)
                         }
                     } else {
@@ -1001,9 +996,9 @@ private struct DoorSwingVisual: View {
 
                         // Wall (top-down)
                         Rectangle()
-                            .fill(sepiaInk.opacity(0.12))
+                            .fill(IVMaterialColors.sepiaInk.opacity(0.12))
                             .frame(width: wallSpan, height: wallThickness)
-                            .overlay(Rectangle().stroke(sepiaInk.opacity(0.3), lineWidth: 1))
+                            .overlay(Rectangle().stroke(IVMaterialColors.sepiaInk.opacity(0.3), lineWidth: 1))
                             .position(x: cx, y: planY)
 
                         // Opening in wall
@@ -1014,7 +1009,7 @@ private struct DoorSwingVisual: View {
 
                         Text("PLAN VIEW (top-down)")
                             .font(.custom("EBGaramond-Italic", size: 15))
-                            .foregroundStyle(sepiaInk.opacity(0.3))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3))
                             .position(x: cx, y: h * 0.08)
 
                         // Left door (rotates from left hinge)
@@ -1056,9 +1051,9 @@ private struct DoorSwingVisual: View {
                         VStack(spacing: 2) {
                             Slider(value: $doorSlider, in: 0...1).tint(color)
                             HStack {
-                                Text("Closed").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.4))
+                                Text("Closed").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                                 Spacer()
-                                Text("Open").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.4))
+                                Text("Open").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                             }
                         }
                         .position(x: cx, y: h * 0.78)
@@ -1101,17 +1096,17 @@ private struct CenteringBuildVisual: View {
                         p.move(to: CGPoint(x: cx - archR - 15, y: baseY))
                         p.addLine(to: CGPoint(x: cx + archR + 15, y: baseY))
                     }
-                    .stroke(sepiaInk.opacity(0.3), lineWidth: 1.5)
+                    .stroke(IVMaterialColors.sepiaInk.opacity(0.3), lineWidth: 1.5)
 
                     // Support walls
                     Rectangle()
-                        .fill(sepiaInk.opacity(0.1))
-                        .overlay(Rectangle().stroke(sepiaInk.opacity(0.3), lineWidth: 1))
+                        .fill(IVMaterialColors.sepiaInk.opacity(0.1))
+                        .overlay(Rectangle().stroke(IVMaterialColors.sepiaInk.opacity(0.3), lineWidth: 1))
                         .frame(width: 12, height: archR * 0.5)
                         .position(x: cx - archR - 6, y: baseY - archR * 0.25)
                     Rectangle()
-                        .fill(sepiaInk.opacity(0.1))
-                        .overlay(Rectangle().stroke(sepiaInk.opacity(0.3), lineWidth: 1))
+                        .fill(IVMaterialColors.sepiaInk.opacity(0.1))
+                        .overlay(Rectangle().stroke(IVMaterialColors.sepiaInk.opacity(0.3), lineWidth: 1))
                         .frame(width: 12, height: archR * 0.5)
                         .position(x: cx + archR + 6, y: baseY - archR * 0.25)
 
@@ -1120,7 +1115,7 @@ private struct CenteringBuildVisual: View {
                         p.addArc(center: CGPoint(x: cx, y: baseY), radius: archR,
                                  startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
                     }
-                    .stroke(sepiaInk.opacity(0.1), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                    .stroke(IVMaterialColors.sepiaInk.opacity(0.1), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
 
                     // Step 2: wood centering
                     if step >= 2 && step < 4 {
@@ -1161,7 +1156,7 @@ private struct CenteringBuildVisual: View {
                                 p.addArc(center: CGPoint(x: cx, y: baseY), radius: archR,
                                          startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
                             }
-                            .stroke(sepiaInk.opacity(0.5), lineWidth: 2)
+                            .stroke(IVMaterialColors.sepiaInk.opacity(0.5), lineWidth: 2)
                         )
 
                         if step == 3 {
@@ -1219,18 +1214,18 @@ private struct ScaffoldClimbVisual: View {
                         p.move(to: CGPoint(x: 5, y: groundY))
                         p.addLine(to: CGPoint(x: w - 5, y: groundY))
                     }
-                    .stroke(sepiaInk.opacity(0.3), lineWidth: 1.5)
+                    .stroke(IVMaterialColors.sepiaInk.opacity(0.3), lineWidth: 1.5)
 
                     // Dome outline
                     Path { p in
                         p.addArc(center: CGPoint(x: cx, y: groundY), radius: domeR,
                                  startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
                     }
-                    .stroke(sepiaInk.opacity(0.15), lineWidth: 2)
+                    .stroke(IVMaterialColors.sepiaInk.opacity(0.15), lineWidth: 2)
 
                     // 43m dimension
                     DimLine(from: CGPoint(x: w - 12, y: groundY), to: CGPoint(x: w - 12, y: groundY - domeR))
-                        .stroke(dimColor, lineWidth: 1)
+                        .stroke(IVMaterialColors.dimColor, lineWidth: 1)
                     DimLabel(text: "43m")
                         .position(x: w - 3, y: groundY - domeR / 2)
 
@@ -1287,13 +1282,13 @@ private struct ScaffoldClimbVisual: View {
                             let hx = cx - domeR * 0.92 * cos(ang)
                             let hy = groundY - domeR * 0.92 * sin(ang)
                             Rectangle()
-                                .fill(sepiaInk.opacity(0.5))
+                                .fill(IVMaterialColors.sepiaInk.opacity(0.5))
                                 .frame(width: 4, height: 4)
                                 .position(x: hx, y: hy)
                         }
                         Text("Putlog holes")
                             .font(.custom("EBGaramond-Italic", size: 15))
-                            .foregroundStyle(sepiaInk.opacity(0.5))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             .position(x: cx, y: groundY - domeR - 6)
                     }
                 }
@@ -1328,7 +1323,7 @@ private struct MixRecipeVisual: View {
                     // Formula — big and prominent
                     Text("1 Lime + 3 Pozzolana = Roman Concrete")
                         .font(.custom("EBGaramond-Bold", size: 17))
-                        .foregroundStyle(isDone ? RenaissanceColors.sageGreen : sepiaInk)
+                        .foregroundStyle(isDone ? RenaissanceColors.sageGreen : IVMaterialColors.sepiaInk)
                         .multilineTextAlignment(.center)
                         .padding(.top, 12)
 
@@ -1337,19 +1332,19 @@ private struct MixRecipeVisual: View {
                     // Ratio bar — full width, proportional
                     HStack(spacing: 4) {
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(scoopsAdded >= 1 ? limeC : sepiaInk.opacity(0.06))
-                            .overlay(RoundedRectangle(cornerRadius: 4).stroke(sepiaInk.opacity(0.3), lineWidth: 1))
+                            .fill(scoopsAdded >= 1 ? limeC : IVMaterialColors.sepiaInk.opacity(0.06))
+                            .overlay(RoundedRectangle(cornerRadius: 4).stroke(IVMaterialColors.sepiaInk.opacity(0.3), lineWidth: 1))
                             .frame(height: 24)
                             .overlay(
                                 Text(scoopsAdded >= 1 ? "Lime" : "")
                                     .font(.custom("EBGaramond-SemiBold", size: 15))
-                                    .foregroundStyle(sepiaInk.opacity(0.6))
+                                    .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
                             )
 
                         ForEach(0..<3, id: \.self) { i in
                             RoundedRectangle(cornerRadius: 4)
-                                .fill(scoopsAdded >= i + 2 ? pozzC.opacity(0.45) : sepiaInk.opacity(0.06))
-                                .overlay(RoundedRectangle(cornerRadius: 4).stroke(sepiaInk.opacity(0.3), lineWidth: 1))
+                                .fill(scoopsAdded >= i + 2 ? pozzC.opacity(0.45) : IVMaterialColors.sepiaInk.opacity(0.06))
+                                .overlay(RoundedRectangle(cornerRadius: 4).stroke(IVMaterialColors.sepiaInk.opacity(0.3), lineWidth: 1))
                                 .frame(height: 24)
                                 .overlay(
                                     Text(scoopsAdded >= i + 2 ? "Pozz" : "")
@@ -1383,13 +1378,13 @@ private struct MixRecipeVisual: View {
                                     .frame(height: h * 0.22)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 8)
-                                            .stroke(isLimeTurn ? color : sepiaInk.opacity(0.2), lineWidth: isLimeTurn ? 3 : 1)
+                                            .stroke(isLimeTurn ? color : IVMaterialColors.sepiaInk.opacity(0.2), lineWidth: isLimeTurn ? 3 : 1)
                                     )
                                     .overlay(
                                         VStack(spacing: 4) {
                                             Text("CaO")
                                                 .font(.custom("EBGaramond-Bold", size: 18))
-                                                .foregroundStyle(sepiaInk)
+                                                .foregroundStyle(IVMaterialColors.sepiaInk)
                                             if isLimeTurn {
                                                 Text("TAP")
                                                     .font(.custom("EBGaramond-SemiBold", size: 15))
@@ -1399,7 +1394,7 @@ private struct MixRecipeVisual: View {
                                     )
                                 Text("Lime — 1 part")
                                     .font(.custom("EBGaramond-SemiBold", size: 15))
-                                    .foregroundStyle(sepiaInk)
+                                    .foregroundStyle(IVMaterialColors.sepiaInk)
                             }
                         }
                         .buttonStyle(.plain)
@@ -1418,13 +1413,13 @@ private struct MixRecipeVisual: View {
                                     .frame(height: h * 0.22)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 8)
-                                            .stroke(isPozzTurn ? color : sepiaInk.opacity(0.2), lineWidth: isPozzTurn ? 3 : 1)
+                                            .stroke(isPozzTurn ? color : IVMaterialColors.sepiaInk.opacity(0.2), lineWidth: isPozzTurn ? 3 : 1)
                                     )
                                     .overlay(
                                         VStack(spacing: 4) {
                                             Text("SiO₂")
                                                 .font(.custom("EBGaramond-Bold", size: 18))
-                                                .foregroundStyle(sepiaInk)
+                                                .foregroundStyle(IVMaterialColors.sepiaInk)
                                             if isPozzTurn {
                                                 Text("TAP ×\(4 - scoopsAdded)")
                                                     .font(.custom("EBGaramond-SemiBold", size: 15))
@@ -1434,7 +1429,7 @@ private struct MixRecipeVisual: View {
                                     )
                                 Text("Pozzolana — 3 parts")
                                     .font(.custom("EBGaramond-SemiBold", size: 15))
-                                    .foregroundStyle(sepiaInk)
+                                    .foregroundStyle(IVMaterialColors.sepiaInk)
                             }
                         }
                         .buttonStyle(.plain)
@@ -1453,7 +1448,7 @@ private struct MixRecipeVisual: View {
                     } else {
                         Text(isLimeTurn ? "Tap lime to add 1 part binder" : "Tap pozzolana to add volcanic ash (\(scoopsAdded - 1)/3)")
                             .font(.custom("EBGaramond-Italic", size: 15))
-                            .foregroundStyle(sepiaInk.opacity(0.5))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                     }
 
                     Spacer().frame(height: 8)
@@ -1506,7 +1501,7 @@ private struct CalcinationSliderVisual: View {
                     HStack(spacing: 10) {
                         Text("CaCO₃")
                             .font(.custom("EBGaramond-Bold", size: 22))
-                            .foregroundStyle(sepiaInk)
+                            .foregroundStyle(IVMaterialColors.sepiaInk)
 
                         Image(systemName: "arrow.right")
                             .font(.system(size: 16, weight: .bold))
@@ -1518,7 +1513,7 @@ private struct CalcinationSliderVisual: View {
 
                         Text("+")
                             .font(.custom("EBGaramond-Bold", size: 20))
-                            .foregroundStyle(sepiaInk.opacity(plusOpacity))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(plusOpacity))
 
                         Text("CO₂↑")
                             .font(.custom("EBGaramond-Bold", size: 22))
@@ -1541,7 +1536,7 @@ private struct CalcinationSliderVisual: View {
                                 ))
                                 .frame(width: isCalcining ? h * 0.28 : h * 0.38,
                                        height: isCalcining ? h * 0.28 : h * 0.38)
-                                .overlay(RoundedRectangle(cornerRadius: 8).stroke(sepiaInk.opacity(0.4), lineWidth: 1.5))
+                                .overlay(RoundedRectangle(cornerRadius: 8).stroke(IVMaterialColors.sepiaInk.opacity(0.4), lineWidth: 1.5))
                                 .animation(.spring(response: 0.5), value: isCalcining)
 
                             DimLabel(text: isCalcining ? "56g (CaO)" : "100g (CaCO₃)", fontSize: 15)
@@ -1553,7 +1548,7 @@ private struct CalcinationSliderVisual: View {
                                 ZStack {
                                     ForEach(0..<8, id: \.self) { i in
                                         Circle()
-                                            .fill(sepiaInk.opacity(0.2))
+                                            .fill(IVMaterialColors.sepiaInk.opacity(0.2))
                                             .frame(width: CGFloat(5 + i % 3 * 3))
                                             .offset(
                                                 x: CGFloat([-12, 8, -5, 14, -9, 5, -3, 10][i]),
@@ -1577,7 +1572,7 @@ private struct CalcinationSliderVisual: View {
                     // Temperature slider — full width
                     VStack(spacing: 3) {
                         HStack {
-                            Text("0°C").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.4))
+                            Text("0°C").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                             Spacer()
                             DimLabel(text: "\(tempC)°C", fontSize: 15)
                             if isCalcining {
@@ -1586,14 +1581,14 @@ private struct CalcinationSliderVisual: View {
                                     .font(.system(size: 13))
                             }
                             Spacer()
-                            Text("1000°C").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.4))
+                            Text("1000°C").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                         }
                         Slider(value: $temperature, in: 0...1)
                             .tint(isCalcining ? RenaissanceColors.furnaceOrange : color)
 
                         Text(isCalcining ? "CaCO₃(100) → CaO(56) + CO₂(44) — mass conserved" : "Drag to 900°C to trigger the reaction")
                             .font(.custom("EBGaramond-Italic", size: 15))
-                            .foregroundStyle(sepiaInk.opacity(0.5))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                     }
                 }
                 .padding(12)
@@ -1668,7 +1663,7 @@ private struct TessellationPuzzleVisual: View {
                                         }
                                     } else {
                                         RoundedRectangle(cornerRadius: 3)
-                                            .stroke(sepiaInk.opacity(0.1), style: StrokeStyle(lineWidth: 1, dash: [3, 2]))
+                                            .stroke(IVMaterialColors.sepiaInk.opacity(0.1), style: StrokeStyle(lineWidth: 1, dash: [3, 2]))
                                     }
                                 }
                                 .frame(width: 44, height: 44)
@@ -1683,15 +1678,15 @@ private struct TessellationPuzzleVisual: View {
                         let visible = step >= (i == 0 ? 2 : 3)
                         VStack(spacing: 1) {
                             Circle()
-                                .fill(visible ? stones[i].c.opacity(0.5) : sepiaInk.opacity(0.1))
+                                .fill(visible ? stones[i].c.opacity(0.5) : IVMaterialColors.sepiaInk.opacity(0.1))
                                 .frame(width: 8, height: 8)
                             Text(stones[i].name)
                                 .font(.custom("EBGaramond-Regular", size: 15))
-                                .foregroundStyle(visible ? sepiaInk : sepiaInk.opacity(0.3))
+                                .foregroundStyle(visible ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                             if visible {
                                 Text(stones[i].origin)
                                     .font(.custom("EBGaramond-Italic", size: 15))
-                                    .foregroundStyle(dimColor)
+                                    .foregroundStyle(IVMaterialColors.dimColor)
                             }
                         }
                     }

@@ -425,7 +425,7 @@ struct NotebookView: View {
                             .foregroundStyle(.white)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
-                            .background(Capsule().fill(RenaissanceColors.ochre))
+                            .parchmentCapsule(color: RenaissanceColors.ochre)
                         }
                         .buttonStyle(.plain)
                     }

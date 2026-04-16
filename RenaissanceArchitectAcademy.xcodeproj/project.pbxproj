@@ -125,6 +125,7 @@
 		0B2 /* RiverMiniGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B2 /* RiverMiniGameView.swift */; };
 		0B3 /* ClayPitMiniGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B3 /* ClayPitMiniGameView.swift */; };
 		0B4 /* FarmMiniGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4 /* FarmMiniGameView.swift */; };
+		0B5 /* MiniGameSharedComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5 /* MiniGameSharedComponents.swift */; };
 		0C0 /* ClaudeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0 /* ClaudeService.swift */; };
 		0C1 /* BirdChatOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C1 /* BirdChatOverlay.swift */; };
 		0C2 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C2 /* ChatMessage.swift */; };
@@ -146,8 +147,6 @@
 		0E8 /* DiscoveryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E8 /* DiscoveryCard.swift */; };
 		0E9 /* DiscoveryCardOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E9 /* DiscoveryCardOverlay.swift */; };
 		0EA /* TerrainBlurHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EA /* TerrainBlurHelper.swift */; };
-		0WF /* WaterFlow.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 1WF /* WaterFlow.fsh */; };
-		0RS /* RiverShimmer.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 1RS /* RiverShimmer.fsh */; };
 		0EB /* CardVisualView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EB /* CardVisualView.swift */; };
 		0F0 /* HapticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F0 /* HapticsManager.swift */; };
 		0F1 /* PantheonInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F1 /* PantheonInteractiveVisuals.swift */; };
@@ -369,6 +368,7 @@
 		1B2 /* RiverMiniGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RiverMiniGameView.swift; sourceTree = "<group>"; };
 		1B3 /* ClayPitMiniGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClayPitMiniGameView.swift; sourceTree = "<group>"; };
 		1B4 /* FarmMiniGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FarmMiniGameView.swift; sourceTree = "<group>"; };
+		1B5 /* MiniGameSharedComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniGameSharedComponents.swift; sourceTree = "<group>"; };
 		1C0 /* ClaudeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeService.swift; sourceTree = "<group>"; };
 		1C1 /* BirdChatOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdChatOverlay.swift; sourceTree = "<group>"; };
 		1C2 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
@@ -390,8 +390,6 @@
 		1E8 /* DiscoveryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoveryCard.swift; sourceTree = "<group>"; };
 		1E9 /* DiscoveryCardOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoveryCardOverlay.swift; sourceTree = "<group>"; };
 		1EA /* TerrainBlurHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TerrainBlurHelper.swift; path = Views/SpriteKit/TerrainBlurHelper.swift; sourceTree = "<group>"; };
-		1WF /* WaterFlow.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = WaterFlow.fsh; path = Views/SpriteKit/WaterFlow.fsh; sourceTree = "<group>"; };
-		1RS /* RiverShimmer.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = RiverShimmer.fsh; path = Views/SpriteKit/RiverShimmer.fsh; sourceTree = "<group>"; };
 		1EB /* CardVisualView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardVisualView.swift; sourceTree = "<group>"; };
 		1F0 /* HapticsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticsManager.swift; sourceTree = "<group>"; };
 		1F1 /* PantheonInteractiveVisuals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PantheonInteractiveVisuals.swift; path = RenaissanceArchitectAcademy/Views/PantheonInteractiveVisuals.swift; sourceTree = SOURCE_ROOT; };
@@ -531,8 +529,6 @@
 				544299992F3646ED00F92073 /* CityScene.swift */,
 				544299BF2F3A000100F92073 /* SceneEditorMode.swift */,
 				1EA /* TerrainBlurHelper.swift */,
-				1WF /* WaterFlow.fsh */,
-				1RS /* RiverShimmer.fsh */,
 				5475D2F92F319000003AA131 /* Assets.xcassets */,
 				54477B172F313D06007D8C64 /* Info.plist */,
 				54477B162F313B22007D8C64 /* Fonts */,
@@ -766,6 +762,7 @@
 				1B2 /* RiverMiniGameView.swift */,
 				1B3 /* ClayPitMiniGameView.swift */,
 				1B4 /* FarmMiniGameView.swift */,
+				1B5 /* MiniGameSharedComponents.swift */,
 			);
 			path = StationMiniGames;
 			sourceTree = "<group>";
@@ -918,8 +915,6 @@
 				F010 /* EBGaramond-ExtraBold.ttf in Resources */,
 				5475D2EF2F3146CC003AA131 /* building_complete.mp3 in Resources */,
 				045 /* footstep.wav in Resources */,
-				0WF /* WaterFlow.fsh in Resources */,
-				0RS /* RiverShimmer.fsh in Resources */,
 				543AD36B2F60C199001895ED /* card_flip.mp3 in Resources */,
 				084 /* correct_chime.mp3 in Resources */,
 				085 /* wrong_buzz.mp3 in Resources */,
@@ -1128,6 +1123,7 @@
 				0B2 /* RiverMiniGameView.swift in Sources */,
 				0B3 /* ClayPitMiniGameView.swift in Sources */,
 				0B4 /* FarmMiniGameView.swift in Sources */,
+				0B5 /* MiniGameSharedComponents.swift in Sources */,
 				0C0 /* ClaudeService.swift in Sources */,
 				0C1 /* BirdChatOverlay.swift in Sources */,
 				0C2 /* ChatMessage.swift in Sources */,

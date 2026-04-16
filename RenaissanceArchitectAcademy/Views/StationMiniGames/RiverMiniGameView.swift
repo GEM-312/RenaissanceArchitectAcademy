@@ -168,7 +168,7 @@ struct RiverMiniGameView: View {
 
                 Text(difficulty)
                     .font(RenaissanceFont.bodySemibold)
-                    .foregroundStyle(difficulty == "Easy" ? RenaissanceColors.sageGreen : RenaissanceColors.ochre)
+                    .foregroundStyle(miniGameDifficultyColor(difficulty))
 
                 Image(systemName: "chevron.right")
                     .font(.body)
@@ -186,164 +186,41 @@ struct RiverMiniGameView: View {
     // MARK: - Phase 2a: Water Intro
 
     private var introWaterCard: some View {
-        VStack(spacing: 20) {
-            HStack(spacing: 12) {
-                Image(systemName: "drop.fill")
-                    .font(.system(size: 24))
-                    .foregroundStyle(RenaissanceColors.renaissanceBlue)
-                    .frame(width: 44, height: 44)
-                    .background(
-                        RoundedRectangle(cornerRadius: CornerRadius.sm)
-                            .fill(RenaissanceColors.renaissanceBlue.opacity(0.1))
-                    )
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Le Tubature")
-                        .font(.custom("Cinzel-Bold", size: 22))
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
-                    Text("Connect the Water Pipes")
-                        .font(RenaissanceFont.dialogSubtitle)
-                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
-                }
-            }
-
-            Text("Connect the pipes to fill your bucket at the drain end. Roman engineers built pipe networks that moved water across entire cities using nothing but gravity. Lead pipes (fistulae), terracotta channels, and stone aqueducts — all connected with precision joints. One misaligned section and the whole system leaked.")
-                .font(.custom("EBGaramond-Regular", size: 16))
-                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
-                .fixedSize(horizontal: false, vertical: true)
-
-            VStack(spacing: 10) {
-                ruleRow(icon: "arrow.triangle.2.circlepath", text: "Tap pipes to rotate them 90°", color: RenaissanceColors.renaissanceBlue)
-                ruleRow(icon: "drop.fill", text: "Connect source (top-left) to drain (bottom-right)", color: RenaissanceColors.sageGreen)
-                ruleRow(icon: "star.fill", text: "Fewer moves = bonus florins", color: RenaissanceColors.goldSuccess)
-            }
-
-            Button {
-                startWaterGame()
-            } label: {
-                HStack(spacing: 8) {
-                    Image(systemName: "drop.fill")
-                        .font(.caption)
-                    Text("Begin Plumbing")
-                        .font(.custom("EBGaramond-SemiBold", size: 16))
-                }
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, Spacing.sm)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(RenaissanceColors.renaissanceBlue)
-                )
-            }
-
-            Button("Back") {
-                withAnimation { phase = .choose }
-            }
-            .font(RenaissanceFont.bodySmall)
-            .foregroundStyle(RenaissanceColors.sepiaInk)
+        MiniGameIntroCard(
+            icon: "drop.fill",
+            iconColor: RenaissanceColors.renaissanceBlue,
+            title: "Le Tubature",
+            subtitle: "Connect the Water Pipes",
+            bodyText: "Connect the pipes to fill your bucket at the drain end. Roman engineers built pipe networks that moved water across entire cities using nothing but gravity. Lead pipes (fistulae), terracotta channels, and stone aqueducts — all connected with precision joints. One misaligned section and the whole system leaked.",
+            buttonLabel: "Begin Plumbing",
+            buttonColor: RenaissanceColors.renaissanceBlue,
+            startAction: { startWaterGame() },
+            backAction: { withAnimation { phase = .choose } }
+        ) {
+            MiniGameRuleRow(icon: "arrow.triangle.2.circlepath", text: "Tap pipes to rotate them 90°", color: RenaissanceColors.renaissanceBlue)
+            MiniGameRuleRow(icon: "drop.fill", text: "Connect source (top-left) to drain (bottom-right)", color: RenaissanceColors.sageGreen)
+            MiniGameRuleRow(icon: "star.fill", text: "Fewer moves = bonus florins", color: RenaissanceColors.goldSuccess)
         }
-        .padding(Spacing.xl)
-        .adaptiveWidth(400)
-        .background(
-            RoundedRectangle(cornerRadius: CornerRadius.lg)
-                .fill(RenaissanceColors.parchment)
-        )
-        .borderWorkshop()
     }
 
     // MARK: - Phase 2b: Sand Intro
 
     private var introSandCard: some View {
-        VStack(spacing: 20) {
-            HStack(spacing: 12) {
-                Image(systemName: "circle.grid.3x3.fill")
-                    .font(.system(size: 24))
-                    .foregroundStyle(RenaissanceColors.ochre)
-                    .frame(width: 44, height: 44)
-                    .background(
-                        RoundedRectangle(cornerRadius: CornerRadius.sm)
-                            .fill(RenaissanceColors.ochre.opacity(0.1))
-                    )
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Il Setaccio")
-                        .font(.custom("Cinzel-Bold", size: 22))
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
-                    Text("Sift the Riverbed Sand")
-                        .font(RenaissanceFont.dialogSubtitle)
-                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
-                }
-            }
-
-            Text("Sift sand into your bucket. River sand isn't just dirt — it's quartz crystals (SiO₂), ground by millennia of water flow. Roman builders needed clean sand for concrete. The trick: sieve out the shells, pebbles, and organic debris. Only pure silica grains make strong mortar.")
-                .font(.custom("EBGaramond-Regular", size: 16))
-                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
-                .fixedSize(horizontal: false, vertical: true)
-
-            VStack(spacing: 10) {
-                ruleRow(icon: "hand.tap.fill", text: "Tap sand grains (golden) to collect them", color: RenaissanceColors.ochre)
-                ruleRow(icon: "xmark.circle", text: "Avoid rocks and shells — \(maxSieveMisses) mistakes allowed", color: RenaissanceColors.errorRed)
-                ruleRow(icon: "star.fill", text: "Collect \(sandNeeded) grains to fill your bucket", color: RenaissanceColors.goldSuccess)
-            }
-
-            Button {
-                startSandGame()
-            } label: {
-                HStack(spacing: 8) {
-                    Image(systemName: "circle.grid.3x3.fill")
-                        .font(.caption)
-                    Text("Begin Sifting")
-                        .font(.custom("EBGaramond-SemiBold", size: 16))
-                }
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, Spacing.sm)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(RenaissanceColors.ochre)
-                )
-            }
-
-            Button("Back") {
-                withAnimation { phase = .choose }
-            }
-            .font(RenaissanceFont.bodySmall)
-            .foregroundStyle(RenaissanceColors.sepiaInk)
+        MiniGameIntroCard(
+            icon: "circle.grid.3x3.fill",
+            iconColor: RenaissanceColors.ochre,
+            title: "Il Setaccio",
+            subtitle: "Sift the Riverbed Sand",
+            bodyText: "Sift sand into your bucket. River sand isn't just dirt — it's quartz crystals (SiO₂), ground by millennia of water flow. Roman builders needed clean sand for concrete. The trick: sieve out the shells, pebbles, and organic debris. Only pure silica grains make strong mortar.",
+            buttonLabel: "Begin Sifting",
+            buttonColor: RenaissanceColors.ochre,
+            startAction: { startSandGame() },
+            backAction: { withAnimation { phase = .choose } }
+        ) {
+            MiniGameRuleRow(icon: "hand.tap.fill", text: "Tap sand grains (golden) to collect them", color: RenaissanceColors.ochre)
+            MiniGameRuleRow(icon: "xmark.circle", text: "Avoid rocks and shells — \(maxSieveMisses) mistakes allowed", color: RenaissanceColors.errorRed)
+            MiniGameRuleRow(icon: "star.fill", text: "Collect \(sandNeeded) grains to fill your bucket", color: RenaissanceColors.goldSuccess)
         }
-        .padding(Spacing.xl)
-        .adaptiveWidth(400)
-        .background(
-            RoundedRectangle(cornerRadius: CornerRadius.lg)
-                .fill(RenaissanceColors.parchment)
-        )
-        .borderWorkshop()
-    }
-
-    // MARK: - Shared UI Helpers
-
-    private func ruleRow(icon: String, text: String, color: Color) -> some View {
-        HStack(spacing: 12) {
-            Image(systemName: icon)
-                .font(.body)
-                .foregroundStyle(color)
-                .frame(width: 32, height: 32)
-                .background(
-                    RoundedRectangle(cornerRadius: CornerRadius.sm)
-                        .fill(color.opacity(0.1))
-                )
-
-            Text(text)
-                .font(.custom("EBGaramond-Regular", size: 14))
-                .foregroundStyle(RenaissanceColors.sepiaInk)
-
-            Spacer()
-        }
-        .padding(Spacing.sm)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(RenaissanceColors.parchment.opacity(0.6))
-                .borderWorkshop(radius: 10)
-        )
     }
 
     // ═══════════════════════════════════════════════════════════════

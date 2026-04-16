@@ -450,7 +450,7 @@ struct ForestMapView: View {
                                     .foregroundStyle(.white)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 7)
-                                    .background(card.color, in: RoundedRectangle(cornerRadius: 8))
+                                    .parchmentButton(color: card.color, radius: 8)
                                 }
                             }
                             .padding(Spacing.md)

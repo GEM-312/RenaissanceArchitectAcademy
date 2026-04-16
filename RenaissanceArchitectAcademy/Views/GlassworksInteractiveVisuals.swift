@@ -50,18 +50,13 @@ struct GlassworksInteractiveVisuals {
     }
 }
 
-// MARK: - Local Aliases
+// MARK: - Local Colors
 
-private let gridColor = ivGridColor
-private let sepiaInk = ivSepiaInk
-private let waterBlue = ivWaterBlue
-private let dimColor = ivDimColor
 private let furnaceOrange = Color(red: 0.92, green: 0.55, blue: 0.18)
 private let glassGreen = Color(red: 0.45, green: 0.68, blue: 0.48)
 private let moltenYellow = Color(red: 0.95, green: 0.82, blue: 0.30)
 private let crystalClear = Color(red: 0.80, green: 0.88, blue: 0.92)
 private let bronzePipe = Color(red: 0.72, green: 0.55, blue: 0.35)
-private let cherryRed = Color(red: 0.80, green: 0.25, blue: 0.20)
 
 private typealias TeachingContainer = IVTeachingContainer
 private typealias DimLabel = IVDimLabel
@@ -86,7 +81,7 @@ private struct MuranoIslandVisual: View {
 
                 // Water background
                 let water = CGRect(x: 10, y: 10, width: size.width - 20, height: size.height * 0.7)
-                ctx.fill(Path(roundedRect: water, cornerRadius: 6), with: .color(waterBlue.opacity(0.08)))
+                ctx.fill(Path(roundedRect: water, cornerRadius: 6), with: .color(IVMaterialColors.waterBlue.opacity(0.08)))
 
                 // Island shape
                 let islandR: CGFloat = min(size.width, size.height) * 0.25
@@ -94,19 +89,19 @@ private struct MuranoIslandVisual: View {
                 island.addEllipse(in: CGRect(x: cx - islandR * 1.2, y: cy - islandR * 0.7,
                                              width: islandR * 2.4, height: islandR * 1.4))
                 ctx.fill(island, with: .color(Color(red: 0.82, green: 0.76, blue: 0.65).opacity(0.4)))
-                ctx.stroke(island, with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                ctx.stroke(island, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
 
                 // Furnace on island
                 if step >= 1 {
                     let fRect = CGRect(x: cx - 10, y: cy - 12, width: 20, height: 18)
                     ctx.fill(Path(roundedRect: fRect, cornerRadius: 2), with: .color(furnaceOrange.opacity(0.4)))
-                    ctx.stroke(Path(roundedRect: fRect, cornerRadius: 2), with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                    ctx.stroke(Path(roundedRect: fRect, cornerRadius: 2), with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
                     // Smoke
                     var smoke = Path()
                     smoke.move(to: CGPoint(x: cx, y: cy - 12))
                     smoke.addQuadCurve(to: CGPoint(x: cx + 5, y: cy - 30),
                                        control: CGPoint(x: cx - 8, y: cy - 20))
-                    ctx.stroke(smoke, with: .color(sepiaInk.opacity(0.15)), lineWidth: 1)
+                    ctx.stroke(smoke, with: .color(IVMaterialColors.sepiaInk.opacity(0.15)), lineWidth: 1)
                 }
 
                 // Step 2: lock symbol
@@ -121,7 +116,7 @@ private struct MuranoIslandVisual: View {
                             wave.addQuadCurve(to: CGPoint(x: wx + islandR * 0.25, y: wy),
                                               control: CGPoint(x: wx + islandR * 0.125, y: wy - 3))
                         }
-                        ctx.stroke(wave, with: .color(waterBlue.opacity(0.2)), lineWidth: 0.5)
+                        ctx.stroke(wave, with: .color(IVMaterialColors.waterBlue.opacity(0.2)), lineWidth: 0.5)
                     }
                 }
 
@@ -162,7 +157,7 @@ private struct FurnaceColorVisual: View {
 
     private let tempColors: [(String, Color, String)] = [
         ("600°C", Color(red: 0.6, green: 0.15, blue: 0.1), "Dull Red"),
-        ("800°C", cherryRed, "Cherry"),
+        ("800°C", IVMaterialColors.cherryRed, "Cherry"),
         ("1,000°C", Color(red: 0.95, green: 0.55, blue: 0.15), "Orange"),
         ("1,100°C", Color(red: 0.98, green: 0.90, blue: 0.55), "Yellow-White"),
     ]
@@ -185,11 +180,11 @@ private struct FurnaceColorVisual: View {
 
                         Text(temp.0)
                             .font(.custom("EBGaramond-Bold", size: 15))
-                            .foregroundStyle(active ? dimColor : dimColor.opacity(0.3))
+                            .foregroundStyle(active ? IVMaterialColors.dimColor : IVMaterialColors.dimColor.opacity(0.3))
 
                         Text(temp.2)
                             .font(.custom("EBGaramond-Regular", size: 15))
-                            .foregroundStyle(active ? sepiaInk : sepiaInk.opacity(0.3))
+                            .foregroundStyle(active ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                     }
                     .frame(maxWidth: .infinity)
                 }
@@ -221,7 +216,7 @@ private struct ThreeChamberVisual: View {
                 let chambers: [(String, Color, CGFloat)] = [
                     ("Lehr (cooling)", crystalClear.opacity(0.3), topY),
                     ("Crucible (1,100°C)", furnaceOrange.opacity(0.4), topY + chamberH + gap),
-                    ("Firebox (fire)", cherryRed.opacity(0.3), topY + (chamberH + gap) * 2),
+                    ("Firebox (fire)", IVMaterialColors.cherryRed.opacity(0.3), topY + (chamberH + gap) * 2),
                 ]
 
                 for (i, (label, fillColor, y)) in chambers.enumerated() {
@@ -232,7 +227,7 @@ private struct ThreeChamberVisual: View {
                     ctx.fill(Path(roundedRect: rect, cornerRadius: 4),
                              with: .color(active ? fillColor : Color.gray.opacity(0.05)))
                     ctx.stroke(Path(roundedRect: rect, cornerRadius: 4),
-                               with: .color(active ? sepiaInk.opacity(0.4) : sepiaInk.opacity(0.1)), lineWidth: 1)
+                               with: .color(active ? IVMaterialColors.sepiaInk.opacity(0.4) : IVMaterialColors.sepiaInk.opacity(0.1)), lineWidth: 1)
                 }
 
                 // Heat rise arrows (step 3)
@@ -285,7 +280,7 @@ private struct CristalloChemVisual: View {
                         )
                     Text("Raw")
                         .font(.custom("Cinzel-Bold", size: 16))
-                        .foregroundStyle(step >= 1 ? sepiaInk : sepiaInk.opacity(0.3))
+                        .foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                     Text("Fe → green")
                         .font(.custom("EBGaramond-Regular", size: 15))
                         .foregroundStyle(step >= 1 ? glassGreen : glassGreen.opacity(0.3))
@@ -296,7 +291,7 @@ private struct CristalloChemVisual: View {
                     VStack(spacing: 2) {
                         Text("+")
                             .font(.custom("Cinzel-Bold", size: 16))
-                            .foregroundStyle(sepiaInk.opacity(0.4))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                         Text("MnO₂")
                             .font(.custom("EBGaramond-Bold", size: 15))
                             .foregroundStyle(Color.purple.opacity(0.6))
@@ -307,7 +302,7 @@ private struct CristalloChemVisual: View {
                 if step >= 2 {
                     Image(systemName: "arrow.right")
                         .font(.system(size: 13))
-                        .foregroundStyle(sepiaInk.opacity(0.3))
+                        .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3))
                 }
 
                 // Clear glass (Cristallo)
@@ -326,7 +321,7 @@ private struct CristalloChemVisual: View {
                             .foregroundStyle(color)
                         Text("Clear")
                             .font(.custom("EBGaramond-Regular", size: 15))
-                            .foregroundStyle(sepiaInk)
+                            .foregroundStyle(IVMaterialColors.sepiaInk)
                     }
                 }
             }
@@ -359,7 +354,7 @@ private struct AnnealingCurveVisual: View {
                 axes.move(to: CGPoint(x: padL, y: padT))
                 axes.addLine(to: CGPoint(x: padL, y: padT + graphH))
                 axes.addLine(to: CGPoint(x: padL + graphW, y: padT + graphH))
-                ctx.stroke(axes, with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                ctx.stroke(axes, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
 
                 // Gradual cooling curve
                 let progressT: CGFloat = step == 1 ? 0.1 : step == 2 ? 0.5 : 1.0
@@ -386,7 +381,7 @@ private struct AnnealingCurveVisual: View {
                     var fast = Path()
                     fast.move(to: CGPoint(x: padL, y: padT))
                     fast.addLine(to: CGPoint(x: padL + graphW * 0.15, y: padT + graphH))
-                    ctx.stroke(fast, with: .color(cherryRed.opacity(0.4)),
+                    ctx.stroke(fast, with: .color(IVMaterialColors.cherryRed.opacity(0.4)),
                                style: StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
                 }
 
@@ -425,15 +420,15 @@ private struct FluxMeltingVisual: View {
                                 .fill(Color.gray.opacity(0.1))
                                 .frame(width: 35, height: 90)
                             RoundedRectangle(cornerRadius: 4)
-                                .fill(step >= 1 ? cherryRed.opacity(0.6) : Color.gray.opacity(0.1))
+                                .fill(step >= 1 ? IVMaterialColors.cherryRed.opacity(0.6) : Color.gray.opacity(0.1))
                                 .frame(width: 35, height: 90)
                         }
                         Text("1,700°C")
                             .font(.custom("EBGaramond-Bold", size: 15))
-                            .foregroundStyle(step >= 1 ? cherryRed : cherryRed.opacity(0.3))
+                            .foregroundStyle(step >= 1 ? IVMaterialColors.cherryRed : IVMaterialColors.cherryRed.opacity(0.3))
                         Text("SiO₂")
                             .font(.custom("Cinzel-Bold", size: 16))
-                            .foregroundStyle(step >= 1 ? sepiaInk : sepiaInk.opacity(0.3))
+                            .foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                     }
 
                     // With flux
@@ -441,17 +436,17 @@ private struct FluxMeltingVisual: View {
                         VStack(spacing: 2) {
                             Text("+10%")
                                 .font(.custom("EBGaramond-Bold", size: 15))
-                                .foregroundStyle(dimColor)
+                                .foregroundStyle(IVMaterialColors.dimColor)
                             Text("CaCO₃")
                                 .font(.custom("EBGaramond-Regular", size: 15))
-                                .foregroundStyle(dimColor)
+                                .foregroundStyle(IVMaterialColors.dimColor)
                         }
                     }
 
                     if step >= 3 {
                         Image(systemName: "arrow.right")
                             .font(.system(size: 13))
-                            .foregroundStyle(sepiaInk.opacity(0.3))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3))
 
                         VStack(spacing: 4) {
                             ZStack(alignment: .bottom) {
@@ -506,7 +501,7 @@ private struct CrucibleVisual: View {
 
                 let clayColor = Color(red: 0.72, green: 0.55, blue: 0.38)
                 ctx.fill(pot, with: .color(step >= 1 ? clayColor.opacity(0.5) : clayColor.opacity(0.15)))
-                ctx.stroke(pot, with: .color(sepiaInk.opacity(0.4)), lineWidth: 1.5)
+                ctx.stroke(pot, with: .color(IVMaterialColors.sepiaInk.opacity(0.4)), lineWidth: 1.5)
 
                 // Step 2: coiling lines
                 if step >= 2 {
@@ -516,7 +511,7 @@ private struct CrucibleVisual: View {
                         var coil = Path()
                         coil.move(to: CGPoint(x: cx - halfW, y: y))
                         coil.addLine(to: CGPoint(x: cx + halfW, y: y))
-                        ctx.stroke(coil, with: .color(sepiaInk.opacity(0.15)), lineWidth: 0.5)
+                        ctx.stroke(coil, with: .color(IVMaterialColors.sepiaInk.opacity(0.15)), lineWidth: 0.5)
                     }
                 }
 
@@ -556,13 +551,13 @@ private struct BlowpipeVisual: View {
                 // Pipe
                 let pipeRect = CGRect(x: startX, y: pipeY - 3, width: endX - startX, height: 6)
                 ctx.fill(Path(pipeRect), with: .color(bronzePipe.opacity(step >= 1 ? 0.6 : 0.2)))
-                ctx.stroke(Path(pipeRect), with: .color(sepiaInk.opacity(0.3)), lineWidth: 0.5)
+                ctx.stroke(Path(pipeRect), with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 0.5)
 
                 // Dimension line
                 if step >= 1 {
                     let dimY = pipeY + 20
                     ctx.stroke(IVDimLine(from: CGPoint(x: startX, y: dimY), to: CGPoint(x: endX, y: dimY)).path(in: .zero),
-                               with: .color(dimColor), lineWidth: 0.5)
+                               with: .color(IVMaterialColors.dimColor), lineWidth: 0.5)
                 }
 
                 // Step 2: rotation arrows
@@ -624,7 +619,7 @@ private struct FuelConsumptionVisual: View {
                 if step >= 1 {
                     Text("1 log = 45 min")
                         .font(.custom("EBGaramond-Regular", size: 15))
-                        .foregroundStyle(dimColor)
+                        .foregroundStyle(IVMaterialColors.dimColor)
                 }
 
                 if step >= 2 {
@@ -636,7 +631,7 @@ private struct FuelConsumptionVisual: View {
                 if step >= 3 {
                     Text("2,000 tons / year")
                         .font(.custom("Cinzel-Bold", size: 16))
-                        .foregroundStyle(cherryRed.opacity(0.7))
+                        .foregroundStyle(IVMaterialColors.cherryRed.opacity(0.7))
                 }
             }
         }
@@ -670,7 +665,7 @@ private struct ConvectionVisual: View {
                 // Floor
                 var floor = Path()
                 floor.addRect(CGRect(x: 20, y: floorY, width: size.width - 40, height: 4))
-                ctx.fill(floor, with: .color(sepiaInk.opacity(0.2)))
+                ctx.fill(floor, with: .color(IVMaterialColors.sepiaInk.opacity(0.2)))
 
                 // Furnace at center
                 let furnaceRect = CGRect(x: cx - 15, y: floorY - 25, width: 30, height: 25)
@@ -699,14 +694,14 @@ private struct ConvectionVisual: View {
                         var cool = Path()
                         cool.move(to: CGPoint(x: startX, y: airY))
                         cool.addLine(to: CGPoint(x: endX, y: airY))
-                        ctx.stroke(cool, with: .color(waterBlue.opacity(0.4)), lineWidth: 1.5)
+                        ctx.stroke(cool, with: .color(IVMaterialColors.waterBlue.opacity(0.4)), lineWidth: 1.5)
                         // Arrowhead
                         var head = Path()
                         head.move(to: CGPoint(x: endX, y: airY))
                         head.addLine(to: CGPoint(x: endX - side * 6, y: airY - 4))
                         head.addLine(to: CGPoint(x: endX - side * 6, y: airY + 4))
                         head.closeSubpath()
-                        ctx.fill(head, with: .color(waterBlue.opacity(0.4)))
+                        ctx.fill(head, with: .color(IVMaterialColors.waterBlue.opacity(0.4)))
                     }
                 }
 
@@ -715,7 +710,7 @@ private struct ConvectionVisual: View {
                     let workerX = cx + 35
                     // Simple stick figure
                     let headCircle = Path(ellipseIn: CGRect(x: workerX - 4, y: floorY - 22, width: 8, height: 8))
-                    ctx.fill(headCircle, with: .color(sepiaInk.opacity(0.3)))
+                    ctx.fill(headCircle, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)))
                     var body = Path()
                     body.move(to: CGPoint(x: workerX, y: floorY - 14))
                     body.addLine(to: CGPoint(x: workerX, y: floorY - 4))
@@ -725,7 +720,7 @@ private struct ConvectionVisual: View {
                     body.addLine(to: CGPoint(x: workerX - 4, y: floorY))
                     body.move(to: CGPoint(x: workerX, y: floorY - 4))
                     body.addLine(to: CGPoint(x: workerX + 4, y: floorY))
-                    ctx.stroke(body, with: .color(sepiaInk.opacity(0.4)), lineWidth: 1)
+                    ctx.stroke(body, with: .color(IVMaterialColors.sepiaInk.opacity(0.4)), lineWidth: 1)
                 }
             }
         }
@@ -768,12 +763,12 @@ private struct GlassBatchVisual: View {
                                         Text(ing.0)
                                             .font(.custom("EBGaramond-Regular", size: 15))
                                     }
-                                    .foregroundStyle(active ? sepiaInk : .clear)
+                                    .foregroundStyle(active ? IVMaterialColors.sepiaInk : .clear)
                                 }
                         }
                     }
                     .clipShape(RoundedRectangle(cornerRadius: 4))
-                    .overlay(RoundedRectangle(cornerRadius: 4).strokeBorder(sepiaInk.opacity(0.2), lineWidth: 0.5))
+                    .overlay(RoundedRectangle(cornerRadius: 4).strokeBorder(IVMaterialColors.sepiaInk.opacity(0.2), lineWidth: 0.5))
                 }
                 .frame(height: 50)
 
@@ -818,12 +813,12 @@ private struct CruciblePreheatVisual: View {
                             .frame(height: 45)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 4)
-                                    .strokeBorder(active ? sepiaInk.opacity(0.3) : sepiaInk.opacity(0.1), lineWidth: 0.5)
+                                    .strokeBorder(active ? IVMaterialColors.sepiaInk.opacity(0.3) : IVMaterialColors.sepiaInk.opacity(0.1), lineWidth: 0.5)
                             )
 
                         Text(stage.0)
                             .font(.custom("EBGaramond-Bold", size: 15))
-                            .foregroundStyle(active ? dimColor : dimColor.opacity(0.2))
+                            .foregroundStyle(active ? IVMaterialColors.dimColor : IVMaterialColors.dimColor.opacity(0.2))
 
                         if step >= 3 {
                             Text("18h")
@@ -836,7 +831,7 @@ private struct CruciblePreheatVisual: View {
                     if i < stages.count - 1 {
                         Image(systemName: "arrow.right")
                             .font(.system(size: 13))
-                            .foregroundStyle(active ? sepiaInk.opacity(0.3) : .clear)
+                            .foregroundStyle(active ? IVMaterialColors.sepiaInk.opacity(0.3) : .clear)
                     }
                 }
             }

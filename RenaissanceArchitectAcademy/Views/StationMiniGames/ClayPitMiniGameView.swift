@@ -206,7 +206,7 @@ struct ClayPitMiniGameView: View {
 
                 Text(difficulty)
                     .font(RenaissanceFont.bodySemibold)
-                    .foregroundStyle(difficultyColor(difficulty))
+                    .foregroundStyle(miniGameDifficultyColor(difficulty))
 
                 Image(systemName: "chevron.right")
                     .font(.body)
@@ -221,131 +221,28 @@ struct ClayPitMiniGameView: View {
         }
     }
 
-    private func difficultyColor(_ d: String) -> Color {
-        switch d {
-        case "Easy":   return RenaissanceColors.sageGreen
-        case "Medium": return RenaissanceColors.ochre
-        case "Hard":   return RenaissanceColors.terracotta
-        default:       return RenaissanceColors.stoneGray
-        }
-    }
-
-    // MARK: - Shared Helpers
-
-    private func ruleRow(icon: String, text: String, color: Color) -> some View {
-        HStack(spacing: 12) {
-            Image(systemName: icon)
-                .font(.body)
-                .foregroundStyle(color)
-                .frame(width: 32, height: 32)
-                .background(
-                    RoundedRectangle(cornerRadius: CornerRadius.sm)
-                        .fill(color.opacity(0.1))
-                )
-
-            Text(text)
-                .font(.custom("EBGaramond-Regular", size: 14))
-                .foregroundStyle(RenaissanceColors.sepiaInk)
-
-            Spacer()
-        }
-        .padding(Spacing.sm)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(RenaissanceColors.parchment.opacity(0.6))
-                .borderWorkshop(radius: 10)
-        )
-    }
-
-    private func introCardShell<Content: View>(
-        icon: String,
-        title: String,
-        subtitle: String,
-        bodyText: String,
-        buttonLabel: String,
-        buttonColor: Color,
-        startAction: @escaping () -> Void,
-        @ViewBuilder rules: () -> Content
-    ) -> some View {
-        VStack(spacing: 20) {
-            HStack(spacing: 12) {
-                Image(systemName: icon)
-                    .font(.system(size: 24))
-                    .foregroundStyle(RenaissanceColors.terracotta)
-                    .frame(width: 44, height: 44)
-                    .background(
-                        RoundedRectangle(cornerRadius: CornerRadius.sm)
-                            .fill(RenaissanceColors.terracotta.opacity(0.1))
-                    )
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(title)
-                        .font(.custom("Cinzel-Bold", size: 22))
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
-                    Text(subtitle)
-                        .font(RenaissanceFont.dialogSubtitle)
-                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
-                }
-            }
-
-            Text(bodyText)
-                .font(.custom("EBGaramond-Regular", size: 16))
-                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
-                .fixedSize(horizontal: false, vertical: true)
-
-            rules()
-
-            Button {
-                startAction()
-            } label: {
-                HStack(spacing: 8) {
-                    Image(systemName: icon)
-                        .font(.caption)
-                    Text(buttonLabel)
-                        .font(.custom("EBGaramond-SemiBold", size: 16))
-                }
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, Spacing.sm)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(buttonColor)
-                )
-            }
-
-            Button("Back") {
-                withAnimation { phase = .choose }
-            }
-            .font(RenaissanceFont.bodySmall)
-            .foregroundStyle(RenaissanceColors.sepiaInk)
-        }
-        .padding(Spacing.xl)
-        .adaptiveWidth(400)
-        .background(
-            RoundedRectangle(cornerRadius: CornerRadius.lg)
-                .fill(RenaissanceColors.parchment)
-        )
-        .borderWorkshop()
-    }
+    // MARK: - Shared Helpers (migrated to MiniGameSharedComponents.swift)
 
     // ═══════════════════════════════════════════════════════════════
     // MARK: - 1. DIGGING GAME — "Lo Scavo"
     // ═══════════════════════════════════════════════════════════════
 
     private var introDigCard: some View {
-        introCardShell(
+        MiniGameIntroCard(
             icon: "shovel.fill",
+            iconColor: RenaissanceColors.terracotta,
             title: "Lo Scavo",
             subtitle: "Dig to the Clay",
             bodyText: "Dig with your shovel through each layer. Beneath every Roman building site lies clay — but you have to dig for it. The earth is layered: topsoil, then gravel, then sand, then finally the clay deposit. Each layer tells a geological story millions of years old. Dig carefully — hit too many rocks and your shovel breaks.",
             buttonLabel: "Begin Digging",
             buttonColor: RenaissanceColors.terracotta,
-            startAction: { startDigGame() }
+            startAction: { startDigGame() },
+            backAction: { withAnimation { phase = .choose } }
         ) {
             VStack(spacing: 10) {
-                ruleRow(icon: "hand.tap.fill", text: "Tap each soil layer to dig through it", color: RenaissanceColors.terracotta)
-                ruleRow(icon: "mountain.2.fill", text: "Avoid hidden rocks — \(maxRockHits) strikes and your shovel breaks", color: RenaissanceColors.errorRed)
-                ruleRow(icon: "star.fill", text: "Clean digs (no rocks) = bonus florins", color: RenaissanceColors.goldSuccess)
+                MiniGameRuleRow(icon: "hand.tap.fill", text: "Tap each soil layer to dig through it", color: RenaissanceColors.terracotta)
+                MiniGameRuleRow(icon: "mountain.2.fill", text: "Avoid hidden rocks — \(maxRockHits) strikes and your shovel breaks", color: RenaissanceColors.errorRed)
+                MiniGameRuleRow(icon: "star.fill", text: "Clean digs (no rocks) = bonus florins", color: RenaissanceColors.goldSuccess)
             }
         }
     }
@@ -614,19 +511,21 @@ struct ClayPitMiniGameView: View {
     // ═══════════════════════════════════════════════════════════════
 
     private var introKneadCard: some View {
-        introCardShell(
+        MiniGameIntroCard(
             icon: "hands.sparkles.fill",
+            iconColor: RenaissanceColors.terracotta,
             title: "L'Impasto",
             subtitle: "Knead the Clay",
             bodyText: "Set down your shovel — this requires bare hands. Raw clay is full of trapped air. Every bubble is a weak point — when fired, the air expands and cracks the piece. Roman potters kneaded clay for hours: press to flatten, fold to trap layers, turn to work evenly. The Japanese call it 'wedging' — chrysanthemum kneading, because the folds look like petals.",
             buttonLabel: "Begin Kneading",
             buttonColor: RenaissanceColors.ochre,
-            startAction: { startKneadGame() }
+            startAction: { startKneadGame() },
+            backAction: { withAnimation { phase = .choose } }
         ) {
             VStack(spacing: 10) {
-                ruleRow(icon: "hand.point.down.fill", text: "Watch the pattern, then repeat: Press, Fold, Turn", color: RenaissanceColors.terracotta)
-                ruleRow(icon: "bubble.left.fill", text: "Each round removes air bubbles from the clay", color: RenaissanceColors.ochre)
-                ruleRow(icon: "xmark.circle", text: "\(kneadMaxMisses) wrong moves and the clay dries out", color: RenaissanceColors.errorRed)
+                MiniGameRuleRow(icon: "hand.point.down.fill", text: "Watch the pattern, then repeat: Press, Fold, Turn", color: RenaissanceColors.terracotta)
+                MiniGameRuleRow(icon: "bubble.left.fill", text: "Each round removes air bubbles from the clay", color: RenaissanceColors.ochre)
+                MiniGameRuleRow(icon: "xmark.circle", text: "\(kneadMaxMisses) wrong moves and the clay dries out", color: RenaissanceColors.errorRed)
             }
         }
     }
@@ -938,19 +837,21 @@ struct ClayPitMiniGameView: View {
     // ═══════════════════════════════════════════════════════════════
 
     private var introWashCard: some View {
-        introCardShell(
+        MiniGameIntroCard(
             icon: "drop.triangle.fill",
+            iconColor: RenaissanceColors.terracotta,
             title: "La Levigazione",
             subtitle: "Wash the Clay",
             bodyText: "Scoop pure clay from the basin with your shovel. Levigation — the Roman technique for purifying clay. Raw earth is mixed with water in a settling basin. Heavy stones and gravel sink fast. Organic debris floats. Pure clay particles suspended in between — the finest, smoothest material for pottery.",
             buttonLabel: "Begin Washing",
             buttonColor: Color(red: 0.4, green: 0.55, blue: 0.65),
-            startAction: { startWashGame() }
+            startAction: { startWashGame() },
+            backAction: { withAnimation { phase = .choose } }
         ) {
             VStack(spacing: 10) {
-                ruleRow(icon: "hand.tap.fill", text: "Tap clay chunks (brown) to collect them", color: RenaissanceColors.terracotta)
-                ruleRow(icon: "xmark.circle", text: "Don't tap stones or debris — \(washMaxMisses) mistakes allowed", color: RenaissanceColors.errorRed)
-                ruleRow(icon: "drop.fill", text: "Items sink and shift — be quick!", color: RenaissanceColors.renaissanceBlue)
+                MiniGameRuleRow(icon: "hand.tap.fill", text: "Tap clay chunks (brown) to collect them", color: RenaissanceColors.terracotta)
+                MiniGameRuleRow(icon: "xmark.circle", text: "Don't tap stones or debris — \(washMaxMisses) mistakes allowed", color: RenaissanceColors.errorRed)
+                MiniGameRuleRow(icon: "drop.fill", text: "Items sink and shift — be quick!", color: RenaissanceColors.renaissanceBlue)
             }
         }
     }

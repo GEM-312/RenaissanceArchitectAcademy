@@ -52,14 +52,9 @@ struct HarborInteractiveVisuals {
     }
 }
 
-// MARK: - Local Aliases
+// MARK: - Local Colors (unique to Harbor)
 
-private let sepiaInk = ivSepiaInk
-private let waterBlue = ivWaterBlue
-private let dimColor = ivDimColor
-private let stoneGray = Color(red: 0.65, green: 0.63, blue: 0.60)
 private let seaBlue = Color(red: 0.30, green: 0.50, blue: 0.65)
-private let leadGray = Color(red: 0.50, green: 0.52, blue: 0.55)
 private let tufaBrown = Color(red: 0.72, green: 0.62, blue: 0.48)
 
 private typealias TeachingContainer = IVTeachingContainer
@@ -136,7 +131,7 @@ private struct HarborPlanVisual: View {
                                 radius: w * 0.35,
                                 startAngle: .degrees(160), endAngle: .degrees(20), clockwise: true)
                     }
-                    .stroke(stoneGray, lineWidth: 3)
+                    .stroke(IVMaterialColors.stoneGray, lineWidth: 3)
 
                     // Placeable items
                     if step >= 2 {
@@ -161,7 +156,7 @@ private struct HarborPlanVisual: View {
                                 } else {
                                     Image(systemName: "ferry.fill")
                                         .font(.system(size: 13))
-                                        .foregroundStyle(sepiaInk.opacity(0.5))
+                                        .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                                         .position(positions[i])
                                         .transition(.scale)
                                 }
@@ -253,7 +248,7 @@ private struct WaveForceVisual: View {
 
                     // Breakwater wall
                     RoundedRectangle(cornerRadius: 2)
-                        .fill(stoneGray)
+                        .fill(IVMaterialColors.stoneGray)
                         .frame(width: 12, height: h * 0.5)
                         .position(x: wallX, y: seaLevel)
 
@@ -269,7 +264,7 @@ private struct WaveForceVisual: View {
                     VStack(spacing: 2) {
                         Text("\(meters)m wave")
                             .font(.custom("EBGaramond-Bold", size: 15))
-                            .foregroundStyle(sepiaInk)
+                            .foregroundStyle(IVMaterialColors.sepiaInk)
                         Text("\(tons) tons/m")
                             .font(.custom("EBGaramond-Bold", size: 16))
                             .foregroundStyle(waveHeight > 0.6 ? RenaissanceColors.errorRed : color)
@@ -450,11 +445,11 @@ private struct BreakwaterVisual: View {
                         let y = baseY - CGFloat(row) * blockH
 
                         RoundedRectangle(cornerRadius: 3)
-                            .fill(stoneGray.opacity(0.5))
+                            .fill(IVMaterialColors.stoneGray.opacity(0.5))
                             .frame(width: blockW, height: blockH - 2)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 3)
-                                    .strokeBorder(stoneGray, lineWidth: 1)
+                                    .strokeBorder(IVMaterialColors.stoneGray, lineWidth: 1)
                             )
                             .position(x: x, y: y)
                             .transition(.move(edge: .top).combined(with: .opacity))
@@ -534,7 +529,7 @@ private struct LighthouseVisual: View {
                         p.addLine(to: CGPoint(x: cx + towerW * 0.7, y: h * 0.7))
                         p.closeSubpath()
                     }
-                    .fill(stoneGray.opacity(0.4))
+                    .fill(IVMaterialColors.stoneGray.opacity(0.4))
 
                     // Fire at top
                     Image(systemName: "flame.fill")
@@ -574,7 +569,7 @@ private struct LighthouseVisual: View {
                     // Dimension
                     DimLine(from: CGPoint(x: cx + towerW, y: topY),
                             to: CGPoint(x: cx + towerW, y: h * 0.7))
-                        .stroke(dimColor, lineWidth: 0.8)
+                        .stroke(IVMaterialColors.dimColor, lineWidth: 0.8)
                     DimLabel(text: "50 m", fontSize: 15)
                         .position(x: cx + towerW + 18, y: h * 0.45)
 
@@ -635,7 +630,7 @@ private struct HarborStoneVisual: View {
                 ZStack {
                     // Tufa block (left)
                     VStack(spacing: 4) {
-                        Text("TUFA").font(.custom("Cinzel-Bold", size: 16)).tracking(0.5).foregroundStyle(sepiaInk.opacity(0.5))
+                        Text("TUFA").font(.custom("Cinzel-Bold", size: 16)).tracking(0.5).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                         ZStack {
                             RoundedRectangle(cornerRadius: 4).fill(tufaBrown).frame(width: blockW, height: blockH)
                             // Pores (visible)
@@ -654,13 +649,13 @@ private struct HarborStoneVisual: View {
                         if saltPoured {
                             Text("Absorbs safely").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(RenaissanceColors.sageGreen).transition(.opacity)
                         }
-                        Text("Porous").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.4))
+                        Text("Porous").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                     }
                     .position(x: w * 0.28, y: h * 0.4)
 
                     // Marble block (right)
                     VStack(spacing: 4) {
-                        Text("MARBLE").font(.custom("Cinzel-Bold", size: 16)).tracking(0.5).foregroundStyle(sepiaInk.opacity(0.5))
+                        Text("MARBLE").font(.custom("Cinzel-Bold", size: 16)).tracking(0.5).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                         ZStack {
                             RoundedRectangle(cornerRadius: 4).fill(Color(red: 0.90, green: 0.88, blue: 0.86)).frame(width: blockW, height: blockH)
                             if saltPoured {
@@ -677,7 +672,7 @@ private struct HarborStoneVisual: View {
                         if saltPoured {
                             Text("Cracks inside").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(RenaissanceColors.errorRed).transition(.opacity)
                         }
-                        Text("Dense").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.4))
+                        Text("Dense").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                     }
                     .position(x: w * 0.72, y: h * 0.4)
 
@@ -728,14 +723,14 @@ private struct MarineConcreteVisual: View {
                 ZStack {
                     HStack(spacing: w * 0.06) {
                         VStack(spacing: 4) {
-                            Text("ROMAN").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(sepiaInk.opacity(0.5))
-                            RoundedRectangle(cornerRadius: 4).fill(stoneGray.opacity(0.4 + years * 0.4))
+                            Text("ROMAN").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
+                            RoundedRectangle(cornerRadius: 4).fill(IVMaterialColors.stoneGray.opacity(0.4 + years * 0.4))
                                 .frame(width: w * 0.25, height: h * 0.25)
                             Text(years > 0.5 ? "Stronger" : "").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(RenaissanceColors.sageGreen)
                         }
                         VStack(spacing: 4) {
-                            Text("MODERN").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(sepiaInk.opacity(0.5))
-                            RoundedRectangle(cornerRadius: 4).fill(stoneGray.opacity(0.6 - years * 0.4))
+                            Text("MODERN").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
+                            RoundedRectangle(cornerRadius: 4).fill(IVMaterialColors.stoneGray.opacity(0.6 - years * 0.4))
                                 .frame(width: w * 0.25, height: h * 0.25)
                                 .overlay { if years > 0.5 {
                                     ForEach(0..<3, id: \.self) { i in
@@ -748,7 +743,7 @@ private struct MarineConcreteVisual: View {
                         }
                     }.position(x: cx, y: h * 0.38)
 
-                    Text("\(Int(years * 2000)) years").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(sepiaInk).position(x: cx, y: h * 0.12)
+                    Text("\(Int(years * 2000)) years").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk).position(x: cx, y: h * 0.12)
 
                     if step >= 2 {
                         Slider(value: $years, in: 0...1).tint(seaBlue).frame(width: w * 0.5).position(x: cx, y: h * 0.7)
@@ -765,7 +760,7 @@ private struct HullProtectionVisual: View {
     let visual: CardVisual; let color: Color; var height: CGFloat = 275
     @State private var step: Int = 1
     @State private var layersAdded: Int = 0
-    private let parts = [("Oak planks", Color.brown.opacity(0.5)), ("Lead sheet", leadGray), ("Copper tacks", Color(red: 0.80, green: 0.55, blue: 0.35))]
+    private let parts = [("Oak planks", Color.brown.opacity(0.5)), ("Lead sheet", IVMaterialColors.leadGray), ("Copper tacks", Color(red: 0.80, green: 0.55, blue: 0.35))]
 
     var body: some View {
         TeachingContainer(title: visual.title, color: color, totalSteps: 3, step: $step,
@@ -812,7 +807,7 @@ private struct WarehouseTrussVisual: View {
                         Path { p in p.move(to: CGPoint(x: cx + trussW * off, y: trussY + deflect * abs(off) * 2)); p.addLine(to: CGPoint(x: cx + trussW * off, y: trussY + h*0.15)) }
                             .stroke(Color.brown.opacity(0.5), lineWidth: 2)
                     }
-                    Text("\(tons) tons").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(sepiaInk).position(x: cx, y: h * 0.12)
+                    Text("\(tons) tons").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk).position(x: cx, y: h * 0.12)
                     if step >= 2 { Slider(value: $loadWeight, in: 0...1).tint(color).frame(width: w*0.5).position(x: cx, y: h*0.72)
                         .onChange(of: loadWeight) { _, v in if v > 0.7 { withAnimation { step = 3 } } } }
                     if step >= 3 { FormulaText(text: "Oak + tannins = naturally waterproof", highlighted: true, fontSize: 15).position(x: cx, y: h*0.85).transition(.opacity) }
@@ -869,14 +864,14 @@ private struct MarineMortarVisual: View {
                 HStack(spacing: 12) {
                     Button { guard scoops == 0 else { return }; withAnimation(.spring(response: 0.3)) { scoops = 1 }; SoundManager.shared.play(.tapSoft) } label: {
                         Text("+ Lime").font(.custom("EBGaramond-SemiBold", size: 15)).padding(.horizontal, 12).padding(.vertical, 6)
-                            .background(scoops >= 1 ? stoneGray.opacity(0.1) : Color.white.opacity(0.3)).cornerRadius(6)
-                            .overlay(RoundedRectangle(cornerRadius: 6).stroke(scoops < 1 ? color : stoneGray.opacity(0.2), lineWidth: scoops < 1 ? 2 : 0.5))
-                    }.buttonStyle(.plain).opacity(scoops >= 1 ? 0.4 : 1).foregroundStyle(sepiaInk)
+                            .background(scoops >= 1 ? IVMaterialColors.stoneGray.opacity(0.1) : Color.white.opacity(0.3)).cornerRadius(6)
+                            .overlay(RoundedRectangle(cornerRadius: 6).stroke(scoops < 1 ? color : IVMaterialColors.stoneGray.opacity(0.2), lineWidth: scoops < 1 ? 2 : 0.5))
+                    }.buttonStyle(.plain).opacity(scoops >= 1 ? 0.4 : 1).foregroundStyle(IVMaterialColors.sepiaInk)
                     Button { guard scoops >= 1 && scoops < 4 else { return }; withAnimation(.spring(response: 0.3)) { scoops += 1 }; SoundManager.shared.play(.tapSoft) } label: {
                         Text("+ Ash").font(.custom("EBGaramond-SemiBold", size: 15)).padding(.horizontal, 12).padding(.vertical, 6)
-                            .background(scoops >= 4 ? stoneGray.opacity(0.1) : Color(red: 0.65, green: 0.40, blue: 0.30).opacity(0.15)).cornerRadius(6)
-                            .overlay(RoundedRectangle(cornerRadius: 6).stroke((scoops >= 1 && scoops < 4) ? color : stoneGray.opacity(0.2), lineWidth: (scoops >= 1 && scoops < 4) ? 2 : 0.5))
-                    }.buttonStyle(.plain).opacity(scoops >= 4 ? 0.4 : 1).foregroundStyle(sepiaInk)
+                            .background(scoops >= 4 ? IVMaterialColors.stoneGray.opacity(0.1) : Color(red: 0.65, green: 0.40, blue: 0.30).opacity(0.15)).cornerRadius(6)
+                            .overlay(RoundedRectangle(cornerRadius: 6).stroke((scoops >= 1 && scoops < 4) ? color : IVMaterialColors.stoneGray.opacity(0.2), lineWidth: (scoops >= 1 && scoops < 4) ? 2 : 0.5))
+                    }.buttonStyle(.plain).opacity(scoops >= 4 ? 0.4 : 1).foregroundStyle(IVMaterialColors.sepiaInk)
                 }
                 if scoops >= 4 && !seawaterAdded {
                     Button { withAnimation(.spring(response: 0.3)) { seawaterAdded = true }; SoundManager.shared.play(.correctChime) } label: {
@@ -886,7 +881,7 @@ private struct MarineMortarVisual: View {
                 }
                 if seawaterAdded { FormulaText(text: "Sets underwater in 7 days", highlighted: true, fontSize: 15) }
                 Text(scoops < 1 ? "Add lime first" : scoops < 4 ? "Add ash (3 scoops)" : !seawaterAdded ? "Now the secret: SEAWATER" : "Salt triggers the reaction")
-                    .font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.6))
+                    .font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
                 Spacer()
             }.padding(.horizontal, 12)
         }.frame(height: height).clipShape(RoundedRectangle(cornerRadius: 10))
@@ -907,19 +902,19 @@ private struct LeadCastingVisual: View {
             IVBlueprintGrid()
             VStack(spacing: 10) {
                 HStack(spacing: 4) {
-                    Image(systemName: "thermometer.medium").font(.system(size: 14)).foregroundStyle(tempC > 300 ? .orange : sepiaInk.opacity(0.4))
-                    Text("\(tempC)°C").font(.custom("EBGaramond-Bold", size: 18)).foregroundStyle(isMolten ? RenaissanceColors.sageGreen : sepiaInk).monospacedDigit()
+                    Image(systemName: "thermometer.medium").font(.system(size: 14)).foregroundStyle(tempC > 300 ? .orange : IVMaterialColors.sepiaInk.opacity(0.4))
+                    Text("\(tempC)°C").font(.custom("EBGaramond-Bold", size: 18)).foregroundStyle(isMolten ? RenaissanceColors.sageGreen : IVMaterialColors.sepiaInk).monospacedDigit()
                 }.padding(.top, 8)
-                RoundedRectangle(cornerRadius: 6).fill(isMolten ? leadGray.opacity(0.3) : leadGray)
+                RoundedRectangle(cornerRadius: 6).fill(isMolten ? IVMaterialColors.leadGray.opacity(0.3) : IVMaterialColors.leadGray)
                     .frame(width: 70, height: isMolten ? 25 : 45).shadow(color: isMolten ? .orange.opacity(0.3) : .clear, radius: 6)
                     .animation(.spring(response: 0.5), value: isMolten)
                 Text(isMolten ? "Molten — pour into molds" : tempC > 200 ? "Warming..." : "Solid lead")
-                    .font(.custom("EBGaramond-SemiBold", size: 15)).foregroundStyle(isMolten ? RenaissanceColors.sageGreen : sepiaInk)
+                    .font(.custom("EBGaramond-SemiBold", size: 15)).foregroundStyle(isMolten ? RenaissanceColors.sageGreen : IVMaterialColors.sepiaInk)
                 Slider(value: $temperature, in: 0...1).tint(isMolten ? RenaissanceColors.sageGreen : .orange).frame(width: 200)
                 HStack { Text("0°C").font(.custom("EBGaramond-Regular", size: 15)); Spacer()
                     Text("327°C").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(RenaissanceColors.sageGreen); Spacer()
                     Text("600°C").font(.custom("EBGaramond-Regular", size: 15))
-                }.foregroundStyle(sepiaInk.opacity(0.4)).frame(width: 200)
+                }.foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4)).frame(width: 200)
                 if isMolten { FormulaText(text: "Lowest melting point = most useful metal", highlighted: true, fontSize: 15) }
                 Spacer()
             }.padding(.horizontal, 12)

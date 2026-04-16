@@ -45,16 +45,11 @@ struct RomanRoadsInteractiveVisuals {
     }
 }
 
-// MARK: - Local Aliases
+// MARK: - Local Colors (unique to Roman Roads)
 
-private let sepiaInk = ivSepiaInk
-private let waterBlue = ivWaterBlue
-private let dimColor = ivDimColor
-private let stoneGray = Color(red: 0.65, green: 0.63, blue: 0.60)
 private let basaltDark = Color(red: 0.38, green: 0.36, blue: 0.34)
 private let sandBeige = Color(red: 0.82, green: 0.76, blue: 0.66)
 private let gravelBrown = Color(red: 0.65, green: 0.55, blue: 0.42)
-private let limeTan = Color(red: 0.88, green: 0.84, blue: 0.76)
 
 private typealias TeachingContainer = IVTeachingContainer
 private typealias DimLabel = IVDimLabel
@@ -125,14 +120,14 @@ private struct RadialRoadsVisual: View {
                                 p.addLine(to: CGPoint(x: extended ? endX : midX * 0.3 + cx * 0.7,
                                                       y: extended ? endY : midY * 0.3 + cy * 0.7))
                             }
-                            .stroke(extended ? color : stoneGray.opacity(0.3),
+                            .stroke(extended ? color : IVMaterialColors.stoneGray.opacity(0.3),
                                     lineWidth: extended ? 1.5 : 0.8)
 
                             // Road name label
                             if extended {
                                 Text(roadNames[i])
                                     .font(.custom("EBGaramond-Regular", size: 15))
-                                    .foregroundStyle(sepiaInk.opacity(0.6))
+                                    .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
                                     .position(x: endX, y: endY)
                                     .transition(.opacity)
                             }
@@ -225,7 +220,7 @@ private struct GromaSurveyVisual: View {
 
                         // Plumb weight
                         Circle()
-                            .fill(stoneGray)
+                            .fill(IVMaterialColors.stoneGray)
                             .frame(width: 8, height: 8)
                             .position(x: armX + sway, y: armY + plumbLen)
                     }
@@ -240,7 +235,7 @@ private struct GromaSurveyVisual: View {
                         .stroke(Color.brown.opacity(0.25), lineWidth: 0.8)
 
                         Circle()
-                            .fill(stoneGray.opacity(0.5))
+                            .fill(IVMaterialColors.stoneGray.opacity(0.5))
                             .frame(width: 5, height: 5)
                             .position(x: fwd + sway * 0.5, y: armY + plumbLen * 0.7)
                     }
@@ -344,12 +339,12 @@ private struct FourLayersVisual: View {
                         // Latin name
                         Text(layers[i].latin)
                             .font(.custom("Cinzel-Bold", size: 16))
-                            .foregroundStyle(sepiaInk.opacity(0.6))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
                             .position(x: cx + w * 0.35, y: y - 6)
 
                         Text(layers[i].desc)
                             .font(.custom("EBGaramond-Regular", size: 15))
-                            .foregroundStyle(sepiaInk.opacity(0.4))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                             .position(x: cx + w * 0.35, y: y + 6)
                     }
 
@@ -380,7 +375,7 @@ private struct FourLayersVisual: View {
                     if layersBuilt >= 4 {
                         DimLine(from: CGPoint(x: w * 0.18, y: baseY - 3 * layerH - layerH * 0.5),
                                 to: CGPoint(x: w * 0.18, y: baseY + layerH * 0.5))
-                            .stroke(dimColor, lineWidth: 0.8)
+                            .stroke(IVMaterialColors.dimColor, lineWidth: 0.8)
                         DimLabel(text: "1.5 m", fontSize: 15)
                             .position(x: w * 0.12, y: baseY - layerH * 1.5)
                     }
@@ -560,7 +555,7 @@ private struct IceSplittingVisual: View {
                     ForEach(0..<5, id: \.self) { i in
                         let hx = cx - blockW * 0.35 + CGFloat(i) * blockW * 0.175
                         Circle()
-                            .fill(waterPoured ? (frozen ? waterBlue.opacity(0.8) : waterBlue.opacity(0.5)) : basaltDark.opacity(0.3))
+                            .fill(waterPoured ? (frozen ? IVMaterialColors.waterBlue.opacity(0.8) : IVMaterialColors.waterBlue.opacity(0.5)) : basaltDark.opacity(0.3))
                             .frame(width: 8, height: 8)
                             .position(x: hx, y: blockY - blockH * 0.3)
                     }
@@ -586,9 +581,9 @@ private struct IceSplittingVisual: View {
                                     Image(systemName: "drop.fill").font(.system(size: 13))
                                     Text("Pour Water").font(.custom("EBGaramond-SemiBold", size: 15))
                                 }
-                                .foregroundStyle(waterBlue)
+                                .foregroundStyle(IVMaterialColors.waterBlue)
                                 .padding(.horizontal, 12).padding(.vertical, 6)
-                                .background(waterBlue.opacity(0.1)).cornerRadius(6)
+                                .background(IVMaterialColors.waterBlue.opacity(0.1)).cornerRadius(6)
                             }
                             .buttonStyle(.plain)
                             .position(x: cx, y: h * 0.78)
@@ -605,9 +600,9 @@ private struct IceSplittingVisual: View {
                                     Image(systemName: "snowflake").font(.system(size: 13))
                                     Text("Freeze").font(.custom("EBGaramond-SemiBold", size: 15))
                                 }
-                                .foregroundStyle(waterBlue)
+                                .foregroundStyle(IVMaterialColors.waterBlue)
                                 .padding(.horizontal, 12).padding(.vertical, 6)
-                                .background(waterBlue.opacity(0.1)).cornerRadius(6)
+                                .background(IVMaterialColors.waterBlue.opacity(0.1)).cornerRadius(6)
                             }
                             .buttonStyle(.plain)
                             .position(x: cx, y: h * 0.78)
@@ -685,7 +680,7 @@ private struct CrystalGrowthVisual: View {
                     Text("\(years) years")
                         .font(.custom("EBGaramond-Bold", size: 16))
                         .monospacedDigit()
-                        .foregroundStyle(timeProgress > 0.8 ? RenaissanceColors.sageGreen : sepiaInk)
+                        .foregroundStyle(timeProgress > 0.8 ? RenaissanceColors.sageGreen : IVMaterialColors.sepiaInk)
                         .position(x: cx, y: h * 0.12)
 
                     // Slider
@@ -750,7 +745,7 @@ private struct CamberDrainageVisual: View {
                         p.addLine(to: CGPoint(x: w * 0.15, y: roadY + h * 0.08))
                         p.closeSubpath()
                     }
-                    .fill(stoneGray.opacity(0.4))
+                    .fill(IVMaterialColors.stoneGray.opacity(0.4))
 
                     Path { p in
                         p.move(to: CGPoint(x: w * 0.15, y: roadY))
@@ -759,7 +754,7 @@ private struct CamberDrainageVisual: View {
                             control: CGPoint(x: cx, y: roadY - camberH)
                         )
                     }
-                    .stroke(stoneGray, lineWidth: 2)
+                    .stroke(IVMaterialColors.stoneGray, lineWidth: 2)
 
                     // Side ditches
                     ForEach([0.12, 0.88], id: \.self) { xFrac in
@@ -774,7 +769,7 @@ private struct CamberDrainageVisual: View {
                     // Camber dimension
                     DimLine(from: CGPoint(x: cx, y: roadY - camberH - 8),
                             to: CGPoint(x: cx, y: roadY - 2))
-                        .stroke(dimColor, lineWidth: 0.8)
+                        .stroke(IVMaterialColors.dimColor, lineWidth: 0.8)
                     DimLabel(text: "15-30 cm", fontSize: 15)
                         .position(x: cx + 30, y: roadY - camberH - 4)
 
@@ -788,7 +783,7 @@ private struct CamberDrainageVisual: View {
                                 var drop = Path()
                                 drop.move(to: CGPoint(x: baseX, y: y))
                                 drop.addLine(to: CGPoint(x: baseX, y: y + 6))
-                                context.stroke(drop, with: .color(waterBlue.opacity(0.4)), lineWidth: 1)
+                                context.stroke(drop, with: .color(IVMaterialColors.waterBlue.opacity(0.4)), lineWidth: 1)
                             }
                         }
                         .frame(width: w, height: h)
@@ -798,7 +793,7 @@ private struct CamberDrainageVisual: View {
                         ForEach([-1.0, 1.0], id: \.self) { side in
                             Image(systemName: "arrow.right")
                                 .font(.system(size: 13))
-                                .foregroundStyle(waterBlue)
+                                .foregroundStyle(IVMaterialColors.waterBlue)
                                 .rotationEffect(.degrees(side > 0 ? 30 : -210))
                                 .position(x: cx + side * w * 0.2, y: roadY - 6)
                         }
@@ -806,7 +801,7 @@ private struct CamberDrainageVisual: View {
                         // Ditch water
                         ForEach([0.12, 0.88], id: \.self) { xFrac in
                             Rectangle()
-                                .fill(waterBlue.opacity(0.3))
+                                .fill(IVMaterialColors.waterBlue.opacity(0.3))
                                 .frame(width: 8, height: h * 0.06)
                                 .position(x: w * xFrac, y: roadY + h * 0.08)
                         }
@@ -826,9 +821,9 @@ private struct CamberDrainageVisual: View {
                                 Image(systemName: "cloud.rain.fill").font(.system(size: 13))
                                 Text("Rain").font(.custom("EBGaramond-SemiBold", size: 15))
                             }
-                            .foregroundStyle(waterBlue)
+                            .foregroundStyle(IVMaterialColors.waterBlue)
                             .padding(.horizontal, 12).padding(.vertical, 6)
-                            .background(waterBlue.opacity(0.1)).cornerRadius(6)
+                            .background(IVMaterialColors.waterBlue.opacity(0.1)).cornerRadius(6)
                         }
                         .buttonStyle(.plain)
                         .position(x: cx, y: h * 0.2)
@@ -884,13 +879,13 @@ private struct RoadMortarRecipeVisual: View {
                     let barW = geo.size.width - 20
                     HStack(spacing: 2) {
                         RoundedRectangle(cornerRadius: 3)
-                            .fill(limeScoops >= 1 ? limeTan : stoneGray.opacity(0.15))
+                            .fill(limeScoops >= 1 ? IVMaterialColors.limeTan : IVMaterialColors.stoneGray.opacity(0.15))
                             .frame(width: barW * 0.25)
-                            .overlay { if limeScoops >= 1 { Text("1").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(sepiaInk) } }
+                            .overlay { if limeScoops >= 1 { Text("1").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk) } }
                         RoundedRectangle(cornerRadius: 3)
-                            .fill(rockScoops >= 3 ? basaltDark.opacity(0.4) : (rockScoops > 0 ? basaltDark.opacity(0.15 * CGFloat(rockScoops)) : stoneGray.opacity(0.15)))
+                            .fill(rockScoops >= 3 ? basaltDark.opacity(0.4) : (rockScoops > 0 ? basaltDark.opacity(0.15 * CGFloat(rockScoops)) : IVMaterialColors.stoneGray.opacity(0.15)))
                             .frame(width: barW * 0.75)
-                            .overlay { if rockScoops > 0 { Text("\(rockScoops)").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(sepiaInk) } }
+                            .overlay { if rockScoops > 0 { Text("\(rockScoops)").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk) } }
                     }
                     .frame(height: 28)
                     .padding(.horizontal, 10)
@@ -910,9 +905,9 @@ private struct RoadMortarRecipeVisual: View {
                                 Text("Lime").font(.custom("EBGaramond-Regular", size: 15))
                             }
                             .frame(width: 60, height: 50)
-                            .background(limeScoops >= 1 ? stoneGray.opacity(0.1) : limeTan.opacity(0.3))
+                            .background(limeScoops >= 1 ? IVMaterialColors.stoneGray.opacity(0.1) : IVMaterialColors.limeTan.opacity(0.3))
                             .cornerRadius(6)
-                            .overlay(RoundedRectangle(cornerRadius: 6).stroke(limeScoops < 1 ? color : stoneGray.opacity(0.3), lineWidth: limeScoops < 1 ? 2 : 1))
+                            .overlay(RoundedRectangle(cornerRadius: 6).stroke(limeScoops < 1 ? color : IVMaterialColors.stoneGray.opacity(0.3), lineWidth: limeScoops < 1 ? 2 : 1))
                         }
                         .buttonStyle(.plain)
                         .opacity(limeScoops >= 1 ? 0.4 : 1)
@@ -927,9 +922,9 @@ private struct RoadMortarRecipeVisual: View {
                                 Text("Volcanic Rock").font(.custom("EBGaramond-Regular", size: 15))
                             }
                             .frame(width: 80, height: 50)
-                            .background(rockScoops >= 3 ? stoneGray.opacity(0.1) : basaltDark.opacity(0.15))
+                            .background(rockScoops >= 3 ? IVMaterialColors.stoneGray.opacity(0.1) : basaltDark.opacity(0.15))
                             .cornerRadius(6)
-                            .overlay(RoundedRectangle(cornerRadius: 6).stroke((limeScoops >= 1 && rockScoops < 3) ? color : stoneGray.opacity(0.3), lineWidth: (limeScoops >= 1 && rockScoops < 3) ? 2 : 1))
+                            .overlay(RoundedRectangle(cornerRadius: 6).stroke((limeScoops >= 1 && rockScoops < 3) ? color : IVMaterialColors.stoneGray.opacity(0.3), lineWidth: (limeScoops >= 1 && rockScoops < 3) ? 2 : 1))
                         }
                         .buttonStyle(.plain)
                         .opacity(rockScoops >= 3 ? 0.4 : 1)
@@ -961,7 +956,7 @@ private struct RoadMortarRecipeVisual: View {
 
                 Text(label)
                     .font(.custom("EBGaramond-Regular", size: 15))
-                    .foregroundStyle(sepiaInk.opacity(0.6))
+                    .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
                     .multilineTextAlignment(.center)
 
                 Spacer()
@@ -1001,9 +996,9 @@ private struct LimeFiringVisual: View {
             VStack(spacing: 10) {
                 HStack(spacing: 4) {
                     Image(systemName: "thermometer.medium").font(.system(size: 14))
-                        .foregroundStyle(tempC > 600 ? .orange : sepiaInk.opacity(0.4))
+                        .foregroundStyle(tempC > 600 ? .orange : IVMaterialColors.sepiaInk.opacity(0.4))
                     Text("\(tempC)°C").font(.custom("EBGaramond-Bold", size: 18))
-                        .foregroundStyle(converted ? RenaissanceColors.sageGreen : sepiaInk)
+                        .foregroundStyle(converted ? RenaissanceColors.sageGreen : IVMaterialColors.sepiaInk)
                         .monospacedDigit()
                 }
                 .padding(.top, 8)
@@ -1012,15 +1007,15 @@ private struct LimeFiringVisual: View {
                 HStack(spacing: 20) {
                     VStack(spacing: 4) {
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(stoneGray.opacity(converted ? 0.3 : 0.6))
+                            .fill(IVMaterialColors.stoneGray.opacity(converted ? 0.3 : 0.6))
                             .frame(width: 50, height: 40)
-                        Text("CaCO₃").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(sepiaInk)
-                        Text("Limestone").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.5))
+                        Text("CaCO₃").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk)
+                        Text("Limestone").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                     }
 
                     Image(systemName: "arrow.right")
                         .font(.system(size: 14))
-                        .foregroundStyle(converted ? RenaissanceColors.sageGreen : sepiaInk.opacity(0.3))
+                        .foregroundStyle(converted ? RenaissanceColors.sageGreen : IVMaterialColors.sepiaInk.opacity(0.3))
 
                     VStack(spacing: 4) {
                         RoundedRectangle(cornerRadius: 4)
@@ -1028,17 +1023,17 @@ private struct LimeFiringVisual: View {
                             .frame(width: 50, height: 40)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 4)
-                                    .strokeBorder(converted ? RenaissanceColors.sageGreen : stoneGray.opacity(0.2), lineWidth: 1)
+                                    .strokeBorder(converted ? RenaissanceColors.sageGreen : IVMaterialColors.stoneGray.opacity(0.2), lineWidth: 1)
                             )
-                        Text("CaO").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(converted ? RenaissanceColors.sageGreen : sepiaInk.opacity(0.3))
-                        Text("Quicklime").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(sepiaInk.opacity(0.5))
+                        Text("CaO").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(converted ? RenaissanceColors.sageGreen : IVMaterialColors.sepiaInk.opacity(0.3))
+                        Text("Quicklime").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                     }
 
                     // CO₂ escaping
                     if converted {
                         Text("+ CO₂ ↑")
                             .font(.custom("EBGaramond-Bold", size: 15))
-                            .foregroundStyle(sepiaInk.opacity(0.5))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                     }
                 }
 
@@ -1056,7 +1051,7 @@ private struct LimeFiringVisual: View {
                     Spacer()
                     Text("1200°C").font(.custom("EBGaramond-Regular", size: 15))
                 }
-                .foregroundStyle(sepiaInk.opacity(0.4))
+                .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                 .frame(width: 200)
 
                 if converted {
@@ -1110,11 +1105,11 @@ private struct MilestoneCarveVisual: View {
                 ZStack {
                     // Milestone column
                     RoundedRectangle(cornerRadius: 6)
-                        .fill(stoneGray.opacity(0.4))
+                        .fill(IVMaterialColors.stoneGray.opacity(0.4))
                         .frame(width: stoneW, height: stoneH)
                         .overlay(
                             RoundedRectangle(cornerRadius: 6)
-                                .strokeBorder(stoneGray, lineWidth: 1.5)
+                                .strokeBorder(IVMaterialColors.stoneGray, lineWidth: 1.5)
                         )
                         .position(x: cx, y: h * 0.4)
 
@@ -1123,7 +1118,7 @@ private struct MilestoneCarveVisual: View {
                         Text(carvings[i].0)
                             .font(.custom("Cinzel-Bold", size: 16))
                             .tracking(1.5)
-                            .foregroundStyle(sepiaInk.opacity(0.6))
+                            .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
                             .position(x: cx, y: h * 0.25 + CGFloat(i) * 22)
                             .transition(.opacity.combined(with: .scale(scale: 0.8)))
                     }

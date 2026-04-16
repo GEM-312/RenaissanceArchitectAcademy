@@ -21,6 +21,7 @@ struct NPCDialogContent: View {
 
     @Environment(\.horizontalSizeClass) private var sizeClass
     private var isLargeScreen: Bool { sizeClass == .regular }
+    private var settings: GameSettings { GameSettings.shared }
 
     private let charsPerTick = 2
     private let tickInterval: TimeInterval = 0.03
@@ -47,7 +48,7 @@ struct NPCDialogContent: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(npc.name)
                         .font(.custom("Cinzel-Bold", size: isLargeScreen ? 18 : 16))
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .foregroundStyle(settings.cardTextColor)
 
                     Text(npc.trade)
                         .font(.custom("EBGaramond-Italic", size: isLargeScreen ? 14 : 13))
@@ -55,7 +56,7 @@ struct NPCDialogContent: View {
 
                     Text("at the \(stationName)")
                         .font(.custom("EBGaramond-Regular", size: 11))
-                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                        .foregroundStyle(settings.cardTextColor.opacity(0.5))
                 }
 
                 Spacer()
@@ -63,7 +64,7 @@ struct NPCDialogContent: View {
                 Button { dismiss() } label: {
                     Image(systemName: "xmark")
                         .font(.system(size: 12, weight: .bold))
-                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
+                        .foregroundStyle(settings.cardTextColor.opacity(0.4))
                         .padding(6)
                 }
                 .buttonStyle(.plain)
@@ -82,7 +83,7 @@ struct NPCDialogContent: View {
                     if showContent {
                         Text(revealedGreeting)
                             .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 16 : 15))
-                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
+                            .foregroundStyle(settings.cardTextColor.opacity(0.85))
                             .lineSpacing(4)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -123,10 +124,7 @@ struct NPCDialogContent: View {
                         .foregroundStyle(.white)
                         .padding(.horizontal, 28)
                         .padding(.vertical, 8)
-                        .background(
-                            RoundedRectangle(cornerRadius: CornerRadius.sm)
-                                .fill(RenaissanceColors.renaissanceBlue)
-                        )
+                        .parchmentButton(color: RenaissanceColors.renaissanceBlue)
                 }
                 .buttonStyle(.plain)
                 .padding(.top, 8)
@@ -185,7 +183,7 @@ struct NPCDialogContent: View {
 
                 Text(text)
                     .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 14 : 12))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                    .foregroundStyle(settings.cardTextColor.opacity(0.8))
                     .lineSpacing(2)
             }
         }

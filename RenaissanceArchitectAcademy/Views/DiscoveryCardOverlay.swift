@@ -230,7 +230,7 @@ struct DiscoveryCardOverlay: View {
                                 .foregroundStyle(RenaissanceColors.parchment)
                                 .padding(.horizontal, Spacing.md)
                                 .padding(.vertical, Spacing.xs)
-                                .background(card.color, in: RoundedRectangle(cornerRadius: CornerRadius.sm))
+                                .parchmentButton(color: card.color)
                             }
 
                             // Continue exploring button

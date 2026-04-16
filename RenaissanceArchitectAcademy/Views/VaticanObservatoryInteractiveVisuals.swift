@@ -52,16 +52,13 @@ struct VaticanObservatoryInteractiveVisuals {
     }
 }
 
-private let gridColor = ivGridColor
-private let sepiaInk = ivSepiaInk
-private let waterBlue = ivWaterBlue
-private let dimColor = ivDimColor
+// MARK: - Local Colors
+
 private let nightBlue = Color(red: 0.12, green: 0.15, blue: 0.35)
 private let starGold = Color(red: 0.92, green: 0.82, blue: 0.45)
 private let leadGray = Color(red: 0.55, green: 0.55, blue: 0.52)
 private let ultraBlue = Color(red: 0.22, green: 0.30, blue: 0.68)
 private let lensGlass = Color(red: 0.78, green: 0.85, blue: 0.90)
-private let marbleWhite = Color(red: 0.92, green: 0.90, blue: 0.88)
 private let brassGold = Color(red: 0.80, green: 0.68, blue: 0.35)
 
 private typealias TeachingContainer = IVTeachingContainer
@@ -85,14 +82,14 @@ private struct GalileoVisual: View {
                 let jupR: CGFloat = 22
                 let jup = Path(ellipseIn: CGRect(x: cx - jupR, y: cy - jupR, width: jupR * 2, height: jupR * 2))
                 ctx.fill(jup, with: .color(Color(red: 0.78, green: 0.65, blue: 0.45).opacity(step >= 1 ? 0.5 : 0.15)))
-                ctx.stroke(jup, with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                ctx.stroke(jup, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
                 // Bands on Jupiter
                 if step >= 1 {
                     for i in [-8, -3, 3, 8] as [CGFloat] {
                         var band = Path()
                         band.move(to: CGPoint(x: cx - jupR * 0.85, y: cy + i))
                         band.addLine(to: CGPoint(x: cx + jupR * 0.85, y: cy + i))
-                        ctx.stroke(band, with: .color(sepiaInk.opacity(0.1)), lineWidth: 0.5)
+                        ctx.stroke(band, with: .color(IVMaterialColors.sepiaInk.opacity(0.1)), lineWidth: 0.5)
                     }
                 }
                 // Step 2: four moons
@@ -105,7 +102,7 @@ private struct GalileoVisual: View {
                         // Orbit hint
                         let orbit = Path(ellipseIn: CGRect(x: cx - abs(xOff), y: cy - abs(xOff) * 0.3,
                                                             width: abs(xOff) * 2, height: abs(xOff) * 0.6))
-                        ctx.stroke(orbit, with: .color(sepiaInk.opacity(0.08)),
+                        ctx.stroke(orbit, with: .color(IVMaterialColors.sepiaInk.opacity(0.08)),
                                    style: StrokeStyle(lineWidth: 0.5, dash: [2, 2]))
                     }
                 }
@@ -149,7 +146,7 @@ private struct LensGrindingVisual: View {
                         ctx.fill(lens, with: .color(lensGlass.opacity(step >= 1 ? 0.4 : 0.1)))
                         ctx.stroke(lens, with: .color(color.opacity(0.4)), lineWidth: 1)
                     }.frame(width: 50, height: 40)
-                    Text("Convex").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(step >= 1 ? sepiaInk : sepiaInk.opacity(0.3))
+                    Text("Convex").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                 }
                 VStack(spacing: 4) {
                     Canvas { ctx, size in
@@ -160,7 +157,7 @@ private struct LensGrindingVisual: View {
                         ctx.fill(lens, with: .color(lensGlass.opacity(step >= 1 ? 0.3 : 0.1)))
                         ctx.stroke(lens, with: .color(color.opacity(0.4)), lineWidth: 1)
                     }.frame(width: 50, height: 40)
-                    Text("Concave").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(step >= 1 ? sepiaInk : sepiaInk.opacity(0.3))
+                    Text("Concave").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                 }
             }
             if step >= 3 {
@@ -186,7 +183,7 @@ private struct MeridianLineVisual: View {
                 // Floor
                 let floorY = size.height * 0.3, floorH = size.height * 0.45
                 let floor = CGRect(x: 15, y: floorY, width: size.width - 30, height: floorH)
-                ctx.fill(Path(floor), with: .color(marbleWhite.opacity(0.3)))
+                ctx.fill(Path(floor), with: .color(IVMaterialColors.marbleWhite.opacity(0.3)))
                 // Brass line N-S
                 var line = Path()
                 line.move(to: CGPoint(x: cx, y: floorY))
@@ -236,16 +233,16 @@ private struct PendulumVisual: View {
                 let stringL = size.height * 0.45
                 // Pivot point
                 let pivot = Path(ellipseIn: CGRect(x: cx - 3, y: pivotY - 3, width: 6, height: 6))
-                ctx.fill(pivot, with: .color(sepiaInk.opacity(0.4)))
+                ctx.fill(pivot, with: .color(IVMaterialColors.sepiaInk.opacity(0.4)))
                 // String + weight
                 let weightY = pivotY + stringL
                 var string = Path()
                 string.move(to: CGPoint(x: cx, y: pivotY))
                 string.addLine(to: CGPoint(x: cx, y: weightY))
-                ctx.stroke(string, with: .color(sepiaInk.opacity(0.4)), lineWidth: 1)
+                ctx.stroke(string, with: .color(IVMaterialColors.sepiaInk.opacity(0.4)), lineWidth: 1)
                 let weight = Path(ellipseIn: CGRect(x: cx - 8, y: weightY - 4, width: 16, height: 16))
                 ctx.fill(weight, with: .color(color.opacity(step >= 1 ? 0.4 : 0.15)))
-                ctx.stroke(weight, with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                ctx.stroke(weight, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
                 // Swing arc
                 if step >= 1 {
                     var arc = Path()
@@ -257,7 +254,7 @@ private struct PendulumVisual: View {
                 if step >= 2 {
                     let dimX = cx + 25
                     ctx.stroke(IVDimLine(from: CGPoint(x: dimX, y: pivotY), to: CGPoint(x: dimX, y: weightY)).path(in: .zero),
-                               with: .color(dimColor), lineWidth: 0.5)
+                               with: .color(IVMaterialColors.dimColor), lineWidth: 0.5)
                 }
             }
             .overlay(alignment: .bottom) {
@@ -291,7 +288,7 @@ private struct JupiterMoonsVisual: View {
                                 .frame(width: name == "Ganymede" ? 16 : 12, height: name == "Ganymede" ? 16 : 12)
                             Text(name)
                                 .font(.custom("EBGaramond-Regular", size: 15))
-                                .foregroundStyle(active ? sepiaInk : sepiaInk.opacity(0.3))
+                                .foregroundStyle(active ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                         }
                     }
                 }
@@ -326,7 +323,7 @@ private struct LeadDomeVisual: View {
                 dome.move(to: CGPoint(x: cx - 50, y: baseY))
                 dome.addQuadCurve(to: CGPoint(x: cx + 50, y: baseY), control: CGPoint(x: cx, y: baseY - 55))
                 ctx.fill(dome, with: .color(leadGray.opacity(step >= 1 ? 0.3 : 0.1)))
-                ctx.stroke(dome, with: .color(sepiaInk.opacity(0.4)), lineWidth: 1.5)
+                ctx.stroke(dome, with: .color(IVMaterialColors.sepiaInk.opacity(0.4)), lineWidth: 1.5)
                 // Sheet overlap lines
                 if step >= 2 {
                     for i in 1..<5 {
@@ -336,7 +333,7 @@ private struct LeadDomeVisual: View {
                         sheetLine.move(to: CGPoint(x: lx, y: baseY - 5))
                         sheetLine.addQuadCurve(to: CGPoint(x: lx + 3, y: baseY - 50 + t * 20),
                                                control: CGPoint(x: lx + 2, y: baseY - 30))
-                        ctx.stroke(sheetLine, with: .color(sepiaInk.opacity(0.15)), lineWidth: 0.5)
+                        ctx.stroke(sheetLine, with: .color(IVMaterialColors.sepiaInk.opacity(0.15)), lineWidth: 0.5)
                     }
                 }
                 // Step 3: rotation arrow
@@ -362,16 +359,16 @@ private struct MarbleFloorVisual: View {
                           stepLabel: labels[step - 1], height: height) {
             VStack(spacing: 8) {
                 RoundedRectangle(cornerRadius: 4)
-                    .fill(marbleWhite.opacity(step >= 1 ? 0.6 : 0.2))
+                    .fill(IVMaterialColors.marbleWhite.opacity(step >= 1 ? 0.6 : 0.2))
                     .frame(height: 35)
                     .overlay {
                         if step >= 2 {
                             Rectangle().fill(brassGold.opacity(0.6)).frame(width: 2)
                         }
                     }
-                    .overlay(RoundedRectangle(cornerRadius: 4).strokeBorder(sepiaInk.opacity(0.2), lineWidth: 0.5))
+                    .overlay(RoundedRectangle(cornerRadius: 4).strokeBorder(IVMaterialColors.sepiaInk.opacity(0.2), lineWidth: 0.5))
                     .padding(.horizontal, 20)
-                if step >= 1 { Text("± 0.5 mm").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(dimColor) }
+                if step >= 1 { Text("± 0.5 mm").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.dimColor) }
                 if step >= 3 { Text("0.006 mm/°C/m expansion").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color) }
             }
         }
@@ -390,7 +387,7 @@ private struct PureGlassVisual: View {
             VStack(spacing: 8) {
                 Circle().fill(lensGlass.opacity(step >= 1 ? 0.4 : 0.1)).frame(width: 50, height: 50)
                     .overlay(Circle().strokeBorder(color.opacity(0.3), lineWidth: 1))
-                if step >= 2 { Text("24h stir · 5-day cool").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(dimColor) }
+                if step >= 2 { Text("24h stir · 5-day cool").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.dimColor) }
                 if step >= 3 { Text("2% yield").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color) }
             }
         }
@@ -421,7 +418,7 @@ private struct UltramarineFrescoVisual: View {
                     }
                     .padding(.horizontal, 20)
                 if step >= 1 { Text("Lapis Lazuli").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(ultraBlue) }
-                if step >= 2 { Text("6,000 km · costlier than gold").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(dimColor) }
+                if step >= 2 { Text("6,000 km · costlier than gold").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.dimColor) }
             }
         }
     }
@@ -441,7 +438,7 @@ private struct TelescopeTubeVisual: View {
                 let tubeW = size.width * 0.7, tubeH: CGFloat = 14
                 let tube = CGRect(x: cx - tubeW / 2, y: cy - tubeH / 2, width: tubeW, height: tubeH)
                 ctx.fill(Path(roundedRect: tube, cornerRadius: 2), with: .color(leadGray.opacity(step >= 1 ? 0.4 : 0.15)))
-                ctx.stroke(Path(roundedRect: tube, cornerRadius: 2), with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                ctx.stroke(Path(roundedRect: tube, cornerRadius: 2), with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
                 // Objective lens (left)
                 if step >= 1 {
                     let lx = cx - tubeW / 2 + 5
@@ -482,19 +479,19 @@ private struct LeadTubeVisual: View {
                     VStack(spacing: 2) {
                         RoundedRectangle(cornerRadius: 3).fill(Color(red: 0.55, green: 0.42, blue: 0.28).opacity(0.4))
                             .frame(width: 40, height: 12)
-                        Text("Mandrel").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(step >= 1 ? sepiaInk : sepiaInk.opacity(0.3))
+                        Text("Mandrel").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                     }
                     if step >= 2 {
-                        Image(systemName: "arrow.right").font(.system(size: 13)).foregroundStyle(sepiaInk.opacity(0.3))
+                        Image(systemName: "arrow.right").font(.system(size: 13)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3))
                         VStack(spacing: 2) {
                             RoundedRectangle(cornerRadius: 3).fill(leadGray.opacity(0.5)).frame(width: 45, height: 14)
                                 .overlay(RoundedRectangle(cornerRadius: 2).fill(Color.clear).frame(width: 36, height: 8)
-                                    .overlay(RoundedRectangle(cornerRadius: 1).strokeBorder(sepiaInk.opacity(0.15), lineWidth: 0.5)))
-                            Text("Lead tube").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(sepiaInk)
+                                    .overlay(RoundedRectangle(cornerRadius: 1).strokeBorder(IVMaterialColors.sepiaInk.opacity(0.15), lineWidth: 0.5)))
+                            Text("Lead tube").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(IVMaterialColors.sepiaInk)
                         }
                     }
                 }
-                if step >= 1 { Text("327°C").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(dimColor) }
+                if step >= 1 { Text("327°C").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.dimColor) }
                 if step >= 3 { Text("Perfectly cylindrical").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color) }
             }
         }
@@ -521,7 +518,7 @@ private struct GrindUltramarineVisual: View {
                             .overlay { Text("3rd").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(.white.opacity(0.5)) }
                     }
                 }
-                if step >= 2 { Text("3 weeks kneading").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(dimColor) }
+                if step >= 2 { Text("3 weeks kneading").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.dimColor) }
                 if step >= 3 { Text("Deep → Pale → Grey").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color) }
             }
         }

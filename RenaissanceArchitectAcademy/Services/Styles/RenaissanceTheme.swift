@@ -10,6 +10,8 @@ enum RenaissanceFont {
     static let title2      = Font.custom("Cinzel-Regular", size: 22, relativeTo: .title2)
     static let title3      = Font.custom("Cinzel-Regular", size: 18, relativeTo: .title3)
     static let cardTitle   = Font.custom("Cinzel-Bold", size: 15, relativeTo: .headline)
+    static let visualTitle = Font.custom("Cinzel-Bold", size: 16, relativeTo: .headline)
+    static let title2Bold  = Font.custom("Cinzel-Bold", size: 22, relativeTo: .title2)
 
     // Body (EBGaramond)
     static let bodyLarge   = Font.custom("EBGaramond-Regular", size: 19, relativeTo: .body)
@@ -19,6 +21,8 @@ enum RenaissanceFont {
     static let bodySmall   = Font.custom("EBGaramond-Regular", size: 15, relativeTo: .body)
     static let caption     = Font.custom("EBGaramond-Regular", size: 13, relativeTo: .caption)
     static let captionSmall = Font.custom("EBGaramond-Regular", size: 11, relativeTo: .caption2)
+    static let footnote     = Font.custom("EBGaramond-Regular", size: 14, relativeTo: .caption)
+    static let footnoteSmall = Font.custom("EBGaramond-Regular", size: 12, relativeTo: .caption2)
     static let italic      = Font.custom("EBGaramond-Italic", size: 17, relativeTo: .body)
     static let italicSmall = Font.custom("EBGaramond-Italic", size: 15, relativeTo: .body)
 
@@ -263,7 +267,45 @@ extension View {
     }
 }
 
-// MARK: - 10. Button Style ViewModifiers
+// MARK: - 10. Parchment Button Background (single source of truth)
+
+/// Reusable parchment texture background for ALL buttons in the app.
+/// Use `.parchmentButton(color:shape:)` on any button content.
+struct ParchmentButtonModifier<S: Shape>: ViewModifier {
+    let color: Color
+    let shape: S
+    var textureOpacity: Double = 0.35
+
+    func body(content: Content) -> some View {
+        content
+            .background(
+                ZStack {
+                    Image("ButtonBackground")
+                        .resizable()
+                        .opacity(textureOpacity)
+                    color
+                        .blendMode(.multiply)
+                }
+                .clipShape(shape)
+            )
+    }
+}
+
+extension View {
+    /// Parchment texture button background — use on ANY button in the app.
+    /// - `color`: the accent fill color (blended with parchment texture)
+    /// - `radius`: corner radius for rounded rectangle shape (default 8)
+    func parchmentButton(color: Color, radius: CGFloat = CGFloat(CornerRadius.sm)) -> some View {
+        modifier(ParchmentButtonModifier(color: color, shape: RoundedRectangle(cornerRadius: radius)))
+    }
+
+    /// Parchment texture capsule button background.
+    func parchmentCapsule(color: Color) -> some View {
+        modifier(ParchmentButtonModifier(color: color, shape: Capsule()))
+    }
+}
+
+// MARK: - 11. Button Style ViewModifiers
 
 struct ActionButtonModifier: ViewModifier {
     let color: Color
@@ -274,10 +316,7 @@ struct ActionButtonModifier: ViewModifier {
             .foregroundStyle(.white)
             .padding(.horizontal, Spacing.xl)
             .padding(.vertical, Spacing.xs)
-            .background(
-                RoundedRectangle(cornerRadius: CornerRadius.sm)
-                    .fill(color)
-            )
+            .parchmentButton(color: color)
     }
 }
 
@@ -288,10 +327,7 @@ struct CapsuleButtonModifier: ViewModifier {
             .foregroundStyle(RenaissanceColors.sepiaInk)
             .padding(.horizontal, Spacing.md)
             .padding(.vertical, Spacing.xs)
-            .background(
-                Capsule()
-                    .fill(RenaissanceColors.renaissanceBlue.opacity(0.1))
-            )
+            .parchmentCapsule(color: RenaissanceColors.renaissanceBlue.opacity(0.1))
     }
 }
 
@@ -302,6 +338,7 @@ struct GhostButtonModifier: ViewModifier {
             .foregroundStyle(RenaissanceColors.sepiaInk)
             .padding(.horizontal, Spacing.md)
             .padding(.vertical, Spacing.xs)
+            .parchmentButton(color: .clear)
             .overlay(
                 RoundedRectangle(cornerRadius: CornerRadius.sm)
                     .stroke(RenaissanceColors.sepiaInk.opacity(0.3), lineWidth: 1)

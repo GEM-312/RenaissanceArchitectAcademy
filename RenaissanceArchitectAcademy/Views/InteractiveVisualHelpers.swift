@@ -2,10 +2,28 @@ import SwiftUI
 
 // MARK: - Shared Colors for Interactive Visuals
 
-let ivGridColor = Color.brown.opacity(0.06)
-let ivSepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
-let ivWaterBlue = Color(red: 0.35, green: 0.55, blue: 0.75)
-let ivDimColor = Color(red: 0.7, green: 0.35, blue: 0.25)
+/// Single source of truth for colors used across all 17 InteractiveVisuals files.
+/// Building-specific unique colors stay as private lets in each file.
+enum IVMaterialColors {
+    // Base drawing colors (used by helpers)
+    static let gridColor  = RenaissanceColors.warmBrown.opacity(0.06)
+    static let sepiaInk   = RenaissanceColors.sepiaInk
+    static let waterBlue  = Color(red: 0.35, green: 0.55, blue: 0.75)
+    static let dimColor   = Color(red: 0.7, green: 0.35, blue: 0.25)
+
+    // Shared building materials — deduplicated from 17 files
+    static let stoneGray   = Color(red: 0.65, green: 0.63, blue: 0.60)
+    static let marbleWhite = Color(red: 0.92, green: 0.90, blue: 0.88)
+    static let leadGray    = Color(red: 0.50, green: 0.52, blue: 0.55)
+    static let ironDark    = Color(red: 0.35, green: 0.33, blue: 0.32)
+    static let oakBrown    = Color(red: 0.55, green: 0.42, blue: 0.28)
+    static let bronzeGold  = Color(red: 0.72, green: 0.55, blue: 0.32)
+    static let hotRed      = Color(red: 0.85, green: 0.35, blue: 0.25)
+    static let limeTan     = Color(red: 0.88, green: 0.84, blue: 0.76)
+    static let cherryRed   = Color(red: 0.80, green: 0.25, blue: 0.20)
+    static let poplarLight = Color(red: 0.78, green: 0.72, blue: 0.58)
+}
+
 
 // MARK: - Visual Title
 
@@ -14,7 +32,7 @@ struct IVVisualTitle: View {
     let color: Color
     var body: some View {
         Text(text)
-            .font(.custom("Cinzel-Bold", size: 16))
+            .font(RenaissanceFont.visualTitle)
             .tracking(1)
             .foregroundStyle(color)
     }
@@ -30,13 +48,13 @@ struct IVBlueprintGrid: View {
                 var path = Path()
                 path.move(to: CGPoint(x: x, y: 0))
                 path.addLine(to: CGPoint(x: x, y: size.height))
-                context.stroke(path, with: .color(ivGridColor), lineWidth: 0.5)
+                context.stroke(path, with: .color(IVMaterialColors.gridColor), lineWidth: 0.5)
             }
             for y in stride(from: CGFloat(0), through: size.height, by: spacing) {
                 var path = Path()
                 path.move(to: CGPoint(x: 0, y: y))
                 path.addLine(to: CGPoint(x: size.width, y: y))
-                context.stroke(path, with: .color(ivGridColor), lineWidth: 0.5)
+                context.stroke(path, with: .color(IVMaterialColors.gridColor), lineWidth: 0.5)
             }
         }
     }
@@ -74,8 +92,8 @@ struct IVTeachingContainer<Content: View>: View {
                 IVStepControls(totalSteps: totalSteps, currentStep: $step, color: color)
                     .padding(.horizontal, 8)
                 Text(stepLabel)
-                    .font(.custom("EBGaramond-Regular", size: 15))
-                    .foregroundStyle(ivSepiaInk.opacity(0.7))
+                    .font(RenaissanceFont.bodySmall)
+                    .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.7))
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
                     .padding(.horizontal, 12)
@@ -108,7 +126,7 @@ struct IVStepControls: View {
                 } label: {
                     HStack(spacing: 3) {
                         Image(systemName: "chevron.left").font(.system(size: 13))
-                        Text("Back").font(.custom("EBGaramond-Regular", size: 15))
+                        Text("Back").font(RenaissanceFont.bodySmall)
                     }
                     .foregroundStyle(color.opacity(0.6))
                 }
@@ -129,7 +147,7 @@ struct IVStepControls: View {
                     SoundManager.shared.play(.tapSoft)
                 } label: {
                     HStack(spacing: 3) {
-                        Text("Next").font(.custom("EBGaramond-Regular", size: 15))
+                        Text("Next").font(RenaissanceFont.bodySmall)
                         Image(systemName: "chevron.right").font(.system(size: 13))
                     }
                     .foregroundStyle(color)
@@ -152,7 +170,7 @@ struct IVDimLabel: View {
     var body: some View {
         Text(text)
             .font(.custom("EBGaramond-SemiBold", size: fontSize))
-            .foregroundStyle(ivDimColor)
+            .foregroundStyle(IVMaterialColors.dimColor)
     }
 }
 
@@ -165,7 +183,7 @@ struct IVFormulaText: View {
     var body: some View {
         Text(text)
             .font(.custom("EBGaramond-Bold", size: fontSize))
-            .foregroundStyle(highlighted ? RenaissanceColors.sageGreen : ivSepiaInk)
+            .foregroundStyle(highlighted ? RenaissanceColors.sageGreen : IVMaterialColors.sepiaInk)
     }
 }
 

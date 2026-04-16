@@ -184,7 +184,7 @@ struct FarmMiniGameView: View {
 
                 Text(difficulty)
                     .font(RenaissanceFont.bodySemibold)
-                    .foregroundStyle(difficultyColor(difficulty))
+                    .foregroundStyle(miniGameDifficultyColor(difficulty))
 
                 Image(systemName: "chevron.right")
                     .font(.body)
@@ -199,106 +199,24 @@ struct FarmMiniGameView: View {
         }
     }
 
-    private func difficultyColor(_ difficulty: String) -> Color {
-        switch difficulty {
-        case "Easy":   return RenaissanceColors.sageGreen
-        case "Medium": return RenaissanceColors.ochre
-        case "Hard":   return RenaissanceColors.terracotta
-        default:       return RenaissanceColors.stoneGray
-        }
-    }
-
     // MARK: - Phase 2: Intro
 
     private var introCard: some View {
-        VStack(spacing: 20) {
-            HStack(spacing: 12) {
-                Image(systemName: "leaf.fill")
-                    .font(.system(size: 24))
-                    .foregroundStyle(RenaissanceColors.sageGreen)
-                    .frame(width: 44, height: 44)
-                    .background(
-                        RoundedRectangle(cornerRadius: CornerRadius.sm)
-                            .fill(RenaissanceColors.sageGreen.opacity(0.1))
-                    )
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Farm Harvest")
-                        .font(.custom("Cinzel-Bold", size: 22))
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
-                    Text(selectedMaterial.rawValue)
-                        .font(RenaissanceFont.dialogSubtitle)
-                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
-                }
-            }
-
-            Text(introText)
-                .font(.custom("EBGaramond-Regular", size: 16))
-                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
-                .fixedSize(horizontal: false, vertical: true)
-
-            VStack(spacing: 10) {
-                ruleRow(icon: "hand.point.up.left.fill", text: "Catch falling items with your pitchfork", color: RenaissanceColors.sageGreen)
-                ruleRow(icon: "arrow.down", text: "Tap left, center, or right to move your pitchfork", color: RenaissanceColors.ochre)
-                ruleRow(icon: "star.fill", text: "Catch in the center = bonus florins", color: RenaissanceColors.goldSuccess)
-            }
-
-            Button {
-                startGame()
-            } label: {
-                HStack(spacing: 8) {
-                    Image(systemName: "leaf.fill")
-                        .font(.caption)
-                    Text("Begin Harvest")
-                        .font(.custom("EBGaramond-SemiBold", size: 16))
-                }
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, Spacing.sm)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(RenaissanceColors.sageGreen)
-                )
-            }
-
-            Button("Back") {
-                withAnimation { phase = .choose }
-            }
-            .font(RenaissanceFont.bodySmall)
-            .foregroundStyle(RenaissanceColors.sepiaInk)
+        MiniGameIntroCard(
+            icon: "leaf.fill",
+            iconColor: RenaissanceColors.sageGreen,
+            title: "Farm Harvest",
+            subtitle: selectedMaterial.rawValue,
+            bodyText: introText,
+            buttonLabel: "Begin Harvest",
+            buttonColor: RenaissanceColors.sageGreen,
+            startAction: { startGame() },
+            backAction: { withAnimation { phase = .choose } }
+        ) {
+            MiniGameRuleRow(icon: "hand.point.up.left.fill", text: "Catch falling items with your pitchfork", color: RenaissanceColors.sageGreen)
+            MiniGameRuleRow(icon: "arrow.down", text: "Tap left, center, or right to move your pitchfork", color: RenaissanceColors.ochre)
+            MiniGameRuleRow(icon: "star.fill", text: "Catch in the center = bonus florins", color: RenaissanceColors.goldSuccess)
         }
-        .padding(Spacing.xl)
-        .adaptiveWidth(400)
-        .background(
-            RoundedRectangle(cornerRadius: CornerRadius.lg)
-                .fill(RenaissanceColors.parchment)
-        )
-        .borderWorkshop()
-    }
-
-    private func ruleRow(icon: String, text: String, color: Color) -> some View {
-        HStack(spacing: 12) {
-            Image(systemName: icon)
-                .font(.body)
-                .foregroundStyle(color)
-                .frame(width: 32, height: 32)
-                .background(
-                    RoundedRectangle(cornerRadius: CornerRadius.sm)
-                        .fill(color.opacity(0.1))
-                )
-
-            Text(text)
-                .font(.custom("EBGaramond-Regular", size: 14))
-                .foregroundStyle(RenaissanceColors.sepiaInk)
-
-            Spacer()
-        }
-        .padding(Spacing.sm)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(RenaissanceColors.parchment.opacity(0.6))
-                .borderWorkshop(radius: 10)
-        )
     }
 
     private var introText: String {

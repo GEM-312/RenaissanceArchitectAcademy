@@ -1986,7 +1986,7 @@ struct WorkshopMapView: View {
                 // Recipe hint
                 if let recipe = workshop.detectedRecipe {
                     HStack(spacing: 6) {
-                        Text(recipe.output.icon)
+                        CraftedItemIconView(item: recipe.output, size: 20)
                         Text(recipe.output.rawValue)
                             .font(RenaissanceFont.bodySmall)
                             .foregroundStyle(RenaissanceColors.sageGreen)

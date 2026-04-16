@@ -54,14 +54,9 @@ struct DuomoInteractiveVisuals {
     }
 }
 
-// MARK: - Local Aliases
+// MARK: - Local Colors
 
-private let gridColor = ivGridColor
-private let sepiaInk = ivSepiaInk
-private let waterBlue = ivWaterBlue
-private let dimColor = ivDimColor
 private let brickRed = Color(red: 0.78, green: 0.38, blue: 0.25)
-private let marbleWhite = Color(red: 0.92, green: 0.90, blue: 0.88)
 private let ironGray = Color(red: 0.40, green: 0.40, blue: 0.42)
 private let greenPrato = Color(red: 0.35, green: 0.55, blue: 0.35)
 private let pinkMaremma = Color(red: 0.82, green: 0.60, blue: 0.58)
@@ -94,14 +89,14 @@ private struct DomeCompetitionVisual: View {
 
                 // Draw octagonal drum
                 let octPath = octagonPath(center: CGPoint(x: cx, y: cy), radius: radius)
-                ctx.stroke(octPath, with: .color(sepiaInk.opacity(0.6)), lineWidth: 2)
+                ctx.stroke(octPath, with: .color(IVMaterialColors.sepiaInk.opacity(0.6)), lineWidth: 2)
                 ctx.fill(octPath, with: .color(brickRed.opacity(step >= 1 ? 0.15 : 0)))
 
                 // 42m dimension
                 if step >= 1 {
                     let dimFrom = CGPoint(x: cx - radius, y: cy + radius + 15)
                     let dimTo = CGPoint(x: cx + radius, y: cy + radius + 15)
-                    ctx.stroke(IVDimLine(from: dimFrom, to: dimTo).path(in: .zero), with: .color(dimColor), lineWidth: 1)
+                    ctx.stroke(IVDimLine(from: dimFrom, to: dimTo).path(in: .zero), with: .color(IVMaterialColors.dimColor), lineWidth: 1)
                 }
 
                 // Step 2: crossed-out centering
@@ -110,7 +105,7 @@ private struct DomeCompetitionVisual: View {
                     var arcPath = Path()
                     arcPath.addArc(center: CGPoint(x: cx, y: cy + radius * 0.4),
                                    radius: radius * 0.7, startAngle: .degrees(-150), endAngle: .degrees(-30), clockwise: false)
-                    ctx.stroke(arcPath, with: .color(sepiaInk.opacity(0.3)), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                    ctx.stroke(arcPath, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
 
                     // Red X through centering
                     let xSize = radius * 0.3
@@ -186,8 +181,8 @@ private struct OctagonStressVisual: View {
             }
             path.closeSubpath()
 
-            ctx.fill(path, with: .color(active ? color.opacity(0.15) : sepiaInk.opacity(0.05)))
-            ctx.stroke(path, with: .color(active ? color : sepiaInk.opacity(0.4)), lineWidth: active ? 2 : 1)
+            ctx.fill(path, with: .color(active ? color.opacity(0.15) : IVMaterialColors.sepiaInk.opacity(0.05)))
+            ctx.stroke(path, with: .color(active ? color : IVMaterialColors.sepiaInk.opacity(0.4)), lineWidth: active ? 2 : 1)
 
             // Stress arrows at corners
             if active {
@@ -198,7 +193,7 @@ private struct OctagonStressVisual: View {
                     var arrow = Path()
                     arrow.move(to: outer)
                     arrow.addLine(to: inner)
-                    ctx.stroke(arrow, with: .color(dimColor.opacity(0.7)), lineWidth: 1.5)
+                    ctx.stroke(arrow, with: .color(IVMaterialColors.dimColor.opacity(0.7)), lineWidth: 1.5)
                 }
             }
         }
@@ -206,7 +201,7 @@ private struct OctagonStressVisual: View {
         .overlay(alignment: .bottom) {
             Text(label)
                 .font(.custom("Cinzel-Bold", size: 16))
-                .foregroundStyle(active ? color : sepiaInk.opacity(0.4))
+                .foregroundStyle(active ? color : IVMaterialColors.sepiaInk.opacity(0.4))
         }
     }
 
@@ -216,8 +211,8 @@ private struct OctagonStressVisual: View {
             let cx = size.width / 2, cy = size.height / 2
             let r = min(size.width, size.height) * 0.38
             let circle = Path(ellipseIn: CGRect(x: cx - r, y: cy - r, width: r * 2, height: r * 2))
-            ctx.fill(circle, with: .color(active ? color.opacity(0.15) : sepiaInk.opacity(0.05)))
-            ctx.stroke(circle, with: .color(active ? color : sepiaInk.opacity(0.4)), lineWidth: active ? 2 : 1)
+            ctx.fill(circle, with: .color(active ? color.opacity(0.15) : IVMaterialColors.sepiaInk.opacity(0.05)))
+            ctx.stroke(circle, with: .color(active ? color : IVMaterialColors.sepiaInk.opacity(0.4)), lineWidth: active ? 2 : 1)
 
             if active {
                 // Evenly distributed arrows
@@ -228,7 +223,7 @@ private struct OctagonStressVisual: View {
                     var arrow = Path()
                     arrow.move(to: outer)
                     arrow.addLine(to: inner)
-                    ctx.stroke(arrow, with: .color(dimColor.opacity(0.5)), lineWidth: 1)
+                    ctx.stroke(arrow, with: .color(IVMaterialColors.dimColor.opacity(0.5)), lineWidth: 1)
                 }
             }
         }
@@ -236,7 +231,7 @@ private struct OctagonStressVisual: View {
         .overlay(alignment: .bottom) {
             Text("∞")
                 .font(.custom("Cinzel-Bold", size: 16))
-                .foregroundStyle(active ? color : sepiaInk.opacity(0.4))
+                .foregroundStyle(active ? color : IVMaterialColors.sepiaInk.opacity(0.4))
         }
     }
 }
@@ -264,29 +259,29 @@ private struct DoubleShellVisual: View {
                 var drum = Path()
                 drum.addRect(CGRect(x: cx - domeW / 2, y: baseY, width: domeW, height: 12))
                 ctx.fill(drum, with: .color(brickRed.opacity(0.3)))
-                ctx.stroke(drum, with: .color(sepiaInk.opacity(0.4)), lineWidth: 1)
+                ctx.stroke(drum, with: .color(IVMaterialColors.sepiaInk.opacity(0.4)), lineWidth: 1)
 
                 // Inner shell (always visible)
                 let innerThick: CGFloat = domeW * 0.06  // ~2.1m proportion
                 var innerOuter = domeArc(cx: cx, baseY: baseY, width: domeW * 0.85, height: domeH * 0.9)
                 var innerInner = domeArc(cx: cx, baseY: baseY, width: domeW * 0.85 - innerThick * 2, height: domeH * 0.9 - innerThick)
 
-                ctx.stroke(innerOuter, with: .color(step >= 1 ? brickRed : sepiaInk.opacity(0.3)), lineWidth: step == 1 ? 2.5 : 1.5)
-                ctx.stroke(innerInner, with: .color(step >= 1 ? brickRed.opacity(0.6) : sepiaInk.opacity(0.2)), lineWidth: 1)
+                ctx.stroke(innerOuter, with: .color(step >= 1 ? brickRed : IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: step == 1 ? 2.5 : 1.5)
+                ctx.stroke(innerInner, with: .color(step >= 1 ? brickRed.opacity(0.6) : IVMaterialColors.sepiaInk.opacity(0.2)), lineWidth: 1)
 
                 // Outer shell
                 if step >= 2 {
                     let outerPath = domeArc(cx: cx, baseY: baseY, width: domeW, height: domeH)
                     let outerInner = domeArc(cx: cx, baseY: baseY, width: domeW - domeW * 0.035 * 2, height: domeH - domeW * 0.02)
-                    ctx.stroke(outerPath, with: .color(marbleWhite.opacity(0.8)), lineWidth: 2.5)
-                    ctx.stroke(outerInner, with: .color(sepiaInk.opacity(0.2)), lineWidth: 1)
+                    ctx.stroke(outerPath, with: .color(IVMaterialColors.marbleWhite.opacity(0.8)), lineWidth: 2.5)
+                    ctx.stroke(outerInner, with: .color(IVMaterialColors.sepiaInk.opacity(0.2)), lineWidth: 1)
                 }
 
                 // Gap + staircase hint
                 if step >= 3 {
                     // Dashed lines in gap
                     let gapMid = domeArc(cx: cx, baseY: baseY, width: domeW * 0.92, height: domeH * 0.95)
-                    ctx.stroke(gapMid, with: .color(sepiaInk.opacity(0.2)), style: StrokeStyle(lineWidth: 0.5, dash: [3, 3]))
+                    ctx.stroke(gapMid, with: .color(IVMaterialColors.sepiaInk.opacity(0.2)), style: StrokeStyle(lineWidth: 0.5, dash: [3, 3]))
 
                     // Staircase dots
                     for i in 0..<8 {
@@ -296,7 +291,7 @@ private struct DoubleShellVisual: View {
                         let x = cx + cos(angle) * midR * 0.5
                         let y = baseY - sin(angle) * domeH * 0.47
                         let dot = Path(ellipseIn: CGRect(x: x - 2, y: y - 2, width: 4, height: 4))
-                        ctx.fill(dot, with: .color(sepiaInk.opacity(0.3)))
+                        ctx.fill(dot, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)))
                     }
                 }
             }
@@ -343,7 +338,7 @@ private struct HerringboneVisual: View {
                         // Horizontal brick
                         let brick = CGRect(x: x, y: y, width: bw * 0.9, height: bh)
                         ctx.fill(Path(brick), with: .color(brickRed.opacity(0.4)))
-                        ctx.stroke(Path(brick), with: .color(sepiaInk.opacity(0.3)), lineWidth: 0.5)
+                        ctx.stroke(Path(brick), with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 0.5)
 
                         // Vertical herringbone bricks (step 2+)
                         if step >= 2 && col % 3 == 1 {
@@ -358,7 +353,7 @@ private struct HerringboneVisual: View {
                                 vBrick.addRect(CGRect(x: -3, y: -bh * 0.6, width: 6, height: bh * 1.2))
                                 let transformed = vBrick.applying(transform)
                                 layerCtx.fill(transformed, with: .color(step >= 3 ? color.opacity(0.5) : brickRed.opacity(0.7)))
-                                layerCtx.stroke(transformed, with: .color(sepiaInk.opacity(0.5)), lineWidth: 0.5)
+                                layerCtx.stroke(transformed, with: .color(IVMaterialColors.sepiaInk.opacity(0.5)), lineWidth: 0.5)
                             }
                         }
                     }
@@ -430,8 +425,8 @@ private struct LanternCompressionVisual: View {
                     let lanternW: CGFloat = 30, lanternH: CGFloat = 35
                     let lanternY = baseY - domeH + 5
                     let lantern = CGRect(x: cx - lanternW / 2, y: lanternY - lanternH, width: lanternW, height: lanternH)
-                    ctx.fill(Path(roundedRect: lantern, cornerRadius: 3), with: .color(marbleWhite.opacity(0.8)))
-                    ctx.stroke(Path(roundedRect: lantern, cornerRadius: 3), with: .color(sepiaInk.opacity(0.5)), lineWidth: 1.5)
+                    ctx.fill(Path(roundedRect: lantern, cornerRadius: 3), with: .color(IVMaterialColors.marbleWhite.opacity(0.8)))
+                    ctx.stroke(Path(roundedRect: lantern, cornerRadius: 3), with: .color(IVMaterialColors.sepiaInk.opacity(0.5)), lineWidth: 1.5)
 
                     // Ball on top
                     let ball = Path(ellipseIn: CGRect(x: cx - 6, y: lanternY - lanternH - 10, width: 12, height: 12))
@@ -483,8 +478,8 @@ private struct CarraraMarbleVisual: View {
                           stepLabel: labels[step - 1], height: height) {
             HStack(spacing: 8) {
                 // White
-                marbleSwatch(label: "Carrara", sublabel: "99% CaCO₃", color: marbleWhite,
-                             borderColor: sepiaInk.opacity(0.3), active: step >= 1)
+                marbleSwatch(label: "Carrara", sublabel: "99% CaCO₃", color: IVMaterialColors.marbleWhite,
+                             borderColor: IVMaterialColors.sepiaInk.opacity(0.3), active: step >= 1)
                 // Green
                 marbleSwatch(label: "Prato", sublabel: "Serpentine", color: greenPrato.opacity(0.5),
                              borderColor: greenPrato, active: step >= 2)
@@ -525,10 +520,10 @@ private struct CarraraMarbleVisual: View {
 
             Text(label)
                 .font(.custom("Cinzel-Bold", size: 16))
-                .foregroundStyle(active ? sepiaInk : sepiaInk.opacity(0.3))
+                .foregroundStyle(active ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
             Text(sublabel)
                 .font(.custom("EBGaramond-Regular", size: 15))
-                .foregroundStyle(active ? dimColor : dimColor.opacity(0.3))
+                .foregroundStyle(active ? IVMaterialColors.dimColor : IVMaterialColors.dimColor.opacity(0.3))
         }
     }
 }
@@ -562,13 +557,13 @@ private struct BrickProductionVisual: View {
 
                         let opacity: CGFloat = step >= 1 ? 0.5 : 0.2
                         ctx.fill(Path(brick), with: .color(brickRed.opacity(opacity)))
-                        ctx.stroke(Path(brick), with: .color(sepiaInk.opacity(0.2)), lineWidth: 0.5)
+                        ctx.stroke(Path(brick), with: .color(IVMaterialColors.sepiaInk.opacity(0.2)), lineWidth: 0.5)
 
                         // Maker's mark (step 2+)
                         if step >= 2 && (row + col) % 4 == 0 {
                             let markCenter = CGPoint(x: x + bw / 2, y: y + bh / 2)
                             let mark = Path(ellipseIn: CGRect(x: markCenter.x - 3, y: markCenter.y - 2, width: 6, height: 4))
-                            ctx.stroke(mark, with: .color(sepiaInk.opacity(0.4)), lineWidth: 0.5)
+                            ctx.stroke(mark, with: .color(IVMaterialColors.sepiaInk.opacity(0.4)), lineWidth: 0.5)
                         }
                     }
                 }
@@ -686,7 +681,7 @@ private struct StainedGlassVisual: View {
                 // Glass pane
                 let glass = CGRect(x: glassX - glassW / 2, y: topY, width: glassW, height: botY - topY)
                 ctx.fill(Path(glass), with: .color(cobaltBlue.opacity(step >= 2 ? 0.4 : 0.1)))
-                ctx.stroke(Path(glass), with: .color(sepiaInk.opacity(0.4)), lineWidth: 1)
+                ctx.stroke(Path(glass), with: .color(IVMaterialColors.sepiaInk.opacity(0.4)), lineWidth: 1)
 
                 // Incoming white light (left side)
                 let colors: [(Color, String)] = [(.red, "R"), (.green, "G"), (.blue, "B")]
@@ -765,11 +760,11 @@ private struct MortarSetVisual: View {
                         .overlay {
                             Text("☁ 3 days")
                                 .font(.custom("EBGaramond-Bold", size: 15))
-                                .foregroundStyle(step == 1 ? sepiaInk : sepiaInk.opacity(0.3))
+                                .foregroundStyle(step == 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                         }
                     Text("Lime")
                         .font(.custom("Cinzel-Bold", size: 16))
-                        .foregroundStyle(step == 1 || step == 3 ? sepiaInk : sepiaInk.opacity(0.3))
+                        .foregroundStyle(step == 1 || step == 3 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                     if step >= 3 {
                         Text("→ horizontal")
                             .font(.custom("EBGaramond-Regular", size: 15))
@@ -785,11 +780,11 @@ private struct MortarSetVisual: View {
                         .overlay {
                             Text("⚡ 15 min")
                                 .font(.custom("EBGaramond-Bold", size: 15))
-                                .foregroundStyle(step >= 2 ? color : sepiaInk.opacity(0.3))
+                                .foregroundStyle(step >= 2 ? color : IVMaterialColors.sepiaInk.opacity(0.3))
                         }
                     Text("Gypsum")
                         .font(.custom("Cinzel-Bold", size: 16))
-                        .foregroundStyle(step >= 2 ? sepiaInk : sepiaInk.opacity(0.3))
+                        .foregroundStyle(step >= 2 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                     if step >= 3 {
                         Text("→ vertical")
                             .font(.custom("EBGaramond-Regular", size: 15))
@@ -836,11 +831,11 @@ private struct BrickFiringVisual: View {
                             .frame(width: brickSize, height: brickHeight)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 6)
-                                    .strokeBorder(sepiaInk.opacity(0.3), lineWidth: 1)
+                                    .strokeBorder(IVMaterialColors.sepiaInk.opacity(0.3), lineWidth: 1)
                             )
                         Text("900°C + O₂")
                             .font(.custom("EBGaramond-Bold", size: 15))
-                            .foregroundStyle(step >= 2 ? dimColor : dimColor.opacity(0.3))
+                            .foregroundStyle(step >= 2 ? IVMaterialColors.dimColor : IVMaterialColors.dimColor.opacity(0.3))
                         Text("Red")
                             .font(.custom("Cinzel-Bold", size: 18))
                             .foregroundStyle(step >= 2 ? brickRed : brickRed.opacity(0.3))
@@ -853,11 +848,11 @@ private struct BrickFiringVisual: View {
                             .frame(width: brickSize, height: brickHeight)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 6)
-                                    .strokeBorder(sepiaInk.opacity(0.3), lineWidth: 1)
+                                    .strokeBorder(IVMaterialColors.sepiaInk.opacity(0.3), lineWidth: 1)
                             )
                         Text("1000°C − O₂")
                             .font(.custom("EBGaramond-Bold", size: 15))
-                            .foregroundStyle(step >= 3 ? dimColor : dimColor.opacity(0.3))
+                            .foregroundStyle(step >= 3 ? IVMaterialColors.dimColor : IVMaterialColors.dimColor.opacity(0.3))
                         Text("Brown")
                             .font(.custom("Cinzel-Bold", size: 18))
                             .foregroundStyle(step >= 3 ? Color(red: 0.4, green: 0.28, blue: 0.2) : Color.gray.opacity(0.3))
@@ -889,7 +884,7 @@ private struct SinopiaVisual: View {
                 // Plaster wall background
                 let wall = CGRect(x: 20, y: 10, width: size.width - 40, height: size.height * 0.7)
                 ctx.fill(Path(roundedRect: wall, cornerRadius: 4), with: .color(Color(red: 0.92, green: 0.89, blue: 0.83)))
-                ctx.stroke(Path(roundedRect: wall, cornerRadius: 4), with: .color(sepiaInk.opacity(0.2)), lineWidth: 0.5)
+                ctx.stroke(Path(roundedRect: wall, cornerRadius: 4), with: .color(IVMaterialColors.sepiaInk.opacity(0.2)), lineWidth: 0.5)
 
                 // Sinopia sketch (simple dome outline drawn in red ochre)
                 if step >= 3 {
@@ -920,7 +915,7 @@ private struct SinopiaVisual: View {
                     // Slab
                     let slab = CGRect(x: cx - 30, y: size.height * 0.3, width: 60, height: 8)
                     ctx.fill(Path(slab), with: .color(Color.gray.opacity(0.3)))
-                    ctx.stroke(Path(slab), with: .color(sepiaInk.opacity(0.3)), lineWidth: 0.5)
+                    ctx.stroke(Path(slab), with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 0.5)
                     // Muller
                     let muller = Path(ellipseIn: CGRect(x: cx - 10, y: size.height * 0.25, width: 20, height: 14))
                     ctx.fill(muller, with: .color(Color.gray.opacity(0.5)))
@@ -955,7 +950,7 @@ private struct QuintoAcutoVisual: View {
                 hemiPath.move(to: CGPoint(x: cx - domeW / 2, y: baseY))
                 hemiPath.addArc(center: CGPoint(x: cx, y: baseY), radius: domeW / 2,
                                 startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
-                ctx.stroke(hemiPath, with: .color(step == 1 ? sepiaInk.opacity(0.6) : sepiaInk.opacity(0.2)),
+                ctx.stroke(hemiPath, with: .color(step == 1 ? IVMaterialColors.sepiaInk.opacity(0.6) : IVMaterialColors.sepiaInk.opacity(0.2)),
                            style: StrokeStyle(lineWidth: step == 1 ? 2 : 1, dash: step > 1 ? [4, 3] : []))
 
                 // Quinto acuto (step 2+) — pointed fifth arc
@@ -970,13 +965,13 @@ private struct QuintoAcutoVisual: View {
                     // Center point at 4/5
                     let centerY = baseY - quintoH * 0.8
                     let centerDot = Path(ellipseIn: CGRect(x: cx - 3, y: centerY - 3, width: 6, height: 6))
-                    ctx.fill(centerDot, with: .color(dimColor))
+                    ctx.fill(centerDot, with: .color(IVMaterialColors.dimColor))
 
                     // 4/5 label line
                     var labelLine = Path()
                     labelLine.move(to: CGPoint(x: cx + 8, y: centerY))
                     labelLine.addLine(to: CGPoint(x: cx + 35, y: centerY))
-                    ctx.stroke(labelLine, with: .color(dimColor.opacity(0.5)), lineWidth: 0.5)
+                    ctx.stroke(labelLine, with: .color(IVMaterialColors.dimColor.opacity(0.5)), lineWidth: 0.5)
                 }
 
                 // Step 3: thrust arrows comparison
@@ -1003,13 +998,13 @@ private struct QuintoAcutoVisual: View {
                 var baseLine = Path()
                 baseLine.move(to: CGPoint(x: cx - domeW / 2 - 10, y: baseY))
                 baseLine.addLine(to: CGPoint(x: cx + domeW / 2 + 10, y: baseY))
-                ctx.stroke(baseLine, with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
+                ctx.stroke(baseLine, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
             }
             .overlay {
                 if step >= 2 {
                     Text("4/5")
                         .font(.custom("EBGaramond-Bold", size: 15))
-                        .foregroundStyle(dimColor)
+                        .foregroundStyle(IVMaterialColors.dimColor)
                         .position(x: 999, y: 999) // positioned via canvas
                 }
             }
@@ -1051,7 +1046,7 @@ private struct LeadCamesVisual: View {
                     var line = Path()
                     line.move(to: CGPoint(x: hx + 20, y: hy + 20))
                     line.addLine(to: CGPoint(x: labelX, y: hy + 20))
-                    ctx.stroke(line, with: .color(sepiaInk.opacity(0.3)), lineWidth: 0.5)
+                    ctx.stroke(line, with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 0.5)
                 }
 
                 // Step 2+: assembled window segment

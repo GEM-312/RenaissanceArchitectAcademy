@@ -70,8 +70,7 @@ struct InventoryBarView: View {
                         let count = workshop.craftedMaterials[item] ?? 0
                         if count > 0 {
                             HStack(spacing: 3) {
-                                Text(item.icon)
-                                    .font(.caption)
+                                CraftedItemIconView(item: item, size: 16)
                                 Text("\(count)")
                                     .font(.custom("EBGaramond-Regular", size: 12))
                                     .foregroundStyle(RenaissanceColors.sageGreen)
