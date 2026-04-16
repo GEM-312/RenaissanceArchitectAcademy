@@ -72,7 +72,7 @@ struct CardVisualView: View {
             .frame(height: visualHeight)
             .background(
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(RenaissanceColors.parchment)
+                    .fill(GameSettings.shared.dialogBackground)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
@@ -142,7 +142,7 @@ struct CardVisualView: View {
                 Text(caption)
                     .font(.custom("EBGaramond-Italic", size: 15))
                     .tracking(0.5)
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+                    .foregroundStyle(GameSettings.shared.cardTextColor.opacity(0.6))
                     .multilineTextAlignment(.center)
             }
         }

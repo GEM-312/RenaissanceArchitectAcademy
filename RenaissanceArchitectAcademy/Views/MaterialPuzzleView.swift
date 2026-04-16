@@ -109,6 +109,7 @@ struct MaterialFormula {
 
 /// Drag and combine puzzle game for collecting building materials
 struct MaterialPuzzleView: View {
+    private var settings: GameSettings { GameSettings.shared }
     let buildingName: String
     let formula: MaterialFormula
     let workshopState: WorkshopState?
@@ -158,7 +159,7 @@ struct MaterialPuzzleView: View {
             "Al": RenaissanceColors.warmBrown,
             // Distractor elements
             "Fe": RenaissanceColors.errorRed,
-            "C": RenaissanceColors.sepiaInk,
+            "C": settings.cardTextColor,
             "Mg": RenaissanceColors.deepTeal,
             "S": Color.yellow.opacity(0.8)
         ]
@@ -265,7 +266,7 @@ struct MaterialPuzzleView: View {
                 onDismiss()
             }
             .font(.custom("EBGaramond-Regular", size: 16))
-            .foregroundColor(RenaissanceColors.sepiaInk)
+            .foregroundColor(settings.cardTextColor)
             .padding(.bottom, isLargeScreen ? 20 : 10)
         }
         .padding(isLargeScreen ? 16 : 10)
@@ -321,11 +322,11 @@ struct MaterialPuzzleView: View {
         VStack(spacing: 4) {
             Text("Gather Materials")
                 .font(.custom("Cinzel-Regular", size: 26))
-                .foregroundColor(RenaissanceColors.sepiaInk)
+                .foregroundColor(settings.cardTextColor)
 
             Text("for the \(buildingName)")
                 .font(.custom("EBGaramond-Regular", size: 17))
-                .foregroundColor(RenaissanceColors.sepiaInk)
+                .foregroundColor(settings.cardTextColor)
         }
     }
 
@@ -333,17 +334,17 @@ struct MaterialPuzzleView: View {
         VStack(spacing: 10) {
             Text(formula.name)
                 .font(.custom("EBGaramond-SemiBold", size: 20))
-                .foregroundColor(RenaissanceColors.sepiaInk)
+                .foregroundColor(settings.cardTextColor)
 
             // Show formula with hidden answer until solved
             HStack(spacing: 8) {
                 Text(formula.reactants)
                     .font(.custom("EBGaramond-Regular", size: 22))
-                    .foregroundColor(RenaissanceColors.sepiaInk)
+                    .foregroundColor(settings.cardTextColor)
 
                 Text("→")
                     .font(.title2)
-                    .foregroundColor(RenaissanceColors.sepiaInk)
+                    .foregroundColor(settings.cardTextColor)
 
                 // Hidden answer
                 Text(revealedProduct ? formula.product : "???")
@@ -359,13 +360,13 @@ struct MaterialPuzzleView: View {
 
             Text(formula.description)
                 .font(.custom("EBGaramond-Regular", size: 14))
-                .foregroundColor(RenaissanceColors.sepiaInk)
+                .foregroundColor(settings.cardTextColor)
         }
         .padding()
         .frame(maxWidth: .infinity)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(RenaissanceColors.parchment)
+                .fill(settings.dialogBackground)
         )
         .borderCard(radius: 12)
     }
@@ -374,7 +375,7 @@ struct MaterialPuzzleView: View {
         VStack(spacing: 8) {
             Text("Discovered Elements:")
                 .font(.custom("EBGaramond-Regular", size: 15))
-                .foregroundColor(RenaissanceColors.sepiaInk)
+                .foregroundColor(settings.cardTextColor)
 
             HStack(spacing: 16) {
                 // Show discovered elements (ones that have been collected)
@@ -389,7 +390,7 @@ struct MaterialPuzzleView: View {
                                 .frame(width: 45, height: 45)
                             Text("?")
                                 .font(.custom("EBGaramond-SemiBold", size: 22))
-                                .foregroundColor(RenaissanceColors.sepiaInk)
+                                .foregroundColor(settings.cardTextColor)
                         }
                     }
                 } else {
@@ -416,7 +417,7 @@ struct MaterialPuzzleView: View {
                                 } else {
                                     Text(element)
                                         .font(.custom("EBGaramond-SemiBold", size: 18))
-                                        .foregroundColor(RenaissanceColors.sepiaInk)
+                                        .foregroundColor(settings.cardTextColor)
                                 }
                             }
 
@@ -436,7 +437,7 @@ struct MaterialPuzzleView: View {
                                     .frame(width: 45, height: 45)
                                 Text("?")
                                     .font(.custom("EBGaramond-SemiBold", size: 22))
-                                    .foregroundColor(RenaissanceColors.sepiaInk)
+                                    .foregroundColor(settings.cardTextColor)
                             }
                         }
                     }
@@ -446,7 +447,7 @@ struct MaterialPuzzleView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(RenaissanceColors.parchment.opacity(0.8))
+                .fill(settings.dialogBackground.opacity(0.8))
         )
     }
 
@@ -517,7 +518,7 @@ struct MaterialPuzzleView: View {
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(RenaissanceColors.parchment.opacity(0.5))
+                .fill(settings.dialogBackground.opacity(0.5))
                 .borderCard(radius: 16)
         )
     }
@@ -529,7 +530,7 @@ struct MaterialPuzzleView: View {
                 Text("Need a hint?")
             }
             .font(.custom("EBGaramond-Regular", size: 14))
-            .foregroundColor(RenaissanceColors.sepiaInk)
+            .foregroundColor(settings.cardTextColor)
             .padding(.horizontal, 16)
             .padding(.vertical, 8)
             .background(
@@ -541,8 +542,8 @@ struct MaterialPuzzleView: View {
 
     private var successOverlay: some View {
         ZStack {
-            // Solid parchment background — fully covers the puzzle
-            RenaissanceColors.parchment
+            // Solid background — fully covers the puzzle
+            settings.dialogBackground
                 .ignoresSafeArea()
 
             VStack(spacing: 20) {
@@ -552,15 +553,15 @@ struct MaterialPuzzleView: View {
 
                 Text("Formula Complete!")
                     .font(.custom("Cinzel-Regular", size: 26))
-                    .foregroundColor(RenaissanceColors.sepiaInk)
+                    .foregroundColor(settings.cardTextColor)
 
                 Text("\(formula.reactants) \u{2192} \(formula.product)")
                     .font(.custom("EBGaramond-Regular", size: 20))
-                    .foregroundColor(RenaissanceColors.sepiaInk)
+                    .foregroundColor(settings.cardTextColor)
 
                 Text("You created \(formula.name)!")
                     .font(.custom("EBGaramond-Regular", size: 17))
-                    .foregroundColor(RenaissanceColors.sepiaInk)
+                    .foregroundColor(settings.cardTextColor)
 
                 if let moleculeData = MoleculeData.molecule(forFormula: formula.name) {
                     MoleculeView(molecule: moleculeData, showLabel: false)
@@ -1052,7 +1053,7 @@ struct TileView: View {
             // Element symbol in sepia
             Text(tile.symbol)
                 .font(.custom("Cinzel-Regular", size: size * 0.35))
-                .foregroundColor(RenaissanceColors.sepiaInk)
+                .foregroundColor(settings.cardTextColor)
         }
         .opacity(tile.isMatched ? 0.3 : 1)
         .scaleEffect(tile.isMatched ? 0.8 : (isHighlighted ? 1.05 : 1))

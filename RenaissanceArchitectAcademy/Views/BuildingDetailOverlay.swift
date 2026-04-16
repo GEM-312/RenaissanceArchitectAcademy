@@ -186,7 +186,7 @@ struct ScienceBadge: View {
 
             Text(science.rawValue)
                 .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 15 : 13, relativeTo: .caption))
-                .foregroundStyle(RenaissanceColors.sepiaInk)
+                .foregroundStyle(settings.cardTextColor)
         }
         .padding(.horizontal, isLargeScreen ? 14 : 10)
         .padding(.vertical, isLargeScreen ? 8 : 6)

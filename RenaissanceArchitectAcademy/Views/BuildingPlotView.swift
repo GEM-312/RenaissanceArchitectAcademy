@@ -3,6 +3,7 @@ import SwiftUI
 /// Building Plot View - Leonardo's Notebook aesthetic
 /// Shows buildings as sketch-to-watercolor transition cards
 struct BuildingPlotView: View {
+    private var settings: GameSettings { GameSettings.shared }
     let plot: BuildingPlot
     var isLargeScreen: Bool = false
     var heroNamespace: Namespace.ID? = nil
@@ -21,7 +22,7 @@ struct BuildingPlotView: View {
             ZStack {
                 // Solid ochre background for cards
                 Rectangle()
-                    .fill(RenaissanceColors.parchment)
+                    .fill(settings.dialogBackground)
                 Rectangle()
                     .fill(RenaissanceColors.ochre.opacity(0.1))
 
@@ -46,7 +47,7 @@ struct BuildingPlotView: View {
                                 .frame(width: iconSize + 16, height: iconSize + 16)
                             Image(systemName: plot.building.iconName)
                                 .font(.custom("EBGaramond-Regular", size: iconSize, relativeTo: .body))
-                                .foregroundStyle(RenaissanceColors.sepiaInk)
+                                .foregroundStyle(settings.cardTextColor)
                         } else if plot.sketchingProgress.isSketchingComplete {
                             // State 2: Sketched — sepia ink drawing
                             Circle()
@@ -54,16 +55,16 @@ struct BuildingPlotView: View {
                                 .frame(width: iconSize + 16, height: iconSize + 16)
                             Image(systemName: plot.building.iconName)
                                 .font(.custom("EBGaramond-Regular", size: iconSize, relativeTo: .body))
-                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                                .foregroundStyle(settings.cardTextColor.opacity(0.5))
                         } else {
                             // State 1: Blank — dashed placeholder
                             Image(systemName: "square.dashed")
                                 .font(.system(size: iconSize, weight: .ultraLight))
-                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.25))
+                                .foregroundStyle(settings.cardTextColor.opacity(0.25))
                                 .overlay(
                                     Image(systemName: "plus")
                                         .font(.system(size: iconSize * 0.4, weight: .ultraLight))
-                                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.2))
+                                        .foregroundStyle(settings.cardTextColor.opacity(0.2))
                                 )
                         }
                     }
@@ -73,7 +74,7 @@ struct BuildingPlotView: View {
                     Text(plot.building.name)
                         .font(.custom("EBGaramond-Regular", size: titleSize, relativeTo: .caption))
                         .tracking(1)
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .foregroundStyle(settings.cardTextColor)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
                         .heroEffect(id: "bldg-name-\(plot.id)", namespace: heroNamespace)
@@ -86,7 +87,7 @@ struct BuildingPlotView: View {
                         Text(plot.building.era.rawValue)
                             .font(.custom("EBGaramond-Regular", size: badgeSize, relativeTo: .caption2))
                     }
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .foregroundStyle(settings.cardTextColor)
                     .padding(.horizontal, isLargeScreen ? 12 : 8)
                     .padding(.vertical, isLargeScreen ? 4 : 2)
                     .background(
@@ -105,7 +106,7 @@ struct BuildingPlotView: View {
                             if plot.building.sciences.count > 3 {
                                 Text("+\(plot.building.sciences.count - 3)")
                                     .font(.caption2)
-                                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                                    .foregroundStyle(settings.cardTextColor)
                             }
                         }
                     }
@@ -128,11 +129,11 @@ struct BuildingPlotView: View {
                             Text(isLargeScreen ? "Sketched — collect materials" : "Sketched")
                                 .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 12 : 10, relativeTo: .caption2))
                         }
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .foregroundStyle(settings.cardTextColor)
                     } else {
                         Text(isLargeScreen ? "Tap to begin sketching" : "Begin")
                             .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 12 : 10, relativeTo: .caption2))
-                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                            .foregroundStyle(settings.cardTextColor.opacity(0.5))
                     }
                 }
                 .padding(isLargeScreen ? 20 : 12)
@@ -187,7 +188,7 @@ struct SketchLinesOverlay: View {
                         y += spacing
                     }
                 }
-                .stroke(RenaissanceColors.sepiaInk.opacity(0.06), lineWidth: 0.5)
+                .stroke(settings.cardTextColor.opacity(0.06), lineWidth: 0.5)
 
                 // Major grid lines (every 4th line)
                 Path { path in
@@ -209,7 +210,7 @@ struct SketchLinesOverlay: View {
                         y += spacing
                     }
                 }
-                .stroke(RenaissanceColors.sepiaInk.opacity(0.1), lineWidth: 0.5)
+                .stroke(settings.cardTextColor.opacity(0.1), lineWidth: 0.5)
             }
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
         }
@@ -227,7 +228,7 @@ struct EngineeringCardBorder: View {
         } else if isHovered {
             return RenaissanceColors.ochre
         } else {
-            return RenaissanceColors.sepiaInk
+            return settings.cardTextColor
         }
     }
 

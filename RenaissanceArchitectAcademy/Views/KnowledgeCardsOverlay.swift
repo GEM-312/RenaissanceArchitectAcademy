@@ -63,6 +63,8 @@ struct KnowledgeCardsOverlay: View {
     /// Current station type (when shown from workshop)
     var currentStation: ResourceStationType? = nil
 
+    private var settings: GameSettings { GameSettings.shared }
+
     // MARK: - Card Layout (responsive)
 
     @Environment(\.horizontalSizeClass) private var sizeClass
@@ -291,14 +293,17 @@ struct KnowledgeCardsOverlay: View {
                                 handleCardTap(card: card, isCompleted: isCompleted)
                             }
 
-                        // BACK face — visual only, no interaction (3D breaks macOS clicks)
-                        flippedCardBack(card: card, isCompleted: isCompleted)
-                            .frame(width: flippedW, height: flippedH)
-                            .scaleEffect(isThisFlipped ? 1.0 : 0.15)
-                            .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
-                            .opacity(angle >= 90 ? 1 : 0)
-                            .allowsHitTesting(false)
-                            .animation(.spring(response: 0.5, dampingFraction: 0.7), value: isThisFlipped)
+                        // BACK face — only rendered during/after flip to save ~150 MB
+                        // (each back instantiates CardVisualView with full Canvas drawing)
+                        if angle > 0 {
+                            flippedCardBack(card: card, isCompleted: isCompleted)
+                                .frame(width: flippedW, height: flippedH)
+                                .scaleEffect(isThisFlipped ? 1.0 : 0.15)
+                                .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
+                                .opacity(angle >= 90 ? 1 : 0)
+                                .allowsHitTesting(false)
+                                .animation(.spring(response: 0.5, dampingFraction: 0.7), value: isThisFlipped)
+                        }
                     }
                     .rotation3DEffect(.degrees(angle), axis: (x: 0, y: 1, z: 0), perspective: 0.4)
 
@@ -399,7 +404,7 @@ struct KnowledgeCardsOverlay: View {
             RoundedRectangle(cornerRadius: 16)
                 .fill(
                     LinearGradient(
-                        colors: [color.opacity(0.15), RenaissanceColors.parchment],
+                        colors: [color.opacity(0.15), settings.dialogBackground],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
@@ -426,14 +431,14 @@ struct KnowledgeCardsOverlay: View {
                 // Title
                 Text(card.title)
                     .font(.custom("Cinzel-Bold", size: 18))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .foregroundStyle(settings.cardTextColor)
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
 
                 // Italian name
                 Text(card.italianTitle)
                     .font(.custom("EBGaramond-Italic", size: 14))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+                    .foregroundStyle(settings.cardTextColor.opacity(0.6))
 
                 Spacer().frame(height: 8)
 
@@ -553,7 +558,7 @@ struct KnowledgeCardsOverlay: View {
         .padding(.horizontal, Spacing.lg)
         .padding(.vertical, Spacing.md)
         .background(
-            RoundedRectangle(cornerRadius: 14).fill(RenaissanceColors.parchment)
+            RoundedRectangle(cornerRadius: 14).fill(settings.dialogBackground)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 14).stroke(color.opacity(0.4), lineWidth: 2)
@@ -618,7 +623,7 @@ struct KnowledgeCardsOverlay: View {
                                 .font(.system(size: 16))
                             Text(funFact)
                                 .font(RenaissanceFont.italicSmall)
-                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                                .foregroundStyle(settings.cardTextColor.opacity(0.8))
                                 .lineSpacing(4)
                         }
                         .padding(Spacing.sm)
@@ -695,7 +700,7 @@ struct KnowledgeCardsOverlay: View {
             } else {
                 result = result + Text(text)
                     .font(RenaissanceFont.bodyMedium)
-                    .foregroundColor(RenaissanceColors.sepiaInk)
+                    .foregroundColor(settings.cardTextColor)
             }
         }
         return result
@@ -732,7 +737,7 @@ struct KnowledgeCardsOverlay: View {
         VStack(spacing: 10) {
             Text("Match each term to its meaning")
                 .font(.custom("EBGaramond-Medium", size: 12))
-                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+                .foregroundStyle(settings.cardTextColor.opacity(0.6))
 
             // Keywords
             VStack(spacing: 6) {
@@ -752,7 +757,7 @@ struct KnowledgeCardsOverlay: View {
                                 .foregroundStyle(
                                     isMatched ? RenaissanceColors.sageGreen
                                     : isSelected ? card.color
-                                    : RenaissanceColors.sepiaInk
+                                    : settings.cardTextColor
                                 )
                             Spacer()
                         }
@@ -779,11 +784,11 @@ struct KnowledgeCardsOverlay: View {
 
             // Arrow divider
             HStack {
-                Rectangle().fill(RenaissanceColors.sepiaInk.opacity(0.1)).frame(height: 1)
+                Rectangle().fill(settings.cardTextColor.opacity(0.1)).frame(height: 1)
                 Image(systemName: "arrow.down")
                     .font(.system(size: 11))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.25))
-                Rectangle().fill(RenaissanceColors.sepiaInk.opacity(0.1)).frame(height: 1)
+                    .foregroundStyle(settings.cardTextColor.opacity(0.25))
+                Rectangle().fill(settings.cardTextColor.opacity(0.1)).frame(height: 1)
             }
 
             // Definitions (shuffled)
@@ -803,7 +808,7 @@ struct KnowledgeCardsOverlay: View {
                                     isWrong ? RenaissanceColors.errorRed
                                     : isMatched ? RenaissanceColors.sageGreen
                                     : isSelected ? card.color
-                                    : RenaissanceColors.sepiaInk.opacity(0.8)
+                                    : settings.cardTextColor.opacity(0.8)
                                 )
                                 .multilineTextAlignment(.leading)
                             Spacer()
@@ -851,7 +856,7 @@ struct KnowledgeCardsOverlay: View {
         VStack(spacing: 12) {
             Text(question)
                 .font(RenaissanceFont.buttonSmall)
-                .foregroundStyle(RenaissanceColors.sepiaInk)
+                .foregroundStyle(settings.cardTextColor)
                 .multilineTextAlignment(.center)
                 .padding(.top, Spacing.xs)
 
@@ -880,7 +885,7 @@ struct KnowledgeCardsOverlay: View {
                             .foregroundStyle(
                                 showResult && isCorrect ? RenaissanceColors.sageGreen
                                 : showResult && isSelected && !isCorrect ? RenaissanceColors.errorRed
-                                : RenaissanceColors.sepiaInk
+                                : settings.cardTextColor
                             )
                         Spacer()
                         if showResult && isCorrect {
@@ -946,7 +951,7 @@ struct KnowledgeCardsOverlay: View {
         VStack(spacing: 16) {
             Text(statement)
                 .font(RenaissanceFont.bodySmall)
-                .foregroundStyle(RenaissanceColors.sepiaInk)
+                .foregroundStyle(settings.cardTextColor)
                 .multilineTextAlignment(.center)
                 .padding(.top, Spacing.xs)
 
@@ -1037,7 +1042,7 @@ struct KnowledgeCardsOverlay: View {
             // Hint
             Text(hint)
                 .font(RenaissanceFont.dialogSubtitle)
-                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
+                .foregroundStyle(settings.cardTextColor.opacity(0.7))
                 .multilineTextAlignment(.center)
                 .padding(.top, Spacing.xxs)
 
@@ -1047,7 +1052,7 @@ struct KnowledgeCardsOverlay: View {
                     let filled = index < spelledTiles.count
                     Text(filled ? String(spelledTiles[index].character) : "_")
                         .font(.custom("Cinzel-Bold", size: 22))
-                        .foregroundStyle(filled ? color : RenaissanceColors.sepiaInk.opacity(0.3))
+                        .foregroundStyle(filled ? color : settings.cardTextColor.opacity(0.3))
                         .frame(width: 28, height: 36)
                         .background(
                             RoundedRectangle(cornerRadius: 4)
@@ -1150,7 +1155,7 @@ struct KnowledgeCardsOverlay: View {
             // Question
             Text(question)
                 .font(RenaissanceFont.buttonSmall)
-                .foregroundStyle(RenaissanceColors.sepiaInk)
+                .foregroundStyle(settings.cardTextColor)
                 .multilineTextAlignment(.center)
                 .padding(.top, Spacing.xxs)
 
@@ -1158,7 +1163,7 @@ struct KnowledgeCardsOverlay: View {
             HStack(spacing: 4) {
                 Text("Answer:")
                     .font(RenaissanceFont.dialogSubtitle)
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                    .foregroundStyle(settings.cardTextColor.opacity(0.5))
                 if fishingAnswered {
                     Text("\(correctAnswer)")
                         .font(.custom("Cinzel-Bold", size: 22))
@@ -1271,7 +1276,7 @@ struct KnowledgeCardsOverlay: View {
             // Hint
             Text(hint)
                 .font(RenaissanceFont.caption)
-                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
+                .foregroundStyle(settings.cardTextColor.opacity(0.7))
                 .multilineTextAlignment(.center)
 
             // Scaffold + figure
@@ -1287,7 +1292,7 @@ struct KnowledgeCardsOverlay: View {
                         .foregroundStyle(
                             hangmanRevealed && !hangmanGuessed.contains(char)
                             ? RenaissanceColors.errorRed
-                            : revealed ? color : RenaissanceColors.sepiaInk.opacity(0.3)
+                            : revealed ? color : settings.cardTextColor.opacity(0.3)
                         )
                         .frame(width: 24, height: 30)
                 }
@@ -1298,12 +1303,12 @@ struct KnowledgeCardsOverlay: View {
             HStack(spacing: 4) {
                 ForEach(0..<maxWrong, id: \.self) { i in
                     Circle()
-                        .fill(i < hangmanWrongCount ? RenaissanceColors.errorRed : RenaissanceColors.sepiaInk.opacity(0.12))
+                        .fill(i < hangmanWrongCount ? RenaissanceColors.errorRed : settings.cardTextColor.opacity(0.12))
                         .frame(width: 10, height: 10)
                 }
                 Text("\(hangmanWrongCount)/\(maxWrong)")
                     .font(.custom("EBGaramond-Regular", size: 12))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
+                    .foregroundStyle(settings.cardTextColor.opacity(0.4))
             }
 
             // Alphabet grid (responsive: 13 cols on iPad, 9 cols on iPhone)
@@ -1421,7 +1426,7 @@ struct KnowledgeCardsOverlay: View {
     private func hangmanFigure(wrongCount: Int, color: Color) -> some View {
         Canvas { context, size in
             let scaffold = RenaissanceColors.warmBrown
-            let figure = RenaissanceColors.sepiaInk
+            let figure = settings.cardTextColor
 
             // Base
             var basePath = Path()
@@ -1843,7 +1848,7 @@ struct KnowledgeCardsOverlay: View {
         HStack(spacing: 4) {
             ForEach(0..<total, id: \.self) { i in
                 Circle()
-                    .fill(i < matched ? RenaissanceColors.sageGreen : RenaissanceColors.sepiaInk.opacity(0.15))
+                    .fill(i < matched ? RenaissanceColors.sageGreen : settings.cardTextColor.opacity(0.15))
                     .frame(width: 8, height: 8)
             }
         }
@@ -1864,7 +1869,7 @@ struct KnowledgeCardsOverlay: View {
                  : overallProgress.completed < overallProgress.total ? "Card complete! Explore other environments for more."
                  : "All cards collected! You've mastered this building.")
                 .font(RenaissanceFont.caption)
-                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
+                .foregroundStyle(settings.cardTextColor.opacity(0.7))
         }
         .padding(.horizontal, Spacing.sm)
         .padding(.vertical, Spacing.xs)
@@ -1886,21 +1891,21 @@ struct KnowledgeCardsOverlay: View {
                 .foregroundStyle(RenaissanceColors.ochre)
             Text("\(progress)/\(total) cards")
                 .font(.custom("EBGaramond-SemiBold", size: 13))
-                .foregroundStyle(RenaissanceColors.sepiaInk)
+                .foregroundStyle(settings.cardTextColor)
 
             // Env breakdown (only show when multiple cards)
             if cards.count > 1 {
                 Text("·")
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.3))
+                    .foregroundStyle(settings.cardTextColor.opacity(0.3))
                 Text("Here: \(completedCardIDs.count)/\(cards.count)")
                     .font(.custom("EBGaramond-Regular", size: 12))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+                    .foregroundStyle(settings.cardTextColor.opacity(0.6))
             }
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 6)
         .background(
-            Capsule().fill(RenaissanceColors.parchment.opacity(0.9))
+            Capsule().fill(settings.dialogBackground.opacity(0.9))
         )
     }
 
@@ -1924,7 +1929,7 @@ struct KnowledgeCardsOverlay: View {
 
                 Text(message)
                     .font(RenaissanceFont.dialogSubtitle)
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .foregroundStyle(settings.cardTextColor)
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -1960,7 +1965,7 @@ struct KnowledgeCardsOverlay: View {
                 } label: {
                     Text("Later")
                         .font(RenaissanceFont.caption)
-                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                        .foregroundStyle(settings.cardTextColor.opacity(0.5))
                         .underline()
                 }
                 .buttonStyle(.plain)
@@ -1970,7 +1975,7 @@ struct KnowledgeCardsOverlay: View {
         .adaptiveWidth(420)
         .background(
             RoundedRectangle(cornerRadius: CornerRadius.md)
-                .fill(RenaissanceColors.parchment)
+                .fill(settings.dialogBackground)
                 .shadow(color: .black.opacity(0.08), radius: 4, y: 2)
         )
         .overlay(
