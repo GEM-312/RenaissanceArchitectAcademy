@@ -781,34 +781,34 @@ struct CityMapView: View {
         }
 
         // When player walks to building, show "build this?" prompt (or locked message)
-        newScene.onMascotReachedBuilding = { [self] buildingId in
+        newScene.onMascotReachedBuilding = { buildingId in
             // Convert SpriteKit ID ("duomo") to ViewModel ID (4)
-            guard let plotId = buildingIdToPlotId[buildingId],
-                  let plot = viewModel.buildingPlots.first(where: { $0.id == plotId }) else {
+            guard let plotId = self.buildingIdToPlotId[buildingId],
+                  let plot = self.viewModel.buildingPlots.first(where: { $0.id == plotId }) else {
                 return
             }
 
             // Block tapping locked buildings — show unlock message instead
-            if !viewModel.isTierUnlocked(plot.building.difficultyTier) {
-                lockedMessage = viewModel.tierUnlockMessage(for: plot.building.difficultyTier)
+            if !self.viewModel.isTierUnlocked(plot.building.difficultyTier) {
+                self.lockedMessage = self.viewModel.tierUnlockMessage(for: plot.building.difficultyTier)
                 withAnimation(.spring(response: 0.3)) {
-                    showLockedMessage = true
+                    self.showLockedMessage = true
                 }
                 return
             }
 
             SoundManager.shared.play(.buildingTap)
-            selectedPlot = plot
+            self.selectedPlot = plot
 
             // If this is the active building, skip the prompt and go straight to the action
-            if viewModel.activeBuildingId == plotId {
+            if self.viewModel.activeBuildingId == plotId {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    handleBuildingAction(for: plot)
+                    self.handleBuildingAction(for: plot)
                 }
             } else {
                 // New building — show "Work on this building?" prompt
                 withAnimation(.spring(response: 0.3)) {
-                    showBuildingPrompt = true
+                    self.showBuildingPrompt = true
                 }
             }
         }
@@ -820,20 +820,20 @@ struct CityMapView: View {
         }
 
         // Dismiss all dialogs when player starts walking to a new building
-        newScene.onPlayerStartedWalking = { [self] in
+        newScene.onPlayerStartedWalking = {
             withAnimation {
-                showBuildingPrompt = false
-                showLockedMessage = false
-                showMascotDialogue = false
-                showGuidance = false
-                selectedPlot = nil
+                self.showBuildingPrompt = false
+                self.showLockedMessage = false
+                self.showMascotDialogue = false
+                self.showGuidance = false
+                self.selectedPlot = nil
             }
         }
 
         // When mascot exits to puzzle, show puzzle view
-        newScene.onMascotExitToPuzzle = { [self] in
+        newScene.onMascotExitToPuzzle = {
             withAnimation(.spring(response: 0.3)) {
-                showMaterialPuzzle = true
+                self.showMaterialPuzzle = true
             }
         }
 
