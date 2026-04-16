@@ -1310,18 +1310,6 @@ class CityScene: SKScene, ScrollZoomable {
         buildingNodes[buildingId]?.updateState(state)
     }
 
-    // MARK: - Helpers
-
-    /// Check if a named image exists in the asset catalog (platform-safe)
-    private static func imageExists(named name: String) -> Bool {
-        #if os(iOS)
-        return UIImage(named: name) != nil
-        #else
-        return NSImage(named: name) != nil
-        #endif
-    }
-
-
     // MARK: - Editor Mode (DEBUG only)
 
     #if DEBUG

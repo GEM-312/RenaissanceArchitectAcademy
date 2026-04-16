@@ -355,7 +355,7 @@ struct GameTopBarView: View {
 
             Text(String(format: "%02d", plot.id))
                 .font(.system(size: 8, weight: .medium, design: .monospaced))
-                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
+                .foregroundStyle(settings.cardTextColor.opacity(0.4))
         }
     }
 
@@ -391,7 +391,7 @@ extension View {
     func glassButton<S: Shape>(shape: S) -> some View {
         self
             .background(
-                shape.fill(RenaissanceColors.parchment.opacity(0.5))
+                shape.fill(GameSettings.shared.dialogBackground.opacity(0.5))
             )
             .overlay(
                 shape

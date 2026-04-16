@@ -292,7 +292,7 @@ struct MascotDialogueView: View {
         case .environments:
             Text(choice.subtitle)
                 .font(RenaissanceFont.captionSmall)
-                .foregroundStyle(RenaissanceColors.sepiaInk)
+                .foregroundStyle(settings.cardTextColor)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
 

@@ -154,7 +154,7 @@ struct MaterialIconView: View {
     var size: CGFloat = 28
 
     var body: some View {
-        if let name = material.imageName, imageExists(name) {
+        if let name = material.imageName {
             Image(name)
                 .resizable()
                 .scaledToFit()
@@ -165,12 +165,4 @@ struct MaterialIconView: View {
         }
     }
 
-    /// Check if an image exists in the asset catalog
-    private func imageExists(_ name: String) -> Bool {
-        #if os(iOS)
-        return UIImage(named: name) != nil
-        #else
-        return NSImage(named: name) != nil
-        #endif
-    }
 }

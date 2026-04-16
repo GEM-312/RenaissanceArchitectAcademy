@@ -6,6 +6,7 @@ import SwiftUI
 /// and optional action buttons (walk to station, navigate to environment).
 /// Used across all 4 map views inside a `BottomDialogPanel`.
 struct BirdGuidanceContent: View {
+    private var settings: GameSettings { GameSettings.shared }
     let message: String
     var progressText: String? = nil
     let onDismiss: () -> Void
@@ -26,13 +27,13 @@ struct BirdGuidanceContent: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text(message)
                     .font(.custom("Cinzel-Bold", size: 14))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .foregroundStyle(settings.cardTextColor)
                     .fixedSize(horizontal: false, vertical: true)
 
                 if let progressText {
                     Text(progressText)
                         .font(RenaissanceFont.caption)
-                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                        .foregroundStyle(settings.cardTextColor.opacity(0.5))
                 }
 
                 HStack(spacing: 8) {
@@ -85,7 +86,7 @@ struct BirdGuidanceContent: View {
             } label: {
                 Image(systemName: "xmark")
                     .font(.system(size: 12, weight: .bold))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
+                    .foregroundStyle(settings.cardTextColor.opacity(0.4))
                     .padding(6)
             }
             .buttonStyle(.plain)

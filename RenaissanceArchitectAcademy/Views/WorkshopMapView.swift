@@ -614,6 +614,10 @@ struct WorkshopMapView: View {
             }
         }
         .onDisappear {
+            // Nil out callbacks before releasing scene to break closure references
+            sceneHolder.scene?.onPlayerPositionChanged = nil
+            sceneHolder.scene?.onStationReached = nil
+            sceneHolder.scene?.onPlayerStartedWalking = nil
             // Release scene to free SpriteKit texture memory when navigating away
             sceneHolder.scene = nil
         }

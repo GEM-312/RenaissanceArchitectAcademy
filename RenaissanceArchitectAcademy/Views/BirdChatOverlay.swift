@@ -202,7 +202,7 @@ struct BirdChatOverlay: View {
                 .lineSpacing(LineHeight.normal)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
-                .background(RenaissanceColors.parchmentLight)
+                .background(settings.dialogBackground)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .borderCard(radius: 12)
 

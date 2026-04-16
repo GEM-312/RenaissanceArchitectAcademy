@@ -78,7 +78,7 @@ struct StationLessonOverlay: View {
                             Capsule()
                                 .fill(RenaissanceColors.renaissanceBlue.opacity(0.1))
                         )
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .foregroundStyle(settings.cardTextColor)
                     }
                 }
 
