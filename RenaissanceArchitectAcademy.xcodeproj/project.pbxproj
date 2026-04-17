@@ -146,6 +146,8 @@
 		2A0 /* VisualEditorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0 /* VisualEditorState.swift */; };
 		2A1 /* EditableModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1 /* EditableModifier.swift */; };
 		2A2 /* EditorBottomPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A2 /* EditorBottomPanel.swift */; };
+		2B0 /* GameCenterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B0 /* GameCenterManager.swift */; };
+		2B1 /* GameCenterDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1 /* GameCenterDashboardView.swift */; };
 		2A3 /* BezierDragShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3 /* BezierDragShape.swift */; };
 		2A4 /* AlzatoCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4 /* AlzatoCanvasView.swift */; };
 		2A5 /* ColosseumInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5 /* ColosseumInteractiveVisuals.swift */; };
@@ -487,6 +489,8 @@
 		BB8 /* stone_hit.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = stone_hit.wav; sourceTree = "<group>"; };
 		BB9 /* timber_chop.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = timber_chop.wav; sourceTree = "<group>"; };
 		BC0 /* workbench_mix.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = workbench_mix.wav; sourceTree = "<group>"; };
+		3B0 /* GameCenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterManager.swift; sourceTree = "<group>"; };
+		3B1 /* GameCenterDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterDashboardView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -633,6 +637,7 @@
 				2C6 /* FurnaceFireView.swift */,
 				3A1 /* EditableModifier.swift */,
 				3A2 /* EditorBottomPanel.swift */,
+				3B1 /* GameCenterDashboardView.swift */,
 				308 /* Sketching */,
 				309 /* Onboarding */,
 				310 /* StationMiniGames */,
@@ -729,6 +734,7 @@
 				1FB /* GameTools.swift */,
 				1FE /* NPCEncounterManager.swift */,
 				3A0 /* VisualEditorState.swift */,
+				3B0 /* GameCenterManager.swift */,
 				306 /* Styles */,
 			);
 			path = Services;
@@ -1151,6 +1157,8 @@
 				2A0 /* VisualEditorState.swift in Sources */,
 				2A1 /* EditableModifier.swift in Sources */,
 				2A2 /* EditorBottomPanel.swift in Sources */,
+				2B0 /* GameCenterManager.swift in Sources */,
+				2B1 /* GameCenterDashboardView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

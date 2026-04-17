@@ -1,9 +1,10 @@
 import SwiftUI
 
-/// Game settings panel — theme toggle, volume sliders
+/// Game settings panel — theme toggle, volume sliders, Game Center
 struct SettingsView: View {
     @Bindable var settings: GameSettings
     var onDismiss: () -> Void
+    @State private var showGameCenterDashboard = false
 
     var body: some View {
         ZStack {
@@ -118,6 +119,47 @@ struct SettingsView: View {
                     volumeRow(label: "Sound Effects", icon: "speaker.wave.2.fill", value: $settings.sfxVolume)
                 }
 
+                Divider()
+                    .overlay(RenaissanceColors.warmBrown.opacity(0.3))
+
+                // Game Center
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Game Center")
+                        .font(.custom("Cinzel-Bold", size: 16))
+                        .foregroundStyle(settings.cardTextColor)
+
+                    let gc = GameCenterManager.shared
+                    HStack(spacing: 8) {
+                        Image(systemName: gc.isAuthenticated ? "checkmark.circle.fill" : "xmark.circle")
+                            .font(.caption)
+                            .foregroundStyle(gc.isAuthenticated ? RenaissanceColors.sageGreen : RenaissanceColors.warmBrown.opacity(0.5))
+                        Text(gc.isAuthenticated ? (gc.playerDisplayName ?? "Signed In") : "Not signed in")
+                            .font(.custom("EBGaramond-Regular", size: 14))
+                            .foregroundStyle(settings.cardTextColor)
+                    }
+
+                    if gc.isAuthenticated {
+                        Button {
+                            showGameCenterDashboard = true
+                        } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: "trophy.fill")
+                                    .font(.caption)
+                                Text("Leaderboards & Achievements")
+                                    .font(.custom("EBGaramond-SemiBold", size: 14))
+                            }
+                            .foregroundStyle(RenaissanceColors.ochre)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 8)
+                            .background(
+                                Capsule()
+                                    .strokeBorder(RenaissanceColors.ochre.opacity(0.5), lineWidth: 1)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+
                 Spacer()
             }
             .padding(24)
@@ -127,6 +169,9 @@ struct SettingsView: View {
                     .fill(settings.dialogBackground.opacity(0.96))
             )
             .borderModal(radius: 18)
+            .fullScreenCover(isPresented: $showGameCenterDashboard) {
+                GameCenterDashboardView()
+            }
         }
     }
 

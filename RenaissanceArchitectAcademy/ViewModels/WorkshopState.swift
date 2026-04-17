@@ -267,6 +267,7 @@ class WorkshopState {
     /// Finish processing and award the crafted item
     func completeProcessing() {
         guard let recipe = currentRecipe else { return }
+        let wasFirstCraft = craftedMaterials.values.reduce(0, +) == 0
         craftedMaterials[recipe.output, default: 0] += 1
         educationalText = recipe.educationalText
         showEducationalPopup = true
@@ -276,6 +277,10 @@ class WorkshopState {
         processProgress = 0.0
         statusMessage = "Created \(recipe.output.rawValue)!"
         persistInventory()
+
+        if wasFirstCraft {
+            GameCenterManager.shared.reportAchievement(GameCenterManager.AchievementID.firstCraft)
+        }
     }
 
     // MARK: - Persistence
