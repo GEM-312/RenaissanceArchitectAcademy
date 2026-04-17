@@ -134,6 +134,7 @@ struct MaterialPuzzleView: View {
     @State private var matchEffectTrigger: Int = 0
     @State private var matchedPositions: Set<GridPosition> = []
     @State private var showReshuffleMessage = false
+    @State private var showSwipeHint = true
 
     // Bird entrance animation
     @State private var birdOffset: CGFloat = -300  // Start far off-screen left
@@ -224,6 +225,26 @@ struct MaterialPuzzleView: View {
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
 
+            // Swipe hint (first-time help)
+            if showSwipeHint {
+                VStack(spacing: 8) {
+                    Image(systemName: "hand.draw")
+                        .font(.system(size: 36))
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
+                    Text("Swipe adjacent tiles to match 3")
+                        .font(.custom("EBGaramond-Regular", size: 15))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                }
+                .padding(20)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(RenaissanceColors.parchment.opacity(0.95))
+                )
+                .borderCard(radius: 12)
+                .transition(.opacity)
+                .onTapGesture { withAnimation { showSwipeHint = false } }
+            }
+
             // Chemistry hint overlay
             if showHintOverlay {
                 HintOverlayView(
@@ -235,8 +256,10 @@ struct MaterialPuzzleView: View {
         }
         .onAppear {
             setupGame()
-            // Bird flies in and lands
             animateBirdFlyIn()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                withAnimation { showSwipeHint = false }
+            }
         }
     }
 
@@ -1038,7 +1061,7 @@ struct TileView: View {
             RoundedRectangle(cornerRadius: 10)
                 .stroke(
                     isNeeded && !tile.isMatched
-                        ? RenaissanceColors.ochre.opacity(0.6)
+                        ? tile.color.opacity(0.6)
                         : RenaissanceColors.ochre.opacity(0.25),
                     lineWidth: 1
                 )

@@ -4,6 +4,7 @@ import Foundation
 enum SketchQuestionType {
     case find           // Tap on the image to locate a feature
     case count(Int)     // Count items and enter the number (Int = correct answer)
+    case reflect        // "Why/how" questions — study image, then reveal answer
 }
 
 /// A curated architectural sketch from the Metropolitan Museum of Art (Open Access API)
@@ -149,6 +150,7 @@ enum MuseumSketchContent {
                     studyPrompt: "This room has eight sides — an octagon. Why would architects choose this shape for a bath?",
                     featureToFind: "The octagonal vault structure",
                     featureHint: "The eight-sided shape distributes the dome's weight evenly to the walls",
+                    questionType: .reflect,
                     tapTarget: CGPoint(x: 0.5, y: 0.3),
                     tapRadius: 0.20
                 ),
@@ -272,6 +274,7 @@ enum MuseumSketchContent {
                     studyPrompt: "This bird's-eye view shows the entire port. Why is there a curved breakwater?",
                     featureToFind: "The curved breakwater protecting the harbor",
                     featureHint: "The curved wall blocks ocean waves — ships inside are protected from storms",
+                    questionType: .reflect,
                     tapTarget: CGPoint(x: 0.55, y: 0.3),
                     tapRadius: 0.20
                 ),
@@ -318,6 +321,7 @@ enum MuseumSketchContent {
                     studyPrompt: "Dürer shows a fortress under attack. What engineering principles make the walls strong?",
                     featureToFind: "The fortress walls and defensive towers",
                     featureHint: "Thick walls, round towers (resist battering rams), and high ground — all engineering",
+                    questionType: .reflect,
                     tapTarget: CGPoint(x: 0.5, y: 0.35),
                     tapRadius: 0.20
                 ),
@@ -332,6 +336,7 @@ enum MuseumSketchContent {
                     studyPrompt: "This shows a Roman castrum — a military camp. Why is it perfectly rectangular?",
                     featureToFind: "The grid layout of the camp",
                     featureHint: "Romans could build this in ONE DAY because every soldier knew the standard layout",
+                    questionType: .reflect,
                     tapTarget: CGPoint(x: 0.5, y: 0.5),
                     tapRadius: 0.22
                 ),
@@ -363,6 +368,7 @@ enum MuseumSketchContent {
                     studyPrompt: "See the arched vaults? These supported multiple floors. Why arches instead of flat ceilings?",
                     featureToFind: "The barrel vaults and arches",
                     featureHint: "Arches push weight to the sides and down — they can support much more than flat beams",
+                    questionType: .reflect,
                     tapTarget: CGPoint(x: 0.5, y: 0.3),
                     tapRadius: 0.20
                 ),
@@ -383,6 +389,7 @@ enum MuseumSketchContent {
                     studyPrompt: "This is a study for painting INSIDE Brunelleschi's dome. How do you paint a curved ceiling?",
                     featureToFind: "The curved fresco composition following the dome shape",
                     featureHint: "The artist had to distort figures so they'd look correct when viewed from 100 feet below",
+                    questionType: .reflect,
                     tapTarget: CGPoint(x: 0.5, y: 0.35),
                     tapRadius: 0.22
                 ),
@@ -397,6 +404,7 @@ enum MuseumSketchContent {
                     studyPrompt: "Callot captured the Piazza del Duomo in 1617. The dome dominates the skyline — why?",
                     featureToFind: "Brunelleschi's dome rising above the city",
                     featureHint: "At 114 meters, it was the tallest dome in the world — built WITHOUT scaffolding from the ground",
+                    questionType: .reflect,
                     tapTarget: CGPoint(x: 0.5, y: 0.2),
                     tapRadius: 0.18
                 ),
@@ -447,6 +455,7 @@ enum MuseumSketchContent {
                     studyPrompt: "Whistler sketched the actual glass furnace on Murano island. Why was glassmaking isolated there?",
                     featureToFind: "The furnace building structure",
                     featureHint: "Venice moved glassmakers to Murano in 1291 — furnaces caused fires, and secrets had to be kept",
+                    questionType: .reflect,
                     tapTarget: CGPoint(x: 0.5, y: 0.4),
                     tapRadius: 0.20
                 ),
@@ -539,6 +548,7 @@ enum MuseumSketchContent {
                     studyPrompt: "Architecture AND anatomy on the same page! Why did Renaissance artists study both?",
                     featureToFind: "Architecture and anatomy side by side",
                     featureHint: "Renaissance thinkers saw the human body as architecture — bones are columns, ribs are arches",
+                    questionType: .reflect,
                     tapTarget: CGPoint(x: 0.5, y: 0.45),
                     tapRadius: 0.25
                 ),
@@ -571,6 +581,7 @@ enum MuseumSketchContent {
                     studyPrompt: "Leonardo designed stage sets AND studied nature on the same page. What does this tell you about him?",
                     featureToFind: "The dual nature of the page — art and science",
                     featureHint: "Leonardo never separated art from science — his workshop was where both came together",
+                    questionType: .reflect,
                     tapTarget: CGPoint(x: 0.5, y: 0.45),
                     tapRadius: 0.25
                 ),
@@ -617,6 +628,7 @@ enum MuseumSketchContent {
                     studyPrompt: "Leonardo's teacher Verrocchio measured animals precisely. Leonardo applied the same method to birds and flight — why?",
                     featureToFind: "The precise measurements and proportions",
                     featureHint: "To build a flying machine, Leonardo first measured real birds — wingspan, weight, wing-beat frequency",
+                    questionType: .reflect,
                     tapTarget: CGPoint(x: 0.5, y: 0.5),
                     tapRadius: 0.22
                 ),
@@ -649,6 +661,7 @@ enum MuseumSketchContent {
                     studyPrompt: "Compare this full moon with the quarter moon. Why do craters look different when the sun angle changes?",
                     featureToFind: "The difference in shadow patterns between full and quarter moon",
                     featureHint: "At full moon, sunlight hits straight on — craters nearly vanish. At quarter, long shadows reveal depth",
+                    questionType: .reflect,
                     tapTarget: CGPoint(x: 0.5, y: 0.5),
                     tapRadius: 0.22
                 ),

@@ -36,6 +36,8 @@ struct CharacterSelectView: View {
                     Text("Choose Your Apprentice")
                         .font(.custom("Cinzel-Regular", size: isLargeScreen ? 32 : 24))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
 
                     Text("Florence, 1485")
                         .font(.custom("EBGaramond-Regular", size: 18))
@@ -162,14 +164,14 @@ struct CharacterSelectView: View {
                 Image(frameName)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: isLargeScreen ? 270 : 140, height: isLargeScreen ? 270 : 140)
+                    .frame(width: isLargeScreen ? 220 : 140, height: isLargeScreen ? 220 : 140)
                     .clipShape(RoundedRectangle(cornerRadius: 14))
 
                 Text(gender.displayName)
                     .font(.custom("EBGaramond-SemiBold", size: isLargeScreen ? 22 : 17))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
-            .frame(width: isLargeScreen ? 300 : 160, height: isLargeScreen ? 360 : 210)
+            .frame(width: isLargeScreen ? 240 : 160, height: isLargeScreen ? 300 : 210)
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .fill(isSelected
