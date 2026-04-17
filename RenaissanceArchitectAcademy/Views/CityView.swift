@@ -15,6 +15,7 @@ struct CityView: View {
 
     var filterEra: Era?
     var workshopState: WorkshopState = WorkshopState()
+    var onNavigate: ((SidebarDestination) -> Void)? = nil
 
     // Adaptive grid columns based on screen size
     private var columns: [GridItem] {
@@ -48,6 +49,21 @@ struct CityView: View {
                     VStack(alignment: .leading, spacing: 20) {
                         // Header for compact mode
                         if horizontalSizeClass != .regular {
+                            if let onNavigate {
+                                Button {
+                                    onNavigate(.cityMap)
+                                } label: {
+                                    HStack(spacing: 4) {
+                                        Image(systemName: "chevron.left")
+                                            .font(.caption)
+                                        Text("Map")
+                                            .font(.custom("EBGaramond-Regular", size: 14))
+                                    }
+                                    .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                                }
+                                .padding(.horizontal)
+                            }
+
                             HStack(alignment: .top) {
                                 CityHeaderView(
                                     title: filterEra?.rawValue ?? "Florence",
@@ -62,6 +78,21 @@ struct CityView: View {
 
                         // Progress summary + Workshop button for regular size
                         if horizontalSizeClass == .regular {
+                            if let onNavigate {
+                                Button {
+                                    onNavigate(.cityMap)
+                                } label: {
+                                    HStack(spacing: 4) {
+                                        Image(systemName: "chevron.left")
+                                            .font(.caption)
+                                        Text("Map")
+                                            .font(.custom("EBGaramond-Regular", size: 14))
+                                    }
+                                    .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                                }
+                                .padding(.horizontal, 40)
+                            }
+
                             HStack {
                                 CityProgressBar(
                                     completedCount: completedCount,

@@ -71,13 +71,11 @@ struct StoryNarrativeView: View {
                     .multilineTextAlignment(.center)
                     .lineSpacing(6)
                     .adaptiveWidth(520)
-                    .padding(.horizontal, 24)
 
                 // Bird companion (only on final story page)
                 if page.showBird && showBird {
                     BirdCharacter(isSitting: false)
                         .frame(width: 180, height: 180)
-                        .transition(.opacity)
                 }
 
                 Spacer()

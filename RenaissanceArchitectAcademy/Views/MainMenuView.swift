@@ -12,7 +12,7 @@ struct MainMenuView: View {
     @State private var revealedZones: [Bool] = Array(repeating: false, count: 7)
 
     // Adaptive sizing
-    private var titleSize: CGFloat { horizontalSizeClass == .regular ? 72 : 56 }
+    private var titleSize: CGFloat { horizontalSizeClass == .regular ? 72 : 46 }
     private var subtitleSize: CGFloat { horizontalSizeClass == .regular ? 44 : 36 }
     private var taglineSize: CGFloat { horizontalSizeClass == .regular ? 24 : 20 }
 
@@ -135,6 +135,7 @@ struct MainMenuView: View {
                         .keyboardShortcut("c", modifiers: [.command])
                         #endif
                 }
+                .frame(maxWidth: .infinity)
                 .opacity(showButtons ? 1 : 0)
                 .offset(y: showButtons ? 0 : 20)
                 .padding(.bottom, horizontalSizeClass == .regular ? 40 : 24)

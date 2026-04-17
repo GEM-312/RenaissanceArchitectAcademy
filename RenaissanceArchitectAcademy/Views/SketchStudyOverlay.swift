@@ -36,6 +36,11 @@ struct SketchStudyOverlay: View {
         return false
     }
 
+    private var isReflectMode: Bool {
+        if case .reflect = sketch.questionType { return true }
+        return false
+    }
+
     private var correctCount: Int? {
         if case .count(let n) = sketch.questionType { return n }
         return nil
@@ -147,8 +152,8 @@ struct SketchStudyOverlay: View {
                     )
 
                 if let cachedImage = sketchService.imageCache[sketch.id] {
-                    if isCountMode {
-                        // Count mode — just show the image, no tap interaction
+                    if isCountMode || isReflectMode {
+                        // Count/reflect mode — just show the image, no tap interaction
                         cachedImage
                             .resizable()
                             .scaledToFit()
@@ -295,7 +300,12 @@ struct SketchStudyOverlay: View {
 
                     // Instructions (only before answer found)
                     if !foundFeature && !showWrongFlash {
-                        if isCountMode {
+                        if isReflectMode {
+                            Text("Study the sketch, then reveal the answer")
+                                .font(RenaissanceFont.italicSmall)
+                                .foregroundStyle(RenaissanceColors.renaissanceBlue.opacity(0.7))
+                                .transition(.opacity)
+                        } else if isCountMode {
                             if countInput.isEmpty {
                                 Text("Study the sketch, count carefully, then enter your answer below")
                                     .font(RenaissanceFont.italicSmall)
@@ -429,23 +439,42 @@ struct SketchStudyOverlay: View {
     private var actionButtons: some View {
         HStack(spacing: Spacing.sm) {
             if !foundFeature {
-                Button {
-                    checkAnswer()
-                } label: {
-                    Text(wrongAttempts > 0 && !showWrongFlash ? "Try Again!" : "I found it!")
-                        .font(.custom("Cinzel-Bold", size: 14))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, Spacing.lg)
-                        .padding(.vertical, Spacing.xs + 2)
-                        .background(
-                            RoundedRectangle(cornerRadius: CornerRadius.sm)
-                                .fill(canCheck
-                                      ? RenaissanceColors.renaissanceBlue
-                                      : RenaissanceColors.stoneGray)
-                        )
+                if isReflectMode {
+                    Button {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            foundFeature = true
+                        }
+                    } label: {
+                        Text("Reveal Answer")
+                            .font(.custom("Cinzel-Bold", size: 14))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, Spacing.lg)
+                            .padding(.vertical, Spacing.xs + 2)
+                            .background(
+                                RoundedRectangle(cornerRadius: CornerRadius.sm)
+                                    .fill(RenaissanceColors.ochre)
+                            )
+                    }
+                    .buttonStyle(.plain)
+                } else {
+                    Button {
+                        checkAnswer()
+                    } label: {
+                        Text(wrongAttempts > 0 && !showWrongFlash ? "Try Again!" : "I found it!")
+                            .font(.custom("Cinzel-Bold", size: 14))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, Spacing.lg)
+                            .padding(.vertical, Spacing.xs + 2)
+                            .background(
+                                RoundedRectangle(cornerRadius: CornerRadius.sm)
+                                    .fill(canCheck
+                                          ? RenaissanceColors.renaissanceBlue
+                                          : RenaissanceColors.stoneGray)
+                            )
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(!canCheck)
                 }
-                .buttonStyle(.plain)
-                .disabled(!canCheck)
             } else {
                 Button {
                     onComplete(florinsReward)

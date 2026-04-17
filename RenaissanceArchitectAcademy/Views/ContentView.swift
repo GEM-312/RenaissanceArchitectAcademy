@@ -222,9 +222,9 @@ struct ContentView: View {
         case .cityMap:
             CityMapView(viewModel: cityViewModel, workshopState: workshopState, notebookState: notebookState, onNavigate: navigateTo, onBackToMenu: backToMenu, onboardingState: onboardingState, returnToLessonPlotId: $returnToLessonPlotId)
         case .allBuildings:
-            CityView(viewModel: cityViewModel, filterEra: nil, workshopState: workshopState)
+            CityView(viewModel: cityViewModel, filterEra: nil, workshopState: workshopState, onNavigate: navigateTo)
         case .era(let era):
-            CityView(viewModel: cityViewModel, filterEra: era, workshopState: workshopState)
+            CityView(viewModel: cityViewModel, filterEra: era, workshopState: workshopState, onNavigate: navigateTo)
         case .profile:
             ProfileView(viewModel: cityViewModel, workshopState: workshopState, onboardingState: onboardingState, onNavigate: navigateTo, onBackToMenu: backToMenu)
         case .workshop:
