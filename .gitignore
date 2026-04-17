@@ -91,6 +91,8 @@ RenaissanceArchitectAcademy/*.gif
 
 # API keys (secrets)
 RenaissanceArchitectAcademy/Services/APIKeys.swift
+.keys/
+*.p8
 
 # Raw video files
 RenaissanceArchitectAcademy/*.mp4

@@ -90,26 +90,6 @@
 		089 /* water_plop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 189 /* water_plop.mp3 */; };
 		090 /* building_tap.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 190 /* building_tap.mp3 */; };
 		091 /* cards_appear.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 191 /* cards_appear.mp3 */; };
-		AA1 /* anvil_strike.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA1 /* anvil_strike.wav */; };
-		AA2 /* clay_dig.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA2 /* clay_dig.wav */; };
-		AA3 /* crafting_complete.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA3 /* crafting_complete.wav */; };
-		AA4 /* farm_collect.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA4 /* farm_collect.wav */; };
-		AA5 /* florins_earned.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA5 /* florins_earned.wav */; };
-		AA6 /* furnace_crackling.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA6 /* furnace_crackling.wav */; };
-		AA7 /* furnace_woosh.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA7 /* furnace_woosh.wav */; };
-		AA8 /* herb_pick.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA8 /* herb_pick.wav */; };
-		AA9 /* level_up.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA9 /* level_up.wav */; };
-		AB0 /* material_pickup.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB0 /* material_pickup.wav */; };
-		AB1 /* mining_hammer.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB1 /* mining_hammer.wav */; };
-		AB2 /* overlay_close.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB2 /* overlay_close.wav */; };
-		AB3 /* overlay_open.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB3 /* overlay_open.wav */; };
-		AB4 /* page_turn.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB4 /* page_turn.wav */; };
-		AB5 /* pigment_grind.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB5 /* pigment_grind.wav */; };
-		AB6 /* scene_transition.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB6 /* scene_transition.wav */; };
-		AB7 /* seal_stamp.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB7 /* seal_stamp.wav */; };
-		AB8 /* stone_hit.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB8 /* stone_hit.wav */; };
-		AB9 /* timber_chop.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB9 /* timber_chop.wav */; };
-		AC0 /* workbench_mix.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC0 /* workbench_mix.wav */; };
 		092 /* KnowledgeCardsOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192 /* KnowledgeCardsOverlay.swift */; };
 		093 /* GameSceneKitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193 /* GameSceneKitView.swift */; };
 		096 /* Tool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 196 /* Tool.swift */; };
@@ -163,13 +143,6 @@
 		0FC /* AqueductInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FC /* AqueductInteractiveVisuals.swift */; };
 		0FD /* NPCDialogueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD /* NPCDialogueView.swift */; };
 		0FE /* NPCEncounterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE /* NPCEncounterManager.swift */; };
-		3C0 /* BottomDialogPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0 /* BottomDialogPanel.swift */; };
-		3C1 /* BirdGuidanceContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1 /* BirdGuidanceContent.swift */; };
-		3C2 /* SceneTransitionOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2 /* SceneTransitionOverlay.swift */; };
-		3C3 /* InventoryBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3 /* InventoryBarView.swift */; };
-		3C4 /* SceneEditorButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4 /* SceneEditorButtons.swift */; };
-		3C5 /* HistoricalNPCContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5 /* HistoricalNPCContent.swift */; };
-		3C6 /* FurnaceFireView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6 /* FurnaceFireView.swift */; };
 		2A0 /* VisualEditorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0 /* VisualEditorState.swift */; };
 		2A1 /* EditableModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1 /* EditableModifier.swift */; };
 		2A2 /* EditorBottomPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A2 /* EditorBottomPanel.swift */; };
@@ -190,6 +163,13 @@
 		2B1 /* FlyingMachineInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1 /* FlyingMachineInteractiveVisuals.swift */; };
 		2B2 /* VaticanObservatoryInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2 /* VaticanObservatoryInteractiveVisuals.swift */; };
 		2B3 /* PrintingPressInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3 /* PrintingPressInteractiveVisuals.swift */; };
+		3C0 /* BottomDialogPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0 /* BottomDialogPanel.swift */; };
+		3C1 /* BirdGuidanceContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1 /* BirdGuidanceContent.swift */; };
+		3C2 /* SceneTransitionOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2 /* SceneTransitionOverlay.swift */; };
+		3C3 /* InventoryBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3 /* InventoryBarView.swift */; };
+		3C4 /* SceneEditorButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4 /* SceneEditorButtons.swift */; };
+		3C5 /* HistoricalNPCContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5 /* HistoricalNPCContent.swift */; };
+		3C6 /* FurnaceFireView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6 /* FurnaceFireView.swift */; };
 		543AD36B2F60C199001895ED /* card_flip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 183 /* card_flip.mp3 */; };
 		543AD36C2F60C199001895ED /* GirlIntroAudio.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 182 /* GirlIntroAudio.m4a */; };
 		544299832F32E0F700F92073 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = 544299822F32E0F700F92073 /* Pow */; };
@@ -207,6 +187,26 @@
 		544299C02F3A000100F92073 /* SceneEditorMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299BF2F3A000100F92073 /* SceneEditorMode.swift */; };
 		5475D2EF2F3146CC003AA131 /* building_complete.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2EE2F3146CB003AA131 /* building_complete.mp3 */; };
 		5475D2F82F319000003AA131 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2F92F319000003AA131 /* Assets.xcassets */; };
+		AA1 /* anvil_strike.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA1 /* anvil_strike.wav */; };
+		AA2 /* clay_dig.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA2 /* clay_dig.wav */; };
+		AA3 /* crafting_complete.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA3 /* crafting_complete.wav */; };
+		AA4 /* farm_collect.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA4 /* farm_collect.wav */; };
+		AA5 /* florins_earned.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA5 /* florins_earned.wav */; };
+		AA6 /* furnace_crackling.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA6 /* furnace_crackling.wav */; };
+		AA7 /* furnace_woosh.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA7 /* furnace_woosh.wav */; };
+		AA8 /* herb_pick.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA8 /* herb_pick.wav */; };
+		AA9 /* level_up.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA9 /* level_up.wav */; };
+		AB0 /* material_pickup.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB0 /* material_pickup.wav */; };
+		AB1 /* mining_hammer.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB1 /* mining_hammer.wav */; };
+		AB2 /* overlay_close.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB2 /* overlay_close.wav */; };
+		AB3 /* overlay_open.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB3 /* overlay_open.wav */; };
+		AB4 /* page_turn.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB4 /* page_turn.wav */; };
+		AB5 /* pigment_grind.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB5 /* pigment_grind.wav */; };
+		AB6 /* scene_transition.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB6 /* scene_transition.wav */; };
+		AB7 /* seal_stamp.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB7 /* seal_stamp.wav */; };
+		AB8 /* stone_hit.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB8 /* stone_hit.wav */; };
+		AB9 /* timber_chop.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB9 /* timber_chop.wav */; };
+		AC0 /* workbench_mix.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC0 /* workbench_mix.wav */; };
 		F001 /* Cinzel-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B022F313B22007D8C64 /* Cinzel-Black.ttf */; };
 		F002 /* Cinzel-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B032F313B22007D8C64 /* Cinzel-Bold.ttf */; };
 		F003 /* Cinzel-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B042F313B22007D8C64 /* Cinzel-ExtraBold.ttf */; };
@@ -333,26 +333,6 @@
 		189 /* water_plop.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = water_plop.mp3; sourceTree = "<group>"; };
 		190 /* building_tap.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = building_tap.mp3; sourceTree = "<group>"; };
 		191 /* cards_appear.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = cards_appear.mp3; sourceTree = "<group>"; };
-		BA1 /* anvil_strike.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = anvil_strike.wav; sourceTree = "<group>"; };
-		BA2 /* clay_dig.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = clay_dig.wav; sourceTree = "<group>"; };
-		BA3 /* crafting_complete.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = crafting_complete.wav; sourceTree = "<group>"; };
-		BA4 /* farm_collect.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = farm_collect.wav; sourceTree = "<group>"; };
-		BA5 /* florins_earned.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = florins_earned.wav; sourceTree = "<group>"; };
-		BA6 /* furnace_crackling.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = furnace_crackling.wav; sourceTree = "<group>"; };
-		BA7 /* furnace_woosh.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = furnace_woosh.wav; sourceTree = "<group>"; };
-		BA8 /* herb_pick.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = herb_pick.wav; sourceTree = "<group>"; };
-		BA9 /* level_up.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = level_up.wav; sourceTree = "<group>"; };
-		BB0 /* material_pickup.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = material_pickup.wav; sourceTree = "<group>"; };
-		BB1 /* mining_hammer.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = mining_hammer.wav; sourceTree = "<group>"; };
-		BB2 /* overlay_close.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = overlay_close.wav; sourceTree = "<group>"; };
-		BB3 /* overlay_open.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = overlay_open.wav; sourceTree = "<group>"; };
-		BB4 /* page_turn.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = page_turn.wav; sourceTree = "<group>"; };
-		BB5 /* pigment_grind.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = pigment_grind.wav; sourceTree = "<group>"; };
-		BB6 /* scene_transition.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = scene_transition.wav; sourceTree = "<group>"; };
-		BB7 /* seal_stamp.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = seal_stamp.wav; sourceTree = "<group>"; };
-		BB8 /* stone_hit.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = stone_hit.wav; sourceTree = "<group>"; };
-		BB9 /* timber_chop.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = timber_chop.wav; sourceTree = "<group>"; };
-		BC0 /* workbench_mix.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = workbench_mix.wav; sourceTree = "<group>"; };
 		192 /* KnowledgeCardsOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnowledgeCardsOverlay.swift; sourceTree = "<group>"; };
 		193 /* GameSceneKitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSceneKitView.swift; sourceTree = "<group>"; };
 		196 /* Tool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tool.swift; sourceTree = "<group>"; };
@@ -484,8 +464,29 @@
 		54477B2A2F313B22007D8C64 /* Mulish-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Mulish-Bold.ttf"; sourceTree = "<group>"; };
 		54477B2B2F313B22007D8C64 /* Mulish-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Mulish-Italic.ttf"; sourceTree = "<group>"; };
 		54477B2C2F313B22007D8C64 /* Mulish-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Mulish-LightItalic.ttf"; sourceTree = "<group>"; };
+		5448B9A92F9297B30071F5FB /* RenaissanceArchitectAcademy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RenaissanceArchitectAcademy.entitlements; sourceTree = "<group>"; };
 		5475D2EE2F3146CB003AA131 /* building_complete.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = building_complete.mp3; sourceTree = "<group>"; };
 		5475D2F92F319000003AA131 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		BA1 /* anvil_strike.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = anvil_strike.wav; sourceTree = "<group>"; };
+		BA2 /* clay_dig.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = clay_dig.wav; sourceTree = "<group>"; };
+		BA3 /* crafting_complete.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = crafting_complete.wav; sourceTree = "<group>"; };
+		BA4 /* farm_collect.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = farm_collect.wav; sourceTree = "<group>"; };
+		BA5 /* florins_earned.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = florins_earned.wav; sourceTree = "<group>"; };
+		BA6 /* furnace_crackling.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = furnace_crackling.wav; sourceTree = "<group>"; };
+		BA7 /* furnace_woosh.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = furnace_woosh.wav; sourceTree = "<group>"; };
+		BA8 /* herb_pick.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = herb_pick.wav; sourceTree = "<group>"; };
+		BA9 /* level_up.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = level_up.wav; sourceTree = "<group>"; };
+		BB0 /* material_pickup.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = material_pickup.wav; sourceTree = "<group>"; };
+		BB1 /* mining_hammer.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = mining_hammer.wav; sourceTree = "<group>"; };
+		BB2 /* overlay_close.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = overlay_close.wav; sourceTree = "<group>"; };
+		BB3 /* overlay_open.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = overlay_open.wav; sourceTree = "<group>"; };
+		BB4 /* page_turn.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = page_turn.wav; sourceTree = "<group>"; };
+		BB5 /* pigment_grind.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = pigment_grind.wav; sourceTree = "<group>"; };
+		BB6 /* scene_transition.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = scene_transition.wav; sourceTree = "<group>"; };
+		BB7 /* seal_stamp.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = seal_stamp.wav; sourceTree = "<group>"; };
+		BB8 /* stone_hit.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = stone_hit.wav; sourceTree = "<group>"; };
+		BB9 /* timber_chop.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = timber_chop.wav; sourceTree = "<group>"; };
+		BC0 /* workbench_mix.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = workbench_mix.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -513,6 +514,7 @@
 		301 /* RenaissanceArchitectAcademy */ = {
 			isa = PBXGroup;
 			children = (
+				5448B9A92F9297B30071F5FB /* RenaissanceArchitectAcademy.entitlements */,
 				544299AD2F36A8D000F92073 /* MascotNode.swift */,
 				544299B02F38000100F92073 /* PlayerNode.swift */,
 				544299B22F38000100F92073 /* ResourceNode.swift */,
@@ -1280,6 +1282,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = RenaissanceArchitectAcademy/RenaissanceArchitectAcademy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2;
 				DEAD_CODE_STRIPPING = YES;
@@ -1290,6 +1293,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = RenaissanceArchitectAcademy/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.educational-games";
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "Your bird companion can reference upcoming events to personalize architecture lessons.";
+				INFOPLIST_KEY_NSGKFriendListUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1317,6 +1322,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = RenaissanceArchitectAcademy/RenaissanceArchitectAcademy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2;
 				DEAD_CODE_STRIPPING = YES;
@@ -1327,6 +1333,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = RenaissanceArchitectAcademy/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.educational-games";
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "Your bird companion can reference upcoming events to personalize architecture lessons.";
+				INFOPLIST_KEY_NSGKFriendListUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
