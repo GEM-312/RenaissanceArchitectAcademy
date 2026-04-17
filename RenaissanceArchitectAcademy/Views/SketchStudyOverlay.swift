@@ -510,6 +510,8 @@ struct SketchStudyOverlay: View {
             checkFindAnswer()
         case .count(let correctAnswer):
             checkCountAnswer(correctAnswer)
+        case .reflect:
+            break // Reflect mode uses "Reveal Answer" button directly
         }
     }
 
