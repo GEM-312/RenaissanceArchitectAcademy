@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import CoreText
+import GameKit
 
 @main
 struct RenaissanceArchitectAcademyApp: App {
@@ -25,6 +26,7 @@ struct RenaissanceArchitectAcademyApp: App {
         WindowGroup {
             ContentView()
                 .buttonStyle(.plain)
+                .onAppear { GameCenterManager.shared.authenticate() }
         }
         .modelContainer(modelContainer)
         #if os(macOS)
