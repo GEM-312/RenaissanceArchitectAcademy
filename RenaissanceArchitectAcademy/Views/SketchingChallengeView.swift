@@ -16,6 +16,9 @@ struct SketchingChallengeView: View {
     @State private var showCompletion = false
     @State private var showSuccessEffect = false
 
+    // Sezione canvas state (@Observable, shared with SezioneCanvasView via @Bindable)
+    @State private var sezioneState = SezioneCanvasState()
+
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     private var isLargeScreen: Bool { horizontalSizeClass == .regular }
 
@@ -259,8 +262,13 @@ struct SketchingChallengeView: View {
                     completedPhases.formUnion(phases)
                     advanceOrComplete()
                 }
-            case .sezione, .prospettiva:
-                // Future phases — placeholder
+            case .sezione(let data):
+                SezioneCanvasView(phaseData: data, onComplete: { phases in
+                    completedPhases.formUnion(phases)
+                    advanceOrComplete()
+                }, canvasState: sezioneState)
+            case .prospettiva:
+                // Future phase — placeholder
                 VStack(spacing: 20) {
                     Spacer()
                     Image(systemName: "hammer.fill")
@@ -269,7 +277,7 @@ struct SketchingChallengeView: View {
                     Text("Coming Soon")
                         .font(.custom("Cinzel-Regular", size: 24, relativeTo: .title))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
-                    Text("This drawing phase is under construction.")
+                    Text("Prospettiva phase is under construction.")
                         .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .body))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Spacer()
