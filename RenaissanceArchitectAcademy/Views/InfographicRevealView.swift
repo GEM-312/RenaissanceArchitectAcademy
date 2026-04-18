@@ -1,17 +1,14 @@
 import SwiftUI
 
-/// Cinematic infographic reward view with dust-reveal effect.
-/// Shown after completing a knowledge card's activity.
-/// Zones auto-reveal one by one, same RadialGradient mask as MainMenuView.
+/// Compact infographic reward with dust-reveal effect.
+/// Designed to render INSIDE a knowledge card (not fullscreen).
+/// Zones auto-reveal one by one using the same RadialGradient mask as MainMenuView.
 struct InfographicRevealView: View {
     let infographic: InfographicReveal
     let onDismiss: () -> Void
 
     @State private var revealedZones: [Bool]
     @State private var allRevealed = false
-
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    private var isLargeScreen: Bool { horizontalSizeClass == .regular }
 
     init(infographic: InfographicReveal, onDismiss: @escaping () -> Void) {
         self.infographic = infographic
@@ -20,22 +17,20 @@ struct InfographicRevealView: View {
     }
 
     var body: some View {
-        VStack(spacing: 16) {
-            Spacer()
-
+        VStack(spacing: 12) {
             // Infographic with dust-reveal mask
             Image(infographic.imageName)
                 .resizable()
                 .scaledToFit()
-                .clipShape(RoundedRectangle(cornerRadius: 14))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 14)
-                        .stroke(RenaissanceColors.ochre.opacity(0.5), lineWidth: 1.5)
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(RenaissanceColors.ochre.opacity(0.4), lineWidth: 1)
                 )
                 .mask {
                     GeometryReader { geo in
                         ZStack {
-                            // Faint base so image isn't fully invisible
+                            // Faint base
                             Color.white.opacity(0.05)
 
                             ForEach(Array(infographic.zones.enumerated()), id: \.offset) { index, zone in
@@ -64,47 +59,40 @@ struct InfographicRevealView: View {
                         .frame(width: geo.size.width, height: geo.size.height)
                     }
                 }
-                .padding(.horizontal, isLargeScreen ? 40 : 16)
 
-            // Done button (appears after all zones revealed)
+            // Done button
             if allRevealed {
                 Button {
                     onDismiss()
                 } label: {
                     Text("Continue")
-                        .font(.custom("Cinzel-Bold", size: 16))
+                        .font(.custom("EBGaramond-SemiBold", size: 14))
                         .foregroundStyle(.white)
-                        .padding(.horizontal, 32)
-                        .padding(.vertical, 12)
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 8)
                         .background(
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: 8)
                                 .fill(RenaissanceColors.sageGreen)
                         )
                 }
                 .buttonStyle(.plain)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
-
-            Spacer()
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(RenaissanceColors.parchmentGradient.ignoresSafeArea())
         .onAppear {
             startRevealSequence()
         }
     }
 
-    /// Auto-reveal zones one by one with staggered delays
     private func startRevealSequence() {
         for (index, _) in infographic.zones.enumerated() {
-            let delay = 0.4 + Double(index) * 0.6
-            withAnimation(.easeOut(duration: 1.2).delay(delay)) {
+            let delay = 0.3 + Double(index) * 0.5
+            withAnimation(.easeOut(duration: 1.0).delay(delay)) {
                 revealedZones[index] = true
             }
         }
-        // Show done button after all zones revealed
-        let totalDuration = 0.4 + Double(infographic.zones.count) * 0.6 + 1.0
-        withAnimation(.easeOut(duration: 0.4).delay(totalDuration)) {
+        let totalDuration = 0.3 + Double(infographic.zones.count) * 0.5 + 0.8
+        withAnimation(.easeOut(duration: 0.3).delay(totalDuration)) {
             allRevealed = true
         }
     }

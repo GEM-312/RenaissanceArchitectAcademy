@@ -200,21 +200,7 @@ struct KnowledgeCardsOverlay: View {
                     .transition(.opacity)
                 }
 
-                // Infographic reward reveal (shown after activity completion)
-                if let infographic = showInfographic {
-                    InfographicRevealView(infographic: infographic) {
-                        // Dismiss infographic and finalize the card completion
-                        withAnimation(.spring(response: 0.3)) {
-                            showInfographic = nil
-                        }
-                        if let card = pendingCompleteCard {
-                            pendingCompleteCard = nil
-                            finalizeCardCompletion(card)
-                        }
-                    }
-                    .transition(.opacity)
-                    .zIndex(200)
-                }
+                // Infographic is shown inline on the card back, not here
             }
         }
         .onChange(of: triggerBirdChat) { _, open in
@@ -562,11 +548,27 @@ struct KnowledgeCardsOverlay: View {
 
             // Content
             ZStack {
-                if !isActivity {
+                if showInfographic != nil && pendingCompleteCard?.id == card.id {
+                    // Infographic reward — shown inline on the card after activity
+                    ScrollView(.vertical, showsIndicators: false) {
+                        VStack(spacing: 12) {
+                            InfographicRevealView(infographic: showInfographic!) {
+                                withAnimation(.spring(response: 0.3)) {
+                                    showInfographic = nil
+                                }
+                                if let pending = pendingCompleteCard {
+                                    pendingCompleteCard = nil
+                                    finalizeCardCompletion(pending)
+                                }
+                            }
+                        }
+                        .padding(.vertical, Spacing.sm)
+                    }
+                    .transition(.opacity)
+                } else if !isActivity {
                     readingContent(card: card, isCompleted: isCompleted)
                         .transition(.opacity)
-                }
-                if isActivity {
+                } else if isActivity {
                     ScrollView(.vertical, showsIndicators: false) {
                         activityContent(card: card)
                     }
@@ -574,6 +576,7 @@ struct KnowledgeCardsOverlay: View {
                 }
             }
             .animation(.easeInOut(duration: 0.4), value: isActivity)
+            .animation(.easeInOut(duration: 0.4), value: showInfographic != nil)
         }
         .padding(.horizontal, Spacing.lg)
         .padding(.vertical, Spacing.md)
