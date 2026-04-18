@@ -216,11 +216,228 @@ enum AlzatoElementType {
     case wall           // rectangular section (drag height)
 }
 
-/// Data specific to Phase 3: Sezione (Cross-Section) - Future
+// MARK: - Sezione Types (Phase 3: Cross-Section)
+
+/// Wall thickness in cross-section — teaches load distribution
+enum SezioneThickness: String, Codable, CaseIterable {
+    case thin       // Upper walls, lighter loads
+    case medium     // Mid-level walls
+    case thick      // Foundations, heavy loads
+
+    var displayName: String {
+        switch self {
+        case .thin: return "Thin"
+        case .medium: return "Medium"
+        case .thick: return "Thick"
+        }
+    }
+
+    var gridWidth: Int {
+        switch self {
+        case .thin: return 1
+        case .medium: return 2
+        case .thick: return 3
+        }
+    }
+}
+
+/// A wall segment available in the drag palette for cross-section
+struct SezioneWallElement: Identifiable, Codable, Equatable, Hashable {
+    let id: String              // "foundation", "leftWall", "upperWall"
+    let label: String           // "Foundation Wall (6m thick)"
+    let targetPosition: GridCoord
+    let width: Int              // Grid cells wide
+    let height: Int             // Grid cells tall
+    let thickness: SezioneThickness
+    let material: String        // "concrete", "brick", "stone" (educational)
+
+    static func == (lhs: Self, rhs: Self) -> Bool { lhs.id == rhs.id }
+    func hash(into hasher: inout Hasher) { hasher.combine(id) }
+}
+
+/// A placed wall on the cross-section grid
+struct SezioneWallPlacement: Codable, Equatable {
+    let elementId: String
+    let position: GridCoord
+}
+
+/// Structural curve types in cross-section
+enum SezioneStructureType: String, Codable, CaseIterable {
+    case arch
+    case barrelVault
+    case dome
+    case groinVault
+    case flatLintel
+    case pitchedRoof
+
+    var displayName: String {
+        switch self {
+        case .arch: return "Arch"
+        case .barrelVault: return "Barrel Vault"
+        case .dome: return "Dome"
+        case .groinVault: return "Groin Vault"
+        case .flatLintel: return "Flat Lintel"
+        case .pitchedRoof: return "Pitched Roof"
+        }
+    }
+}
+
+/// A structural curve element in the cross-section (Layer 2)
+struct SezioneStructuralCurve: Identifiable {
+    let id: String              // "mainArch", "barrelVault"
+    let label: String
+    let type: SezioneStructureType
+    let position: CGPoint       // Normalized 0-1 on canvas
+    let size: CGSize            // Normalized 0-1
+    let initialPoints: [CGPoint]  // Starting shape (wrong)
+    let targetPoints: [CGPoint]   // Correct shape
+    let tolerance: CGFloat      // Max avg distance for correct
+    let educationalHint: String
+}
+
+/// Load path direction for arrows (Layer 3)
+enum LoadDirection: String, Codable, CaseIterable {
+    case down
+    case diagonalLeft
+    case diagonalRight
+    case outward    // Lateral thrust
+
+    var iconName: String {
+        switch self {
+        case .down: return "arrow.down"
+        case .diagonalLeft: return "arrow.down.left"
+        case .diagonalRight: return "arrow.down.right"
+        case .outward: return "arrow.left.and.right"
+        }
+    }
+}
+
+/// A load path arrow segment (Layer 3)
+struct LoadPathSegment: Identifiable, Codable, Equatable {
+    let id: String
+    let from: GridCoord
+    let to: GridCoord
+    let direction: LoadDirection
+    let label: String           // "Compression through arch"
+}
+
+/// The three interactive layers in SezioneCanvasView
+enum SezioneLayer: Int, CaseIterable, Comparable {
+    case walls = 0
+    case curves = 1
+    case loadPaths = 2
+
+    static func < (lhs: SezioneLayer, rhs: SezioneLayer) -> Bool {
+        lhs.rawValue < rhs.rawValue
+    }
+
+    var displayName: String {
+        switch self {
+        case .walls: return "Walls"
+        case .curves: return "Structure"
+        case .loadPaths: return "Load Path"
+        }
+    }
+
+    var iconName: String {
+        switch self {
+        case .walls: return "rectangle.split.3x3"
+        case .curves: return "arch.brick"
+        case .loadPaths: return "arrow.down.to.line"
+        }
+    }
+}
+
+/// Data specific to Phase 3: Sezione (Cross-Section)
 struct SezionePhaseData {
-    let canvasWidth: Int
-    let canvasHeight: Int
+    let gridRows: Int
+    let gridCols: Int
+    let wallElements: [SezioneWallElement]
+    let structuralCurves: [SezioneStructuralCurve]
+    let loadPathTargets: [LoadPathSegment]
     let educationalText: String
+    let historicalContext: String
+    let hint: String?
+}
+
+// MARK: - Sezione Actions (for undo/redo)
+
+/// Value-type actions for the Sezione canvas — enables undo history
+enum SezioneAction: Equatable {
+    case placeWall(SezioneWallPlacement)
+    case removeWall(SezioneWallPlacement)
+    case lockCurve(String)
+    case placeArrow(LoadPathSegment)
+    case removeArrow(String)
+    case advanceLayer(SezioneLayer)
+}
+
+// MARK: - Sezione Validation
+
+/// Result of validating the student's cross-section
+struct SezioneValidationResult {
+    let wallsCorrect: Int
+    let wallsTotal: Int
+    let curvesCorrect: Int
+    let curvesTotal: Int
+    let arrowsCorrect: Int
+    let arrowsTotal: Int
+
+    var isComplete: Bool {
+        wallsCorrect == wallsTotal &&
+        curvesCorrect == curvesTotal &&
+        arrowsCorrect == arrowsTotal
+    }
+
+    var layerComplete: (walls: Bool, curves: Bool, arrows: Bool) {
+        (wallsCorrect == wallsTotal,
+         curvesCorrect == curvesTotal,
+         arrowsCorrect == arrowsTotal)
+    }
+}
+
+// MARK: - Teaching Animation
+
+/// Simplified building silhouette for the 3D→2D transition animation
+struct BuildingSilhouetteData {
+    let outlinePath: [CGPoint]       // Building outline (normalized 0-1)
+    let roofPath: [CGPoint]?         // Roof portion (lifts away for Pianta)
+    let interiorPaths: [[CGPoint]]?  // Interior lines (revealed for Sezione)
+    let slicePosition: CGFloat       // Where to cut for Sezione (0-1)
+}
+
+// MARK: - Flow State Machine
+
+/// Drives the entire sketching challenge flow — replaces boolean soup
+/// Uses the existing SketchTeachingStep from SketchTeachingData.swift
+enum SketchingFlowState: Equatable {
+    case intro
+    case animation(SketchingPhaseType)
+    case teaching(Int)                   // step index (0=observe, 1=understand, 2=plan)
+    case drawing(SketchingPhaseType)
+    case phaseComplete(SketchingPhaseType)
+    case allComplete
+}
+
+// MARK: - Sezione Tool
+
+/// Tools available in the Sezione toolbar
+enum SezioneTool: String, CaseIterable {
+    case dragWall = "Drag Wall"
+    case shapeCurve = "Shape Curve"
+    case placeArrow = "Place Arrow"
+    case eraser = "Eraser"
+    case undo = "Undo"
+
+    var iconName: String {
+        switch self {
+        case .dragWall: return "rectangle.split.3x3"
+        case .shapeCurve: return "scribble.variable"
+        case .placeArrow: return "arrow.down.to.line"
+        case .eraser: return "eraser"
+        case .undo: return "arrow.counterclockwise"
+        }
+    }
 }
 
 /// Data specific to Phase 4: Prospettiva (Perspective) - Future
