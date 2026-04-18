@@ -352,6 +352,10 @@ struct SketchingChallengeView: View {
         }
         .onAppear {
             showSuccessEffect.toggle()
+            GameCenterManager.shared.startActivity(GameCenterManager.ActivityID.sketching)
+        }
+        .onDisappear {
+            GameCenterManager.shared.endCurrentActivity()
         }
     }
 

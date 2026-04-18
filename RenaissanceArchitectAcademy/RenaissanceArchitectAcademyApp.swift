@@ -27,6 +27,11 @@ struct RenaissanceArchitectAcademyApp: App {
             ContentView()
                 .buttonStyle(.plain)
                 .onAppear { GameCenterManager.shared.authenticate() }
+                .task {
+                    // Load Game Center activity definitions after auth settles
+                    try? await Task.sleep(for: .seconds(2))
+                    await GameCenterManager.shared.loadActivityDefinitions()
+                }
         }
         .modelContainer(modelContainer)
         #if os(macOS)

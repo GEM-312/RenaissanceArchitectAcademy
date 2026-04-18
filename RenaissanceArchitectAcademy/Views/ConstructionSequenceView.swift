@@ -38,6 +38,10 @@ struct ConstructionSequenceView: View {
         .onAppear {
             steps = sequence.steps.shuffled()
             auroraPhase = true
+            GameCenterManager.shared.startActivity(GameCenterManager.ActivityID.construction)
+        }
+        .onDisappear {
+            GameCenterManager.shared.endCurrentActivity()
         }
     }
 

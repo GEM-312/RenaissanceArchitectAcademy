@@ -149,11 +149,13 @@ struct ContentView: View {
             switch newPhase {
             case .background, .inactive:
                 flushPlayTime()
+                GameCenterManager.shared.pauseCurrentActivity()
             case .active:
                 // Restart session clock when returning
                 if sessionStartDate == nil {
                     sessionStartDate = Date()
                 }
+                GameCenterManager.shared.resumeCurrentActivity()
             @unknown default:
                 break
             }

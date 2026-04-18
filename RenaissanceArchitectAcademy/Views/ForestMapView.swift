@@ -1713,10 +1713,12 @@ struct ForestMapView: View {
                 selectedPOIIndex = nil
                 showToolDialog = false
             }
-            // Camera zoom out is handled by the scene itself (startFollowingPlayer resets)
+            GameCenterManager.shared.endCurrentActivity()
         }
 
         newScene.onPOISelected = { index in
+            // Start forest activity when reaching a tree POI
+            GameCenterManager.shared.startActivity(GameCenterManager.ActivityID.forest)
             let hasAxe = workshop.hasTool(for: .forest)
             if !hasAxe {
                 // No axe — ONLY show tool requirement dialog, no science cards

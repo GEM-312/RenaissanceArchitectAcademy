@@ -269,9 +269,14 @@ struct CraftingRoomMapView: View {
             withAnimation(.easeOut(duration: 0.2)) {
                 self.activeStation = nil
             }
+            GameCenterManager.shared.endCurrentActivity()
         }
 
         newScene.onFurnitureReached = { station in
+            // Start crafting activity when reaching furnace
+            if station == .furnace {
+                GameCenterManager.shared.startActivity(GameCenterManager.ActivityID.crafting)
+            }
             // Tool gate: pigment table requires mortar & pestle
             if station == .pigmentTable {
                 let hasMortar = (self.workshop.tools[.mortarAndPestle] ?? 0) > 0

@@ -203,6 +203,7 @@ struct BuildingLessonView: View {
                 currentIndex = saved
             }
             freezeWordBankIfNeeded()
+            GameCenterManager.shared.startActivity(GameCenterManager.ActivityID.lesson)
         }
         .onDisappear {
             stopWordBankShuffleTimer()
@@ -210,6 +211,7 @@ struct BuildingLessonView: View {
             if currentIndex < pages.count {
                 viewModel.saveLessonBookmark(for: plot.id, sectionIndex: currentIndex)
             }
+            GameCenterManager.shared.endCurrentActivity()
         }
         // Environment navigation uses onNavigate to go to full scene (not a sheet)
     }

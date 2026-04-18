@@ -181,6 +181,111 @@ class GameCenterManager: NSObject {
         #endif
     }
 
+    // MARK: - Activity IDs (must match App Store Connect)
+
+    enum ActivityID {
+        static let quarry        = "com.raa.activity.quarry"
+        static let river         = "com.raa.activity.river"
+        static let volcano       = "com.raa.activity.volcano"
+        static let clayPit       = "com.raa.activity.claypit"
+        static let mine          = "com.raa.activity.mine"
+        static let forest        = "com.raa.activity.forest"
+        static let farm          = "com.raa.activity.farm"
+        static let market        = "com.raa.activity.market"
+        static let crafting      = "com.raa.activity.crafting"
+        static let sketching     = "com.raa.activity.sketching"
+        static let lesson        = "com.raa.activity.lesson"
+        static let construction  = "com.raa.activity.construction"
+
+        static func forStation(_ station: ResourceStationType) -> String? {
+            switch station {
+            case .quarry:       return quarry
+            case .river:        return river
+            case .volcano:      return volcano
+            case .clayPit:      return clayPit
+            case .mine:         return mine
+            case .forest:       return forest
+            case .farm:         return farm
+            case .market:       return market
+            case .furnace:      return crafting
+            case .workbench, .pigmentTable, .craftingRoom, .goldsmithWorkshop:
+                return nil // No separate activity for these
+            }
+        }
+    }
+
+    // MARK: - Activities (iOS 26+)
+    // Store as Any to avoid @available on stored properties (incompatible with @Observable)
+
+    private var _activityDefinitions: Any = [String: Any]()
+    private var _currentActivity: Any?
+
+    /// Load all activity definitions from App Store Connect. Call once after authentication.
+    func loadActivityDefinitions() async {
+        guard isAuthenticated else { return }
+        if #available(iOS 26.0, macOS 26.0, *) {
+            do {
+                let definitions = try await GKGameActivityDefinition.all
+                var defs = [String: GKGameActivityDefinition]()
+                for def in definitions {
+                    defs[def.identifier] = def
+                }
+                _activityDefinitions = defs
+                print("[GameCenter] Loaded \(definitions.count) activity definitions")
+            } catch {
+                print("[GameCenter] Activity definitions error: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    /// Start a Game Center activity. Ends any current activity first.
+    func startActivity(_ vendorID: String) {
+        if #available(iOS 26.0, macOS 26.0, *) {
+            endCurrentActivity()
+
+            guard let defs = _activityDefinitions as? [String: GKGameActivityDefinition],
+                  let definition = defs[vendorID] else {
+                print("[GameCenter] No activity definition for \(vendorID)")
+                return
+            }
+            do {
+                let activity = try GKGameActivity.start(definition: definition)
+                _currentActivity = activity
+                print("[GameCenter] Started activity: \(vendorID)")
+            } catch {
+                print("[GameCenter] Start activity error: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    /// End the current activity. Auto-reports all linked achievements and scores.
+    func endCurrentActivity(withAchievement achievementID: String? = nil) {
+        if #available(iOS 26.0, macOS 26.0, *) {
+            guard let activity = _currentActivity as? GKGameActivity else { return }
+            if let achID = achievementID {
+                let ach = GKAchievement(identifier: achID)
+                activity.setAchievementCompleted(ach)
+            }
+            activity.end()
+            print("[GameCenter] Ended activity")
+            _currentActivity = nil
+        }
+    }
+
+    /// Pause the current activity (e.g., app backgrounded).
+    func pauseCurrentActivity() {
+        if #available(iOS 26.0, macOS 26.0, *) {
+            (_currentActivity as? GKGameActivity)?.pause()
+        }
+    }
+
+    /// Resume the current activity (e.g., app foregrounded).
+    func resumeCurrentActivity() {
+        if #available(iOS 26.0, macOS 26.0, *) {
+            (_currentActivity as? GKGameActivity)?.resume()
+        }
+    }
+
     // MARK: - Access Point
 
     func showAccessPoint() {

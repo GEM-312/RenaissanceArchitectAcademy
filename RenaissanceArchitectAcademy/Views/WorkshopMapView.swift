@@ -663,6 +663,8 @@ struct WorkshopMapView: View {
                 showStationKnowledgeCards = false
                 stationKnowledgeCards = []
             }
+            // End any active Game Center activity when player walks away
+            GameCenterManager.shared.endCurrentActivity()
         }
 
 
@@ -671,6 +673,11 @@ struct WorkshopMapView: View {
             self.activeStation = stationType
             self.lastVisitedStation = stationType
             dismissAllOverlays()
+
+            // Start Game Center activity for this station
+            if let actID = GameCenterManager.ActivityID.forStation(stationType) {
+                GameCenterManager.shared.startActivity(actID)
+            }
 
             // Prewarm NPC generation while card/overlay displays (iOS 26+)
             if #available(iOS 26.0, macOS 26.0, *) {
