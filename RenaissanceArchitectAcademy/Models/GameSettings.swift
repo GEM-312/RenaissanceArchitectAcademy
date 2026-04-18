@@ -114,14 +114,14 @@ class GameSettings {
     var cardBackground: Color {
         isDarkMode
             ? Color(red: 0.18, green: 0.16, blue: 0.13).opacity(0.92)
-            : RenaissanceColors.parchment.opacity(0.92)
+            : Color(red: 0.93, green: 0.87, blue: 0.78).opacity(0.95)
     }
 
     /// Dialog/modal background — full opacity for overlays
     var dialogBackground: Color {
         isDarkMode
             ? Color(red: 0.18, green: 0.16, blue: 0.13)
-            : RenaissanceColors.parchment
+            : Color(red: 0.93, green: 0.87, blue: 0.78)
     }
 
     /// Card border color
