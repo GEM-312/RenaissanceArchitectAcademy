@@ -148,6 +148,7 @@
 		2A2 /* EditorBottomPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A2 /* EditorBottomPanel.swift */; };
 		2D0 /* GameCenterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0 /* GameCenterManager.swift */; };
 		2D1 /* GameCenterDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1 /* GameCenterDashboardView.swift */; };
+		2E0 /* SezioneCanvasState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E0 /* SezioneCanvasState.swift */; };
 		2A3 /* BezierDragShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3 /* BezierDragShape.swift */; };
 		2A4 /* AlzatoCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4 /* AlzatoCanvasView.swift */; };
 		2A5 /* ColosseumInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5 /* ColosseumInteractiveVisuals.swift */; };
@@ -491,6 +492,7 @@
 		BC0 /* workbench_mix.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = workbench_mix.wav; sourceTree = "<group>"; };
 		3D0 /* GameCenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterManager.swift; sourceTree = "<group>"; };
 		3D1 /* GameCenterDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterDashboardView.swift; sourceTree = "<group>"; };
+		3E0 /* SezioneCanvasState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SezioneCanvasState.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -653,6 +655,7 @@
 				158 /* NotebookState.swift */,
 				163 /* PersistenceManager.swift */,
 				1E1 /* MuseumSketchService.swift */,
+				3E0 /* SezioneCanvasState.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -1159,6 +1162,7 @@
 				2A2 /* EditorBottomPanel.swift in Sources */,
 				2D0 /* GameCenterManager.swift in Sources */,
 				2D1 /* GameCenterDashboardView.swift in Sources */,
+				2E0 /* SezioneCanvasState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
