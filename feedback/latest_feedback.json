@@ -1,0 +1,109 @@
+{
+  "synced_at": "2026-04-18T03:08:15.756464Z",
+  "app_id": "6760910118",
+  "builds": [
+    {
+      "id": "c45a886e-232a-49eb-9959-10b7167c411d",
+      "version": "3",
+      "uploaded": "2026-04-17T09:50:09-07:00",
+      "state": "VALID"
+    },
+    {
+      "id": "4429cb1d-d9b4-4bd9-8ef7-81c04a122aab",
+      "version": "2",
+      "uploaded": "2026-04-03T09:41:06-07:00",
+      "state": "VALID"
+    },
+    {
+      "id": "e164aa1d-6e43-4dd3-b9f2-8bf563d9abbc",
+      "version": "1",
+      "uploaded": "2026-03-20T09:28:46-07:00",
+      "state": "VALID"
+    }
+  ],
+  "testers": [
+    {
+      "name": "Brianna  Walker",
+      "email": "briannawalker6@icloud.com",
+      "state": "INSTALLED"
+    },
+    {
+      "name": "William Guschwan",
+      "email": "arshilegorky@yahoo.com",
+      "state": "INSTALLED"
+    },
+    {
+      "name": "Pollak Marina",
+      "email": "pollakmarinaus@gmail.com",
+      "state": "INSTALLED"
+    },
+    {
+      "name": "Ray Garmon",
+      "email": "masterblade815@gmail.com",
+      "state": "INSTALLED"
+    }
+  ],
+  "feedback": [
+    {
+      "id": "AFEkX5LNbbB2AybofPKPCs4",
+      "comment": "I\u2019m tapping on the gold objects instead of sifting. One of the golds I have to tap was brown.",
+      "timestamp": "2026-04-17T13:09:55Z",
+      "tester": "Ray Garmon",
+      "email": "masterblade815@gmail.com",
+      "device": "iPhone11,8",
+      "os": "18.7.7",
+      "build": "2",
+      "version": "1.0",
+      "has_screenshot": true
+    },
+    {
+      "id": "AOVEMjw-FLHLtKgIapw43RE",
+      "comment": "Not related with question. It asked why and I had to tap picture.",
+      "timestamp": "2026-04-17T12:37:08Z",
+      "tester": "Ray Garmon",
+      "email": "masterblade815@gmail.com",
+      "device": "iPhone11,8",
+      "os": "18.7.7",
+      "build": "2",
+      "version": "1.0",
+      "has_screenshot": true
+    },
+    {
+      "id": "AN75Jh3vJa3LX0dFspGdiag",
+      "comment": "iPad horizontal view:\n- just scale down a bit for \u201cChoose your apprentice\u201d screen\n\nOther minor changes:\n- no back button for the player to go back if needed in (All, Rome, Ren., Tests)\n- 2 different animations after choosing your apprentice",
+      "timestamp": "2026-04-10T22:55:42Z",
+      "tester": "Brianna  Walker",
+      "email": "briannawalker6@icloud.com",
+      "device": "iPhone13,4",
+      "os": "26.4.1",
+      "build": "2",
+      "version": "1.0",
+      "has_screenshot": true
+    },
+    {
+      "id": "ALyw50q51F_-1jx_jKyRbQ4",
+      "comment": "iPhone vertical view:\n- just minor scaling changes\n- text adjustments\n- maybe have the bird companion fly from off the screen because it appears over the text",
+      "timestamp": "2026-04-10T22:44:08Z",
+      "tester": "Brianna  Walker",
+      "email": "briannawalker6@icloud.com",
+      "device": "iPhone13,4",
+      "os": "26.4.1",
+      "build": "2",
+      "version": "1.0",
+      "has_screenshot": true
+    },
+    {
+      "id": "APY9_829gbEZmekNgsuC6Kc",
+      "comment": "Every card asking to tap somewhere on the picture but some questions and interactions doesn\u2019t make much sense. ",
+      "timestamp": "2026-04-04T22:39:49Z",
+      "tester": "Pollak Marina",
+      "email": "pollakmarinaus@gmail.com",
+      "device": "iPhone16,2",
+      "os": "26.4",
+      "build": "2",
+      "version": "1.0",
+      "has_screenshot": true
+    }
+  ],
+  "total_feedback": 5
+}
