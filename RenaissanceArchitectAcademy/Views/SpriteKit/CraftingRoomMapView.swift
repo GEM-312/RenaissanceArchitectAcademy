@@ -695,11 +695,10 @@ struct CraftingRoomMapView: View {
                     )
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
-                    // Tool recipe: "Forge Tool" button (skips furnace)
-                    if let toolRecipe = ToolRecipe.detectRecipe(from: workshop.workbenchIngredients) {
-                        let alreadyOwned = (workshop.tools[toolRecipe.output] ?? 0) > 0
+                    // Tool recipe: "Forge Tool" button (skips furnace) — only if not already owned
+                    if let toolRecipe = ToolRecipe.detectRecipe(from: workshop.workbenchIngredients),
+                       (workshop.tools[toolRecipe.output] ?? 0) == 0 {
                         Button {
-                            guard !alreadyOwned else { return }
                             // Consume ingredients from workbench
                             workshop.workbenchSlots = [nil, nil, nil, nil]
                             if workshop.craftTool(toolRecipe.output) {
@@ -715,18 +714,17 @@ struct CraftingRoomMapView: View {
                             HStack(spacing: 6) {
                                 Image(systemName: "hammer.fill")
                                     .font(.caption)
-                                Text(alreadyOwned ? "Already Owned" : "Forge Tool!")
+                                Text("Forge Tool!")
                                     .font(RenaissanceFont.bodySemibold)
                             }
                             .padding(.horizontal, Spacing.xl)
                             .padding(.vertical, Spacing.xs)
                             .background(
                                 RoundedRectangle(cornerRadius: CornerRadius.sm)
-                                    .fill(alreadyOwned ? RenaissanceColors.stoneGray.opacity(0.3) : RenaissanceColors.ochre)
+                                    .fill(RenaissanceColors.ochre)
                             )
-                            .foregroundStyle(alreadyOwned ? RenaissanceColors.sepiaInk : .white)
+                            .foregroundStyle(.white)
                         }
-                        .disabled(alreadyOwned)
                     } else {
                         // Normal recipe: "Mix!" button
                         Button("Mix!") {
