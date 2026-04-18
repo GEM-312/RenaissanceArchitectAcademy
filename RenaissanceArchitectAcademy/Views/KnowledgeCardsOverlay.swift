@@ -123,6 +123,10 @@ struct KnowledgeCardsOverlay: View {
     @State private var hangmanRevealed = false
     @State private var hangmanWon = false
 
+    // Infographic reveal (shown after activity completion as reward)
+    @State private var showInfographic: InfographicReveal? = nil
+    @State private var pendingCompleteCard: KnowledgeCard? = nil
+
     // Card crack → florin burst animation
     @State private var crackingCardID: String? = nil
     @State private var cardCrackPhase: Int = 0          // 0=none, 1=shake, 2=crack, 3=burst
@@ -194,6 +198,22 @@ struct KnowledgeCardsOverlay: View {
                         }
                     )
                     .transition(.opacity)
+                }
+
+                // Infographic reward reveal (shown after activity completion)
+                if let infographic = showInfographic {
+                    InfographicRevealView(infographic: infographic) {
+                        // Dismiss infographic and finalize the card completion
+                        withAnimation(.spring(response: 0.3)) {
+                            showInfographic = nil
+                        }
+                        if let card = pendingCompleteCard {
+                            pendingCompleteCard = nil
+                            finalizeCardCompletion(card)
+                        }
+                    }
+                    .transition(.opacity)
+                    .zIndex(200)
                 }
             }
         }
@@ -1606,6 +1626,20 @@ struct KnowledgeCardsOverlay: View {
     }
 
     private func completeCard(_ card: KnowledgeCard) {
+        // If card has an infographic, show it as a reward before finalizing
+        if let infographic = card.infographic {
+            pendingCompleteCard = card
+            withAnimation(.spring(response: 0.4)) {
+                flippedOpenCard = nil
+                showInfographic = infographic
+            }
+            return
+        }
+
+        finalizeCardCompletion(card)
+    }
+
+    private func finalizeCardCompletion(_ card: KnowledgeCard) {
         // Save to ViewModel + notebook
         let entry = NotebookEntry(
             buildingId: buildingId,

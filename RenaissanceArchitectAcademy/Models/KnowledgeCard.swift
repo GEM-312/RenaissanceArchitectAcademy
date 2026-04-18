@@ -135,6 +135,7 @@ struct KnowledgeCard: Identifiable {
     let activity: CardActivityType    // Activity type on card back
     let notebookSummary: String       // What gets saved to the notebook on completion
     var funFact: String? = nil        // Optional fun fact shown in lightbulb callout
+    var infographic: InfographicReveal? = nil  // Optional infographic with dust-reveal interaction
     var visual: CardVisual? = nil     // Optional interactive science visual below lesson text
 
     /// Color based on science — single source of truth in RenaissanceColors.color(for:)
@@ -142,6 +143,24 @@ struct KnowledgeCard: Identifiable {
         RenaissanceColors.color(for: science)
     }
 
+}
+
+// MARK: - Infographic Reveal
+
+/// Data for the dust-reveal infographic reward on a knowledge card.
+/// Shown after completing the card's activity as a cinematic reward.
+/// Uses the same RadialGradient mask pattern as MainMenuView's dome reveal.
+struct InfographicReveal {
+    let imageName: String           // Asset catalog image name
+    let zones: [InfographicZone]    // Auto-reveal zones (played one by one)
+}
+
+/// A reveal zone — normalized position + radius on the infographic
+struct InfographicZone {
+    let x: CGFloat      // 0-1 horizontal position
+    let y: CGFloat      // 0-1 vertical position
+    let radius: CGFloat // 0-1 relative to image width
+    let label: String   // What this zone reveals
 }
 
 // MARK: - Content Router
@@ -244,6 +263,16 @@ enum KnowledgeCardContent {
                 ],
                 activity: .numberFishing(question: "How wide is the Pantheon's ring foundation (meters)?", correctAnswer: 7, decoys: [3, 5, 10, 15, 20]),
                 notebookSummary: "STEP 1: Dig circular trench 4.5m deep, pour 7.3m-wide ring foundation. Distributes the dome's weight into soft Roman clay. Foundation first — always.",
+                infographic: InfographicReveal(
+                    imageName: "PantheonStep1Infographic",
+                    zones: [
+                        InfographicZone(x: 0.50, y: 0.08, radius: 0.25, label: "Step 1: The Ring Foundation"),
+                        InfographicZone(x: 0.20, y: 0.50, radius: 0.25, label: "Underground Construction"),
+                        InfographicZone(x: 0.50, y: 0.55, radius: 0.28, label: "Pouring the Concrete"),
+                        InfographicZone(x: 0.82, y: 0.25, radius: 0.22, label: "Even Load Distribution"),
+                        InfographicZone(x: 0.82, y: 0.78, radius: 0.22, label: "Foundational Integrity"),
+                    ]
+                ),
                 visual: CardVisual(
                     type: .crossSection,
                     title: "Ring Foundation Cross-Section",
