@@ -87,6 +87,25 @@ enum Science: String, CaseIterable, Codable {
     var hasCustomImage: Bool {
         customImageName != nil
     }
+
+    /// Key used for Game Center achievement ID
+    var achievementKey: String {
+        switch self {
+        case .mathematics: return "mathematics"
+        case .physics: return "physics"
+        case .chemistry: return "chemistry"
+        case .geometry: return "geometry"
+        case .engineering: return "engineering"
+        case .astronomy: return "astronomy"
+        case .biology: return "biology"
+        case .geology: return "geology"
+        case .optics: return "optics"
+        case .hydraulics: return "hydraulics"
+        case .acoustics: return "acoustics"
+        case .materials: return "materials"
+        case .architecture: return "architecture"
+        }
+    }
 }
 
 /// A building that can be constructed

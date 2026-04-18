@@ -24,7 +24,7 @@ struct GameTopBarView: View {
     @Environment(\.gameSettings) private var settings
     @State private var isNavExpanded = false
     @State private var showSettings = false
-    @State private var showGameCenter = false
+    // Game Center presented via GameCenterManager.showDashboard()
 
     var body: some View {
         ZStack(alignment: .bottomLeading) {
@@ -133,9 +133,7 @@ struct GameTopBarView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .fullScreenCover(isPresented: $showGameCenter) {
-            GameCenterDashboardView()
-        }
+        // Game Center dashboard presented via GameCenterManager.showDashboard()
     }
 
     // MARK: - Nav Column (LEFT side, flush left)
@@ -203,8 +201,8 @@ struct GameTopBarView: View {
 
         // Game Center button (only when authenticated)
         if GameCenterManager.shared.isAuthenticated {
-            items.append(NavItem(icon: "trophy.fill", label: "Ranks", destination: nil, action: {
-                showGameCenter = true
+            items.append(NavItem(icon: "trophy.fill", label: "Game Center", destination: nil, action: {
+                GameCenterManager.shared.showDashboard()
                 withAnimation(.spring(response: 0.45, dampingFraction: 0.65)) {
                     isNavExpanded = false
                 }

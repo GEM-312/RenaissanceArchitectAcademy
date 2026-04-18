@@ -355,10 +355,12 @@ import SwiftUI
         let gc = GameCenterManager.shared
         gc.submitScore(completed, to: GameCenterManager.LeaderboardID.buildingsCompleted)
         if completed >= 1 { gc.reportAchievement(GameCenterManager.AchievementID.firstBuilding) }
-        if completed >= 5 { gc.reportAchievement(GameCenterManager.AchievementID.fiveBuildings) }
         if completed >= 17 { gc.reportAchievement(GameCenterManager.AchievementID.allBuildings) }
-
-        reportMasteryAchievements()
+        // Check era completion
+        let romeComplete = buildingPlots.filter { $0.building.era == .ancientRome && $0.isCompleted }.count == 8
+        let renComplete = buildingPlots.filter { $0.building.era == .renaissance && $0.isCompleted }.count == 9
+        if romeComplete { gc.reportAchievement(GameCenterManager.AchievementID.romeComplete) }
+        if renComplete { gc.reportAchievement(GameCenterManager.AchievementID.renaissanceComplete) }
     }
 
     func completeSketchingPhase(for plotId: Int, phases: Set<SketchingPhaseType>) {
@@ -378,8 +380,7 @@ import SwiftUI
         save.lastSaved = Date()
         manager.save()
 
-        let minutes = Int(totalPlayTime / 60)
-        GameCenterManager.shared.submitScore(minutes, to: GameCenterManager.LeaderboardID.totalPlayTime)
+        // Play time tracked locally (no leaderboard for this)
     }
 
     // MARK: - Game Economy & Progress
@@ -390,10 +391,10 @@ import SwiftUI
         persistPlayerSave()
 
         let gc = GameCenterManager.shared
-        gc.submitScore(goldFlorins, to: GameCenterManager.LeaderboardID.goldFlorins)
-        if goldFlorins >= 100 {
-            gc.reportAchievement(GameCenterManager.AchievementID.hundredFlorins)
-        }
+        gc.submitScore(goldFlorins, to: GameCenterManager.LeaderboardID.totalFlorins)
+        if goldFlorins >= 100 { gc.reportAchievement(GameCenterManager.AchievementID.florins100) }
+        if goldFlorins >= 500 { gc.reportAchievement(GameCenterManager.AchievementID.florins500) }
+        if goldFlorins >= 1000 { gc.reportAchievement(GameCenterManager.AchievementID.florins1000) }
     }
 
     @discardableResult
@@ -412,8 +413,16 @@ import SwiftUI
         persistPlayerSave()
         persistBuildingProgress(for: plotId)
 
+        let gc = GameCenterManager.shared
+        // Individual science achievement
+        gc.reportAchievement(GameCenterManager.AchievementID.science(science))
+        // Milestone achievements
+        gc.submitScore(earnedScienceBadges.count, to: GameCenterManager.LeaderboardID.sciencesMastered)
+        if earnedScienceBadges.count >= 3 {
+            gc.reportAchievement(GameCenterManager.AchievementID.sciences3)
+        }
         if earnedScienceBadges.count == Science.allCases.count {
-            GameCenterManager.shared.reportAchievement(GameCenterManager.AchievementID.allSciences)
+            gc.reportAchievement(GameCenterManager.AchievementID.sciencesAll)
         }
     }
 
@@ -439,20 +448,6 @@ import SwiftUI
         buildingProgressMap[plotId] = progress
         persistBuildingProgress(for: plotId)
         earnFlorins(GameRewards.sketchCompleteFlorins)
-    }
-
-    // MARK: - Game Center Mastery
-
-    private func reportMasteryAchievements() {
-        let gc = GameCenterManager.shared
-        let completed = buildingPlots.filter(\.isCompleted).count
-        if completed >= 1 { gc.reportAchievement(GameCenterManager.AchievementID.apprenticeRank) }
-        if completedCount(for: .apprentice) >= 3 {
-            gc.reportAchievement(GameCenterManager.AchievementID.architectRank)
-        }
-        if completedCount(for: .architect) >= 3 {
-            gc.reportAchievement(GameCenterManager.AchievementID.masterRank)
-        }
     }
 
     // MARK: - Lesson Bookmarks (SwiftData)

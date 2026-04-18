@@ -4,7 +4,7 @@ import SwiftUI
 struct SettingsView: View {
     @Bindable var settings: GameSettings
     var onDismiss: () -> Void
-    @State private var showGameCenterDashboard = false
+    // Game Center presented via GameCenterManager.showDashboard()
 
     var body: some View {
         ZStack {
@@ -140,7 +140,7 @@ struct SettingsView: View {
 
                     if gc.isAuthenticated {
                         Button {
-                            showGameCenterDashboard = true
+                            GameCenterManager.shared.showDashboard()
                         } label: {
                             HStack(spacing: 6) {
                                 Image(systemName: "trophy.fill")
@@ -169,9 +169,7 @@ struct SettingsView: View {
                     .fill(settings.dialogBackground.opacity(0.96))
             )
             .borderModal(radius: 18)
-            .fullScreenCover(isPresented: $showGameCenterDashboard) {
-                GameCenterDashboardView()
-            }
+            // Game Center dashboard presented via GameCenterManager.showDashboard()
         }
     }
 

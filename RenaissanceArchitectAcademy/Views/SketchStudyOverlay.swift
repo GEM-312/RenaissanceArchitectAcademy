@@ -514,7 +514,8 @@ struct SketchStudyOverlay: View {
             break // Reflect mode uses "Reveal Answer" button directly
         }
     }
-
+    
+    /// <#Description#>
     private func checkFindAnswer() {
         guard let pos = tapPosition else { return }
 
