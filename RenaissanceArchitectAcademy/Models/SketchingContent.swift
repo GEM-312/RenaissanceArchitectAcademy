@@ -157,9 +157,106 @@ enum SketchingContent {
                     educationalText: "The Pantheon's elevation reveals its dual nature: a Greek temple portico (8 Corinthian columns, triangular pediment) joined to a Roman rotunda crowned by the world's largest unreinforced concrete dome. The 1:1 proportional system — where dome diameter equals building height — creates perfect geometric harmony.",
                     historicalContext: "The portico columns are 12.5m tall, carved from single Egyptian granite blocks. Each weighs 60 tons and was shipped 2,000 km from the quarries at Mons Claudianus."
                 ))
+            ),
+            // Phase 3: Sezione (Cross-Section) — 3-layer structural drawing
+            SketchingPhase(
+                phaseType: .sezione,
+                title: "Sezione: Cross-Section",
+                introduction: "Now reveal the Pantheon's hidden engineering — the cross-section. See how the dome sits on thick walls, how the oculus opens at the top, and how weight flows from the dome through the walls to the foundation.",
+                sciencesFocused: [.engineering, .physics, .materials],
+                phaseData: .sezione(SezionePhaseData(
+                    gridRows: 10,
+                    gridCols: 12,
+                    wallElements: [
+                        // Foundation — thick base
+                        SezioneWallElement(
+                            id: "foundation",
+                            label: "Foundation",
+                            targetPosition: GridCoord(row: 9, col: 1),
+                            width: 10, height: 1,
+                            thickness: .thick,
+                            material: "Roman concrete"
+                        ),
+                        // Left wall — thick (6m)
+                        SezioneWallElement(
+                            id: "leftWall",
+                            label: "Left Wall",
+                            targetPosition: GridCoord(row: 4, col: 1),
+                            width: 2, height: 5,
+                            thickness: .thick,
+                            material: "Brick-faced concrete"
+                        ),
+                        // Right wall — thick (6m)
+                        SezioneWallElement(
+                            id: "rightWall",
+                            label: "Right Wall",
+                            targetPosition: GridCoord(row: 4, col: 9),
+                            width: 2, height: 5,
+                            thickness: .thick,
+                            material: "Brick-faced concrete"
+                        ),
+                        // Upper left wall — thinner (stepped)
+                        SezioneWallElement(
+                            id: "upperLeft",
+                            label: "Upper Wall",
+                            targetPosition: GridCoord(row: 2, col: 2),
+                            width: 1, height: 2,
+                            thickness: .medium,
+                            material: "Lighter concrete"
+                        ),
+                        // Upper right wall — thinner (stepped)
+                        SezioneWallElement(
+                            id: "upperRight",
+                            label: "Upper Wall",
+                            targetPosition: GridCoord(row: 2, col: 9),
+                            width: 1, height: 2,
+                            thickness: .medium,
+                            material: "Lighter concrete"
+                        )
+                    ],
+                    structuralCurves: [
+                        // The great dome — hemisphere profile
+                        SezioneStructuralCurve(
+                            id: "dome",
+                            label: "Dome",
+                            type: .dome,
+                            position: CGPoint(x: 0.15, y: 0.0),
+                            size: CGSize(width: 0.7, height: 0.35),
+                            initialPoints: [
+                                CGPoint(x: 0.0, y: 0.95),
+                                CGPoint(x: 0.2, y: 0.7),
+                                CGPoint(x: 0.5, y: 0.6),
+                                CGPoint(x: 0.8, y: 0.7),
+                                CGPoint(x: 1.0, y: 0.95)
+                            ],
+                            targetPoints: [
+                                CGPoint(x: 0.0, y: 0.95),
+                                CGPoint(x: 0.12, y: 0.25),
+                                CGPoint(x: 0.5, y: 0.05),
+                                CGPoint(x: 0.88, y: 0.25),
+                                CGPoint(x: 1.0, y: 0.95)
+                            ],
+                            tolerance: 0.10,
+                            educationalHint: "The dome is a perfect hemisphere — 43.3m in diameter. The concrete gets lighter toward the top: heavy basalt aggregate at the base, light volcanic pumice near the oculus."
+                        )
+                    ],
+                    loadPathTargets: [
+                        // Dome crown pushes down
+                        LoadPathSegment(id: "dome-top", from: GridCoord(row: 0, col: 6), to: GridCoord(row: 2, col: 6), direction: .down, label: "Dome weight"),
+                        // Dome spreads to walls
+                        LoadPathSegment(id: "dome-left", from: GridCoord(row: 2, col: 5), to: GridCoord(row: 4, col: 2), direction: .diagonalLeft, label: "Thrust to left wall"),
+                        LoadPathSegment(id: "dome-right", from: GridCoord(row: 2, col: 7), to: GridCoord(row: 4, col: 9), direction: .diagonalRight, label: "Thrust to right wall"),
+                        // Walls carry to foundation
+                        LoadPathSegment(id: "wall-left", from: GridCoord(row: 4, col: 2), to: GridCoord(row: 9, col: 2), direction: .down, label: "Compression through wall"),
+                        LoadPathSegment(id: "wall-right", from: GridCoord(row: 4, col: 9), to: GridCoord(row: 9, col: 9), direction: .down, label: "Compression through wall")
+                    ],
+                    educationalText: "The Pantheon's dome is the world's largest unreinforced concrete dome — 2000 years old. Roman engineers used a brilliant trick: the concrete mix changes from heavy basalt at the base to lightweight volcanic pumice near the oculus, reducing the dome's weight by 40%.",
+                    historicalContext: "The 8.2m oculus at the top is the building's only light source. Rain falls through it onto the slightly convex floor, which has 22 hidden drainage holes. The dome's interior has 5 rings of 28 coffers — each reducing weight while maintaining strength.",
+                    hint: "Start with the thick foundation at the bottom. The walls get thinner as they go up — the dome is lightest at the top."
+                ))
             )
         ],
-        educationalSummary: "You've designed both the floor plan and elevation of one of history's most influential buildings. The Pantheon's proportional system — a perfect sphere inscribed in a cylinder — influenced architects for 2000 years, from Brunelleschi's Duomo to the US Capitol."
+        educationalSummary: "You've designed the floor plan, elevation, AND cross-section of one of history's most influential buildings. The Pantheon's proportional system — a perfect sphere inscribed in a cylinder — influenced architects for 2000 years, from Brunelleschi's Duomo to the US Capitol."
     )
 
     // MARK: - Colosseum
