@@ -149,6 +149,8 @@
 		2D0 /* GameCenterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0 /* GameCenterManager.swift */; };
 		2D1 /* GameCenterDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1 /* GameCenterDashboardView.swift */; };
 		2E0 /* SezioneCanvasState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E0 /* SezioneCanvasState.swift */; };
+		2E1 /* SezioneCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E1 /* SezioneCanvasView.swift */; };
+		2E2 /* SezioneToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E2 /* SezioneToolbarView.swift */; };
 		2A3 /* BezierDragShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3 /* BezierDragShape.swift */; };
 		2A4 /* AlzatoCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4 /* AlzatoCanvasView.swift */; };
 		2A5 /* ColosseumInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5 /* ColosseumInteractiveVisuals.swift */; };
@@ -493,6 +495,8 @@
 		3D0 /* GameCenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterManager.swift; sourceTree = "<group>"; };
 		3D1 /* GameCenterDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterDashboardView.swift; sourceTree = "<group>"; };
 		3E0 /* SezioneCanvasState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SezioneCanvasState.swift; sourceTree = "<group>"; };
+		3E1 /* SezioneCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SezioneCanvasView.swift; sourceTree = "<group>"; };
+		3E2 /* SezioneToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SezioneToolbarView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -750,6 +754,8 @@
 				137 /* SketchingToolbarView.swift */,
 				3A3 /* BezierDragShape.swift */,
 				3A4 /* AlzatoCanvasView.swift */,
+				3E1 /* SezioneCanvasView.swift */,
+				3E2 /* SezioneToolbarView.swift */,
 			);
 			path = Sketching;
 			sourceTree = "<group>";
@@ -1163,6 +1169,8 @@
 				2D0 /* GameCenterManager.swift in Sources */,
 				2D1 /* GameCenterDashboardView.swift in Sources */,
 				2E0 /* SezioneCanvasState.swift in Sources */,
+				2E1 /* SezioneCanvasView.swift in Sources */,
+				2E2 /* SezioneToolbarView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
