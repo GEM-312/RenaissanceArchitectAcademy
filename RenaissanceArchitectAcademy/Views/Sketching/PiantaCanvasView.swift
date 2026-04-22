@@ -1330,7 +1330,9 @@ struct PiantaCanvasView: View {
     /// a reward, not a gate.
     @MainActor
     private func triggerBlueprintBloomIfSubscribed(cellSize: CGFloat) {
+        print("[PiantaCanvasView] Pianta complete — subscribed=\(GameSettings.shared.isSubscribed) building=\(buildingName)")
         guard GameSettings.shared.isSubscribed else {
+            print("[PiantaCanvasView] non-subscriber path — skipping bloom")
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 showCompletion = true
                 onComplete([.pianta])
