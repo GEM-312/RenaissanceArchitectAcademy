@@ -124,16 +124,33 @@ struct RoomDefinition: Identifiable {
 
 // MARK: - Phase Data
 
-/// Data specific to the Pianta (Floor Plan) phase
+/// Data specific to the Pianta (Floor Plan) phase.
+///
+/// AI-validated design (2026-04-22): The student studies an aerial view of the real
+/// building (left side) and sketches their floor plan on the right. Claude Haiku
+/// vision compares the student's sketch to the `referencePlanImageName` engineering
+/// drawing and returns a score 0–100. Grid/geometric validation was retired.
 struct PiantaPhaseData {
-    let gridSize: Int                           // Grid dimensions (e.g., 12 = 12x12)
-    let targetRooms: [RoomDefinition]           // Rooms player must create
-    let targetColumns: [GridCoord]              // Required column positions
-    let symmetryAxis: SymmetryAxis?             // Required symmetry (nil = none)
-    let proportionalRatios: [ProportionalRatio] // Key ratios to teach
-    let hint: String?                           // First hint text
-    let educationalText: String                 // Shown after completion
+    let gridSize: Int                           // Canvas grid density (drawing feel only — not validated)
+    let hint: String?                           // Text if student taps "hint" (also bird-suggested)
+    let educationalText: String                 // Shown after successful sketch
     let historicalContext: String               // Historical facts about this building
+
+    /// Assets.xcassets imageset name for the aerial/top-down photo of the real building.
+    /// Shown on the left side of the canvas as the "study this" reference.
+    let aerialImageName: String
+
+    /// Assets.xcassets imageset name for the engineering floor plan drawing.
+    /// Revealed under the student's canvas at 30% opacity while the Peek button is held,
+    /// and sent as the comparison target to the Claude vision validator.
+    let referencePlanImageName: String
+
+    // Legacy fields — retained so old templates still compile; ignored by the new AI-validated UI.
+    // TODO: remove after all 17 templates are migrated.
+    let targetRooms: [RoomDefinition]
+    let targetColumns: [GridCoord]
+    let symmetryAxis: SymmetryAxis?
+    let proportionalRatios: [ProportionalRatio]
 }
 
 // MARK: - Phase Content

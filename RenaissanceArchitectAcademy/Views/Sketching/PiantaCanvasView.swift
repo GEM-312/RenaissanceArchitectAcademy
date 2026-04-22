@@ -52,11 +52,10 @@ struct PiantaCanvasView: View {
     @State private var canvasOriginXStored: CGFloat = 0
     @State private var canvasSizeStored: CGFloat = 300
 
-    // Blueprint render state (Apprentice subscription feature — see FalSketchService)
-    @State private var blueprintImage: PlatformImage? = nil
-    @State private var isRenderingBlueprint = false
-    @State private var showBlueprint = false
-    @State private var blueprintAwaitingTap = false
+    // AI validation state (Apr 22 2026 redesign — replaces old fal.ai bloom)
+    @State private var aiValidationResult: SketchValidator.Result? = nil
+    @State private var isAIValidating = false
+    @State private var isPeekingReference = false   // Hold-to-peek engineering plan overlay
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     private var isLargeScreen: Bool { horizontalSizeClass == .regular }
@@ -64,6 +63,18 @@ struct PiantaCanvasView: View {
     // MARK: - Layout
 
     private var gridSize: Int { phaseData.gridSize }
+    private var aerialImageName: String { phaseData.aerialImageName }
+    private var referencePlanImageName: String { phaseData.referencePlanImageName }
+
+    /// True when the asset exists in the bundle. Lets us show a placeholder
+    /// for buildings where Marina hasn't generated art yet.
+    private func imageExists(_ name: String) -> Bool {
+        #if os(iOS)
+        return UIImage(named: name) != nil
+        #else
+        return NSImage(named: name) != nil
+        #endif
+    }
 
     var body: some View {
         VStack(spacing: 16) {
@@ -77,9 +88,103 @@ struct PiantaCanvasView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
 
-            // Canvas + Bird overlay
+            // Split layout: aerial reference on the left, canvas + tools on the right
+            HStack(alignment: .top, spacing: 16) {
+                aerialReferenceView
+                    .frame(maxWidth: .infinity)
+
+                canvasBody
+                    .frame(maxWidth: .infinity)
+            }
+        }
+        .padding()
+        .overlay {
+            // Result overlay shown after AI validation completes
+            if let result = aiValidationResult {
+                ZStack {
+                    Color.black.opacity(0.45).ignoresSafeArea()
+                    SketchResultView(
+                        result: result,
+                        buildingName: buildingName,
+                        onRetry: {
+                            aiValidationResult = nil
+                        },
+                        onContinue: {
+                            let earned = result.passed ? result.score / 2 : 0
+                            aiValidationResult = nil
+                            showCompletion = true
+                            onComplete([.pianta])
+                            _ = earned
+                        }
+                    )
+                }
+                .transition(.opacity)
+            }
+            if isAIValidating {
+                ZStack {
+                    Color.black.opacity(0.35).ignoresSafeArea()
+                    VStack(spacing: 12) {
+                        ProgressView().scaleEffect(1.4)
+                        Text("Comparing your sketch...")
+                            .font(.custom("EBGaramond-SemiBold", size: 16))
+                            .foregroundStyle(.white)
+                    }
+                    .padding(32)
+                    .background(RoundedRectangle(cornerRadius: 12).fill(Color.black.opacity(0.6)))
+                }
+                .transition(.opacity)
+            }
+        }
+    }
+
+    // MARK: - Aerial Reference (left side)
+
+    @ViewBuilder
+    private var aerialReferenceView: some View {
+        VStack(spacing: 8) {
+            Text("Study from Above")
+                .font(.custom("Cinzel-Bold", size: 14))
+                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
+
+            if imageExists(aerialImageName) {
+                Image(aerialImageName)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(RenaissanceColors.sepiaInk.opacity(0.25), lineWidth: 1)
+                    )
+            } else {
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(RenaissanceColors.parchment.opacity(0.7))
+                    .overlay(
+                        VStack(spacing: 8) {
+                            Image(systemName: "photo.on.rectangle.angled")
+                                .font(.system(size: 32))
+                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.3))
+                            Text("Aerial art for \(buildingName)\ncoming soon")
+                                .font(.custom("EBGaramond-Italic", size: 13))
+                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                                .multilineTextAlignment(.center)
+                        }
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(RenaissanceColors.sepiaInk.opacity(0.15), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                    )
+            }
+        }
+    }
+
+    // MARK: - Canvas Body (right side — existing drawing canvas)
+
+    @ViewBuilder
+    private var canvasBody: some View {
+        VStack(spacing: 12) {
             GeometryReader { geo in
-                let canvasSize = min(geo.size.width - 32, geo.size.height - 80)
+                let canvasSize = min(geo.size.width - 16, geo.size.height - 40)
                 let cellSize = canvasSize / CGFloat(gridSize)
                 let canvasOriginX = (geo.size.width - canvasSize) / 2
 
@@ -137,6 +242,17 @@ struct PiantaCanvasView: View {
                         if let result = validationResult {
                             validationOverlay(result, cellSize: cellSize)
                         }
+
+                        // Engineering plan overlay — visible while "Peek" is held
+                        if isPeekingReference, imageExists(referencePlanImageName) {
+                            Image(referencePlanImageName)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: canvasSize, height: canvasSize)
+                                .opacity(0.3)
+                                .allowsHitTesting(false)
+                                .transition(.opacity)
+                        }
                     }
                     .frame(width: canvasSize, height: canvasSize)
                     .background(
@@ -153,9 +269,6 @@ struct PiantaCanvasView: View {
 
                     // Bird companion overlay
                     birdOverlay(canvasSize: canvasSize, cellSize: cellSize, canvasOriginX: canvasOriginX)
-
-                    // Blueprint bloom overlay (subscriber reward — covers the canvas when complete)
-                    blueprintBloomOverlay(canvasSize: canvasSize, canvasOriginX: canvasOriginX)
                 }
                 .frame(maxWidth: .infinity)
                 .changeEffect(
@@ -190,13 +303,20 @@ struct PiantaCanvasView: View {
                 validationFeedbackView(result)
             }
 
-            // Check Plan button
-            RenaissanceButton(title: "Check Plan") {
-                validatePlan()
+            // Peek + Check Plan buttons
+            HStack(spacing: 12) {
+                // Peek button — hold to see the engineering plan underneath
+                PeekButton(isPeeking: $isPeekingReference)
+                    .frame(maxWidth: 140)
+
+                RenaissanceButton(title: isAIValidating ? "Checking..." : "Check Plan") {
+                    guard !isAIValidating else { return }
+                    validatePlan()
+                }
+                .disabled(isAIValidating)
             }
-            .padding(.horizontal, 40)
+            .padding(.horizontal, 16)
         }
-        .padding()
     }
 
     // MARK: - Validation Feedback
@@ -1301,8 +1421,8 @@ struct PiantaCanvasView: View {
         if result.isComplete {
             showSuccessEffect.toggle()
             birdCelebrate()
-            showBirdSpeechBriefly("Magnifico! A true architect!")
-            triggerBlueprintBloomIfSubscribed(cellSize: canvasSizeStored / CGFloat(gridSize))
+            showBirdSpeechBriefly("Magnifico! Let me compare it to the master plan...")
+            triggerAIValidation(cellSize: canvasSizeStored / CGFloat(gridSize))
         } else if !isNeat {
             // Bird gives neatness feedback
             showBirdSpeechBriefly(result.neatnessFeedback ?? "Clean up your plan!")
@@ -1326,65 +1446,49 @@ struct PiantaCanvasView: View {
 
     /// Called from validation-success. For subscribers: snapshot the sketch,
     /// call fal.ai, crossfade to the rendered blueprint, dwell, then fire onComplete.
-    /// For non-subscribers (or on error): falls through to the original
-    /// 1s-delay → onComplete flow. Failures are silent by design — the render is
-    /// a reward, not a gate.
+    /// Pianta passed geometric validation → snapshot the canvas + reference plan,
+    /// send both to Claude Haiku vision, show the result overlay. Pianta (floor plan)
+    /// is free for everyone — subscription gating applies only to architect-tier phases.
     @MainActor
-    private func triggerBlueprintBloomIfSubscribed(cellSize: CGFloat) {
-        print("[PiantaCanvasView] Pianta complete — subscribed=\(GameSettings.shared.isSubscribed) building=\(buildingName)")
-        guard GameSettings.shared.isSubscribed else {
-            print("[PiantaCanvasView] non-subscriber path — skipping bloom")
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                showCompletion = true
-                onComplete([.pianta])
-            }
+    private func triggerAIValidation(cellSize: CGFloat) {
+        print("[PiantaCanvasView] Pianta validated geometrically — building=\(buildingName)")
+
+        // Snapshot the student's sketch
+        guard let studentImage = renderStudentSnapshot(cellSize: cellSize) else {
+            print("[PiantaCanvasView] ❌ couldn't snapshot student sketch")
+            showCompletion = true
+            onComplete([.pianta])
             return
         }
 
-        // Bird announces the bloom
-        showBirdSpeechBriefly("Painting your blueprint...")
-
-        // Snapshot the current sketch
-        guard let sketchImage = renderSketchSnapshot(cellSize: cellSize) else {
-            // Snapshot failed — silently fall through
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                showCompletion = true
-                onComplete([.pianta])
-            }
+        // Load the reference engineering plan
+        guard imageExists(referencePlanImageName),
+              let referenceImage = loadReferenceImage(named: referencePlanImageName) else {
+            print("[PiantaCanvasView] ❌ reference plan '\(referencePlanImageName)' missing from Assets")
+            showCompletion = true
+            onComplete([.pianta])
             return
         }
 
-        withAnimation(.easeIn(duration: 0.3)) { isRenderingBlueprint = true }
+        isAIValidating = true
 
         Task { @MainActor in
+            defer { isAIValidating = false }
             do {
-                let blueprint = try await FalSketchService.shared.render(
-                    sketch: sketchImage,
-                    buildingId: buildingName,
-                    phase: .pianta
+                let result = try await SketchValidator.shared.validate(
+                    studentSketch: studentImage,
+                    referencePlan: referenceImage,
+                    buildingName: buildingName
                 )
-                blueprintImage = blueprint
-                withAnimation(.easeInOut(duration: 1.5)) {
-                    showBlueprint = true
-                    isRenderingBlueprint = false
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    aiValidationResult = result
                 }
-                // Dwell so the student can admire the bloom. Tap-to-continue
-                // advances early; otherwise we auto-advance after 8s.
-                showBirdSpeechBriefly("Tap anywhere to continue")
-                blueprintAwaitingTap = true
-                for _ in 0..<80 where blueprintAwaitingTap {
-                    try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s ticks → 8s total
-                }
-                blueprintAwaitingTap = false
-                showCompletion = true
-                onComplete([.pianta])
             } catch {
-                print("[PiantaCanvasView] blueprint render failed: \(error)")
-                isRenderingBlueprint = false
+                print("[PiantaCanvasView] AI validation failed: \(error)")
+                // Graceful fallback — let student continue with default award
                 #if DEBUG
-                // Surface the error via the bird so we can diagnose without Xcode open
                 showBirdSpeechBriefly("DEBUG: \(error.localizedDescription)")
-                try? await Task.sleep(nanoseconds: 4_000_000_000)
+                try? await Task.sleep(nanoseconds: 3_000_000_000)
                 #endif
                 showCompletion = true
                 onComplete([.pianta])
@@ -1393,10 +1497,10 @@ struct PiantaCanvasView: View {
     }
 
     /// Snapshot the sketch (walls + circles + columns on grid) as a PlatformImage
-    /// suitable for feeding to FalSketchService. Excludes hints, previews, validation
+    /// suitable for feeding to SketchValidator. Excludes hints, previews, validation
     /// overlays, and the bird — we want the student's clean work.
     @MainActor
-    private func renderSketchSnapshot(cellSize: CGFloat) -> PlatformImage? {
+    private func renderStudentSnapshot(cellSize: CGFloat) -> PlatformImage? {
         let canvasSize = cellSize * CGFloat(gridSize)
         let snapshot = ZStack {
             gridBackground(cellSize: cellSize, canvasSize: canvasSize)
@@ -1422,37 +1526,54 @@ struct PiantaCanvasView: View {
         #endif
     }
 
-    /// Overlay shown during and after the render. Sits inside the canvas frame
-    /// at full opacity once the blueprint is ready, replacing the sketch visually.
-    @ViewBuilder
-    private func blueprintBloomOverlay(canvasSize: CGFloat, canvasOriginX: CGFloat) -> some View {
-        if isRenderingBlueprint {
-            // Soft golden shimmer over the canvas while fal.ai renders
-            Rectangle()
-                .fill(RenaissanceColors.goldSuccess.opacity(0.15))
-                .frame(width: canvasSize, height: canvasSize)
-                .position(x: canvasOriginX + canvasSize / 2, y: canvasSize / 2)
-                .transition(.opacity)
-                .allowsHitTesting(false)
-        }
+    /// Load an Asset imageset as a PlatformImage for the AI validator.
+    private func loadReferenceImage(named: String) -> PlatformImage? {
+        #if os(iOS)
+        return UIImage(named: named)
+        #else
+        return NSImage(named: named)
+        #endif
+    }
+}
 
-        if showBlueprint, let blueprint = blueprintImage {
-            #if os(iOS)
-            let img = Image(uiImage: blueprint)
-            #else
-            let img = Image(nsImage: blueprint)
-            #endif
-            img
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: canvasSize, height: canvasSize)
-                .position(x: canvasOriginX + canvasSize / 2, y: canvasSize / 2)
-                .transition(.opacity)
-                .onTapGesture {
-                    // Advance early when the student taps
-                    blueprintAwaitingTap = false
-                }
+// MARK: - Peek Button
+
+/// Press-and-hold button that sets `isPeeking = true` while held.
+/// Used to reveal the engineering floor plan at 30% opacity under the student's sketch.
+struct PeekButton: View {
+    @Binding var isPeeking: Bool
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "eye")
+                .font(.system(size: 14))
+            Text(isPeeking ? "Peeking..." : "Hold to Peek")
+                .font(.custom("EBGaramond-SemiBold", size: 15))
         }
+        .foregroundStyle(isPeeking ? .white : RenaissanceColors.sepiaInk)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 10)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(isPeeking ? RenaissanceColors.renaissanceBlue : RenaissanceColors.parchment)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(RenaissanceColors.sepiaInk.opacity(0.3), lineWidth: 1)
+                )
+        )
+        // Drag gesture with zero minimum distance = press-and-hold detection.
+        // onChanged fires the instant the touch begins; onEnded fires on release.
+        .gesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { _ in
+                    if !isPeeking {
+                        withAnimation(.easeInOut(duration: 0.2)) { isPeeking = true }
+                    }
+                }
+                .onEnded { _ in
+                    withAnimation(.easeInOut(duration: 0.2)) { isPeeking = false }
+                }
+        )
     }
 }
 
@@ -1497,32 +1618,15 @@ struct ValidationResult {
     PiantaCanvasView(
         phaseData: PiantaPhaseData(
             gridSize: 12,
-            targetRooms: [
-                RoomDefinition(
-                    label: "Rotunda",
-                    origin: GridCoord(row: 5, col: 6),
-                    width: 6,
-                    height: 6,
-                    requiredRatio: ProportionalRatio(numerator: 1, denominator: 1),
-                    shape: .circle
-                ),
-                RoomDefinition(
-                    label: "Portico",
-                    origin: GridCoord(row: 8, col: 4),
-                    width: 4,
-                    height: 2,
-                    requiredRatio: ProportionalRatio(numerator: 2, denominator: 1)
-                )
-            ],
+            hint: "Circular rotunda + rectangular portico with 16 columns.",
+            educationalText: "The Pantheon's dome spans 43.3 meters.",
+            historicalContext: "Built by Emperor Hadrian around 126 AD.",
+            aerialImageName: "PantheonAerial",
+            referencePlanImageName: "PantheonFloorPlan",
+            targetRooms: [],
             targetColumns: [],
             symmetryAxis: nil,
-            proportionalRatios: [
-                ProportionalRatio(numerator: 1, denominator: 1),
-                ProportionalRatio(numerator: 2, denominator: 1)
-            ],
-            hint: "Use the Circle tool to draw the rotunda.",
-            educationalText: "The Pantheon's dome spans 43.3 meters.",
-            historicalContext: "Built by Emperor Hadrian around 126 AD."
+            proportionalRatios: []
         ),
         buildingName: "Pantheon",
         onComplete: { _ in }

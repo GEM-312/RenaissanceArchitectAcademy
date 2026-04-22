@@ -941,35 +941,27 @@ struct CraftingRoomMapView: View {
 
                 // Furnace contents
                 ZStack {
-                    RoundedRectangle(cornerRadius: CornerRadius.md)
-                        .fill(RenaissanceColors.terracotta.opacity(0.3))
-                        .frame(height: 80)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: CornerRadius.md)
-                                .strokeBorder(RenaissanceColors.terracotta, lineWidth: 2)
-                        )
-
                     if workshop.isProcessing {
                         FurnaceFireView(width: 300, height: 80)
                     }
 
                     if let input = workshop.furnaceInput {
-                        VStack(spacing: 4) {
-                            HStack(spacing: 4) {
+                        VStack(spacing: 8) {
+                            HStack(spacing: 12) {
                                 ForEach(Array(input.keys.sorted(by: { $0.rawValue < $1.rawValue })), id: \.self) { material in
-                                    HStack(spacing: 2) {
-                                        MaterialIconView(material: material, size: 16)
+                                    HStack(spacing: 4) {
+                                        MaterialIconView(material: material, size: 48)
                                         Text("×\(input[material]!)")
                                             .font(RenaissanceFont.caption)
                                     }
                                 }
                             }
                             if let recipe = workshop.currentRecipe {
-                                HStack(spacing: 4) {
+                                HStack(spacing: 8) {
                                     Image(systemName: "arrow.right")
                                         .font(.caption)
                                         .foregroundStyle(RenaissanceColors.sepiaInk)
-                                    CraftedItemIconView(item: recipe.output, size: 16)
+                                    CraftedItemIconView(item: recipe.output, size: 48)
                                     Text(recipe.output.rawValue)
                                         .font(RenaissanceFont.caption)
                                         .foregroundStyle(RenaissanceColors.sepiaInk)
@@ -982,6 +974,7 @@ struct CraftingRoomMapView: View {
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                 }
+                .frame(minHeight: 80)
 
                 // Temperature picker
                 VStack(spacing: 4) {

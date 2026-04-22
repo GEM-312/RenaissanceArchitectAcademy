@@ -116,6 +116,8 @@
 		0D3 /* APIKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D3 /* APIKeys.swift */; };
 		0D4 /* WolframService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D4 /* WolframService.swift */; };
 		2CC /* FalSketchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC /* FalSketchService.swift */; };
+		2CD /* SketchValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD /* SketchValidator.swift */; };
+		2CE /* SketchResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE /* SketchResultView.swift */; };
 		0D5 /* WolframGeometryHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D5 /* WolframGeometryHelper.swift */; };
 		0D6 /* WolframGeometryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D6 /* WolframGeometryView.swift */; };
 		0E0 /* MuseumSketch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E0 /* MuseumSketch.swift */; };
@@ -362,6 +364,8 @@
 		1D3 /* APIKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeys.swift; sourceTree = "<group>"; };
 		1D4 /* WolframService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WolframService.swift; sourceTree = "<group>"; };
 		3CC /* FalSketchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FalSketchService.swift; sourceTree = "<group>"; };
+		3CD /* SketchValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchValidator.swift; sourceTree = "<group>"; };
+		3CE /* SketchResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchResultView.swift; sourceTree = "<group>"; };
 		1D5 /* WolframGeometryHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WolframGeometryHelper.swift; sourceTree = "<group>"; };
 		1D6 /* WolframGeometryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WolframGeometryView.swift; sourceTree = "<group>"; };
 		1E0 /* MuseumSketch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MuseumSketch.swift; sourceTree = "<group>"; };
@@ -734,6 +738,7 @@
 				1D3 /* APIKeys.swift */,
 				1D4 /* WolframService.swift */,
 				3CC /* FalSketchService.swift */,
+				3CD /* SketchValidator.swift */,
 				1D5 /* WolframGeometryHelper.swift */,
 				1F9 /* GenerationService.swift */,
 				1FB /* GameTools.swift */,
@@ -750,6 +755,7 @@
 			children = (
 				136 /* PiantaCanvasView.swift */,
 				137 /* SketchingToolbarView.swift */,
+				3CE /* SketchResultView.swift */,
 			);
 			path = Sketching;
 			sourceTree = "<group>";
@@ -1143,6 +1149,8 @@
 				0D3 /* APIKeys.swift in Sources */,
 				0D4 /* WolframService.swift in Sources */,
 				2CC /* FalSketchService.swift in Sources */,
+				2CD /* SketchValidator.swift in Sources */,
+				2CE /* SketchResultView.swift in Sources */,
 				0D5 /* WolframGeometryHelper.swift in Sources */,
 				0D6 /* WolframGeometryView.swift in Sources */,
 				0E0 /* MuseumSketch.swift in Sources */,
