@@ -52,14 +52,41 @@ typealias PlatformImage = NSImage
     }
 
     private static func stylePrompt(for phase: SketchPhase) -> String {
-        """
-        Redraw this sketch as a precise Renaissance architectural drawing: a \
-        \(phase.viewDescription). Sepia ink line work on aged parchment with a \
-        delicate watercolor wash, in the style of a Leonardo da Vinci technical \
-        notebook page. Preserve the EXACT layout of every wall, column, and circle \
-        from the input. Crisp geometric lines, accurate proportions, no decorative \
-        corner elements, no ornamental flourishes, no 3D or isometric details.
-        """
+        switch phase {
+        case .pianta:
+            return """
+            Architectural PIANTA (floor plan). STRICT TOP-DOWN BIRD'S-EYE VIEW ONLY — \
+            imagine looking straight down at the building from directly above. Columns \
+            appear as small solid sepia-filled dots, NEVER as vertical shafts, columns \
+            with capitals, or standing architectural elements. Walls are thin sepia \
+            lines. This is a 2D flat ENGINEERING DIAGRAM in the style of a Leonardo da \
+            Vinci technical notebook page — aged parchment, sepia ink, delicate \
+            watercolor wash. PROHIBITED: elevation view, front view, perspective, 3D, \
+            isometric, standing columns, building facade, rooflines, ornamental corner \
+            rectangles, decorative flourishes. Preserve the EXACT position of every \
+            wall, column dot, and circle from the input sketch.
+            """
+        case .alzato:
+            return """
+            Architectural ALZATO (front elevation). Strict orthographic front view \
+            only — no perspective, no 3D, no floor plan. Sepia ink on aged parchment \
+            with delicate watercolor wash, Leonardo da Vinci notebook style. Preserve \
+            the exact facade layout from the input.
+            """
+        case .sezione:
+            return """
+            Architectural SEZIONE (cross-section). Vertical cut view only — no \
+            perspective, no floor plan. Show interior layering, arches, and structural \
+            elements. Sepia ink on aged parchment with delicate watercolor wash, \
+            Leonardo da Vinci notebook style. Preserve the exact layering from the input.
+            """
+        case .prospettiva:
+            return """
+            Architectural PROSPETTIVA (one-point perspective). Single vanishing point. \
+            Sepia ink on aged parchment with delicate watercolor wash, Leonardo da \
+            Vinci notebook style. Preserve the exact spatial arrangement from the input.
+            """
+        }
     }
 
     // MARK: - State
