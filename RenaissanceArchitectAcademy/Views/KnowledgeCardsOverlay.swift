@@ -631,10 +631,13 @@ struct KnowledgeCardsOverlay: View {
                         .opacity(animateFlippedStory ? 1 : 0)
                         .editable("lesson-text", paddingV: Spacing.xs)
 
-                    // Interactive science visual
+                    // Interactive science visual — minHeight prevents Canvas-based
+                    // visuals (Pantheon ring, etc.) from collapsing when they have
+                    // no intrinsic content size. 0.3 is tighter than the original 0.4
+                    // (less empty space below) while still giving animations room.
                     if let visual = card.visual {
                         CardVisualView(visual: visual, color: card.color, containerHeight: flippedH)
-                            .fixedSize(horizontal: false, vertical: true)
+                            .frame(minHeight: flippedH * 0.3)
                             .opacity(animateFlippedStory ? 1 : 0)
                     }
 
