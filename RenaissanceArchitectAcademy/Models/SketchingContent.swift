@@ -29,7 +29,7 @@ enum SketchingContent {
             SketchingPhase(
                 phaseType: .pianta,
                 title: "Pianta: Floor Plan",
-                introduction: "The Pantheon's rotunda is a perfect circle — the dome sits on a cylindrical drum. In front sits the iconic portico: a colonnade of sixteen granite columns in three rows, crowned by a triangular pediment.\n\nUse the Circle tool to draw the rotunda, then the Wall tool for the rectangular portico abutting it. Place eight columns across the front and four more inside to mark the entrance path.",
+                introduction: "The Pantheon's rotunda is a perfect circle — the dome sits on a cylindrical drum. In front sits the iconic portico: a colonnade of sixteen granite columns arranged in three rows, crowned by a triangular pediment.\n\nUse the Circle tool to draw the rotunda, then the Wall tool for the rectangular portico abutting it. Place the 16 columns: 8 across the front, then two inner rows of 4 flanking the entrance axis.",
                 sciencesFocused: [.geometry, .mathematics, .architecture],
                 phaseData: .pianta(PiantaPhaseData(
                     gridSize: 12,
@@ -52,7 +52,7 @@ enum SketchingContent {
                         )
                     ],
                     targetColumns: [
-                        // Front row — the 8 granite columns of the famous façade
+                        // Front row — the iconic 8-column façade
                         GridCoord(row: 11, col: 2),
                         GridCoord(row: 11, col: 3),
                         GridCoord(row: 11, col: 4),
@@ -61,7 +61,12 @@ enum SketchingContent {
                         GridCoord(row: 11, col: 7),
                         GridCoord(row: 11, col: 8),
                         GridCoord(row: 11, col: 9),
-                        // Inner pronaos columns — 2 pairs flanking the entrance axis
+                        // Middle row — 4 columns flanking the entrance axis
+                        GridCoord(row: 10, col: 2),
+                        GridCoord(row: 10, col: 3),
+                        GridCoord(row: 10, col: 8),
+                        GridCoord(row: 10, col: 9),
+                        // Back row (against rotunda) — 4 pronaos columns
                         GridCoord(row: 9, col: 2),
                         GridCoord(row: 9, col: 3),
                         GridCoord(row: 9, col: 8),
@@ -72,7 +77,7 @@ enum SketchingContent {
                         ProportionalRatio(numerator: 1, denominator: 1),  // Rotunda (circle)
                         ProportionalRatio(numerator: 8, denominator: 3)   // Portico (wide and shallow)
                     ],
-                    hint: "Use the Circle tool to draw the rotunda — a perfect circle in the center. Its diameter equals its height: a 1:1 ratio. Then draw the portico abutting the rotunda, with 8 columns across the front and 4 inner columns marking the entrance path.",
+                    hint: "Use the Circle tool to draw the rotunda — a perfect circle in the center. Its diameter equals its height: a 1:1 ratio. Then draw the portico abutting the rotunda, with 8 columns across the front and two rows of 4 inner columns behind them (16 total).",
                     educationalText: "The Pantheon's dome spans 43.3 meters — the same as its height from floor to oculus. This 1:1 ratio creates a perfect sphere that could fit inside the building. The portico's sixteen granite columns (8 front + two inner rows of 4) were quarried in Egypt, floated down the Nile, and shipped across the Mediterranean — each weighing 60 tonnes.",
                     historicalContext: "Emperor Hadrian rebuilt the Pantheon around 126 AD. The original was built by Marcus Agrippa in 27 BC but burned down twice. The inscription on the portico still reads 'M·AGRIPPA·L·F·COS·TERTIVM·FECIT' — crediting Agrippa, though Hadrian designed the current building."
                 ))
