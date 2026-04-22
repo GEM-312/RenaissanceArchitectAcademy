@@ -101,18 +101,14 @@ class TerrainBlurHelper {
 
     // MARK: - Update (call every frame)
 
-    /// Fade terrain slightly when zoomed in to create depth-of-field feel during walking.
-    /// Terrain dims to 0.6 opacity at max zoom, stays full at overview.
+    /// Zoom-based depth-of-field fade was REMOVED 2026-04-22 per Marina —
+    /// the crossfade during zoom-in was distracting. Terrain now stays at
+    /// full opacity always; the sharpened overlay is unused.
+    /// Method retained (and still called from scene update loops) so re-enabling
+    /// is a one-line change if we revisit the effect later.
     func updateBlur(cameraScale: CGFloat) {
-        blurredTerrainSprite?.alpha = 0  // Sharpened overlay not used during walking
-
-        if cameraScale < blurThreshold {
-            // Smoothly fade terrain as we zoom closer — depth-of-field effect
-            let t = max(0, min(1, (blurThreshold - cameraScale) / blurThreshold))
-            terrainSprite?.alpha = 1.0 - t * 0.4  // Fades to 0.6 at max zoom
-        } else {
-            terrainSprite?.alpha = 1
-        }
+        terrainSprite?.alpha = 1
+        blurredTerrainSprite?.alpha = 0
     }
 
     // MARK: - Cleanup
