@@ -623,63 +623,59 @@ struct KnowledgeCardsOverlay: View {
                 .padding(.horizontal, Spacing.xs)
                 .opacity(showFlippedContent ? 1 : 0)
 
-            // Lesson text
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack(spacing: Spacing.sm) {
-                    highlightedLessonText(card: card)
-                        .lineSpacing(5)
-                        .padding(.top, Spacing.xxs)
-                        .opacity(animateFlippedStory ? 1 : 0)
-                        .editable("lesson-text", paddingV: Spacing.xs)
+            // Lesson content — plain VStack (no ScrollView) so content flows
+            // naturally and the card hugs its total height. If content ever
+            // exceeds the card's maxHeight, SwiftUI will clip rather than scroll
+            // — acceptable at typical text sizes.
+            VStack(spacing: Spacing.sm) {
+                highlightedLessonText(card: card)
+                    .lineSpacing(5)
+                    .padding(.top, Spacing.xxs)
+                    .opacity(animateFlippedStory ? 1 : 0)
+                    .editable("lesson-text", paddingV: Spacing.xs)
 
-                    // Interactive science visual — minHeight prevents Canvas-based
-                    // visuals (Pantheon ring, etc.) from collapsing when they have
-                    // no intrinsic content size. 0.3 is tighter than the original 0.4
-                    // (less empty space below) while still giving animations room.
-                    if let visual = card.visual {
-                        CardVisualView(visual: visual, color: card.color, containerHeight: flippedH)
-                            .frame(minHeight: flippedH * 0.3)
-                            .opacity(animateFlippedStory ? 1 : 0)
-                    }
-
-                    // Fun fact lightbulb callout
-                    if let funFact = card.funFact {
-                        HStack(alignment: .top, spacing: 8) {
-                            Image(systemName: "lightbulb.fill")
-                                .foregroundStyle(RenaissanceColors.ochre)
-                                .font(.system(size: 16))
-                            Text(funFact)
-                                .font(RenaissanceFont.cardReadingItalic)
-                                .foregroundStyle(settings.cardTextColor.opacity(0.8))
-                                .lineSpacing(4)
-                        }
-                        .padding(Spacing.sm)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(card.color.opacity(0.08))
-                        )
+                // Interactive science visual. CardVisualView sets its own height
+                // (35% of card × cardTextScale), so it grows with text size.
+                if let visual = card.visual {
+                    CardVisualView(visual: visual, color: card.color, containerHeight: flippedH)
                         .opacity(animateFlippedStory ? 1 : 0)
-                        .editable("fun-fact", fontSize: 15, cornerRadius: 10)
-                    }
+                }
 
-                    // Done Reading button lives INSIDE the ScrollView so it sits
-                    // directly under the content with no dead space below.
-                    if !isCompleted {
-                        Button {
-                            openActivity(for: card)
-                        } label: {
-                            Text("Done Reading")
-                                .font(RenaissanceFont.buttonSmall)
-                                .foregroundStyle(.white)
-                                .padding(.vertical, Spacing.sm)
-                                .frame(maxWidth: .infinity)
-                                .parchmentButton(color: card.color, radius: 9)
-                        }
-                        .buttonStyle(.plain)
-                        .opacity(animateFlippedStory ? 1 : 0)
-                        .editable("done-button", cornerRadius: 9)
-                        .padding(.top, Spacing.xs)
+                // Fun fact lightbulb callout
+                if let funFact = card.funFact {
+                    HStack(alignment: .top, spacing: 8) {
+                        Image(systemName: "lightbulb.fill")
+                            .foregroundStyle(RenaissanceColors.ochre)
+                            .font(.system(size: 16))
+                        Text(funFact)
+                            .font(RenaissanceFont.cardReadingItalic)
+                            .foregroundStyle(settings.cardTextColor.opacity(0.8))
+                            .lineSpacing(4)
                     }
+                    .padding(Spacing.sm)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(card.color.opacity(0.08))
+                    )
+                    .opacity(animateFlippedStory ? 1 : 0)
+                    .editable("fun-fact", fontSize: 15, cornerRadius: 10)
+                }
+
+                if !isCompleted {
+                    Button {
+                        openActivity(for: card)
+                    } label: {
+                        Text("Done Reading")
+                            .font(RenaissanceFont.buttonSmall)
+                            .foregroundStyle(.white)
+                            .padding(.vertical, Spacing.sm)
+                            .frame(maxWidth: .infinity)
+                            .parchmentButton(color: card.color, radius: 9)
+                    }
+                    .buttonStyle(.plain)
+                    .opacity(animateFlippedStory ? 1 : 0)
+                    .editable("done-button", cornerRadius: 9)
+                    .padding(.top, Spacing.xs)
                 }
             }
         }

@@ -55,17 +55,10 @@ struct RecipeBookView: View {
         let bookWidth: CGFloat = isLarge ? 520 : 360
         let bookHeight: CGFloat = isLarge ? 560 : 560
 
+        // No outer book-frame chrome — the BookBackground image is the book
+        // itself (its Midjourney art includes spine, binding, edges). Recipe
+        // pages provide their own parchment page-background inside pageBody.
         return ZStack {
-            RoundedRectangle(cornerRadius: 18)
-                .fill(RenaissanceColors.parchment)
-            RoundedRectangle(cornerRadius: 18)
-                .fill(
-                    LinearGradient(
-                        colors: [RenaissanceColors.warmBrown.opacity(0.10), .clear],
-                        startPoint: .top, endPoint: .bottom
-                    )
-                )
-
             #if os(iOS)
             PageCurlContainer(pageCount: pages.count, currentPage: $pageIndex) { index in
                 let isCover: Bool = { if case .cover = pages[index] { return true }; return false }()
@@ -80,15 +73,13 @@ struct RecipeBookView: View {
             pageBody(for: pages[pageIndex])
                 .padding(isCover ? 0 : (isLarge ? 28 : 20))
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: isCover ? .center : .topLeading)
+                .background(isCover ? AnyView(Color.clear) : AnyView(RenaissanceColors.parchment))
+                .clipShape(RoundedRectangle(cornerRadius: 18))
                 .transition(.opacity)
                 .id(pageIndex)
             #endif
         }
         .frame(width: bookWidth, height: bookHeight)
-        .overlay(
-            RoundedRectangle(cornerRadius: 18)
-                .stroke(RenaissanceColors.warmBrown.opacity(0.55), lineWidth: 2.5)
-        )
         .shadow(color: .black.opacity(0.25), radius: 16, y: 6)
     }
 

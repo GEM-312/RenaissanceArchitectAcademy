@@ -8,11 +8,12 @@ struct CardVisualView: View {
     let color: Color
     var containerHeight: CGFloat = 780
 
-    /// Visual canvas height — ~35% of card's available height.
-    /// (Was 0.55 — too greedy. Created dead space below short visuals and
-    /// left no room for scaled reading text. Card now also grows vertically
-    /// via KnowledgeCardsOverlay maxHeight+fixedSize, so this is a cap.)
-    private var visualHeight: CGFloat { containerHeight * 0.35 }
+    /// Visual canvas height — scales with the user's card-text-size slider so
+    /// the interactive area grows alongside reading text. Baseline ~35% of
+    /// container at 1.0×; 45% at 1.3× (max slider), 28% at 0.8× (min slider).
+    private var visualHeight: CGFloat {
+        containerHeight * 0.35 * GameSettings.shared.cardTextScale
+    }
 
     @State private var currentStep: Int = 1   // Start at step 1 (not empty step 0)
     @State private var animationPhase: CGFloat = 0
