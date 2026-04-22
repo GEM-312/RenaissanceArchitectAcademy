@@ -68,16 +68,18 @@ struct RecipeBookView: View {
 
             #if os(iOS)
             PageCurlContainer(pageCount: pages.count, currentPage: $pageIndex) { index in
+                let isCover: Bool = { if case .cover = pages[index] { return true }; return false }()
                 pageBody(for: pages[index])
-                    .padding(isLarge ? 28 : 20)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                    .background(RenaissanceColors.parchment)
+                    .padding(isCover ? 0 : (isLarge ? 28 : 20))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: isCover ? .center : .topLeading)
+                    .background(isCover ? AnyView(Color.clear) : AnyView(RenaissanceColors.parchment))
             }
             .clipShape(RoundedRectangle(cornerRadius: 18))
             #else
+            let isCover: Bool = { if case .cover = pages[pageIndex] { return true }; return false }()
             pageBody(for: pages[pageIndex])
-                .padding(isLarge ? 28 : 20)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                .padding(isCover ? 0 : (isLarge ? 28 : 20))
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: isCover ? .center : .topLeading)
                 .transition(.opacity)
                 .id(pageIndex)
             #endif
@@ -104,44 +106,71 @@ struct RecipeBookView: View {
         }
     }
 
+    /// The cover page uses the BookBackground asset edge-to-edge (the image
+    /// already carries the title + art). Only a subtle "Turn the page" hint
+    /// overlays at the bottom. Falls back to the old typographic cover if
+    /// the image isn't in Assets.
     private var coverPage: some View {
-        VStack(spacing: 20) {
-            Spacer()
+        let hasCoverImage: Bool = {
+            #if os(iOS)
+            return UIImage(named: "BookBackground") != nil
+            #else
+            return NSImage(named: "BookBackground") != nil
+            #endif
+        }()
 
-            Image(systemName: "book.closed.fill")
-                .font(.system(size: 68))
-                .foregroundStyle(RenaissanceColors.warmBrown)
-
-            VStack(spacing: 6) {
-                Text("The Master's Recipe Book")
-                    .font(.custom("Cinzel-Bold", size: isLarge ? 28 : 22))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
-                    .multilineTextAlignment(.center)
-                Text("Il Libro delle Ricette")
-                    .font(.custom("EBGaramond-Italic", size: isLarge ? 17 : 14))
-                    .foregroundStyle(RenaissanceColors.ochre)
+        return ZStack {
+            if hasCoverImage {
+                Image("BookBackground")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .clipped()
+            } else {
+                // Fallback: original typographic cover
+                VStack(spacing: 20) {
+                    Spacer()
+                    Image(systemName: "book.closed.fill")
+                        .font(.system(size: 68))
+                        .foregroundStyle(RenaissanceColors.warmBrown)
+                    VStack(spacing: 6) {
+                        Text("The Master's Recipe Book")
+                            .font(.custom("Cinzel-Bold", size: isLarge ? 28 : 22))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                            .multilineTextAlignment(.center)
+                        Text("Il Libro delle Ricette")
+                            .font(.custom("EBGaramond-Italic", size: isLarge ? 17 : 14))
+                            .foregroundStyle(RenaissanceColors.ochre)
+                    }
+                    Rectangle()
+                        .fill(RenaissanceColors.ochre.opacity(0.5))
+                        .frame(width: 80, height: 1)
+                    Text("Every master keeps one. Turn the pages — every recipe is a lesson.\n\nIngredients, heat, patience. That is the craft.")
+                        .font(.custom("EBGaramond-Regular", size: isLarge ? 15 : 14))
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.78))
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(3)
+                        .padding(.horizontal, 20)
+                    Spacer()
+                }
             }
 
-            Rectangle()
-                .fill(RenaissanceColors.ochre.opacity(0.5))
-                .frame(width: 80, height: 1)
-
-            Text("Every master keeps one. Turn the pages — every recipe is a lesson.\n\nIngredients, heat, patience. That is the craft.")
-                .font(.custom("EBGaramond-Regular", size: isLarge ? 15 : 14))
-                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.78))
-                .multilineTextAlignment(.center)
-                .lineSpacing(3)
-                .padding(.horizontal, 20)
-
-            Spacer()
-
-            HStack(spacing: 4) {
-                Image(systemName: "arrow.right")
-                    .font(.system(size: 11))
-                Text("Turn the page")
-                    .font(.custom("EBGaramond-Italic", size: 13))
+            VStack {
+                Spacer()
+                HStack(spacing: 4) {
+                    Image(systemName: "arrow.right")
+                        .font(.system(size: 11))
+                    Text("Turn the page")
+                        .font(.custom("EBGaramond-Italic", size: 13))
+                }
+                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.55))
+                .padding(.horizontal, 10)
+                .padding(.vertical, 4)
+                .background(
+                    Capsule().fill(RenaissanceColors.parchment.opacity(hasCoverImage ? 0.7 : 0))
+                )
+                .padding(.bottom, 16)
             }
-            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
         }
     }
 
