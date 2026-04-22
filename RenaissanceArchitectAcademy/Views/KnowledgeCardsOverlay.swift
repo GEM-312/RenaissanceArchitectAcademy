@@ -648,7 +648,7 @@ struct KnowledgeCardsOverlay: View {
                                 .foregroundStyle(RenaissanceColors.ochre)
                                 .font(.system(size: 16))
                             Text(funFact)
-                                .font(RenaissanceFont.italicSmall)
+                                .font(RenaissanceFont.cardReadingItalic)
                                 .foregroundStyle(settings.cardTextColor.opacity(0.8))
                                 .lineSpacing(4)
                         }
@@ -660,26 +660,26 @@ struct KnowledgeCardsOverlay: View {
                         .opacity(animateFlippedStory ? 1 : 0)
                         .editable("fun-fact", fontSize: 15, cornerRadius: 10)
                     }
-                }
-            }
 
-            // Small gap before the action button — previously Spacer(minLength: 6)
-            // caused a large empty zone when the visual was short.
-
-            if !isCompleted {
-                Button {
-                    openActivity(for: card)
-                } label: {
-                    Text("Done Reading")
-                        .font(RenaissanceFont.buttonSmall)
-                        .foregroundStyle(.white)
-                        .padding(.vertical, Spacing.sm)
-                        .frame(maxWidth: .infinity)
-                        .parchmentButton(color: card.color, radius: 9)
+                    // Done Reading button lives INSIDE the ScrollView so it sits
+                    // directly under the content with no dead space below.
+                    if !isCompleted {
+                        Button {
+                            openActivity(for: card)
+                        } label: {
+                            Text("Done Reading")
+                                .font(RenaissanceFont.buttonSmall)
+                                .foregroundStyle(.white)
+                                .padding(.vertical, Spacing.sm)
+                                .frame(maxWidth: .infinity)
+                                .parchmentButton(color: card.color, radius: 9)
+                        }
+                        .buttonStyle(.plain)
+                        .opacity(animateFlippedStory ? 1 : 0)
+                        .editable("done-button", cornerRadius: 9)
+                        .padding(.top, Spacing.xs)
+                    }
                 }
-                .buttonStyle(.plain)
-                .opacity(animateFlippedStory ? 1 : 0)
-                .editable("done-button", cornerRadius: 9)
             }
         }
     }
@@ -720,11 +720,11 @@ struct KnowledgeCardsOverlay: View {
         for (text, isKeyword) in segments {
             if isKeyword {
                 result = result + Text(text)
-                    .font(.custom("EBGaramond-SemiBold", size: 16))
+                    .font(RenaissanceFont.cardReadingBold)
                     .foregroundColor(color)
             } else {
                 result = result + Text(text)
-                    .font(RenaissanceFont.bodyMedium)
+                    .font(RenaissanceFont.cardReading)
                     .foregroundColor(settings.cardTextColor)
             }
         }

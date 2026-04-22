@@ -44,6 +44,13 @@ enum RenaissanceFont {
     @MainActor static var ivBody: Font    { .custom("EBGaramond-Regular",  size: 28 * GameSettings.shared.cardTextScale, relativeTo: .body) }
     @MainActor static var ivButton: Font  { .custom("EBGaramond-SemiBold", size: 28 * GameSettings.shared.cardTextScale, relativeTo: .body) }
     @MainActor static var ivSmall: Font   { .custom("EBGaramond-Regular",  size: 22 * GameSettings.shared.cardTextScale, relativeTo: .body) }
+
+    // Knowledge card READING text (the paragraph at the top of a flipped card,
+    // keywords + fun facts). Baseline 18pt × cardTextScale — smaller than iv*
+    // so reading paragraphs stay comfortable, but still user-adjustable.
+    @MainActor static var cardReading: Font       { .custom("EBGaramond-Regular",  size: 18 * GameSettings.shared.cardTextScale, relativeTo: .body) }
+    @MainActor static var cardReadingBold: Font   { .custom("EBGaramond-SemiBold", size: 18 * GameSettings.shared.cardTextScale, relativeTo: .body) }
+    @MainActor static var cardReadingItalic: Font { .custom("EBGaramond-Italic",   size: 18 * GameSettings.shared.cardTextScale, relativeTo: .body) }
 }
 
 // MARK: - 2. Letter Spacing (Tracking)
