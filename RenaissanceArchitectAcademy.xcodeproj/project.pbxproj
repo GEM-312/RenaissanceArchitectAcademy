@@ -91,6 +91,7 @@
 		090 /* building_tap.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 190 /* building_tap.mp3 */; };
 		091 /* cards_appear.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 191 /* cards_appear.mp3 */; };
 		092 /* KnowledgeCardsOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192 /* KnowledgeCardsOverlay.swift */; };
+		2CA /* RecipeBookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA /* RecipeBookView.swift */; };
 		093 /* GameSceneKitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193 /* GameSceneKitView.swift */; };
 		096 /* Tool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 196 /* Tool.swift */; };
 		097 /* ToolRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197 /* ToolRecipe.swift */; };
@@ -148,12 +149,7 @@
 		2A2 /* EditorBottomPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A2 /* EditorBottomPanel.swift */; };
 		2D0 /* GameCenterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0 /* GameCenterManager.swift */; };
 		2D1 /* GameCenterDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1 /* GameCenterDashboardView.swift */; };
-		2E0 /* SezioneCanvasState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E0 /* SezioneCanvasState.swift */; };
-		2E1 /* SezioneCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E1 /* SezioneCanvasView.swift */; };
-		2E2 /* SezioneToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E2 /* SezioneToolbarView.swift */; };
 		2E3 /* InfographicRevealView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3 /* InfographicRevealView.swift */; };
-		2A3 /* BezierDragShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3 /* BezierDragShape.swift */; };
-		2A4 /* AlzatoCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4 /* AlzatoCanvasView.swift */; };
 		2A5 /* ColosseumInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5 /* ColosseumInteractiveVisuals.swift */; };
 		2A6 /* RomanRoadsInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A6 /* RomanRoadsInteractiveVisuals.swift */; };
 		2A7 /* RomanBathsInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7 /* RomanBathsInteractiveVisuals.swift */; };
@@ -340,6 +336,7 @@
 		190 /* building_tap.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = building_tap.mp3; sourceTree = "<group>"; };
 		191 /* cards_appear.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = cards_appear.mp3; sourceTree = "<group>"; };
 		192 /* KnowledgeCardsOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnowledgeCardsOverlay.swift; sourceTree = "<group>"; };
+		3CA /* RecipeBookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeBookView.swift; sourceTree = "<group>"; };
 		193 /* GameSceneKitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSceneKitView.swift; sourceTree = "<group>"; };
 		196 /* Tool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tool.swift; sourceTree = "<group>"; };
 		197 /* ToolRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolRecipe.swift; sourceTree = "<group>"; };
@@ -402,8 +399,6 @@
 		3A0 /* VisualEditorState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEditorState.swift; sourceTree = "<group>"; };
 		3A1 /* EditableModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableModifier.swift; sourceTree = "<group>"; };
 		3A2 /* EditorBottomPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorBottomPanel.swift; sourceTree = "<group>"; };
-		3A3 /* BezierDragShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BezierDragShape.swift; sourceTree = "<group>"; };
-		3A4 /* AlzatoCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlzatoCanvasView.swift; sourceTree = "<group>"; };
 		3A5 /* ColosseumInteractiveVisuals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ColosseumInteractiveVisuals.swift; path = RenaissanceArchitectAcademy/Views/ColosseumInteractiveVisuals.swift; sourceTree = SOURCE_ROOT; };
 		3A6 /* RomanRoadsInteractiveVisuals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RomanRoadsInteractiveVisuals.swift; path = RenaissanceArchitectAcademy/Views/RomanRoadsInteractiveVisuals.swift; sourceTree = SOURCE_ROOT; };
 		3A7 /* RomanBathsInteractiveVisuals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RomanBathsInteractiveVisuals.swift; path = RenaissanceArchitectAcademy/Views/RomanBathsInteractiveVisuals.swift; sourceTree = SOURCE_ROOT; };
@@ -495,9 +490,6 @@
 		BC0 /* workbench_mix.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = workbench_mix.wav; sourceTree = "<group>"; };
 		3D0 /* GameCenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterManager.swift; sourceTree = "<group>"; };
 		3D1 /* GameCenterDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterDashboardView.swift; sourceTree = "<group>"; };
-		3E0 /* SezioneCanvasState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SezioneCanvasState.swift; sourceTree = "<group>"; };
-		3E1 /* SezioneCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SezioneCanvasView.swift; sourceTree = "<group>"; };
-		3E2 /* SezioneToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SezioneToolbarView.swift; sourceTree = "<group>"; };
 		3E3 /* InfographicRevealView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfographicRevealView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -626,6 +618,7 @@
 				173 /* MathVisualTemplates.swift */,
 				179 /* ConstructionSequenceView.swift */,
 				192 /* KnowledgeCardsOverlay.swift */,
+				3CA /* RecipeBookView.swift */,
 				1C1 /* BirdChatOverlay.swift */,
 				1D1 /* PubChemMoleculeView.swift */,
 				1D6 /* WolframGeometryView.swift */,
@@ -662,7 +655,6 @@
 				158 /* NotebookState.swift */,
 				163 /* PersistenceManager.swift */,
 				1E1 /* MuseumSketchService.swift */,
-				3E0 /* SezioneCanvasState.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -755,10 +747,6 @@
 			children = (
 				136 /* PiantaCanvasView.swift */,
 				137 /* SketchingToolbarView.swift */,
-				3A3 /* BezierDragShape.swift */,
-				3A4 /* AlzatoCanvasView.swift */,
-				3E1 /* SezioneCanvasView.swift */,
-				3E2 /* SezioneToolbarView.swift */,
 			);
 			path = Sketching;
 			sourceTree = "<group>";
@@ -1089,8 +1077,6 @@
 				034 /* SketchingChallengeView.swift in Sources */,
 				036 /* PiantaCanvasView.swift in Sources */,
 				037 /* SketchingToolbarView.swift in Sources */,
-				2A3 /* BezierDragShape.swift in Sources */,
-				2A4 /* AlzatoCanvasView.swift in Sources */,
 				038 /* GameTopBarView.swift in Sources */,
 				039 /* OnboardingState.swift in Sources */,
 				040 /* OnboardingContent.swift in Sources */,
@@ -1130,6 +1116,7 @@
 				079 /* ConstructionSequenceView.swift in Sources */,
 				080 /* KnowledgeCard.swift in Sources */,
 				092 /* KnowledgeCardsOverlay.swift in Sources */,
+				2CA /* RecipeBookView.swift in Sources */,
 				093 /* GameSceneKitView.swift in Sources */,
 				096 /* Tool.swift in Sources */,
 				097 /* ToolRecipe.swift in Sources */,
@@ -1171,9 +1158,6 @@
 				2A2 /* EditorBottomPanel.swift in Sources */,
 				2D0 /* GameCenterManager.swift in Sources */,
 				2D1 /* GameCenterDashboardView.swift in Sources */,
-				2E0 /* SezioneCanvasState.swift in Sources */,
-				2E1 /* SezioneCanvasView.swift in Sources */,
-				2E2 /* SezioneToolbarView.swift in Sources */,
 				2E3 /* InfographicRevealView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

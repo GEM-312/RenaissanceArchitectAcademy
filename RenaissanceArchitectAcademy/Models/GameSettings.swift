@@ -56,6 +56,15 @@ class GameSettings {
         didSet { save() }
     }
 
+    // MARK: - Subscription
+
+    /// Whether the player has an active paid subscription. Stub for now — real StoreKit
+    /// wiring lands with SubscriptionManager. Gates premium features like watercolor sketch
+    /// rendering (SketchRenderService). Default: false. Toggle via debug UI while testing.
+    var isSubscribed: Bool = false {
+        didSet { save() }
+    }
+
     // MARK: - Language
 
     var preferredLanguage: AppLanguage = .english {
@@ -165,6 +174,7 @@ class GameSettings {
     private static let aiProviderKey = "gameSettings_aiProvider"
     private static let aiChosenKey = "gameSettings_aiChosen"
     private static let languageKey = "gameSettings_language"
+    private static let subscribedKey = "gameSettings_isSubscribed"
 
     /// Shared instance — used by SpriteKit scenes that can't access SwiftUI Environment
     static let shared = GameSettings()
@@ -196,6 +206,7 @@ class GameSettings {
            let lang = AppLanguage(rawValue: raw) {
             preferredLanguage = lang
         }
+        isSubscribed = UserDefaults.standard.bool(forKey: Self.subscribedKey)
     }
 
     private func save() {
@@ -205,6 +216,7 @@ class GameSettings {
         UserDefaults.standard.set(preferredAIProvider.rawValue, forKey: Self.aiProviderKey)
         UserDefaults.standard.set(hasChosenAIProvider, forKey: Self.aiChosenKey)
         UserDefaults.standard.set(preferredLanguage.rawValue, forKey: Self.languageKey)
+        UserDefaults.standard.set(isSubscribed, forKey: Self.subscribedKey)
     }
 }
 

@@ -16,9 +16,6 @@ struct SketchingChallengeView: View {
     @State private var showCompletion = false
     @State private var showSuccessEffect = false
 
-    // Sezione canvas state (@Observable, shared with SezioneCanvasView via @Bindable)
-    @State private var sezioneState = SezioneCanvasState()
-
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     private var isLargeScreen: Bool { horizontalSizeClass == .regular }
 
@@ -250,37 +247,12 @@ struct SketchingChallengeView: View {
             .padding(.horizontal)
             .padding(.vertical, 8)
 
-            // Phase content
+            // Phase content (only Pianta supported — other phases removed Apr 21 2026)
             switch phase.phaseData {
             case .pianta(let data):
                 PiantaCanvasView(phaseData: data) { phases in
                     completedPhases.formUnion(phases)
                     advanceOrComplete()
-                }
-            case .alzato(let data):
-                AlzatoCanvasView(phaseData: data) { phases in
-                    completedPhases.formUnion(phases)
-                    advanceOrComplete()
-                }
-            case .sezione(let data):
-                SezioneCanvasView(phaseData: data, onComplete: { phases in
-                    completedPhases.formUnion(phases)
-                    advanceOrComplete()
-                }, canvasState: sezioneState)
-            case .prospettiva:
-                // Future phase — placeholder
-                VStack(spacing: 20) {
-                    Spacer()
-                    Image(systemName: "hammer.fill")
-                        .font(.custom("EBGaramond-Regular", size: 48, relativeTo: .title3))
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
-                    Text("Coming Soon")
-                        .font(.custom("Cinzel-Regular", size: 24, relativeTo: .title))
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
-                    Text("Prospettiva phase is under construction.")
-                        .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .body))
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
-                    Spacer()
                 }
             }
         }

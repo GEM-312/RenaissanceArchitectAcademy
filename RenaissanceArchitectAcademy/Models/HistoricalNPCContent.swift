@@ -1,18 +1,95 @@
 import Foundation
 
-/// Pre-written historical NPCs for all 17 buildings.
+/// Pre-written historical NPCs for all 17 buildings + 5 workshop stations.
 ///
 /// Each building maps to a real historical figure with verified facts.
+/// Stations map to historical trade masters (non-Florentine per design).
 /// Sources: Paul Strathern's "The Medici", existing HistoricalFigureMapping,
 /// and verified historical records.
 ///
-/// Lookup: `HistoricalNPCContent.npc(for: buildingName)` → `NPCDisplayData?`
+/// Lookups:
+///   `HistoricalNPCContent.npc(for: buildingName)` → building-patron NPC
+///   `HistoricalNPCContent.stationMaster(for: station)` → station-trade master
 enum HistoricalNPCContent {
 
     /// Look up the historical NPC for a building
     static func npc(for buildingName: String) -> NPCDisplayData? {
         npcs[buildingName]
     }
+
+    /// Look up the historical trade-master who helps at a specific workshop station.
+    /// Returns nil for stations without a master (market, pigmentTable, mine, forest).
+    static func stationMaster(for station: ResourceStationType) -> NPCDisplayData? {
+        switch station {
+        case .clayPit: return clayPitMaster
+        case .quarry:  return quarryMaster
+        case .volcano: return volcanoMaster
+        case .river:   return riverMaster
+        case .farm:    return farmMaster
+        default:       return nil
+        }
+    }
+
+    // MARK: - Station Trade Masters
+
+    static let clayPitMaster = NPCDisplayData(
+        name: "Cipriano Piccolpasso",
+        trade: "Maestro Vasaio di Casteldurante (Master Potter)",
+        greeting: "Ah, young one — do not despair at the broken shovel! I have spent forty years at the potter's wheel in Casteldurante. Every apprentice breaks tools. What matters is what you learn from the breaking.",
+        historicalFact: "Piccolpasso wrote 'Li tre libri dell'arte del vasaio' (The Three Books of the Potter's Art) around 1557 — the first complete European treatise on ceramics. He documented every step: clay selection, kneading, throwing, glazing, firing temperatures. His diagrams are still studied today.",
+        scienceTip: "The best Renaissance clay came from river banks where centuries of water had sorted the particles. Coarse clays made bricks; fine clays made maiolica. You can test clay by rolling it between your fingers — if it feels gritty, it has sand; if it smears, it is pure.",
+        portraitPrompt: ""
+    )
+
+    static let quarryMaster = NPCDisplayData(
+        name: "Gaius Cocceius Auctus",
+        trade: "Magister Lapidarius (Master Stonecutter)",
+        greeting: "Salve, apprentice! I began as a slave in the quarries and rose to architect for emperors. Stone teaches patience: every block has a grain, every grain a weakness. Strike wrong and you waste a week's work. Strike right and you build for a thousand years.",
+        historicalFact: "Cocceius Auctus cut the two great Roman tunnels near Naples — the Crypta Neapolitana and the Grotta di Cocceio (named for him) — in the 1st century BC. His team used fire-and-water splitting: heat the rock with fires, then shock it with cold water to crack it along natural fractures.",
+        scienceTip: "Travertine — the stone of the Colosseum — forms from hot springs depositing calcium carbonate. Its famous holes are fossilized air bubbles. When you quarry travertine, always cut along the bedding plane — cutting across the grain wastes half your stone.",
+        portraitPrompt: ""
+    )
+
+    static let volcanoMaster = NPCDisplayData(
+        name: "Pliny the Elder",
+        trade: "Naturalis Historiae Auctor (Author of Natural History)",
+        greeting: "Apprentice! I have walked the slopes of Vesuvius and gathered the ash the gods leave behind. Do not fear the mountain — respect it. The same fire that destroyed Pompeii gave Rome the greatest building material the world has ever known.",
+        historicalFact: "Pliny documented pozzolana ash in his 37-volume Natural History around 77 AD — the volcanic ash that makes Roman concrete set underwater and grow stronger for 2,000 years. He died in 79 AD leading a rescue mission during the Vesuvius eruption, still investigating.",
+        scienceTip: "Pozzolana works because volcanic ash is amorphous silica — glassy, not crystalline. When mixed with lime and water, it forms calcium-silicate-hydrate crystals that interlock like tiny bridges. This is why Roman harbors still stand after two millennia.",
+        portraitPrompt: ""
+    )
+
+    static let riverMaster = NPCDisplayData(
+        name: "Sergius Orata",
+        trade: "Ingeniarius Aquarum (Hydraulic Engineer)",
+        greeting: "Child of the water! I was born by the coast and made my fortune in rivers and oyster beds. Sand looks simple — it is not. The grain matters. The river matters. Know your water and you know your concrete.",
+        historicalFact: "Sergius Orata lived in the 1st century BC near the Bay of Naples, where he invented the hypocaust (underfloor heating using hot water) and pioneered artificial oyster cultivation. He understood how flowing water sorts sediment — coarse gravel settles first, then sand, then silt.",
+        scienceTip: "River sand for concrete must be washed — freshwater sand contains clay particles that weaken the mix. Rub a handful on white cloth: if it stains brown, wash it again. The best building sand has sharp angular grains that lock together; rounded sand slips apart.",
+        portraitPrompt: ""
+    )
+
+    static let farmMaster = NPCDisplayData(
+        name: "Lucius Junius Moderatus Columella",
+        trade: "De Re Rustica Auctor (Author of 'On Agriculture')",
+        greeting: "Young one — the farm is the first workshop. Every stone building begins here, with the lime kiln. I wrote twelve books on agriculture because the land teaches everything: patience, seasons, care, calculation.",
+        historicalFact: "Columella, a Roman agricultural writer of the 1st century AD, documented the entire farming system in 'De Re Rustica' — twelve volumes covering soil, crops, livestock, beekeeping, and lime kiln operation. His calculations for field yields were still used 1,500 years later.",
+        scienceTip: "Lime for mortar is made by burning limestone in a kiln at 900°C. The fire drives off carbon dioxide, leaving quicklime (calcium oxide). When water is added — 'slaking' — it returns to calcium hydroxide, but now chemically ready to cure concrete. Never use freshly slaked lime until it has rested for weeks.",
+        portraitPrompt: ""
+    )
+
+    // MARK: - Workbench Master (shared, appears when player is stuck on a recipe)
+
+    /// Angelo Barovier — master glassmaker of Murano. Non-Florentine per design
+    /// (Florence reserved for the Architect Level). Appears at the workbench when
+    /// the player is stuck on a recipe — teaches the ingredients, doesn't craft for them.
+    static let workbenchMaster = NPCDisplayData(
+        name: "Angelo Barovier",
+        trade: "Mastro Vetraio di Murano (Master Glassmaker of Murano)",
+        greeting: "Ah, young apprentice — I see you are puzzled at the bench. Do not be ashamed. I spent thirty years mixing sand and ash before I discovered *cristallo*, the first truly clear glass. A recipe is not memorized — it is understood. Let me show you.",
+        historicalFact: "Angelo Barovier (c. 1405–1460) worked the furnaces of Murano and invented *cristallo* around 1450 — the first European glass so clear you could read through it. The Venetian Republic guarded Murano's recipes so fiercely that masters who fled the island could be hunted down. Barovier's family runs glassworks on Murano to this day — over 600 years.",
+        scienceTip: "Every recipe is three things in balance: the former (what becomes the substance — silica, clay, lime), the flux (what lowers the melting point — natron, soda ash), and the stabilizer (what holds the form — lime, alumina). Change any ratio and the whole material changes. Patience with proportions is the soul of craft.",
+        portraitPrompt: ""
+    )
 
     // MARK: - 18 Historical NPCs (17 buildings)
 

@@ -42,6 +42,11 @@ struct CraftingRoomMapView: View {
     @State private var guidanceMessage: String = ""
     @State private var guidanceDestination: SidebarDestination? = nil
 
+    // Barovier (workbench master) helper overlay
+    @State private var showBarovierOverlay = false
+    // Recipe book — opened from Barovier or (later) from a book prop on the bench
+    @State private var showRecipeBook = false
+
 
     var body: some View {
         GeometryReader { geometry in
@@ -108,6 +113,21 @@ struct CraftingRoomMapView: View {
 
                     stationOverlay(for: station)
                         .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+
+                // Layer 3.5: Barovier helper overlay — rendered above workbench
+                if showBarovierOverlay {
+                    barovierOverlay
+                        .transition(.opacity.combined(with: .scale(scale: 0.95)))
+                        .zIndex(100)
+                }
+
+                // Layer 3.6: Recipe Book — full-screen interactive book
+                if showRecipeBook {
+                    RecipeBookView(onClose: {
+                        withAnimation(.spring(response: 0.3)) { showRecipeBook = false }
+                    })
+                    .zIndex(110)
                 }
 
                 // Knowledge cards at crafting stations
@@ -749,6 +769,29 @@ struct CraftingRoomMapView: View {
 
                     Spacer()
 
+                    Button {
+                        SoundManager.shared.play(.tapSoft)
+                        withAnimation(.spring(response: 0.3)) { showBarovierOverlay = true }
+                    } label: {
+                        HStack(spacing: 5) {
+                            Image(systemName: "graduationcap.fill").font(.system(size: 11))
+                            Text("Ask Master")
+                                .font(RenaissanceFont.bodySmall)
+                        }
+                        .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(
+                            RoundedRectangle(cornerRadius: CornerRadius.sm)
+                                .fill(RenaissanceColors.renaissanceBlue.opacity(0.08))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: CornerRadius.sm)
+                                .stroke(RenaissanceColors.renaissanceBlue.opacity(0.3), lineWidth: 1)
+                        )
+                    }
+                    .buttonStyle(.plain)
+
                     Button("Close") { dismissOverlay() }
                         .font(RenaissanceFont.bodySmall)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
@@ -758,6 +801,89 @@ struct CraftingRoomMapView: View {
             .background(overlayBackground)
             .padding(.horizontal, Spacing.xl)
             .padding(.bottom, Spacing.xxxl)
+        }
+    }
+
+    /// Barovier teaches the science of recipe mixing — on-demand, not blocking.
+    /// Shown over the workbench when the player taps "Ask Master".
+    private var barovierOverlay: some View {
+        let npc = HistoricalNPCContent.workbenchMaster
+        return ZStack {
+            Color.black.opacity(0.45)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    withAnimation(.spring(response: 0.3)) { showBarovierOverlay = false }
+                }
+
+            VStack(spacing: 14) {
+                VStack(spacing: 6) {
+                    Image(systemName: "person.crop.circle.fill")
+                        .font(.system(size: 52))
+                        .foregroundStyle(RenaissanceColors.ochre)
+                    Text(npc.name)
+                        .font(.custom("Cinzel-Bold", size: 19))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                    Text(npc.trade)
+                        .font(.custom("EBGaramond-Italic", size: 13))
+                        .foregroundStyle(RenaissanceColors.ochre)
+                        .multilineTextAlignment(.center)
+                }
+
+                Text("Ah, young apprentice — the recipes are not mine to memorize for you. I keep every one in my book on this bench. Every master opens it a thousand times. Read, try, fail, try again. That is the path.")
+                    .font(.custom("EBGaramond-Regular", size: 14))
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
+                    .lineSpacing(3)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 4)
+
+                VStack(spacing: 8) {
+                    Button {
+                        SoundManager.shared.play(.tapSoft)
+                        withAnimation(.spring(response: 0.3)) {
+                            showBarovierOverlay = false
+                            showRecipeBook = true
+                        }
+                    } label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: "book.closed.fill")
+                                .font(.system(size: 14))
+                            Text("Open the Book")
+                                .font(.custom("EBGaramond-SemiBold", size: 15))
+                        }
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(
+                            RoundedRectangle(cornerRadius: CornerRadius.sm)
+                                .fill(RenaissanceColors.ochre)
+                        )
+                    }
+                    .buttonStyle(.plain)
+
+                    Button {
+                        SoundManager.shared.play(.tapSoft)
+                        withAnimation(.spring(response: 0.3)) { showBarovierOverlay = false }
+                    } label: {
+                        Text("Close")
+                            .font(.custom("EBGaramond-Regular", size: 14))
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 8)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(22)
+            .frame(maxWidth: 380)
+            .background(
+                RoundedRectangle(cornerRadius: CornerRadius.lg)
+                    .fill(RenaissanceColors.parchment)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: CornerRadius.lg)
+                    .stroke(RenaissanceColors.ochre.opacity(0.35), lineWidth: 1.5)
+            )
+            .padding(.horizontal, 24)
         }
     }
 

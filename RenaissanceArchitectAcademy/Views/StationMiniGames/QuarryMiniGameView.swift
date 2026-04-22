@@ -10,6 +10,8 @@ struct QuarryMiniGameView: View {
     let onComplete: (Material, Int) -> Void   // material earned, bonus florins
     let onDismiss: () -> Void
     var onNudgeCamera: (() -> Void)? = nil   // Called when transitioning from full-screen game back to dialog
+    /// Optional — if set, adds "Ask the Master for help" button to the fail card.
+    var onAskMasterHelp: (() -> Void)? = nil
 
     @Environment(\.gameSettings) private var settings
 
@@ -664,6 +666,37 @@ struct QuarryMiniGameView: View {
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
 
             VStack(spacing: 10) {
+                if onAskMasterHelp != nil {
+                    Button {
+                        SoundManager.shared.play(.tapSoft)
+                        onAskMasterHelp?()
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: "hand.raised.fill")
+                                .font(.body)
+                                .foregroundStyle(RenaissanceColors.sepiaInk)
+                                .frame(width: 32, height: 32)
+                                .background(
+                                    RoundedRectangle(cornerRadius: CornerRadius.sm)
+                                        .fill(RenaissanceColors.warmBrown.opacity(0.1))
+                                )
+                            Text("Ask the Master for help")
+                                .font(.custom("EBGaramond-Regular", size: 16))
+                                .foregroundStyle(RenaissanceColors.sepiaInk)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundStyle(RenaissanceColors.sepiaInk)
+                        }
+                        .padding(Spacing.sm)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(RenaissanceColors.parchment.opacity(0.6))
+                                .borderWorkshop(radius: 10)
+                        )
+                    }
+                }
+
                 Button {
                     resetGame()
                     withAnimation { phase = .intro }

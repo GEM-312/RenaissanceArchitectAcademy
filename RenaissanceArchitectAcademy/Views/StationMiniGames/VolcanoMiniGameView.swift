@@ -9,6 +9,8 @@ struct VolcanoMiniGameView: View {
     let onComplete: (Material, Int) -> Void
     let onDismiss: () -> Void
     var onNudgeCamera: (() -> Void)? = nil
+    /// Optional — if set, adds "Ask the Master for help" button to the fail card.
+    var onAskMasterHelp: (() -> Void)? = nil
 
     @Environment(\.gameSettings) private var settings
 
@@ -1268,6 +1270,15 @@ struct VolcanoMiniGameView: View {
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
 
             VStack(spacing: 10) {
+                if onAskMasterHelp != nil {
+                    Button {
+                        SoundManager.shared.play(.tapSoft)
+                        onAskMasterHelp?()
+                    } label: {
+                        failedOptionRow(icon: "hand.raised.fill", text: "Ask the Master for help")
+                    }
+                }
+
                 Button {
                     switch selectedMaterial {
                     case .volcanicAsh: withAnimation { phase = .introAsh }

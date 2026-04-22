@@ -90,6 +90,13 @@ struct WorkshopMapView: View {
     @State private var showNPCEncounter = false
     @State private var npcDisplayData: NPCDisplayData?
     @State private var npcPortrait: CGImage?
+    /// True when NPC was summoned via "Ask Expert" button — skip re-opening card/overlay on dismiss.
+    @State private var wasNPCOnDemand = false
+
+    // Master helper (NPC rescues player stuck in mini-game)
+    @State private var showMasterHelpOverlay = false
+    @State private var masterHelpNPC: NPCDisplayData?
+    @State private var masterHelpStation: ResourceStationType?
 
     @ObservedObject private var assetManager = AssetManager.shared
 
@@ -155,13 +162,22 @@ struct WorkshopMapView: View {
                 .allowsHitTesting(!(showDiscoveryCard || showStationKnowledgeCards || showStationLesson))
 
                 #if DEBUG
-                SceneEditorButtons(
-                    isActive: sceneHolder.scene?.isEditorActive == true,
-                    onToggle: { sceneHolder.scene?.toggleEditorMode() },
-                    onRotateLeft: { sceneHolder.scene?.editorRotateLeft() },
-                    onRotateRight: { sceneHolder.scene?.editorRotateRight() },
-                    onNudge: { dx, dy in sceneHolder.scene?.editorNudge(dx: dx, dy: dy) }
-                )
+                // Hide editor buttons during mini-games and modal overlays — they overlap the UI.
+                if !showQuarryMiniGame
+                    && !showVolcanoMiniGame
+                    && !showRiverMiniGame
+                    && !showClayPitMiniGame
+                    && !showFarmMiniGame
+                    && !showMasterHelpOverlay
+                    && !showWorkbenchOverlay {
+                    SceneEditorButtons(
+                        isActive: sceneHolder.scene?.isEditorActive == true,
+                        onToggle: { sceneHolder.scene?.toggleEditorMode() },
+                        onRotateLeft: { sceneHolder.scene?.editorRotateLeft() },
+                        onRotateRight: { sceneHolder.scene?.editorRotateRight() },
+                        onNudge: { dx, dy in sceneHolder.scene?.editorNudge(dx: dx, dy: dy) }
+                    )
+                }
                 #endif
 
                 // Status message overlay
@@ -350,6 +366,9 @@ struct WorkshopMapView: View {
                         },
                         onNudgeCamera: {
                             sceneHolder.scene?.nudgeCameraUp(by: 0.2)
+                        },
+                        onAskMasterHelp: {
+                            summonMasterHelp(for: .quarry)
                         }
                     )
                     .transition(.opacity)
@@ -398,6 +417,9 @@ struct WorkshopMapView: View {
                         },
                         onNudgeCamera: {
                             sceneHolder.scene?.nudgeCameraUp(by: 0.2)
+                        },
+                        onAskMasterHelp: {
+                            summonMasterHelp(for: .volcano)
                         }
                     )
                     .transition(.opacity)
@@ -446,6 +468,9 @@ struct WorkshopMapView: View {
                         },
                         onNudgeCamera: {
                             sceneHolder.scene?.nudgeCameraUp(by: 0.2)
+                        },
+                        onAskMasterHelp: {
+                            summonMasterHelp(for: .river)
                         }
                     )
                     .transition(.opacity)
@@ -494,6 +519,9 @@ struct WorkshopMapView: View {
                         },
                         onNudgeCamera: {
                             sceneHolder.scene?.nudgeCameraUp(by: 0.2)
+                        },
+                        onAskMasterHelp: {
+                            summonMasterHelp(for: .clayPit)
                         }
                     )
                     .transition(.opacity)
@@ -542,9 +570,19 @@ struct WorkshopMapView: View {
                         },
                         onNudgeCamera: {
                             sceneHolder.scene?.nudgeCameraUp(by: 0.2)
+                        },
+                        onAskMasterHelp: {
+                            summonMasterHelp(for: .farm)
                         }
                     )
                     .transition(.opacity)
+                }
+
+                // Master Help overlay — NPC rescues player stuck in mini-game
+                if showMasterHelpOverlay, let npc = masterHelpNPC, let station = masterHelpStation {
+                    masterHelpOverlay(npc: npc, station: station)
+                        .transition(.opacity.combined(with: .scale(scale: 0.95)))
+                        .zIndex(100)
                 }
 
                 // Educational popup
@@ -722,8 +760,9 @@ struct WorkshopMapView: View {
                         showSingleStationOverlay()
                     }
                 } else {
-                    // Try NPC encounter (first visit), then knowledge card or station overlay
-                    tryNPCBeforeStation(for: stationType)
+                    // NPC is on-demand only (see showNPCOnDemand, wired to "Ask Expert" button + stuck detector).
+                    // Auto-popup removed Apr 21 2026 — was interrupting players before every mini-game.
+                    proceedToCardOrStation(for: stationType)
                 }
             }
         }
@@ -1771,6 +1810,9 @@ struct WorkshopMapView: View {
                     }
                 }
 
+                askExpertButton(for: station)
+                    .padding(.top, 4)
+
                 Button("Back") {
                     withAnimation(.spring(response: 0.3)) {
                         showCollectionOverlay = false
@@ -2718,14 +2760,19 @@ struct WorkshopMapView: View {
         return "\(progress.completed)/\(progress.total) cards collected"
     }
 
-    /// Dismiss NPC from the unified bottom panel and proceed to card or station overlay.
+    /// Dismiss NPC from the unified bottom panel.
+    /// On-demand dismissals just close (station overlay stays visible behind).
+    /// Legacy auto-popup dismissals (currently unused post-5a) re-trigger card/overlay flow.
     private func dismissNPCFromPanel() {
         withAnimation(.easeOut(duration: 0.2)) {
             showNPCEncounter = false
             npcDisplayData = nil
             npcPortrait = nil
         }
-        // After NPC: proceed to knowledge card or station overlay
+        let wasOnDemand = wasNPCOnDemand
+        wasNPCOnDemand = false
+        guard !wasOnDemand else { return }
+        // Legacy auto-popup path — unused after 5a but kept for safety
         if let station = activeStation {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
                 if hasKnowledgeCard(at: station) {
@@ -2740,27 +2787,19 @@ struct WorkshopMapView: View {
 
     // MARK: - NPC Encounter (Foundation Models)
 
-    /// Try to show an NPC encounter on first visit to a station.
-    /// If NPC is available (iOS 26+, active building, not yet seen this session):
-    ///   shows NPC → on dismiss → proceeds to knowledge card or station overlay.
-    /// Otherwise falls through directly to card or station overlay.
-    private func tryNPCBeforeStation(for station: ResourceStationType) {
-        guard let vm = viewModel, let buildingId = vm.activeBuildingId else {
-            // No active building — skip NPC, proceed normally
-            proceedToCardOrStation(for: station)
-            return
-        }
+    /// Show an NPC encounter on demand — triggered by "Ask Expert" button (5b) or StuckDetector (5c).
+    /// iOS 26+: uses Foundation Models generation (with pre-written fallback).
+    /// Pre-iOS 26: uses HistoricalNPCContent directly.
+    private func showNPCOnDemand(for station: ResourceStationType) {
+        guard let vm = viewModel, let buildingId = vm.activeBuildingId else { return }
 
         let buildingName = vm.buildingPlots.first(where: { $0.id == buildingId })?.building.name ?? ""
         let sciences = vm.buildingPlots.first(where: { $0.id == buildingId })?.building.sciences.map(\.rawValue) ?? []
 
+        wasNPCOnDemand = true
+
         if #available(iOS 26.0, macOS 26.0, *) {
             let manager = NPCEncounterManager.shared
-            guard manager.shouldShowNPC(station: station.rawValue, buildingId: buildingId) else {
-                proceedToCardOrStation(for: station)
-                return
-            }
-
             Task {
                 if let npc = await manager.getNPC(
                     station: station.rawValue,
@@ -2770,16 +2809,219 @@ struct WorkshopMapView: View {
                 ) {
                     npcDisplayData = npc
                     npcPortrait = manager.currentPortrait
-                    withAnimation(.spring(response: 0.3)) {
-                        showNPCEncounter = true
-                    }
-                    // NPC dismiss handler (in body) proceeds to card or station overlay
+                    withAnimation(.spring(response: 0.3)) { showNPCEncounter = true }
+                } else if let historical = HistoricalNPCContent.npc(for: buildingName) {
+                    npcDisplayData = historical
+                    withAnimation(.spring(response: 0.3)) { showNPCEncounter = true }
                 } else {
-                    proceedToCardOrStation(for: station)
+                    wasNPCOnDemand = false
                 }
             }
+        } else if let historical = HistoricalNPCContent.npc(for: buildingName) {
+            npcDisplayData = historical
+            withAnimation(.spring(response: 0.3)) { showNPCEncounter = true }
         } else {
-            proceedToCardOrStation(for: station)
+            wasNPCOnDemand = false
+        }
+    }
+
+    /// Whether to show the "Ask Expert" button for this station.
+    /// Requires active building + NPC content available (generation, cache, or historical fallback).
+    private func shouldShowExpertButton(for station: ResourceStationType) -> Bool {
+        guard let vm = viewModel, let buildingId = vm.activeBuildingId else { return false }
+        let buildingName = vm.buildingPlots.first(where: { $0.id == buildingId })?.building.name ?? ""
+        if #available(iOS 26.0, macOS 26.0, *) {
+            if NPCEncounterManager.shared.shouldShowNPC(station: station.rawValue, buildingId: buildingId) {
+                return true
+            }
+        }
+        return HistoricalNPCContent.npc(for: buildingName) != nil
+    }
+
+    // MARK: - Master Help (mini-game fail rescue)
+
+    /// Look up the station's trade master and show the Master Help overlay.
+    /// Station-master is authored per-station (potter at clay pit, stonecutter at quarry, etc.) —
+    /// narratively accurate regardless of active building.
+    private func summonMasterHelp(for station: ResourceStationType) {
+        guard let npc = HistoricalNPCContent.stationMaster(for: station) else { return }
+        masterHelpNPC = npc
+        masterHelpStation = station
+        withAnimation(.spring(response: 0.3)) { showMasterHelpOverlay = true }
+    }
+
+    /// Florins the Master charges for collecting one material on the player's behalf.
+    private static let masterHelpCost: Int = 5
+
+    /// Whether the player can currently afford the Master's help.
+    private var canAffordMasterHelp: Bool {
+        (viewModel?.goldFlorins ?? 0) >= Self.masterHelpCost
+    }
+
+    /// Player accepts the Master's help — pay florins, award 1 material, dismiss the mini-game.
+    private func acceptMasterHelp() {
+        guard let station = masterHelpStation, let vm = viewModel else { return }
+        guard vm.goldFlorins >= Self.masterHelpCost else { return }
+
+        vm.goldFlorins -= Self.masterHelpCost
+        let material = station.materials.first ?? .clay
+        workshop.rawMaterials[material, default: 0] += 1
+        sceneHolder.scene?.playPlayerCelebrateAnimation()
+        sceneHolder.scene?.showCollectionEffect(at: station)
+        recentlyCollectedStations.insert(station)
+        refreshStationBadges()
+
+        if workshop.currentJob != nil && workshop.currentJob?.craftTarget == nil {
+            if workshop.checkJobCompletion() {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    completeCurrentJob()
+                }
+            }
+        }
+
+        withAnimation(.spring(response: 0.3)) {
+            showMasterHelpOverlay = false
+            masterHelpNPC = nil
+            masterHelpStation = nil
+            switch station {
+            case .clayPit: showClayPitMiniGame = false
+            case .quarry:  showQuarryMiniGame = false
+            case .volcano: showVolcanoMiniGame = false
+            case .river:   showRiverMiniGame = false
+            case .farm:    showFarmMiniGame = false
+            default:       break
+            }
+            activeStation = nil
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+            showNextGuidance(forceRefresh: true)
+        }
+    }
+
+    /// Player declines — just hide the overlay, mini-game fail card remains.
+    private func declineMasterHelp() {
+        withAnimation(.spring(response: 0.3)) {
+            showMasterHelpOverlay = false
+            masterHelpNPC = nil
+            masterHelpStation = nil
+        }
+    }
+
+    /// Overlay shown when the building's NPC offers to help after a mini-game fail.
+    @ViewBuilder
+    private func masterHelpOverlay(npc: NPCDisplayData, station: ResourceStationType) -> some View {
+        ZStack {
+            Color.black.opacity(0.45)
+                .ignoresSafeArea()
+                .onTapGesture { declineMasterHelp() }
+
+            VStack(spacing: 16) {
+                VStack(spacing: 6) {
+                    Image(systemName: "person.crop.circle.fill")
+                        .font(.system(size: 52))
+                        .foregroundStyle(RenaissanceColors.ochre)
+                    Text(npc.name)
+                        .font(.custom("Cinzel-Bold", size: 19))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                    Text(npc.trade)
+                        .font(.custom("EBGaramond-Italic", size: 13))
+                        .foregroundStyle(RenaissanceColors.ochre)
+                        .multilineTextAlignment(.center)
+                }
+
+                Text("Do you need some help to collect the material?")
+                    .font(.custom("EBGaramond-Regular", size: 15))
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 8)
+
+                let afford = canAffordMasterHelp
+                VStack(spacing: 8) {
+                    Button {
+                        SoundManager.shared.play(.tapSoft)
+                        acceptMasterHelp()
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: afford ? "hand.raised.fill" : "lock.fill")
+                            if afford {
+                                Text("Yes, please")
+                                Image(systemName: "dollarsign.circle.fill")
+                                    .font(.system(size: 13))
+                                Text("\(Self.masterHelpCost) florins")
+                            } else {
+                                Text("Need \(Self.masterHelpCost) florins (you have \(viewModel?.goldFlorins ?? 0))")
+                            }
+                        }
+                        .font(.custom("EBGaramond-SemiBold", size: 15))
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(
+                            RoundedRectangle(cornerRadius: CornerRadius.sm)
+                                .fill(afford ? RenaissanceColors.ochre : RenaissanceColors.stoneGray)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(!afford)
+
+                    Button {
+                        SoundManager.shared.play(.tapSoft)
+                        declineMasterHelp()
+                    } label: {
+                        Text(afford ? "I'll try again" : "Close")
+                            .font(.custom("EBGaramond-Regular", size: 14))
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: CornerRadius.sm)
+                                    .stroke(RenaissanceColors.sepiaInk.opacity(0.2), lineWidth: 1)
+                            )
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(22)
+            .frame(maxWidth: 340)
+            .background(
+                RoundedRectangle(cornerRadius: CornerRadius.lg)
+                    .fill(RenaissanceColors.parchment)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: CornerRadius.lg)
+                    .stroke(RenaissanceColors.ochre.opacity(0.35), lineWidth: 1.5)
+            )
+            .padding(.horizontal, 24)
+        }
+    }
+
+    /// Small parchment button that summons the building's expert NPC.
+    @ViewBuilder
+    private func askExpertButton(for station: ResourceStationType) -> some View {
+        if shouldShowExpertButton(for: station) {
+            Button {
+                SoundManager.shared.play(.tapSoft)
+                showNPCOnDemand(for: station)
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: "graduationcap.fill")
+                        .font(.system(size: 12))
+                    Text("Ask an Expert")
+                        .font(.custom("EBGaramond-SemiBold", size: 13))
+                }
+                .foregroundStyle(RenaissanceColors.renaissanceBlue)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(
+                    RoundedRectangle(cornerRadius: CornerRadius.sm)
+                        .fill(RenaissanceColors.renaissanceBlue.opacity(0.08))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: CornerRadius.sm)
+                        .stroke(RenaissanceColors.renaissanceBlue.opacity(0.25), lineWidth: 1)
+                )
+            }
+            .buttonStyle(.plain)
         }
     }
 

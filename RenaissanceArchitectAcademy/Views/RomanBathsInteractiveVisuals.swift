@@ -1195,7 +1195,7 @@ private struct FurnaceGradientVisual: View {
 
 private struct GlassRecipeVisual: View {
     let visual: CardVisual; let color: Color; var height: CGFloat = 275
-    @State private var ingredientsAdded: Int = 0
+    @State private var step: Int = 1
 
     private let ingredients: [(name: String, pct: String, color: Color)] = [
         ("Silica", "60%", Color(red: 0.85, green: 0.80, blue: 0.65)),
@@ -1204,77 +1204,90 @@ private struct GlassRecipeVisual: View {
         ("Cullet", "15%", Color(red: 0.65, green: 0.80, blue: 0.72).opacity(0.5)),
     ]
 
+    /// step 1 = empty, 2–5 = ingredient 1-4 added, 6 = fired clear glass
+    private var ingredientsAdded: Int { max(0, step - 1) }
+
     private var crucibleColor: Color {
         switch ingredientsAdded {
         case 0: return IVMaterialColors.stoneGray.opacity(0.15)
         case 1: return ingredients[0].color.opacity(0.3)
         case 2: return Color(red: 0.80, green: 0.78, blue: 0.68).opacity(0.4)
         case 3: return Color(red: 0.78, green: 0.78, blue: 0.72).opacity(0.5)
-        default: return Color(red: 0.70, green: 0.82, blue: 0.75).opacity(0.4) // green tint glass
+        case 4: return Color(red: 0.70, green: 0.82, blue: 0.75).opacity(0.4) // green tint glass
+        default: return Color(red: 0.90, green: 0.94, blue: 0.96).opacity(0.55) // clear glass
+        }
+    }
+
+    private var stepLabel: String {
+        switch step {
+        case 1: return "Empty crucible — ready to receive ingredients."
+        case 2: return "60% silica sand — glass-former, backbone of the mix."
+        case 3: return "15% natron — flux, lowers melting temperature."
+        case 4: return "10% lime — stabilizer, makes glass durable."
+        case 5: return "15% cullet — recycled glass, speeds the melt."
+        default: return "Fired at 1,100 °C with manganese — clear Roman glass."
         }
     }
 
     var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 10).fill(RenaissanceColors.parchment)
-            RoundedRectangle(cornerRadius: 10).strokeBorder(color.opacity(0.2), lineWidth: 1)
-            IVBlueprintGrid()
-
+        IVTeachingContainer(
+            title: "Roman Glass Recipe",
+            color: color,
+            totalSteps: 6,
+            step: $step,
+            stepLabel: stepLabel,
+            height: height
+        ) {
             VStack(spacing: 10) {
-                FormulaText(text: "60% Silica + 15% Natron + 10% Lime + 15% Cullet", highlighted: ingredientsAdded >= 4, fontSize: 15)
-                    .padding(.top, 8)
+                FormulaText(
+                    text: step >= 6 ? "1,100°C → clear Roman glass" : "60% Silica + 15% Natron + 10% Lime + 15% Cullet",
+                    highlighted: step >= 6,
+                    fontSize: 15
+                )
+                .padding(.top, 4)
 
                 // Crucible
                 RoundedRectangle(cornerRadius: 8)
                     .fill(crucibleColor)
-                    .frame(width: 80, height: 60)
+                    .frame(width: 100, height: 70)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
                             .strokeBorder(IVMaterialColors.stoneGray, lineWidth: 1.5)
                     )
+                    .animation(.easeInOut(duration: 0.3), value: ingredientsAdded)
 
-                // Ingredient buttons
-                if ingredientsAdded < 4 {
-                    HStack(spacing: 8) {
-                        ForEach(0..<4, id: \.self) { i in
-                            let isNext = i == ingredientsAdded
-                            let isDone = i < ingredientsAdded
-
-                            Button {
-                                guard isNext else { return }
-                                withAnimation(.spring(response: 0.3)) { ingredientsAdded += 1 }
-                                SoundManager.shared.play(.tapSoft)
-                            } label: {
-                                VStack(spacing: 1) {
-                                    Text(ingredients[i].pct).font(.custom("EBGaramond-Bold", size: 15))
-                                    Text(ingredients[i].name).font(.custom("EBGaramond-Regular", size: 15))
-                                }
-                                .frame(width: 55, height: 38)
-                                .background(isDone ? IVMaterialColors.stoneGray.opacity(0.1) : ingredients[i].color.opacity(0.2))
-                                .cornerRadius(4)
-                                .overlay(RoundedRectangle(cornerRadius: 4).stroke(isNext ? color : IVMaterialColors.stoneGray.opacity(0.2), lineWidth: isNext ? 2 : 0.5))
-                                .foregroundStyle(isDone ? IVMaterialColors.sepiaInk.opacity(0.3) : IVMaterialColors.sepiaInk)
-                            }
-                            .buttonStyle(.plain)
-                            .disabled(isDone || !isNext)
+                // Ingredient badges — the NEXT one highlighted, added ones dimmed done
+                HStack(spacing: 8) {
+                    ForEach(0..<4, id: \.self) { i in
+                        let isNext = i == ingredientsAdded && step < 6
+                        let isDone = i < ingredientsAdded
+                        VStack(spacing: 1) {
+                            Text(ingredients[i].pct).font(.custom("EBGaramond-Bold", size: 15))
+                            Text(ingredients[i].name).font(.custom("EBGaramond-Regular", size: 15))
                         }
+                        .frame(width: 60, height: 40)
+                        .background(isDone ? IVMaterialColors.stoneGray.opacity(0.1) : ingredients[i].color.opacity(0.25))
+                        .cornerRadius(4)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 4)
+                                .stroke(isNext ? color : IVMaterialColors.stoneGray.opacity(0.2), lineWidth: isNext ? 2 : 0.5)
+                        )
+                        .foregroundStyle(isDone ? IVMaterialColors.sepiaInk.opacity(0.35) : IVMaterialColors.sepiaInk)
+                        .scaleEffect(isDone ? 0.95 : 1.0)
+                        .animation(.spring(response: 0.3), value: ingredientsAdded)
                     }
                 }
 
-                if ingredientsAdded >= 4 {
-                    Text("Add manganese to remove green tint")
-                        .font(.custom("EBGaramond-Regular", size: 15))
+                if step >= 6 {
+                    Text("Manganese removes the green tint")
+                        .font(.custom("EBGaramond-Italic", size: 14))
                         .foregroundStyle(RenaissanceColors.sageGreen)
-
-                    FormulaText(text: "1,100°C → clear Roman glass", highlighted: true, fontSize: 15)
+                        .transition(.opacity)
                 }
 
-                Spacer()
+                Spacer(minLength: 0)
             }
-            .padding(.horizontal, 12)
         }
-        .frame(height: height)
-        .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 }
 
