@@ -129,9 +129,10 @@ typealias PlatformImage = NSImage
         let dataURL = "data:image/png;base64,\(pngData.base64EncodedString())"
 
         do {
-            let requestId = try await submitRequest(imageDataURL: dataURL, phase: phase)
-            print("[FalSketchService] submit OK, request_id=\(requestId)")
-            let resultImageURL = try await pollForResult(requestId: requestId)
+            let submit = try await submitRequest(imageDataURL: dataURL, phase: phase)
+            print("[FalSketchService] submit OK, request_id=\(submit.requestId)")
+            print("[FalSketchService] status_url=\(submit.statusURL)")
+            let resultImageURL = try await pollForResult(statusURL: submit.statusURL, responseURL: submit.responseURL)
             print("[FalSketchService] poll OK, result URL=\(resultImageURL)")
             let rendered = try await downloadImage(from: resultImageURL)
             print("[FalSketchService] ✅ render complete")
@@ -159,7 +160,15 @@ typealias PlatformImage = NSImage
 
     // MARK: - Request flow
 
-    private func submitRequest(imageDataURL: String, phase: SketchPhase) async throws -> String {
+    /// Submit response carries back the URLs fal.ai wants us to poll, so we use
+    /// those directly instead of constructing them (avoids URL-format drift).
+    private struct SubmitResponse {
+        let requestId: String
+        let statusURL: URL
+        let responseURL: URL
+    }
+
+    private func submitRequest(imageDataURL: String, phase: SketchPhase) async throws -> SubmitResponse {
         var request = URLRequest(url: Self.submitURL)
         request.httpMethod = "POST"
         request.setValue("Key \(APIKeys.falAI)", forHTTPHeaderField: "Authorization")
@@ -187,31 +196,52 @@ typealias PlatformImage = NSImage
               let requestId = json["request_id"] as? String else {
             throw RenderError.networkFailed("submit: no request_id in response")
         }
-        return requestId
+
+        // Prefer the URLs fal.ai returns. Fall back to constructing them if missing.
+        let statusURL = (json["status_url"] as? String).flatMap(URL.init(string:))
+            ?? URL(string: Self.statusURLBase + requestId + "/status")!
+        let responseURL = (json["response_url"] as? String).flatMap(URL.init(string:))
+            ?? URL(string: Self.statusURLBase + requestId)!
+
+        return SubmitResponse(requestId: requestId, statusURL: statusURL, responseURL: responseURL)
     }
 
-    private func pollForResult(requestId: String) async throws -> URL {
+    private func pollForResult(statusURL: URL, responseURL: URL) async throws -> URL {
         let deadline = Date().addingTimeInterval(Self.timeoutInterval)
-        let statusURL = URL(string: Self.statusURLBase + requestId + "/status")!
-        let resultURL = URL(string: Self.statusURLBase + requestId)!
 
         while Date() < deadline {
             try await Task.sleep(nanoseconds: UInt64(Self.pollInterval * 1_000_000_000))
 
             var request = URLRequest(url: statusURL)
             request.setValue("Key \(APIKeys.falAI)", forHTTPHeaderField: "Authorization")
+            request.setValue("application/json", forHTTPHeaderField: "Accept")
 
-            let (data, _) = try await URLSession.shared.data(for: request)
-            guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-                  let status = json["status"] as? String else {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            let code = (response as? HTTPURLResponse)?.statusCode ?? -1
+
+            // Empty body or non-JSON → keep polling (common right after submit)
+            guard !data.isEmpty else {
+                print("[FalSketchService] poll HTTP \(code): empty body — retrying")
+                continue
+            }
+            guard let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] else {
+                let preview = String(data: data.prefix(200), encoding: .utf8) ?? "<binary>"
+                print("[FalSketchService] poll HTTP \(code): non-JSON body: \(preview) — retrying")
+                continue
+            }
+            guard let status = json["status"] as? String else {
+                print("[FalSketchService] poll HTTP \(code): json has no status field — retrying. keys=\(Array(json.keys))")
                 continue
             }
 
+            print("[FalSketchService] poll status=\(status)")
+
             if status == "COMPLETED" {
-                return try await fetchResultImageURL(from: resultURL)
+                return try await fetchResultImageURL(from: responseURL)
             }
             if status == "FAILED" {
-                throw RenderError.networkFailed("fal.ai prediction failed")
+                let errMsg = json["error"] as? String ?? String(describing: json)
+                throw RenderError.networkFailed("fal.ai prediction failed: \(errMsg)")
             }
         }
         throw RenderError.timeout
@@ -220,13 +250,20 @@ typealias PlatformImage = NSImage
     private func fetchResultImageURL(from resultURL: URL) async throws -> URL {
         var request = URLRequest(url: resultURL)
         request.setValue("Key \(APIKeys.falAI)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
 
-        let (data, _) = try await URLSession.shared.data(for: request)
-        guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let images = json["images"] as? [[String: Any]],
+        let (data, response) = try await URLSession.shared.data(for: request)
+        let code = (response as? HTTPURLResponse)?.statusCode ?? -1
+        guard let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] else {
+            let preview = String(data: data.prefix(200), encoding: .utf8) ?? "<binary>"
+            print("[FalSketchService] result HTTP \(code): non-JSON body: \(preview)")
+            throw RenderError.noImageReturned
+        }
+        guard let images = json["images"] as? [[String: Any]],
               let first = images.first,
               let urlString = first["url"] as? String,
               let url = URL(string: urlString) else {
+            print("[FalSketchService] result HTTP \(code): no images in response. keys=\(Array(json.keys))")
             throw RenderError.noImageReturned
         }
         return url
