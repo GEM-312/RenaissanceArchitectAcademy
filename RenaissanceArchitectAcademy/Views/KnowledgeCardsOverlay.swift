@@ -303,7 +303,8 @@ struct KnowledgeCardsOverlay: View {
                         // (each back instantiates CardVisualView with full Canvas drawing)
                         if angle > 0 {
                             flippedCardBack(card: card, isCompleted: isCompleted)
-                                .frame(width: flippedW, height: flippedH)
+                                .frame(maxWidth: flippedW, maxHeight: flippedH)
+                                .fixedSize(horizontal: false, vertical: true)
                                 .scaleEffect(isThisFlipped ? 1.0 : 0.15)
                                 .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
                                 .opacity(angle >= 90 ? 1 : 0)
