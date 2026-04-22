@@ -628,60 +628,64 @@ struct KnowledgeCardsOverlay: View {
                 .padding(.horizontal, Spacing.xs)
                 .opacity(showFlippedContent ? 1 : 0)
 
-            // Lesson content — plain VStack (no ScrollView) so content flows
-            // naturally and the card hugs its total height. If content ever
-            // exceeds the card's maxHeight, SwiftUI will clip rather than scroll
-            // — acceptable at typical text sizes.
-            VStack(spacing: Spacing.sm) {
-                highlightedLessonText(card: card)
-                    .lineSpacing(5)
-                    .padding(.top, Spacing.xxs)
-                    .opacity(animateFlippedStory ? 1 : 0)
-                    .editable("lesson-text", paddingV: Spacing.xs)
-
-                // Interactive science visual. CardVisualView sets its own height
-                // (35% of card × cardTextScale), so it grows with text size.
-                if let visual = card.visual {
-                    CardVisualView(visual: visual, color: card.color, containerHeight: flippedH)
+            // Lesson content in a ScrollView so long reading text never clips.
+            // The VStack inside uses .frame(maxWidth: .infinity) to take the
+            // card's full width; height is intrinsic (VStack hugs content).
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: Spacing.sm) {
+                    highlightedLessonText(card: card)
+                        .fixedSize(horizontal: false, vertical: true)  // force multi-line wrap
+                        .lineSpacing(5)
+                        .padding(.top, Spacing.xxs)
                         .opacity(animateFlippedStory ? 1 : 0)
-                }
+                        .editable("lesson-text", paddingV: Spacing.xs)
 
-                // Fun fact lightbulb callout
-                if let funFact = card.funFact {
-                    HStack(alignment: .top, spacing: 8) {
-                        Image(systemName: "lightbulb.fill")
-                            .foregroundStyle(RenaissanceColors.ochre)
-                            .font(.system(size: 16))
-                        Text(funFact)
-                            .font(RenaissanceFont.cardReadingItalic)
-                            .foregroundStyle(settings.cardTextColor.opacity(0.8))
-                            .lineSpacing(4)
+                    // Interactive science visual. CardVisualView sets its own height
+                    // (55% of card × cardTextScale), so it grows with text size.
+                    if let visual = card.visual {
+                        CardVisualView(visual: visual, color: card.color, containerHeight: flippedH)
+                            .opacity(animateFlippedStory ? 1 : 0)
                     }
-                    .padding(Spacing.sm)
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(card.color.opacity(0.08))
-                    )
-                    .opacity(animateFlippedStory ? 1 : 0)
-                    .editable("fun-fact", fontSize: 15, cornerRadius: 10)
-                }
 
-                if !isCompleted {
-                    Button {
-                        openActivity(for: card)
-                    } label: {
-                        Text("Done Reading")
-                            .font(RenaissanceFont.buttonSmall)
-                            .foregroundStyle(.white)
-                            .padding(.vertical, Spacing.sm)
-                            .frame(maxWidth: .infinity)
-                            .parchmentButton(color: card.color, radius: 9)
+                    // Fun fact lightbulb callout
+                    if let funFact = card.funFact {
+                        HStack(alignment: .top, spacing: 8) {
+                            Image(systemName: "lightbulb.fill")
+                                .foregroundStyle(RenaissanceColors.ochre)
+                                .font(.system(size: 16))
+                            Text(funFact)
+                                .font(RenaissanceFont.cardReadingItalic)
+                                .foregroundStyle(settings.cardTextColor.opacity(0.8))
+                                .lineSpacing(4)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        .padding(Spacing.sm)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(card.color.opacity(0.08))
+                        )
+                        .opacity(animateFlippedStory ? 1 : 0)
+                        .editable("fun-fact", fontSize: 15, cornerRadius: 10)
                     }
-                    .buttonStyle(.plain)
-                    .opacity(animateFlippedStory ? 1 : 0)
-                    .editable("done-button", cornerRadius: 9)
-                    .padding(.top, Spacing.xs)
+
+                    if !isCompleted {
+                        Button {
+                            openActivity(for: card)
+                        } label: {
+                            Text("Done Reading")
+                                .font(RenaissanceFont.buttonSmall)
+                                .foregroundStyle(.white)
+                                .padding(.vertical, Spacing.sm)
+                                .frame(maxWidth: .infinity)
+                                .parchmentButton(color: card.color, radius: 9)
+                        }
+                        .buttonStyle(.plain)
+                        .opacity(animateFlippedStory ? 1 : 0)
+                        .editable("done-button", cornerRadius: 9)
+                        .padding(.top, Spacing.xs)
+                    }
                 }
+                .frame(maxWidth: .infinity)
             }
         }
     }
