@@ -676,6 +676,19 @@ struct WorkshopMapView: View {
                 withAnimation(.easeOut(duration: 0.2)) { showArrivalGuidance = false }
             }
         }
+        // Reactive counter — whenever inventory changes (collect, craft, trade), regenerate
+        // the bird guidance message so counts stay live. Only refreshes when guidance is
+        // already visible so we don't accidentally pop the pill during other overlays.
+        .onChange(of: workshop.rawMaterials) { _, _ in
+            if showArrivalGuidance {
+                showNextGuidance(forceRefresh: true)
+            }
+        }
+        .onChange(of: workshop.craftedMaterials) { _, _ in
+            if showArrivalGuidance {
+                showNextGuidance(forceRefresh: true)
+            }
+        }
     }
 
     // MARK: - Scene Creation
@@ -1732,10 +1745,18 @@ struct WorkshopMapView: View {
                 }
 
                 // Material buttons — use flexible grid for narrow card
+                // "You have N" badge per material; material grays out if player already
+                // has enough for the active building's recipes (stillNeeded == 0).
+                let activeBuilding: Building? = viewModel?.activeBuildingId.flatMap { id in
+                    viewModel?.buildingPlots.first(where: { $0.id == id })?.building
+                }
+                let neededForBuilding: [Material: Int] = rawMaterialsStillNeeded(for: activeBuilding)
                 let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: min(station.materials.count, 3))
                 LazyVGrid(columns: columns, spacing: 6) {
                     ForEach(station.materials, id: \.self) { material in
                         let canAfford = (viewModel?.goldFlorins ?? 0) >= material.cost
+                        let currentCount = workshop.rawMaterials[material, default: 0]
+                        let isFulfilled = (neededForBuilding[material] ?? 0) == 0
                         Button {
                             guard let vm = viewModel else { return }
                             guard vm.goldFlorins >= material.cost else {
@@ -1795,6 +1816,18 @@ struct WorkshopMapView: View {
                                         .font(RenaissanceFont.bodySmall)
                                         .foregroundStyle(canAfford ? settings.cardTextColor : RenaissanceColors.errorRed)
                                 }
+                                // "You have N" badge — live count, updates on collection
+                                if currentCount > 0 {
+                                    Text("You have \(currentCount)")
+                                        .font(RenaissanceFont.captionSmall)
+                                        .foregroundStyle(isFulfilled ? RenaissanceColors.sageGreen : settings.cardTextColor.opacity(0.75))
+                                        .padding(.horizontal, 6)
+                                        .padding(.vertical, 2)
+                                        .background(
+                                            Capsule()
+                                                .fill(isFulfilled ? RenaissanceColors.sageGreen.opacity(0.15) : settings.itemBadgeBackground.opacity(0.5))
+                                        )
+                                }
                             }
                             .padding(10)
                             .frame(maxWidth: .infinity)
@@ -1806,7 +1839,10 @@ struct WorkshopMapView: View {
                                 RoundedRectangle(cornerRadius: CornerRadius.sm)
                                     .strokeBorder(canAfford ? settings.cardBorderColor : RenaissanceColors.stoneGray.opacity(0.3), lineWidth: 1)
                             )
+                            .saturation(isFulfilled ? 0.25 : 1.0)   // Gray out when already have enough
+                            .opacity(isFulfilled ? 0.55 : 1.0)
                         }
+                        .disabled(isFulfilled)
                     }
                 }
 

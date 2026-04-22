@@ -418,10 +418,26 @@ struct CraftingRoomMapView: View {
             return
         }
 
-        // 3. All building materials crafted? Celebrate!
+        // 3. All building materials crafted? Check cards + sketch too before celebrating.
+        //    Previously this fired on materials alone — misleading players to the City Map
+        //    before canStartBuilding() was actually true. Now aligned with that gate.
         if totalRequired > 0 && craftedCount >= totalRequired {
-            guidanceMessage = "All \(totalRequired) materials for the \(buildingName) are crafted! Head to the City Map to build!"
-            guidanceDestination = .cityMap
+            let allBuildingCards = KnowledgeCardContent.cards(for: buildingName)
+            let cardsRemaining = allBuildingCards.filter { !progress.completedCardIDs.contains($0.id) }.count
+            let allCardsDone = cardsRemaining == 0
+            let sketchOk = SketchingContent.sketchingChallenge(for: buildingName) == nil || progress.sketchCompleted
+
+            if allCardsDone && sketchOk {
+                guidanceMessage = "All materials, cards, and sketches complete for the \(buildingName)! Head to the City Map to build!"
+                guidanceDestination = .cityMap
+            } else if !allCardsDone {
+                guidanceMessage = "Materials ready! But \(cardsRemaining) knowledge card\(cardsRemaining == 1 ? "" : "s") still to discover for the \(buildingName)."
+                guidanceDestination = nil
+            } else {
+                // Materials + cards done, but sketch isn't
+                guidanceMessage = "Materials and cards ready! Now sketch the floor plan of the \(buildingName) from the City Map."
+                guidanceDestination = .cityMap
+            }
             withAnimation(.spring(response: 0.4)) { showGuidance = true }
             return
         }
