@@ -741,13 +741,7 @@ struct KnowledgeCardsOverlay: View {
 
     @ViewBuilder
     private func activityContent(card: KnowledgeCard) -> some View {
-        // Top/bottom spacers center activity content in the card's available
-        // vertical space so short activities (e.g. true/false, multiple choice)
-        // don't cluster at the top leaving dead parchment below.
         VStack(spacing: Spacing.sm) {
-            Spacer(minLength: 0)
-
-            // Standard activity
             switch card.activity {
             case .keywordMatch:
                 keywordMatchView(card: card)
@@ -764,8 +758,6 @@ struct KnowledgeCardsOverlay: View {
             case .hangman(let word, let hint):
                 hangmanView(card: card, word: word, hint: hint)
             }
-
-            Spacer(minLength: 0)
         }
     }
 
