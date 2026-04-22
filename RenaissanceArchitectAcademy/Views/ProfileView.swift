@@ -191,9 +191,6 @@ struct ProfileView: View {
                     )
                 }
 
-                // Reading preferences (visible to all users)
-                CardTextSizeSetting()
-
                 #if DEBUG
                 DebugSubscriptionToggle()
                 #endif
@@ -821,58 +818,6 @@ struct ProfileNavRow: View {
             .glassButton(shape: RoundedRectangle(cornerRadius: 12))
         }
         .buttonStyle(.plain)
-    }
-}
-
-// MARK: - Card Text Size Setting (user-facing, all users)
-
-/// Slider that scales all interactive knowledge-card text between 0.8× and 1.3×.
-/// The underlying tokens in RenaissanceFont.iv* multiply by GameSettings.cardTextScale
-/// at access time, so changes apply live across every card.
-struct CardTextSizeSetting: View {
-    @Environment(\.gameSettings) private var settings
-
-    var body: some View {
-        @Bindable var bindable = settings
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Image(systemName: "textformat.size")
-                    .font(.system(size: 14))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
-                Text("Card Text Size")
-                    .font(.custom("Cinzel-Bold", size: 14))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
-                Spacer()
-                Text("\(Int(settings.cardTextScale * 100))%")
-                    .font(.custom("EBGaramond-SemiBold", size: 14))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
-                    .monospacedDigit()
-            }
-
-            HStack(spacing: 10) {
-                Text("A")
-                    .font(.custom("EBGaramond-Regular", size: 12))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
-                Slider(value: $bindable.cardTextScale, in: 0.8...1.3, step: 0.05)
-                    .tint(RenaissanceColors.ochre)
-                Text("A")
-                    .font(.custom("EBGaramond-Regular", size: 22))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
-            }
-
-            Text("Preview")
-                .font(RenaissanceFont.ivLabel)
-                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
-        }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 6)
-                .fill(RenaissanceColors.parchment.opacity(0.9))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 6)
-                        .stroke(RenaissanceColors.sepiaInk.opacity(0.2), lineWidth: 1)
-                )
-        )
     }
 }
 

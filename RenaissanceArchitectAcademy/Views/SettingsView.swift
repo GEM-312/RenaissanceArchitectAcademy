@@ -115,9 +115,17 @@ struct SettingsView: View {
                         .font(.custom("Cinzel-Bold", size: 16))
                         .foregroundStyle(settings.cardTextColor)
 
-                    volumeRow(label: "Music", icon: "music.note", value: $settings.musicVolume)
-                    volumeRow(label: "Sound Effects", icon: "speaker.wave.2.fill", value: $settings.sfxVolume)
+                    volumeRow(label: "Music", icon: "music.note", value: $settings.musicVolume, testAction: nil)
+                    volumeRow(label: "Sound Effects", icon: "speaker.wave.2.fill", value: $settings.sfxVolume) {
+                        SoundManager.shared.play(.tapSoft)
+                    }
                 }
+
+                Divider()
+                    .overlay(RenaissanceColors.warmBrown.opacity(0.3))
+
+                // Reading — card text size slider
+                cardTextSizeRow
 
                 Divider()
                     .overlay(RenaissanceColors.warmBrown.opacity(0.3))
@@ -173,7 +181,12 @@ struct SettingsView: View {
         }
     }
 
-    private func volumeRow(label: String, icon: String, value: Binding<Double>) -> some View {
+    private func volumeRow(
+        label: String,
+        icon: String,
+        value: Binding<Double>,
+        testAction: (() -> Void)?
+    ) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 6) {
                 Image(systemName: icon)
@@ -182,6 +195,26 @@ struct SettingsView: View {
                 Text(label)
                     .font(.custom("EBGaramond-Regular", size: 14))
                     .foregroundStyle(settings.cardTextColor)
+                Spacer()
+                if let testAction {
+                    Button {
+                        testAction()
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "play.fill")
+                                .font(.system(size: 10))
+                            Text("Try")
+                                .font(.custom("EBGaramond-Regular", size: 12))
+                        }
+                        .foregroundStyle(RenaissanceColors.ochre)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(
+                            Capsule().strokeBorder(RenaissanceColors.ochre.opacity(0.4), lineWidth: 1)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                }
             }
             HStack(spacing: 10) {
                 Image(systemName: "speaker.fill")
@@ -193,6 +226,40 @@ struct SettingsView: View {
                     .font(.caption2)
                     .foregroundStyle(RenaissanceColors.warmBrown.opacity(0.6))
             }
+        }
+    }
+
+    // MARK: - Reading / Card Text Size
+
+    @ViewBuilder
+    private var cardTextSizeRow: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Image(systemName: "textformat.size")
+                    .font(.caption)
+                    .foregroundStyle(RenaissanceColors.warmBrown)
+                Text("Card Text Size")
+                    .font(.custom("Cinzel-Bold", size: 16))
+                    .foregroundStyle(settings.cardTextColor)
+                Spacer()
+                Text("\(Int(settings.cardTextScale * 100))%")
+                    .font(.custom("EBGaramond-SemiBold", size: 14))
+                    .foregroundStyle(settings.cardTextColor.opacity(0.7))
+                    .monospacedDigit()
+            }
+            HStack(spacing: 10) {
+                Text("A")
+                    .font(.custom("EBGaramond-Regular", size: 12))
+                    .foregroundStyle(RenaissanceColors.warmBrown.opacity(0.6))
+                Slider(value: $settings.cardTextScale, in: 0.8...1.3, step: 0.05)
+                    .tint(RenaissanceColors.ochre)
+                Text("A")
+                    .font(.custom("EBGaramond-Regular", size: 22))
+                    .foregroundStyle(RenaissanceColors.warmBrown.opacity(0.6))
+            }
+            Text("Adjusts text size inside knowledge card visuals")
+                .font(.custom("EBGaramond-Regular", size: 12))
+                .foregroundStyle(settings.cardTextColor.opacity(0.5))
         }
     }
 }
