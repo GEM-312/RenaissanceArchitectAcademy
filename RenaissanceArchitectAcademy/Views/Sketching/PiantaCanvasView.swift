@@ -1370,12 +1370,15 @@ struct PiantaCanvasView: View {
                 showCompletion = true
                 onComplete([.pianta])
             } catch {
-                // Silent failure — just proceed to completion
+                print("[PiantaCanvasView] blueprint render failed: \(error)")
                 isRenderingBlueprint = false
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    showCompletion = true
-                    onComplete([.pianta])
-                }
+                #if DEBUG
+                // Surface the error via the bird so we can diagnose without Xcode open
+                showBirdSpeechBriefly("DEBUG: \(error.localizedDescription)")
+                try? await Task.sleep(nanoseconds: 4_000_000_000)
+                #endif
+                showCompletion = true
+                onComplete([.pianta])
             }
         }
     }

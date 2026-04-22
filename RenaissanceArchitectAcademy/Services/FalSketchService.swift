@@ -100,15 +100,20 @@ typealias PlatformImage = NSImage
     /// - Throws: `RenderError.notSubscribed` if the player isn't on a paid tier.
     /// - Returns: A Renaissance-styled PlatformImage.
     func render(sketch: PlatformImage, buildingId: String, phase: SketchPhase) async throws -> PlatformImage {
+        print("[FalSketchService] render requested: building=\(buildingId) phase=\(phase.rawValue)")
+
         guard GameSettings.shared.isSubscribed else {
+            print("[FalSketchService] ❌ notSubscribed")
             throw RenderError.notSubscribed
         }
 
         if let cached = cachedBlueprint(for: buildingId, phase: phase) {
+            print("[FalSketchService] ✅ cache hit")
             return cached
         }
 
         guard APIKeys.falAI != "REPLACE_WITH_KEY", !APIKeys.falAI.isEmpty else {
+            print("[FalSketchService] ❌ invalidKey — APIKeys.falAI not set")
             throw RenderError.invalidKey
         }
 
@@ -117,16 +122,26 @@ typealias PlatformImage = NSImage
         defer { isRendering = false }
 
         guard let pngData = sketch.pngData() else {
+            print("[FalSketchService] ❌ encodingFailed — sketch.pngData() returned nil")
             throw RenderError.encodingFailed
         }
+        print("[FalSketchService] PNG size: \(pngData.count) bytes")
         let dataURL = "data:image/png;base64,\(pngData.base64EncodedString())"
 
-        let requestId = try await submitRequest(imageDataURL: dataURL, phase: phase)
-        let resultImageURL = try await pollForResult(requestId: requestId)
-        let rendered = try await downloadImage(from: resultImageURL)
-
-        try? cacheBlueprint(rendered, for: buildingId, phase: phase)
-        return rendered
+        do {
+            let requestId = try await submitRequest(imageDataURL: dataURL, phase: phase)
+            print("[FalSketchService] submit OK, request_id=\(requestId)")
+            let resultImageURL = try await pollForResult(requestId: requestId)
+            print("[FalSketchService] poll OK, result URL=\(resultImageURL)")
+            let rendered = try await downloadImage(from: resultImageURL)
+            print("[FalSketchService] ✅ render complete")
+            try? cacheBlueprint(rendered, for: buildingId, phase: phase)
+            return rendered
+        } catch {
+            print("[FalSketchService] ❌ \(error)")
+            lastError = String(describing: error)
+            throw error
+        }
     }
 
     /// Returns a previously-rendered blueprint from disk if one exists for this (building, phase).
@@ -155,7 +170,6 @@ typealias PlatformImage = NSImage
             "image_url": imageDataURL,
             "guidance_scale": 3.5,
             "num_images": 1,
-            "safety_tolerance": "2",
             "output_format": "png"
         ]
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
@@ -163,8 +177,10 @@ typealias PlatformImage = NSImage
         let (data, response) = try await URLSession.shared.data(for: request)
 
         guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
+            let code = (response as? HTTPURLResponse)?.statusCode ?? -1
             let msg = String(data: data, encoding: .utf8) ?? "unknown"
-            throw RenderError.networkFailed("submit failed: \(msg)")
+            print("[FalSketchService] submit HTTP \(code): \(msg)")
+            throw RenderError.networkFailed("HTTP \(code): \(msg)")
         }
 
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
