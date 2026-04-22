@@ -830,7 +830,7 @@ struct ProfileNavRow: View {
 /// The underlying tokens in RenaissanceFont.iv* multiply by GameSettings.cardTextScale
 /// at access time, so changes apply live across every card.
 struct CardTextSizeSetting: View {
-    @Environment(GameSettings.self) private var settings
+    @Environment(\.gameSettings) private var settings
 
     var body: some View {
         @Bindable var bindable = settings
