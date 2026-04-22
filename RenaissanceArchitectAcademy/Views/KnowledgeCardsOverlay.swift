@@ -547,7 +547,8 @@ struct KnowledgeCardsOverlay: View {
                 .frame(height: 1)
                 .padding(.horizontal, Spacing.xs)
 
-            // Content
+            // Content — fills remaining card height so reading and activity
+            // use the same vertical area (no top-clustering dead space).
             ZStack {
                 if showInfographic != nil && pendingCompleteCard?.id == card.id {
                     // Infographic reward — shown inline on the card after activity
@@ -568,14 +569,18 @@ struct KnowledgeCardsOverlay: View {
                     .transition(.opacity)
                 } else if !isActivity {
                     readingContent(card: card, isCompleted: isCompleted)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                         .transition(.opacity)
                 } else if isActivity {
-                    ScrollView(.vertical, showsIndicators: false) {
-                        activityContent(card: card)
-                    }
-                    .transition(.opacity)
+                    // Activity fills full content area and distributes vertically
+                    // (Spacers inside activityContent center/spread the controls).
+                    // No ScrollView — content is sized to fit the card.
+                    activityContent(card: card)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .transition(.opacity)
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .animation(.easeInOut(duration: 0.4), value: isActivity)
             .animation(.easeInOut(duration: 0.4), value: showInfographic != nil)
         }
@@ -732,7 +737,12 @@ struct KnowledgeCardsOverlay: View {
 
     @ViewBuilder
     private func activityContent(card: KnowledgeCard) -> some View {
+        // Top/bottom spacers center activity content in the card's available
+        // vertical space so short activities (e.g. true/false, multiple choice)
+        // don't cluster at the top leaving dead parchment below.
         VStack(spacing: Spacing.sm) {
+            Spacer(minLength: 0)
+
             // Standard activity
             switch card.activity {
             case .keywordMatch:
@@ -750,6 +760,8 @@ struct KnowledgeCardsOverlay: View {
             case .hangman(let word, let hint):
                 hangmanView(card: card, word: word, hint: hint)
             }
+
+            Spacer(minLength: 0)
         }
     }
 

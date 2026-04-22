@@ -8,11 +8,11 @@ struct CardVisualView: View {
     let color: Color
     var containerHeight: CGFloat = 780
 
-    /// Visual canvas height — scales with the user's card-text-size slider so
-    /// the interactive area grows alongside reading text. Baseline ~35% of
-    /// container at 1.0×; 45% at 1.3× (max slider), 28% at 0.8× (min slider).
+    /// Visual canvas height — 55% of card at 1.0× baseline (original size that
+    /// the interactive visuals were designed for), scales with the user's
+    /// card-text-size slider. 71.5% at 1.3× (max), 44% at 0.8× (min).
     private var visualHeight: CGFloat {
-        containerHeight * 0.35 * GameSettings.shared.cardTextScale
+        containerHeight * 0.55 * GameSettings.shared.cardTextScale
     }
 
     @State private var currentStep: Int = 1   // Start at step 1 (not empty step 0)
