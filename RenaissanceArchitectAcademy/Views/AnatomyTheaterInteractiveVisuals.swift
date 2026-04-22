@@ -86,7 +86,7 @@ private struct VesaliusVisual: View {
                             .font(.custom("Cinzel-Bold", size: 15))
                             .foregroundStyle(dogmaBlue)
                         Text("(Pre-1543)")
-                            .font(.custom("EBGaramond-Regular", size: 15))
+                            .font(RenaissanceFont.ivBody)
                             .foregroundStyle(dogmaBlue.opacity(0.6))
 
                         RoundedRectangle(cornerRadius: 8)
@@ -98,7 +98,7 @@ private struct VesaliusVisual: View {
                                         .font(.system(size: 30))
                                         .opacity(step >= 2 ? 1.0 : 0.3)
                                     Text("Animal Myths")
-                                        .font(.custom("EBGaramond-SemiBold", size: 15))
+                                        .font(RenaissanceFont.ivLabel)
                                         .foregroundStyle(dogmaBlue)
                                 }
                             }
@@ -113,7 +113,7 @@ private struct VesaliusVisual: View {
 
                         if step >= 2 {
                             Text("Galen dissected\npigs & monkeys")
-                                .font(.custom("EBGaramond-Regular", size: 15))
+                                .font(RenaissanceFont.ivBody)
                                 .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
                                 .multilineTextAlignment(.center)
                                 .lineLimit(2)
@@ -135,7 +135,7 @@ private struct VesaliusVisual: View {
                             .font(.custom("Cinzel-Bold", size: 15))
                             .foregroundStyle(observationRed)
                         Text("(Vesalius)")
-                            .font(.custom("EBGaramond-Regular", size: 15))
+                            .font(RenaissanceFont.ivBody)
                             .foregroundStyle(observationRed.opacity(0.6))
 
                         RoundedRectangle(cornerRadius: 8)
@@ -147,7 +147,7 @@ private struct VesaliusVisual: View {
                                         .font(.system(size: 30))
                                         .opacity(step >= 1 ? 1.0 : 0.3)
                                     Text("Human Reality")
-                                        .font(.custom("EBGaramond-SemiBold", size: 15))
+                                        .font(RenaissanceFont.ivLabel)
                                         .foregroundStyle(observationRed)
                                 }
                             }
@@ -162,7 +162,7 @@ private struct VesaliusVisual: View {
 
                         if step >= 1 {
                             Text("Seeing is\nCorrecting")
-                                .font(.custom("EBGaramond-SemiBold", size: 15))
+                                .font(RenaissanceFont.ivLabel)
                                 .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.7))
                                 .multilineTextAlignment(.center)
                                 .lineLimit(2)
@@ -329,7 +329,7 @@ private struct FunnelShapeVisual: View {
                     ctx.stroke(IVDimLine(from: CGPoint(x: cx - maxW / 2, y: topTierY - 8),
                                          to: CGPoint(x: cx + maxW / 2, y: topTierY - 8), tickSize: 4).path(in: .zero),
                                with: .color(IVMaterialColors.dimColor), lineWidth: 0.8)
-                    let topLabel = ctx.resolve(Text("11 m").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(IVMaterialColors.dimColor))
+                    let topLabel = ctx.resolve(Text("11 m").font(RenaissanceFont.ivLabel).foregroundColor(IVMaterialColors.dimColor))
                     ctx.draw(topLabel, at: CGPoint(x: cx, y: topTierY - 16))
 
                     // Bottom dimension: 2 meters
@@ -337,7 +337,7 @@ private struct FunnelShapeVisual: View {
                     ctx.stroke(IVDimLine(from: CGPoint(x: cx - minW / 2, y: botDimY),
                                          to: CGPoint(x: cx + minW / 2, y: botDimY), tickSize: 3).path(in: .zero),
                                with: .color(IVMaterialColors.dimColor), lineWidth: 0.8)
-                    let botLabel = ctx.resolve(Text("2 m").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(IVMaterialColors.dimColor))
+                    let botLabel = ctx.resolve(Text("2 m").font(RenaissanceFont.ivLabel).foregroundColor(IVMaterialColors.dimColor))
                     ctx.draw(botLabel, at: CGPoint(x: cx, y: botDimY + 10))
                 }
 
@@ -370,7 +370,7 @@ private struct FunnelShapeVisual: View {
                 if step >= 1 {
                     // "Dissection Table" label below alcove
                     let tableLabel = ctx.resolve(Text("Central Dissection Table")
-                        .font(.custom("EBGaramond-Regular", size: 15)).foregroundColor(IVMaterialColors.sepiaInk.opacity(0.5)))
+                        .font(RenaissanceFont.ivBody).foregroundColor(IVMaterialColors.sepiaInk.opacity(0.5)))
                     ctx.draw(tableLabel, at: CGPoint(x: cx, y: bottomY + (step >= 3 ? 22 : 14)))
                 }
             }
@@ -633,7 +633,7 @@ private struct ScalpelSteelVisual: View {
             .overlay(alignment: .bottom) {
                 if step >= 1 {
                     Text("Fe + 1.5% C → Rockwell 60")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(color)
                         .offset(y: -28)
                 }
@@ -667,7 +667,7 @@ private struct TimberPrepVisual: View {
                             .frame(width: 25, height: 35)
                     }
                     Text("6 mo")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(step >= 1 ? IVMaterialColors.waterBlue : IVMaterialColors.waterBlue.opacity(0.3))
                     Text("Soak")
                         .font(.custom("Cinzel-Bold", size: 16))
@@ -696,7 +696,7 @@ private struct TimberPrepVisual: View {
                                 .frame(width: 25, height: 35)
                         }
                         Text("12 mo")
-                            .font(.custom("EBGaramond-Bold", size: 15))
+                            .font(RenaissanceFont.ivFormula)
                             .foregroundStyle(IVMaterialColors.dimColor)
                         Text("Air Dry")
                             .font(.custom("Cinzel-Bold", size: 16))
@@ -713,7 +713,7 @@ private struct TimberPrepVisual: View {
                             .font(.system(size: 22))
                             .foregroundStyle(Color(red: 0.30, green: 0.58, blue: 0.32).opacity(0.6))
                         Text("18 mo")
-                            .font(.custom("EBGaramond-Bold", size: 15))
+                            .font(RenaissanceFont.ivFormula)
                             .foregroundStyle(color)
                         Text("Ready")
                             .font(.custom("Cinzel-Bold", size: 16))
@@ -902,12 +902,12 @@ private struct CypressVentVisual: View {
                 HStack(spacing: 16) {
                     if step >= 1 {
                         Text("Thujone")
-                            .font(.custom("EBGaramond-Bold", size: 15))
+                            .font(RenaissanceFont.ivFormula)
                             .foregroundStyle(cypressGreen)
                     }
                     if step >= 1 {
                         Text("Cedrol")
-                            .font(.custom("EBGaramond-Bold", size: 15))
+                            .font(RenaissanceFont.ivFormula)
                             .foregroundStyle(cypressGreen)
                     }
                 }
@@ -915,16 +915,16 @@ private struct CypressVentVisual: View {
                 if step >= 2 {
                     HStack(spacing: 12) {
                         Label("No insects", systemImage: "ant.fill")
-                            .font(.custom("EBGaramond-Regular", size: 15))
+                            .font(RenaissanceFont.ivBody)
                         Label("No fungus", systemImage: "leaf.fill")
-                            .font(.custom("EBGaramond-Regular", size: 15))
+                            .font(RenaissanceFont.ivBody)
                     }
                     .foregroundStyle(color.opacity(0.7))
                 }
 
                 if step >= 3 {
                     Text("3-day dissection odor control")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(color)
                 }
             }
@@ -996,7 +996,7 @@ private struct CarvingToolsVisual: View {
                         ForEach(Array(toolSteps.enumerated()), id: \.offset) { i, s in
                             let active = step >= 3 || i < 5
                             Text(s)
-                                .font(.custom("EBGaramond-Regular", size: 15))
+                                .font(RenaissanceFont.ivBody)
                                 .foregroundStyle(active ? (i == 5 && step >= 3 ? color : IVMaterialColors.sepiaInk) : IVMaterialColors.sepiaInk.opacity(0.3))
                                 .padding(.horizontal, 4)
                                 .padding(.vertical, 2)
@@ -1016,7 +1016,7 @@ private struct CarvingToolsVisual: View {
 
                 if step >= 3 {
                     Text("2 weeks carving + walnut oil seal")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(walnutBrown)
                 }
             }

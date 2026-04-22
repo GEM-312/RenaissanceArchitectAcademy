@@ -179,11 +179,11 @@ private struct FurnaceColorVisual: View {
                             .shadow(color: active && i == 3 ? moltenYellow.opacity(0.3) : .clear, radius: 6)
 
                         Text(temp.0)
-                            .font(.custom("EBGaramond-Bold", size: 15))
+                            .font(RenaissanceFont.ivFormula)
                             .foregroundStyle(active ? IVMaterialColors.dimColor : IVMaterialColors.dimColor.opacity(0.3))
 
                         Text(temp.2)
-                            .font(.custom("EBGaramond-Regular", size: 15))
+                            .font(RenaissanceFont.ivBody)
                             .foregroundStyle(active ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                     }
                     .frame(maxWidth: .infinity)
@@ -282,7 +282,7 @@ private struct CristalloChemVisual: View {
                         .font(.custom("Cinzel-Bold", size: 16))
                         .foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                     Text("Fe → green")
-                        .font(.custom("EBGaramond-Regular", size: 15))
+                        .font(RenaissanceFont.ivBody)
                         .foregroundStyle(step >= 1 ? glassGreen : glassGreen.opacity(0.3))
                 }
 
@@ -293,7 +293,7 @@ private struct CristalloChemVisual: View {
                             .font(.custom("Cinzel-Bold", size: 16))
                             .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                         Text("MnO₂")
-                            .font(.custom("EBGaramond-Bold", size: 15))
+                            .font(RenaissanceFont.ivFormula)
                             .foregroundStyle(Color.purple.opacity(0.6))
                     }
                 }
@@ -320,7 +320,7 @@ private struct CristalloChemVisual: View {
                             .font(.custom("Cinzel-Bold", size: 16))
                             .foregroundStyle(color)
                         Text("Clear")
-                            .font(.custom("EBGaramond-Regular", size: 15))
+                            .font(RenaissanceFont.ivBody)
                             .foregroundStyle(IVMaterialColors.sepiaInk)
                     }
                 }
@@ -424,7 +424,7 @@ private struct FluxMeltingVisual: View {
                                 .frame(width: 35, height: 90)
                         }
                         Text("1,700°C")
-                            .font(.custom("EBGaramond-Bold", size: 15))
+                            .font(RenaissanceFont.ivFormula)
                             .foregroundStyle(step >= 1 ? IVMaterialColors.cherryRed : IVMaterialColors.cherryRed.opacity(0.3))
                         Text("SiO₂")
                             .font(.custom("Cinzel-Bold", size: 16))
@@ -435,10 +435,10 @@ private struct FluxMeltingVisual: View {
                     if step >= 2 {
                         VStack(spacing: 2) {
                             Text("+10%")
-                                .font(.custom("EBGaramond-Bold", size: 15))
+                                .font(RenaissanceFont.ivFormula)
                                 .foregroundStyle(IVMaterialColors.dimColor)
                             Text("CaCO₃")
-                                .font(.custom("EBGaramond-Regular", size: 15))
+                                .font(RenaissanceFont.ivBody)
                                 .foregroundStyle(IVMaterialColors.dimColor)
                         }
                     }
@@ -458,7 +458,7 @@ private struct FluxMeltingVisual: View {
                                     .frame(width: 35, height: 58)  // ~65% of 90
                             }
                             Text("1,100°C")
-                                .font(.custom("EBGaramond-Bold", size: 15))
+                                .font(RenaissanceFont.ivFormula)
                                 .foregroundStyle(color)
                             Text("+ Flux")
                                 .font(.custom("Cinzel-Bold", size: 16))
@@ -618,13 +618,13 @@ private struct FuelConsumptionVisual: View {
 
                 if step >= 1 {
                     Text("1 log = 45 min")
-                        .font(.custom("EBGaramond-Regular", size: 15))
+                        .font(RenaissanceFont.ivBody)
                         .foregroundStyle(IVMaterialColors.dimColor)
                 }
 
                 if step >= 2 {
                     Text("6 tons / day")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(color)
                 }
 
@@ -759,9 +759,9 @@ private struct GlassBatchVisual: View {
                                 .overlay {
                                     VStack(spacing: 1) {
                                         Text(ing.1)
-                                            .font(.custom("EBGaramond-Bold", size: 15))
+                                            .font(RenaissanceFont.ivFormula)
                                         Text(ing.0)
-                                            .font(.custom("EBGaramond-Regular", size: 15))
+                                            .font(RenaissanceFont.ivBody)
                                     }
                                     .foregroundStyle(active ? IVMaterialColors.sepiaInk : .clear)
                                 }
@@ -774,7 +774,7 @@ private struct GlassBatchVisual: View {
 
                 if step >= 3 {
                     Text("Mix 30 min → furnace")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(color)
                 }
             }
@@ -817,12 +817,12 @@ private struct CruciblePreheatVisual: View {
                             )
 
                         Text(stage.0)
-                            .font(.custom("EBGaramond-Bold", size: 15))
+                            .font(RenaissanceFont.ivFormula)
                             .foregroundStyle(active ? IVMaterialColors.dimColor : IVMaterialColors.dimColor.opacity(0.2))
 
                         if step >= 3 {
                             Text("18h")
-                                .font(.custom("EBGaramond-Regular", size: 15))
+                                .font(RenaissanceFont.ivBody)
                                 .foregroundStyle(color.opacity(0.7))
                         }
                     }

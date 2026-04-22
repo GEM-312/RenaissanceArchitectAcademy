@@ -522,7 +522,7 @@ private struct CarraraMarbleVisual: View {
                 .font(.custom("Cinzel-Bold", size: 16))
                 .foregroundStyle(active ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
             Text(sublabel)
-                .font(.custom("EBGaramond-Regular", size: 15))
+                .font(RenaissanceFont.ivBody)
                 .foregroundStyle(active ? IVMaterialColors.dimColor : IVMaterialColors.dimColor.opacity(0.3))
         }
     }
@@ -729,7 +729,7 @@ private struct StainedGlassVisual: View {
             .overlay(alignment: .bottom) {
                 if step >= 3 {
                     Text("2% CoO → deep blue")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(cobaltBlue)
                         .offset(y: -28)
                 }
@@ -759,7 +759,7 @@ private struct MortarSetVisual: View {
                         .frame(height: 60)
                         .overlay {
                             Text("☁ 3 days")
-                                .font(.custom("EBGaramond-Bold", size: 15))
+                                .font(RenaissanceFont.ivFormula)
                                 .foregroundStyle(step == 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                         }
                     Text("Lime")
@@ -767,7 +767,7 @@ private struct MortarSetVisual: View {
                         .foregroundStyle(step == 1 || step == 3 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                     if step >= 3 {
                         Text("→ horizontal")
-                            .font(.custom("EBGaramond-Regular", size: 15))
+                            .font(RenaissanceFont.ivBody)
                             .foregroundStyle(color)
                     }
                 }
@@ -779,7 +779,7 @@ private struct MortarSetVisual: View {
                         .frame(height: 60)
                         .overlay {
                             Text("⚡ 15 min")
-                                .font(.custom("EBGaramond-Bold", size: 15))
+                                .font(RenaissanceFont.ivFormula)
                                 .foregroundStyle(step >= 2 ? color : IVMaterialColors.sepiaInk.opacity(0.3))
                         }
                     Text("Gypsum")
@@ -787,7 +787,7 @@ private struct MortarSetVisual: View {
                         .foregroundStyle(step >= 2 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                     if step >= 3 {
                         Text("→ vertical")
-                            .font(.custom("EBGaramond-Regular", size: 15))
+                            .font(RenaissanceFont.ivBody)
                             .foregroundStyle(color)
                     }
                 }
@@ -834,7 +834,7 @@ private struct BrickFiringVisual: View {
                                     .strokeBorder(IVMaterialColors.sepiaInk.opacity(0.3), lineWidth: 1)
                             )
                         Text("900°C + O₂")
-                            .font(.custom("EBGaramond-Bold", size: 15))
+                            .font(RenaissanceFont.ivFormula)
                             .foregroundStyle(step >= 2 ? IVMaterialColors.dimColor : IVMaterialColors.dimColor.opacity(0.3))
                         Text("Red")
                             .font(.custom("Cinzel-Bold", size: 18))
@@ -851,7 +851,7 @@ private struct BrickFiringVisual: View {
                                     .strokeBorder(IVMaterialColors.sepiaInk.opacity(0.3), lineWidth: 1)
                             )
                         Text("1000°C − O₂")
-                            .font(.custom("EBGaramond-Bold", size: 15))
+                            .font(RenaissanceFont.ivFormula)
                             .foregroundStyle(step >= 3 ? IVMaterialColors.dimColor : IVMaterialColors.dimColor.opacity(0.3))
                         Text("Brown")
                             .font(.custom("Cinzel-Bold", size: 18))
@@ -1003,7 +1003,7 @@ private struct QuintoAcutoVisual: View {
             .overlay {
                 if step >= 2 {
                     Text("4/5")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(IVMaterialColors.dimColor)
                         .position(x: 999, y: 999) // positioned via canvas
                 }

@@ -124,7 +124,7 @@ private struct ApartmentFloorsVisual: View {
 
                         // Floor label
                         Text(floors[i].name)
-                            .font(.custom("EBGaramond-Regular", size: 15))
+                            .font(RenaissanceFont.ivBody)
                             .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             .position(x: cx + buildingW * 0.5 + 22, y: y)
                     }
@@ -142,7 +142,7 @@ private struct ApartmentFloorsVisual: View {
                         } label: {
                             HStack(spacing: 4) {
                                 Image(systemName: "square.stack.3d.up").font(.system(size: 13))
-                                Text("Add Floor").font(.custom("EBGaramond-SemiBold", size: 15))
+                                Text("Add Floor").font(RenaissanceFont.ivLabel)
                             }
                             .foregroundStyle(floors[floorsBuilt].color)
                             .padding(.horizontal, 12).padding(.vertical, 6)
@@ -153,7 +153,7 @@ private struct ApartmentFloorsVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "Rich ↓ Poor ↑ — vertical inequality", highlighted: true, fontSize: 15)
+                        FormulaText(text: "Rich ↓ Poor ↑ — vertical inequality", highlighted: true)
                             .position(x: cx, y: h * 0.08)
                             .transition(.opacity)
                     }
@@ -222,7 +222,7 @@ private struct HeightLimitVisual: View {
                     .foregroundStyle(RenaissanceColors.errorRed.opacity(0.5))
 
                     Text("Augustus: 20m")
-                        .font(.custom("EBGaramond-Regular", size: 15))
+                        .font(RenaissanceFont.ivBody)
                         .foregroundStyle(RenaissanceColors.errorRed.opacity(0.6))
                         .position(x: w * 0.78, y: augustusY)
 
@@ -236,7 +236,7 @@ private struct HeightLimitVisual: View {
                     .foregroundStyle(warmOrange.opacity(0.5))
 
                     Text("Nero: 17.5m")
-                        .font(.custom("EBGaramond-Regular", size: 15))
+                        .font(RenaissanceFont.ivBody)
                         .foregroundStyle(warmOrange.opacity(0.6))
                         .position(x: w * 0.78, y: neroY)
 
@@ -345,7 +345,7 @@ private struct TabernaShopVisual: View {
                             .stroke(oakBrown, lineWidth: 2)
 
                             Text("Mezzanine bedroom")
-                                .font(.custom("EBGaramond-Regular", size: 15))
+                                .font(RenaissanceFont.ivBody)
                                 .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                                 .position(x: cx, y: h * 0.38 - shopH * 0.25)
                                 .transition(.opacity)
@@ -370,7 +370,7 @@ private struct TabernaShopVisual: View {
                                 } label: {
                                     VStack(spacing: 2) {
                                         Image(systemName: parts[i].icon).font(.system(size: 13))
-                                        Text(parts[i].name).font(.custom("EBGaramond-Regular", size: 15))
+                                        Text(parts[i].name).font(RenaissanceFont.ivBody)
                                     }
                                     .foregroundStyle(color.opacity(0.5))
                                     .padding(6)
@@ -384,7 +384,7 @@ private struct TabernaShopVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "Max visibility, min wasted space", highlighted: true, fontSize: 15)
+                        FormulaText(text: "Max visibility, min wasted space", highlighted: true)
                             .position(x: cx, y: h * 0.85)
                             .transition(.opacity)
                     }
@@ -444,7 +444,7 @@ private struct WallTaperVisual: View {
                             .transition(.move(edge: .bottom).combined(with: .opacity))
 
                         // Width label
-                        DimLabel(text: "\(wallWidths[i].cm)cm", fontSize: 15)
+                        DimLabel(text: "\(wallWidths[i].cm)cm")
                             .position(x: cx + floorW * 0.5 + 20, y: y)
                     }
 
@@ -461,7 +461,7 @@ private struct WallTaperVisual: View {
                         } label: {
                             HStack(spacing: 4) {
                                 Image(systemName: "square.stack.3d.up").font(.system(size: 13))
-                                Text("Add Floor").font(.custom("EBGaramond-SemiBold", size: 15))
+                                Text("Add Floor").font(RenaissanceFont.ivLabel)
                             }
                             .foregroundStyle(color)
                             .padding(.horizontal, 12).padding(.vertical, 6)
@@ -472,7 +472,7 @@ private struct WallTaperVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "60cm → 45 → 30 → 15cm timber", highlighted: true, fontSize: 15)
+                        FormulaText(text: "60cm → 45 → 30 → 15cm timber", highlighted: true)
                             .position(x: cx, y: h * 0.88)
                             .transition(.opacity)
                     }
@@ -569,11 +569,11 @@ private struct SpiralStaircaseVisual: View {
                     DimLine(from: CGPoint(x: cx - radius, y: cy + radius + 12),
                             to: CGPoint(x: cx + radius, y: cy + radius + 12))
                         .stroke(IVMaterialColors.dimColor, lineWidth: 0.8)
-                    DimLabel(text: "2 m diameter", fontSize: 15)
+                    DimLabel(text: "2 m diameter")
                         .position(x: cx, y: cy + radius + 22)
 
                     if step >= 3 {
-                        FormulaText(text: "2m circle → 7 floors of access", highlighted: true, fontSize: 15)
+                        FormulaText(text: "2m circle → 7 floors of access", highlighted: true)
                             .position(x: cx, y: h * 0.88)
                             .transition(.opacity)
                     }
@@ -631,10 +631,10 @@ private struct CheapMortarVisual: View {
                                 }
                             }
                             if tested {
-                                Text("Crumbles").font(.custom("EBGaramond-Bold", size: 15))
+                                Text("Crumbles").font(RenaissanceFont.ivFormula)
                                     .foregroundStyle(RenaissanceColors.errorRed)
                             }
-                            Text("No pozzolana").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
+                            Text("No pozzolana").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                         }
 
                         // Roman concrete block
@@ -652,10 +652,10 @@ private struct CheapMortarVisual: View {
                                     }
                                 }
                             if tested {
-                                Text("Holds").font(.custom("EBGaramond-Bold", size: 15))
+                                Text("Holds").font(RenaissanceFont.ivFormula)
                                     .foregroundStyle(RenaissanceColors.sageGreen)
                             }
-                            Text("With pozzolana").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
+                            Text("With pozzolana").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                         }
                     }
                     .position(x: w * 0.5, y: h * 0.4)
@@ -671,7 +671,7 @@ private struct CheapMortarVisual: View {
                         } label: {
                             HStack(spacing: 4) {
                                 Image(systemName: "hammer.fill").font(.system(size: 13))
-                                Text("Stress Test").font(.custom("EBGaramond-SemiBold", size: 15))
+                                Text("Stress Test").font(RenaissanceFont.ivLabel)
                             }
                             .foregroundStyle(color)
                             .padding(.horizontal, 12).padding(.vertical, 6)
@@ -682,7 +682,7 @@ private struct CheapMortarVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "1/3 the cost — 1/3 the strength", highlighted: true, fontSize: 15)
+                        FormulaText(text: "1/3 the cost — 1/3 the strength", highlighted: true)
                             .position(x: w * 0.5, y: h * 0.85)
                             .transition(.opacity)
                     }
@@ -778,17 +778,17 @@ private struct TileInterlockVisual: View {
                     HStack(spacing: 12) {
                         HStack(spacing: 4) {
                             RoundedRectangle(cornerRadius: 1).fill(brickRed.opacity(0.4)).frame(width: 12, height: 8)
-                            Text("Tegula").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
+                            Text("Tegula").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                         }
                         HStack(spacing: 4) {
                             Capsule().fill(brickRed.opacity(0.6)).frame(width: 4, height: 10)
-                            Text("Imbrix").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
+                            Text("Imbrix").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                         }
                     }
                     .position(x: cx, y: h * 0.2)
 
                     if step >= 3 {
-                        FormulaText(text: "No nails — gravity holds 3,000 tiles", highlighted: true, fontSize: 15)
+                        FormulaText(text: "No nails — gravity holds 3,000 tiles", highlighted: true)
                             .position(x: cx, y: h * 0.85)
                             .transition(.opacity)
                     }
@@ -856,7 +856,7 @@ private struct GlassMicaVisual: View {
                                 checkBoth()
                             }
                         if tappedGlass {
-                            Text("Clear — expensive").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(RenaissanceColors.ochre)
+                            Text("Clear — expensive").font(RenaissanceFont.ivBody).foregroundStyle(RenaissanceColors.ochre)
                                 .transition(.opacity)
                         }
                     }
@@ -893,14 +893,14 @@ private struct GlassMicaVisual: View {
                                 checkBoth()
                             }
                         if tappedMica {
-                            Text("Translucent — cheap").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(RenaissanceColors.sageGreen)
+                            Text("Translucent — cheap").font(RenaissanceFont.ivBody).foregroundStyle(RenaissanceColors.sageGreen)
                                 .transition(.opacity)
                         }
                     }
                     .position(x: w * 0.7, y: h * 0.4)
 
                     if step >= 3 {
-                        FormulaText(text: "Light was a luxury — priced by floor", highlighted: true, fontSize: 15)
+                        FormulaText(text: "Light was a luxury — priced by floor", highlighted: true)
                             .position(x: w * 0.5, y: h * 0.85)
                             .transition(.opacity)
                     }
@@ -964,16 +964,16 @@ private struct BeamDepthVisual: View {
                     DimLine(from: CGPoint(x: cx - beamW * 0.5, y: beamY + beamH + 10),
                             to: CGPoint(x: cx + beamW * 0.5, y: beamY + beamH + 10))
                         .stroke(IVMaterialColors.dimColor, lineWidth: 0.8)
-                    DimLabel(text: String(format: "%.1fm span", spanM), fontSize: 15)
+                    DimLabel(text: String(format: "%.1fm span", spanM))
                         .position(x: cx, y: beamY + beamH + 22)
 
                     // Depth dimension
-                    DimLabel(text: "\(depthCm)cm deep", fontSize: 15)
+                    DimLabel(text: "\(depthCm)cm deep")
                         .position(x: cx + beamW * 0.5 + 30, y: beamY)
 
                     // Formula
                     FormulaText(text: "Depth = \(String(format: "%.1f", spanM))m ÷ 20 = \(depthCm)cm",
-                               highlighted: step >= 3, fontSize: 15)
+                               highlighted: step >= 3)
                         .position(x: cx, y: h * 0.12)
 
                     // Slider
@@ -1034,9 +1034,9 @@ private struct OakPoplarFireVisual: View {
                                             .offset(y: -h * 0.12)
                                     }
                                 }
-                            Text("Lower floors").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
+                            Text("Lower floors").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                             if fireStarted {
-                                Text("Resists").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(RenaissanceColors.sageGreen)
+                                Text("Resists").font(RenaissanceFont.ivFormula).foregroundStyle(RenaissanceColors.sageGreen)
                                     .transition(.opacity)
                             }
                         }
@@ -1056,9 +1056,9 @@ private struct OakPoplarFireVisual: View {
                                         .offset(y: -h * 0.08)
                                 }
                             }
-                            Text("Upper floors").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
+                            Text("Upper floors").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                             if fireStarted {
-                                Text("Burns!").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(RenaissanceColors.errorRed)
+                                Text("Burns!").font(RenaissanceFont.ivFormula).foregroundStyle(RenaissanceColors.errorRed)
                                     .transition(.opacity)
                             }
                         }
@@ -1077,7 +1077,7 @@ private struct OakPoplarFireVisual: View {
                         } label: {
                             HStack(spacing: 4) {
                                 Image(systemName: "flame.fill").font(.system(size: 13))
-                                Text("Fire Test").font(.custom("EBGaramond-SemiBold", size: 15))
+                                Text("Fire Test").font(RenaissanceFont.ivLabel)
                             }
                             .foregroundStyle(.orange)
                             .padding(.horizontal, 12).padding(.vertical, 6)
@@ -1088,7 +1088,7 @@ private struct OakPoplarFireVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "40% lighter — but fire starts where the cheapest wood is", highlighted: true, fontSize: 15)
+                        FormulaText(text: "40% lighter — but fire starts where the cheapest wood is", highlighted: true)
                             .position(x: w * 0.5, y: h * 0.85)
                             .transition(.opacity)
                     }
@@ -1150,7 +1150,7 @@ private struct AgedLimeVisual: View {
 
                     // Consistency label
                     Text(months < 1 ? "Runny" : months < 3 ? "Thickening..." : "Thick yogurt")
-                        .font(.custom("EBGaramond-SemiBold", size: 15))
+                        .font(RenaissanceFont.ivLabel)
                         .foregroundStyle(isReady ? RenaissanceColors.sageGreen : IVMaterialColors.sepiaInk)
                         .position(x: cx, y: h * 0.55)
 
@@ -1173,7 +1173,7 @@ private struct AgedLimeVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "Patience = no hot spots = stronger mortar", highlighted: true, fontSize: 15)
+                        FormulaText(text: "Patience = no hot spots = stronger mortar", highlighted: true)
                             .position(x: cx, y: h * 0.85)
                             .transition(.opacity)
                     }
@@ -1259,7 +1259,7 @@ private struct BrickFiringVisual: View {
                 Text(isTooLow ? (tempC < 400 ? "Raw clay" : "Under-fired — crumbly") :
                      isPerfect ? "Perfect — rings when tapped!" :
                      isTooHigh ? "Over-fired — brittle!" : "Warming...")
-                    .font(.custom("EBGaramond-SemiBold", size: 15))
+                    .font(RenaissanceFont.ivLabel)
                     .foregroundStyle(isPerfect ? RenaissanceColors.sageGreen : (isTooHigh ? RenaissanceColors.errorRed : IVMaterialColors.sepiaInk))
 
                 // Slider
@@ -1271,11 +1271,11 @@ private struct BrickFiringVisual: View {
                             if isPerfect { withAnimation { step = 3 } }
                         }
                     HStack {
-                        Text("0°C").font(.custom("EBGaramond-Regular", size: 15))
+                        Text("0°C").font(RenaissanceFont.ivBody)
                         Spacer()
-                        Text("950°C").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(RenaissanceColors.sageGreen)
+                        Text("950°C").font(RenaissanceFont.ivBody).foregroundStyle(RenaissanceColors.sageGreen)
                         Spacer()
-                        Text("1200°C").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(RenaissanceColors.errorRed)
+                        Text("1200°C").font(RenaissanceFont.ivBody).foregroundStyle(RenaissanceColors.errorRed)
                     }
                     .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                     .frame(width: 200)

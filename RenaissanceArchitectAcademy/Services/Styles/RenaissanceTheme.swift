@@ -34,6 +34,14 @@ enum RenaissanceFont {
     static let tagline     = Font.custom("PetitFormalScript-Regular", size: 20, relativeTo: .title3)
     static let dialogTitle = Font.custom("EBGaramond-SemiBold", size: 22, relativeTo: .title2)
     static let dialogSubtitle = Font.custom("EBGaramond-Regular", size: 14, relativeTo: .caption)
+
+    // Interactive Visual labels inside knowledge cards
+    // (edit these to change all card diagram text at once)
+    static let ivLabel   = Font.custom("EBGaramond-SemiBold", size: 28, relativeTo: .body)
+    static let ivFormula = Font.custom("EBGaramond-Bold",     size: 28, relativeTo: .body)
+    static let ivBody    = Font.custom("EBGaramond-Regular",  size: 28, relativeTo: .body)
+    static let ivButton  = Font.custom("EBGaramond-SemiBold", size: 28, relativeTo: .body)
+    static let ivSmall   = Font.custom("EBGaramond-Regular",  size: 22, relativeTo: .body)  // For dense labels/subscripts
 }
 
 // MARK: - 2. Letter Spacing (Tracking)

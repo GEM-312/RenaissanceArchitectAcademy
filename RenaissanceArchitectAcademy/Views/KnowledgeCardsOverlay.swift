@@ -634,7 +634,7 @@ struct KnowledgeCardsOverlay: View {
                     // Interactive science visual
                     if let visual = card.visual {
                         CardVisualView(visual: visual, color: card.color, containerHeight: flippedH)
-                            .frame(minHeight: flippedH * 0.4)
+                            .fixedSize(horizontal: false, vertical: true)
                             .opacity(animateFlippedStory ? 1 : 0)
                     }
 
@@ -660,7 +660,8 @@ struct KnowledgeCardsOverlay: View {
                 }
             }
 
-            Spacer(minLength: 6)
+            // Small gap before the action button — previously Spacer(minLength: 6)
+            // caused a large empty zone when the visual was short.
 
             if !isCompleted {
                 Button {

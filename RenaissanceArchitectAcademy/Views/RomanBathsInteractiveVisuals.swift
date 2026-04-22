@@ -160,7 +160,7 @@ private struct ThermaeFloorPlanVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "6 rooms — one ticket — almost free", highlighted: true, fontSize: 15)
+                        FormulaText(text: "6 rooms — one ticket — almost free", highlighted: true)
                             .position(x: w * 0.5, y: h * 0.88)
                             .transition(.opacity)
                     }
@@ -278,9 +278,9 @@ private struct HypocaustVisual: View {
                     }
 
                     // Labels
-                    DimLabel(text: "Floor", fontSize: 15)
+                    DimLabel(text: "Floor")
                         .position(x: w * 0.87, y: floorY - 8)
-                    DimLabel(text: "Pilae", fontSize: 15)
+                    DimLabel(text: "Pilae")
                         .position(x: w * 0.87, y: floorY + h * 0.08)
 
                     // Action button
@@ -298,7 +298,7 @@ private struct HypocaustVisual: View {
                                 Image(systemName: heatPhase == 0 ? "flame.fill" : "arrow.right")
                                     .font(.system(size: 13))
                                 Text(heatPhase == 0 ? "Light Furnace" : "Flow →")
-                                    .font(.custom("EBGaramond-SemiBold", size: 15))
+                                    .font(RenaissanceFont.ivLabel)
                             }
                             .foregroundStyle(IVMaterialColors.hotRed)
                             .padding(.horizontal, 12).padding(.vertical, 6)
@@ -309,7 +309,7 @@ private struct HypocaustVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "Full circuit: furnace → floor → walls → roof", highlighted: true, fontSize: 15)
+                        FormulaText(text: "Full circuit: furnace → floor → walls → roof", highlighted: true)
                             .position(x: cx, y: h * 0.88)
                             .transition(.opacity)
                     }
@@ -397,7 +397,7 @@ private struct CastellumVisual: View {
 
                         if !outlet.active {
                             Text("OFF")
-                                .font(.custom("EBGaramond-Bold", size: 15))
+                                .font(RenaissanceFont.ivFormula)
                                 .foregroundStyle(RenaissanceColors.errorRed.opacity(0.5))
                                 .position(x: pipeEndX + 25, y: oy + 10)
                         }
@@ -418,7 +418,7 @@ private struct CastellumVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "Gravity rations — no valves needed", highlighted: true, fontSize: 15)
+                        FormulaText(text: "Gravity rations — no valves needed", highlighted: true)
                             .position(x: cx, y: h * 0.88)
                             .transition(.opacity)
                     }
@@ -538,7 +538,7 @@ private struct BathGradientVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "15°C → 28°C → 40°C — gradual acclimatization", highlighted: true, fontSize: 15)
+                        FormulaText(text: "15°C → 28°C → 40°C — gradual acclimatization", highlighted: true)
                             .position(x: cx, y: h * 0.85)
                             .transition(.opacity)
                     }
@@ -599,11 +599,11 @@ private struct DrainFlowVisual: View {
                     }
                     .stroke(IVMaterialColors.stoneGray.opacity(0.4), lineWidth: 2)
 
-                    DimLabel(text: "Cloaca Maxima", fontSize: 15)
+                    DimLabel(text: "Cloaca Maxima")
                         .position(x: w * 0.85, y: h * 0.7)
 
                     // Slope annotation
-                    DimLabel(text: "2% slope", fontSize: 15)
+                    DimLabel(text: "2% slope")
                         .position(x: w * 0.65, y: floorY - 12)
 
                     // Water flow
@@ -638,7 +638,7 @@ private struct DrainFlowVisual: View {
                         } label: {
                             HStack(spacing: 4) {
                                 Image(systemName: "drop.fill").font(.system(size: 13))
-                                Text("Open Drain").font(.custom("EBGaramond-SemiBold", size: 15))
+                                Text("Open Drain").font(RenaissanceFont.ivLabel)
                             }
                             .foregroundStyle(IVMaterialColors.waterBlue)
                             .padding(.horizontal, 12).padding(.vertical, 6)
@@ -649,7 +649,7 @@ private struct DrainFlowVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "Zero waste — drain reused for latrines", highlighted: true, fontSize: 15)
+                        FormulaText(text: "Zero waste — drain reused for latrines", highlighted: true)
                             .position(x: cx, y: h * 0.85)
                             .transition(.opacity)
                     }
@@ -718,7 +718,7 @@ private struct BathWallLayersVisual: View {
                             Circle().fill(layers[i].color).frame(width: 8, height: 8)
                             VStack(alignment: .leading, spacing: 1) {
                                 Text(layers[i].name).font(.custom("Cinzel-Bold", size: 16))
-                                Text(layers[i].desc).font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
+                                Text(layers[i].desc).font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             }
                         }
                         .foregroundStyle(IVMaterialColors.sepiaInk)
@@ -739,7 +739,7 @@ private struct BathWallLayersVisual: View {
                         } label: {
                             HStack(spacing: 4) {
                                 Image(systemName: "rectangle.on.rectangle").font(.system(size: 13))
-                                Text("Peel Layer").font(.custom("EBGaramond-SemiBold", size: 15))
+                                Text("Peel Layer").font(RenaissanceFont.ivLabel)
                             }
                             .foregroundStyle(color)
                             .padding(.horizontal, 12).padding(.vertical, 6)
@@ -750,7 +750,7 @@ private struct BathWallLayersVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "Beauty → Waterproof → Structure", highlighted: true, fontSize: 15)
+                        FormulaText(text: "Beauty → Waterproof → Structure", highlighted: true)
                             .position(x: cx, y: h * 0.85)
                             .transition(.opacity)
                     }
@@ -783,7 +783,7 @@ private struct BathConcreteVisual: View {
             IVBlueprintGrid()
 
             VStack(spacing: 10) {
-                FormulaText(text: "1 Lime : 4 Pozzolana (extra silica)", highlighted: scoops >= 5, fontSize: 15)
+                FormulaText(text: "1 Lime : 4 Pozzolana (extra silica)", highlighted: scoops >= 5)
                     .padding(.top, 8)
 
                 // Ratio bar
@@ -810,7 +810,7 @@ private struct BathConcreteVisual: View {
                             withAnimation(.spring(response: 0.3)) { scoops = 1 }
                             SoundManager.shared.play(.tapSoft)
                         } label: {
-                            Text("+ Lime").font(.custom("EBGaramond-SemiBold", size: 15))
+                            Text("+ Lime").font(RenaissanceFont.ivLabel)
                                 .padding(.horizontal, 12).padding(.vertical, 6)
                                 .background(scoops >= 1 ? IVMaterialColors.stoneGray.opacity(0.1) : Color.white.opacity(0.3))
                                 .cornerRadius(6)
@@ -832,7 +832,7 @@ private struct BathConcreteVisual: View {
                                 }
                             }
                         } label: {
-                            Text("+ Pozzolana").font(.custom("EBGaramond-SemiBold", size: 15))
+                            Text("+ Pozzolana").font(RenaissanceFont.ivLabel)
                                 .padding(.horizontal, 12).padding(.vertical, 6)
                                 .background(Color(red: 0.65, green: 0.40, blue: 0.30).opacity(0.15))
                                 .cornerRadius(6)
@@ -869,14 +869,14 @@ private struct BathConcreteVisual: View {
                         }
 
                         Text(healed ? "Self-healed!" : "Micro-crack")
-                            .font(.custom("EBGaramond-Regular", size: 15))
+                            .font(RenaissanceFont.ivBody)
                             .foregroundStyle(healed ? RenaissanceColors.sageGreen : RenaissanceColors.errorRed)
                             .offset(y: 32)
                     }
                 }
 
                 if healed {
-                    FormulaText(text: "Extra silica fills cracks automatically", highlighted: true, fontSize: 15)
+                    FormulaText(text: "Extra silica fills cracks automatically", highlighted: true)
                 }
 
                 Spacer()
@@ -933,7 +933,7 @@ private struct GlassMakingVisual: View {
 
                     // Labels
                     Text(isMolten ? "Molten glass" : isMelting ? "Melting..." : "Sand (SiO₂)")
-                        .font(.custom("EBGaramond-SemiBold", size: 15))
+                        .font(RenaissanceFont.ivLabel)
                         .foregroundStyle(isMolten ? RenaissanceColors.sageGreen : IVMaterialColors.sepiaInk)
                         .position(x: cx, y: h * 0.18)
 
@@ -956,7 +956,7 @@ private struct GlassMakingVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "Pour flat → thick window → light floods in", highlighted: true, fontSize: 15)
+                        FormulaText(text: "Pour flat → thick window → light floods in", highlighted: true)
                             .position(x: cx, y: h * 0.85)
                             .transition(.opacity)
                     }
@@ -1058,7 +1058,7 @@ private struct TrussLoadVisual: View {
 
                     // Weight display
                     Text("\(tons) tons")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(isOverloaded ? RenaissanceColors.errorRed : IVMaterialColors.sepiaInk)
                         .position(x: cx, y: h * 0.12)
 
@@ -1077,11 +1077,11 @@ private struct TrussLoadVisual: View {
                     DimLine(from: CGPoint(x: cx - trussW * 0.5, y: h * 0.63),
                             to: CGPoint(x: cx + trussW * 0.5, y: h * 0.63))
                         .stroke(IVMaterialColors.dimColor, lineWidth: 0.8)
-                    DimLabel(text: "25 m span", fontSize: 15)
+                    DimLabel(text: "25 m span")
                         .position(x: cx, y: h * 0.66)
 
                     if step >= 3 {
-                        FormulaText(text: "Depth = span ÷ 20 = 1.25 m", highlighted: true, fontSize: 15)
+                        FormulaText(text: "Depth = span ÷ 20 = 1.25 m", highlighted: true)
                             .position(x: cx, y: h * 0.85)
                             .transition(.opacity)
                     }
@@ -1131,11 +1131,11 @@ private struct FurnaceGradientVisual: View {
 
                         // Temperature labels along bar
                         HStack {
-                            Text("300°C").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.hotRed)
+                            Text("300°C").font(RenaissanceFont.ivFormula).foregroundStyle(IVMaterialColors.hotRed)
                             Spacer()
-                            Text("120°C").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(warmOrange)
+                            Text("120°C").font(RenaissanceFont.ivBody).foregroundStyle(warmOrange)
                             Spacer()
-                            Text("40°C").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk)
+                            Text("40°C").font(RenaissanceFont.ivFormula).foregroundStyle(IVMaterialColors.sepiaInk)
                         }
                         .frame(width: w * 0.65)
                         .position(x: cx, y: h * 0.52)
@@ -1170,7 +1170,7 @@ private struct FurnaceGradientVisual: View {
                         } label: {
                             HStack(spacing: 4) {
                                 Image(systemName: "flame.fill").font(.system(size: 13))
-                                Text("Light Furnace").font(.custom("EBGaramond-SemiBold", size: 15))
+                                Text("Light Furnace").font(RenaissanceFont.ivLabel)
                             }
                             .foregroundStyle(IVMaterialColors.hotRed)
                             .padding(.horizontal, 12).padding(.vertical, 6)
@@ -1181,7 +1181,7 @@ private struct FurnaceGradientVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "Distance controls temperature — no thermostat needed", highlighted: true, fontSize: 15)
+                        FormulaText(text: "Distance controls temperature — no thermostat needed", highlighted: true)
                             .position(x: cx, y: h * 0.85)
                             .transition(.opacity)
                     }
@@ -1242,7 +1242,6 @@ private struct GlassRecipeVisual: View {
                 FormulaText(
                     text: step >= 6 ? "1,100°C → clear Roman glass" : "60% Silica + 15% Natron + 10% Lime + 15% Cullet",
                     highlighted: step >= 6,
-                    fontSize: 15
                 )
                 .padding(.top, 4)
 
@@ -1262,8 +1261,8 @@ private struct GlassRecipeVisual: View {
                         let isNext = i == ingredientsAdded && step < 6
                         let isDone = i < ingredientsAdded
                         VStack(spacing: 1) {
-                            Text(ingredients[i].pct).font(.custom("EBGaramond-Bold", size: 15))
-                            Text(ingredients[i].name).font(.custom("EBGaramond-Regular", size: 15))
+                            Text(ingredients[i].pct).font(RenaissanceFont.ivFormula)
+                            Text(ingredients[i].name).font(RenaissanceFont.ivBody)
                         }
                         .frame(width: 60, height: 40)
                         .background(isDone ? IVMaterialColors.stoneGray.opacity(0.1) : ingredients[i].color.opacity(0.25))
@@ -1363,7 +1362,7 @@ private struct VenturiEffectVisual: View {
 
                     // Air speed indicator
                     Text("\(airSpeed) m/s")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(isOptimal ? RenaissanceColors.sageGreen : IVMaterialColors.sepiaInk)
                         .position(x: cx, y: h * 0.15)
 
@@ -1378,9 +1377,9 @@ private struct VenturiEffectVisual: View {
                             }
 
                         HStack {
-                            Text("Wide").font(.custom("EBGaramond-Regular", size: 15))
+                            Text("Wide").font(RenaissanceFont.ivBody)
                             Spacer()
-                            Text("Narrow").font(.custom("EBGaramond-Regular", size: 15))
+                            Text("Narrow").font(RenaissanceFont.ivBody)
                         }
                         .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                         .frame(width: w * 0.5)
@@ -1388,7 +1387,7 @@ private struct VenturiEffectVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "Narrow = fast air = hotter fire", highlighted: true, fontSize: 15)
+                        FormulaText(text: "Narrow = fast air = hotter fire", highlighted: true)
                             .position(x: cx, y: h * 0.92)
                             .transition(.opacity)
                     }
@@ -1502,7 +1501,7 @@ private struct AmphoraVisual: View {
                     ForEach(0..<layersAdded, id: \.self) { i in
                         HStack(spacing: 4) {
                             Circle().fill(RenaissanceColors.sageGreen).frame(width: 6, height: 6)
-                            Text(parts[i].name).font(.custom("EBGaramond-Regular", size: 15))
+                            Text(parts[i].name).font(RenaissanceFont.ivBody)
                         }
                         .foregroundStyle(IVMaterialColors.sepiaInk)
                         .position(x: cx + ampW * 0.5 + 40, y: h * 0.25 + CGFloat(i) * 22)
@@ -1522,7 +1521,7 @@ private struct AmphoraVisual: View {
                         } label: {
                             HStack(spacing: 4) {
                                 Image(systemName: "plus.circle").font(.system(size: 13))
-                                Text("Add \(parts[layersAdded].name)").font(.custom("EBGaramond-SemiBold", size: 15))
+                                Text("Add \(parts[layersAdded].name)").font(RenaissanceFont.ivLabel)
                             }
                             .foregroundStyle(color)
                             .padding(.horizontal, 12).padding(.vertical, 6)
@@ -1533,7 +1532,7 @@ private struct AmphoraVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "Sealed, waterproof, airtight", highlighted: true, fontSize: 15)
+                        FormulaText(text: "Sealed, waterproof, airtight", highlighted: true)
                             .position(x: cx, y: h * 0.85)
                             .transition(.opacity)
                     }

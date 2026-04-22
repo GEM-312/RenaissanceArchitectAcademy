@@ -106,13 +106,13 @@ private struct BottegaVisual: View {
     }
     @ViewBuilder private func ageLabel(_ age: String, task: String) -> some View {
         VStack(spacing: 1) {
-            Text(age).font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.dimColor)
-            Text(task).font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
+            Text(age).font(RenaissanceFont.ivFormula).foregroundStyle(IVMaterialColors.dimColor)
+            Text(task).font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
         }
     }
     @ViewBuilder private func disciplinePill(_ text: String, icon: String) -> some View {
         Label(text, systemImage: icon)
-            .font(.custom("EBGaramond-Regular", size: 15))
+            .font(RenaissanceFont.ivBody)
             .foregroundStyle(color.opacity(0.7))
             .padding(.horizontal, 6).padding(.vertical, 3)
             .background(RoundedRectangle(cornerRadius: 3).fill(color.opacity(0.06)))
@@ -280,7 +280,7 @@ private struct WaterTankVisual: View {
             .overlay(alignment: .bottom) {
                 if step >= 3 {
                     Text("730 drawings")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(color)
                         .offset(y: -28)
                 }
@@ -366,13 +366,13 @@ private struct WhiteWallsVisual: View {
                         .foregroundStyle(IVMaterialColors.sepiaInk.opacity(step >= 2 ? 0.4 : 0.3))
                     if step >= 2 {
                         Text("40%")
-                            .font(.custom("EBGaramond-Bold", size: 15))
+                            .font(RenaissanceFont.ivFormula)
                             .foregroundStyle(IVMaterialColors.dimColor.opacity(0.5))
                     }
                 }
                 if step >= 2 {
                     Text("vs")
-                        .font(.custom("EBGaramond-Regular", size: 15))
+                        .font(RenaissanceFont.ivBody)
                         .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3))
                 }
                 // Lime plaster
@@ -386,7 +386,7 @@ private struct WhiteWallsVisual: View {
                         .foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                     if step >= 2 {
                         Text("85%")
-                            .font(.custom("EBGaramond-Bold", size: 15))
+                            .font(RenaissanceFont.ivFormula)
                             .foregroundStyle(color)
                     }
                 }
@@ -473,11 +473,11 @@ private struct CastingSandVisual: View {
                         .font(.custom("Cinzel-Bold", size: 16))
                         .foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                     Text("Clay-rich")
-                        .font(.custom("EBGaramond-Regular", size: 15))
+                        .font(RenaissanceFont.ivBody)
                         .foregroundStyle(step >= 2 ? IVMaterialColors.dimColor : IVMaterialColors.dimColor.opacity(0.3))
                     if step >= 2 {
                         Text("→ Casting")
-                            .font(.custom("EBGaramond-Bold", size: 15))
+                            .font(RenaissanceFont.ivFormula)
                             .foregroundStyle(color)
                     }
                 }
@@ -491,11 +491,11 @@ private struct CastingSandVisual: View {
                         .font(.custom("Cinzel-Bold", size: 16))
                         .foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                     Text("Pure SiO₂")
-                        .font(.custom("EBGaramond-Regular", size: 15))
+                        .font(RenaissanceFont.ivBody)
                         .foregroundStyle(step >= 3 ? IVMaterialColors.dimColor : IVMaterialColors.dimColor.opacity(0.3))
                     if step >= 3 {
                         Text("→ Polishing")
-                            .font(.custom("EBGaramond-Bold", size: 15))
+                            .font(RenaissanceFont.ivFormula)
                             .foregroundStyle(color)
                     }
                 }
@@ -546,12 +546,12 @@ private struct CustomToolsVisual: View {
                             .frame(width: 30, height: 2)
                     }
                     Text("Wire die → uniform wire")
-                        .font(.custom("EBGaramond-Regular", size: 15))
+                        .font(RenaissanceFont.ivBody)
                         .foregroundStyle(IVMaterialColors.dimColor)
                 }
                 if step >= 3 {
                     Text("Carburize: Fe + C → hardened")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(color)
                 }
             }
@@ -630,7 +630,7 @@ private struct PoplarPanelVisual: View {
                             .frame(width: 59, height: 79)
                             .overlay(
                                 Text("Gesso")
-                                    .font(.custom("EBGaramond-Regular", size: 15))
+                                    .font(RenaissanceFont.ivBody)
                                     .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3))
                             )
                     }
@@ -643,12 +643,12 @@ private struct PoplarPanelVisual: View {
 
                 if step >= 1 {
                     Text("77 × 53 cm")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(IVMaterialColors.dimColor)
                 }
                 if step >= 3 {
                     Text("Poplar — humblest wood")
-                        .font(.custom("EBGaramond-Regular", size: 15))
+                        .font(RenaissanceFont.ivBody)
                         .foregroundStyle(color)
                 }
             }
@@ -678,7 +678,7 @@ private struct PigmentGrindVisual: View {
                         .foregroundStyle(step >= 1 ? ultraBlue : ultraBlue.opacity(0.3))
                     if step >= 2 {
                         Text("3 hours")
-                            .font(.custom("EBGaramond-Bold", size: 15))
+                            .font(RenaissanceFont.ivFormula)
                             .foregroundStyle(IVMaterialColors.dimColor)
                     }
                 }
@@ -693,7 +693,7 @@ private struct PigmentGrindVisual: View {
                         .foregroundStyle(step >= 1 ? ochreYellow : ochreYellow.opacity(0.3))
                     if step >= 2 {
                         Text("1 hour")
-                            .font(.custom("EBGaramond-Bold", size: 15))
+                            .font(RenaissanceFont.ivFormula)
                             .foregroundStyle(IVMaterialColors.dimColor)
                     }
                 }
@@ -704,10 +704,10 @@ private struct PigmentGrindVisual: View {
                             .font(.custom("Cinzel-Bold", size: 16))
                             .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3))
                         Text("Linseed")
-                            .font(.custom("EBGaramond-Regular", size: 15))
+                            .font(RenaissanceFont.ivBody)
                             .foregroundStyle(IVMaterialColors.dimColor)
                         Text("= Paint")
-                            .font(.custom("EBGaramond-Bold", size: 15))
+                            .font(RenaissanceFont.ivFormula)
                             .foregroundStyle(color)
                     }
                 }
@@ -734,7 +734,7 @@ private struct LostWaxVisual: View {
                     ForEach(Array(stages.enumerated()), id: \.offset) { i, stage in
                         let active = (step == 1 && i < 2) || (step == 2 && i < 4) || step >= 3
                         Text(stage)
-                            .font(.custom("EBGaramond-Regular", size: 15))
+                            .font(RenaissanceFont.ivBody)
                             .foregroundStyle(active ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.2))
                             .padding(.horizontal, 4).padding(.vertical, 3)
                             .background(RoundedRectangle(cornerRadius: 2).fill(active ? color.opacity(0.08) : Color.clear))
@@ -749,7 +749,7 @@ private struct LostWaxVisual: View {
 
                 if step >= 3 {
                     Text("70 tons planned for the Giant Horse")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(IVMaterialColors.bronzeGold)
                 }
             }
