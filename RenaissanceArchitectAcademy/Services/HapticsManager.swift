@@ -15,21 +15,71 @@ class HapticsManager {
     #if os(iOS)
     private var engine: CHHapticEngine?
     private let supportsHaptics: Bool
+    private var engineIsRunning: Bool = false
     #endif
 
     private init() {
         #if os(iOS)
         supportsHaptics = CHHapticEngine.capabilitiesForHardware().supportsHaptics
         if supportsHaptics {
-            do {
-                engine = try CHHapticEngine()
-                engine?.isAutoShutdownEnabled = true
-            } catch {
-                print("HapticsManager: engine init failed: \(error)")
-            }
+            createEngine()
         }
         #endif
     }
+
+    #if os(iOS)
+    /// Rebuild the engine + install stopped/reset handlers so we can recover from
+    /// iOS auto-shutdown or silent failures (the -4805 error spam).
+    private func createEngine() {
+        do {
+            let newEngine = try CHHapticEngine()
+            newEngine.isAutoShutdownEnabled = true
+
+            // When iOS kills the engine (app background, audio route change, etc.),
+            // mark it as not-running so the next play() call recreates it.
+            newEngine.stoppedHandler = { [weak self] reason in
+                print("HapticsManager: engine stopped — \(reason)")
+                Task { @MainActor in self?.engineIsRunning = false }
+            }
+            // On reset (transient system issue), try to restart in place.
+            newEngine.resetHandler = { [weak self] in
+                print("HapticsManager: engine reset — restarting")
+                Task { @MainActor in
+                    self?.engineIsRunning = false
+                    try? self?.engine?.start()
+                    self?.engineIsRunning = true
+                }
+            }
+
+            engine = newEngine
+        } catch {
+            print("HapticsManager: engine init failed: \(error)")
+            engine = nil
+        }
+    }
+
+    /// Ensure the engine is running before a pattern play. Retries once if start fails.
+    private func ensureEngineRunning() -> Bool {
+        guard let engine else { return false }
+        if engineIsRunning { return true }
+        do {
+            try engine.start()
+            engineIsRunning = true
+            return true
+        } catch {
+            print("HapticsManager: engine start failed (\(error)) — recreating")
+            createEngine()
+            do {
+                try engine.start()
+                engineIsRunning = true
+                return true
+            } catch {
+                print("HapticsManager: engine start failed again: \(error)")
+                return false
+            }
+        }
+    }
+    #endif
 
     // MARK: - Haptic Events
 
@@ -87,14 +137,17 @@ class HapticsManager {
     // MARK: - Complex Patterns (CoreHaptics)
 
     private func playPattern(_ events: [CHHapticEvent]) {
-        guard let engine else { return }
+        guard let engine, ensureEngineRunning() else {
+            simpleImpact(.medium)
+            return
+        }
         do {
-            try engine.start()
             let pattern = try CHHapticPattern(events: events, parameters: [])
             let player = try engine.makePlayer(with: pattern)
             try player.start(atTime: 0)
         } catch {
             // Fallback to simple impact
+            print("HapticsManager: pattern play failed: \(error)")
             simpleImpact(.medium)
         }
     }
