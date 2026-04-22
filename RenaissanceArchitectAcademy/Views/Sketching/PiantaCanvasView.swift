@@ -56,6 +56,7 @@ struct PiantaCanvasView: View {
     @State private var blueprintImage: PlatformImage? = nil
     @State private var isRenderingBlueprint = false
     @State private var showBlueprint = false
+    @State private var blueprintAwaitingTap = false
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     private var isLargeScreen: Bool { horizontalSizeClass == .regular }
@@ -1367,8 +1368,14 @@ struct PiantaCanvasView: View {
                     showBlueprint = true
                     isRenderingBlueprint = false
                 }
-                // Dwell so the student can admire the bloom, then navigate
-                try? await Task.sleep(nanoseconds: 3_000_000_000)
+                // Dwell so the student can admire the bloom. Tap-to-continue
+                // advances early; otherwise we auto-advance after 8s.
+                showBirdSpeechBriefly("Tap anywhere to continue")
+                blueprintAwaitingTap = true
+                for _ in 0..<80 where blueprintAwaitingTap {
+                    try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s ticks → 8s total
+                }
+                blueprintAwaitingTap = false
                 showCompletion = true
                 onComplete([.pianta])
             } catch {
@@ -1431,22 +1438,20 @@ struct PiantaCanvasView: View {
 
         if showBlueprint, let blueprint = blueprintImage {
             #if os(iOS)
-            Image(uiImage: blueprint)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: canvasSize, height: canvasSize)
-                .position(x: canvasOriginX + canvasSize / 2, y: canvasSize / 2)
-                .transition(.opacity)
-                .allowsHitTesting(false)
+            let img = Image(uiImage: blueprint)
             #else
-            Image(nsImage: blueprint)
+            let img = Image(nsImage: blueprint)
+            #endif
+            img
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: canvasSize, height: canvasSize)
                 .position(x: canvasOriginX + canvasSize / 2, y: canvasSize / 2)
                 .transition(.opacity)
-                .allowsHitTesting(false)
-            #endif
+                .onTapGesture {
+                    // Advance early when the student taps
+                    blueprintAwaitingTap = false
+                }
         }
     }
 }
