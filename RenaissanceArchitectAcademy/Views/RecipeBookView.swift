@@ -55,44 +55,23 @@ struct RecipeBookView: View {
         let bookWidth: CGFloat = isLarge ? 520 : 360
         let bookHeight: CGFloat = isLarge ? 560 : 560
 
-        // Book cover/page backdrop — prefers the Midjourney "BookBackground" image
-        // when present, falls back to a parchment fill + warm gradient.
-        let hasCustomBackground: Bool = {
-            #if os(iOS)
-            return UIImage(named: "BookBackground") != nil
-            #else
-            return NSImage(named: "BookBackground") != nil
-            #endif
-        }()
-
         return ZStack {
-            if hasCustomBackground {
-                Image("BookBackground")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .clipShape(RoundedRectangle(cornerRadius: 18))
-            } else {
-                RoundedRectangle(cornerRadius: 18)
-                    .fill(RenaissanceColors.parchment)
-                RoundedRectangle(cornerRadius: 18)
-                    .fill(
-                        LinearGradient(
-                            colors: [RenaissanceColors.warmBrown.opacity(0.10), .clear],
-                            startPoint: .top, endPoint: .bottom
-                        )
+            RoundedRectangle(cornerRadius: 18)
+                .fill(RenaissanceColors.parchment)
+            RoundedRectangle(cornerRadius: 18)
+                .fill(
+                    LinearGradient(
+                        colors: [RenaissanceColors.warmBrown.opacity(0.10), .clear],
+                        startPoint: .top, endPoint: .bottom
                     )
-            }
+                )
 
             #if os(iOS)
             PageCurlContainer(pageCount: pages.count, currentPage: $pageIndex) { index in
                 pageBody(for: pages[index])
                     .padding(isLarge ? 28 : 20)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                    .background(
-                        hasCustomBackground
-                            ? AnyView(Color.clear)
-                            : AnyView(RenaissanceColors.parchment)
-                    )
+                    .background(RenaissanceColors.parchment)
             }
             .clipShape(RoundedRectangle(cornerRadius: 18))
             #else
