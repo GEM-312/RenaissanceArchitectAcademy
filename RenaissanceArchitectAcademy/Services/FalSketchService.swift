@@ -43,22 +43,23 @@ typealias PlatformImage = NSImage
 
         var viewDescription: String {
             switch self {
-            case .pianta:      return "floor plan, top-down orthographic view, preserving walls, columns, and rooms"
-            case .alzato:      return "front elevation, preserving facade proportions, ornament, and symmetry"
-            case .sezione:     return "architectural cross-section, preserving interior layering, arches, and load paths"
-            case .prospettiva: return "one-point perspective rendering, preserving vanishing points and spatial depth"
+            case .pianta:      return "floor plan — strict top-down plan view, no perspective, no 3D"
+            case .alzato:      return "front elevation — strict orthographic front view, no perspective"
+            case .sezione:     return "architectural cross-section — strict vertical cut view, no perspective"
+            case .prospettiva: return "one-point perspective rendering with a single vanishing point"
             }
         }
     }
 
-    private static let baseStyle = """
-        Leonardo da Vinci Renaissance architectural blueprint. Sepia ink line work on \
-        aged parchment, delicate watercolor wash, elegant classical style. Clean, \
-        refined, museum-quality.
-        """
-
     private static func stylePrompt(for phase: SketchPhase) -> String {
-        "Transform this \(phase.viewDescription). \(baseStyle)"
+        """
+        Redraw this sketch as a precise Renaissance architectural drawing: a \
+        \(phase.viewDescription). Sepia ink line work on aged parchment with a \
+        delicate watercolor wash, in the style of a Leonardo da Vinci technical \
+        notebook page. Preserve the EXACT layout of every wall, column, and circle \
+        from the input. Crisp geometric lines, accurate proportions, no decorative \
+        corner elements, no ornamental flourishes, no 3D or isometric details.
+        """
     }
 
     // MARK: - State
@@ -177,7 +178,9 @@ typealias PlatformImage = NSImage
         let body: [String: Any] = [
             "prompt": Self.stylePrompt(for: phase),
             "image_url": imageDataURL,
-            "guidance_scale": 3.5,
+            // Default is 3.5; higher = more strict adherence to prompt + input layout.
+            // 6.0 seems to keep Flux from simplifying multi-column colonnades into 4-5 columns.
+            "guidance_scale": 6.0,
             "num_images": 1,
             "output_format": "png"
         ]

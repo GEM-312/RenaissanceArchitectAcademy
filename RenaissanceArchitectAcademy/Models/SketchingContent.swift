@@ -44,7 +44,7 @@ enum SketchingContent {
                         ),
                         RoomDefinition(
                             label: "Portico",
-                            origin: GridCoord(row: 9, col: 2),
+                            origin: GridCoord(row: 8, col: 2),  // top row touches the rotunda's bottom — no gap
                             width: 8,                           // matches the iconic 8-column façade
                             height: 3,
                             requiredRatio: ProportionalRatio(numerator: 8, denominator: 3),
@@ -53,24 +53,24 @@ enum SketchingContent {
                     ],
                     targetColumns: [
                         // Front row — the iconic 8-column façade
-                        GridCoord(row: 11, col: 2),
-                        GridCoord(row: 11, col: 3),
-                        GridCoord(row: 11, col: 4),
-                        GridCoord(row: 11, col: 5),
-                        GridCoord(row: 11, col: 6),
-                        GridCoord(row: 11, col: 7),
-                        GridCoord(row: 11, col: 8),
-                        GridCoord(row: 11, col: 9),
-                        // Middle row — 4 columns flanking the entrance axis
                         GridCoord(row: 10, col: 2),
                         GridCoord(row: 10, col: 3),
+                        GridCoord(row: 10, col: 4),
+                        GridCoord(row: 10, col: 5),
+                        GridCoord(row: 10, col: 6),
+                        GridCoord(row: 10, col: 7),
                         GridCoord(row: 10, col: 8),
                         GridCoord(row: 10, col: 9),
-                        // Back row (against rotunda) — 4 pronaos columns
+                        // Middle row — 4 columns flanking the entrance axis
                         GridCoord(row: 9, col: 2),
                         GridCoord(row: 9, col: 3),
                         GridCoord(row: 9, col: 8),
-                        GridCoord(row: 9, col: 9)
+                        GridCoord(row: 9, col: 9),
+                        // Back row (against rotunda seam) — 4 pronaos columns
+                        GridCoord(row: 8, col: 2),
+                        GridCoord(row: 8, col: 3),
+                        GridCoord(row: 8, col: 8),
+                        GridCoord(row: 8, col: 9)
                     ],
                     symmetryAxis: .vertical,
                     proportionalRatios: [
