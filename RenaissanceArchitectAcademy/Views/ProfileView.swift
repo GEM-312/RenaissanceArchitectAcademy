@@ -190,6 +190,10 @@ struct ProfileView: View {
                         onBackToMenu: onBackToMenu
                     )
                 }
+
+                #if DEBUG
+                DebugSubscriptionToggle()
+                #endif
             }
             .padding()
         }
@@ -816,6 +820,47 @@ struct ProfileNavRow: View {
         .buttonStyle(.plain)
     }
 }
+
+#if DEBUG
+// MARK: - DEBUG: Subscription toggle
+/// Lets you flip `GameSettings.shared.isSubscribed` in dev builds so you can
+/// test the Apprentice-tier sketch bloom without wiring up real StoreKit.
+/// Removed automatically from release builds via `#if DEBUG`.
+struct DebugSubscriptionToggle: View {
+    @State private var isSubscribed: Bool = GameSettings.shared.isSubscribed
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("DEBUG")
+                .font(.custom("Cinzel-Bold", size: 12))
+                .foregroundStyle(RenaissanceColors.errorRed.opacity(0.8))
+
+            Toggle(isOn: $isSubscribed) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Apprentice subscription")
+                        .font(.custom("EBGaramond-Regular", size: 14))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                    Text("Unlocks watercolor sketch bloom after Pianta")
+                        .font(.custom("EBGaramond-Regular", size: 11))
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+                }
+            }
+            .onChange(of: isSubscribed) { _, newValue in
+                GameSettings.shared.isSubscribed = newValue
+            }
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 6)
+                .fill(RenaissanceColors.parchment.opacity(0.9))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 6)
+                        .stroke(RenaissanceColors.errorRed.opacity(0.4), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                )
+        )
+    }
+}
+#endif
 
 // MARK: - Preview
 #Preview {

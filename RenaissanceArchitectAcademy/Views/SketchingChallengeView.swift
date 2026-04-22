@@ -250,7 +250,7 @@ struct SketchingChallengeView: View {
             // Phase content (only Pianta supported — other phases removed Apr 21 2026)
             switch phase.phaseData {
             case .pianta(let data):
-                PiantaCanvasView(phaseData: data) { phases in
+                PiantaCanvasView(phaseData: data, buildingName: challenge.buildingName) { phases in
                     completedPhases.formUnion(phases)
                     advanceOrComplete()
                 }

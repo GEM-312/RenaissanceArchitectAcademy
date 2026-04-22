@@ -31,12 +31,35 @@ typealias PlatformImage = NSImage
     private static let pollInterval: TimeInterval = 1.0
     private static let timeoutInterval: TimeInterval = 90.0
 
-    private static let stylePrompt = """
-        Transform this floor plan sketch into a Leonardo da Vinci Renaissance \
-        architectural blueprint. Sepia ink line work on aged parchment, delicate \
-        watercolor wash, elegant classical style. Preserve the exact layout of \
-        walls, columns, and rooms. Clean, refined, museum-quality.
+    /// Which architectural view the student is sketching. Each phase gets its own
+    /// prompt wording and its own cache slot, so a building rendered in multiple
+    /// phases produces distinct blueprints (one per view).
+    ///
+    /// Currently only `.pianta` is wired into the apprentice UI; the other three
+    /// cases exist so the service is ready when architect-tier brings back
+    /// Alzato / Sezione / Prospettiva.
+    enum SketchPhase: String {
+        case pianta, alzato, sezione, prospettiva
+
+        var viewDescription: String {
+            switch self {
+            case .pianta:      return "floor plan, top-down orthographic view, preserving walls, columns, and rooms"
+            case .alzato:      return "front elevation, preserving facade proportions, ornament, and symmetry"
+            case .sezione:     return "architectural cross-section, preserving interior layering, arches, and load paths"
+            case .prospettiva: return "one-point perspective rendering, preserving vanishing points and spatial depth"
+            }
+        }
+    }
+
+    private static let baseStyle = """
+        Leonardo da Vinci Renaissance architectural blueprint. Sepia ink line work on \
+        aged parchment, delicate watercolor wash, elegant classical style. Clean, \
+        refined, museum-quality.
         """
+
+    private static func stylePrompt(for phase: SketchPhase) -> String {
+        "Transform this \(phase.viewDescription). \(baseStyle)"
+    }
 
     // MARK: - State
 
@@ -46,6 +69,7 @@ typealias PlatformImage = NSImage
     // MARK: - Errors
 
     enum RenderError: LocalizedError {
+        case notSubscribed
         case invalidKey
         case encodingFailed
         case networkFailed(String)
@@ -54,6 +78,7 @@ typealias PlatformImage = NSImage
 
         var errorDescription: String? {
             switch self {
+            case .notSubscribed: return "Blueprint rendering is an Apprentice-tier feature."
             case .invalidKey: return "fal.ai API key is missing or invalid."
             case .encodingFailed: return "Couldn't encode the sketch image."
             case .networkFailed(let msg): return "Network error: \(msg)"
@@ -67,11 +92,19 @@ typealias PlatformImage = NSImage
 
     /// Render a sketch into a Renaissance watercolor blueprint.
     /// - Parameters:
-    ///   - sketch: The student's sketch (PiantaCanvas render).
-    ///   - buildingId: Used as cache key — second call with same id returns instantly.
+    ///   - sketch: The student's sketch (from the phase's canvas view).
+    ///   - buildingId: Combined with `phase` as cache key — second call with same
+    ///     (buildingId, phase) returns instantly from disk.
+    ///   - phase: Which architectural view this sketch represents. Controls the
+    ///     style prompt and cache slot.
+    /// - Throws: `RenderError.notSubscribed` if the player isn't on a paid tier.
     /// - Returns: A Renaissance-styled PlatformImage.
-    func render(sketch: PlatformImage, buildingId: String) async throws -> PlatformImage {
-        if let cached = cachedBlueprint(for: buildingId) {
+    func render(sketch: PlatformImage, buildingId: String, phase: SketchPhase) async throws -> PlatformImage {
+        guard GameSettings.shared.isSubscribed else {
+            throw RenderError.notSubscribed
+        }
+
+        if let cached = cachedBlueprint(for: buildingId, phase: phase) {
             return cached
         }
 
@@ -88,17 +121,17 @@ typealias PlatformImage = NSImage
         }
         let dataURL = "data:image/png;base64,\(pngData.base64EncodedString())"
 
-        let requestId = try await submitRequest(imageDataURL: dataURL)
+        let requestId = try await submitRequest(imageDataURL: dataURL, phase: phase)
         let resultImageURL = try await pollForResult(requestId: requestId)
         let rendered = try await downloadImage(from: resultImageURL)
 
-        try? cacheBlueprint(rendered, for: buildingId)
+        try? cacheBlueprint(rendered, for: buildingId, phase: phase)
         return rendered
     }
 
-    /// Returns a previously-rendered blueprint from disk if one exists.
-    func cachedBlueprint(for buildingId: String) -> PlatformImage? {
-        let url = cacheURL(for: buildingId)
+    /// Returns a previously-rendered blueprint from disk if one exists for this (building, phase).
+    func cachedBlueprint(for buildingId: String, phase: SketchPhase) -> PlatformImage? {
+        let url = cacheURL(for: buildingId, phase: phase)
         guard let data = try? Data(contentsOf: url) else { return nil }
         return PlatformImage(data: data)
     }
@@ -111,14 +144,14 @@ typealias PlatformImage = NSImage
 
     // MARK: - Request flow
 
-    private func submitRequest(imageDataURL: String) async throws -> String {
+    private func submitRequest(imageDataURL: String, phase: SketchPhase) async throws -> String {
         var request = URLRequest(url: Self.submitURL)
         request.httpMethod = "POST"
         request.setValue("Key \(APIKeys.falAI)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         let body: [String: Any] = [
-            "prompt": Self.stylePrompt,
+            "prompt": Self.stylePrompt(for: phase),
             "image_url": imageDataURL,
             "guidance_scale": 3.5,
             "num_images": 1,
@@ -200,13 +233,13 @@ typealias PlatformImage = NSImage
         return dir
     }
 
-    private func cacheURL(for buildingId: String) -> URL {
-        cacheDirectory().appendingPathComponent("\(buildingId).png")
+    private func cacheURL(for buildingId: String, phase: SketchPhase) -> URL {
+        cacheDirectory().appendingPathComponent("\(buildingId)_\(phase.rawValue).png")
     }
 
-    private func cacheBlueprint(_ image: PlatformImage, for buildingId: String) throws {
+    private func cacheBlueprint(_ image: PlatformImage, for buildingId: String, phase: SketchPhase) throws {
         guard let data = image.pngData() else { throw RenderError.encodingFailed }
-        try data.write(to: cacheURL(for: buildingId))
+        try data.write(to: cacheURL(for: buildingId, phase: phase))
     }
 }
 

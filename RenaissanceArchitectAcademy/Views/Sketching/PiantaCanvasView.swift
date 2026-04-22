@@ -5,6 +5,7 @@ import Pow
 /// Squared grid where players draw walls, place columns, and create rooms
 struct PiantaCanvasView: View {
     let phaseData: PiantaPhaseData
+    let buildingName: String
     let onComplete: (Set<SketchingPhaseType>) -> Void
 
     // MARK: - State
@@ -50,6 +51,11 @@ struct PiantaCanvasView: View {
     // Canvas geometry (for bird positioning)
     @State private var canvasOriginXStored: CGFloat = 0
     @State private var canvasSizeStored: CGFloat = 300
+
+    // Blueprint render state (Apprentice subscription feature — see FalSketchService)
+    @State private var blueprintImage: PlatformImage? = nil
+    @State private var isRenderingBlueprint = false
+    @State private var showBlueprint = false
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     private var isLargeScreen: Bool { horizontalSizeClass == .regular }
@@ -146,6 +152,9 @@ struct PiantaCanvasView: View {
 
                     // Bird companion overlay
                     birdOverlay(canvasSize: canvasSize, cellSize: cellSize, canvasOriginX: canvasOriginX)
+
+                    // Blueprint bloom overlay (subscriber reward — covers the canvas when complete)
+                    blueprintBloomOverlay(canvasSize: canvasSize, canvasOriginX: canvasOriginX)
                 }
                 .frame(maxWidth: .infinity)
                 .changeEffect(
@@ -1292,10 +1301,7 @@ struct PiantaCanvasView: View {
             showSuccessEffect.toggle()
             birdCelebrate()
             showBirdSpeechBriefly("Magnifico! A true architect!")
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                showCompletion = true
-                onComplete([.pianta])
-            }
+            triggerBlueprintBloomIfSubscribed(cellSize: canvasSizeStored / CGFloat(gridSize))
         } else if !isNeat {
             // Bird gives neatness feedback
             showBirdSpeechBriefly(result.neatnessFeedback ?? "Clean up your plan!")
@@ -1313,6 +1319,130 @@ struct PiantaCanvasView: View {
             return "Too many columns! Place them only where needed."
         }
         return "Clean up your plan!"
+    }
+
+    // MARK: - Blueprint Bloom (Apprentice subscription reward)
+
+    /// Called from validation-success. For subscribers: snapshot the sketch,
+    /// call fal.ai, crossfade to the rendered blueprint, dwell, then fire onComplete.
+    /// For non-subscribers (or on error): falls through to the original
+    /// 1s-delay → onComplete flow. Failures are silent by design — the render is
+    /// a reward, not a gate.
+    @MainActor
+    private func triggerBlueprintBloomIfSubscribed(cellSize: CGFloat) {
+        guard GameSettings.shared.isSubscribed else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                showCompletion = true
+                onComplete([.pianta])
+            }
+            return
+        }
+
+        // Bird announces the bloom
+        showBirdSpeechBriefly("Painting your blueprint...")
+
+        // Snapshot the current sketch
+        guard let sketchImage = renderSketchSnapshot(cellSize: cellSize) else {
+            // Snapshot failed — silently fall through
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                showCompletion = true
+                onComplete([.pianta])
+            }
+            return
+        }
+
+        withAnimation(.easeIn(duration: 0.3)) { isRenderingBlueprint = true }
+
+        Task { @MainActor in
+            do {
+                let blueprint = try await FalSketchService.shared.render(
+                    sketch: sketchImage,
+                    buildingId: buildingName,
+                    phase: .pianta
+                )
+                blueprintImage = blueprint
+                withAnimation(.easeInOut(duration: 1.5)) {
+                    showBlueprint = true
+                    isRenderingBlueprint = false
+                }
+                // Dwell so the student can admire the bloom, then navigate
+                try? await Task.sleep(nanoseconds: 3_000_000_000)
+                showCompletion = true
+                onComplete([.pianta])
+            } catch {
+                // Silent failure — just proceed to completion
+                isRenderingBlueprint = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    showCompletion = true
+                    onComplete([.pianta])
+                }
+            }
+        }
+    }
+
+    /// Snapshot the sketch (walls + circles + columns on grid) as a PlatformImage
+    /// suitable for feeding to FalSketchService. Excludes hints, previews, validation
+    /// overlays, and the bird — we want the student's clean work.
+    @MainActor
+    private func renderSketchSnapshot(cellSize: CGFloat) -> PlatformImage? {
+        let canvasSize = cellSize * CGFloat(gridSize)
+        let snapshot = ZStack {
+            gridBackground(cellSize: cellSize, canvasSize: canvasSize)
+            ForEach(placedWalls) { wall in
+                wallPath(wall, cellSize: cellSize)
+            }
+            ForEach(placedCircles) { circle in
+                circleShape(circle, cellSize: cellSize)
+            }
+            ForEach(placedColumns) { col in
+                columnMarker(col, cellSize: cellSize)
+            }
+        }
+        .frame(width: canvasSize, height: canvasSize)
+        .background(Color.white)
+
+        let renderer = ImageRenderer(content: snapshot)
+        renderer.scale = 2.0
+        #if os(iOS)
+        return renderer.uiImage
+        #else
+        return renderer.nsImage
+        #endif
+    }
+
+    /// Overlay shown during and after the render. Sits inside the canvas frame
+    /// at full opacity once the blueprint is ready, replacing the sketch visually.
+    @ViewBuilder
+    private func blueprintBloomOverlay(canvasSize: CGFloat, canvasOriginX: CGFloat) -> some View {
+        if isRenderingBlueprint {
+            // Soft golden shimmer over the canvas while fal.ai renders
+            Rectangle()
+                .fill(RenaissanceColors.goldSuccess.opacity(0.15))
+                .frame(width: canvasSize, height: canvasSize)
+                .position(x: canvasOriginX + canvasSize / 2, y: canvasSize / 2)
+                .transition(.opacity)
+                .allowsHitTesting(false)
+        }
+
+        if showBlueprint, let blueprint = blueprintImage {
+            #if os(iOS)
+            Image(uiImage: blueprint)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: canvasSize, height: canvasSize)
+                .position(x: canvasOriginX + canvasSize / 2, y: canvasSize / 2)
+                .transition(.opacity)
+                .allowsHitTesting(false)
+            #else
+            Image(nsImage: blueprint)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: canvasSize, height: canvasSize)
+                .position(x: canvasOriginX + canvasSize / 2, y: canvasSize / 2)
+                .transition(.opacity)
+                .allowsHitTesting(false)
+            #endif
+        }
     }
 }
 
@@ -1384,6 +1514,7 @@ struct ValidationResult {
             educationalText: "The Pantheon's dome spans 43.3 meters.",
             historicalContext: "Built by Emperor Hadrian around 126 AD."
         ),
+        buildingName: "Pantheon",
         onComplete: { _ in }
     )
 }
