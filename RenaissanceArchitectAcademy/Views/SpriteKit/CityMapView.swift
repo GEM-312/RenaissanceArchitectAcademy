@@ -703,6 +703,39 @@ struct CityMapView: View {
                 onRotateRight: { sceneHolder.scene?.editorRotateRight() },
                 onNudge: { dx, dy in sceneHolder.scene?.editorNudge(dx: dx, dy: dy) }
             )
+
+            // DEBUG: skip straight into the Pantheon sketch — bypasses mascot,
+            // cards, checklist, everything. Used to test the sketch bloom.
+            VStack {
+                HStack {
+                    Button {
+                        if let plot = viewModel.buildingPlots.first(where: { $0.building.name == "Pantheon" }) {
+                            selectedPlot = plot
+                            // Close anything that might be open
+                            showMascotDialogue = false
+                            showBuildingChecklist = false
+                            showKnowledgeCards = false
+                            showBuildingLesson = false
+                            showEnvironmentPicker = false
+                            // Jump to sketch
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                showSketching = true
+                            }
+                        }
+                    } label: {
+                        Text("🧪 SKETCH")
+                            .font(.custom("EBGaramond-SemiBold", size: 12))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(Color.red.opacity(0.85), in: RoundedRectangle(cornerRadius: 6))
+                    }
+                    .padding(.leading, 12)
+                    .padding(.top, 80)
+                    Spacer()
+                }
+                Spacer()
+            }
             #endif
 
             } // end ZStack
