@@ -38,7 +38,7 @@ typealias PlatformImage = NSImage
     /// Currently only `.pianta` is wired into the apprentice UI; the other three
     /// cases exist so the service is ready when architect-tier brings back
     /// Alzato / Sezione / Prospettiva.
-    enum SketchPhase: String {
+    enum SketchPhase: String, CaseIterable {
         case pianta, alzato, sezione, prospettiva
 
         var viewDescription: String {
