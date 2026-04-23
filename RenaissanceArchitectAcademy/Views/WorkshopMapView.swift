@@ -155,11 +155,18 @@ struct WorkshopMapView: View {
                     navigationPanel
                         .frame(maxWidth: .infinity)
                     Spacer()
-                    inventoryBar
                 }
                 .frame(maxWidth: .infinity)
                 .padding(Spacing.md)
                 .allowsHitTesting(!(showDiscoveryCard || showStationKnowledgeCards || showStationLesson))
+
+                // Layer 3b: Foldable inventory bar — its own layer so it can
+                // dock to top OR bottom (the nav panel's VStack above would
+                // pin it to bottom only).
+                inventoryBar
+                    .padding(.horizontal, Spacing.md)
+                    .padding(.bottom, Spacing.md)
+                    .allowsHitTesting(!(showDiscoveryCard || showStationKnowledgeCards || showStationLesson))
 
                 #if DEBUG
                 // Hide editor buttons during mini-games and modal overlays — they overlap the UI.
@@ -1497,7 +1504,9 @@ struct WorkshopMapView: View {
     }
 
     private var inventoryBar: some View {
-        InventoryBarView(workshop: workshop)
+        // Foldable wrapper — drag to flip top/bottom, tap chevron to minimize,
+        // position persists across Workshop / Forest / Crafting Room.
+        FoldableInventoryBar(workshop: workshop)
     }
 
     // MARK: - Layer 4: Hint Bubble

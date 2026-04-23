@@ -89,15 +89,20 @@ struct ForestMapView: View {
                         .transition(.opacity)
                 }
 
-                // Layer 3: Nav panel + inventory bar (same layout as Workshop)
+                // Layer 3: Nav panel (inventory bar moved to its own layer
+                // below so it can dock top or bottom).
                 VStack(spacing: 0) {
                     navigationPanel
                         .frame(maxWidth: .infinity)
                     Spacer()
-                    inventoryBar
                 }
                 .frame(maxWidth: .infinity)
                 .padding(Spacing.md)
+
+                // Layer 3b: Foldable inventory bar
+                inventoryBar
+                    .padding(.horizontal, Spacing.md)
+                    .padding(.bottom, Spacing.md)
 
                 #if DEBUG
                 SceneEditorButtons(
@@ -1686,7 +1691,7 @@ struct ForestMapView: View {
     // MARK: - Inventory Bar
 
     private var inventoryBar: some View {
-        InventoryBarView(workshop: workshop)
+        FoldableInventoryBar(workshop: workshop)
     }
 
     // MARK: - Scene Setup

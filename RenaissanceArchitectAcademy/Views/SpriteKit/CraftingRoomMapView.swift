@@ -66,15 +66,19 @@ struct CraftingRoomMapView: View {
                         .allowsHitTesting(false)
                 }
 
-                // Layer 2: Nav + inventory
+                // Layer 2: Nav panel (inventory moved to its own layer)
                 VStack(spacing: 0) {
                     navigationPanel
                         .frame(maxWidth: .infinity)
                     Spacer()
-                    inventoryBar
                 }
                 .frame(maxWidth: .infinity)
                 .padding(Spacing.md)
+
+                // Layer 2b: Foldable inventory bar
+                inventoryBar
+                    .padding(.horizontal, Spacing.md)
+                    .padding(.bottom, Spacing.md)
 
                 #if DEBUG
                 SceneEditorButtons(
@@ -622,7 +626,7 @@ struct CraftingRoomMapView: View {
     // MARK: - Inventory Bar
 
     private var inventoryBar: some View {
-        InventoryBarView(workshop: workshop)
+        FoldableInventoryBar(workshop: workshop)
     }
 
     // MARK: - Workbench Overlay

@@ -121,6 +121,7 @@
 		6CE /* BlueprintStudyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE /* BlueprintStudyView.swift */; };
 		8CE /* ShapeSnap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CE /* ShapeSnap.swift */; };
 		ACE /* SketchEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE /* SketchEditorView.swift */; };
+		ECE /* FoldableInventoryBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCE /* FoldableInventoryBar.swift */; };
 		0D5 /* WolframGeometryHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D5 /* WolframGeometryHelper.swift */; };
 		0D6 /* WolframGeometryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D6 /* WolframGeometryView.swift */; };
 		0E0 /* MuseumSketch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E0 /* MuseumSketch.swift */; };
@@ -372,6 +373,7 @@
 		7CE /* BlueprintStudyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueprintStudyView.swift; sourceTree = "<group>"; };
 		9CE /* ShapeSnap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeSnap.swift; sourceTree = "<group>"; };
 		BCE /* SketchEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchEditorView.swift; sourceTree = "<group>"; };
+		FCE /* FoldableInventoryBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldableInventoryBar.swift; sourceTree = "<group>"; };
 		1D5 /* WolframGeometryHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WolframGeometryHelper.swift; sourceTree = "<group>"; };
 		1D6 /* WolframGeometryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WolframGeometryView.swift; sourceTree = "<group>"; };
 		1E0 /* MuseumSketch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MuseumSketch.swift; sourceTree = "<group>"; };
@@ -646,6 +648,7 @@
 				2C1 /* BirdGuidanceContent.swift */,
 				2C2 /* SceneTransitionOverlay.swift */,
 				2C3 /* InventoryBarView.swift */,
+				FCE /* FoldableInventoryBar.swift */,
 				2C4 /* SceneEditorButtons.swift */,
 				2C6 /* FurnaceFireView.swift */,
 				3A1 /* EditableModifier.swift */,
@@ -1063,6 +1066,7 @@
 				3C1 /* BirdGuidanceContent.swift in Sources */,
 				3C2 /* SceneTransitionOverlay.swift in Sources */,
 				3C3 /* InventoryBarView.swift in Sources */,
+				ECE /* FoldableInventoryBar.swift in Sources */,
 				3C4 /* SceneEditorButtons.swift in Sources */,
 				3C5 /* HistoricalNPCContent.swift in Sources */,
 				3C6 /* FurnaceFireView.swift in Sources */,
