@@ -612,6 +612,7 @@ struct NotebookView: View {
         }
         return parts
     }
+
 }
 
 // MARK: - Notebook Tab

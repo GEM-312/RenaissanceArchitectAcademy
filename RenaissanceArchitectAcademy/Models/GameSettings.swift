@@ -65,6 +65,18 @@ class GameSettings {
         didSet { save() }
     }
 
+    // MARK: - Accessibility / Readability
+
+    /// Multiplier applied to interactive card text (diagrams, labels, formulas).
+    /// Range: 0.8 (smaller) → 1.3 (larger). 1.0 = baseline 28pt from RenaissanceFont.iv*.
+    /// User-adjustable via a slider in Profile settings.
+    var cardTextScale: Double = 1.0 {
+        didSet {
+            guard isLoaded else { return }
+            save()
+        }
+    }
+
     // MARK: - Language
 
     var preferredLanguage: AppLanguage = .english {
@@ -175,6 +187,7 @@ class GameSettings {
     private static let aiChosenKey = "gameSettings_aiChosen"
     private static let languageKey = "gameSettings_language"
     private static let subscribedKey = "gameSettings_isSubscribed"
+    private static let cardTextScaleKey = "gameSettings_cardTextScale"
 
     /// Shared instance — used by SpriteKit scenes that can't access SwiftUI Environment
     static let shared = GameSettings()
@@ -207,6 +220,10 @@ class GameSettings {
             preferredLanguage = lang
         }
         isSubscribed = UserDefaults.standard.bool(forKey: Self.subscribedKey)
+        if UserDefaults.standard.object(forKey: Self.cardTextScaleKey) != nil {
+            let stored = UserDefaults.standard.double(forKey: Self.cardTextScaleKey)
+            cardTextScale = max(0.8, min(1.3, stored))  // Clamp to valid range
+        }
     }
 
     private func save() {
@@ -217,18 +234,17 @@ class GameSettings {
         UserDefaults.standard.set(hasChosenAIProvider, forKey: Self.aiChosenKey)
         UserDefaults.standard.set(preferredLanguage.rawValue, forKey: Self.languageKey)
         UserDefaults.standard.set(isSubscribed, forKey: Self.subscribedKey)
+        UserDefaults.standard.set(cardTextScale, forKey: Self.cardTextScaleKey)
     }
 }
 
 // MARK: - SwiftUI Environment
 
-private struct GameSettingsKey: EnvironmentKey {
-    @MainActor static let defaultValue = GameSettings.shared
-}
-
+// @Entry (iOS 17+) generates the EnvironmentKey for us and handles the
+// MainActor isolation correctly — the default expression is only evaluated
+// from a SwiftUI view, which is already MainActor-isolated. This replaces
+// the private EnvironmentKey struct whose @MainActor static defaultValue
+// conflicted with EnvironmentKey's nonisolated protocol requirement.
 extension EnvironmentValues {
-    var gameSettings: GameSettings {
-        get { self[GameSettingsKey.self] }
-        set { self[GameSettingsKey.self] = newValue }
-    }
+    @Entry var gameSettings: GameSettings = GameSettings.shared
 }

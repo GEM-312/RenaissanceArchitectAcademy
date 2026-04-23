@@ -115,7 +115,7 @@ private struct OrnithopterVisual: View {
             .overlay(alignment: .bottom) {
                 if step >= 2 {
                     Text("12m wingspan")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(IVMaterialColors.dimColor)
                         .offset(y: step >= 3 ? -45 : -28)
                 }
@@ -123,7 +123,7 @@ private struct OrnithopterVisual: View {
             .overlay(alignment: .bottom) {
                 if step >= 3 {
                     Text("500 sketches · 35,000 words")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(color)
                         .offset(y: -28)
                 }
@@ -221,7 +221,7 @@ private struct WingAreaMathVisual: View {
                 // Formula
                 if step >= 1 {
                     Text("0.1 m² / kg × 90 kg = 18 m²")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(step >= 2 ? color : IVMaterialColors.sepiaInk)
                 }
                 // Power comparison
@@ -231,24 +231,24 @@ private struct WingAreaMathVisual: View {
                             Text("🐦")
                                 .font(.system(size: 20))
                             Text("10 W/kg")
-                                .font(.custom("EBGaramond-Bold", size: 15))
+                                .font(RenaissanceFont.ivFormula)
                                 .foregroundStyle(color)
                         }
                         VStack(spacing: 2) {
                             Text("vs")
-                                .font(.custom("EBGaramond-Regular", size: 15))
+                                .font(RenaissanceFont.ivBody)
                                 .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3))
                         }
                         VStack(spacing: 2) {
                             Text("🧑")
                                 .font(.system(size: 20))
                             Text("1 W/kg")
-                                .font(.custom("EBGaramond-Bold", size: 15))
+                                .font(RenaissanceFont.ivFormula)
                                 .foregroundStyle(.red.opacity(0.6))
                         }
                     }
                     Text("10× too weak to flap")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(.red.opacity(0.5))
                 }
             }
@@ -425,15 +425,15 @@ private struct SilkCoveringVisual: View {
                 if step >= 3 {
                     HStack(spacing: 16) {
                         VStack(spacing: 1) {
-                            Text("2 kg").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color)
-                            Text("weight").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.dimColor)
+                            Text("2 kg").font(RenaissanceFont.ivFormula).foregroundStyle(color)
+                            Text("weight").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.dimColor)
                         }
                         Text("resists")
-                            .font(.custom("EBGaramond-Regular", size: 15))
+                            .font(RenaissanceFont.ivBody)
                             .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                         VStack(spacing: 1) {
-                            Text("50 kg").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color)
-                            Text("pressure").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.dimColor)
+                            Text("50 kg").font(RenaissanceFont.ivFormula).foregroundStyle(color)
+                            Text("pressure").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.dimColor)
                         }
                     }
                 }
@@ -518,18 +518,18 @@ private struct IronCablesVisual: View {
                         VStack(spacing: 2) {
                             Text("Cast").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             RoundedRectangle(cornerRadius: 2).fill(ironWire.opacity(0.3)).frame(width: 40, height: 20)
-                            Text("1×").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
+                            Text("1×").font(RenaissanceFont.ivFormula).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                         }
                         VStack(spacing: 2) {
                             Text("Drawn").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(color)
                             RoundedRectangle(cornerRadius: 2).fill(ironWire.opacity(0.5)).frame(width: 40, height: 40)
-                            Text("2×").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color)
+                            Text("2×").font(RenaissanceFont.ivFormula).foregroundStyle(color)
                         }
                     }
                 }
                 if step == 1 {
                     Text("Pedals → cables → wing tips")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(IVMaterialColors.sepiaInk)
                 }
             }
@@ -660,7 +660,7 @@ private struct SilkAssemblyVisual: View {
                     ForEach(Array(stages.enumerated()), id: \.offset) { i, stage in
                         let active = (step == 1 && i < 2) || (step == 2 && i < 4) || step >= 3
                         Text(stage)
-                            .font(.custom("EBGaramond-Regular", size: 15))
+                            .font(RenaissanceFont.ivBody)
                             .foregroundStyle(active ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.2))
                             .padding(.horizontal, 4).padding(.vertical, 3)
                             .background(RoundedRectangle(cornerRadius: 2).fill(active ? color.opacity(0.06) : Color.clear))
@@ -674,7 +674,7 @@ private struct SilkAssemblyVisual: View {
 
                 if step >= 3 {
                     Text("3 days per wing")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(color)
                 }
             }

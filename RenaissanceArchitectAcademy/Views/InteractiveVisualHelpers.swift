@@ -166,10 +166,10 @@ struct IVStepControls: View {
 
 struct IVDimLabel: View {
     let text: String
-    var fontSize: CGFloat = 15
+    var fontSize: CGFloat? = nil  // Optional override; nil = use theme token
     var body: some View {
         Text(text)
-            .font(.custom("EBGaramond-SemiBold", size: fontSize))
+            .font(fontSize.map { Font.custom("EBGaramond-SemiBold", size: $0) } ?? RenaissanceFont.ivLabel)
             .foregroundStyle(IVMaterialColors.dimColor)
     }
 }
@@ -179,10 +179,10 @@ struct IVDimLabel: View {
 struct IVFormulaText: View {
     let text: String
     var highlighted: Bool = false
-    var fontSize: CGFloat = 15
+    var fontSize: CGFloat? = nil  // Optional override; nil = use theme token
     var body: some View {
         Text(text)
-            .font(.custom("EBGaramond-Bold", size: fontSize))
+            .font(fontSize.map { Font.custom("EBGaramond-Bold", size: $0) } ?? RenaissanceFont.ivFormula)
             .foregroundStyle(highlighted ? RenaissanceColors.sageGreen : IVMaterialColors.sepiaInk)
     }
 }

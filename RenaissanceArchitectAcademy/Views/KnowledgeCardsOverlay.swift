@@ -303,7 +303,8 @@ struct KnowledgeCardsOverlay: View {
                         // (each back instantiates CardVisualView with full Canvas drawing)
                         if angle > 0 {
                             flippedCardBack(card: card, isCompleted: isCompleted)
-                                .frame(width: flippedW, height: flippedH)
+                                .frame(maxWidth: flippedW, maxHeight: flippedH)
+                                .fixedSize(horizontal: false, vertical: true)
                                 .scaleEffect(isThisFlipped ? 1.0 : 0.15)
                                 .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
                                 .opacity(angle >= 90 ? 1 : 0)
@@ -546,7 +547,8 @@ struct KnowledgeCardsOverlay: View {
                 .frame(height: 1)
                 .padding(.horizontal, Spacing.xs)
 
-            // Content
+            // Content — fills remaining card height so reading and activity
+            // use the same vertical area (no top-clustering dead space).
             ZStack {
                 if showInfographic != nil && pendingCompleteCard?.id == card.id {
                     // Infographic reward — shown inline on the card after activity
@@ -567,14 +569,18 @@ struct KnowledgeCardsOverlay: View {
                     .transition(.opacity)
                 } else if !isActivity {
                     readingContent(card: card, isCompleted: isCompleted)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                         .transition(.opacity)
                 } else if isActivity {
-                    ScrollView(.vertical, showsIndicators: false) {
-                        activityContent(card: card)
-                    }
-                    .transition(.opacity)
+                    // Activity fills full content area and distributes vertically
+                    // (Spacers inside activityContent center/spread the controls).
+                    // No ScrollView — content is sized to fit the card.
+                    activityContent(card: card)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .transition(.opacity)
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .animation(.easeInOut(duration: 0.4), value: isActivity)
             .animation(.easeInOut(duration: 0.4), value: showInfographic != nil)
         }
@@ -622,19 +628,22 @@ struct KnowledgeCardsOverlay: View {
                 .padding(.horizontal, Spacing.xs)
                 .opacity(showFlippedContent ? 1 : 0)
 
-            // Lesson text
+            // Lesson content in a ScrollView so long reading text never clips.
+            // The VStack inside uses .frame(maxWidth: .infinity) to take the
+            // card's full width; height is intrinsic (VStack hugs content).
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: Spacing.sm) {
                     highlightedLessonText(card: card)
+                        .fixedSize(horizontal: false, vertical: true)  // force multi-line wrap
                         .lineSpacing(5)
                         .padding(.top, Spacing.xxs)
                         .opacity(animateFlippedStory ? 1 : 0)
                         .editable("lesson-text", paddingV: Spacing.xs)
 
-                    // Interactive science visual
+                    // Interactive science visual. CardVisualView sets its own height
+                    // (55% of card × cardTextScale), so it grows with text size.
                     if let visual = card.visual {
                         CardVisualView(visual: visual, color: card.color, containerHeight: flippedH)
-                            .frame(minHeight: flippedH * 0.4)
                             .opacity(animateFlippedStory ? 1 : 0)
                     }
 
@@ -645,9 +654,10 @@ struct KnowledgeCardsOverlay: View {
                                 .foregroundStyle(RenaissanceColors.ochre)
                                 .font(.system(size: 16))
                             Text(funFact)
-                                .font(RenaissanceFont.italicSmall)
+                                .font(RenaissanceFont.cardReadingItalic)
                                 .foregroundStyle(settings.cardTextColor.opacity(0.8))
                                 .lineSpacing(4)
+                                .fixedSize(horizontal: false, vertical: true)
                         }
                         .padding(Spacing.sm)
                         .background(
@@ -657,25 +667,25 @@ struct KnowledgeCardsOverlay: View {
                         .opacity(animateFlippedStory ? 1 : 0)
                         .editable("fun-fact", fontSize: 15, cornerRadius: 10)
                     }
-                }
-            }
 
-            Spacer(minLength: 6)
-
-            if !isCompleted {
-                Button {
-                    openActivity(for: card)
-                } label: {
-                    Text("Done Reading")
-                        .font(RenaissanceFont.buttonSmall)
-                        .foregroundStyle(.white)
-                        .padding(.vertical, Spacing.sm)
-                        .frame(maxWidth: .infinity)
-                        .parchmentButton(color: card.color, radius: 9)
+                    if !isCompleted {
+                        Button {
+                            openActivity(for: card)
+                        } label: {
+                            Text("Done Reading")
+                                .font(RenaissanceFont.buttonSmall)
+                                .foregroundStyle(.white)
+                                .padding(.vertical, Spacing.sm)
+                                .frame(maxWidth: .infinity)
+                                .parchmentButton(color: card.color, radius: 9)
+                        }
+                        .buttonStyle(.plain)
+                        .opacity(animateFlippedStory ? 1 : 0)
+                        .editable("done-button", cornerRadius: 9)
+                        .padding(.top, Spacing.xs)
+                    }
                 }
-                .buttonStyle(.plain)
-                .opacity(animateFlippedStory ? 1 : 0)
-                .editable("done-button", cornerRadius: 9)
+                .frame(maxWidth: .infinity)
             }
         }
     }
@@ -716,11 +726,11 @@ struct KnowledgeCardsOverlay: View {
         for (text, isKeyword) in segments {
             if isKeyword {
                 result = result + Text(text)
-                    .font(.custom("EBGaramond-SemiBold", size: 16))
+                    .font(RenaissanceFont.cardReadingBold)
                     .foregroundColor(color)
             } else {
                 result = result + Text(text)
-                    .font(RenaissanceFont.bodyMedium)
+                    .font(RenaissanceFont.cardReading)
                     .foregroundColor(settings.cardTextColor)
             }
         }
@@ -732,7 +742,6 @@ struct KnowledgeCardsOverlay: View {
     @ViewBuilder
     private func activityContent(card: KnowledgeCard) -> some View {
         VStack(spacing: Spacing.sm) {
-            // Standard activity
             switch card.activity {
             case .keywordMatch:
                 keywordMatchView(card: card)

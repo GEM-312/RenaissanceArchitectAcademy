@@ -629,7 +629,7 @@ private struct LimestonePathVisual: View {
             .overlay(alignment: .bottom) {
                 if step >= 3 {
                     Text("CaCO₃ → Ca²⁺ + alkaline pH")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(color)
                         .offset(y: -28)
                 }
@@ -808,7 +808,7 @@ private struct UnderfloorHeatVisual: View {
             .overlay(alignment: .top) {
                 if step >= 3 {
                     Text("> 10°C")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(color)
                         .padding(.top, 8)
                 }
@@ -864,7 +864,7 @@ private struct SoilSubstrateVisual: View {
                         .frame(height: 22)
                         .overlay {
                             Text(layer.0)
-                                .font(.custom("EBGaramond-Regular", size: 15))
+                                .font(RenaissanceFont.ivBody)
                                 .foregroundStyle(active ? .white.opacity(0.8) : .clear)
                         }
                 }
@@ -876,7 +876,7 @@ private struct SoilSubstrateVisual: View {
                         .frame(height: 12)
                         .overlay {
                             Text("Biochar")
-                                .font(.custom("EBGaramond-Regular", size: 15))
+                                .font(RenaissanceFont.ivBody)
                                 .foregroundStyle(.white.opacity(0.7))
                         }
                 }

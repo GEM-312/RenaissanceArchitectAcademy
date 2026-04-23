@@ -181,7 +181,7 @@ private struct HarborPlanVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "350 ships — Rome's lifeline", highlighted: true, fontSize: 15)
+                        FormulaText(text: "350 ships — Rome's lifeline", highlighted: true)
                             .position(x: cx, y: h * 0.88)
                             .transition(.opacity)
                     }
@@ -263,7 +263,7 @@ private struct WaveForceVisual: View {
                     // Force readout
                     VStack(spacing: 2) {
                         Text("\(meters)m wave")
-                            .font(.custom("EBGaramond-Bold", size: 15))
+                            .font(RenaissanceFont.ivFormula)
                             .foregroundStyle(IVMaterialColors.sepiaInk)
                         Text("\(tons) tons/m")
                             .font(.custom("EBGaramond-Bold", size: 16))
@@ -283,7 +283,7 @@ private struct WaveForceVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "3m wave = 30 tons/meter", highlighted: true, fontSize: 15)
+                        FormulaText(text: "3m wave = 30 tons/meter", highlighted: true)
                             .position(x: cx, y: h * 0.15)
                             .transition(.opacity)
                     }
@@ -373,7 +373,7 @@ private struct CofferdamVisual: View {
                         } label: {
                             HStack(spacing: 4) {
                                 Image(systemName: "arrow.up.circle").font(.system(size: 13))
-                                Text("Pump Water").font(.custom("EBGaramond-SemiBold", size: 15))
+                                Text("Pump Water").font(RenaissanceFont.ivLabel)
                             }
                             .foregroundStyle(seaBlue)
                             .padding(.horizontal, 12).padding(.vertical, 6)
@@ -384,7 +384,7 @@ private struct CofferdamVisual: View {
                     }
 
                     if step >= 4 {
-                        FormulaText(text: "Build on land — inside the sea", highlighted: true, fontSize: 15)
+                        FormulaText(text: "Build on land — inside the sea", highlighted: true)
                             .position(x: cx, y: h * 0.88)
                             .transition(.opacity)
                     }
@@ -455,7 +455,7 @@ private struct BreakwaterVisual: View {
                             .transition(.move(edge: .top).combined(with: .opacity))
 
                         if row == 0 && col == 0 {
-                            DimLabel(text: "15 t", fontSize: 15)
+                            DimLabel(text: "15 t")
                                 .position(x: x, y: y)
                         }
                     }
@@ -473,7 +473,7 @@ private struct BreakwaterVisual: View {
                         } label: {
                             HStack(spacing: 4) {
                                 Image(systemName: "square.stack.3d.up").font(.system(size: 13))
-                                Text("Place Block").font(.custom("EBGaramond-SemiBold", size: 15))
+                                Text("Place Block").font(RenaissanceFont.ivLabel)
                             }
                             .foregroundStyle(color)
                             .padding(.horizontal, 12).padding(.vertical, 6)
@@ -484,7 +484,7 @@ private struct BreakwaterVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "3× overbuilt = survives any storm", highlighted: true, fontSize: 15)
+                        FormulaText(text: "3× overbuilt = survives any storm", highlighted: true)
                             .position(x: cx, y: h * 0.88)
                             .transition(.opacity)
                     }
@@ -570,7 +570,7 @@ private struct LighthouseVisual: View {
                     DimLine(from: CGPoint(x: cx + towerW, y: topY),
                             to: CGPoint(x: cx + towerW, y: h * 0.7))
                         .stroke(IVMaterialColors.dimColor, lineWidth: 0.8)
-                    DimLabel(text: "50 m", fontSize: 15)
+                    DimLabel(text: "50 m")
                         .position(x: cx + towerW + 18, y: h * 0.45)
 
                     // Drag to rotate (step 2)
@@ -591,7 +591,7 @@ private struct LighthouseVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "Fire + bronze mirror = 50 km visible", highlighted: true, fontSize: 15)
+                        FormulaText(text: "Fire + bronze mirror = 50 km visible", highlighted: true)
                             .position(x: cx, y: h * 0.92)
                             .transition(.opacity)
                     }
@@ -647,9 +647,9 @@ private struct HarborStoneVisual: View {
                             }
                         }
                         if saltPoured {
-                            Text("Absorbs safely").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(RenaissanceColors.sageGreen).transition(.opacity)
+                            Text("Absorbs safely").font(RenaissanceFont.ivFormula).foregroundStyle(RenaissanceColors.sageGreen).transition(.opacity)
                         }
-                        Text("Porous").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
+                        Text("Porous").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                     }
                     .position(x: w * 0.28, y: h * 0.4)
 
@@ -670,9 +670,9 @@ private struct HarborStoneVisual: View {
                             }
                         }
                         if saltPoured {
-                            Text("Cracks inside").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(RenaissanceColors.errorRed).transition(.opacity)
+                            Text("Cracks inside").font(RenaissanceFont.ivFormula).foregroundStyle(RenaissanceColors.errorRed).transition(.opacity)
                         }
-                        Text("Dense").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
+                        Text("Dense").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                     }
                     .position(x: w * 0.72, y: h * 0.4)
 
@@ -685,7 +685,7 @@ private struct HarborStoneVisual: View {
                         } label: {
                             HStack(spacing: 4) {
                                 Image(systemName: "drop.fill").font(.system(size: 13))
-                                Text("Pour Salt Water").font(.custom("EBGaramond-SemiBold", size: 15))
+                                Text("Pour Salt Water").font(RenaissanceFont.ivLabel)
                             }
                             .foregroundStyle(seaBlue)
                             .padding(.horizontal, 12).padding(.vertical, 6)
@@ -696,7 +696,7 @@ private struct HarborStoneVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "Soft + porous beats hard + dense at sea", highlighted: true, fontSize: 15)
+                        FormulaText(text: "Soft + porous beats hard + dense at sea", highlighted: true)
                             .position(x: w * 0.5, y: h * 0.85)
                             .transition(.opacity)
                     }
@@ -726,7 +726,7 @@ private struct MarineConcreteVisual: View {
                             Text("ROMAN").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             RoundedRectangle(cornerRadius: 4).fill(IVMaterialColors.stoneGray.opacity(0.4 + years * 0.4))
                                 .frame(width: w * 0.25, height: h * 0.25)
-                            Text(years > 0.5 ? "Stronger" : "").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(RenaissanceColors.sageGreen)
+                            Text(years > 0.5 ? "Stronger" : "").font(RenaissanceFont.ivFormula).foregroundStyle(RenaissanceColors.sageGreen)
                         }
                         VStack(spacing: 4) {
                             Text("MODERN").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
@@ -739,17 +739,17 @@ private struct MarineConcreteVisual: View {
                                             .frame(width: w*0.25, height: h*0.25)
                                     }
                                 }}
-                            Text(years > 0.5 ? "Dissolves" : "").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(RenaissanceColors.errorRed)
+                            Text(years > 0.5 ? "Dissolves" : "").font(RenaissanceFont.ivFormula).foregroundStyle(RenaissanceColors.errorRed)
                         }
                     }.position(x: cx, y: h * 0.38)
 
-                    Text("\(Int(years * 2000)) years").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk).position(x: cx, y: h * 0.12)
+                    Text("\(Int(years * 2000)) years").font(RenaissanceFont.ivFormula).foregroundStyle(IVMaterialColors.sepiaInk).position(x: cx, y: h * 0.12)
 
                     if step >= 2 {
                         Slider(value: $years, in: 0...1).tint(seaBlue).frame(width: w * 0.5).position(x: cx, y: h * 0.7)
                             .onChange(of: years) { _, v in if v > 0.8 { withAnimation { step = 3 } } }
                     }
-                    if step >= 3 { FormulaText(text: "Seawater = secret ingredient", highlighted: true, fontSize: 15).position(x: cx, y: h * 0.85).transition(.opacity) }
+                    if step >= 3 { FormulaText(text: "Seawater = secret ingredient", highlighted: true).position(x: cx, y: h * 0.85).transition(.opacity) }
                 }
             }
         }
@@ -771,15 +771,15 @@ private struct HullProtectionVisual: View {
                     ForEach(0..<layersAdded, id: \.self) { i in
                         RoundedRectangle(cornerRadius: 4).fill(parts[i].1).frame(width: w * 0.5 - CGFloat(i)*8, height: h * 0.18)
                             .position(x: cx, y: h * 0.35 + CGFloat(i) * h * 0.12).transition(.opacity)
-                        DimLabel(text: parts[i].0, fontSize: 15).position(x: cx + w * 0.32, y: h * 0.35 + CGFloat(i) * h * 0.12)
+                        DimLabel(text: parts[i].0).position(x: cx + w * 0.32, y: h * 0.35 + CGFloat(i) * h * 0.12)
                     }
                     if step >= 2 && layersAdded < 3 {
                         Button { withAnimation(.spring(response: 0.3)) { layersAdded += 1 }; SoundManager.shared.play(.tapSoft)
                             if layersAdded >= 3 { DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { withAnimation { step = 3 } } }
-                        } label: { Text("Add \(parts[layersAdded].0)").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundStyle(color).padding(.horizontal, 12).padding(.vertical, 6).background(color.opacity(0.1)).cornerRadius(6) }
+                        } label: { Text("Add \(parts[layersAdded].0)").font(RenaissanceFont.ivLabel).foregroundStyle(color).padding(.horizontal, 12).padding(.vertical, 6).background(color.opacity(0.1)).cornerRadius(6) }
                             .buttonStyle(.plain).position(x: cx, y: h * 0.82)
                     }
-                    if step >= 3 { FormulaText(text: "Planks → Lead → Tacks", highlighted: true, fontSize: 15).position(x: cx, y: h * 0.85).transition(.opacity) }
+                    if step >= 3 { FormulaText(text: "Planks → Lead → Tacks", highlighted: true).position(x: cx, y: h * 0.85).transition(.opacity) }
                 }
             }
         }
@@ -807,10 +807,10 @@ private struct WarehouseTrussVisual: View {
                         Path { p in p.move(to: CGPoint(x: cx + trussW * off, y: trussY + deflect * abs(off) * 2)); p.addLine(to: CGPoint(x: cx + trussW * off, y: trussY + h*0.15)) }
                             .stroke(Color.brown.opacity(0.5), lineWidth: 2)
                     }
-                    Text("\(tons) tons").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk).position(x: cx, y: h * 0.12)
+                    Text("\(tons) tons").font(RenaissanceFont.ivFormula).foregroundStyle(IVMaterialColors.sepiaInk).position(x: cx, y: h * 0.12)
                     if step >= 2 { Slider(value: $loadWeight, in: 0...1).tint(color).frame(width: w*0.5).position(x: cx, y: h*0.72)
                         .onChange(of: loadWeight) { _, v in if v > 0.7 { withAnimation { step = 3 } } } }
-                    if step >= 3 { FormulaText(text: "Oak + tannins = naturally waterproof", highlighted: true, fontSize: 15).position(x: cx, y: h*0.85).transition(.opacity) }
+                    if step >= 3 { FormulaText(text: "Oak + tannins = naturally waterproof", highlighted: true).position(x: cx, y: h*0.85).transition(.opacity) }
                 }
             }
         }
@@ -838,11 +838,11 @@ private struct PoplarPilesVisual: View {
                     if step >= 2 && pilesHammered < 5 {
                         Button { withAnimation(.spring(response: 0.3)) { pilesHammered += 1 }; SoundManager.shared.play(.tapSoft); HapticsManager.shared.play(.buttonTap)
                             if pilesHammered >= 5 { DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { withAnimation { step = 3 } } }
-                        } label: { HStack(spacing: 4) { Image(systemName: "arrow.down").font(.system(size: 13)); Text("Drive Pile").font(.custom("EBGaramond-SemiBold", size: 15)) }
+                        } label: { HStack(spacing: 4) { Image(systemName: "arrow.down").font(.system(size: 13)); Text("Drive Pile").font(RenaissanceFont.ivLabel) }
                             .foregroundStyle(color).padding(.horizontal, 12).padding(.vertical, 6).background(color.opacity(0.1)).cornerRadius(6) }
                             .buttonStyle(.plain).position(x: cx, y: h * 0.12)
                     }
-                    if step >= 3 { FormulaText(text: "Poplar swells tight — natural waterproof seal", highlighted: true, fontSize: 15).position(x: cx, y: h*0.88).transition(.opacity) }
+                    if step >= 3 { FormulaText(text: "Poplar swells tight — natural waterproof seal", highlighted: true).position(x: cx, y: h*0.88).transition(.opacity) }
                 }
             }
         }
@@ -860,28 +860,28 @@ private struct MarineMortarVisual: View {
             RoundedRectangle(cornerRadius: 10).strokeBorder(color.opacity(0.2), lineWidth: 1)
             IVBlueprintGrid()
             VStack(spacing: 10) {
-                FormulaText(text: "1 Lime : 3 Volcanic Ash + Seawater", highlighted: seawaterAdded, fontSize: 15).padding(.top, 8)
+                FormulaText(text: "1 Lime : 3 Volcanic Ash + Seawater", highlighted: seawaterAdded).padding(.top, 8)
                 HStack(spacing: 12) {
                     Button { guard scoops == 0 else { return }; withAnimation(.spring(response: 0.3)) { scoops = 1 }; SoundManager.shared.play(.tapSoft) } label: {
-                        Text("+ Lime").font(.custom("EBGaramond-SemiBold", size: 15)).padding(.horizontal, 12).padding(.vertical, 6)
+                        Text("+ Lime").font(RenaissanceFont.ivLabel).padding(.horizontal, 12).padding(.vertical, 6)
                             .background(scoops >= 1 ? IVMaterialColors.stoneGray.opacity(0.1) : Color.white.opacity(0.3)).cornerRadius(6)
                             .overlay(RoundedRectangle(cornerRadius: 6).stroke(scoops < 1 ? color : IVMaterialColors.stoneGray.opacity(0.2), lineWidth: scoops < 1 ? 2 : 0.5))
                     }.buttonStyle(.plain).opacity(scoops >= 1 ? 0.4 : 1).foregroundStyle(IVMaterialColors.sepiaInk)
                     Button { guard scoops >= 1 && scoops < 4 else { return }; withAnimation(.spring(response: 0.3)) { scoops += 1 }; SoundManager.shared.play(.tapSoft) } label: {
-                        Text("+ Ash").font(.custom("EBGaramond-SemiBold", size: 15)).padding(.horizontal, 12).padding(.vertical, 6)
+                        Text("+ Ash").font(RenaissanceFont.ivLabel).padding(.horizontal, 12).padding(.vertical, 6)
                             .background(scoops >= 4 ? IVMaterialColors.stoneGray.opacity(0.1) : Color(red: 0.65, green: 0.40, blue: 0.30).opacity(0.15)).cornerRadius(6)
                             .overlay(RoundedRectangle(cornerRadius: 6).stroke((scoops >= 1 && scoops < 4) ? color : IVMaterialColors.stoneGray.opacity(0.2), lineWidth: (scoops >= 1 && scoops < 4) ? 2 : 0.5))
                     }.buttonStyle(.plain).opacity(scoops >= 4 ? 0.4 : 1).foregroundStyle(IVMaterialColors.sepiaInk)
                 }
                 if scoops >= 4 && !seawaterAdded {
                     Button { withAnimation(.spring(response: 0.3)) { seawaterAdded = true }; SoundManager.shared.play(.correctChime) } label: {
-                        HStack(spacing: 4) { Image(systemName: "drop.fill").font(.system(size: 13)); Text("Add SEAWATER (not fresh!)").font(.custom("EBGaramond-SemiBold", size: 15)) }
+                        HStack(spacing: 4) { Image(systemName: "drop.fill").font(.system(size: 13)); Text("Add SEAWATER (not fresh!)").font(RenaissanceFont.ivLabel) }
                             .foregroundStyle(seaBlue).padding(.horizontal, 14).padding(.vertical, 8).background(seaBlue.opacity(0.1)).cornerRadius(8)
                     }.buttonStyle(.plain)
                 }
-                if seawaterAdded { FormulaText(text: "Sets underwater in 7 days", highlighted: true, fontSize: 15) }
+                if seawaterAdded { FormulaText(text: "Sets underwater in 7 days", highlighted: true) }
                 Text(scoops < 1 ? "Add lime first" : scoops < 4 ? "Add ash (3 scoops)" : !seawaterAdded ? "Now the secret: SEAWATER" : "Salt triggers the reaction")
-                    .font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
+                    .font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
                 Spacer()
             }.padding(.horizontal, 12)
         }.frame(height: height).clipShape(RoundedRectangle(cornerRadius: 10))
@@ -909,13 +909,13 @@ private struct LeadCastingVisual: View {
                     .frame(width: 70, height: isMolten ? 25 : 45).shadow(color: isMolten ? .orange.opacity(0.3) : .clear, radius: 6)
                     .animation(.spring(response: 0.5), value: isMolten)
                 Text(isMolten ? "Molten — pour into molds" : tempC > 200 ? "Warming..." : "Solid lead")
-                    .font(.custom("EBGaramond-SemiBold", size: 15)).foregroundStyle(isMolten ? RenaissanceColors.sageGreen : IVMaterialColors.sepiaInk)
+                    .font(RenaissanceFont.ivLabel).foregroundStyle(isMolten ? RenaissanceColors.sageGreen : IVMaterialColors.sepiaInk)
                 Slider(value: $temperature, in: 0...1).tint(isMolten ? RenaissanceColors.sageGreen : .orange).frame(width: 200)
-                HStack { Text("0°C").font(.custom("EBGaramond-Regular", size: 15)); Spacer()
-                    Text("327°C").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(RenaissanceColors.sageGreen); Spacer()
-                    Text("600°C").font(.custom("EBGaramond-Regular", size: 15))
+                HStack { Text("0°C").font(RenaissanceFont.ivBody); Spacer()
+                    Text("327°C").font(RenaissanceFont.ivBody).foregroundStyle(RenaissanceColors.sageGreen); Spacer()
+                    Text("600°C").font(RenaissanceFont.ivBody)
                 }.foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4)).frame(width: 200)
-                if isMolten { FormulaText(text: "Lowest melting point = most useful metal", highlighted: true, fontSize: 15) }
+                if isMolten { FormulaText(text: "Lowest melting point = most useful metal", highlighted: true) }
                 Spacer()
             }.padding(.horizontal, 12)
         }.frame(height: height).clipShape(RoundedRectangle(cornerRadius: 10))

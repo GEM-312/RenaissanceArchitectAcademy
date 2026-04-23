@@ -458,7 +458,7 @@ private struct IstrianStoneVisual: View {
                             .font(.custom("Cinzel-Bold", size: 16))
                             .foregroundStyle(color)
                         Text("harder")
-                            .font(.custom("EBGaramond-Regular", size: 15))
+                            .font(RenaissanceFont.ivBody)
                             .foregroundStyle(IVMaterialColors.dimColor)
                     }
                 }
@@ -483,7 +483,7 @@ private struct IstrianStoneVisual: View {
 
             if step >= 2 {
                 Text("Salt ✕ → tight grain")
-                    .font(.custom("EBGaramond-Bold", size: 15))
+                    .font(RenaissanceFont.ivFormula)
                     .foregroundStyle(color)
             }
         }
@@ -520,7 +520,7 @@ private struct MarineConcreteVisual: View {
                             .font(.system(size: 13))
                             .foregroundStyle(IVMaterialColors.waterBlue.opacity(0.5))
                         Text("500 years in saltwater")
-                            .font(.custom("EBGaramond-Bold", size: 15))
+                            .font(RenaissanceFont.ivFormula)
                             .foregroundStyle(color)
                     }
                 }
@@ -535,7 +535,7 @@ private struct MarineConcreteVisual: View {
                 .font(.system(size: 15))
                 .opacity(active ? 1 : 0.2)
             Text(label)
-                .font(.custom("EBGaramond-Regular", size: 15))
+                .font(RenaissanceFont.ivBody)
                 .foregroundStyle(active ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
         }
         .padding(.horizontal, 6)
@@ -716,7 +716,7 @@ private struct TimberSeasonVisual: View {
                                 }
                             }
                         Text("80%")
-                            .font(.custom("EBGaramond-Bold", size: 15))
+                            .font(RenaissanceFont.ivFormula)
                             .foregroundStyle(step >= 1 ? IVMaterialColors.waterBlue : IVMaterialColors.waterBlue.opacity(0.3))
                         Text("Fresh")
                             .font(.custom("Cinzel-Bold", size: 16))
@@ -729,7 +729,7 @@ private struct TimberSeasonVisual: View {
                                 .font(.system(size: 13))
                                 .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3))
                             Text("3 yrs")
-                                .font(.custom("EBGaramond-Regular", size: 15))
+                                .font(RenaissanceFont.ivBody)
                                 .foregroundStyle(IVMaterialColors.dimColor)
                         }
                     }
@@ -741,7 +741,7 @@ private struct TimberSeasonVisual: View {
                                 .fill(Color(red: 0.65, green: 0.50, blue: 0.32).opacity(0.6))
                                 .frame(width: 40, height: 30)
                             Text("15%")
-                                .font(.custom("EBGaramond-Bold", size: 15))
+                                .font(RenaissanceFont.ivFormula)
                                 .foregroundStyle(color)
                             Text("Seasoned")
                                 .font(.custom("Cinzel-Bold", size: 16))
@@ -752,7 +752,7 @@ private struct TimberSeasonVisual: View {
 
                 if step >= 3 {
                     Text("100,000 logs in reserve")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(color)
                 }
             }

@@ -73,8 +73,11 @@ struct GameToolContext {
     let florins: Int
 }
 
-/// Protocol for AI chat services — Claude API, Apple Intelligence, or Mock
-/// All implementations must be @MainActor @Observable for SwiftUI binding
+/// Protocol for AI chat services — Claude API, Apple Intelligence, or Mock.
+/// Marked @MainActor so conformances don't cross isolation boundaries under
+/// Swift 6 strict concurrency. All implementers are @MainActor @Observable
+/// classes bound directly to SwiftUI views.
+@MainActor
 protocol AIService: AnyObject {
     var messages: [ChatMessage] { get }
     var isLoading: Bool { get }

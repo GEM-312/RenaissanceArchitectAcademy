@@ -62,7 +62,9 @@ enum CraftedItem: String, CaseIterable, Identifiable, Codable {
     /// Asset catalog image name — nil if no image yet
     var imageName: String? {
         switch self {
-        case .limeMortar:             return "MaterialMortar"
+        case .limeMortar:             return "CraftedLimeMortar"
+        case .romanConcrete:          return "CraftedRomanConcrete"
+        case .terracottaTiles:        return "CraftedTerracottaTiles"
         case .bronzeFittings:         return "MaterialBronze"
         case .rawBronze:              return "MaterialRawBronze"
         case .castingMold:            return "MaterialCastingMold"

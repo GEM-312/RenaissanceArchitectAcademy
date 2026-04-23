@@ -162,7 +162,7 @@ private struct LensGrindingVisual: View {
             }
             if step >= 3 {
                 Text("100 → 2 (98% rejected)")
-                    .font(.custom("EBGaramond-Bold", size: 15))
+                    .font(RenaissanceFont.ivFormula)
                     .foregroundStyle(color)
             }
         }
@@ -260,7 +260,7 @@ private struct PendulumVisual: View {
             .overlay(alignment: .bottom) {
                 if step >= 2 {
                     Text("1m = 1 second")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(color)
                         .offset(y: -28)
                 }
@@ -287,20 +287,20 @@ private struct JupiterMoonsVisual: View {
                                 .fill(starGold.opacity(active ? 0.6 : 0.15))
                                 .frame(width: name == "Ganymede" ? 16 : 12, height: name == "Ganymede" ? 16 : 12)
                             Text(name)
-                                .font(.custom("EBGaramond-Regular", size: 15))
+                                .font(RenaissanceFont.ivBody)
                                 .foregroundStyle(active ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                         }
                     }
                 }
                 if step >= 2 {
                     Text("Moons orbit Jupiter → not everything orbits Earth")
-                        .font(.custom("EBGaramond-Regular", size: 15))
+                        .font(RenaissanceFont.ivBody)
                         .foregroundStyle(color.opacity(0.7))
                         .multilineTextAlignment(.center)
                 }
                 if step >= 3 {
                     Text("Systematic data defeated dogma")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(color)
                 }
             }
@@ -368,8 +368,8 @@ private struct MarbleFloorVisual: View {
                     }
                     .overlay(RoundedRectangle(cornerRadius: 4).strokeBorder(IVMaterialColors.sepiaInk.opacity(0.2), lineWidth: 0.5))
                     .padding(.horizontal, 20)
-                if step >= 1 { Text("± 0.5 mm").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.dimColor) }
-                if step >= 3 { Text("0.006 mm/°C/m expansion").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color) }
+                if step >= 1 { Text("± 0.5 mm").font(RenaissanceFont.ivFormula).foregroundStyle(IVMaterialColors.dimColor) }
+                if step >= 3 { Text("0.006 mm/°C/m expansion").font(RenaissanceFont.ivFormula).foregroundStyle(color) }
             }
         }
     }
@@ -387,8 +387,8 @@ private struct PureGlassVisual: View {
             VStack(spacing: 8) {
                 Circle().fill(lensGlass.opacity(step >= 1 ? 0.4 : 0.1)).frame(width: 50, height: 50)
                     .overlay(Circle().strokeBorder(color.opacity(0.3), lineWidth: 1))
-                if step >= 2 { Text("24h stir · 5-day cool").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.dimColor) }
-                if step >= 3 { Text("2% yield").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color) }
+                if step >= 2 { Text("24h stir · 5-day cool").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.dimColor) }
+                if step >= 3 { Text("2% yield").font(RenaissanceFont.ivFormula).foregroundStyle(color) }
             }
         }
     }
@@ -418,7 +418,7 @@ private struct UltramarineFrescoVisual: View {
                     }
                     .padding(.horizontal, 20)
                 if step >= 1 { Text("Lapis Lazuli").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(ultraBlue) }
-                if step >= 2 { Text("6,000 km · costlier than gold").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.dimColor) }
+                if step >= 2 { Text("6,000 km · costlier than gold").font(RenaissanceFont.ivFormula).foregroundStyle(IVMaterialColors.dimColor) }
             }
         }
     }
@@ -458,7 +458,7 @@ private struct TelescopeTubeVisual: View {
             }
             .overlay(alignment: .bottom) {
                 if step >= 2 {
-                    Text("20×").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color).offset(y: -28)
+                    Text("20×").font(RenaissanceFont.ivFormula).foregroundStyle(color).offset(y: -28)
                 }
             }
         }
@@ -491,8 +491,8 @@ private struct LeadTubeVisual: View {
                         }
                     }
                 }
-                if step >= 1 { Text("327°C").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.dimColor) }
-                if step >= 3 { Text("Perfectly cylindrical").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color) }
+                if step >= 1 { Text("327°C").font(RenaissanceFont.ivFormula).foregroundStyle(IVMaterialColors.dimColor) }
+                if step >= 3 { Text("Perfectly cylindrical").font(RenaissanceFont.ivFormula).foregroundStyle(color) }
             }
         }
     }
@@ -510,16 +510,16 @@ private struct GrindUltramarineVisual: View {
             VStack(spacing: 8) {
                 HStack(spacing: 8) {
                     Circle().fill(ultraBlue.opacity(step >= 3 ? 0.7 : step >= 1 ? 0.4 : 0.1)).frame(width: 30, height: 30)
-                        .overlay { Text("1st").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(.white.opacity(step >= 3 ? 0.7 : 0)) }
+                        .overlay { Text("1st").font(RenaissanceFont.ivBody).foregroundStyle(.white.opacity(step >= 3 ? 0.7 : 0)) }
                     if step >= 3 {
                         Circle().fill(ultraBlue.opacity(0.3)).frame(width: 25, height: 25)
-                            .overlay { Text("2nd").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(.white.opacity(0.6)) }
+                            .overlay { Text("2nd").font(RenaissanceFont.ivBody).foregroundStyle(.white.opacity(0.6)) }
                         Circle().fill(Color.gray.opacity(0.3)).frame(width: 20, height: 20)
-                            .overlay { Text("3rd").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(.white.opacity(0.5)) }
+                            .overlay { Text("3rd").font(RenaissanceFont.ivBody).foregroundStyle(.white.opacity(0.5)) }
                     }
                 }
-                if step >= 2 { Text("3 weeks kneading").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.dimColor) }
-                if step >= 3 { Text("Deep → Pale → Grey").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color) }
+                if step >= 2 { Text("3 weeks kneading").font(RenaissanceFont.ivFormula).foregroundStyle(IVMaterialColors.dimColor) }
+                if step >= 3 { Text("Deep → Pale → Grey").font(RenaissanceFont.ivFormula).foregroundStyle(color) }
             }
         }
     }
@@ -572,7 +572,7 @@ private struct StarChartsVisual: View {
             .overlay(alignment: .bottom) {
                 if step >= 3 {
                     Text("1,000 stars · 1 arcminute")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(color)
                         .offset(y: -28)
                 }

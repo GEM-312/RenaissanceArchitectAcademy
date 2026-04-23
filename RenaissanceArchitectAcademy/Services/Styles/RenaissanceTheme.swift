@@ -34,6 +34,23 @@ enum RenaissanceFont {
     static let tagline     = Font.custom("PetitFormalScript-Regular", size: 20, relativeTo: .title3)
     static let dialogTitle = Font.custom("EBGaramond-SemiBold", size: 22, relativeTo: .title2)
     static let dialogSubtitle = Font.custom("EBGaramond-Regular", size: 14, relativeTo: .caption)
+
+    // Interactive Visual labels inside knowledge cards.
+    // Computed vars (not `let`) so they re-read GameSettings.shared.cardTextScale
+    // at every access — updates live when the user moves the settings slider.
+    // Baseline: 28pt × cardTextScale.
+    @MainActor static var ivLabel: Font   { .custom("EBGaramond-SemiBold", size: 28 * GameSettings.shared.cardTextScale, relativeTo: .body) }
+    @MainActor static var ivFormula: Font { .custom("EBGaramond-Bold",     size: 28 * GameSettings.shared.cardTextScale, relativeTo: .body) }
+    @MainActor static var ivBody: Font    { .custom("EBGaramond-Regular",  size: 28 * GameSettings.shared.cardTextScale, relativeTo: .body) }
+    @MainActor static var ivButton: Font  { .custom("EBGaramond-SemiBold", size: 28 * GameSettings.shared.cardTextScale, relativeTo: .body) }
+    @MainActor static var ivSmall: Font   { .custom("EBGaramond-Regular",  size: 22 * GameSettings.shared.cardTextScale, relativeTo: .body) }
+
+    // Knowledge card READING text (the paragraph at the top of a flipped card,
+    // keywords + fun facts). Baseline 18pt × cardTextScale — smaller than iv*
+    // so reading paragraphs stay comfortable, but still user-adjustable.
+    @MainActor static var cardReading: Font       { .custom("EBGaramond-Regular",  size: 18 * GameSettings.shared.cardTextScale, relativeTo: .body) }
+    @MainActor static var cardReadingBold: Font   { .custom("EBGaramond-SemiBold", size: 18 * GameSettings.shared.cardTextScale, relativeTo: .body) }
+    @MainActor static var cardReadingItalic: Font { .custom("EBGaramond-Italic",   size: 18 * GameSettings.shared.cardTextScale, relativeTo: .body) }
 }
 
 // MARK: - 2. Letter Spacing (Tracking)

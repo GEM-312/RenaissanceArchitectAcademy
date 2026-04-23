@@ -148,7 +148,7 @@ private struct MortarVsConcreteVisual: View {
 
                         if mortarApplied {
                             Text("Lime + Sand")
-                                .font(.custom("EBGaramond-Regular", size: 15))
+                                .font(RenaissanceFont.ivBody)
                                 .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
                                 .transition(.opacity)
                         }
@@ -201,7 +201,7 @@ private struct MortarVsConcreteVisual: View {
 
                         if concreteApplied {
                             Text("Lime + Ash + Aggregate")
-                                .font(.custom("EBGaramond-Regular", size: 15))
+                                .font(RenaissanceFont.ivBody)
                                 .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
                                 .transition(.opacity)
                         }
@@ -218,7 +218,7 @@ private struct MortarVsConcreteVisual: View {
                                     if concreteApplied { withAnimation { step = 3 } }
                                 } label: {
                                     Text("Apply Mortar")
-                                        .font(.custom("EBGaramond-SemiBold", size: 15))
+                                        .font(RenaissanceFont.ivLabel)
                                         .padding(.horizontal, 12).padding(.vertical, 6)
                                         .background(mortarTan.opacity(0.3))
                                         .cornerRadius(6)
@@ -233,7 +233,7 @@ private struct MortarVsConcreteVisual: View {
                                     if mortarApplied { withAnimation { step = 3 } }
                                 } label: {
                                     Text("Pour Concrete")
-                                        .font(.custom("EBGaramond-SemiBold", size: 15))
+                                        .font(RenaissanceFont.ivLabel)
                                         .padding(.horizontal, 12).padding(.vertical, 6)
                                         .background(IVMaterialColors.stoneGray.opacity(0.3))
                                         .cornerRadius(6)
@@ -248,7 +248,7 @@ private struct MortarVsConcreteVisual: View {
 
                     // Final formula (step 3)
                     if step >= 3 {
-                        FormulaText(text: "Same lime binder — different jobs", highlighted: true, fontSize: 15)
+                        FormulaText(text: "Same lime binder — different jobs", highlighted: true)
                             .position(x: w * 0.5, y: h * 0.85)
                             .transition(.opacity)
                     }
@@ -360,17 +360,17 @@ private struct SpecusCrossSectionVisual: View {
                     // Layer labels (step 2+)
                     if step >= 2 {
                         // Stone label
-                        DimLabel(text: "Stone wall", fontSize: 15)
+                        DimLabel(text: "Stone wall")
                             .position(x: cx + chW * 0.5 + 30, y: cy - chH * 0.3)
                             .opacity(revealedLayers.contains(0) ? 1 : 0.4)
 
                         // Signinum label
-                        DimLabel(text: "Opus signinum", fontSize: 15)
+                        DimLabel(text: "Opus signinum")
                             .position(x: cx + chW * 0.5 + 30, y: cy)
                             .opacity(revealedLayers.contains(1) ? 1 : 0.4)
 
                         // Channel label
-                        DimLabel(text: "Water channel", fontSize: 15)
+                        DimLabel(text: "Water channel")
                             .position(x: cx + chW * 0.5 + 30, y: cy + chH * 0.25)
                             .opacity(revealedLayers.contains(2) ? 1 : 0.4)
                     }
@@ -381,14 +381,14 @@ private struct SpecusCrossSectionVisual: View {
                         DimLine(from: CGPoint(x: cx - chW * 0.5, y: cy + chH * 0.5 + 12),
                                 to: CGPoint(x: cx + chW * 0.5, y: cy + chH * 0.5 + 12))
                             .stroke(IVMaterialColors.dimColor, lineWidth: 0.8)
-                        DimLabel(text: "0.9 m", fontSize: 15)
+                        DimLabel(text: "0.9 m")
                             .position(x: cx, y: cy + chH * 0.5 + 22)
 
                         // Height dimension
                         DimLine(from: CGPoint(x: cx - chW * 0.5 - 16, y: cy - chH * 0.5 + 6),
                                 to: CGPoint(x: cx - chW * 0.5 - 16, y: cy + chH * 0.5 - 2))
                             .stroke(IVMaterialColors.dimColor, lineWidth: 0.8)
-                        DimLabel(text: "1.5 m", fontSize: 15)
+                        DimLabel(text: "1.5 m")
                             .rotationEffect(.degrees(-90))
                             .position(x: cx - chW * 0.5 - 30, y: cy)
                     }
@@ -406,18 +406,18 @@ private struct SpecusCrossSectionVisual: View {
                         HStack(spacing: 8) {
                             VStack(spacing: 2) {
                                 Image(systemName: "drop.fill").font(.system(size: 13)).foregroundStyle(IVMaterialColors.waterBlue)
-                                Text("Fountains").font(.custom("EBGaramond-Regular", size: 15))
-                                Text("1st").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color)
+                                Text("Fountains").font(RenaissanceFont.ivBody)
+                                Text("1st").font(RenaissanceFont.ivFormula).foregroundStyle(color)
                             }
                             VStack(spacing: 2) {
                                 Image(systemName: "humidity.fill").font(.system(size: 13)).foregroundStyle(IVMaterialColors.waterBlue.opacity(0.7))
-                                Text("Baths").font(.custom("EBGaramond-Regular", size: 15))
-                                Text("2nd").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color)
+                                Text("Baths").font(RenaissanceFont.ivBody)
+                                Text("2nd").font(RenaissanceFont.ivFormula).foregroundStyle(color)
                             }
                             VStack(spacing: 2) {
                                 Image(systemName: "house.fill").font(.system(size: 13)).foregroundStyle(IVMaterialColors.waterBlue.opacity(0.4))
-                                Text("Homes").font(.custom("EBGaramond-Regular", size: 15))
-                                Text("3rd").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color)
+                                Text("Homes").font(RenaissanceFont.ivBody)
+                                Text("3rd").font(RenaissanceFont.ivFormula).foregroundStyle(color)
                             }
                         }
                         .foregroundStyle(IVMaterialColors.sepiaInk)
@@ -531,7 +531,7 @@ private struct UndergroundRevealVisual: View {
                         .foregroundStyle(Color.brown.opacity(0.5))
                         .position(x: margin + 8, y: h * 0.08)
                     Text("Springs")
-                        .font(.custom("EBGaramond-Regular", size: 15))
+                        .font(RenaissanceFont.ivBody)
                         .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                         .position(x: margin + 8, y: h * 0.16)
 
@@ -540,7 +540,7 @@ private struct UndergroundRevealVisual: View {
                         .foregroundStyle(Color.brown.opacity(0.5))
                         .position(x: w - margin - 8, y: h * 0.32)
                     Text("Rome")
-                        .font(.custom("EBGaramond-Regular", size: 15))
+                        .font(RenaissanceFont.ivBody)
                         .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                         .position(x: w - margin - 8, y: h * 0.40)
 
@@ -561,7 +561,7 @@ private struct UndergroundRevealVisual: View {
                                     .frame(width: 28, height: 28)
                                     .overlay {
                                         Text("?")
-                                            .font(.custom("EBGaramond-Bold", size: 15))
+                                            .font(RenaissanceFont.ivFormula)
                                             .foregroundStyle(color.opacity(0.4))
                                     }
                                     .position(x: x, y: h * 0.75)
@@ -577,7 +577,7 @@ private struct UndergroundRevealVisual: View {
                             } else {
                                 // Label: tunnel or arches
                                 Text(isUnderground[i] ? "tunnel" : "arches")
-                                    .font(.custom("EBGaramond-Regular", size: 15))
+                                    .font(RenaissanceFont.ivBody)
                                     .foregroundStyle(isUnderground[i] ? Color.brown.opacity(0.5) : IVMaterialColors.stoneGray)
                                     .position(x: x, y: h * 0.75)
                                     .transition(.scale.combined(with: .opacity))
@@ -594,14 +594,14 @@ private struct UndergroundRevealVisual: View {
                                         .stroke(style: StrokeStyle(lineWidth: 2, dash: [4, 3]))
                                         .foregroundStyle(Color.brown.opacity(0.5))
                                         .frame(width: 16, height: 2)
-                                    DimLabel(text: "53 km underground", fontSize: 15)
+                                    DimLabel(text: "53 km underground")
                                 }
                                 HStack(spacing: 4) {
                                     Rectangle().fill(IVMaterialColors.stoneGray).frame(width: 16, height: 2)
-                                    DimLabel(text: "16 km on arches", fontSize: 15)
+                                    DimLabel(text: "16 km on arches")
                                 }
                             }
-                            FormulaText(text: "85% invisible", highlighted: true, fontSize: 15)
+                            FormulaText(text: "85% invisible", highlighted: true)
                         }
                         .position(x: w * 0.5, y: h * 0.88)
                         .transition(.opacity)
@@ -846,7 +846,7 @@ private struct ChorobatesTiltVisual: View {
 
                     // Final formula (step 3)
                     if step >= 3 {
-                        FormulaText(text: "Gradient: 1 : 4,800", highlighted: true, fontSize: 15)
+                        FormulaText(text: "Gradient: 1 : 4,800", highlighted: true)
                             .position(x: cx, y: h * 0.12)
                             .transition(.opacity)
                     }
@@ -943,7 +943,7 @@ private struct GradientSliderVisual: View {
                                 .foregroundStyle(RenaissanceColors.errorRed.opacity(0.6))
                                 .position(x: w * 0.5, y: channelY - 30)
                         } else {
-                            FormulaText(text: "34 cm / km", highlighted: true, fontSize: 15)
+                            FormulaText(text: "34 cm / km", highlighted: true)
                                 .position(x: w * 0.5, y: channelY - 30)
                         }
 
@@ -953,9 +953,9 @@ private struct GradientSliderVisual: View {
                                 .tint(slopeValue < 0.3 || slopeValue > 0.7 ? RenaissanceColors.errorRed : color)
                                 .frame(width: w * 0.7)
                             HStack {
-                                Text("Gentle").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
+                                Text("Gentle").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                                 Spacer()
-                                Text("Steep").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
+                                Text("Steep").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                             }
                             .frame(width: w * 0.7)
                         }
@@ -1108,7 +1108,7 @@ private struct VoussoirArchBuildVisual: View {
                                 .position(x: arrowX, y: arrowY)
                         }
 
-                        FormulaText(text: "Compression — strong because it wants to fall", highlighted: true, fontSize: 15)
+                        FormulaText(text: "Compression — strong because it wants to fall", highlighted: true)
                             .position(x: cx, y: h * 0.08)
                             .transition(.opacity)
                     }
@@ -1176,7 +1176,7 @@ private struct UnderwaterComparisonVisual: View {
 
                         if waterPoured {
                             Text("Dissolves")
-                                .font(.custom("EBGaramond-Bold", size: 15))
+                                .font(RenaissanceFont.ivFormula)
                                 .foregroundStyle(RenaissanceColors.errorRed)
                                 .transition(.opacity)
                         }
@@ -1205,7 +1205,7 @@ private struct UnderwaterComparisonVisual: View {
 
                         if waterPoured {
                             Text("HARDENS")
-                                .font(.custom("EBGaramond-Bold", size: 15))
+                                .font(RenaissanceFont.ivFormula)
                                 .foregroundStyle(RenaissanceColors.sageGreen)
                                 .transition(.opacity)
                         }
@@ -1242,7 +1242,7 @@ private struct UnderwaterComparisonVisual: View {
                             HStack(spacing: 4) {
                                 Image(systemName: "drop.fill").font(.system(size: 13))
                                 Text("Pour Water")
-                                    .font(.custom("EBGaramond-SemiBold", size: 15))
+                                    .font(RenaissanceFont.ivLabel)
                             }
                             .foregroundStyle(.white)
                             .padding(.horizontal, 16).padding(.vertical, 8)
@@ -1255,7 +1255,7 @@ private struct UnderwaterComparisonVisual: View {
 
                     // Final formula (step 3)
                     if step >= 3 {
-                        FormulaText(text: "Silica + Lime = sets underwater", highlighted: true, fontSize: 15)
+                        FormulaText(text: "Silica + Lime = sets underwater", highlighted: true)
                             .position(x: w * 0.5, y: h * 0.12)
                             .transition(.opacity)
                     }
@@ -1345,17 +1345,17 @@ private struct OpusSigninumCoatsVisual: View {
                         VStack(alignment: .leading, spacing: 8) {
                             HStack(spacing: 4) {
                                 Circle().fill(coatsApplied >= 1 ? coatColors[0] : IVMaterialColors.stoneGray.opacity(0.2)).frame(width: 8, height: 8)
-                                Text("Coarse").font(.custom("EBGaramond-Regular", size: 15))
+                                Text("Coarse").font(RenaissanceFont.ivBody)
                                     .foregroundStyle(coatsApplied >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                             }
                             HStack(spacing: 4) {
                                 Circle().fill(coatsApplied >= 2 ? coatColors[1] : IVMaterialColors.stoneGray.opacity(0.2)).frame(width: 8, height: 8)
-                                Text("Medium").font(.custom("EBGaramond-Regular", size: 15))
+                                Text("Medium").font(RenaissanceFont.ivBody)
                                     .foregroundStyle(coatsApplied >= 2 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                             }
                             HStack(spacing: 4) {
                                 Circle().fill(coatsApplied >= 3 ? coatColors[2] : IVMaterialColors.stoneGray.opacity(0.2)).frame(width: 8, height: 8)
-                                Text("Finest").font(.custom("EBGaramond-Regular", size: 15))
+                                Text("Finest").font(RenaissanceFont.ivBody)
                                     .foregroundStyle(coatsApplied >= 3 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                             }
                         }
@@ -1380,7 +1380,7 @@ private struct OpusSigninumCoatsVisual: View {
                             HStack(spacing: 4) {
                                 Image(systemName: "paintbrush.fill").font(.system(size: 13))
                                 Text("Apply Coat \(coatsApplied + 1)")
-                                    .font(.custom("EBGaramond-SemiBold", size: 15))
+                                    .font(RenaissanceFont.ivLabel)
                             }
                             .foregroundStyle(color)
                             .padding(.horizontal, 12).padding(.vertical, 6)
@@ -1394,7 +1394,7 @@ private struct OpusSigninumCoatsVisual: View {
 
                     // Final formula
                     if step >= 3 {
-                        FormulaText(text: "Smoother than modern plumbing", highlighted: true, fontSize: 15)
+                        FormulaText(text: "Smoother than modern plumbing", highlighted: true)
                             .position(x: cx, y: h * 0.82)
                             .transition(.opacity)
                     }
@@ -1463,7 +1463,7 @@ private struct FistulaPipeFabVisual: View {
                             .frame(width: pipeSize * 0.5, height: pipeSize * 0.5)
                             .position(x: cx, y: cy + 2)
 
-                        DimLabel(text: "Wood core", fontSize: 15)
+                        DimLabel(text: "Wood core")
                             .position(x: cx, y: cy + pipeSize * 0.35)
                     }
 
@@ -1510,7 +1510,7 @@ private struct FistulaPipeFabVisual: View {
                             .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             .position(x: cx, y: cy)
 
-                        FormulaText(text: "10 standard sizes", highlighted: true, fontSize: 15)
+                        FormulaText(text: "10 standard sizes", highlighted: true)
                             .position(x: cx, y: cy + pipeSize * 0.35)
                     }
                 }
@@ -1548,7 +1548,6 @@ private struct AqueductMortarRecipeVisual: View {
                 FormulaText(
                     text: "1 Lime : 2 Sand : ½ Pozzolana",
                     highlighted: ingredientsAdded >= 4,
-                    fontSize: 15
                 )
                 .padding(.top, 8)
 
@@ -1563,7 +1562,7 @@ private struct AqueductMortarRecipeVisual: View {
                             .frame(width: barW * (1.0 / totalParts))
                             .overlay {
                                 if ingredientsAdded >= 1 {
-                                    Text("1").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk)
+                                    Text("1").font(RenaissanceFont.ivFormula).foregroundStyle(IVMaterialColors.sepiaInk)
                                 }
                             }
 
@@ -1575,7 +1574,7 @@ private struct AqueductMortarRecipeVisual: View {
                             .overlay {
                                 if ingredientsAdded >= 2 {
                                     Text(ingredientsAdded >= 3 ? "2" : "1")
-                                        .font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk)
+                                        .font(RenaissanceFont.ivFormula).foregroundStyle(IVMaterialColors.sepiaInk)
                                 }
                             }
 
@@ -1585,7 +1584,7 @@ private struct AqueductMortarRecipeVisual: View {
                             .frame(width: barW * (0.5 / totalParts))
                             .overlay {
                                 if ingredientsAdded >= 4 {
-                                    Text("½").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk)
+                                    Text("½").font(RenaissanceFont.ivFormula).foregroundStyle(IVMaterialColors.sepiaInk)
                                 }
                             }
                     }
@@ -1603,8 +1602,8 @@ private struct AqueductMortarRecipeVisual: View {
                         SoundManager.shared.play(.tapSoft)
                     } label: {
                         VStack(spacing: 2) {
-                            Text("CaO").font(.custom("EBGaramond-Bold", size: 15))
-                            Text("Lime").font(.custom("EBGaramond-Regular", size: 15))
+                            Text("CaO").font(RenaissanceFont.ivFormula)
+                            Text("Lime").font(RenaissanceFont.ivBody)
                         }
                         .frame(width: 60, height: 50)
                         .background(ingredientsAdded >= 1 ? IVMaterialColors.stoneGray.opacity(0.1) : Color.white.opacity(0.5))
@@ -1622,8 +1621,8 @@ private struct AqueductMortarRecipeVisual: View {
                         SoundManager.shared.play(.tapSoft)
                     } label: {
                         VStack(spacing: 2) {
-                            Text("SiO₂").font(.custom("EBGaramond-Bold", size: 15))
-                            Text("Sand").font(.custom("EBGaramond-Regular", size: 15))
+                            Text("SiO₂").font(RenaissanceFont.ivFormula)
+                            Text("Sand").font(RenaissanceFont.ivBody)
                         }
                         .frame(width: 60, height: 50)
                         .background(ingredientsAdded >= 3 ? IVMaterialColors.stoneGray.opacity(0.1) : Color.yellow.opacity(0.15))
@@ -1642,8 +1641,8 @@ private struct AqueductMortarRecipeVisual: View {
                         SoundManager.shared.play(.tapSoft)
                     } label: {
                         VStack(spacing: 2) {
-                            Text("ite").font(.custom("EBGaramond-Bold", size: 15))
-                            Text("Pozzolana").font(.custom("EBGaramond-Regular", size: 15))
+                            Text("ite").font(RenaissanceFont.ivFormula)
+                            Text("Pozzolana").font(RenaissanceFont.ivBody)
                         }
                         .frame(width: 70, height: 50)
                         .background(ingredientsAdded >= 4 ? IVMaterialColors.stoneGray.opacity(0.1) : pozzolanaRed.opacity(0.15))
@@ -1667,7 +1666,7 @@ private struct AqueductMortarRecipeVisual: View {
                                 .font(.system(size: 13))
                                 .rotationEffect(.degrees(trowelFlipped ? 180 : 0))
                             Text(trowelFlipped ? "It clings!" : "Trowel Test")
-                                .font(.custom("EBGaramond-SemiBold", size: 15))
+                                .font(RenaissanceFont.ivLabel)
                         }
                         .foregroundStyle(trowelFlipped ? RenaissanceColors.sageGreen : color)
                         .padding(.horizontal, 14).padding(.vertical, 6)
@@ -1680,7 +1679,7 @@ private struct AqueductMortarRecipeVisual: View {
 
                 // Status text
                 Text(statusText)
-                    .font(.custom("EBGaramond-Regular", size: 15))
+                    .font(RenaissanceFont.ivBody)
                     .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
                     .multilineTextAlignment(.center)
 
@@ -1783,13 +1782,13 @@ private struct TerracottaFiringVisual: View {
 
                     // Range markers
                     HStack {
-                        Text("0°C").font(.custom("EBGaramond-Regular", size: 15))
+                        Text("0°C").font(RenaissanceFont.ivBody)
                         Spacer()
-                        Text("600°C").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(RenaissanceColors.sageGreen)
+                        Text("600°C").font(RenaissanceFont.ivBody).foregroundStyle(RenaissanceColors.sageGreen)
                         Spacer()
-                        Text("900°C").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(RenaissanceColors.sageGreen)
+                        Text("900°C").font(RenaissanceFont.ivBody).foregroundStyle(RenaissanceColors.sageGreen)
                         Spacer()
-                        Text("1100°C").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(RenaissanceColors.errorRed)
+                        Text("1100°C").font(RenaissanceFont.ivBody).foregroundStyle(RenaissanceColors.errorRed)
                     }
                     .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                     .frame(width: 200)
@@ -1797,7 +1796,7 @@ private struct TerracottaFiringVisual: View {
 
                 // Status text
                 Text(statusText)
-                    .font(.custom("EBGaramond-Regular", size: 15))
+                    .font(RenaissanceFont.ivBody)
                     .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.7))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 16)
@@ -1873,7 +1872,7 @@ private struct DailyFlowVisual: View {
                             .foregroundStyle(fillLevel > 0.5 ? .white : IVMaterialColors.sepiaInk)
                         if counterValue > 0 {
                             Text("m³ / day")
-                                .font(.custom("EBGaramond-Regular", size: 15))
+                                .font(RenaissanceFont.ivBody)
                                 .foregroundStyle(fillLevel > 0.5 ? .white.opacity(0.8) : IVMaterialColors.sepiaInk.opacity(0.5))
                         }
                     }
@@ -1887,7 +1886,7 @@ private struct DailyFlowVisual: View {
                             HStack(spacing: 4) {
                                 Image(systemName: "drop.fill").font(.system(size: 13))
                                 Text("Fill")
-                                    .font(.custom("EBGaramond-SemiBold", size: 15))
+                                    .font(RenaissanceFont.ivLabel)
                             }
                             .foregroundStyle(.white)
                             .padding(.horizontal, 16).padding(.vertical, 8)
@@ -1904,7 +1903,7 @@ private struct DailyFlowVisual: View {
                             Image(systemName: "person.fill")
                                 .font(.system(size: 13))
                                 .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
-                            FormulaText(text: "190 liters / person / day", highlighted: true, fontSize: 15)
+                            FormulaText(text: "190 liters / person / day", highlighted: true)
                         }
                         .position(x: cx, y: h * 0.82)
                         .transition(.opacity)

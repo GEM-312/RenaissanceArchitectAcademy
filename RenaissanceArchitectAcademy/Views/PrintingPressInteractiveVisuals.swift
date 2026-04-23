@@ -77,21 +77,21 @@ private struct GutenbergVisual: View {
                 HStack(spacing: 20) {
                     VStack(spacing: 4) {
                         Text("✍️").font(.system(size: 20)).opacity(step >= 1 ? 0.7 : 0.2)
-                        Text("1 Bible").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
-                        Text("2 years").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.dimColor.opacity(step >= 1 ? 0.6 : 0.2))
+                        Text("1 Bible").font(RenaissanceFont.ivFormula).foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
+                        Text("2 years").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.dimColor.opacity(step >= 1 ? 0.6 : 0.2))
                     }
                     if step >= 2 {
                         Image(systemName: "arrow.right").font(.system(size: 13)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3))
                         VStack(spacing: 4) {
                             Text("🖨️").font(.system(size: 20))
-                            Text("180 Bibles").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color)
-                            Text("3 years").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.dimColor)
+                            Text("180 Bibles").font(RenaissanceFont.ivFormula).foregroundStyle(color)
+                            Text("3 years").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.dimColor)
                         }
                     }
                 }
                 if step >= 3 {
                     Text("150 shops · 4,000 titles by 1500")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(color)
                 }
             }
@@ -148,7 +148,7 @@ private struct ScrewPressVisual: View {
             .overlay(alignment: .bottom) {
                 if step >= 3 {
                     Text("10 kg → 3,140 kg (314×)")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(color)
                         .offset(y: -28)
                 }
@@ -182,8 +182,8 @@ private struct TypeMetalVisual: View {
                                 .frame(width: geo.size.width * metal.2)
                                 .overlay {
                                     VStack(spacing: 1) {
-                                        Text(metal.1).font(.custom("EBGaramond-Bold", size: 15))
-                                        Text(metal.0).font(.custom("EBGaramond-Regular", size: 15))
+                                        Text(metal.1).font(RenaissanceFont.ivFormula)
+                                        Text(metal.0).font(RenaissanceFont.ivBody)
                                     }.foregroundStyle(active ? .white.opacity(0.8) : .clear)
                                 }
                         }
@@ -191,7 +191,7 @@ private struct TypeMetalVisual: View {
                     .clipShape(RoundedRectangle(cornerRadius: 4))
                     .overlay(RoundedRectangle(cornerRadius: 4).strokeBorder(IVMaterialColors.sepiaInk.opacity(0.2), lineWidth: 0.5))
                 }.frame(height: 40)
-                if step >= 3 { Text("+1% expansion on cooling").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color) }
+                if step >= 3 { Text("+1% expansion on cooling").font(RenaissanceFont.ivFormula).foregroundStyle(color) }
             }.padding(.horizontal, 8)
         }
     }
@@ -213,7 +213,7 @@ private struct OilInkVisual: View {
                     Circle().fill(IVMaterialColors.waterBlue.opacity(step >= 1 ? 0.3 : 0.1)).frame(width: 35, height: 35)
                         .overlay { if step >= 1 { Image(systemName: "xmark").font(.system(size: 13)).foregroundStyle(.red.opacity(0.5)) } }
                     Text("Water").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(step >= 1 ? .red.opacity(0.5) : IVMaterialColors.sepiaInk.opacity(0.3))
-                    Text("Beads off").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(step >= 1 ? IVMaterialColors.dimColor : IVMaterialColors.dimColor.opacity(0.3))
+                    Text("Beads off").font(RenaissanceFont.ivBody).foregroundStyle(step >= 1 ? IVMaterialColors.dimColor : IVMaterialColors.dimColor.opacity(0.3))
                 }
                 if step >= 2 {
                     Image(systemName: "arrow.right").font(.system(size: 13)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3))
@@ -222,7 +222,7 @@ private struct OilInkVisual: View {
                         Circle().fill(inkBlack.opacity(0.6)).frame(width: 35, height: 35)
                             .overlay { if step >= 3 { Image(systemName: "checkmark").font(.system(size: 13)).foregroundStyle(Color(red: 0.30, green: 0.58, blue: 0.32)) } }
                         Text("Oil").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(color)
-                        Text("Clings").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.dimColor)
+                        Text("Clings").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.dimColor)
                     }
                 }
             }.padding(.horizontal, 20)
@@ -253,10 +253,10 @@ private struct CompositorVisual: View {
                                 .scaleEffect(x: -1) // mirrored
                         }
                     }
-                    Text("← mirrored").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.dimColor.opacity(0.5))
+                    Text("← mirrored").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.dimColor.opacity(0.5))
                 }
-                if step >= 2 { Text("1,500 chars/hour").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color) }
-                if step >= 3 { Text("→ 500 copies/day").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color) }
+                if step >= 2 { Text("1,500 chars/hour").font(RenaissanceFont.ivFormula).foregroundStyle(color) }
+                if step >= 3 { Text("→ 500 copies/day").font(RenaissanceFont.ivFormula).foregroundStyle(color) }
             }
         }
     }
@@ -279,15 +279,15 @@ private struct TypeAlloyVisual: View {
                     orePill("Cassiterite", formula: "SnO₂", temp: "232°C", active: step >= 2)
                     orePill("Stibnite", formula: "Sb₂S₃", temp: "630°C", active: step >= 2)
                 }
-                if step >= 3 { Text("500 impressions per piece").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color) }
+                if step >= 3 { Text("500 impressions per piece").font(RenaissanceFont.ivFormula).foregroundStyle(color) }
             }
         }
     }
     @ViewBuilder private func orePill(_ name: String, formula: String, temp: String, active: Bool) -> some View {
         VStack(spacing: 2) {
-            Text(formula).font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(active ? IVMaterialColors.dimColor : IVMaterialColors.dimColor.opacity(0.2))
+            Text(formula).font(RenaissanceFont.ivFormula).foregroundStyle(active ? IVMaterialColors.dimColor : IVMaterialColors.dimColor.opacity(0.2))
             Text(name).font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(active ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.2))
-            Text(temp).font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(active ? color : color.opacity(0.2))
+            Text(temp).font(RenaissanceFont.ivBody).foregroundStyle(active ? color : color.opacity(0.2))
         }.padding(.horizontal, 4).padding(.vertical, 3)
         .background(RoundedRectangle(cornerRadius: 3).fill(active ? color.opacity(0.06) : Color.clear))
     }
@@ -309,11 +309,11 @@ private struct DampenPaperVisual: View {
                     .frame(height: 40)
                     .overlay(RoundedRectangle(cornerRadius: 4).strokeBorder(IVMaterialColors.sepiaInk.opacity(0.2), lineWidth: 0.5))
                     .padding(.horizontal, 30)
-                if step >= 2 { Text("20-25% moisture").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color) }
+                if step >= 2 { Text("20-25% moisture").font(RenaissanceFont.ivFormula).foregroundStyle(color) }
                 if step >= 3 {
                     HStack(spacing: 20) {
-                        Text("Too wet: bleed").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(.red.opacity(0.5))
-                        Text("Too dry: smear").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(.red.opacity(0.5))
+                        Text("Too wet: bleed").font(RenaissanceFont.ivBody).foregroundStyle(.red.opacity(0.5))
+                        Text("Too dry: smear").font(RenaissanceFont.ivBody).foregroundStyle(.red.opacity(0.5))
                     }
                 }
             }
@@ -356,7 +356,7 @@ private struct IronFrameVisual: View {
                 }
             }
             .overlay(alignment: .bottom) {
-                if step >= 3 { Text("3,000+ kg").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color).offset(y: -28) }
+                if step >= 3 { Text("3,000+ kg").font(RenaissanceFont.ivFormula).foregroundStyle(color).offset(y: -28) }
             }
         }
     }
@@ -376,16 +376,16 @@ private struct OakPressVisual: View {
                     VStack(spacing: 4) {
                         RoundedRectangle(cornerRadius: 3).fill(IVMaterialColors.oakBrown.opacity(step >= 1 ? 0.5 : 0.15))
                             .frame(width: 25, height: 60)
-                        Text("15×15cm").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(step >= 1 ? IVMaterialColors.dimColor : IVMaterialColors.dimColor.opacity(0.3))
+                        Text("15×15cm").font(RenaissanceFont.ivFormula).foregroundStyle(step >= 1 ? IVMaterialColors.dimColor : IVMaterialColors.dimColor.opacity(0.3))
                     }
                     VStack(spacing: 4) {
                         RoundedRectangle(cornerRadius: 3).fill(IVMaterialColors.oakBrown.opacity(step >= 1 ? 0.5 : 0.15))
                             .frame(width: 25, height: 60)
-                        Text("15×15cm").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(step >= 1 ? IVMaterialColors.dimColor : IVMaterialColors.dimColor.opacity(0.3))
+                        Text("15×15cm").font(RenaissanceFont.ivFormula).foregroundStyle(step >= 1 ? IVMaterialColors.dimColor : IVMaterialColors.dimColor.opacity(0.3))
                     }
                 }
-                if step >= 2 { Text("1,500 kg each").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color) }
-                if step >= 3 { Text("Bronze bushing → smooth screw").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.dimColor) }
+                if step >= 2 { Text("1,500 kg each").font(RenaissanceFont.ivFormula).foregroundStyle(color) }
+                if step >= 3 { Text("Bronze bushing → smooth screw").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.dimColor) }
             }
         }
     }
@@ -414,7 +414,7 @@ private struct TypeCasesVisual: View {
                                 }
                             }
                         }
-                        .overlay(alignment: .leading) { Text("UPPER").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.dimColor).padding(.leading, 4) }
+                        .overlay(alignment: .leading) { Text("UPPER").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.dimColor).padding(.leading, 4) }
                         .padding(.horizontal, 20)
                 }
                 // Lower case
@@ -424,16 +424,16 @@ private struct TypeCasesVisual: View {
                         .overlay {
                             HStack(spacing: 2) {
                                 ForEach(["a","b","c","d","e","f","g","h"], id: \.self) { ch in
-                                    Text(ch).font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
+                                    Text(ch).font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                                         .frame(width: 14, height: 14)
                                         .background(RoundedRectangle(cornerRadius: 1).fill(paperCream.opacity(0.3)))
                                 }
                             }
                         }
-                        .overlay(alignment: .leading) { Text("lower").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.dimColor).padding(.leading, 4) }
+                        .overlay(alignment: .leading) { Text("lower").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.dimColor).padding(.leading, 4) }
                         .padding(.horizontal, 20)
                 }
-                if step >= 3 { Text("\"Uppercase\" = top tray position").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(color) }
+                if step >= 3 { Text("\"Uppercase\" = top tray position").font(RenaissanceFont.ivFormula).foregroundStyle(color) }
             }
         }
     }
@@ -458,7 +458,7 @@ private struct PunchMatrixVisual: View {
                             Text("A").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(.white.opacity(step >= 1 ? 0.6 : 0))
                                 .padding(.bottom, 2)
                         }
-                    Text("Punch").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
+                    Text("Punch").font(RenaissanceFont.ivBody).foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                 }
                 if step >= 2 {
                     Image(systemName: "arrow.right").font(.system(size: 13)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3))
@@ -470,7 +470,7 @@ private struct PunchMatrixVisual: View {
                                 Text("A").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(copperRose.opacity(0.3))
                                     .scaleEffect(x: -1)
                             }
-                        Text("Matrix").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk)
+                        Text("Matrix").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk)
                     }
                 }
                 if step >= 3 {
@@ -483,7 +483,7 @@ private struct PunchMatrixVisual: View {
                                 Text("A").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(leadGray.opacity(0.7))
                                     .scaleEffect(x: -1).padding(.top, 2)
                             }
-                        Text("Type").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(color)
+                        Text("Type").font(RenaissanceFont.ivBody).foregroundStyle(color)
                     }
                 }
             }.padding(.horizontal, 16)
@@ -502,7 +502,7 @@ private struct CastTypeVisual: View {
                           stepLabel: labels[step - 1], height: height) {
             VStack(spacing: 8) {
                 if step >= 1 { Text("240°C").font(.custom("EBGaramond-Bold", size: 16)).foregroundStyle(Color(red: 0.90, green: 0.50, blue: 0.15)) }
-                if step >= 2 { Text("Cool 10 sec → perfect letter").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.dimColor) }
+                if step >= 2 { Text("Cool 10 sec → perfect letter").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.dimColor) }
                 if step >= 3 {
                     HStack(spacing: 2) {
                         ForEach(0..<8, id: \.self) { _ in
@@ -510,7 +510,7 @@ private struct CastTypeVisual: View {
                         }
                     }
                     Text("4,000 / day — every one identical")
-                        .font(.custom("EBGaramond-Bold", size: 15))
+                        .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(color)
                 }
             }

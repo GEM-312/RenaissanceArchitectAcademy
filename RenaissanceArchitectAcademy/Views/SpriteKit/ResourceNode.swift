@@ -619,28 +619,26 @@ class ResourceNode: SKNode {
 
     /// Show/update a badge below the station label with materials still needed for the active building.
     /// Pass an empty dict (or all-zero) to hide the badge.
+    /// Each needed material is drawn as its Asset image (Material.imageName) + "×N" text.
+    /// Falls back to the emoji icon only if the imageset isn't in Assets.xcassets.
     func updateNeededBadge(materials: [Material: Int]) {
-        // Filter to materials with count > 0
         let needed = materials.filter { $0.value > 0 }
+                               .sorted(by: { $0.key.rawValue < $1.key.rawValue })
 
-        // Hide if nothing needed
         if needed.isEmpty {
             needsBadgeNode?.removeFromParent()
             needsBadgeNode = nil
             return
         }
 
-        // Build display string: "🪨×2  💧×3"
-        let parts = needed.sorted(by: { $0.key.rawValue < $1.key.rawValue }).map { mat, count in
-            "\(mat.icon)×\(count)"
-        }
-        let text = parts.joined(separator: "  ")
-
-        // Remove old badge if exists
         needsBadgeNode?.removeFromParent()
 
         let dark = GameSettings.shared.isDarkMode
         let fontSize: CGFloat = 22
+        let iconSize: CGFloat = 36
+        let iconTextSpacing: CGFloat = 4
+        let materialSpacing: CGFloat = 14
+
         let container = SKNode()
         container.name = "needsBadge"
         container.position = CGPoint(x: 0, y: -200)
@@ -654,22 +652,52 @@ class ResourceNode: SKNode {
             ? PlatformColor(red: 0.18, green: 0.16, blue: 0.13, alpha: 0.75)
             : PlatformColor(red: 0.961, green: 0.902, blue: 0.827, alpha: 0.75)
 
-        let label = SKLabelNode()
-        label.fontName = "EBGaramond-SemiBold"
-        label.fontSize = fontSize
-        label.fontColor = textColor
-        label.verticalAlignmentMode = .center
-        label.horizontalAlignmentMode = .center
-        label.position = CGPoint(x: 0, y: -1)
-        label.zPosition = 2
-        label.text = text
-        container.addChild(label)
+        // Measure each material's layout width to compute the pill size.
+        struct MatLayout {
+            let sprite: SKSpriteNode?
+            let emojiLabel: SKLabelNode?
+            let countLabel: SKLabelNode
+            let width: CGFloat
+        }
 
-        // Capsule background
-        let textWidth = label.frame.width
-        let hPad: CGFloat = fontSize * 0.6
-        let pillWidth = textWidth + hPad * 2
-        let pillHeight = fontSize * 1.5
+        var layouts: [MatLayout] = []
+        for (mat, count) in needed {
+            // Icon: prefer asset image, fall back to emoji label if missing.
+            var icon: (SKSpriteNode?, SKLabelNode?, CGFloat) = (nil, nil, 0)
+            if let name = mat.imageName, let texture = Self.loadTexture(named: name) {
+                let sprite = SKSpriteNode(texture: texture)
+                sprite.size = CGSize(width: iconSize, height: iconSize)
+                icon = (sprite, nil, iconSize)
+            } else {
+                let l = SKLabelNode(text: mat.icon)
+                l.fontSize = iconSize
+                l.verticalAlignmentMode = .center
+                l.horizontalAlignmentMode = .center
+                icon = (nil, l, iconSize)
+            }
+
+            let countLabel = SKLabelNode()
+            countLabel.fontName = "EBGaramond-SemiBold"
+            countLabel.fontSize = fontSize
+            countLabel.fontColor = textColor
+            countLabel.verticalAlignmentMode = .center
+            countLabel.horizontalAlignmentMode = .left
+            countLabel.text = "×\(count)"
+
+            let matWidth = icon.2 + iconTextSpacing + countLabel.frame.width
+            layouts.append(MatLayout(
+                sprite: icon.0,
+                emojiLabel: icon.1,
+                countLabel: countLabel,
+                width: matWidth
+            ))
+        }
+
+        let totalWidth = layouts.map(\.width).reduce(0, +)
+                          + CGFloat(max(0, layouts.count - 1)) * materialSpacing
+        let hPad: CGFloat = fontSize * 0.7
+        let pillWidth = totalWidth + hPad * 2
+        let pillHeight = max(fontSize, iconSize) * 1.35
         let cornerRadius = pillHeight / 2
 
         let pillPath = CGPath(roundedRect: CGRect(
@@ -684,8 +712,40 @@ class ResourceNode: SKNode {
         bg.zPosition = 1
         container.addChild(bg)
 
+        // Lay out each material left-to-right inside the pill.
+        var cursor = -totalWidth / 2
+        for layout in layouts {
+            let iconCenterX = cursor + iconSize / 2
+            if let sprite = layout.sprite {
+                sprite.position = CGPoint(x: iconCenterX, y: 0)
+                sprite.zPosition = 2
+                container.addChild(sprite)
+            } else if let emoji = layout.emojiLabel {
+                emoji.position = CGPoint(x: iconCenterX, y: -1)
+                emoji.zPosition = 2
+                container.addChild(emoji)
+            }
+            cursor += iconSize + iconTextSpacing
+
+            layout.countLabel.position = CGPoint(x: cursor, y: -1)
+            layout.countLabel.zPosition = 2
+            container.addChild(layout.countLabel)
+            cursor += layout.countLabel.frame.width + materialSpacing
+        }
+
         addChild(container)
         needsBadgeNode = container
+    }
+
+    /// Safely loads a texture if the named imageset exists in the bundle.
+    /// Avoids printing a warning + pink-square placeholder when art isn't shipped yet.
+    private static func loadTexture(named name: String) -> SKTexture? {
+        #if os(iOS)
+        guard UIImage(named: name) != nil else { return nil }
+        #else
+        guard NSImage(named: name) != nil else { return nil }
+        #endif
+        return SKTexture(imageNamed: name)
     }
 
     // MARK: - Theme Update

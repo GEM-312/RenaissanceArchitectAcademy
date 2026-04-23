@@ -126,7 +126,7 @@ private struct RadialRoadsVisual: View {
                             // Road name label
                             if extended {
                                 Text(roadNames[i])
-                                    .font(.custom("EBGaramond-Regular", size: 15))
+                                    .font(RenaissanceFont.ivBody)
                                     .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
                                     .position(x: endX, y: endY)
                                     .transition(.opacity)
@@ -153,7 +153,7 @@ private struct RadialRoadsVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "400,000 km = 10× around Earth", highlighted: true, fontSize: 15)
+                        FormulaText(text: "400,000 km = 10× around Earth", highlighted: true)
                             .position(x: cx, y: h * 0.88)
                             .transition(.opacity)
                     }
@@ -274,7 +274,7 @@ private struct GromaSurveyVisual: View {
                         }
                         .stroke(RenaissanceColors.sageGreen.opacity(0.5), style: StrokeStyle(lineWidth: 1, dash: [6, 4]))
 
-                        FormulaText(text: "Sight + plumb = 80 km straight", highlighted: true, fontSize: 15)
+                        FormulaText(text: "Sight + plumb = 80 km straight", highlighted: true)
                             .position(x: cx, y: h * 0.88)
                             .transition(.opacity)
                     }
@@ -343,7 +343,7 @@ private struct FourLayersVisual: View {
                             .position(x: cx + w * 0.35, y: y - 6)
 
                         Text(layers[i].desc)
-                            .font(.custom("EBGaramond-Regular", size: 15))
+                            .font(RenaissanceFont.ivBody)
                             .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                             .position(x: cx + w * 0.35, y: y + 6)
                     }
@@ -361,7 +361,7 @@ private struct FourLayersVisual: View {
                         } label: {
                             HStack(spacing: 4) {
                                 Image(systemName: "square.stack.3d.up").font(.system(size: 13))
-                                Text("Add \(layers[layersBuilt].latin)").font(.custom("EBGaramond-SemiBold", size: 15))
+                                Text("Add \(layers[layersBuilt].latin)").font(RenaissanceFont.ivLabel)
                             }
                             .foregroundStyle(layers[layersBuilt].color)
                             .padding(.horizontal, 12).padding(.vertical, 6)
@@ -376,12 +376,12 @@ private struct FourLayersVisual: View {
                         DimLine(from: CGPoint(x: w * 0.18, y: baseY - 3 * layerH - layerH * 0.5),
                                 to: CGPoint(x: w * 0.18, y: baseY + layerH * 0.5))
                             .stroke(IVMaterialColors.dimColor, lineWidth: 0.8)
-                        DimLabel(text: "1.5 m", fontSize: 15)
+                        DimLabel(text: "1.5 m")
                             .position(x: w * 0.12, y: baseY - layerH * 1.5)
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "4 layers = 2,300 years of service", highlighted: true, fontSize: 15)
+                        FormulaText(text: "4 layers = 2,300 years of service", highlighted: true)
                             .position(x: cx, y: h * 0.12)
                             .transition(.opacity)
                     }
@@ -490,7 +490,7 @@ private struct BasaltPavingVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "No mortar — just geometry + gravity", highlighted: true, fontSize: 15)
+                        FormulaText(text: "No mortar — just geometry + gravity", highlighted: true)
                             .position(x: cx, y: h * 0.85)
                             .transition(.opacity)
                     }
@@ -579,7 +579,7 @@ private struct IceSplittingVisual: View {
                             } label: {
                                 HStack(spacing: 4) {
                                     Image(systemName: "drop.fill").font(.system(size: 13))
-                                    Text("Pour Water").font(.custom("EBGaramond-SemiBold", size: 15))
+                                    Text("Pour Water").font(RenaissanceFont.ivLabel)
                                 }
                                 .foregroundStyle(IVMaterialColors.waterBlue)
                                 .padding(.horizontal, 12).padding(.vertical, 6)
@@ -598,7 +598,7 @@ private struct IceSplittingVisual: View {
                             } label: {
                                 HStack(spacing: 4) {
                                     Image(systemName: "snowflake").font(.system(size: 13))
-                                    Text("Freeze").font(.custom("EBGaramond-SemiBold", size: 15))
+                                    Text("Freeze").font(RenaissanceFont.ivLabel)
                                 }
                                 .foregroundStyle(IVMaterialColors.waterBlue)
                                 .padding(.horizontal, 12).padding(.vertical, 6)
@@ -611,12 +611,12 @@ private struct IceSplittingVisual: View {
 
                     // Formula
                     if step >= 2 {
-                        FormulaText(text: "H₂O → ice = +9% volume", highlighted: frozen, fontSize: 15)
+                        FormulaText(text: "H₂O → ice = +9% volume", highlighted: frozen)
                             .position(x: cx, y: h * 0.12)
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "Water + winter = nature's chisel", highlighted: true, fontSize: 15)
+                        FormulaText(text: "Water + winter = nature's chisel", highlighted: true)
                             .position(x: cx, y: h * 0.85)
                             .transition(.opacity)
                     }
@@ -695,7 +695,7 @@ private struct CrystalGrowthVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "Crystals fill pores → stronger every year", highlighted: true, fontSize: 15)
+                        FormulaText(text: "Crystals fill pores → stronger every year", highlighted: true)
                             .position(x: cx, y: h * 0.85)
                             .transition(.opacity)
                     }
@@ -770,7 +770,7 @@ private struct CamberDrainageVisual: View {
                     DimLine(from: CGPoint(x: cx, y: roadY - camberH - 8),
                             to: CGPoint(x: cx, y: roadY - 2))
                         .stroke(IVMaterialColors.dimColor, lineWidth: 0.8)
-                    DimLabel(text: "15-30 cm", fontSize: 15)
+                    DimLabel(text: "15-30 cm")
                         .position(x: cx + 30, y: roadY - camberH - 4)
 
                     // Rain drops
@@ -819,7 +819,7 @@ private struct CamberDrainageVisual: View {
                         } label: {
                             HStack(spacing: 4) {
                                 Image(systemName: "cloud.rain.fill").font(.system(size: 13))
-                                Text("Rain").font(.custom("EBGaramond-SemiBold", size: 15))
+                                Text("Rain").font(RenaissanceFont.ivLabel)
                             }
                             .foregroundStyle(IVMaterialColors.waterBlue)
                             .padding(.horizontal, 12).padding(.vertical, 6)
@@ -830,7 +830,7 @@ private struct CamberDrainageVisual: View {
                     }
 
                     if step >= 3 {
-                        FormulaText(text: "Invisible arc — rain sees it perfectly", highlighted: true, fontSize: 15)
+                        FormulaText(text: "Invisible arc — rain sees it perfectly", highlighted: true)
                             .position(x: cx, y: h * 0.88)
                             .transition(.opacity)
                     }
@@ -871,7 +871,7 @@ private struct RoadMortarRecipeVisual: View {
             IVBlueprintGrid()
 
             VStack(spacing: 10) {
-                FormulaText(text: "1 Lime : 3 Volcanic Rock", highlighted: mixComplete, fontSize: 15)
+                FormulaText(text: "1 Lime : 3 Volcanic Rock", highlighted: mixComplete)
                     .padding(.top, 8)
 
                 // Ratio bar
@@ -881,11 +881,11 @@ private struct RoadMortarRecipeVisual: View {
                         RoundedRectangle(cornerRadius: 3)
                             .fill(limeScoops >= 1 ? IVMaterialColors.limeTan : IVMaterialColors.stoneGray.opacity(0.15))
                             .frame(width: barW * 0.25)
-                            .overlay { if limeScoops >= 1 { Text("1").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk) } }
+                            .overlay { if limeScoops >= 1 { Text("1").font(RenaissanceFont.ivFormula).foregroundStyle(IVMaterialColors.sepiaInk) } }
                         RoundedRectangle(cornerRadius: 3)
                             .fill(rockScoops >= 3 ? basaltDark.opacity(0.4) : (rockScoops > 0 ? basaltDark.opacity(0.15 * CGFloat(rockScoops)) : IVMaterialColors.stoneGray.opacity(0.15)))
                             .frame(width: barW * 0.75)
-                            .overlay { if rockScoops > 0 { Text("\(rockScoops)").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk) } }
+                            .overlay { if rockScoops > 0 { Text("\(rockScoops)").font(RenaissanceFont.ivFormula).foregroundStyle(IVMaterialColors.sepiaInk) } }
                     }
                     .frame(height: 28)
                     .padding(.horizontal, 10)
@@ -901,8 +901,8 @@ private struct RoadMortarRecipeVisual: View {
                             SoundManager.shared.play(.tapSoft)
                         } label: {
                             VStack(spacing: 2) {
-                                Text("CaO").font(.custom("EBGaramond-Bold", size: 15))
-                                Text("Lime").font(.custom("EBGaramond-Regular", size: 15))
+                                Text("CaO").font(RenaissanceFont.ivFormula)
+                                Text("Lime").font(RenaissanceFont.ivBody)
                             }
                             .frame(width: 60, height: 50)
                             .background(limeScoops >= 1 ? IVMaterialColors.stoneGray.opacity(0.1) : IVMaterialColors.limeTan.opacity(0.3))
@@ -918,8 +918,8 @@ private struct RoadMortarRecipeVisual: View {
                             SoundManager.shared.play(.tapSoft)
                         } label: {
                             VStack(spacing: 2) {
-                                Text("ite").font(.custom("EBGaramond-Bold", size: 15))
-                                Text("Volcanic Rock").font(.custom("EBGaramond-Regular", size: 15))
+                                Text("ite").font(RenaissanceFont.ivFormula)
+                                Text("Volcanic Rock").font(RenaissanceFont.ivBody)
                             }
                             .frame(width: 80, height: 50)
                             .background(rockScoops >= 3 ? IVMaterialColors.stoneGray.opacity(0.1) : basaltDark.opacity(0.15))
@@ -940,7 +940,7 @@ private struct RoadMortarRecipeVisual: View {
                     } label: {
                         HStack(spacing: 4) {
                             Image(systemName: "arrow.down.to.line").font(.system(size: 13))
-                            Text("Ram (\(ramCount)/3)").font(.custom("EBGaramond-SemiBold", size: 15))
+                            Text("Ram (\(ramCount)/3)").font(RenaissanceFont.ivLabel)
                         }
                         .foregroundStyle(color)
                         .padding(.horizontal, 14).padding(.vertical, 6)
@@ -950,12 +950,12 @@ private struct RoadMortarRecipeVisual: View {
                 }
 
                 if ramComplete {
-                    FormulaText(text: "50 rams per m² — solid as stone", highlighted: true, fontSize: 15)
+                    FormulaText(text: "50 rams per m² — solid as stone", highlighted: true)
                         .transition(.opacity)
                 }
 
                 Text(label)
-                    .font(.custom("EBGaramond-Regular", size: 15))
+                    .font(RenaissanceFont.ivBody)
                     .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
                     .multilineTextAlignment(.center)
 
@@ -1009,8 +1009,8 @@ private struct LimeFiringVisual: View {
                         RoundedRectangle(cornerRadius: 4)
                             .fill(IVMaterialColors.stoneGray.opacity(converted ? 0.3 : 0.6))
                             .frame(width: 50, height: 40)
-                        Text("CaCO₃").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk)
-                        Text("Limestone").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
+                        Text("CaCO₃").font(RenaissanceFont.ivFormula).foregroundStyle(IVMaterialColors.sepiaInk)
+                        Text("Limestone").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                     }
 
                     Image(systemName: "arrow.right")
@@ -1025,14 +1025,14 @@ private struct LimeFiringVisual: View {
                                 RoundedRectangle(cornerRadius: 4)
                                     .strokeBorder(converted ? RenaissanceColors.sageGreen : IVMaterialColors.stoneGray.opacity(0.2), lineWidth: 1)
                             )
-                        Text("CaO").font(.custom("EBGaramond-Bold", size: 15)).foregroundStyle(converted ? RenaissanceColors.sageGreen : IVMaterialColors.sepiaInk.opacity(0.3))
-                        Text("Quicklime").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
+                        Text("CaO").font(RenaissanceFont.ivFormula).foregroundStyle(converted ? RenaissanceColors.sageGreen : IVMaterialColors.sepiaInk.opacity(0.3))
+                        Text("Quicklime").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                     }
 
                     // CO₂ escaping
                     if converted {
                         Text("+ CO₂ ↑")
-                            .font(.custom("EBGaramond-Bold", size: 15))
+                            .font(RenaissanceFont.ivFormula)
                             .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                     }
                 }
@@ -1045,18 +1045,18 @@ private struct LimeFiringVisual: View {
                     }
 
                 HStack {
-                    Text("0°C").font(.custom("EBGaramond-Regular", size: 15))
+                    Text("0°C").font(RenaissanceFont.ivBody)
                     Spacer()
-                    Text("900°C").font(.custom("EBGaramond-Regular", size: 15)).foregroundStyle(RenaissanceColors.sageGreen)
+                    Text("900°C").font(RenaissanceFont.ivBody).foregroundStyle(RenaissanceColors.sageGreen)
                     Spacer()
-                    Text("1200°C").font(.custom("EBGaramond-Regular", size: 15))
+                    Text("1200°C").font(RenaissanceFont.ivBody)
                 }
                 .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                 .frame(width: 200)
 
                 if converted {
                     Text("⚠️ Burns skin — reacts violently with water")
-                        .font(.custom("EBGaramond-Regular", size: 15))
+                        .font(RenaissanceFont.ivBody)
                         .foregroundStyle(RenaissanceColors.errorRed.opacity(0.6))
                 }
 
@@ -1137,7 +1137,7 @@ private struct MilestoneCarveVisual: View {
                         } label: {
                             HStack(spacing: 4) {
                                 Image(systemName: "hammer.fill").font(.system(size: 13))
-                                Text("Carve").font(.custom("EBGaramond-SemiBold", size: 15))
+                                Text("Carve").font(RenaissanceFont.ivLabel)
                             }
                             .foregroundStyle(color)
                             .padding(.horizontal, 12).padding(.vertical, 6)
@@ -1148,14 +1148,14 @@ private struct MilestoneCarveVisual: View {
                     }
 
                     // Dimension
-                    DimLabel(text: "1.8 m tall", fontSize: 15)
+                    DimLabel(text: "1.8 m tall")
                         .position(x: cx + stoneW * 0.5 + 25, y: h * 0.4)
 
-                    DimLabel(text: "Every 1,480 m", fontSize: 15)
+                    DimLabel(text: "Every 1,480 m")
                         .position(x: cx, y: h * 0.72)
 
                     if step >= 3 {
-                        FormulaText(text: "Mile zero = Golden Milestone in the Forum", highlighted: true, fontSize: 15)
+                        FormulaText(text: "Mile zero = Golden Milestone in the Forum", highlighted: true)
                             .position(x: cx, y: h * 0.88)
                             .transition(.opacity)
                     }
