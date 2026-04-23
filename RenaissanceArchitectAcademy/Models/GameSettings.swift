@@ -240,13 +240,11 @@ class GameSettings {
 
 // MARK: - SwiftUI Environment
 
-private struct GameSettingsKey: EnvironmentKey {
-    @MainActor static let defaultValue = GameSettings.shared
-}
-
+// @Entry (iOS 17+) generates the EnvironmentKey for us and handles the
+// MainActor isolation correctly — the default expression is only evaluated
+// from a SwiftUI view, which is already MainActor-isolated. This replaces
+// the private EnvironmentKey struct whose @MainActor static defaultValue
+// conflicted with EnvironmentKey's nonisolated protocol requirement.
 extension EnvironmentValues {
-    var gameSettings: GameSettings {
-        get { self[GameSettingsKey.self] }
-        set { self[GameSettingsKey.self] = newValue }
-    }
+    @Entry var gameSettings: GameSettings = GameSettings.shared
 }

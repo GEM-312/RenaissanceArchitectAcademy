@@ -126,31 +126,51 @@ struct RoomDefinition: Identifiable {
 
 /// Data specific to the Pianta (Floor Plan) phase.
 ///
-/// AI-validated design (2026-04-22): The student studies an aerial view of the real
-/// building (left side) and sketches their floor plan on the right. Claude Haiku
-/// vision compares the student's sketch to the `referencePlanImageName` engineering
-/// drawing and returns a score 0–100. Grid/geometric validation was retired.
+/// AI-validated design (2026-04-23): The student studies a full orthographic blueprint
+/// (plan + elevation + section) in Study Mode, then sketches the floor plan on the grid.
+/// Claude Haiku vision compares the student's sketch to the plan portion of the blueprint
+/// and returns a score 0–100. Grid/geometric validation was retired — legacy target fields
+/// default to empty and are no longer enforced.
 struct PiantaPhaseData {
-    let gridSize: Int                           // Canvas grid density (drawing feel only — not validated)
-    let hint: String?                           // Text if student taps "hint" (also bird-suggested)
-    let educationalText: String                 // Shown after successful sketch
-    let historicalContext: String               // Historical facts about this building
+    let gridSize: Int
+    let hint: String?
+    let educationalText: String
+    let historicalContext: String
 
-    /// Assets.xcassets imageset name for the aerial/top-down photo of the real building.
-    /// Shown on the left side of the canvas as the "study this" reference.
-    let aerialImageName: String
-
-    /// Assets.xcassets imageset name for the engineering floor plan drawing.
-    /// Revealed under the student's canvas at 30% opacity while the Peek button is held,
-    /// and sent as the comparison target to the Claude vision validator.
+    /// Assets.xcassets imageset name for the full orthographic blueprint of this building.
+    /// Shown in Study Mode before the student starts drawing, revealed under the canvas
+    /// at 30% opacity while the Peek button is held, and sent as the comparison target
+    /// to the Claude vision validator. Typically a 16:9 navy-blue blueprint with plan,
+    /// elevation, and section views.
     let referencePlanImageName: String
 
-    // Legacy fields — retained so old templates still compile; ignored by the new AI-validated UI.
-    // TODO: remove after all 17 templates are migrated.
+    // Legacy geometric-validation fields — no longer enforced. Default to empty so new
+    // templates don't need to supply them. Retained so old preview/scaffold code still
+    // compiles; safe to remove once everything has been migrated.
     let targetRooms: [RoomDefinition]
     let targetColumns: [GridCoord]
     let symmetryAxis: SymmetryAxis?
     let proportionalRatios: [ProportionalRatio]
+
+    init(gridSize: Int,
+         hint: String?,
+         educationalText: String,
+         historicalContext: String,
+         referencePlanImageName: String,
+         targetRooms: [RoomDefinition] = [],
+         targetColumns: [GridCoord] = [],
+         symmetryAxis: SymmetryAxis? = nil,
+         proportionalRatios: [ProportionalRatio] = []) {
+        self.gridSize = gridSize
+        self.hint = hint
+        self.educationalText = educationalText
+        self.historicalContext = historicalContext
+        self.referencePlanImageName = referencePlanImageName
+        self.targetRooms = targetRooms
+        self.targetColumns = targetColumns
+        self.symmetryAxis = symmetryAxis
+        self.proportionalRatios = proportionalRatios
+    }
 }
 
 // MARK: - Phase Content
