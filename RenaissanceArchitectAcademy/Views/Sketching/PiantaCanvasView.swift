@@ -102,10 +102,13 @@ struct PiantaCanvasView: View {
     private var blueprintBackgroundLayer: some View {
         Group {
             if imageExists(phaseData.referencePlanImageName) {
+                // Hidden by default — only visible while the student holds
+                // "Peek". The student is meant to *study* the blueprint
+                // first and then draw from memory, not trace it constantly.
                 Image(phaseData.referencePlanImageName)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .opacity(isPeeking ? 0.6 : 0.3)
+                    .opacity(isPeeking ? 0.6 : 0)
                     .animation(.easeInOut(duration: 0.2), value: isPeeking)
                     .ignoresSafeArea()
                     .allowsHitTesting(false)

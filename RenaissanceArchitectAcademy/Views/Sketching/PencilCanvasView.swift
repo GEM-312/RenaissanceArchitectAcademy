@@ -2,33 +2,44 @@
 import SwiftUI
 import PencilKit
 
-/// SwiftUI wrapper around `PKCanvasView` so the student can free-hand trace
-/// the blueprint with Apple Pencil or finger. The system-provided
-/// `PKToolPicker` is shown alongside — it gives pencil / pen / marker /
-/// **ruler** / eraser for free, no custom tool code required.
+/// SwiftUI wrapper around `PKCanvasView` for free-hand sketching on top of
+/// a blueprint. The system-provided `PKToolPicker` gives pencil / pen /
+/// marker / **ruler** / eraser.
 ///
-/// Caller owns the `PKDrawing` binding so the canvas can be snapshotted for
-/// Claude validation without going through the view tree.
+/// PKCanvasView is a `UIScrollView` subclass — without explicit
+/// configuration it applies a content offset / inset adjustment that
+/// visibly drifts touches relative to the pencil nib. We disable scrolling,
+/// lock zoom to 1.0, and turn off content-inset adjustment so the touch
+/// location exactly matches the pencil tip.
+///
+/// The tool picker is attached in `updateUIView` once the canvas has a
+/// window (it doesn't have one yet in `makeUIView`, which is why earlier
+/// versions never showed the picker).
 struct PencilCanvasView: UIViewRepresentable {
     @Binding var drawing: PKDrawing
-    var isToolPickerVisible: Bool = true
 
     func makeUIView(context: Context) -> PKCanvasView {
         let canvas = PKCanvasView()
         canvas.drawing = drawing
-        canvas.drawingPolicy = .anyInput   // Pencil OR finger — not every student has a Pencil
-        canvas.backgroundColor = .clear     // Let the blueprint show through
-        canvas.isOpaque = false
         canvas.delegate = context.coordinator
+        canvas.drawingPolicy = .anyInput          // Pencil OR finger — not every student has a Pencil
+        canvas.backgroundColor = .clear           // Let the blueprint show through on Peek
+        canvas.isOpaque = false
 
-        if isToolPickerVisible {
-            DispatchQueue.main.async {
-                let picker = PKToolPicker.shared(for: canvas.window ?? UIWindow()) ?? PKToolPicker()
-                picker.setVisible(true, forFirstResponder: canvas)
-                picker.addObserver(canvas)
-                canvas.becomeFirstResponder()
-            }
-        }
+        // CRITICAL — kill every scroll-view behavior that offsets touches
+        canvas.isScrollEnabled = false
+        canvas.minimumZoomScale = 1.0
+        canvas.maximumZoomScale = 1.0
+        canvas.zoomScale = 1.0
+        canvas.bouncesZoom = false
+        canvas.alwaysBounceHorizontal = false
+        canvas.alwaysBounceVertical = false
+        canvas.contentInsetAdjustmentBehavior = .never
+        canvas.contentInset = .zero
+        canvas.verticalScrollIndicatorInsets = .zero
+        canvas.horizontalScrollIndicatorInsets = .zero
+        canvas.showsVerticalScrollIndicator = false
+        canvas.showsHorizontalScrollIndicator = false
 
         return canvas
     }
@@ -39,12 +50,32 @@ struct PencilCanvasView: UIViewRepresentable {
         if canvas.drawing != drawing {
             canvas.drawing = drawing
         }
+
+        // Keep contentSize glued to bounds so PencilKit doesn't auto-scroll
+        // after strokes approach the edge of the canvas.
+        if canvas.contentSize != canvas.bounds.size, canvas.bounds.size != .zero {
+            canvas.contentSize = canvas.bounds.size
+        }
+
+        // Attach the tool picker exactly once, after the canvas is in a
+        // window — PKToolPicker.setVisible is a no-op while the canvas has
+        // no window, which is why the picker never appeared on first mount.
+        if canvas.window != nil, !context.coordinator.pickerAttached {
+            let picker = context.coordinator.toolPicker
+            picker.setVisible(true, forFirstResponder: canvas)
+            picker.addObserver(canvas)
+            canvas.becomeFirstResponder()
+            context.coordinator.pickerAttached = true
+        }
     }
 
     func makeCoordinator() -> Coordinator { Coordinator(self) }
 
     final class Coordinator: NSObject, PKCanvasViewDelegate {
         var parent: PencilCanvasView
+        let toolPicker = PKToolPicker()
+        var pickerAttached = false
+
         init(_ parent: PencilCanvasView) { self.parent = parent }
 
         func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) {
@@ -57,12 +88,10 @@ struct PencilCanvasView: UIViewRepresentable {
 /// Claude receives a clean sketch to compare against the blueprint.
 extension PKDrawing {
     func renderedImage(size: CGSize, scale: CGFloat = 2.0) -> UIImage {
-        let renderer = UIGraphicsImageRenderer(size: size, format: {
-            let f = UIGraphicsImageRendererFormat()
-            f.scale = scale
-            f.opaque = true
-            return f
-        }())
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = scale
+        format.opaque = true
+        let renderer = UIGraphicsImageRenderer(size: size, format: format)
         return renderer.image { ctx in
             UIColor.white.setFill()
             ctx.fill(CGRect(origin: .zero, size: size))
