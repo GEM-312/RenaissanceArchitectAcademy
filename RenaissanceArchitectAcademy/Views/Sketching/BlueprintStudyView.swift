@@ -9,14 +9,25 @@ import SwiftUI
 struct BlueprintStudyView: View {
     let phaseData: PiantaPhaseData
     let buildingName: String
+    var notebookState: NotebookState? = nil
+    var buildingId: Int? = nil
     let onComplete: () -> Void
 
     @Environment(\.dismiss) private var dismiss
     @State private var zoom: CGFloat = 1.0
+    @State private var savedToastVisible = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
             RenaissanceColors.parchment.ignoresSafeArea()
+
+            if savedToastVisible {
+                VStack {
+                    savedToast
+                    Spacer()
+                }
+                .zIndex(5)
+            }
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
@@ -130,10 +141,50 @@ struct BlueprintStudyView: View {
         )
     }
 
+    private var savedToast: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundStyle(RenaissanceColors.sageGreen)
+            Text("Saved to your notebook")
+                .font(.custom("EBGaramond-SemiBold", size: 15))
+                .foregroundStyle(RenaissanceColors.sepiaInk)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(RenaissanceColors.parchment)
+                .overlay(RoundedRectangle(cornerRadius: 20)
+                    .stroke(RenaissanceColors.sageGreen.opacity(0.4), lineWidth: 1))
+                .shadow(color: .black.opacity(0.15), radius: 6, y: 2)
+        )
+        .padding(.top, 16)
+        .transition(.move(edge: .top).combined(with: .opacity))
+    }
+
+    private func saveStudyEntry() {
+        guard let notebookState, let buildingId else { return }
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        notebookState.addSketchEntry(
+            buildingId: buildingId,
+            buildingName: buildingName,
+            title: "Pianta — \(buildingName)",
+            body: "Studied the master blueprint \(formatter.string(from: Date()))."
+        )
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+            savedToastVisible = true
+        }
+    }
+
     private var markStudiedButton: some View {
         Button {
-            onComplete()
-            dismiss()
+            saveStudyEntry()
+            // Small delay so the toast animates before we dismiss
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
+                onComplete()
+                dismiss()
+            }
         } label: {
             Text("Mark as Studied")
                 .font(.custom("EBGaramond-SemiBold", size: 17))

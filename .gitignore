@@ -86,8 +86,18 @@ RenaissanceArchitectAcademy/Styles/bird_frames/
 RenaissanceArchitectAcademy/Styles/volcano_frames/
 RenaissanceArchitectAcademy/Styles/apprentice_frames/
 RenaissanceArchitectAcademy/Styles/bird_turn_frames/
+RenaissanceArchitectAcademy/Styles/girl_intro_frames/
 RenaissanceArchitectAcademy/Styles/*.mp4
 RenaissanceArchitectAcademy/*.gif
+
+# Frame extraction dump under Services/Styles/ (raw, pre-processed)
+RenaissanceArchitectAcademy/Services/Styles/
+
+# Repo-root Styles/ extraction folders (Desktop-style dumps)
+/Styles/
+
+# Random documents that don't belong in the repo
+/ManifestPublication.docx
 
 # API keys (secrets)
 RenaissanceArchitectAcademy/Services/APIKeys.swift

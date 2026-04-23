@@ -8,6 +8,10 @@ struct SketchingChallengeView: View {
     let onComplete: (Set<SketchingPhaseType>) -> Void
     let onDismiss: () -> Void
     var onFlorinsEarned: ((Int) -> Void)? = nil
+    /// Optional notebook state — when set, completed sketches get saved
+    /// as notebook entries for this buildingId.
+    var notebookState: NotebookState? = nil
+    var buildingId: Int? = nil
 
     @State private var showIntro = true
     @State private var showTeaching = false
@@ -250,7 +254,12 @@ struct SketchingChallengeView: View {
             // Phase content (only Pianta supported — other phases removed Apr 21 2026)
             switch phase.phaseData {
             case .pianta(let data):
-                PiantaCanvasView(phaseData: data, buildingName: challenge.buildingName) { phases in
+                PiantaCanvasView(
+                    phaseData: data,
+                    buildingName: challenge.buildingName,
+                    notebookState: notebookState,
+                    buildingId: buildingId
+                ) { phases in
                     completedPhases.formUnion(phases)
                     advanceOrComplete()
                 }

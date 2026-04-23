@@ -243,6 +243,8 @@ struct NotebookView: View {
             return notebook.vocabularyEntries
         case .quizNotes:
             return notebook.quizResults
+        case .sketches:
+            return notebook.sketches
         case .myNotes:
             return notebook.userNotes
         }
@@ -252,10 +254,121 @@ struct NotebookView: View {
         Group {
             if entry.entryType == .funFact {
                 funFactCard(entry)
+            } else if entry.entryType == .sketch {
+                sketchCard(entry)
             } else {
                 standardCard(entry)
             }
         }
+    }
+
+    // MARK: - Sketch Card
+
+    /// Which sketch is open in the editor sheet
+    @State private var editingSketch: NotebookEntry? = nil
+
+    private func sketchCard(_ entry: NotebookEntry) -> some View {
+        Button {
+            editingSketch = entry
+        } label: {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(entry.title)
+                            .font(.custom("Cinzel-Bold", size: 16))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
+                        Text(entry.body)
+                            .font(.custom("EBGaramond-Italic", size: 13))
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+                    }
+                    Spacer()
+                    Button(role: .destructive) {
+                        notebookState.deleteSketch(entryId: entry.id, buildingId: buildingId)
+                    } label: {
+                        Image(systemName: "trash")
+                            .font(.body)
+                            .foregroundStyle(RenaissanceColors.errorRed.opacity(0.7))
+                            .padding(6)
+                    }
+                    .buttonStyle(.plain)
+                }
+
+                sketchThumbnail(for: entry)
+
+                if let annotation = entry.userAnnotation, !annotation.isEmpty {
+                    Text(annotation)
+                        .font(.custom("EBGaramond-Regular", size: 14))
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
+                        .lineLimit(3)
+                        .padding(.top, 4)
+                }
+            }
+            .padding(14)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.white.opacity(0.55))
+                    .overlay(RoundedRectangle(cornerRadius: 10)
+                        .stroke(RenaissanceColors.sepiaInk.opacity(0.12), lineWidth: 1))
+            )
+        }
+        .buttonStyle(.plain)
+        #if os(iOS)
+        .fullScreenCover(item: $editingSketch) { entry in
+            SketchEditorView(entry: entry, notebookState: notebookState)
+        }
+        #else
+        .sheet(item: $editingSketch) { entry in
+            SketchEditorView(entry: entry, notebookState: notebookState)
+                .frame(minWidth: 700, minHeight: 500)
+        }
+        #endif
+    }
+
+    /// Thumbnail for a saved sketch — renders the stored PKDrawing on a
+    /// parchment background. Shows a "study only" placeholder if the
+    /// entry was saved without a drawing (Just Study Today / Mark Studied).
+    @ViewBuilder
+    private func sketchThumbnail(for entry: NotebookEntry) -> some View {
+        #if os(iOS)
+        let drawing = notebookState.loadDrawing(for: entry.id)
+        GeometryReader { geo in
+            let size = CGSize(width: geo.size.width, height: 220)
+            ZStack {
+                Color.white
+                if let drawing, !drawing.strokes.isEmpty {
+                    Image(uiImage: drawing.image(
+                        from: CGRect(origin: .zero, size: size),
+                        scale: UIScreen.main.scale
+                    ))
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                } else {
+                    VStack(spacing: 6) {
+                        Image(systemName: "book.pages")
+                            .font(.system(size: 32))
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.3))
+                        Text("Study-only entry")
+                            .font(.custom("EBGaramond-Italic", size: 13))
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+                    }
+                }
+            }
+        }
+        .frame(height: 220)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .overlay(RoundedRectangle(cornerRadius: 8)
+            .stroke(RenaissanceColors.sepiaInk.opacity(0.1), lineWidth: 1))
+        #else
+        RoundedRectangle(cornerRadius: 8)
+            .fill(Color.white)
+            .frame(height: 160)
+            .overlay(
+                Text("Sketch saved — open on iPad to view.")
+                    .font(.custom("EBGaramond-Italic", size: 13))
+                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
+            )
+        #endif
     }
 
     // MARK: - Standard Card (with PencilKit overlay on iOS)
@@ -621,6 +734,7 @@ enum NotebookTab: String, CaseIterable {
     case keyFacts = "Key Facts"
     case vocabulary = "Vocabulary"
     case quizNotes = "Quiz Notes"
+    case sketches = "Sketches"
     case myNotes = "My Notes"
 
     var label: String { rawValue }
@@ -630,6 +744,7 @@ enum NotebookTab: String, CaseIterable {
         case .keyFacts: return "lightbulb.fill"
         case .vocabulary: return "textformat.abc"
         case .quizNotes: return "checkmark.circle.fill"
+        case .sketches: return "scribble.variable"
         case .myNotes: return "pencil"
         }
     }

@@ -22,6 +22,8 @@ import PencilKit
 struct PiantaCanvasView: View {
     let phaseData: PiantaPhaseData
     let buildingName: String
+    var notebookState: NotebookState? = nil
+    var buildingId: Int? = nil
     let onComplete: (Set<SketchingPhaseType>) -> Void
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -36,6 +38,8 @@ struct PiantaCanvasView: View {
             BlueprintStudyView(
                 phaseData: phaseData,
                 buildingName: buildingName,
+                notebookState: notebookState,
+                buildingId: buildingId,
                 onComplete: { onComplete([.pianta]) }
             )
         }
@@ -43,6 +47,8 @@ struct PiantaCanvasView: View {
         BlueprintStudyView(
             phaseData: phaseData,
             buildingName: buildingName,
+            notebookState: notebookState,
+            buildingId: buildingId,
             onComplete: { onComplete([.pianta]) }
         )
         #endif
@@ -61,6 +67,8 @@ struct PiantaCanvasView: View {
     /// the canvas finishes tearing down — prevents the picker from lingering
     /// over the Workshop / City Map while `.fullScreenCover` animates out.
     @State private var canvasIsActive = true
+    /// Tiny "✓ Saved to your notebook" toast shown after a save.
+    @State private var savedToastVisible = false
 
     private var iPadCanvasBody: some View {
         ZStack {
@@ -90,6 +98,9 @@ struct PiantaCanvasView: View {
                 resultOverlay(result)
             }
         }
+        .overlay(alignment: .top) {
+            if savedToastVisible { savedToast }
+        }
         .fullScreenCover(isPresented: $showStudyMode) {
             StudyModeView(
                 phaseData: phaseData,
@@ -97,6 +108,8 @@ struct PiantaCanvasView: View {
                 onBeginSketching: { showStudyMode = false },
                 onJustStudyToday: {
                     showStudyMode = false
+                    // Save a "studied only" notebook entry (no drawing file)
+                    saveToNotebook(withDrawing: false, score: nil)
                     // Same credit as a completed sketch
                     onComplete([.pianta])
                 }
@@ -230,11 +243,86 @@ struct PiantaCanvasView: View {
                 onRetry: { validationResult = nil },
                 onContinue: {
                     validationResult = nil
+                    // Save the student's actual PKDrawing alongside the score
+                    saveToNotebook(withDrawing: true, score: result.score)
                     onComplete([.pianta])
                 }
             )
         }
         .transition(.opacity)
+    }
+
+    // MARK: - Save to Notebook + Toast
+
+    private var savedToast: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundStyle(RenaissanceColors.sageGreen)
+            Text("Saved to your notebook")
+                .font(.custom("EBGaramond-SemiBold", size: 15))
+                .foregroundStyle(RenaissanceColors.sepiaInk)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(RenaissanceColors.parchment)
+                .overlay(RoundedRectangle(cornerRadius: 20)
+                    .stroke(RenaissanceColors.sageGreen.opacity(0.4), lineWidth: 1))
+                .shadow(color: .black.opacity(0.15), radius: 6, y: 2)
+        )
+        .padding(.top, 16)
+        .transition(.move(edge: .top).combined(with: .opacity))
+    }
+
+    /// Persist a notebook entry for this sketching session. When
+    /// `withDrawing` is true and there are strokes, the PKDrawing file is
+    /// saved next to the entry on disk; otherwise only the text entry is
+    /// added (e.g. the "Just Study Today" path).
+    private func saveToNotebook(withDrawing: Bool, score: Int?) {
+        guard let notebookState, let buildingId else { return }
+
+        let title = "Pianta — \(buildingName)"
+        let body: String
+        if withDrawing {
+            if let score {
+                body = "Sketched and reviewed by Maestro. Score: \(score)/100."
+            } else {
+                body = "Sketched \(formattedDate())."
+            }
+        } else {
+            body = "Studied the master blueprint \(formattedDate())."
+        }
+
+        let entryId = notebookState.addSketchEntry(
+            buildingId: buildingId,
+            buildingName: buildingName,
+            title: title,
+            body: body
+        )
+
+        if withDrawing, !drawing.strokes.isEmpty {
+            notebookState.saveDrawing(drawing, for: entryId)
+        }
+
+        showSavedToast()
+    }
+
+    private func showSavedToast() {
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+            savedToastVisible = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
+            withAnimation(.easeOut(duration: 0.3)) {
+                savedToastVisible = false
+            }
+        }
+    }
+
+    private func formattedDate() -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        return formatter.string(from: Date())
     }
 
     // MARK: - Validation

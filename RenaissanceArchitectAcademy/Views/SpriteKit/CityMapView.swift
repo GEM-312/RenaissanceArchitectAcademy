@@ -1194,7 +1194,9 @@ struct CityMapView: View {
                 },
                 onFlorinsEarned: { amount in
                     viewModel.earnFlorins(amount)
-                }
+                },
+                notebookState: notebookState,
+                buildingId: plot.id
             )
         } else {
             Text("Sketching challenge coming soon!")

@@ -115,6 +115,44 @@ class NotebookState {
         lessonsAddedToNotebook.contains(buildingId)
     }
 
+    // MARK: - Sketch Entries
+
+    /// Append a sketch notebook entry for a building and return its ID.
+    /// Caller should then persist the PKDrawing via `saveDrawing(_:for:)`
+    /// using the returned entry ID as the filename key.
+    @discardableResult
+    func addSketchEntry(buildingId: Int,
+                        buildingName: String,
+                        title: String,
+                        body: String) -> UUID {
+        let entry = NotebookEntry(
+            buildingId: buildingId,
+            entryType: .sketch,
+            title: title,
+            body: body
+        )
+        var notebook = getOrCreateNotebook(buildingId: buildingId, buildingName: buildingName)
+        notebook.entries.append(entry)
+        notebook.lastModified = Date()
+        notebooks[buildingId] = notebook
+        saveToDisk()
+        return entry.id
+    }
+
+    /// Remove a sketch notebook entry AND its saved drawing file from disk.
+    func deleteSketch(entryId: UUID, buildingId: Int) {
+        guard var notebook = notebooks[buildingId] else { return }
+        notebook.entries.removeAll { $0.id == entryId }
+        notebook.lastModified = Date()
+        notebooks[buildingId] = notebook
+        saveToDisk()
+
+        #if os(iOS)
+        let url = drawingURL(for: entryId)
+        try? FileManager.default.removeItem(at: url)
+        #endif
+    }
+
     // MARK: - PKDrawing Persistence (iOS only)
 
     #if os(iOS)

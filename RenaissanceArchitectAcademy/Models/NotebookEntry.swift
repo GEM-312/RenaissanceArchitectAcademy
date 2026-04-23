@@ -9,6 +9,7 @@ enum NotebookEntryType: String, Codable, CaseIterable {
     case quizResult        // Question + correct answer + explanation
     case userNote          // Player's own notes
     case environmentNote   // From workshop/forest visits
+    case sketch            // Pianta floor plan sketch — PKDrawing saved separately
 }
 
 /// A single entry in a building's notebook
@@ -83,6 +84,12 @@ struct BuildingNotebook: Identifiable, Codable {
     /// Quiz results
     var quizResults: [NotebookEntry] {
         entries.filter { $0.entryType == .quizResult }
+    }
+
+    /// Sketches — Pianta floor plans the student saved (most recent first)
+    var sketches: [NotebookEntry] {
+        entries.filter { $0.entryType == .sketch }
+            .sorted { $0.dateAdded > $1.dateAdded }
     }
 }
 
