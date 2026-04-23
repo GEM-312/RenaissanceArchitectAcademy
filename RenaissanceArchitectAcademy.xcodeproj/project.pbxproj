@@ -119,6 +119,7 @@
 		2CE /* SketchResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE /* SketchResultView.swift */; };
 		4CE /* PencilCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE /* PencilCanvasView.swift */; };
 		6CE /* BlueprintStudyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE /* BlueprintStudyView.swift */; };
+		8CE /* ShapeSnap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CE /* ShapeSnap.swift */; };
 		0D5 /* WolframGeometryHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D5 /* WolframGeometryHelper.swift */; };
 		0D6 /* WolframGeometryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D6 /* WolframGeometryView.swift */; };
 		0E0 /* MuseumSketch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E0 /* MuseumSketch.swift */; };
@@ -368,6 +369,7 @@
 		3CE /* SketchResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchResultView.swift; sourceTree = "<group>"; };
 		5CE /* PencilCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PencilCanvasView.swift; sourceTree = "<group>"; };
 		7CE /* BlueprintStudyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueprintStudyView.swift; sourceTree = "<group>"; };
+		9CE /* ShapeSnap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeSnap.swift; sourceTree = "<group>"; };
 		1D5 /* WolframGeometryHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WolframGeometryHelper.swift; sourceTree = "<group>"; };
 		1D6 /* WolframGeometryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WolframGeometryView.swift; sourceTree = "<group>"; };
 		1E0 /* MuseumSketch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MuseumSketch.swift; sourceTree = "<group>"; };
@@ -759,6 +761,7 @@
 				3CE /* SketchResultView.swift */,
 				5CE /* PencilCanvasView.swift */,
 				7CE /* BlueprintStudyView.swift */,
+				9CE /* ShapeSnap.swift */,
 			);
 			path = Sketching;
 			sourceTree = "<group>";
@@ -1155,6 +1158,7 @@
 				2CE /* SketchResultView.swift in Sources */,
 				4CE /* PencilCanvasView.swift in Sources */,
 				6CE /* BlueprintStudyView.swift in Sources */,
+				8CE /* ShapeSnap.swift in Sources */,
 				0D5 /* WolframGeometryHelper.swift in Sources */,
 				0D6 /* WolframGeometryView.swift in Sources */,
 				0E0 /* MuseumSketch.swift in Sources */,

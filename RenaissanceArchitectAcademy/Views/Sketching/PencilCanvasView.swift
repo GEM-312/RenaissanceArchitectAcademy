@@ -90,9 +90,39 @@ struct PencilCanvasView: UIViewRepresentable {
         let toolPicker = PKToolPicker()
         var pickerAttached = false
 
+        /// Strokes seen so far — lets us detect when exactly one new
+        /// stroke was added so we can run shape-snap on it without
+        /// re-entering on our own mutation.
+        private var seenStrokeCount = 0
+        private var isSnappingStroke = false
+
         init(_ parent: PencilCanvasView) { self.parent = parent }
 
         func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) {
+            // Reentrancy guard — our own `canvas.drawing = …` below re-fires
+            // this delegate. Skip the second fire.
+            if isSnappingStroke {
+                isSnappingStroke = false
+                seenStrokeCount = canvasView.drawing.strokes.count
+                parent.drawing = canvasView.drawing
+                return
+            }
+
+            let count = canvasView.drawing.strokes.count
+
+            // Only run snap when exactly one stroke was appended. Undo,
+            // erase, or batch mutations shouldn't trigger it.
+            if count == seenStrokeCount + 1,
+               let latest = canvasView.drawing.strokes.last,
+               let snapped = ShapeSnap.snapIfHeld(stroke: latest) {
+                isSnappingStroke = true
+                var strokes = Array(canvasView.drawing.strokes.dropLast())
+                strokes.append(snapped)
+                canvasView.drawing = PKDrawing(strokes: strokes)
+                return   // the re-entered call will sync the binding
+            }
+
+            seenStrokeCount = count
             parent.drawing = canvasView.drawing
         }
     }
