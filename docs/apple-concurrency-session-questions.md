@@ -4,7 +4,7 @@
 
 **Architecture summary:** `@Observable` class-based services on `@MainActor`, async/await for AI network calls (Claude, fal.ai), SpriteKit scenes bridged into SwiftUI, multiple singleton services, long polling patterns for queue-based APIs.
 
-Seven questions ordered by expected value. Each has a real code snippet from the codebase you can share with the Apple engineer.
+Six questions ordered by expected value, plus a bonus. Each has a real code snippet from the codebase you can share with the Apple engineer.
 
 ---
 
@@ -126,36 +126,7 @@ class WorkshopScene: SKScene {
 
 ---
 
-## Question 4 — URLSession long polling with structured concurrency
-
-### The ask
-> *"I expect to integrate async AI services that return long-running job IDs I have to poll (queue-based APIs like Replicate, fal.ai, some ElevenLabs endpoints). The classic pattern is: submit returns a request_id, then poll every 1.5s until status is COMPLETED or timeout at 90s. What's the preferred idiomatic pattern in modern Swift — `Task.sleep` in a `while` loop, `AsyncSequence`, `AsyncTimerSequence`, or a `TaskGroup` racing a timeout vs the poll? How do I combine timeout + cancellation cleanly?"*
-
-### Hypothetical code (what the pattern looks like)
-
-```swift
-private func pollForResult(statusURL: URL, responseURL: URL) async throws -> URL {
-    let deadline = Date().addingTimeInterval(Self.timeoutInterval)
-    while Date() < deadline {
-        try await Task.sleep(nanoseconds: UInt64(Self.pollInterval * 1_000_000_000))
-
-        var request = URLRequest(url: statusURL)
-        request.setValue("Key \(APIKeys.falAI)", forHTTPHeaderField: "Authorization")
-        let (data, response) = try await URLSession.shared.data(for: request)
-        // ... parse status, return if COMPLETED, throw if FAILED ...
-    }
-    throw RenderError.timeout
-}
-```
-
-### What would help most
-- Would `AsyncTimerSequence.every(...)` or `AsyncStream` be cleaner?
-- Best practice for `withThrowingTaskGroup` to combine polling + timeout race?
-- Are there cancellation pitfalls with `Task.sleep` that I should know about?
-
----
-
-## Question 5 — `Sendable` for services holding `UIImage` / `URLSession` / `Data`
+## Question 4 — `Sendable` for services holding `UIImage` / `URLSession` / `Data`
 
 ### The ask
 > *"My `@Observable` services hold non-Sendable types like `URLSession`, `UIImage` (typealiased `PlatformImage`), and cached `Data`. Passing these across async boundaries in Swift 6 strict mode triggers Sendable warnings. Is `@unchecked Sendable` acceptable for Apple-framework-backed types that Apple docs claim are thread-safe internally? What's the recommended pattern for passing images through an async pipeline?"*
@@ -188,7 +159,7 @@ private func pollForResult(statusURL: URL, responseURL: URL) async throws -> URL
 
 ---
 
-## Question 6 — `TaskGroup` for parallel AI requests
+## Question 5 — `TaskGroup` for parallel AI requests
 
 ### The ask
 > *"When a student completes a sketch, I may want to (a) validate the sketch against a reference plan via Claude vision, AND simultaneously (b) pre-fetch the next card's data so the UI is ready. Is `withThrowingTaskGroup` the right primitive, and what are the cancellation semantics — if task (b) throws, does (a) get cancelled? How do I propagate partial results?"*
@@ -219,7 +190,7 @@ func postSketchPipeline(snapshot: PlatformImage, buildingName: String) async thr
 
 ---
 
-## Question 7 — `ImageRenderer` on background tasks
+## Question 6 — `ImageRenderer` on background tasks
 
 ### The ask
 > *"`ImageRenderer<Content>` is relatively new. I use it to snapshot a SwiftUI view (a student's sketch canvas) before sending to an AI API. Is it safe to call `renderer.uiImage` from a non-main actor, or strictly main? Same question for `UIGraphicsImageRenderer` — any differences?"*
@@ -255,7 +226,7 @@ private func renderStudentSnapshot(cellSize: CGFloat) -> PlatformImage? {
 
 ## Bonus question if time allows
 
-### Question 8 — `GameSettings.shared.cardTextScale` read from computed `Font` properties
+### Question 7 — `GameSettings.shared.cardTextScale` read from computed `Font` properties
 
 I have:
 ```swift
