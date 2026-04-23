@@ -42,9 +42,7 @@ struct NotebookView: View {
                 header
                 tabBar
 
-                if selectedTab == .blueprints {
-                    blueprintsSection
-                } else if let notebook = notebook, !notebook.entries.isEmpty || selectedTab == .myNotes {
+                if let notebook = notebook, !notebook.entries.isEmpty || selectedTab == .myNotes {
                     ScrollView {
                         LazyVStack(spacing: 14) {
                             // "Add Note" section on My Notes tab
@@ -245,8 +243,6 @@ struct NotebookView: View {
             return notebook.vocabularyEntries
         case .quizNotes:
             return notebook.quizResults
-        case .blueprints:
-            return [] // Rendered separately via blueprintsSection
         case .myNotes:
             return notebook.userNotes
         }
@@ -617,102 +613,6 @@ struct NotebookView: View {
         return parts
     }
 
-    // MARK: - Blueprints Tab
-
-    /// Blueprints earned by completing architectural sketches.
-    /// Apprentice tier: Pianta only. Architect tier will add Alzato/Sezione/Prospettiva —
-    /// iterating over all SketchPhase cases means they'll appear automatically when added.
-    @ViewBuilder
-    private var blueprintsSection: some View {
-        let phasesWithRenders: [(FalSketchService.SketchPhase, PlatformImage)] = FalSketchService.SketchPhase.allCases
-            .compactMap { phase in
-                FalSketchService.shared.cachedBlueprint(for: buildingName, phase: phase).map { (phase, $0) }
-            }
-
-        if phasesWithRenders.isEmpty {
-            blueprintsEmptyState
-        } else {
-            ScrollView {
-                LazyVStack(spacing: 20) {
-                    ForEach(phasesWithRenders, id: \.0) { phase, image in
-                        blueprintCard(phase: phase, image: image)
-                    }
-                }
-                .padding(.horizontal, 20)
-                .padding(.top, 12)
-                .padding(.bottom, 80)
-            }
-        }
-    }
-
-    private var blueprintsEmptyState: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "scroll")
-                .font(.system(size: 48))
-                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.3))
-            Text("No Blueprints Yet")
-                .font(.custom("Cinzel-Bold", size: 18))
-                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
-            Text("Complete the architectural sketch for \(buildingName) and your Renaissance blueprint will appear here.")
-                .font(.custom("EBGaramond-Regular", size: 14))
-                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-
-    private func blueprintCard(phase: FalSketchService.SketchPhase, image: PlatformImage) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Text(phase.rawValue.capitalized)
-                    .font(.custom("Cinzel-Bold", size: 16))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
-                Text("— " + phaseItalianLabel(phase))
-                    .font(.custom("EBGaramond-Italic", size: 14))
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
-                Spacer()
-            }
-
-            #if os(iOS)
-            Image(uiImage: image)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(maxWidth: .infinity)
-                .background(Color.white)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(RenaissanceColors.sepiaInk.opacity(0.2), lineWidth: 1)
-                )
-            #else
-            Image(nsImage: image)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(maxWidth: .infinity)
-                .background(Color.white)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(RenaissanceColors.sepiaInk.opacity(0.2), lineWidth: 1)
-                )
-            #endif
-        }
-        .padding(14)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(RenaissanceColors.parchment.opacity(0.6))
-        )
-    }
-
-    private func phaseItalianLabel(_ phase: FalSketchService.SketchPhase) -> String {
-        switch phase {
-        case .pianta: return "Floor Plan"
-        case .alzato: return "Elevation"
-        case .sezione: return "Cross-Section"
-        case .prospettiva: return "Perspective"
-        }
-    }
 }
 
 // MARK: - Notebook Tab
@@ -721,7 +621,6 @@ enum NotebookTab: String, CaseIterable {
     case keyFacts = "Key Facts"
     case vocabulary = "Vocabulary"
     case quizNotes = "Quiz Notes"
-    case blueprints = "Blueprints"
     case myNotes = "My Notes"
 
     var label: String { rawValue }
@@ -731,7 +630,6 @@ enum NotebookTab: String, CaseIterable {
         case .keyFacts: return "lightbulb.fill"
         case .vocabulary: return "textformat.abc"
         case .quizNotes: return "checkmark.circle.fill"
-        case .blueprints: return "scroll.fill"
         case .myNotes: return "pencil"
         }
     }

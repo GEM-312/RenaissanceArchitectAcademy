@@ -1,15 +1,16 @@
 import Foundation
 #if os(iOS)
 import UIKit
+/// Platform-agnostic image type — UIImage on iOS/iPadOS, NSImage on macOS.
+typealias PlatformImage = UIImage
 #else
 import AppKit
+typealias PlatformImage = NSImage
 #endif
 
 /// Grades a student's floor-plan sketch against a reference engineering plan
 /// by sending both images to Claude Haiku's vision endpoint and asking for a
 /// structured similarity assessment.
-///
-/// Replaces the old geometric grid validation + fal.ai bloom pipeline.
 /// Cost per comparison: ~$0.005 (Claude Haiku, ~2k input tokens + 2 image slots
 /// + ~300 output tokens).
 @MainActor

@@ -129,9 +129,9 @@ class WorkshopScene: SKScene {
 ## Question 4 — URLSession long polling with structured concurrency
 
 ### The ask
-> *"fal.ai uses a queue API — submit returns a request_id, then poll every 1.5s until status is COMPLETED or timeout at 90s. I currently use `Task.sleep` in a `while Date() < deadline` loop. What's the preferred idiomatic pattern in modern Swift — `AsyncSequence`, `AsyncTimerSequence`, continuation-based retry helper? How do I combine timeout + cancellation cleanly?"*
+> *"I expect to integrate async AI services that return long-running job IDs I have to poll (queue-based APIs like Replicate, fal.ai, some ElevenLabs endpoints). The classic pattern is: submit returns a request_id, then poll every 1.5s until status is COMPLETED or timeout at 90s. What's the preferred idiomatic pattern in modern Swift — `Task.sleep` in a `while` loop, `AsyncSequence`, `AsyncTimerSequence`, or a `TaskGroup` racing a timeout vs the poll? How do I combine timeout + cancellation cleanly?"*
 
-### Current code (`Services/FalSketchService.swift`)
+### Hypothetical code (what the pattern looks like)
 
 ```swift
 private func pollForResult(statusURL: URL, responseURL: URL) async throws -> URL {

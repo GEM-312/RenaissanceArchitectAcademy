@@ -17,7 +17,7 @@
 
 ## 2. Tier structure
 
-RAA's features map naturally to three tiers. Pianta sketching must stay free (it is the core promise and already free to operate after Haiku validation at $0.005/call). fal.ai watercolor rendering ($0.04/call) and Claude bird tutoring ($1.99/mo value slot) are the premium hooks.
+RAA's features map naturally to three tiers. Pianta sketching must stay free (it is the core promise and already free to operate after Haiku validation at $0.005/call). Claude bird tutoring + Apprentice/Architect sketching phases + ElevenLabs narration are the premium hooks.
 
 | Feature | Free "Visitor" | **Apprentice** $4.99/mo, $29.99/yr | **Architect** $9.99/mo, $59.99/yr, $99 one-time |
 |---|---|---|---|
@@ -28,7 +28,6 @@ RAA's features map naturally to three tiers. Pianta sketching must stay free (it
 | Quizzes, material puzzle | All | All | All |
 | **Pianta sketch (Phase 1)** | All 17 buildings | All 17 | All 17 |
 | **Haiku AI sketch validation** | 3/day | Unlimited | Unlimited |
-| **Watercolor blueprint bloom (fal.ai)** | Pantheon only (demo) | All 17 (cached) | All 17 + re-renders |
 | **Alzato (Phase 2 — elevation)** | Preview on Pantheon | **Unlocked, all 17** | Unlocked, all 17 |
 | **Sezione (Phase 3 — cross-section)** | Locked | Locked | **Unlocked, all 17** |
 | **Prospettiva (Phase 4 — perspective)** | Locked | Locked | **Unlocked, all 17** |
@@ -94,7 +93,7 @@ Every callsite keeps working unchanged.
 - `RenaissanceArchitectAcademyApp.swift` — `.task { await SubscriptionManager.shared.refreshEntitlements() }` at app root, inject into environment.
 - `ProfileView` — keep DEBUG toggle behind `#if DEBUG`. Add release-build "Manage Subscription" row (`URL(string: "itms-apps://apps.apple.com/account/subscriptions")`).
 - `SketchingChallengeView` — phase-gate: if `phase == .alzato && tier < .apprentice`, show paywall. Same for Sezione/Prospettiva at Architect.
-- `NotebookView` — bloom card checks subscription via `FalSketchService`; add paywall sheet on "Render my sketch" tap when not subscribed.
+- `SketchValidator` — unlimited Haiku-vision sketch scoring for Apprentice+; free tier gets 3/day via a counter in `GameSettings`.
 
 ## 6. UX decisions
 
@@ -113,9 +112,9 @@ Every callsite keeps working unchanged.
 
 | Phase | Deliverable | Days | Gates launch? |
 |---|---|---|---|
-| **1. Foundation** | Cloudflare Worker proxy live (`docs/proxy-migration.md`); API keys out of binary | 1–2 | **Yes** |
+| **1. Foundation** | Cloudflare Worker proxy live (Cloudflare Worker reverse proxy — doc to be written when we wire Claude/ElevenLabs for App Store release); API keys out of binary | 1–2 | **Yes** |
 | **2. StoreKit config** | ASC: app record, paid agreement, tax/banking, 5 products, subscription group, localized metadata, intro offer, Family Sharing | 1 | **Yes** |
-| **3. SubscriptionManager + Paywall** | `SubscriptionManager.swift`, `PaywallView`, `ParentGateOverlay`, integration with `FalSketchService` and `BirdChatViewModel` | 3–4 | **Yes** |
+| **3. SubscriptionManager + Paywall** | `SubscriptionManager.swift`, `PaywallView`, `ParentGateOverlay`, integration with `SketchValidator` (daily limit for free tier) and `BirdChatViewModel` | 3–4 | **Yes** |
 | **4. Tier gating** | `GameSettings.isSubscribed` → computed, Alzato/Sezione/Prospettiva locks, badge UI | 2 | **Yes** |
 | **5. Polish** | Restore flow, grace-period banner, Manage Subscription link, parent gate, analytics events | 2 | **Yes** |
 | **6. Testing** | Sandbox test account, Family Sharing child account, intro offer, renewal, refund, grace period | 2 | **Yes** |
@@ -151,11 +150,11 @@ Total: ~11–13 working days. Fits mid-May ship with current 3.5-week runway.
 |---|---|---|---|
 | App Store rejection on first submission | High | 3–7 day delay | Pre-flight with Apple checklist; submit 10 days before May 15 |
 | Paywall too early → kids-category rejection | Medium | Reject | Only trigger on premium feature tap, not launch |
-| fal.ai API key leaked from binary | High if proxy not done | Account drain | **Cloudflare Worker before submission** (blocks release) |
+| Claude / ElevenLabs API key leaked from binary | High if proxy not done | Account drain | **Cloudflare Worker before submission** (blocks release) |
 | Parents chargeback "my kid bought this" | Medium | 1-star reviews | Parent gate, "7-day free trial, cancel anytime" wording, honor all refunds silently |
 | Family Sharing misconfigured | Medium | Angry 1-star | Test with real Family Sharing (2 Apple IDs) before submission |
 | StoreKit 2 race on launch | Low | Brief `isSubscribed = false` flicker | Show "Checking subscription..." splash until first refresh completes |
-| Claude/fal.ai costs exceed revenue | Low at scale | Margin pressure | Cache watercolor renders per (building, phase); rate-limit Bird to 30 msgs/day on Apprentice |
+| Claude / ElevenLabs costs exceed revenue | Low at scale | Margin pressure | Cache narration MP3s; rate-limit Bird chat to 30 msgs/day on Apprentice; daily Haiku validation cap on free tier |
 | Teens pirate by modifying UserDefaults | Low | Minimal | Don't store `isSubscribed` in UserDefaults — compute from JWS-signed `Transaction.currentEntitlements` |
 | Currency tier wrong internationally | Low | Revenue miss | Use Apple's auto tiers for launch; adjust post-launch |
 | Marina's banking/tax forms incomplete | Medium | Launch blocked | Complete in ASC week of Apr 28, not last minute |
@@ -172,6 +171,6 @@ Total: ~11–13 working days. Fits mid-May ship with current 3.5-week runway.
 
 ## Notes
 
-- The Cloudflare Worker (`docs/proxy-migration.md`) is a hard prerequisite; do it in week 1. An `.ipa` with `APIKeys.falAI` visible will get scraped within days of public TestFlight.
+- The Cloudflare Worker (Cloudflare Worker reverse proxy — doc to be written when we wire Claude/ElevenLabs for App Store release) is a hard prerequisite; do it in week 1. An `.ipa` with `APIKeys.claude` (and soon ElevenLabs) visible will get scraped within days of public TestFlight.
 - The Bird-tutor pricing promise in `AIProvider.swift` (`"$1.99/mo"`) is inconsistent with this doc's $4.99 Apprentice tier. Delete that string when wiring SubscriptionManager.
 - Consider gating Foundation Models bird responses (free) vs Claude bird responses (Apprentice+) rather than hard-gating the bird entirely — keeps free tier feeling alive.

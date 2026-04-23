@@ -848,26 +848,6 @@ struct DebugSubscriptionToggle: View {
             .onChange(of: isSubscribed) { _, newValue in
                 GameSettings.shared.isSubscribed = newValue
             }
-
-            Button {
-                FalSketchService.shared.clearCache()
-                SoundManager.shared.play(.tapSoft)
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "trash")
-                        .font(.system(size: 12))
-                    Text("Clear sketch cache")
-                        .font(.custom("EBGaramond-Regular", size: 13))
-                }
-                .foregroundStyle(RenaissanceColors.errorRed.opacity(0.8))
-                .padding(.horizontal, 10)
-                .padding(.vertical, 6)
-                .background(
-                    RoundedRectangle(cornerRadius: 4)
-                        .stroke(RenaissanceColors.errorRed.opacity(0.4), lineWidth: 1)
-                )
-            }
-            .buttonStyle(.plain)
         }
         .padding()
         .background(

@@ -34,6 +34,37 @@
 
 ## Swift Language
 
+### Swift Concurrency Fundamentals (Big Picture) — 2026-04-23
+
+**The Concept:** Your iPad runs code on multiple CPU cores at once. That's fast but dangerous — two threads writing the same variable = race condition = weird bugs. Swift's concurrency model gives you safe ways to do multiple things at once without data corruption or UI freezes.
+
+**Key Terms:**
+
+1. **Main thread / `@MainActor`** — The UI thread. All SwiftUI state changes and drawing happen here. If you block it, the UI freezes. If you touch UI from another thread, you crash.
+
+2. **Actor** — A special class where only ONE caller can touch data at a time. Like a house with one key. Swift enforces this at compile time. `@MainActor` is Apple's pre-built actor that IS the main thread.
+
+3. **`@Observable`** — Macro that makes any SwiftUI view reading a property automatically re-render when that property changes. Replaces the older `ObservableObject` + `@Published` pattern.
+
+4. **`async` function** — Can pause without blocking the thread. Other work runs during the pause.
+
+5. **`await`** — The word you put at the pause point. Read it as "wait for."
+
+6. **`Task`** — Wraps async work so you can start it.
+
+7. **`Sendable`** — Marks a type as "safe to pass between threads/actors." Swift 6 strict mode requires this for values crossing actor boundaries.
+
+**In Our Code:**
+
+| Concept | Where |
+|---|---|
+| `@MainActor @Observable class` | `ClaudeService`, `FalSketchService`, `SketchValidator`, `GameSettings` |
+| `async` function calling network | `SketchValidator.validate(...)`, `FalSketchService.render(...)` |
+| `Task { ... }` launching work from a view | `PiantaCanvasView.triggerAIValidation` |
+| `@Observable` driving re-renders | `GameSettings.cardTextScale` slider → all `RenaissanceFont.iv*` tokens recompute |
+
+**Key Takeaway:** `@MainActor` = UI-safe, `async/await` = non-blocking, `@Observable` = auto re-render SwiftUI, `Sendable` = safe to cross between them.
+
 ### Swift Concurrency (async/await/Task) — 2026-03-26
 
 **The Concept:** Swift Concurrency lets code **wait** for slow work (network, disk) without freezing the UI. Like ordering at a restaurant — you place the order (`async` call), do other things (UI stays responsive), and get notified when it's ready (`await`).
