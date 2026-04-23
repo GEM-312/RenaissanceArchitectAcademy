@@ -119,6 +119,8 @@ struct PencilCanvasView: UIViewRepresentable {
                 var strokes = Array(canvasView.drawing.strokes.dropLast())
                 strokes.append(snapped)
                 canvasView.drawing = PKDrawing(strokes: strokes)
+                // Confirmation haptic — lets the student feel the snap fired
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                 return   // the re-entered call will sync the binding
             }
 

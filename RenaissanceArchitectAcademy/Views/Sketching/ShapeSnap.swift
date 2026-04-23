@@ -12,45 +12,61 @@ import PencilKit
 enum ShapeSnap {
 
     /// Hold detection — pencil barely moves but time keeps advancing.
-    static let holdWindow: TimeInterval = 0.35      // seconds
-    static let holdTolerance: CGFloat = 12          // points
+    /// Relaxed from the first cut so a natural "pause and lift" triggers.
+    static let holdWindow: TimeInterval = 0.22      // seconds
+    static let holdTolerance: CGFloat = 22          // points — pencil wobbles on hold
 
     /// Line detection — max perpendicular distance from the best-fit line.
-    static let lineTolerance: CGFloat = 18          // points
+    static let lineTolerance: CGFloat = 22          // points
 
     /// Circle detection — relative standard deviation of radii.
-    static let circleTolerance: CGFloat = 0.20
-    /// Circle must span nearly a full revolution (≥ this fraction of 2π).
-    static let circleMinArc: CGFloat = 0.80
+    static let circleTolerance: CGFloat = 0.25
+    /// Circle must span this fraction of 2π of angular coverage to count.
+    static let circleMinArc: CGFloat = 0.70
 
     /// If the stroke ends in a hold AND classifies as a line/circle,
     /// return a new stroke with clean geometry. Otherwise nil (leave alone).
     static func snapIfHeld(stroke: PKStroke) -> PKStroke? {
         let pts = Array(stroke.path)
-        guard let last = pts.last, pts.count >= 8 else { return nil }
+        guard let first = pts.first, let last = pts.last, pts.count >= 6 else {
+            print("[ShapeSnap] reject — too few samples (\(pts.count))")
+            return nil
+        }
+
+        let totalDuration = last.timeOffset - first.timeOffset
 
         // 1. Require a hold at the end of the stroke.
         let holdSamples = pts.filter { last.timeOffset - $0.timeOffset <= holdWindow }
-        guard holdSamples.count >= 4 else { return nil }
         let holdExtent = spatialExtent(of: holdSamples.map(\.location))
-        guard holdExtent < holdTolerance else { return nil }
+        let heldLongEnough = holdSamples.count >= 3 && holdExtent < holdTolerance
+        print("[ShapeSnap] stroke pts=\(pts.count) dur=\(String(format: "%.2f", totalDuration))s "
+              + "holdSamples=\(holdSamples.count) holdDrift=\(String(format: "%.1f", holdExtent))pt "
+              + "held=\(heldLongEnough)")
+
+        guard heldLongEnough else { return nil }
 
         // 2. Strip the hold region before classifying shape.
         let body = pts.filter { last.timeOffset - $0.timeOffset > holdWindow * 0.6 }
-        guard body.count >= 6 else { return nil }
+        guard body.count >= 4 else {
+            print("[ShapeSnap] reject — body too short after stripping hold")
+            return nil
+        }
         let locs = body.map(\.location)
 
         // 3. Try line first (most common — walls of a floor plan).
         if let (a, b) = fitLine(points: locs) {
+            print("[ShapeSnap] ✅ LINE snap (\(Int(hypot(b.x - a.x, b.y - a.y)))pt)")
             return makeLineStroke(from: a, to: b, sourceStroke: stroke, sampleCount: 40)
         }
 
         // 4. Try circle.
         if let (center, radius) = fitCircle(points: locs) {
+            print("[ShapeSnap] ✅ CIRCLE snap (r=\(Int(radius))pt)")
             return makeCircleStroke(center: center, radius: radius,
                                     sourceStroke: stroke, sampleCount: 64)
         }
 
+        print("[ShapeSnap] held but no shape matched — leaving free-hand")
         return nil
     }
 
