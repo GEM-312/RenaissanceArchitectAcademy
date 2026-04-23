@@ -57,6 +57,10 @@ struct PiantaCanvasView: View {
     @State private var isValidating = false
     @State private var validationResult: SketchValidator.Result?
     @State private var validationTask: Task<Void, Never>?
+    /// Flips false on `.onDisappear` so the tool picker dismisses before
+    /// the canvas finishes tearing down — prevents the picker from lingering
+    /// over the Workshop / City Map while `.fullScreenCover` animates out.
+    @State private var canvasIsActive = true
 
     private var iPadCanvasBody: some View {
         ZStack {
@@ -66,8 +70,11 @@ struct PiantaCanvasView: View {
             blueprintBackgroundLayer
 
             // PencilKit canvas — transparent so blueprint shows through.
-            // Tool picker is hidden while Study Mode is over the top.
-            PencilCanvasView(drawing: $drawing, isToolPickerVisible: !showStudyMode)
+            // Tool picker is hidden while Study Mode is over the top OR
+            // while the view is being dismissed (canvasIsActive goes false
+            // on .onDisappear so the picker vanishes before teardown).
+            PencilCanvasView(drawing: $drawing,
+                             isToolPickerVisible: canvasIsActive && !showStudyMode)
                 .ignoresSafeArea(edges: .bottom)
 
             // Top bar (title + Study + close)
@@ -97,6 +104,9 @@ struct PiantaCanvasView: View {
         }
         .onDisappear {
             validationTask?.cancel()
+            // Hide the tool picker immediately so it doesn't linger on top
+            // of the screen we're animating into (Workshop / City / etc.)
+            canvasIsActive = false
         }
     }
 

@@ -85,6 +85,17 @@ struct PencilCanvasView: UIViewRepresentable {
 
     func makeCoordinator() -> Coordinator { Coordinator(self) }
 
+    /// Explicitly tear down the tool picker so it doesn't linger over the
+    /// view underneath (Workshop / City Map) during the `.fullScreenCover`
+    /// dismiss animation. Without this the picker stays anchored to the
+    /// still-alive canvas until SwiftUI finishes its dismiss and releases
+    /// the coordinator.
+    static func dismantleUIView(_ canvas: PKCanvasView, coordinator: Coordinator) {
+        coordinator.toolPicker.setVisible(false, forFirstResponder: canvas)
+        coordinator.toolPicker.removeObserver(canvas)
+        if canvas.isFirstResponder { canvas.resignFirstResponder() }
+    }
+
     final class Coordinator: NSObject, PKCanvasViewDelegate {
         var parent: PencilCanvasView
         let toolPicker = PKToolPicker()
