@@ -65,8 +65,9 @@ struct PiantaCanvasView: View {
             // Blueprint layer — always visible at 30%, jumps to 60% while Peek is held
             blueprintBackgroundLayer
 
-            // PencilKit canvas — transparent so blueprint shows through
-            PencilCanvasView(drawing: $drawing)
+            // PencilKit canvas — transparent so blueprint shows through.
+            // Tool picker is hidden while Study Mode is over the top.
+            PencilCanvasView(drawing: $drawing, isToolPickerVisible: !showStudyMode)
                 .ignoresSafeArea(edges: .bottom)
 
             // Top bar (title + Study + close)

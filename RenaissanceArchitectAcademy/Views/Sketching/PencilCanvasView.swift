@@ -17,6 +17,9 @@ import PencilKit
 /// versions never showed the picker).
 struct PencilCanvasView: UIViewRepresentable {
     @Binding var drawing: PKDrawing
+    /// When false, the canvas resigns first responder so the system tool
+    /// picker dismisses. Used to hide the picker while Study Mode is open.
+    var isToolPickerVisible: Bool = true
 
     func makeUIView(context: Context) -> PKCanvasView {
         let canvas = PKCanvasView()
@@ -61,11 +64,22 @@ struct PencilCanvasView: UIViewRepresentable {
         // window — PKToolPicker.setVisible is a no-op while the canvas has
         // no window, which is why the picker never appeared on first mount.
         if canvas.window != nil, !context.coordinator.pickerAttached {
-            let picker = context.coordinator.toolPicker
-            picker.setVisible(true, forFirstResponder: canvas)
-            picker.addObserver(canvas)
-            canvas.becomeFirstResponder()
+            context.coordinator.toolPicker.addObserver(canvas)
             context.coordinator.pickerAttached = true
+        }
+
+        // Toggle picker visibility — when Study Mode is open we hide it so
+        // the picker doesn't float over the blueprint reader. Resigning
+        // first responder is the iOS-idiomatic way to dismiss it.
+        if canvas.window != nil, context.coordinator.pickerAttached {
+            let picker = context.coordinator.toolPicker
+            if isToolPickerVisible {
+                picker.setVisible(true, forFirstResponder: canvas)
+                if !canvas.isFirstResponder { canvas.becomeFirstResponder() }
+            } else {
+                picker.setVisible(false, forFirstResponder: canvas)
+                if canvas.isFirstResponder { canvas.resignFirstResponder() }
+            }
         }
     }
 
