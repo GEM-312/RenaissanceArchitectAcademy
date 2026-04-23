@@ -294,3 +294,16 @@ Task { @MainActor in
 ---
 
 *Last updated: 2026-03-18*
+
+## Timer Lifecycle in SwiftUI Structs
+
+**THE CONCEPT:** Unlike classes, SwiftUI view structs are value types — so there's no retain cycle risk. But `Timer.scheduledTimer` runs on the RunLoop indefinitely. If you don't store a reference, you lose the ability to stop it. The timer fires forever, even after the view leaves the screen.
+
+**STEP BY STEP:**
+1. Timer created in `.onAppear` → discarded immediately (not stored)
+2. SwiftUI RunLoop holds a strong reference → timer keeps firing
+3. View disappears → no way to call `.invalidate()` → timer leaks
+
+**IN OUR CODE:** `MascotDialogueView.swift` — `Eye` struct's blink timer was anonymous. Now stored as `@State private var blinkTimer: Timer?` and invalidated in `.onDisappear`.
+
+**KEY TAKEAWAY:** Every repeating `Timer` needs a stored reference and a corresponding `.invalidate()` on cleanup.

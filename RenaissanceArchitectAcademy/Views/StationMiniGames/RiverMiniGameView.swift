@@ -843,8 +843,8 @@ struct RiverMiniGameView: View {
 
         var items: [SieveItem] = []
 
-        // Sand grains — golden icons
-        let sandIcons = ["🟡", "🟤", "✨", "🔶"]
+        // Sand grains — golden icons (no brown 🟤 which confused testers)
+        let sandIcons = ["🟡", "💛", "✨", "🔶"]
         for i in 0..<sandCount {
             items.append(SieveItem(
                 id: i,

@@ -568,6 +568,7 @@ struct WatercolorSplash: Shape {
 
 struct Eye: View {
     @State private var blink = false
+    @State private var blinkTimer: Timer?
 
     var body: some View {
         ZStack {
@@ -584,8 +585,7 @@ struct Eye: View {
                 .opacity(blink ? 0 : 1)
         }
         .onAppear {
-            // Random blinking
-            Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { _ in
+            blinkTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { _ in
                 withAnimation(.easeInOut(duration: 0.15)) {
                     blink = true
                 }
@@ -595,6 +595,10 @@ struct Eye: View {
                     }
                 }
             }
+        }
+        .onDisappear {
+            blinkTimer?.invalidate()
+            blinkTimer = nil
         }
     }
 }
