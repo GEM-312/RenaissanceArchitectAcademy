@@ -120,10 +120,14 @@ struct FoldableInventoryBar: View {
 
     private var gripHandle: some View {
         Image(systemName: "line.3.horizontal")
-            .font(.caption)
-            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
-            .padding(.horizontal, 10)
-            .padding(.vertical, 14)
+            .font(.system(size: 20, weight: .semibold))
+            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
+            .frame(width: 44, height: 44)
+            .background(
+                Circle()
+                    .fill(RenaissanceColors.ochre.opacity(0.18))
+                    .overlay(Circle().stroke(RenaissanceColors.ochre.opacity(0.5), lineWidth: 1))
+            )
             .contentShape(Rectangle())
             .gesture(dragGesture)
     }
@@ -132,20 +136,19 @@ struct FoldableInventoryBar: View {
         Button {
             toggleMinimizedManually()
         } label: {
-            Image(systemName: edge == .bottom ? "chevron.down" : "chevron.up")
-                .font(.caption)
-                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
-                .padding(.horizontal, 10)
-                .padding(.vertical, 14)
+            Image(systemName: edge == .bottom ? "chevron.down.circle.fill" : "chevron.up.circle.fill")
+                .font(.system(size: 26, weight: .semibold))
+                .foregroundStyle(RenaissanceColors.warmBrown)
+                .background(Circle().fill(Color.white.opacity(0.9)))
         }
         .buttonStyle(.plain)
+        .frame(width: 44, height: 44)
     }
 
     private var expandChevron: some View {
-        Image(systemName: edge == .bottom ? "chevron.up" : "chevron.down")
-            .font(.caption)
-            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
-            .padding(.horizontal, 8)
+        Image(systemName: edge == .bottom ? "chevron.up.circle.fill" : "chevron.down.circle.fill")
+            .font(.system(size: 22, weight: .semibold))
+            .foregroundStyle(RenaissanceColors.warmBrown)
     }
 
     // MARK: - Minimized counts preview
