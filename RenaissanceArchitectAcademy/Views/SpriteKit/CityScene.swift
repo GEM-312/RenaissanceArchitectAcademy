@@ -1026,49 +1026,48 @@ class CityScene: SKScene, ScrollZoomable {
     // MARK: - Camera Control
 
     private func clampCamera() {
-        let viewSize = view?.bounds.size ?? CGSize(width: 1024, height: 768)
-
-        // Recalculate min zoom from actual view size — min ensures terrain fills screen
-        if viewSize.width > 0 && viewSize.height > 0 {
-            maxZoomOutScale = min(mapSize.width / viewSize.width, mapSize.height / viewSize.height)
+        // Keep maxZoomOutScale in sync with the current view size so the
+        // student can't zoom out past the point where terrain fills the
+        // screen. Uses the same .aspectFill render-scale math as the
+        // initial fit.
+        if let fit = computeFitScale() {
+            maxZoomOutScale = fit
         }
 
-        // Clamp SCALE first — prevents SKActions from overshooting maxZoomOutScale
-        // which causes terrain edges to flash visible for 1-2 frames during zoom-out
+        // Clamp SCALE first — prevents SKActions from overshooting
+        // maxZoomOutScale which causes terrain edges to flash visible
+        // for 1-2 frames during zoom-out.
         let clampedScale = max(0.5, min(maxZoomOutScale, cameraNode.xScale))
         if cameraNode.xScale != clampedScale {
             cameraNode.setScale(clampedScale)
         }
 
         let scale = cameraNode.xScale
+        let viewSize = view?.bounds.size ?? CGSize(width: 1024, height: 768)
 
-        // Calculate visible area at current zoom
-        let visibleWidth = viewSize.width * scale
-        let visibleHeight = viewSize.height * scale
+        // For .aspectFill, visible area in SCENE coordinates is
+        // viewSize / renderScale. Multiplying by scale gives the area
+        // visible at the current camera zoom. This is the same formula
+        // WorkshopScene uses — without it the clamp limits are in
+        // view-pixel space which doesn't match the scene coord space,
+        // so panning exposes parchment at the edges.
+        let renderScale = max(viewSize.width / self.size.width,
+                              viewSize.height / self.size.height)
+        let visibleWidth = (viewSize.width / renderScale) * scale
+        let visibleHeight = (viewSize.height / renderScale) * scale
 
-        // No padding — terrain fills edge-to-edge, no parchment should be visible
-        let xPadding: CGFloat = 0
-        let yPadding: CGFloat = 0
+        let minX = visibleWidth / 2
+        let maxX = mapSize.width - (visibleWidth / 2)
+        let minY = visibleHeight / 2
+        let maxY = mapSize.height - (visibleHeight / 2)
 
-        let minX = (visibleWidth / 2) - xPadding
-        let maxX = mapSize.width - (visibleWidth / 2) + xPadding
-        let minY = (visibleHeight / 2) - yPadding
-        let maxY = mapSize.height - (visibleHeight / 2) + yPadding
-
-        // Clamp or center per axis
-        if visibleWidth >= mapSize.width {
-            // View is wider than map — lock to center
-            cameraNode.position.x = mapSize.width / 2
-        } else if maxX > minX {
+        if maxX > minX {
             cameraNode.position.x = max(minX, min(maxX, cameraNode.position.x))
         } else {
             cameraNode.position.x = mapSize.width / 2
         }
 
-        if visibleHeight >= mapSize.height {
-            // View is taller than map — lock to center
-            cameraNode.position.y = mapSize.height / 2
-        } else if maxY > minY {
+        if maxY > minY {
             cameraNode.position.y = max(minY, min(maxY, cameraNode.position.y))
         } else {
             cameraNode.position.y = mapSize.height / 2
