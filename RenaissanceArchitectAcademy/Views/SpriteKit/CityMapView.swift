@@ -803,10 +803,12 @@ struct CityMapView: View {
             return existingScene
         }
 
-        // Create new scene
+        // Create new scene — match CityScene.mapSize (3500×2500, standard
+        // across all scenes). .aspectFill preserves the terrain aspect
+        // ratio so the new 7000×5000 (@2x) art doesn't squash.
         let newScene = CityScene()
-        newScene.size = CGSize(width: 4048, height: 2144)
-        newScene.scaleMode = .resizeFill
+        newScene.size = CGSize(width: 3500, height: 2500)
+        newScene.scaleMode = .aspectFill
 
         // Set player gender before scene setup
         if let gender = onboardingState?.apprenticeGender {

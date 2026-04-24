@@ -89,8 +89,11 @@ class CityScene: SKScene, ScrollZoomable {
 
     // MARK: - Map Size
 
-    /// Single terrain tile — 3500×1955
-    private let mapSize = CGSize(width: 4048, height: 2144)
+    /// Matches the standard used by every other scene in the project —
+    /// 3500×2500 coordinate space, 2x (7000×5000) terrain PNGs. Was
+    /// 4048×2144 before Apr 23 2026; that aspect (1.888:1) stretched the
+    /// new 1.4:1 terrain horizontally / squashed it vertically.
+    private let mapSize = CGSize(width: 3500, height: 2500)
 
     // MARK: - Waypoint Graph (road network for pathfinding)
 
