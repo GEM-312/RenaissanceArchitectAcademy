@@ -399,34 +399,40 @@ class CityScene: SKScene, ScrollZoomable {
         cameraNode.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
         addChild(cameraNode)
         camera = cameraNode
-        // Start fully zoomed out so terrain is sharp on launch
-        let viewSize = view?.bounds.size ?? self.size
-        if viewSize.width > 0 && viewSize.height > 0 {
-            let fitScale = min(mapSize.width / viewSize.width, mapSize.height / viewSize.height)
-            cameraNode.setScale(fitScale)
-        } else {
-            cameraNode.setScale(1.7)
+        // Start fully zoomed out so terrain is sharp on launch.
+        // Uses the same .aspectFill fit math as WorkshopScene.
+        cameraNode.setScale(computeFitScale() ?? 1.0)
+    }
+
+    /// Recalculate zoom limits when view resizes.
+    override func didChangeSize(_ oldSize: CGSize) {
+        super.didChangeSize(oldSize)
+        if let fit = computeFitScale() {
+            maxZoomOutScale = fit
         }
     }
 
-    /// Recalculate zoom limits when view resizes (.resizeFill updates scene.size)
-    override func didChangeSize(_ oldSize: CGSize) {
-        super.didChangeSize(oldSize)
-        let viewSize = view?.bounds.size ?? self.size
-        guard viewSize.width > 0 && viewSize.height > 0 else { return }
-        // min ensures terrain always fills the screen (no parchment edges visible)
-        maxZoomOutScale = min(mapSize.width / viewSize.width, mapSize.height / viewSize.height)
-    }
-
-    /// Set camera scale so the full map is visible
+    /// Set camera scale so the full map is visible. Uses the .aspectFill
+    /// render-scale-aware calculation (copied from WorkshopScene) — the
+    /// naive `min(mapSize/viewSize)` formula only works for .resizeFill
+    /// and would leave huge parchment borders around the map.
     private func fitCameraToMap() {
-        guard let cameraNode = cameraNode else { return }
-        let viewSize = view?.bounds.size ?? self.size
-        guard viewSize.width > 0 && viewSize.height > 0 else { return }
-        let fitScale = min(mapSize.width / viewSize.width, mapSize.height / viewSize.height)
+        guard let cameraNode = cameraNode, let fitScale = computeFitScale() else { return }
         maxZoomOutScale = fitScale
         cameraNode.setScale(fitScale)
         cameraNode.position = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
+    }
+
+    /// Camera scale at which the full map exactly fills the view under
+    /// `.aspectFill`. Returns nil if the view isn't sized yet.
+    private func computeFitScale() -> CGFloat? {
+        let viewSize = view?.bounds.size ?? self.size
+        guard viewSize.width > 0, viewSize.height > 0 else { return nil }
+        let renderScale = max(viewSize.width / self.size.width,
+                              viewSize.height / self.size.height)
+        let visibleW = viewSize.width / renderScale
+        let visibleH = viewSize.height / renderScale
+        return min(mapSize.width / visibleW, mapSize.height / visibleH)
     }
 
     // MARK: - Terrain
