@@ -84,6 +84,12 @@ class SoundManager: ObservableObject {
         // Walking (wav format)
         case footstep = "footstep"
 
+        // Bird Companion
+        case birdFlyIn = "bird_fly_in"
+        case birdChirp = "bird_chirp"
+        case birdHappyTrill = "bird_happy_trill"
+        case birdSquawk = "bird_squawk"
+
         /// File extension — new station/crafting/UI sounds are wav, originals are mp3
         var ext: String {
             switch self {
@@ -92,7 +98,8 @@ class SoundManager: ObservableObject {
                  .stoneHit, .clayDig, .miningHammer, .timberChop,
                  .farmCollect, .herbPick, .pigmentGrind, .materialPickup,
                  .workbenchMix, .furnaceWoosh, .furnaceCrackling, .anvilStrike,
-                 .craftingComplete, .florinsEarned:
+                 .craftingComplete, .florinsEarned,
+                 .birdFlyIn, .birdChirp, .birdHappyTrill, .birdSquawk:
                 return "wav"
             default: return "mp3"
             }
@@ -115,6 +122,15 @@ class SoundManager: ObservableObject {
         case .stoneHit, .miningHammer, .anvilStrike: HapticsManager.shared.play(.materialCollected)
         case .materialPickup, .farmCollect, .herbPick, .timberChop, .clayDig, .pigmentGrind: HapticsManager.shared.play(.materialCollected)
         case .florinsEarned: HapticsManager.shared.play(.correctAnswer)
+        default: break
+        }
+
+        // Paired bird reactions — the bird voices success and failure alongside UI sounds
+        switch sound {
+        case .correctChime, .cardComplete, .buildingComplete, .levelUp:
+            playBirdReaction(.birdHappyTrill)
+        case .wrongBuzz, .hangmanWrong:
+            playBirdReaction(.birdSquawk)
         default: break
         }
 
@@ -143,6 +159,24 @@ class SoundManager: ObservableObject {
         }
     }
 
+   /// Play a bird reaction cached alongside the UI sound, at 0.7× volume so it layers cleanly.
+    private func playBirdReaction(_ bird: Sound) {
+        let sfxVol = Float(GameSettings.shared.sfxVolume) * 0.7
+        if let player = sfxPlayers[bird.rawValue] {
+            player.currentTime = 0
+            player.volume = sfxVol
+            player.play()
+            return
+        }
+        guard let url = Bundle.main.url(forResource: bird.rawValue, withExtension: bird.ext) else { return }
+        do {
+            let player = try AVAudioPlayer(contentsOf: url)
+            player.volume = sfxVol
+            player.play()
+            sfxPlayers[bird.rawValue] = player
+        } catch {}
+    }
+
     /// Preload a sound for instant playback
     func preload(_ sound: Sound) {
         guard sfxPlayers[sound.rawValue] == nil else { return }
@@ -162,6 +196,15 @@ class SoundManager: ObservableObject {
         case workshop = "music_workshop"
         case forest = "music_forest"
         case craftingRoom = "music_crafting"
+        case lesson = "music_lesson"
+
+        /// Shipped so far as wav; older tracks still mp3 until reauthored.
+        var ext: String {
+            switch self {
+            case .lesson: return "wav"
+            default: return "mp3"
+            }
+        }
     }
 
     /// Currently playing music track (to avoid restarting the same track)
@@ -174,7 +217,7 @@ class SoundManager: ObservableObject {
 
         let musicVol = Float(GameSettings.shared.musicVolume)
 
-        guard let url = Bundle.main.url(forResource: track.rawValue, withExtension: "mp3") else {
+        guard let url = Bundle.main.url(forResource: track.rawValue, withExtension: track.ext) else {
             // Track file doesn't exist yet — silently skip
             return
         }
@@ -209,10 +252,18 @@ class SoundManager: ObservableObject {
     // MARK: - Ambient Sounds
 
     enum AmbientSound: String {
-        case cityAmbient = "ambient_city"
-        case workshopAmbient = "ambient_workshop"
-        case forestAmbient = "ambient_forest"
-        case craftingAmbient = "ambient_crafting"
+        case cityAmbient = "city_ambient"
+        case workshopAmbient = "workshop_ambient"
+        case forestAmbient = "forest_ambient"
+        case craftingAmbient = "crafting_ambient"
+
+        /// Shipped so far as wav; older mp3 fallback for anything not converted yet.
+        var ext: String {
+            switch self {
+            case .workshopAmbient, .forestAmbient, .craftingAmbient: return "wav"
+            default: return "mp3"
+            }
+        }
     }
 
     private var currentAmbient: AmbientSound?
@@ -224,7 +275,7 @@ class SoundManager: ObservableObject {
 
         let ambientVol = Float(GameSettings.shared.sfxVolume) * 0.6  // Ambient is quieter than SFX
 
-        guard let url = Bundle.main.url(forResource: ambient.rawValue, withExtension: "mp3") else {
+        guard let url = Bundle.main.url(forResource: ambient.rawValue, withExtension: ambient.ext) else {
             return
         }
 

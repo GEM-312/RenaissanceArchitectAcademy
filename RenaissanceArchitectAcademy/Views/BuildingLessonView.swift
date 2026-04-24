@@ -203,6 +203,7 @@ struct BuildingLessonView: View {
                 currentIndex = saved
             }
             freezeWordBankIfNeeded()
+            SoundManager.shared.playMusic(.lesson)
             GameCenterManager.shared.startActivity(GameCenterManager.ActivityID.lesson)
         }
         .onDisappear {
@@ -211,6 +212,7 @@ struct BuildingLessonView: View {
             if currentIndex < pages.count {
                 viewModel.saveLessonBookmark(for: plot.id, sectionIndex: currentIndex)
             }
+            SoundManager.shared.stopMusic()
             GameCenterManager.shared.endCurrentActivity()
         }
         // Environment navigation uses onNavigate to go to full scene (not a sheet)

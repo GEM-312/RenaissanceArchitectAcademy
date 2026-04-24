@@ -585,12 +585,14 @@ struct ForestMapView: View {
                 floatOffset = 8
             }
             auroraPhase = true
+            SoundManager.shared.playAmbient(.forestAmbient)
             // Show bird guidance after short delay
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 showForestGuidance()
             }
         }
         .onDisappear {
+            SoundManager.shared.stopAmbient()
             // Nil out callbacks before releasing scene to break closure references
             sceneHolder.scene?.onPlayerPositionChanged = nil
             sceneHolder.scene?.onBackRequested = nil

@@ -216,6 +216,14 @@
 		AB8 /* stone_hit.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB8 /* stone_hit.wav */; };
 		AB9 /* timber_chop.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB9 /* timber_chop.wav */; };
 		AC0 /* workbench_mix.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC0 /* workbench_mix.wav */; };
+		AC1 /* bird_chirp.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC1 /* bird_chirp.wav */; };
+		AC2 /* bird_fly_in.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC2 /* bird_fly_in.wav */; };
+		AC3 /* bird_happy_trill.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC3 /* bird_happy_trill.wav */; };
+		AC4 /* bird_squawk.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC4 /* bird_squawk.wav */; };
+		AC5 /* forest_ambient.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC5 /* forest_ambient.wav */; };
+		AC6 /* workshop_ambient.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC6 /* workshop_ambient.wav */; };
+		AC7 /* crafting_ambient.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC7 /* crafting_ambient.wav */; };
+		AC8 /* music_lesson.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC8 /* music_lesson.wav */; };
 		F001 /* Cinzel-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B022F313B22007D8C64 /* Cinzel-Black.ttf */; };
 		F002 /* Cinzel-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B032F313B22007D8C64 /* Cinzel-Bold.ttf */; };
 		F003 /* Cinzel-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B042F313B22007D8C64 /* Cinzel-ExtraBold.ttf */; };
@@ -502,6 +510,14 @@
 		BB8 /* stone_hit.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = stone_hit.wav; sourceTree = "<group>"; };
 		BB9 /* timber_chop.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = timber_chop.wav; sourceTree = "<group>"; };
 		BC0 /* workbench_mix.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = workbench_mix.wav; sourceTree = "<group>"; };
+		BC1 /* bird_chirp.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bird_chirp.wav; sourceTree = "<group>"; };
+		BC2 /* bird_fly_in.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bird_fly_in.wav; sourceTree = "<group>"; };
+		BC3 /* bird_happy_trill.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bird_happy_trill.wav; sourceTree = "<group>"; };
+		BC4 /* bird_squawk.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bird_squawk.wav; sourceTree = "<group>"; };
+		BC5 /* forest_ambient.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = forest_ambient.wav; sourceTree = "<group>"; };
+		BC6 /* workshop_ambient.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = workshop_ambient.wav; sourceTree = "<group>"; };
+		BC7 /* crafting_ambient.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = crafting_ambient.wav; sourceTree = "<group>"; };
+		BC8 /* music_lesson.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = music_lesson.wav; sourceTree = "<group>"; };
 		3D0 /* GameCenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterManager.swift; sourceTree = "<group>"; };
 		3D1 /* GameCenterDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterDashboardView.swift; sourceTree = "<group>"; };
 		3E3 /* InfographicRevealView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfographicRevealView.swift; sourceTree = "<group>"; };
@@ -585,6 +601,14 @@
 				BB8 /* stone_hit.wav */,
 				BB9 /* timber_chop.wav */,
 				BC0 /* workbench_mix.wav */,
+				BC1 /* bird_chirp.wav */,
+				BC2 /* bird_fly_in.wav */,
+				BC3 /* bird_happy_trill.wav */,
+				BC4 /* bird_squawk.wav */,
+				BC5 /* forest_ambient.wav */,
+				BC6 /* workshop_ambient.wav */,
+				BC7 /* crafting_ambient.wav */,
+				BC8 /* music_lesson.wav */,
 				147 /* BoyAvatarTransition.mp4 */,
 				148 /* GirlAvatarTransition.mp4 */,
 				303 /* Views */,
@@ -973,6 +997,14 @@
 				AB8 /* stone_hit.wav in Resources */,
 				AB9 /* timber_chop.wav in Resources */,
 				AC0 /* workbench_mix.wav in Resources */,
+				AC1 /* bird_chirp.wav in Resources */,
+				AC2 /* bird_fly_in.wav in Resources */,
+				AC3 /* bird_happy_trill.wav in Resources */,
+				AC4 /* bird_squawk.wav in Resources */,
+				AC5 /* forest_ambient.wav in Resources */,
+				AC6 /* workshop_ambient.wav in Resources */,
+				AC7 /* crafting_ambient.wav in Resources */,
+				AC8 /* music_lesson.wav in Resources */,
 				543AD36C2F60C199001895ED /* GirlIntroAudio.m4a in Resources */,
 				047 /* BoyAvatarTransition.mp4 in Resources */,
 				048 /* GirlAvatarTransition.mp4 in Resources */,

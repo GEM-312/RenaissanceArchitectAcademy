@@ -235,12 +235,14 @@ struct CraftingRoomMapView: View {
             if workshop.currentAssignment == nil {
                 workshop.generateNewAssignment()
             }
+            SoundManager.shared.playAmbient(.craftingAmbient)
             // Show bird guidance after short delay
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 showCraftingGuidance()
             }
         }
         .onDisappear {
+            SoundManager.shared.stopAmbient()
             // Nil out callbacks before releasing scene to break closure references
             sceneHolder.scene?.onFurnitureReached = nil
             sceneHolder.scene?.onPlayerPositionChanged = nil

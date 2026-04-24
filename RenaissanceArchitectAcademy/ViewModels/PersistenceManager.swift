@@ -17,16 +17,23 @@ final class PersistenceManager {
         let descriptor = FetchDescriptor<PlayerSave>(
             predicate: #Predicate { $0.apprenticeName == name }
         )
-        if let existing = try? modelContext.fetch(descriptor).first {
-            print("[PERSIST] Found existing save for '\(name)' — florins: \(existing.goldFlorins), apprenticeName: '\(existing.apprenticeName)'")
-            return existing
+        do {
+            if let existing = try modelContext.fetch(descriptor).first {
+                print("[PERSIST] Found existing save for '\(name)' — florins: \(existing.goldFlorins), apprenticeName: '\(existing.apprenticeName)'")
+                return existing
+            }
+        } catch {
+            print("[PERSIST ERROR] fetch(PlayerSave where name='\(name)') failed: \(error)")
         }
-        // No save for this player — create new one
         print("[PERSIST] No save found for '\(name)' — creating fresh save")
         let save = PlayerSave()
         save.apprenticeName = name
         modelContext.insert(save)
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            print("[PERSIST ERROR] insert new PlayerSave('\(name)') failed: \(error)")
+        }
         return save
     }
 
@@ -36,11 +43,23 @@ final class PersistenceManager {
             sortBy: [SortDescriptor(\.lastSaved, order: .reverse)]
         )
         descriptor.fetchLimit = 1
-        guard let save = try? modelContext.fetch(descriptor).first,
-              !save.apprenticeName.isEmpty else {
+        do {
+            let all = try modelContext.fetch(descriptor)
+            print("[PERSIST] loadMostRecentPlayer — \(all.count) PlayerSave row(s) in store")
+            guard let save = all.first else {
+                print("[PERSIST] loadMostRecentPlayer — store is empty, returning nil")
+                return nil
+            }
+            guard !save.apprenticeName.isEmpty else {
+                print("[PERSIST] loadMostRecentPlayer — most recent save has empty name, returning nil")
+                return nil
+            }
+            print("[PERSIST] loadMostRecentPlayer — returning '\(save.apprenticeName)' (florins: \(save.goldFlorins), lastSaved: \(save.lastSaved))")
+            return save.apprenticeName
+        } catch {
+            print("[PERSIST ERROR] loadMostRecentPlayer fetch failed: \(error)")
             return nil
         }
-        return save.apprenticeName
     }
 
     private func migrateFromUserDefaults(into save: PlayerSave) {
@@ -75,8 +94,14 @@ final class PersistenceManager {
         let descriptor = FetchDescriptor<BuildingProgressRecord>(
             predicate: #Predicate { $0.playerName == name }
         )
-        guard let records = try? modelContext.fetch(descriptor) else { return [:] }
-        return Dictionary(uniqueKeysWithValues: records.map { ($0.buildingId, $0) })
+        do {
+            let records = try modelContext.fetch(descriptor)
+            print("[PERSIST] loadAllBuildingProgress('\(name)') → \(records.count) record(s)")
+            return Dictionary(uniqueKeysWithValues: records.map { ($0.buildingId, $0) })
+        } catch {
+            print("[PERSIST ERROR] loadAllBuildingProgress('\(name)') failed: \(error)")
+            return [:]
+        }
     }
 
     func getOrCreateBuildingProgress(for buildingId: Int) -> BuildingProgressRecord {
@@ -101,45 +126,59 @@ final class PersistenceManager {
         let descriptor = FetchDescriptor<PlayerSave>(
             predicate: #Predicate { $0.apprenticeName == "" }
         )
-        guard let stale = try? modelContext.fetch(descriptor), !stale.isEmpty else { return }
-        for save in stale {
-            modelContext.delete(save)
+        do {
+            let stale = try modelContext.fetch(descriptor)
+            guard !stale.isEmpty else { return }
+            print("[PERSIST] Deleting \(stale.count) empty-name PlayerSave(s)")
+            for save in stale { modelContext.delete(save) }
+            try modelContext.save()
+        } catch {
+            print("[PERSIST ERROR] deleteEmptyNameSaves failed: \(error)")
         }
-        try? modelContext.save()
     }
 
     /// Wipe ALL player saves and building progress (full database reset)
     func resetAllData() {
-        // Delete all PlayerSave records
-        if let allSaves = try? modelContext.fetch(FetchDescriptor<PlayerSave>()) {
-            for save in allSaves {
-                modelContext.delete(save)
-            }
+        print("[PERSIST] resetAllData() called — wiping ALL saves")
+        do {
+            let allSaves = try modelContext.fetch(FetchDescriptor<PlayerSave>())
+            print("[PERSIST] resetAllData — deleting \(allSaves.count) PlayerSave(s)")
+            for save in allSaves { modelContext.delete(save) }
+        } catch {
+            print("[PERSIST ERROR] resetAllData fetch PlayerSave: \(error)")
         }
-        // Delete all BuildingProgressRecords
-        if let allProgress = try? modelContext.fetch(FetchDescriptor<BuildingProgressRecord>()) {
-            for record in allProgress {
-                modelContext.delete(record)
-            }
+        do {
+            let allProgress = try modelContext.fetch(FetchDescriptor<BuildingProgressRecord>())
+            print("[PERSIST] resetAllData — deleting \(allProgress.count) BuildingProgressRecord(s)")
+            for record in allProgress { modelContext.delete(record) }
+        } catch {
+            print("[PERSIST ERROR] resetAllData fetch BuildingProgressRecord: \(error)")
         }
-        try? modelContext.save()
+        do { try modelContext.save() } catch {
+            print("[PERSIST ERROR] resetAllData save: \(error)")
+        }
         currentPlayerName = ""
     }
 
     /// Reset only BuildingProgressRecords (keeps PlayerSave intact — player name, florins, onboarding)
     func resetBuildingProgressOnly() {
-        if let allProgress = try? modelContext.fetch(FetchDescriptor<BuildingProgressRecord>()) {
+        do {
+            let allProgress = try modelContext.fetch(FetchDescriptor<BuildingProgressRecord>())
             print("[PERSIST] Clearing \(allProgress.count) building progress records (schema migration)")
-            for record in allProgress {
-                modelContext.delete(record)
-            }
+            for record in allProgress { modelContext.delete(record) }
+            try modelContext.save()
+        } catch {
+            print("[PERSIST ERROR] resetBuildingProgressOnly: \(error)")
         }
-        try? modelContext.save()
     }
 
     // MARK: - Save
 
     func save() {
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            print("[PERSIST ERROR] modelContext.save() failed: \(error)")
+        }
     }
 }

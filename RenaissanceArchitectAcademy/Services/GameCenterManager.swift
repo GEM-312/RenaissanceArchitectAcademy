@@ -145,7 +145,9 @@ class GameCenterManager: NSObject {
             topVC.present(gcVC, animated: true)
         }
         #elseif os(macOS)
-        GKDialogController.shared().present(GKGameCenterViewController(state: .default))
+        let gcVC = GKGameCenterViewController(state: .default)
+        gcVC.gameCenterDelegate = self
+        GKDialogController.shared().present(gcVC)
         #endif
     }
 
@@ -304,10 +306,16 @@ class GameCenterManager: NSObject {
 
 // MARK: - GKGameCenterControllerDelegate
 
-#if os(iOS)
 extension GameCenterManager: GKGameCenterControllerDelegate {
     nonisolated func gameCenterViewControllerDidFinish(_ gameCenterViewController: GKGameCenterViewController) {
-        gameCenterViewController.dismiss(animated: true)
+        #if os(iOS)
+        Task { @MainActor in
+            gameCenterViewController.dismiss(animated: true)
+        }
+        #elseif os(macOS)
+        Task { @MainActor in
+            GKDialogController.shared().dismiss(gameCenterViewController)
+        }
+        #endif
     }
 }
-#endif

@@ -442,6 +442,7 @@ struct BirdCharacter: View {
                     // Already sitting — show last fly frame, play blink once
                     flyOffset = .zero
                     flyRotation = 0
+                    SoundManager.shared.play(.birdChirp)
                     playSittingBlink()
                 } else {
                     playFlyIn()
@@ -465,6 +466,9 @@ struct BirdCharacter: View {
     /// Fly in from top-left: loop flying frames, swoop down, then land
     private func playFlyIn() {
         timer?.invalidate()
+
+        // Bird's audible wingbeat — synced to the visual swoop
+        SoundManager.shared.play(.birdFlyIn)
 
         // Reset to start position (off-screen top-left, tilted)
         flyOffset = CGSize(width: -180, height: -280)

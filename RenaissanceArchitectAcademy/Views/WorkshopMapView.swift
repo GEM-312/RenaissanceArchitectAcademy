@@ -651,6 +651,7 @@ struct WorkshopMapView: View {
             if workshop.currentAssignment == nil {
                 workshop.generateNewAssignment()
             }
+            SoundManager.shared.playAmbient(.workshopAmbient)
             // Show bird guidance if player has an active building with workshop cards
             checkArrivalGuidance()
             // Show material-need badges on stations
@@ -659,6 +660,7 @@ struct WorkshopMapView: View {
             }
         }
         .onDisappear {
+            SoundManager.shared.stopAmbient()
             // Nil out callbacks before releasing scene to break closure references
             sceneHolder.scene?.onPlayerPositionChanged = nil
             sceneHolder.scene?.onStationReached = nil
