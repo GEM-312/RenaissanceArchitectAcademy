@@ -43,16 +43,16 @@ class WorkshopScene: SKScene, ScrollZoomable {
     // Station positions — scaled to 3500x2500 coordinate space
     // Workbench, furnace, and pigment table are inside the Crafting Room (interior scene)
     private let stationPositions: [ResourceStationType: CGPoint] = [
-        .quarry:       CGPoint(x: 499,  y: 1441),
-        .river:        CGPoint(x: 1166, y: 1257),
-        .volcano:      CGPoint(x: 2879, y: 450),
-        .clayPit:      CGPoint(x: 2796, y: 2046),
-        .mine:         CGPoint(x: 1032, y: 1758),
-        .forest:       CGPoint(x: 293,  y: 679),
-        .market:       CGPoint(x: 1397, y: 594),
-        .craftingRoom: CGPoint(x: 1636, y: 1144),
-        .farm:         CGPoint(x: 2450, y: 1450),
-        .goldsmithWorkshop: CGPoint(x: 2100, y: 1550),
+        .quarry:       CGPoint(x: 1227, y: 1818),
+        .river:        CGPoint(x: 1057, y: 1104),
+        .volcano:      CGPoint(x: 2669, y: 2184),
+        .clayPit:      CGPoint(x: 2992, y: 1005),
+        .mine:         CGPoint(x: 2209, y: 1487),
+        .forest:       CGPoint(x: 540,  y: 525),
+        .market:       CGPoint(x: 1487, y: 365),
+        .craftingRoom: CGPoint(x: 3160, y: 1350),
+        .farm:         CGPoint(x: 1769, y: 850),
+        .goldsmithWorkshop: CGPoint(x: 2835, y: 231),
     ]
 
     // MARK: - Waypoint Graph (road network for pathfinding)
