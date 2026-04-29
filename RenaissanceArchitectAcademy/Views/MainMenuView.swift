@@ -3,8 +3,9 @@ import SwiftUI
 /// Main Menu - Leonardo's Notebook aesthetic
 /// Title on top, dome image centered, buttons in a horizontal row at the bottom
 struct MainMenuView: View {
+    var hasExistingSave: Bool = false
     var onStartGame: () -> Void
-    var onContinue: () -> Void = {}
+    var onContinue: () -> Void
     var onOpenWorkshop: () -> Void = {}
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var showContent = false
@@ -130,10 +131,12 @@ struct MainMenuView: View {
                         .keyboardShortcut(.return, modifiers: [])
                         #endif
 
-                    RenaissanceButton(title: "Continue", action: onContinue)
-                        #if os(macOS)
-                        .keyboardShortcut("c", modifiers: [.command])
-                        #endif
+                    if hasExistingSave {
+                        RenaissanceButton(title: "Continue", action: onContinue)
+                            #if os(macOS)
+                            .keyboardShortcut("r", modifiers: [.command])
+                            #endif
+                    }
                 }
                 .frame(maxWidth: .infinity)
                 .opacity(showButtons ? 1 : 0)
@@ -251,11 +254,11 @@ struct AnimatedText: View {
     }
 }
 
-#Preview("iPhone") {
-    MainMenuView(onStartGame: {})
+#Preview("iPhone — new player") {
+    MainMenuView(hasExistingSave: false, onStartGame: {}, onContinue: {})
 }
 
-#Preview("iPad", traits: .landscapeLeft) {
-    MainMenuView(onStartGame: {})
+#Preview("iPad — returning player", traits: .landscapeLeft) {
+    MainMenuView(hasExistingSave: true, onStartGame: {}, onContinue: {})
 }
 

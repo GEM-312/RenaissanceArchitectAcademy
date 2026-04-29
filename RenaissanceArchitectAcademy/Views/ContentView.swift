@@ -27,6 +27,9 @@ struct ContentView: View {
     // Persistence loading guard
     @State private var hasLoadedPersistence = false
 
+    // Whether a real (non-empty-name) save exists — gates the Continue button
+    @State private var hasExistingSave = false
+
     // Lesson return — stores plot ID when student navigates to workshop/forest from a lesson
     @State private var returnToLessonPlotId: Int? = nil
 
@@ -64,6 +67,7 @@ struct ContentView: View {
                 .transition(.opacity)
             } else if showingMainMenu {
                 MainMenuView(
+                    hasExistingSave: hasExistingSave,
                     onStartGame: {
                         // TODO: Re-enable skip after onboarding is finalized:
                         // if onboardingState.hasCompletedOnboarding { showingMainMenu = false; return }
@@ -72,7 +76,7 @@ struct ContentView: View {
                         }
                     },
                     onContinue: {
-                        // Skip onboarding, go straight to city map
+                        // Returning player — go straight to city map
                         selectedDestination = .cityMap
                         withAnimation(.easeInOut(duration: 0.5)) {
                             showingMainMenu = false
@@ -133,6 +137,7 @@ struct ContentView: View {
                 cityViewModel.loadFromPersistence()
                 workshopState.loadFromPersistence()
                 notebookState.switchPlayer(to: manager.currentPlayerName)
+                hasExistingSave = true
                 print("[INIT] Loaded — florins: \(cityViewModel.goldFlorins), materials: \(workshopState.rawMaterials)")
             } else {
                 print("[INIT] No recent player found, starting fresh")
@@ -188,6 +193,7 @@ struct ContentView: View {
         cityViewModel.loadFromPersistence()
         workshopState.loadFromPersistence()
         notebookState.switchPlayer(to: name)
+        hasExistingSave = true
 
         print("[PLAYER SWITCH] After load — florins: \(cityViewModel.goldFlorins), materials: \(workshopState.rawMaterials)")
     }
