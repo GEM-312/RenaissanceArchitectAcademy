@@ -28,7 +28,30 @@
 
 ## SpriteKit
 
-*(Teaching moments about SpriteKit scenes, nodes, physics, and animations will appear here)*
+### SKEmitterNode for Ambient Atmosphere — 2026-04-29
+
+**The Concept:** An `SKEmitterNode` spawns hundreds of small textured particles per second, each with randomized speed, direction, color, scale, and lifetime. Perfect for "vibe" effects (smoke, sparks, dust, mist) where you want organic-looking motion without animating each particle by hand. Cheapest "world feels alive" upgrade in SpriteKit — no Photoshop work, no asset bundle growth.
+
+**Step by Step:**
+
+1. **Make a soft particle texture.** A radial-gradient circle works for almost everything (smoke, dust, sparks, mist). Generate it once at runtime via `UIGraphicsImageRenderer` (iOS) / `NSImage` block (macOS) so you ship no extra asset.
+
+2. **Configure the emitter with five property groups:**
+   - **Spawn:** `particleBirthRate` (per second), `particleLifetime` (+ range)
+   - **Movement:** `emissionAngle` + `emissionAngleRange` (spread), `particleSpeed` + range, `xAcceleration` / `yAcceleration` (drift + gravity)
+   - **Size:** `particleScale` + range, `particleScaleSpeed` (grow/shrink over life)
+   - **Rotation:** `particleRotationRange`, `particleRotationSpeed`
+   - **Color/alpha:** `particleColor` + `particleColorBlendFactor`, `particleAlpha` + `particleAlphaSpeed` (fade out)
+
+3. **Set `targetNode = self`.** This makes particles drift in **scene-space**, not emitter-space — they keep moving naturally even as the camera pans. Without this, particles "drag along" with the emitter and look glued to it.
+
+4. **Pre-warm with `advanceSimulationTime(4.0)`.** Otherwise the column has to "build up" for ~4 seconds when the scene first appears. Pre-warming runs the simulation forward so the smoke is already mid-rise when the player sees it.
+
+5. **Pick `zPosition` carefully.** Particles need to render above the things they emit from but below the player. In WorkshopScene: stations are at 10, player at 50, so smoke at 15.
+
+**In Our Code:** `WorkshopScene.swift` → `setupAmbientEffects()` calls `makeVolcanoSmokeEmitter()`. The emitter spawns warm-ash-colored particles above the volcano station, rising with slight horizontal drift and fading to transparent over 4 seconds. Static `softCircleTexture` is the shared gradient image, generated once.
+
+**Key Takeaway:** Use particles for anything **volumetric** (smoke, sparks, dust, mist) — they handle the "infinite organic variation" problem for free. Save sprite atlases for things with **structure** (cranes lifting, NPCs walking, water flowing in a specific direction). Different problems, different tools.
 
 ---
 

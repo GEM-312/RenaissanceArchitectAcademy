@@ -177,6 +177,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
         setupTitle()
         setupWalkingPaths()
         setupStations()
+        setupAmbientEffects()
         setupPlayer()
 
         // Dark tint node — toggled by theme (2x mapSize to cover edge fill area)
@@ -320,6 +321,108 @@ class WorkshopScene: SKScene, ScrollZoomable {
             addChild(node)
             resourceNodes[stationType] = node
         }
+    }
+
+    // MARK: - Ambient Effects (always-on world animation)
+
+    /// Adds non-interactive ambient animations layered over the painted terrain
+    /// — the workshop "breathes" even when the player isn't acting on a station.
+    /// Particles are scene-space (`targetNode = self`) so they drift independently
+    /// of camera pan/zoom.
+    private func setupAmbientEffects() {
+        guard let volcanoPos = stationPositions[.volcano] else { return }
+
+        let smoke = makeVolcanoSmokeEmitter()
+        // Origin sits above the volcano sprite so particles read as rising
+        // from the crater, not from the station icon's center.
+        smoke.position = CGPoint(x: volcanoPos.x, y: volcanoPos.y + 60)
+        smoke.zPosition = 15
+        smoke.targetNode = self
+        smoke.name = "volcanoSmoke"
+        // Pre-warm so smoke is already rising when the player first sees the scene
+        // (otherwise the column has to "build up" for ~4 seconds on scene load).
+        smoke.advanceSimulationTime(4.0)
+        addChild(smoke)
+    }
+
+    private func makeVolcanoSmokeEmitter() -> SKEmitterNode {
+        let e = SKEmitterNode()
+        e.particleTexture = Self.softCircleTexture
+
+        // Spawn rate + lifetime
+        e.particleBirthRate = 8
+        e.particleLifetime = 4.0
+        e.particleLifetimeRange = 1.5
+
+        // Movement — straight up with slight spread, drifting and accelerating
+        e.emissionAngle = .pi / 2
+        e.emissionAngleRange = .pi / 8
+        e.particleSpeed = 35
+        e.particleSpeedRange = 15
+        e.xAcceleration = 5
+        e.yAcceleration = 8
+
+        // Size — particles grow as they rise
+        e.particleScale = 0.8
+        e.particleScaleRange = 0.4
+        e.particleScaleSpeed = 0.3
+
+        // Slow tumble
+        e.particleRotationRange = .pi
+        e.particleRotationSpeed = .pi / 8
+
+        // Warm ash color — sepia gray with a faint volcanic warmth
+        e.particleColor = PlatformColor(red: 0.45, green: 0.35, blue: 0.30, alpha: 1)
+        e.particleColorBlendFactor = 1.0
+        e.particleColorBlendFactorSpeed = -0.2
+
+        // Alpha — translucent, fades to nothing as it rises
+        e.particleAlpha = 0.65
+        e.particleAlphaRange = 0.15
+        e.particleAlphaSpeed = -0.2
+
+        // Standard alpha blend (additive would over-glow against the watercolor terrain)
+        e.particleBlendMode = .alpha
+
+        // Spread the spawn point so the column looks organic, not a single jet
+        e.particlePositionRange = CGVector(dx: 30, dy: 8)
+
+        return e
+    }
+
+    /// Soft radial-gradient circle used as the smoke particle. Generated once at
+    /// runtime so we don't have to ship another asset just for ambient particles.
+    private static let softCircleTexture: SKTexture = {
+        let size = CGSize(width: 64, height: 64)
+        #if os(iOS)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        let image = renderer.image { ctx in
+            drawSoftCircle(in: ctx.cgContext, size: size)
+        }
+        return SKTexture(image: image)
+        #else
+        let image = NSImage(size: size, flipped: false) { _ in
+            guard let cg = NSGraphicsContext.current?.cgContext else { return false }
+            drawSoftCircle(in: cg, size: size)
+            return true
+        }
+        return SKTexture(image: image)
+        #endif
+    }()
+
+    private static func drawSoftCircle(in ctx: CGContext, size: CGSize) {
+        let center = CGPoint(x: size.width / 2, y: size.height / 2)
+        let radius = size.width / 2
+        let space = CGColorSpaceCreateDeviceRGB()
+        let colors = [
+            PlatformColor(white: 1, alpha: 1).cgColor,
+            PlatformColor(white: 1, alpha: 0).cgColor
+        ] as CFArray
+        guard let gradient = CGGradient(colorsSpace: space, colors: colors, locations: [0, 1]) else { return }
+        ctx.drawRadialGradient(gradient,
+                               startCenter: center, startRadius: 0,
+                               endCenter: center, endRadius: radius,
+                               options: [])
     }
 
     // MARK: - Player
