@@ -852,19 +852,35 @@ struct WorkshopMapView: View {
                     guidanceDestination = nil
                     guidanceStationType = .craftingRoom
                 case .build:
-                    // Safety: check if materials are actually ready before sending to city
-                    let required = Building.requiredCraftedItems(for: buildingName)
-                    let allCrafted = required.allSatisfy { item, needed in
-                        (workshop.craftedMaterials[item] ?? 0) >= needed
-                    }
-                    if allCrafted {
+                    // Celebrate ONLY when every gate passes (materials + cards + sketch).
+                    // Otherwise the bird previously sent players to the City Map before
+                    // canStartBuilding was actually true — misleading dead end.
+                    if let bid = bid, vm.canStartBuilding(for: bid, workshopState: workshop) {
                         guidanceMessage = "All done for the \(buildingName)! Head to the City Map to build!"
                         guidanceDestination = .cityMap
                     } else {
-                        // Materials still missing — guide to crafting room, don't loop back to city
-                        guidanceMessage = "Time for the Crafting Room — craft the remaining materials for the \(buildingName)!"
-                        guidanceDestination = nil
-                        guidanceStationType = .craftingRoom
+                        let required = Building.requiredCraftedItems(for: buildingName)
+                        let materialsOk = required.allSatisfy { item, needed in
+                            (workshop.craftedMaterials[item] ?? 0) >= needed
+                        }
+                        let allCards = KnowledgeCardContent.cards(for: buildingName)
+                        let cardsRemaining = allCards.filter { !progress.completedCardIDs.contains($0.id) }.count
+                        let sketchOk = SketchingContent.sketchingChallenge(for: buildingName) == nil || progress.sketchCompleted
+
+                        if !materialsOk {
+                            guidanceMessage = "Time for the Crafting Room — craft the remaining materials for the \(buildingName)!"
+                            guidanceDestination = nil
+                            guidanceStationType = .craftingRoom
+                        } else if cardsRemaining > 0 {
+                            guidanceMessage = "Materials ready! But \(cardsRemaining) knowledge card\(cardsRemaining == 1 ? "" : "s") still to discover for the \(buildingName) on the City Map."
+                            guidanceDestination = .cityMap
+                        } else if !sketchOk {
+                            guidanceMessage = "Materials and cards ready! Now sketch the floor plan of the \(buildingName) from the City Map."
+                            guidanceDestination = .cityMap
+                        } else {
+                            guidanceMessage = "Almost done — visit the City Map to see what's left for the \(buildingName)!"
+                            guidanceDestination = .cityMap
+                        }
                     }
                 default:
                     break

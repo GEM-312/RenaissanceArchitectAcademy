@@ -285,14 +285,38 @@ struct ForestMapView: View {
             return
         }
 
-        // 4. Enough timber — guide to Crafting Room to craft Timber Beams
+        // 4. Enough timber — but is everything ELSE done? Don't celebrate
+        //    based on timberBeams alone (Bug #1 fix Apr 29 — was sending
+        //    players to City Map before cards/sketch/other materials done).
         let hasCraftedTimberBeams = (workshop.craftedMaterials[.timberBeams] ?? 0) >= 1
-        if hasCraftedTimberBeams {
+        if !hasCraftedTimberBeams {
+            guidanceMessage = "You have \(timberCount) timber! Head to the Crafting Room to craft Timber Beams for the \(buildingName)!"
+            guidanceDestination = .workshop
+        } else if vm.canStartBuilding(for: bid, workshopState: workshop) {
             guidanceMessage = "All done for the \(buildingName)! Head to the City Map to build!"
             guidanceDestination = .cityMap
         } else {
-            guidanceMessage = "You have \(timberCount) timber! Head to the Crafting Room to craft Timber Beams for the \(buildingName)!"
-            guidanceDestination = .workshop
+            let allCards = KnowledgeCardContent.cards(for: buildingName)
+            let cardsRemaining = allCards.filter { !progress.completedCardIDs.contains($0.id) }.count
+            let sketchOk = SketchingContent.sketchingChallenge(for: buildingName) == nil || progress.sketchCompleted
+            let building = vm.buildingPlots.first(where: { $0.id == bid })?.building
+            let materialsOk = (building?.requiredMaterials ?? [:]).allSatisfy { item, needed in
+                (workshop.craftedMaterials[item] ?? 0) >= needed
+            }
+
+            if !materialsOk {
+                guidanceMessage = "Timber Beams ready! But the \(buildingName) still needs more crafted materials — back to the Crafting Room."
+                guidanceDestination = .workshop
+            } else if cardsRemaining > 0 {
+                guidanceMessage = "Materials ready! But \(cardsRemaining) knowledge card\(cardsRemaining == 1 ? "" : "s") still to discover for the \(buildingName) on the City Map."
+                guidanceDestination = .cityMap
+            } else if !sketchOk {
+                guidanceMessage = "Materials and cards ready! Now sketch the floor plan of the \(buildingName) from the City Map."
+                guidanceDestination = .cityMap
+            } else {
+                guidanceMessage = "Almost done — visit the City Map to see what's left for the \(buildingName)!"
+                guidanceDestination = .cityMap
+            }
         }
 
         withAnimation(.spring(response: 0.4)) {

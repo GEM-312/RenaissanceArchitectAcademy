@@ -503,10 +503,26 @@ struct CraftingRoomMapView: View {
             guidanceDestination = nil
 
         case .build:
-            // Verify materials are actually all crafted before sending to city
-            if totalRequired > 0 && craftedCount >= totalRequired {
-                guidanceMessage = "All materials crafted for the \(buildingName)! Head to the City Map to build!"
+            // Mirror the canStartBuilding gate so we never celebrate before
+            // every requirement (materials + cards + sketch) is complete.
+            if vm.canStartBuilding(for: bid, workshopState: workshop) {
+                guidanceMessage = "All done for the \(buildingName)! Head to the City Map to build!"
                 guidanceDestination = .cityMap
+            } else if totalRequired > 0 && craftedCount >= totalRequired {
+                let allCards = KnowledgeCardContent.cards(for: buildingName)
+                let cardsRemaining = allCards.filter { !progress.completedCardIDs.contains($0.id) }.count
+                let sketchOk = SketchingContent.sketchingChallenge(for: buildingName) == nil || progress.sketchCompleted
+
+                if cardsRemaining > 0 {
+                    guidanceMessage = "Materials ready! But \(cardsRemaining) knowledge card\(cardsRemaining == 1 ? "" : "s") still to discover for the \(buildingName) on the City Map."
+                    guidanceDestination = .cityMap
+                } else if !sketchOk {
+                    guidanceMessage = "Materials and cards ready! Now sketch the floor plan of the \(buildingName) from the City Map."
+                    guidanceDestination = .cityMap
+                } else {
+                    guidanceMessage = "Almost done — visit the City Map to see what's left for the \(buildingName)!"
+                    guidanceDestination = .cityMap
+                }
             } else {
                 guidanceMessage = "Craft your materials at the Workbench and Furnace! (\(craftedCount)/\(totalRequired) crafted)"
                 guidanceDestination = nil
