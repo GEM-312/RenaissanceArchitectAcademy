@@ -92,7 +92,9 @@ private class WolframXMLParser: NSObject, XMLParserDelegate {
 
 // MARK: - Wolfram Service
 
-/// Queries Wolfram Alpha for chemical/scientific information.
+/// Queries Wolfram Alpha for chemical/scientific information — proxied
+/// through our Cloudflare Worker. The real Wolfram app ID lives as a
+/// server-side secret on the Worker.
 ///
 /// Usage:
 /// ```swift
@@ -101,7 +103,6 @@ private class WolframXMLParser: NSObject, XMLParserDelegate {
 /// ```
 actor WolframService {
 
-    private let appID = APIKeys.wolframAlpha
     private var cache: [String: WolframResult] = [:]
 
     /// Full Results query — returns structured pods with text + images
@@ -109,13 +110,14 @@ actor WolframService {
         let key = input.lowercased()
         if let cached = cache[key] { return cached }
 
-        let encoded = input.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? input
-        let urlString = "https://api.wolframalpha.com/v2/query?input=\(encoded)&appid=\(appID)&format=plaintext,image"
-        guard let url = URL(string: urlString) else {
+        guard let url = WorkerClient.wolframQueryURL(input: input) else {
             throw WolframError.invalidQuery
         }
 
-        let (data, response) = try await URLSession.shared.data(from: url)
+        var request = URLRequest(url: url)
+        request.setValue(WorkerClient.proxyToken, forHTTPHeaderField: "X-Proxy-Token")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
             throw WolframError.requestFailed
         }
@@ -133,13 +135,14 @@ actor WolframService {
 
     /// Short answer — returns a single text string (faster, simpler)
     func shortAnswer(_ input: String) async throws -> String {
-        let encoded = input.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? input
-        let urlString = "https://api.wolframalpha.com/v1/result?i=\(encoded)&appid=\(appID)"
-        guard let url = URL(string: urlString) else {
+        guard let url = WorkerClient.wolframResultURL(input: input) else {
             throw WolframError.invalidQuery
         }
 
-        let (data, response) = try await URLSession.shared.data(from: url)
+        var request = URLRequest(url: url)
+        request.setValue(WorkerClient.proxyToken, forHTTPHeaderField: "X-Proxy-Token")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
             throw WolframError.requestFailed
         }

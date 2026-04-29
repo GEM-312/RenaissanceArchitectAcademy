@@ -104,5 +104,9 @@ RenaissanceArchitectAcademy/Services/APIKeys.swift
 .keys/
 *.p8
 
+# Cloudflare Worker (proxy for Anthropic + Wolfram keys)
+cloudflare-worker/.wrangler/
+cloudflare-worker/node_modules/
+
 # Raw video files
 RenaissanceArchitectAcademy/*.mp4

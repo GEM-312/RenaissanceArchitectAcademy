@@ -41,7 +41,7 @@ typealias PlatformImage = NSImage
         var errorDescription: String? {
             switch self {
             case .encodingFailed:        return "Couldn't encode the sketch image."
-            case .invalidKey:            return "Claude API key is missing."
+            case .invalidKey:            return "Proxy token missing. Paste your hex token into APIKeys.swift."
             case .networkFailed(let m):  return "Network error: \(m)"
             case .unparseableResponse(let m): return "Couldn't parse Claude response: \(m)"
             }
@@ -50,7 +50,6 @@ typealias PlatformImage = NSImage
 
     // MARK: - Configuration
 
-    private static let apiURL = URL(string: "https://api.anthropic.com/v1/messages")!
     private static let model = "claude-haiku-4-5-20251001"
     private static let maxTokens = 512
 
@@ -71,7 +70,7 @@ typealias PlatformImage = NSImage
                   buildingName: String) async throws -> Result {
         print("[SketchValidator] validate requested: building=\(buildingName)")
 
-        guard APIKeys.claude.hasPrefix("sk-ant-") else {
+        guard WorkerClient.isConfigured else {
             throw ValidationError.invalidKey
         }
 
@@ -91,10 +90,9 @@ typealias PlatformImage = NSImage
             buildingName: buildingName
         )
 
-        var request = URLRequest(url: Self.apiURL)
+        var request = URLRequest(url: WorkerClient.chatURL)
         request.httpMethod = "POST"
-        request.setValue(APIKeys.claude, forHTTPHeaderField: "x-api-key")
-        request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
+        request.setValue(WorkerClient.proxyToken, forHTTPHeaderField: "X-Proxy-Token")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
 

@@ -1,20 +1,16 @@
 import Foundation
 
-/// Service for communicating with the Claude API.
+/// Service for communicating with Claude — proxied through our Cloudflare Worker.
 ///
-/// HOW TO SET UP:
-/// 1. Go to https://console.anthropic.com → API Keys → Create Key
-/// 2. Paste your key below where it says "YOUR_API_KEY_HERE"
-/// 3. Set `useLocalMock = false` to enable real API calls
+/// The real Anthropic key lives as a server-side secret on the Worker; this
+/// app only carries `APIKeys.proxyToken`, the shared-secret that authenticates
+/// the request to the Worker.
 ///
 /// Cost: ~$0.05 per 100 bird questions using Haiku 4.5
 @MainActor
 @Observable class ClaudeService: AIService {
 
-    // API key loaded from APIKeys.swift (not committed to repo)
-    static let apiKey = APIKeys.claude
-
-    // Set to false once you've added your API key above
+    // Set to true to skip network calls and return canned responses instead.
     static var useLocalMock: Bool = false
 
     /// Max messages per card session (prevents runaway costs)
@@ -22,9 +18,6 @@ import Foundation
 
     /// Model to use (Haiku for speed + cost)
     static let model = "claude-haiku-4-5-20251001"
-
-    /// Anthropic API endpoint
-    private static let apiURL = "https://api.anthropic.com/v1/messages"
 
     // MARK: - State
 
@@ -89,16 +82,13 @@ import Foundation
         isLoading = false
     }
 
-    // MARK: - Claude API Call (Direct to Anthropic)
+    // MARK: - Claude API Call (via Cloudflare Worker proxy)
 
-    /// Call the Claude API directly at api.anthropic.com
+    /// Call Claude through our Cloudflare Worker (`POST /chat`).
+    /// The Worker injects the real Anthropic API key server-side.
     private func callClaudeAPI(context: BirdContext) async throws -> String {
-        guard Self.apiKey != "YOUR_API_KEY_HERE" else {
+        guard WorkerClient.isConfigured else {
             throw ClaudeError.noAPIKey
-        }
-
-        guard let url = URL(string: Self.apiURL) else {
-            throw ClaudeError.invalidURL
         }
 
         // Build message history for Claude
@@ -121,11 +111,10 @@ import Foundation
             "messages": apiMessages
         ]
 
-        var request = URLRequest(url: url)
+        var request = URLRequest(url: WorkerClient.chatURL)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "content-type")
-        request.setValue(Self.apiKey, forHTTPHeaderField: "x-api-key")
-        request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
+        request.setValue(WorkerClient.proxyToken, forHTTPHeaderField: "X-Proxy-Token")
         request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
         request.timeoutInterval = 15
 
@@ -191,7 +180,7 @@ import Foundation
         var errorDescription: String? {
             switch self {
             case .noAPIKey:
-                return "No API key. Open ClaudeService.swift and paste your key from console.anthropic.com"
+                return "Proxy token missing. Paste your hex token into APIKeys.swift."
             case .invalidURL:
                 return "Invalid API URL."
             case .apiError:

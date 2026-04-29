@@ -91,7 +91,6 @@
 		090 /* building_tap.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 190 /* building_tap.mp3 */; };
 		091 /* cards_appear.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 191 /* cards_appear.mp3 */; };
 		092 /* KnowledgeCardsOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192 /* KnowledgeCardsOverlay.swift */; };
-		2CA /* RecipeBookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA /* RecipeBookView.swift */; };
 		093 /* GameSceneKitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 193 /* GameSceneKitView.swift */; };
 		096 /* Tool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 196 /* Tool.swift */; };
 		097 /* ToolRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 197 /* ToolRecipe.swift */; };
@@ -114,14 +113,8 @@
 		0D1 /* PubChemMoleculeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D1 /* PubChemMoleculeView.swift */; };
 		0D2 /* StationCompounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D2 /* StationCompounds.swift */; };
 		0D3 /* APIKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D3 /* APIKeys.swift */; };
+		2D2 /* WorkerClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2 /* WorkerClient.swift */; };
 		0D4 /* WolframService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D4 /* WolframService.swift */; };
-		2CD /* SketchValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD /* SketchValidator.swift */; };
-		2CE /* SketchResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE /* SketchResultView.swift */; };
-		4CE /* PencilCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE /* PencilCanvasView.swift */; };
-		6CE /* BlueprintStudyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE /* BlueprintStudyView.swift */; };
-		8CE /* ShapeSnap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CE /* ShapeSnap.swift */; };
-		ACE /* SketchEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE /* SketchEditorView.swift */; };
-		ECE /* FoldableInventoryBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCE /* FoldableInventoryBar.swift */; };
 		0D5 /* WolframGeometryHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D5 /* WolframGeometryHelper.swift */; };
 		0D6 /* WolframGeometryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D6 /* WolframGeometryView.swift */; };
 		0E0 /* MuseumSketch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E0 /* MuseumSketch.swift */; };
@@ -154,9 +147,6 @@
 		2A0 /* VisualEditorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0 /* VisualEditorState.swift */; };
 		2A1 /* EditableModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1 /* EditableModifier.swift */; };
 		2A2 /* EditorBottomPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A2 /* EditorBottomPanel.swift */; };
-		2D0 /* GameCenterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0 /* GameCenterManager.swift */; };
-		2D1 /* GameCenterDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1 /* GameCenterDashboardView.swift */; };
-		2E3 /* InfographicRevealView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3 /* InfographicRevealView.swift */; };
 		2A5 /* ColosseumInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5 /* ColosseumInteractiveVisuals.swift */; };
 		2A6 /* RomanRoadsInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A6 /* RomanRoadsInteractiveVisuals.swift */; };
 		2A7 /* RomanBathsInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7 /* RomanBathsInteractiveVisuals.swift */; };
@@ -172,6 +162,12 @@
 		2B1 /* FlyingMachineInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1 /* FlyingMachineInteractiveVisuals.swift */; };
 		2B2 /* VaticanObservatoryInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2 /* VaticanObservatoryInteractiveVisuals.swift */; };
 		2B3 /* PrintingPressInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3 /* PrintingPressInteractiveVisuals.swift */; };
+		2CA /* RecipeBookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA /* RecipeBookView.swift */; };
+		2CD /* SketchValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD /* SketchValidator.swift */; };
+		2CE /* SketchResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE /* SketchResultView.swift */; };
+		2D0 /* GameCenterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0 /* GameCenterManager.swift */; };
+		2D1 /* GameCenterDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1 /* GameCenterDashboardView.swift */; };
+		2E3 /* InfographicRevealView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3 /* InfographicRevealView.swift */; };
 		3C0 /* BottomDialogPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0 /* BottomDialogPanel.swift */; };
 		3C1 /* BirdGuidanceContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1 /* BirdGuidanceContent.swift */; };
 		3C2 /* SceneTransitionOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2 /* SceneTransitionOverlay.swift */; };
@@ -179,6 +175,7 @@
 		3C4 /* SceneEditorButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4 /* SceneEditorButtons.swift */; };
 		3C5 /* HistoricalNPCContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5 /* HistoricalNPCContent.swift */; };
 		3C6 /* FurnaceFireView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6 /* FurnaceFireView.swift */; };
+		4CE /* PencilCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE /* PencilCanvasView.swift */; };
 		543AD36B2F60C199001895ED /* card_flip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 183 /* card_flip.mp3 */; };
 		543AD36C2F60C199001895ED /* GirlIntroAudio.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 182 /* GirlIntroAudio.m4a */; };
 		544299832F32E0F700F92073 /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = 544299822F32E0F700F92073 /* Pow */; };
@@ -196,6 +193,8 @@
 		544299C02F3A000100F92073 /* SceneEditorMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299BF2F3A000100F92073 /* SceneEditorMode.swift */; };
 		5475D2EF2F3146CC003AA131 /* building_complete.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2EE2F3146CB003AA131 /* building_complete.mp3 */; };
 		5475D2F82F319000003AA131 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2F92F319000003AA131 /* Assets.xcassets */; };
+		6CE /* BlueprintStudyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE /* BlueprintStudyView.swift */; };
+		8CE /* ShapeSnap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CE /* ShapeSnap.swift */; };
 		AA1 /* anvil_strike.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA1 /* anvil_strike.wav */; };
 		AA2 /* clay_dig.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA2 /* clay_dig.wav */; };
 		AA3 /* crafting_complete.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA3 /* crafting_complete.wav */; };
@@ -224,6 +223,8 @@
 		AC6 /* workshop_ambient.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC6 /* workshop_ambient.wav */; };
 		AC7 /* crafting_ambient.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC7 /* crafting_ambient.wav */; };
 		AC8 /* music_lesson.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC8 /* music_lesson.wav */; };
+		ACE /* SketchEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE /* SketchEditorView.swift */; };
+		ECE /* FoldableInventoryBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCE /* FoldableInventoryBar.swift */; };
 		F001 /* Cinzel-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B022F313B22007D8C64 /* Cinzel-Black.ttf */; };
 		F002 /* Cinzel-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B032F313B22007D8C64 /* Cinzel-Bold.ttf */; };
 		F003 /* Cinzel-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B042F313B22007D8C64 /* Cinzel-ExtraBold.ttf */; };
@@ -351,7 +352,6 @@
 		190 /* building_tap.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = building_tap.mp3; sourceTree = "<group>"; };
 		191 /* cards_appear.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = cards_appear.mp3; sourceTree = "<group>"; };
 		192 /* KnowledgeCardsOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnowledgeCardsOverlay.swift; sourceTree = "<group>"; };
-		3CA /* RecipeBookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeBookView.swift; sourceTree = "<group>"; };
 		193 /* GameSceneKitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSceneKitView.swift; sourceTree = "<group>"; };
 		196 /* Tool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tool.swift; sourceTree = "<group>"; };
 		197 /* ToolRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolRecipe.swift; sourceTree = "<group>"; };
@@ -374,14 +374,8 @@
 		1D1 /* PubChemMoleculeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PubChemMoleculeView.swift; sourceTree = "<group>"; };
 		1D2 /* StationCompounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationCompounds.swift; sourceTree = "<group>"; };
 		1D3 /* APIKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeys.swift; sourceTree = "<group>"; };
+		3D2 /* WorkerClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkerClient.swift; sourceTree = "<group>"; };
 		1D4 /* WolframService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WolframService.swift; sourceTree = "<group>"; };
-		3CD /* SketchValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchValidator.swift; sourceTree = "<group>"; };
-		3CE /* SketchResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchResultView.swift; sourceTree = "<group>"; };
-		5CE /* PencilCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PencilCanvasView.swift; sourceTree = "<group>"; };
-		7CE /* BlueprintStudyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueprintStudyView.swift; sourceTree = "<group>"; };
-		9CE /* ShapeSnap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeSnap.swift; sourceTree = "<group>"; };
-		BCE /* SketchEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchEditorView.swift; sourceTree = "<group>"; };
-		FCE /* FoldableInventoryBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldableInventoryBar.swift; sourceTree = "<group>"; };
 		1D5 /* WolframGeometryHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WolframGeometryHelper.swift; sourceTree = "<group>"; };
 		1D6 /* WolframGeometryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WolframGeometryView.swift; sourceTree = "<group>"; };
 		1E0 /* MuseumSketch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MuseumSketch.swift; sourceTree = "<group>"; };
@@ -436,6 +430,12 @@
 		3B1 /* FlyingMachineInteractiveVisuals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FlyingMachineInteractiveVisuals.swift; path = RenaissanceArchitectAcademy/Views/FlyingMachineInteractiveVisuals.swift; sourceTree = SOURCE_ROOT; };
 		3B2 /* VaticanObservatoryInteractiveVisuals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VaticanObservatoryInteractiveVisuals.swift; path = RenaissanceArchitectAcademy/Views/VaticanObservatoryInteractiveVisuals.swift; sourceTree = SOURCE_ROOT; };
 		3B3 /* PrintingPressInteractiveVisuals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PrintingPressInteractiveVisuals.swift; path = RenaissanceArchitectAcademy/Views/PrintingPressInteractiveVisuals.swift; sourceTree = SOURCE_ROOT; };
+		3CA /* RecipeBookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeBookView.swift; sourceTree = "<group>"; };
+		3CD /* SketchValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchValidator.swift; sourceTree = "<group>"; };
+		3CE /* SketchResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchResultView.swift; sourceTree = "<group>"; };
+		3D0 /* GameCenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterManager.swift; sourceTree = "<group>"; };
+		3D1 /* GameCenterDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterDashboardView.swift; sourceTree = "<group>"; };
+		3E3 /* InfographicRevealView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfographicRevealView.swift; sourceTree = "<group>"; };
 		544299972F3646ED00F92073 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BuildingNode.swift; path = Views/SpriteKit/BuildingNode.swift; sourceTree = "<group>"; };
 		544299982F3646ED00F92073 /* CityMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityMapView.swift; path = Views/SpriteKit/CityMapView.swift; sourceTree = "<group>"; };
 		544299992F3646ED00F92073 /* CityScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityScene.swift; path = Views/SpriteKit/CityScene.swift; sourceTree = "<group>"; };
@@ -490,6 +490,9 @@
 		5448B9A92F9297B30071F5FB /* RenaissanceArchitectAcademy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RenaissanceArchitectAcademy.entitlements; sourceTree = "<group>"; };
 		5475D2EE2F3146CB003AA131 /* building_complete.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = building_complete.mp3; sourceTree = "<group>"; };
 		5475D2F92F319000003AA131 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		5CE /* PencilCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PencilCanvasView.swift; sourceTree = "<group>"; };
+		7CE /* BlueprintStudyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueprintStudyView.swift; sourceTree = "<group>"; };
+		9CE /* ShapeSnap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeSnap.swift; sourceTree = "<group>"; };
 		BA1 /* anvil_strike.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = anvil_strike.wav; sourceTree = "<group>"; };
 		BA2 /* clay_dig.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = clay_dig.wav; sourceTree = "<group>"; };
 		BA3 /* crafting_complete.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = crafting_complete.wav; sourceTree = "<group>"; };
@@ -518,9 +521,8 @@
 		BC6 /* workshop_ambient.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = workshop_ambient.wav; sourceTree = "<group>"; };
 		BC7 /* crafting_ambient.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = crafting_ambient.wav; sourceTree = "<group>"; };
 		BC8 /* music_lesson.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = music_lesson.wav; sourceTree = "<group>"; };
-		3D0 /* GameCenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterManager.swift; sourceTree = "<group>"; };
-		3D1 /* GameCenterDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterDashboardView.swift; sourceTree = "<group>"; };
-		3E3 /* InfographicRevealView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfographicRevealView.swift; sourceTree = "<group>"; };
+		BCE /* SketchEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchEditorView.swift; sourceTree = "<group>"; };
+		FCE /* FoldableInventoryBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldableInventoryBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -769,6 +771,7 @@
 				1C0 /* ClaudeService.swift */,
 				1D0 /* PubChemService.swift */,
 				1D3 /* APIKeys.swift */,
+				3D2 /* WorkerClient.swift */,
 				1D4 /* WolframService.swift */,
 				3CD /* SketchValidator.swift */,
 				1D5 /* WolframGeometryHelper.swift */,
@@ -1192,6 +1195,7 @@
 				0D1 /* PubChemMoleculeView.swift in Sources */,
 				0D2 /* StationCompounds.swift in Sources */,
 				0D3 /* APIKeys.swift in Sources */,
+				2D2 /* WorkerClient.swift in Sources */,
 				0D4 /* WolframService.swift in Sources */,
 				2CD /* SketchValidator.swift in Sources */,
 				2CE /* SketchResultView.swift in Sources */,
@@ -1352,7 +1356,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = RenaissanceArchitectAcademy/RenaissanceArchitectAcademy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				"ENABLE_ON_DEMAND_RESOURCES[sdk=iphoneos*]" = YES;
 				"ENABLE_ON_DEMAND_RESOURCES[sdk=iphonesimulator*]" = YES;
@@ -1392,7 +1396,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = RenaissanceArchitectAcademy/RenaissanceArchitectAcademy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				"ENABLE_ON_DEMAND_RESOURCES[sdk=iphoneos*]" = YES;
 				"ENABLE_ON_DEMAND_RESOURCES[sdk=iphonesimulator*]" = YES;
