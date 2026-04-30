@@ -1,5 +1,6 @@
 import SpriteKit
 import SwiftUI
+import CoreImage
 
 /// SpriteKit scene for Leonardo's Workshop mini-game
 /// Player walks between resource stations to collect materials, then crafts at workbench/furnace
@@ -325,24 +326,110 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
     // MARK: - Ambient Effects (always-on world animation)
 
+    /// Stored references so editor mode can drag-position them at runtime.
+    private var volcanoSmoke: SKEmitterNode?
+    private var craftingRoomChimneySmoke: SKEmitterNode?
+    private var smallSmokeAccent1: SKEmitterNode?
+    private var smallSmokeAccent2: SKEmitterNode?
+    private var volcanoLava: SKEmitterNode?
+    private var volcanoGlow: SKSpriteNode?
+
     /// Adds non-interactive ambient animations layered over the painted terrain
     /// — the workshop "breathes" even when the player isn't acting on a station.
     /// Particles are scene-space (`targetNode = self`) so they drift independently
     /// of camera pan/zoom.
+    ///
+    /// Positions were dialed in via editor mode and dumped from the iPad.
+    /// To re-tune: tap EDITOR → tap a smoke source → drag → console prints new pos.
     private func setupAmbientEffects() {
-        guard let volcanoPos = stationPositions[.volcano] else { return }
+        // Volcano crater — steam + ash plume (white-to-gray mix)
+        let volcano = makeVolcanoSmokeEmitter()
+        volcano.position = CGPoint(x: 2006, y: 2334)
+        volcano.zPosition = 15
+        volcano.targetNode = self
+        volcano.name = "volcanoSmoke"
+        volcano.advanceSimulationTime(4.0)
+        addChild(volcano)
+        volcanoSmoke = volcano
 
-        let smoke = makeVolcanoSmokeEmitter()
-        // Origin sits above the volcano sprite so particles read as rising
-        // from the crater, not from the station icon's center.
-        smoke.position = CGPoint(x: volcanoPos.x, y: volcanoPos.y + 60)
-        smoke.zPosition = 15
-        smoke.targetNode = self
-        smoke.name = "volcanoSmoke"
-        // Pre-warm so smoke is already rising when the player first sees the scene
-        // (otherwise the column has to "build up" for ~4 seconds on scene load).
-        smoke.advanceSimulationTime(4.0)
-        addChild(smoke)
+        // Crafting Room chimney — wood-fire gray, narrower column
+        let chimney = makeChimneySmokeEmitter()
+        chimney.position = CGPoint(x: 3207, y: 1767)
+        chimney.zPosition = 15
+        chimney.targetNode = self
+        chimney.name = "craftingChimneySmoke"
+        chimney.advanceSimulationTime(4.0)
+        addChild(chimney)
+        craftingRoomChimneySmoke = chimney
+
+        // Small white smoke accents — distant chimneys / vents.
+        // Lighter color, smaller scale, sparser column for "background life".
+        let accent1 = makeSmallWhiteSmokeEmitter()
+        accent1.position = CGPoint(x: 2218, y: 2243)
+        accent1.zPosition = 15
+        accent1.targetNode = self
+        accent1.name = "smallSmokeAccent1"
+        accent1.advanceSimulationTime(4.0)
+        addChild(accent1)
+        smallSmokeAccent1 = accent1
+
+        let accent2 = makeSmallWhiteSmokeEmitter()
+        accent2.position = CGPoint(x: 3301, y: 1749)
+        accent2.zPosition = 15
+        accent2.targetNode = self
+        accent2.name = "smallSmokeAccent2"
+        accent2.advanceSimulationTime(4.0)
+        addChild(accent2)
+        smallSmokeAccent2 = accent2
+
+        // Volcano lava flow — spills DOWN-RIGHT along the painted slope, not up.
+        // Bright yellow at the crater, cooling through orange/red to dark crust
+        // by the time particles reach the base of the slope. Position is the
+        // crater opening (top of the lava trail); particles travel along the
+        // slope from there, so dragging this in editor mode anchors the start.
+        let lava = makeLavaFlowEmitter()
+        lava.position = CGPoint(x: 2062, y: 2290)
+        lava.zPosition = 14
+        lava.targetNode = self
+        lava.name = "volcanoLava"
+        lava.advanceSimulationTime(2.0)
+        addChild(lava)
+        volcanoLava = lava
+
+        // Volcano firelight halo — elongated oval rotated along the lava slope
+        // so the warmth follows the painted lava trail instead of forming a
+        // perfect circle around the source. Additive blend brightens the
+        // terrain beneath. Pulses subtly to feel like breathing fire.
+        let glow = SKSpriteNode(texture: Self.triangleGlowTexture)
+        glow.position = CGPoint(x: 2249, y: 2078)
+        glow.size = CGSize(width: 140, height: 240)   // base × apex-to-base — 2× smaller
+        // +π/4 (counterclockwise 45°) → apex points UPPER-LEFT (toward crater),
+        // base spreads to lower-right (along the painted lava direction).
+        glow.zRotation = .pi / 4
+        glow.color = PlatformColor(red: 1.0, green: 0.55, blue: 0.15, alpha: 1.0)
+        glow.colorBlendFactor = 1.0
+        glow.blendMode = .add
+        glow.alpha = 0.45
+        glow.zPosition = 13   // just below the lava emitter so particles draw on top
+        glow.name = "volcanoGlow"
+        addChild(glow)
+        volcanoGlow = glow
+
+        // Visible breathing pulse — both scale AND alpha animate together via
+        // SKAction.group so the glow swells and brightens at the same time.
+        // Alpha change is the most visible part because additive blend can hide
+        // small scale changes (max-bright pixels can't get brighter).
+        let scaleUp   = SKAction.scale(to: 1.15, duration: 1.4)
+        let scaleDown = SKAction.scale(to: 1.0,  duration: 1.4)
+        let fadeUp    = SKAction.fadeAlpha(to: 0.70, duration: 1.4)
+        let fadeDown  = SKAction.fadeAlpha(to: 0.45, duration: 1.4)
+        scaleUp.timingMode = .easeInEaseOut
+        scaleDown.timingMode = .easeInEaseOut
+        fadeUp.timingMode = .easeInEaseOut
+        fadeDown.timingMode = .easeInEaseOut
+        let breatheIn  = SKAction.group([scaleUp,   fadeUp])
+        let breatheOut = SKAction.group([scaleDown, fadeDown])
+        glow.run(SKAction.repeatForever(SKAction.sequence([breatheIn, breatheOut])))
     }
 
     private func makeVolcanoSmokeEmitter() -> SKEmitterNode {
@@ -371,10 +458,16 @@ class WorkshopScene: SKScene, ScrollZoomable {
         e.particleRotationRange = .pi
         e.particleRotationSpeed = .pi / 8
 
-        // Warm ash color — sepia gray with a faint volcanic warmth
-        e.particleColor = PlatformColor(red: 0.45, green: 0.35, blue: 0.30, alpha: 1)
-        e.particleColorBlendFactor = 1.0
-        e.particleColorBlendFactorSpeed = -0.2
+        // White-and-gray volcanic plume only — no color tints.
+        // Per-channel ranges (RedRange / GreenRange / BlueRange) randomize
+        // each channel INDEPENDENTLY, so particles drifted toward bluish or
+        // purplish tints. Instead we use particleColorBlendFactorRange to vary
+        // how much of the gray color tints the white texture: factor 1.0 = pure
+        // gray, factor 0.4 = light gray (mostly white texture). No hue shift.
+        e.particleColor = PlatformColor(red: 0.78, green: 0.78, blue: 0.78, alpha: 1)
+        e.particleColorBlendFactor = 0.7
+        e.particleColorBlendFactorRange = 0.3
+        e.particleColorBlendFactorSpeed = -0.15
 
         // Alpha — translucent, fades to nothing as it rises
         e.particleAlpha = 0.65
@@ -388,6 +481,233 @@ class WorkshopScene: SKScene, ScrollZoomable {
         e.particlePositionRange = CGVector(dx: 30, dy: 8)
 
         return e
+    }
+
+    private func makeChimneySmokeEmitter() -> SKEmitterNode {
+        let e = SKEmitterNode()
+        e.particleTexture = Self.softCircleTexture
+
+        // Gentler than volcano — fewer, slower, narrower
+        e.particleBirthRate = 4
+        e.particleLifetime = 3.5
+        e.particleLifetimeRange = 1.0
+
+        e.emissionAngle = .pi / 2
+        e.emissionAngleRange = .pi / 14
+        e.particleSpeed = 25
+        e.particleSpeedRange = 8
+        e.xAcceleration = 3
+        e.yAcceleration = 4
+
+        e.particleScale = 0.5
+        e.particleScaleRange = 0.2
+        e.particleScaleSpeed = 0.25
+
+        e.particleRotationRange = .pi
+        e.particleRotationSpeed = .pi / 10
+
+        // Wood-smoke gray — lighter and less warm than volcanic plume
+        e.particleColor = PlatformColor(red: 0.55, green: 0.50, blue: 0.46, alpha: 1)
+        e.particleColorBlendFactor = 1.0
+        e.particleColorBlendFactorSpeed = -0.2
+
+        e.particleAlpha = 0.55
+        e.particleAlphaRange = 0.1
+        e.particleAlphaSpeed = -0.18
+
+        e.particleBlendMode = .alpha
+        e.particlePositionRange = CGVector(dx: 12, dy: 4)
+
+        return e
+    }
+
+    /// Small distant chimney/vent — lighter and sparser than wood-fire
+    /// chimney. Use for "background life" accents away from main stations.
+    private func makeSmallWhiteSmokeEmitter() -> SKEmitterNode {
+        let e = SKEmitterNode()
+        e.particleTexture = Self.softCircleTexture
+
+        e.particleBirthRate = 3
+        e.particleLifetime = 2.8
+        e.particleLifetimeRange = 0.8
+
+        e.emissionAngle = .pi / 2
+        e.emissionAngleRange = .pi / 16
+        e.particleSpeed = 20
+        e.particleSpeedRange = 5
+        e.xAcceleration = 2
+        e.yAcceleration = 3
+
+        e.particleScale = 0.35
+        e.particleScaleRange = 0.15
+        e.particleScaleSpeed = 0.2
+
+        e.particleRotationRange = .pi
+        e.particleRotationSpeed = .pi / 12
+
+        // Whitish — light warm gray, reads as distant chimney smoke against parchment
+        e.particleColor = PlatformColor(red: 0.78, green: 0.75, blue: 0.72, alpha: 1)
+        e.particleColorBlendFactor = 1.0
+        e.particleColorBlendFactorSpeed = -0.2
+
+        e.particleAlpha = 0.45
+        e.particleAlphaRange = 0.1
+        e.particleAlphaSpeed = -0.18
+
+        e.particleBlendMode = .alpha
+        e.particlePositionRange = CGVector(dx: 8, dy: 3)
+
+        return e
+    }
+
+    /// Volcano lava flow — particles spill along a downward-sloping diagonal,
+    /// pulled by gravity, cooling through bright yellow → orange → red → dark
+    /// crust over their lifetime. Reads as molten rock running down the slope,
+    /// not as fire shooting up.
+    ///
+    /// Two physics differences vs fire:
+    ///   1. `emissionAngle = -π/4` aims particles DOWN-RIGHT along the slope
+    ///   2. Strong negative `yAcceleration` pulls them down (gravity)
+    /// Combined: particles arc down-the-slope before fading.
+    private func makeLavaFlowEmitter() -> SKEmitterNode {
+        let e = SKEmitterNode()
+        e.particleTexture = Self.softCircleTexture
+
+        // Lava oozes out slowly and crusts further as it cools — not a fast
+        // shooter. Birth rate stays high to keep the visual stream dense even
+        // though each particle barely moves.
+        e.particleBirthRate = 32
+        e.particleLifetime = 3.5
+        e.particleLifetimeRange = 0.8
+
+        // Aim DOWN-RIGHT along the painted slope. Wider angle range gives the
+        // natural "splitting" feel where lava branches into multiple streams.
+        e.emissionAngle = -.pi / 4
+        e.emissionAngleRange = .pi / 7
+
+        // SLOW emission — viscous molten rock, not fire. Combined with low
+        // gravity, particles drift along the slope rather than launching off it.
+        e.particleSpeed = 18
+        e.particleSpeedRange = 6
+
+        // Very gentle gravity — just enough to bend the path along the slope.
+        // Higher values made particles accelerate (visually look "fast at top")
+        // because gravity kept adding velocity. With near-zero acceleration,
+        // particles maintain their slow initial speed → slow throughout, with
+        // the natural stillness at the end coming from the alpha fade.
+        e.xAcceleration = 4
+        e.yAcceleration = -10
+
+        // Hold size longer — heavy shrink made particles appear to slow down
+        // visually as they spread, even though gravity is actually accelerating
+        // them. Keep them readable through the whole flow.
+        e.particleScale = 0.4
+        e.particleScaleRange = 0.15
+        e.particleScaleSpeed = -0.04
+
+        e.particleRotationRange = .pi
+        e.particleRotationSpeed = .pi / 10
+
+        // Color sequence: bright yellow at birth (crater) → orange → deep red
+        // → dark red/black (cooled crust at the base). 0.0 = first instant of
+        // particle life (top of slope), 1.0 = end of life (bottom of slope).
+        let colors = [
+            PlatformColor(red: 1.0, green: 0.95, blue: 0.40, alpha: 1.0),
+            PlatformColor(red: 1.0, green: 0.55, blue: 0.10, alpha: 1.0),
+            PlatformColor(red: 0.85, green: 0.18, blue: 0.0, alpha: 1.0),
+            PlatformColor(red: 0.25, green: 0.05, blue: 0.0, alpha: 0.0)
+        ]
+        e.particleColorSequence = SKKeyframeSequence(
+            keyframeValues: colors,
+            times: [0.0, 0.25, 0.65, 1.0]
+        )
+        e.particleColorBlendFactor = 1.0
+
+        // Additive blend so the bright crater origin glows brighter where
+        // particles overlap, while the cooled tail fades cleanly.
+        e.particleBlendMode = .add
+
+        e.particleAlpha = 0.9
+        e.particleAlphaRange = 0.1
+
+        // Narrow spawn — lava emerges from a single crater opening, not a wide column
+        e.particlePositionRange = CGVector(dx: 12, dy: 6)
+
+        return e
+    }
+
+    /// Soft teardrop-blob glow — drawn with bezier curves (not straight lines)
+    /// so the underlying silhouette is already organic, then Gaussian-blurred
+    /// to dissolve any remaining edge sharpness. Reads as a soft warm cloud
+    /// in roughly a teardrop orientation, no geometry visible.
+    ///
+    /// The canvas is padded around the shape so the blur halo isn't clipped
+    /// at the texture edges (which would re-introduce hard cuts).
+    private static let triangleGlowTexture: SKTexture = {
+        let blobSize = CGSize(width: 200, height: 280)   // raw shape dimensions
+        let padding: CGFloat = 90                         // larger headroom for stronger blur
+        let canvas = CGSize(width: blobSize.width + padding * 2,
+                            height: blobSize.height + padding * 2)
+
+        // 1. Render the solid blob on a transparent canvas.
+        let solidImage: CGImage = {
+            #if os(iOS)
+            let renderer = UIGraphicsImageRenderer(size: canvas)
+            let img = renderer.image { ctx in
+                drawSolidBlob(in: ctx.cgContext, blobSize: blobSize, padding: padding)
+            }
+            return img.cgImage ?? UIImage().cgImage!
+            #else
+            let img = NSImage(size: canvas, flipped: true) { _ in
+                guard let cg = NSGraphicsContext.current?.cgContext else { return false }
+                drawSolidBlob(in: cg, blobSize: blobSize, padding: padding)
+                return true
+            }
+            var rect = CGRect(origin: .zero, size: canvas)
+            return img.cgImage(forProposedRect: &rect, context: nil, hints: nil)!
+            #endif
+        }()
+
+        // 2. Run it through CIGaussianBlur to dissolve any remaining edge
+        // sharpness from the bezier curves. Higher radius = softer, more
+        // diffuse glow with the warmth spreading further from the source.
+        let ciInput = CIImage(cgImage: solidImage)
+        let blur = CIFilter(name: "CIGaussianBlur")!
+        blur.setValue(ciInput, forKey: kCIInputImageKey)
+        blur.setValue(55.0, forKey: kCIInputRadiusKey)
+
+        let ciContext = CIContext()
+        guard let blurredOutput = blur.outputImage,
+              let blurredCG = ciContext.createCGImage(blurredOutput, from: ciInput.extent) else {
+            return SKTexture(cgImage: solidImage)
+        }
+        return SKTexture(cgImage: blurredCG)
+    }()
+
+    /// Teardrop-blob outline using quadratic bezier curves. Three curves form
+    /// an asymmetric organic shape — narrower "tip" at the top, fuller
+    /// rounded "belly" at the bottom. Sides bow outward slightly so it reads
+    /// as a soft cloud rather than a triangle.
+    private static func drawSolidBlob(in ctx: CGContext, blobSize: CGSize, padding: CGFloat) {
+        let w = blobSize.width
+        let h = blobSize.height
+        let tip       = CGPoint(x: padding + w / 2,        y: padding + h * 0.05)
+        let bellyL    = CGPoint(x: padding + w * 0.05,     y: padding + h * 0.95)
+        let bellyR    = CGPoint(x: padding + w * 0.95,     y: padding + h * 0.95)
+        // Control points push the curves OUTWARD so sides bulge instead of pulling inward
+        let ctrlLeft  = CGPoint(x: padding - w * 0.10,     y: padding + h * 0.50)
+        let ctrlBot   = CGPoint(x: padding + w / 2,        y: padding + h * 1.15)
+        let ctrlRight = CGPoint(x: padding + w * 1.10,     y: padding + h * 0.50)
+
+        let path = CGMutablePath()
+        path.move(to: tip)
+        path.addQuadCurve(to: bellyL,  control: ctrlLeft)   // tip → belly-left
+        path.addQuadCurve(to: bellyR,  control: ctrlBot)    // belly-left → belly-right (rounded bottom)
+        path.addQuadCurve(to: tip,     control: ctrlRight)  // belly-right → tip
+        path.closeSubpath()
+        ctx.addPath(path)
+        ctx.setFillColor(PlatformColor.white.cgColor)
+        ctx.fillPath()
     }
 
     /// Soft radial-gradient circle used as the smoke particle. Generated once at
@@ -501,8 +821,8 @@ class WorkshopScene: SKScene, ScrollZoomable {
             // Gradual zoom: ease from overview → close-up during approach
             if let dest = walkTargetPosition {
                 let totalDist = hypot(dest.x - cameraNode.position.x, dest.y - cameraNode.position.y)
-                let closeZoom: CGFloat = 0.45
-                let farZoom: CGFloat = 0.65
+                let closeZoom: CGFloat = 0.60
+                let farZoom: CGFloat = 0.80
                 let zoomStartDist: CGFloat = 700
 
                 if totalDist < zoomStartDist {
@@ -1095,6 +1415,26 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
         // Player
         editorMode.registerNode(playerNode, name: "player")
+
+        // Ambient effect emitters — drag to position over painted features
+        if let smoke = volcanoSmoke {
+            editorMode.registerNode(smoke, name: "smoke_volcano")
+        }
+        if let chimney = craftingRoomChimneySmoke {
+            editorMode.registerNode(chimney, name: "smoke_craftingChimney")
+        }
+        if let accent = smallSmokeAccent1 {
+            editorMode.registerNode(accent, name: "smoke_accent1")
+        }
+        if let accent = smallSmokeAccent2 {
+            editorMode.registerNode(accent, name: "smoke_accent2")
+        }
+        if let lava = volcanoLava {
+            editorMode.registerNode(lava, name: "lava_volcano")
+        }
+        if let glow = volcanoGlow {
+            editorMode.registerNode(glow, name: "glow_volcano")
+        }
 
         // Waypoint dots (hidden until editor mode)
         editableEdges = waypointEdges
