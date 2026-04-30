@@ -387,6 +387,7 @@ struct CityMapView: View {
                     workshopState: workshopState
                 )
                 .transition(.opacity)
+                .zIndex(60)   // Above BottomDialogPanel (50) so taps reach the card
             }
 
             // Sketch Study overlay (activity BETWEEN knowledge cards)
@@ -437,8 +438,11 @@ struct CityMapView: View {
                 .zIndex(200)
             }
 
-            // Bird guidance — tells player where to go next
-            if showGuidance {
+            // Bird guidance — tells player where to go next.
+            // Hidden while a knowledge card is open so its full-screen footprint
+            // doesn't intercept taps to the card's interactive area above the
+            // visible panel (Apr 30 hit-test bug).
+            if showGuidance && !showKnowledgeCards {
                 BottomDialogPanel(bottomPadding: Spacing.xl) {
                     BirdGuidanceContent(
                         message: guidanceMessage,
