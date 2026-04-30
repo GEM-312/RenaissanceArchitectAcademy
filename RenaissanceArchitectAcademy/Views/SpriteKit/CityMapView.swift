@@ -461,58 +461,46 @@ struct CityMapView: View {
 
             // Environment Picker (Card 2: Explore Environments)
             if showEnvironmentPicker {
-                ZStack {
-                    RenaissanceColors.overlayDimming
-                        .ignoresSafeArea()
-                        .onTapGesture {
+                BirdModalOverlay(
+                    birdSize: 140,
+                    contentPadding: 24,
+                    onDismissBackground: {
+                        withAnimation {
+                            showEnvironmentPicker = false
+                            selectedPlot = nil
+                        }
+                        sceneHolder.scene?.resetMascot()
+                    }
+                ) {
+                    VStack(spacing: 16) {
+                        Text("Where to next?")
+                            .font(.custom("EBGaramond-SemiBold", size: 24))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
+
+                        environmentButton(icon: "hammer.fill", title: "Workshop", subtitle: "Collect raw materials", color: RenaissanceColors.warmBrown) {
+                            withAnimation { showEnvironmentPicker = false; selectedPlot = nil }
+                            sceneHolder.scene?.resetMascot()
+                            onNavigate?(.workshop)
+                        }
+
+                        environmentButton(icon: "tree.fill", title: "Forest", subtitle: "Gather timber & explore", color: RenaissanceColors.sageGreen) {
+                            withAnimation { showEnvironmentPicker = false; selectedPlot = nil }
+                            sceneHolder.scene?.resetMascot()
+                            onNavigate?(.forest)
+                        }
+
+                        Button {
                             withAnimation {
                                 showEnvironmentPicker = false
                                 selectedPlot = nil
                             }
                             sceneHolder.scene?.resetMascot()
-                        }
-
-                    VStack(spacing: 20) {
-                        Spacer()
-
-                        BirdCharacter(isSitting: true)
-                            .frame(width: 140, height: 140)
-
-                        VStack(spacing: 16) {
-                            Text("Where to next?")
-                                .font(.custom("EBGaramond-SemiBold", size: 24))
+                        } label: {
+                            Text("Stay on Map")
+                                .font(.custom("EBGaramond-Regular", size: 16))
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
-
-                            environmentButton(icon: "hammer.fill", title: "Workshop", subtitle: "Collect raw materials", color: RenaissanceColors.warmBrown) {
-                                withAnimation { showEnvironmentPicker = false; selectedPlot = nil }
-                                sceneHolder.scene?.resetMascot()
-                                onNavigate?(.workshop)
-                            }
-
-                            environmentButton(icon: "tree.fill", title: "Forest", subtitle: "Gather timber & explore", color: RenaissanceColors.sageGreen) {
-                                withAnimation { showEnvironmentPicker = false; selectedPlot = nil }
-                                sceneHolder.scene?.resetMascot()
-                                onNavigate?(.forest)
-                            }
-
-                            Button {
-                                withAnimation {
-                                    showEnvironmentPicker = false
-                                    selectedPlot = nil
-                                }
-                                sceneHolder.scene?.resetMascot()
-                            } label: {
-                                Text("Stay on Map")
-                                    .font(.custom("EBGaramond-Regular", size: 16))
-                                    .foregroundStyle(RenaissanceColors.sepiaInk)
-                            }
-                            .buttonStyle(.plain)
                         }
-                        .padding(24)
-                        .background(DialogueBubble())
-                        .padding(.horizontal, Spacing.xxxl)
-
-                        Spacer()
+                        .buttonStyle(.plain)
                     }
                 }
                 .transition(.opacity)
@@ -605,49 +593,37 @@ struct CityMapView: View {
 
             // Locked building message
             if showLockedMessage {
-                ZStack {
-                    RenaissanceColors.overlayDimming
-                        .ignoresSafeArea()
-                        .onTapGesture {
+                BirdModalOverlay(
+                    birdSize: 160,
+                    contentPadding: 28,
+                    onDismissBackground: {
+                        withAnimation {
+                            showLockedMessage = false
+                        }
+                        sceneHolder.scene?.resetMascot()
+                    }
+                ) {
+                    VStack(spacing: 16) {
+                        Image(systemName: "lock.fill")
+                            .font(.custom("EBGaramond-Regular", size: 32, relativeTo: .title3))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
+
+                        Text("Not Yet Unlocked")
+                            .font(.custom("EBGaramond-SemiBold", size: 24))
+                            .foregroundStyle(RenaissanceColors.sepiaInk)
+
+                        Text(lockedMessage)
+                            .font(.custom("EBGaramond-Regular", size: 18, relativeTo: .body))
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                            .multilineTextAlignment(.center)
+                            .lineSpacing(4)
+
+                        RenaissanceButton(title: "Got It") {
                             withAnimation {
                                 showLockedMessage = false
                             }
                             sceneHolder.scene?.resetMascot()
                         }
-
-                    VStack(spacing: 20) {
-                        Spacer()
-
-                        BirdCharacter(isSitting: true)
-                            .frame(width: 160, height: 160)
-
-                        VStack(spacing: 16) {
-                            Image(systemName: "lock.fill")
-                                .font(.custom("EBGaramond-Regular", size: 32, relativeTo: .title3))
-                                .foregroundStyle(RenaissanceColors.sepiaInk)
-
-                            Text("Not Yet Unlocked")
-                                .font(.custom("EBGaramond-SemiBold", size: 24))
-                                .foregroundStyle(RenaissanceColors.sepiaInk)
-
-                            Text(lockedMessage)
-                                .font(.custom("EBGaramond-Regular", size: 18, relativeTo: .body))
-                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
-                                .multilineTextAlignment(.center)
-                                .lineSpacing(4)
-
-                            RenaissanceButton(title: "Got It") {
-                                withAnimation {
-                                    showLockedMessage = false
-                                }
-                                sceneHolder.scene?.resetMascot()
-                            }
-                        }
-                        .padding(28)
-                        .background(DialogueBubble())
-                        .padding(.horizontal, Spacing.xxxl)
-
-                        Spacer()
                     }
                 }
                 .transition(.opacity)

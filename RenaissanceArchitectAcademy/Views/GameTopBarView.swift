@@ -28,9 +28,10 @@ struct GameTopBarView: View {
 
     var body: some View {
         ZStack(alignment: .bottomLeading) {
-            // Top bar: nav buttons (left) + building icons (right)
-            VStack {
-                HStack(alignment: .top, spacing: 0) {
+            // Top bar: nav buttons (left) + building icons (right).
+            // Anchored to top via .frame(maxHeight:.infinity, alignment:.top)
+            // — replaces the previous VStack { HStack; Spacer } pattern.
+            HStack(alignment: .top, spacing: 0) {
                     // LEFT: Title + Nav buttons (flush left)
                     VStack(alignment: .leading, spacing: 4) {
                         // Title + Florins row
@@ -98,9 +99,7 @@ struct GameTopBarView: View {
                     buildingColumn
                         .fixedSize()
                 }
-
-                Spacer()
-            }
+            .frame(maxHeight: .infinity, alignment: .top)
 
             // Bottom-left: Dialog content (no avatar card — profile is in nav menu)
             if let dialog = avatarDialogContent {
