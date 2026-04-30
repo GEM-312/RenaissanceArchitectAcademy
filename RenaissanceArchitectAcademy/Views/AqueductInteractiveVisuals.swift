@@ -1479,7 +1479,7 @@ private struct FistulaPipeFabVisual: View {
                             p.move(to: CGPoint(x: cx - 3, y: cy - pipeSize * 0.35))
                             p.addLine(to: CGPoint(x: cx + 3, y: cy - pipeSize * 0.35))
                         }
-                        .stroke(Color.orange.opacity(0.6), lineWidth: 3)
+                        .stroke(RenaissanceColors.furnaceOrange.opacity(0.6), lineWidth: 3)
 
                         // Flame icon
                         Image(systemName: "flame.fill")
@@ -1568,8 +1568,8 @@ private struct AqueductMortarRecipeVisual: View {
 
                         // Sand portion
                         RoundedRectangle(cornerRadius: 3)
-                            .fill(ingredientsAdded >= 3 ? Color.yellow.opacity(0.3) :
-                                    ingredientsAdded >= 2 ? Color.yellow.opacity(0.15) : IVMaterialColors.stoneGray.opacity(0.15))
+                            .fill(ingredientsAdded >= 3 ? RenaissanceColors.candleGlow.opacity(0.3) :
+                                    ingredientsAdded >= 2 ? RenaissanceColors.candleGlow.opacity(0.15) : IVMaterialColors.stoneGray.opacity(0.15))
                             .frame(width: barW * (2.0 / totalParts))
                             .overlay {
                                 if ingredientsAdded >= 2 {
@@ -1625,7 +1625,7 @@ private struct AqueductMortarRecipeVisual: View {
                             Text("Sand").font(RenaissanceFont.ivBody)
                         }
                         .frame(width: 60, height: 50)
-                        .background(ingredientsAdded >= 3 ? IVMaterialColors.stoneGray.opacity(0.1) : Color.yellow.opacity(0.15))
+                        .background(ingredientsAdded >= 3 ? IVMaterialColors.stoneGray.opacity(0.1) : RenaissanceColors.candleGlow.opacity(0.15))
                         .cornerRadius(6)
                         .overlay(RoundedRectangle(cornerRadius: 6).stroke(
                             (ingredientsAdded >= 1 && ingredientsAdded <= 2) ? color : IVMaterialColors.stoneGray.opacity(0.3),

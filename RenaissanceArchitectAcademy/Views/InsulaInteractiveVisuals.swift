@@ -1081,7 +1081,7 @@ private struct OakPoplarFireVisual: View {
                             }
                             .foregroundStyle(.orange)
                             .padding(.horizontal, 12).padding(.vertical, 6)
-                            .background(Color.orange.opacity(0.1)).cornerRadius(6)
+                            .background(RenaissanceColors.terracotta.opacity(0.1)).cornerRadius(6)
                         }
                         .buttonStyle(.plain)
                         .position(x: w * 0.5, y: h * 0.78)

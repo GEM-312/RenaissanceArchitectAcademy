@@ -846,7 +846,7 @@ private struct OakumCaulkVisual: View {
                     for i in 0..<2 {
                         let y = plankY + CGFloat(i) * (plankH + gap) + plankH
                         let gapRect = CGRect(x: 25, y: y, width: size.width - 50, height: gap)
-                        ctx.fill(Path(gapRect), with: .color(step >= 2 ? ropeGold.opacity(0.4) : Color.red.opacity(0.15)))
+                        ctx.fill(Path(gapRect), with: .color(step >= 2 ? ropeGold.opacity(0.4) : RenaissanceColors.errorRed.opacity(0.15)))
                     }
                 }
 

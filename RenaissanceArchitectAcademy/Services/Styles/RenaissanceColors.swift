@@ -57,6 +57,10 @@ enum RenaissanceColors {
     /// Furnace orange for fire/heat actions: #E66619
     static let furnaceOrange = Color(red: 0.9, green: 0.4, blue: 0.1)
 
+    /// Candle glow — pale warm yellow for candlelight, lanterns, lamp wicks.
+    /// More cream than `goldSuccess`, less saturated than `highlightAmber`.
+    static let candleGlow = Color(red: 0.95, green: 0.85, blue: 0.45)
+
     /// Light parchment for card fills (slightly warmer): #FDF5E0
     static let parchmentLight = Color(red: 0.99, green: 0.96, blue: 0.88)
 

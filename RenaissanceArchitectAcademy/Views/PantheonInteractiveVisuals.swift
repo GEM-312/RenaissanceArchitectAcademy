@@ -144,12 +144,12 @@ private struct ColumnsCountVisual: View {
                             let cx = startX + spacing * CGFloat(i)
                             Image(systemName: "arrow.down")
                                 .font(.system(size: 13, weight: .bold))
-                                .foregroundStyle(Color.red.opacity(0.5))
+                                .foregroundStyle(RenaissanceColors.errorRed.opacity(0.5))
                                 .position(x: cx, y: topY + 14)
                         }
                         Text("60t each")
                             .font(RenaissanceFont.ivLabel)
-                            .foregroundStyle(Color.red.opacity(0.6))
+                            .foregroundStyle(RenaissanceColors.errorRed.opacity(0.6))
                             .position(x: w / 2, y: topY + 24)
                     }
 
@@ -257,12 +257,12 @@ private struct LayerDigVisual: View {
                         ForEach([0.3, 0.4, 0.5, 0.6, 0.7], id: \.self) { frac in
                             Image(systemName: "arrow.down")
                                 .font(.system(size: 13, weight: .bold))
-                                .foregroundStyle(Color.red.opacity(0.4))
+                                .foregroundStyle(RenaissanceColors.errorRed.opacity(0.4))
                                 .position(x: w * frac, y: groundY - 16)
                         }
                         Text("Dome weight distributed →")
                             .font(RenaissanceFont.ivBody.italic())
-                            .foregroundStyle(Color.red.opacity(0.5))
+                            .foregroundStyle(RenaissanceColors.errorRed.opacity(0.5))
                             .position(x: w / 2, y: groundY - 26)
                     }
                 }
@@ -559,12 +559,12 @@ private struct OculusCompressionVisual: View {
                             let ay = baseY - domeR * 0.6 * sin(rad)
                             Image(systemName: deg > 90 ? "arrow.left" : "arrow.right")
                                 .font(.system(size: 13, weight: .bold))
-                                .foregroundStyle(Color.red.opacity(0.5))
+                                .foregroundStyle(RenaissanceColors.errorRed.opacity(0.5))
                                 .position(x: ax + (deg > 90 ? -10 : 10), y: ay)
                         }
                         Text("Outward thrust")
                             .font(RenaissanceFont.ivBody.italic())
-                            .foregroundStyle(Color.red.opacity(0.5))
+                            .foregroundStyle(RenaissanceColors.errorRed.opacity(0.5))
                             .position(x: cx, y: baseY - domeR * 0.3)
                     }
 
@@ -577,13 +577,13 @@ private struct OculusCompressionVisual: View {
                             let ay = oculusY + arrowR * sin(angle)
                             Image(systemName: "arrow.right")
                                 .font(.system(size: 13, weight: .bold))
-                                .foregroundStyle(Color.orange.opacity(0.7))
+                                .foregroundStyle(RenaissanceColors.furnaceOrange.opacity(0.7))
                                 .rotationEffect(.radians(angle + .pi))
                                 .position(x: ax, y: ay)
                         }
                         Text("Compression →")
                             .font(RenaissanceFont.ivLabel)
-                            .foregroundStyle(Color.orange)
+                            .foregroundStyle(RenaissanceColors.furnaceOrange)
                             .position(x: cx + oculusR * 3, y: oculusY)
                     }
 
@@ -780,7 +780,7 @@ private struct TimelineAgingVisual: View {
                                     p.addLine(to: CGPoint(x: 35, y: 28))
                                     p.addLine(to: CGPoint(x: 25, y: 45))
                                 }
-                                .stroke(Color.red.opacity(min(1, yearSlider)), lineWidth: 1.5)
+                                .stroke(RenaissanceColors.errorRed.opacity(min(1, yearSlider)), lineWidth: 1.5)
                                 .frame(width: 70, height: 55)
                             }
                         }
@@ -790,7 +790,7 @@ private struct TimelineAgingVisual: View {
                         if step >= 3 {
                             Text(yearSlider > 0.5 ? "CRACKING" : "Portland cement")
                                 .font(RenaissanceFont.ivBody.italic())
-                                .foregroundStyle(yearSlider > 0.5 ? Color.red.opacity(0.7) : IVMaterialColors.sepiaInk.opacity(0.5))
+                                .foregroundStyle(yearSlider > 0.5 ? RenaissanceColors.errorRed.opacity(0.7) : IVMaterialColors.sepiaInk.opacity(0.5))
                         }
                     }
                 }
@@ -1164,7 +1164,7 @@ private struct CenteringBuildVisual: View {
                                 let rad = deg * .pi / 180
                                 Image(systemName: "arrow.down")
                                     .font(.system(size: 13, weight: .bold))
-                                    .foregroundStyle(Color.red.opacity(0.5))
+                                    .foregroundStyle(RenaissanceColors.errorRed.opacity(0.5))
                                     .position(x: cx - archR * cos(rad), y: baseY - archR * sin(rad) - 10)
                             }
                             DimLabel(text: "4,535 tons")

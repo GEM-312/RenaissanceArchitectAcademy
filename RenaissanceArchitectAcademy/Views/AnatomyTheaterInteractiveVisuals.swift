@@ -53,7 +53,7 @@ private let walnutBrown = Color(red: 0.45, green: 0.32, blue: 0.20)
 private let oakTan = Color(red: 0.60, green: 0.48, blue: 0.32)
 private let cypressGreen = Color(red: 0.35, green: 0.50, blue: 0.30)
 private let steelGray = Color(red: 0.55, green: 0.55, blue: 0.58)
-private let candleYellow = Color(red: 0.95, green: 0.85, blue: 0.45)
+private let candleYellow = RenaissanceColors.candleGlow
 
 private typealias TeachingContainer = IVTeachingContainer
 private typealias DimLabel = IVDimLabel

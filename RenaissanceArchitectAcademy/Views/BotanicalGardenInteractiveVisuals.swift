@@ -659,7 +659,7 @@ private struct GreenhouseGlassVisual: View {
 
                 // Glass pane
                 let glass = CGRect(x: glassX - glassW / 2, y: topY, width: glassW, height: botY - topY)
-                ctx.fill(Path(glass), with: .color(Color.cyan.opacity(0.08)))
+                ctx.fill(Path(glass), with: .color(RenaissanceColors.renaissanceBlue.opacity(0.08)))
                 ctx.stroke(Path(glass), with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1.5)
 
                 // Lead came frame

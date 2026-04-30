@@ -317,7 +317,7 @@ private struct PowerRatioVisual: View {
                         thermal.addCurve(to: CGPoint(x: ax + 3, y: startY - 25),
                                          control1: CGPoint(x: ax + 5, y: startY - 8),
                                          control2: CGPoint(x: ax - 5, y: startY - 18))
-                        ctx.stroke(thermal, with: .color(Color.orange.opacity(0.25)),
+                        ctx.stroke(thermal, with: .color(RenaissanceColors.furnaceOrange.opacity(0.25)),
                                    style: StrokeStyle(lineWidth: 1, dash: [2, 2]))
                     }
                 }

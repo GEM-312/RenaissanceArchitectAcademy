@@ -294,7 +294,7 @@ private struct CristalloChemVisual: View {
                             .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                         Text("MnO₂")
                             .font(RenaissanceFont.ivFormula)
-                            .foregroundStyle(Color.purple.opacity(0.6))
+                            .foregroundStyle(RenaissanceColors.blueprintBlue.opacity(0.6))
                     }
                 }
 

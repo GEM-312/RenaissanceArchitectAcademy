@@ -138,7 +138,7 @@ private struct NorthLightVisual: View {
                 // Window on top (north)
                 let winW: CGFloat = 30
                 let winRect = CGRect(x: cx - winW / 2, y: roomY - 3, width: winW, height: 6)
-                ctx.fill(Path(winRect), with: .color(step >= 1 ? Color.cyan.opacity(0.2) : IVMaterialColors.sepiaInk.opacity(0.05)))
+                ctx.fill(Path(winRect), with: .color(step >= 1 ? RenaissanceColors.renaissanceBlue.opacity(0.2) : IVMaterialColors.sepiaInk.opacity(0.05)))
                 ctx.stroke(Path(winRect), with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1)
                 // Light rays spreading down
                 if step >= 1 {
@@ -147,7 +147,7 @@ private struct NorthLightVisual: View {
                         var ray = Path()
                         ray.move(to: CGPoint(x: cx, y: roomY + 3))
                         ray.addLine(to: CGPoint(x: cx + spread, y: roomY + roomH * 0.7))
-                        ctx.stroke(ray, with: .color(Color.yellow.opacity(0.1)), lineWidth: 1)
+                        ctx.stroke(ray, with: .color(RenaissanceColors.candleGlow.opacity(0.1)), lineWidth: 1)
                     }
                 }
                 // Step 2: easel in room (no shadows)
@@ -380,7 +380,7 @@ private struct WhiteWallsVisual: View {
                     RoundedRectangle(cornerRadius: 4)
                         .fill(limeWhite.opacity(step >= 1 ? 0.9 : 0.3))
                         .frame(width: 55, height: 50)
-                        .shadow(color: step >= 3 ? Color.yellow.opacity(0.15) : .clear, radius: 8)
+                        .shadow(color: step >= 3 ? RenaissanceColors.candleGlow.opacity(0.15) : .clear, radius: 8)
                     Text("Lime")
                         .font(.custom("Cinzel-Bold", size: 16))
                         .foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
