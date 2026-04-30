@@ -328,7 +328,9 @@ class CityScene: SKScene, ScrollZoomable {
             applyTheme()
         }
 
-        // Smoothly follow the player while walking to a building
+        // Smoothly follow the player while walking to a building — preserve
+        // whatever zoom the player set themselves. No auto zoom-in during
+        // approach, no auto zoom-out on arrival.
         if isFollowingPlayer {
             let target = playerNode.position
             let current = cameraNode.position
@@ -337,21 +339,6 @@ class CityScene: SKScene, ScrollZoomable {
                 x: current.x + (target.x - current.x) * lerpFactor,
                 y: current.y + (target.y - current.y) * lerpFactor
             )
-
-            // Gradual zoom: ease from overview → close-up during approach
-            if let dest = walkTargetPosition {
-                let totalDist = hypot(dest.x - cameraNode.position.x, dest.y - cameraNode.position.y)
-                let closeZoom: CGFloat = 0.55
-                let farZoom: CGFloat = 0.8
-                let zoomStartDist: CGFloat = 800  // city map is bigger, start zooming earlier
-
-                if totalDist < zoomStartDist {
-                    let progress = 1.0 - (totalDist / zoomStartDist)
-                    let targetScale = farZoom - (farZoom - closeZoom) * progress
-                    let currentScale = cameraNode.xScale
-                    cameraNode.setScale(currentScale + (targetScale - currentScale) * 0.06)
-                }
-            }
         }
 
         // Spotlight follows player, fades in/out with walking
