@@ -926,57 +926,38 @@ class CityScene: SKScene, ScrollZoomable {
 
     // MARK: - Camera Follow & Zoom
 
-    /// Start following player — gentle initial zoom, gradual approach in update()
+    /// Start following player — set state only, preserve player's chosen zoom.
     private func startFollowingPlayer(toward target: CGPoint) {
-        guard let cameraNode = cameraNode else { return }
         isFollowingPlayer = true
         walkTargetPosition = target
-
-        // Zoom to 0.8x (gentle start) — gradual zoom to 0.55 happens in update()
-        let zoomAction = SKAction.scale(to: 0.8, duration: 0.5)
-        zoomAction.timingMode = .easeInEaseOut
-        cameraNode.run(zoomAction, withKey: "cameraZoom")
     }
 
-    /// Settle camera on the building after player arrives
+    /// Settle camera on the building after player arrives — pan only, no zoom change.
     private func zoomCameraToBuilding(_ buildingPos: CGPoint) {
         guard let cameraNode = cameraNode else { return }
-
-        // On smaller screens (iPhone), zoom less so the player sprite stays visible
-        let viewWidth = view?.bounds.width ?? 1024
-        let targetScale: CGFloat = viewWidth < 500 ? 0.85 : 0.6
-
         let moveAction = SKAction.move(to: buildingPos, duration: 0.5)
         moveAction.timingMode = .easeInEaseOut
-
-        let zoomAction = SKAction.scale(to: targetScale, duration: 0.5)
-        zoomAction.timingMode = .easeInEaseOut
-
-        cameraNode.run(SKAction.group([moveAction, zoomAction]), withKey: "cameraZoom")
+        cameraNode.run(moveAction, withKey: "cameraZoom")
     }
 
-    /// Zoom back out to show the full map (call when overlay/dialogue dismisses)
+    /// Pan back to map center when overlay/dialogue dismisses — preserves zoom.
     func zoomCameraOut() {
         guard let cameraNode = cameraNode else { return }
         isFollowingPlayer = false
         walkTargetPosition = nil
         dialogBuildingNode = nil
 
-        // Remove blur + walking terrain when zooming back out
+        // Remove blur + walking terrain when player exits a building
         stopWalkingTerrainEffects()
 
-        view?.preferredFramesPerSecond = 60  // Smooth zoom-out animation
+        view?.preferredFramesPerSecond = 60  // Smooth pan animation
 
         let mapCenter = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
-
         let moveAction = SKAction.move(to: mapCenter, duration: 0.6)
         moveAction.timingMode = .easeInEaseOut
 
-        let zoomAction = SKAction.scale(to: maxZoomOutScale, duration: 0.6)
-        zoomAction.timingMode = .easeInEaseOut
-
         let idleAfter = SKAction.run { [weak self] in self?.view?.preferredFramesPerSecond = 30 }
-        cameraNode.run(SKAction.sequence([SKAction.group([moveAction, zoomAction]), idleAfter]), withKey: "cameraZoom")
+        cameraNode.run(SKAction.sequence([moveAction, idleAfter]), withKey: "cameraZoom")
     }
 
     /// Reset internal state only — does NOT zoom the camera.

@@ -412,39 +412,28 @@ class ForestScene: SKScene, ScrollZoomable {
 
     // MARK: - Camera Follow & Zoom
 
-    /// Stage 1: Start following player — zoom in to walking level
+    /// Stage 1: Start following player — set state only, preserve player's chosen zoom.
     private func startFollowingPlayer(toward target: CGPoint) {
-        guard let cameraNode = cameraNode else { return }
         isFollowingPlayer = true
         isPlayerWalking = true
         walkTargetPosition = target
-
-        // Zoom to 0.65x (start of approach) — gradual zoom to 0.45 happens in update()
-        let zoomAction = SKAction.scale(to: 0.65, duration: 0.5)
-        zoomAction.timingMode = .easeInEaseOut
-        cameraNode.run(zoomAction, withKey: "cameraZoom")
 
         // Increase terrain blur while walking
         startWalkingTerrainEffects()
     }
 
-    /// Stage 2: Settle camera on the POI after player arrives
+    /// Stage 2: Settle camera on the POI after player arrives — pan only, no zoom change.
     private func zoomCameraToPOI(_ poiPos: CGPoint) {
         guard let cameraNode = cameraNode else { return }
-
         let moveAction = SKAction.move(to: poiPos, duration: 0.5)
         moveAction.timingMode = .easeInEaseOut
-
-        let zoomAction = SKAction.scale(to: 0.45, duration: 0.5)
-        zoomAction.timingMode = .easeInEaseOut
-
-        cameraNode.run(SKAction.group([moveAction, zoomAction]), withKey: "cameraZoom")
+        cameraNode.run(moveAction, withKey: "cameraZoom")
 
         // Return to base blur when arrived
         stopWalkingTerrainEffects()
     }
 
-    /// Zoom back out to show the full map (called from SwiftUI when overlay dismisses)
+    /// Pan back to map center when overlay dismisses — preserves zoom.
     func zoomCameraOut() {
         guard let cameraNode = cameraNode else { return }
         isFollowingPlayer = false
@@ -452,17 +441,11 @@ class ForestScene: SKScene, ScrollZoomable {
         walkTargetPosition = nil
 
         let mapCenter = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
-        let fitScale = maxZoomOutScale
-
         let moveAction = SKAction.move(to: mapCenter, duration: 0.6)
         moveAction.timingMode = .easeInEaseOut
+        cameraNode.run(moveAction, withKey: "cameraZoom")
 
-        let zoomAction = SKAction.scale(to: fitScale, duration: 0.6)
-        zoomAction.timingMode = .easeInEaseOut
-
-        cameraNode.run(SKAction.group([moveAction, zoomAction]), withKey: "cameraZoom")
-
-        // Return to base blur when zooming out
+        // Return to base blur when player exits a POI
         stopWalkingTerrainEffects()
     }
 

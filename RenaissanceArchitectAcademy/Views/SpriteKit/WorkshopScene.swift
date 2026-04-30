@@ -1183,29 +1183,18 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
     // MARK: - Station Camera Zoom
 
-    /// Stage 1: Start following player — gentle initial zoom, gradual approach in update()
+    /// Stage 1: Start following player — set state only, preserve player's chosen zoom.
     private func startFollowingPlayer(toward target: CGPoint) {
-        guard let cameraNode = cameraNode else { return }
         isFollowingPlayer = true
         walkTargetPosition = target
-
-        // Zoom to 0.65x (gentle start) — gradual zoom to 0.45 happens in update()
-        let zoomAction = SKAction.scale(to: 0.65, duration: 0.5)
-        zoomAction.timingMode = .easeInEaseOut
-        cameraNode.run(zoomAction, withKey: "cameraZoom")
     }
 
-    /// Stage 2: Settle camera on the station after player arrives
+    /// Stage 2: Settle camera on the station after player arrives — pan only, no zoom change.
     private func zoomCameraToStation(_ stationPos: CGPoint) {
         guard let cameraNode = cameraNode else { return }
-
         let moveAction = SKAction.move(to: stationPos, duration: 0.5)
         moveAction.timingMode = .easeInEaseOut
-
-        let zoomAction = SKAction.scale(to: 0.45, duration: 0.5)
-        zoomAction.timingMode = .easeInEaseOut
-
-        cameraNode.run(SKAction.group([moveAction, zoomAction]), withKey: "cameraZoom")
+        cameraNode.run(moveAction, withKey: "cameraZoom")
     }
 
     /// Nudge camera upward so the station appears in the top third of the screen.
@@ -1222,22 +1211,16 @@ class WorkshopScene: SKScene, ScrollZoomable {
         cameraNode.run(moveAction, withKey: "cameraNudge")
     }
 
-    /// Zoom back out to show the full map (call when overlay dismisses)
+    /// Pan back to map center when overlay dismisses — preserves zoom.
     func zoomCameraOut() {
         guard let cameraNode = cameraNode else { return }
         isFollowingPlayer = false
         walkTargetPosition = nil
 
         let mapCenter = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
-        let fitScale = maxZoomOutScale
-
         let moveAction = SKAction.move(to: mapCenter, duration: 0.6)
         moveAction.timingMode = .easeInEaseOut
-
-        let zoomAction = SKAction.scale(to: fitScale, duration: 0.6)
-        zoomAction.timingMode = .easeInEaseOut
-
-        cameraNode.run(SKAction.group([moveAction, zoomAction]), withKey: "cameraZoom")
+        cameraNode.run(moveAction, withKey: "cameraZoom")
     }
 
     private var hasFiredDragCallback = false
