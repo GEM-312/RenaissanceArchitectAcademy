@@ -182,6 +182,9 @@ struct CraftingRoomMapView: View {
                             }
                             onNavigate?(.cityMap)
                         },
+                        onCompleted: { card in
+                            notebookState?.completeDiscoveryCard(card)
+                        },
                         playerName: onboardingState?.apprenticeName ?? "Apprentice"
                     )
                     .transition(.opacity)
@@ -327,9 +330,10 @@ struct CraftingRoomMapView: View {
                 }
                 return
             }
-            // No active building — show discovery card if available
+            // No active building — show discovery card if available + not yet completed
             if let vm = viewModel, vm.activeBuildingId == nil,
-               let card = DiscoveryCardContent.card(for: stationKey) {
+               let card = DiscoveryCardContent.card(for: stationKey),
+               notebookState?.isDiscoveryCardCompleted(card.id) != true {
                 self.discoveryCard = card
                 self.activeStation = station
                 SoundManager.shared.play(.cardsAppear)

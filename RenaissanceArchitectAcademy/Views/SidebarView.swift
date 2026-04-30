@@ -10,6 +10,7 @@ enum SidebarDestination: Hashable {
     case forest         // Italian forest exploration
 
     case notebook(Int)  // Building notebook by plot ID
+    case notebookPicker // Picker showing all notebooks (buildings + Discoveries)
 }
 
 // Add iconName to Era

@@ -319,6 +319,9 @@ struct WorkshopMapView: View {
                             pendingStationAfterCard = nil
                             onNavigate?(.cityMap)
                         },
+                        onCompleted: { card in
+                            notebookState?.completeDiscoveryCard(card)
+                        },
                         playerName: onboardingState?.apprenticeName ?? "Apprentice"
                     )
                     .transition(.opacity)
@@ -1163,8 +1166,9 @@ struct WorkshopMapView: View {
                 showStationKnowledgeCards = true
             }
         } else if vm.activeBuildingId == nil,
-                  let card = DiscoveryCardContent.card(for: stationKey) {
-            // No active building — show discovery card
+                  let card = DiscoveryCardContent.card(for: stationKey),
+                  notebookState?.isDiscoveryCardCompleted(card.id) != true {
+            // No active building — show discovery card (only if not already completed)
             showArrivalGuidance = false
             discoveryCard = card
             SoundManager.shared.play(.cardsAppear)

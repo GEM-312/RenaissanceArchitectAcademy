@@ -10,6 +10,7 @@ enum NotebookEntryType: String, Codable, CaseIterable {
     case userNote          // Player's own notes
     case environmentNote   // From workshop/forest visits
     case sketch            // Pianta floor plan sketch — PKDrawing saved separately
+    case discoveryCard     // Cross-cutting station/forest fact, not tied to a specific building
 }
 
 /// A single entry in a building's notebook

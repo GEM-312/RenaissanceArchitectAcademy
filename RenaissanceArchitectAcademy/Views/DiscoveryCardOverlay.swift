@@ -8,6 +8,9 @@ struct DiscoveryCardOverlay: View {
     let card: DiscoveryCard
     let onDismiss: () -> Void
     let onChooseBuilding: () -> Void  // Navigate to city map to pick a building
+    /// Fired the first time the player flips the card to its back (i.e. learns
+    /// the content). Caller is expected to record the discovery to the notebook.
+    var onCompleted: ((DiscoveryCard) -> Void)? = nil
     var playerName: String = "Apprentice"
 
     private var settings: GameSettings { GameSettings.shared }
@@ -15,6 +18,7 @@ struct DiscoveryCardOverlay: View {
     @State private var isFlipped = false
     @State private var showContent = false
     @State private var animateStory = false
+    @State private var hasReportedCompletion = false
 
     var body: some View {
         ZStack {
@@ -51,6 +55,11 @@ struct DiscoveryCardOverlay: View {
                         withAnimation(.easeIn(duration: 0.8).delay(0.3)) {
                             animateStory = true
                         }
+                    }
+                    // Mark this discovery as completed once per overlay lifetime
+                    if !hasReportedCompletion {
+                        hasReportedCompletion = true
+                        onCompleted?(card)
                     }
                 }
             }

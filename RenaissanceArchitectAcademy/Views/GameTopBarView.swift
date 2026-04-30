@@ -194,7 +194,7 @@ struct GameTopBarView: View {
             NavItem(icon: "paintpalette.fill", label: "Ren.", destination: .era(.renaissance)) { [onNavigate] in onNavigate(.era(.renaissance)) },
             NavItem(icon: "hammer.fill", label: "Workshop", destination: .workshop) { [onNavigate] in onNavigate(.workshop) },
             NavItem(icon: "leaf.fill", label: "Forest", destination: .forest) { [onNavigate] in onNavigate(.forest) },
-            NavItem(icon: "book.closed.fill", label: "Notes", destination: .notebook(4)) { [onNavigate] in onNavigate(.notebook(4)) },
+            NavItem(icon: "book.closed.fill", label: "Notes", destination: .notebookPicker) { [onNavigate] in onNavigate(.notebookPicker) },
         ]
 
         items.append(contentsOf: allItems.filter { !isCurrentDestination($0.destination) })

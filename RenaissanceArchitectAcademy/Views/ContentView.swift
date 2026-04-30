@@ -240,18 +240,35 @@ struct ContentView: View {
         case .forest:
             ForestMapView(workshop: workshopState, viewModel: cityViewModel, onNavigate: navigateTo, onBackToWorkshop: { navigateTo(.workshop) }, onBackToMenu: backToMenu, onboardingState: onboardingState, returnToLessonPlotId: $returnToLessonPlotId)
         case .notebook(let buildingId):
-            if let plot = cityViewModel.buildingPlots.first(where: { $0.id == buildingId }) {
+            if buildingId == NotebookState.discoveriesNotebookID {
+                // Special "Discoveries" notebook — not a real building
+                NotebookView(
+                    buildingId: NotebookState.discoveriesNotebookID,
+                    buildingName: NotebookState.discoveriesNotebookName,
+                    sciences: [],
+                    era: .ancientRome,
+                    notebookState: notebookState,
+                    onDismiss: { navigateTo(.notebookPicker) }
+                )
+            } else if let plot = cityViewModel.buildingPlots.first(where: { $0.id == buildingId }) {
                 NotebookView(
                     buildingId: buildingId,
                     buildingName: plot.building.name,
                     sciences: plot.building.sciences,
                     era: plot.building.era,
                     notebookState: notebookState,
-                    onDismiss: { navigateTo(.cityMap) }
+                    onDismiss: { navigateTo(.notebookPicker) }
                 )
             } else {
                 CityMapView(viewModel: cityViewModel, workshopState: workshopState, notebookState: notebookState, onNavigate: navigateTo, onBackToMenu: backToMenu, onboardingState: onboardingState, returnToLessonPlotId: $returnToLessonPlotId)
             }
+        case .notebookPicker:
+            NotebookPickerView(
+                viewModel: cityViewModel,
+                notebookState: notebookState,
+                onPickBuilding: { id in navigateTo(.notebook(id)) },
+                onDismiss: { navigateTo(.cityMap) }
+            )
         case .none:
             CityMapView(viewModel: cityViewModel, workshopState: workshopState, notebookState: notebookState, onNavigate: navigateTo, onBackToMenu: backToMenu, onboardingState: onboardingState, returnToLessonPlotId: $returnToLessonPlotId)
         }

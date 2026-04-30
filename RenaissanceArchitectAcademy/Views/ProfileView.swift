@@ -791,7 +791,7 @@ struct ProfileNavRow: View {
                         onNavigate(.workshop)
                     }
                     profileNavButton(icon: "book.closed.fill", label: "Notes") {
-                        onNavigate(.notebook(4))
+                        onNavigate(.notebookPicker)
                     }
                     profileNavButton(icon: "leaf.fill", label: "Forest") {
                         onNavigate(.forest)

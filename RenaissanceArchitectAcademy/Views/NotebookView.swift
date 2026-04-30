@@ -636,15 +636,18 @@ struct NotebookView: View {
     // MARK: - Empty State
 
     private var emptyState: some View {
-        VStack(spacing: 16) {
+        let isDiscoveries = buildingId == NotebookState.discoveriesNotebookID
+        return VStack(spacing: 16) {
             Spacer()
-            Image(systemName: "book.closed")
+            Image(systemName: isDiscoveries ? "sparkles" : "book.closed")
                 .font(.custom("EBGaramond-Regular", size: 48, relativeTo: .title3))
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
             Text("No entries yet")
                 .font(.custom("EBGaramond-SemiBold", size: 20))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
-            Text("Complete the lesson to fill your notebook with knowledge about \(buildingName).")
+            Text(isDiscoveries
+                 ? "Visit a workshop station, forest tree, or crafting tool without an active building to discover Renaissance trivia and fill this section."
+                 : "Complete the lesson to fill your notebook with knowledge about \(buildingName).")
                 .font(.custom("EBGaramond-Regular", size: 15))
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
                 .multilineTextAlignment(.center)

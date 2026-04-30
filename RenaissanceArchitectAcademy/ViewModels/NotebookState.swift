@@ -8,7 +8,13 @@ import PencilKit
 @Observable
 class NotebookState {
 
-    /// All notebooks keyed by building ID
+    /// Sentinel building ID reserved for the cross-cutting "Discoveries" notebook
+    /// — discovery cards aren't tied to a specific building, so they live in their
+    /// own logical notebook stored under this ID. Real building IDs run 1...17.
+    static let discoveriesNotebookID = 0
+    static let discoveriesNotebookName = "Discoveries"
+
+    /// All notebooks keyed by building ID (or `discoveriesNotebookID` for discoveries)
     var notebooks: [Int: BuildingNotebook] = [:]
 
     /// Tracks which building lessons have been added to notebooks (avoid duplicates)
@@ -16,6 +22,9 @@ class NotebookState {
 
     /// Tracks which station lessons (bird at workshop) have been saved to notebooks
     var stationLessonsAddedToNotebook: Set<String> = []
+
+    /// Tracks which discovery cards have been completed (avoid re-showing + duplicate entries)
+    var completedDiscoveryCardIDs: Set<String> = []
 
     /// Current player name — used to scope file paths
     private(set) var playerName: String = ""
@@ -32,6 +41,7 @@ class NotebookState {
         notebooks = [:]
         lessonsAddedToNotebook = []
         stationLessonsAddedToNotebook = []
+        completedDiscoveryCardIDs = []
         loadFromDisk()
     }
 
@@ -107,6 +117,43 @@ class NotebookState {
     /// Mark a lesson as added so we don't duplicate entries
     func markLessonAdded(for buildingId: Int) {
         lessonsAddedToNotebook.insert(buildingId)
+        saveToDisk()
+    }
+
+    // MARK: - Discovery Cards
+
+    /// Whether a discovery card has already been completed (avoid re-showing + duplicate entries)
+    func isDiscoveryCardCompleted(_ cardID: String) -> Bool {
+        completedDiscoveryCardIDs.contains(cardID)
+    }
+
+    /// Mark a discovery card as completed and append a notebook entry under
+    /// the special "Discoveries" notebook (sentinel ID = `discoveriesNotebookID`).
+    /// No-op if the card was already completed.
+    func completeDiscoveryCard(_ card: DiscoveryCard) {
+        guard !completedDiscoveryCardIDs.contains(card.id) else { return }
+        completedDiscoveryCardIDs.insert(card.id)
+
+        let body = """
+        \(card.storyText)
+
+        ✦ \(card.funFact)
+        """
+
+        let entry = NotebookEntry(
+            buildingId: Self.discoveriesNotebookID,
+            entryType: .discoveryCard,
+            title: "\(card.stationName) — \(card.italianName)",
+            body: body
+        )
+
+        var notebook = getOrCreateNotebook(
+            buildingId: Self.discoveriesNotebookID,
+            buildingName: Self.discoveriesNotebookName
+        )
+        notebook.entries.append(entry)
+        notebook.lastModified = Date()
+        notebooks[Self.discoveriesNotebookID] = notebook
         saveToDisk()
     }
 
@@ -240,7 +287,8 @@ class NotebookState {
             let data = try JSONEncoder().encode(SavedState(
                 notebooks: notebooks,
                 lessonsAdded: lessonsAddedToNotebook,
-                stationLessonsAdded: stationLessonsAddedToNotebook
+                stationLessonsAdded: stationLessonsAddedToNotebook,
+                completedDiscoveryCards: completedDiscoveryCardIDs
             ))
             try data.write(to: notebooksFileURL)
         } catch {
@@ -256,6 +304,7 @@ class NotebookState {
         notebooks = saved.notebooks
         lessonsAddedToNotebook = saved.lessonsAdded
         stationLessonsAddedToNotebook = saved.stationLessonsAdded ?? []
+        completedDiscoveryCardIDs = saved.completedDiscoveryCards ?? []
     }
 
     /// Whether a station lesson has already been saved to notebooks
@@ -274,11 +323,16 @@ class NotebookState {
         let notebooks: [Int: BuildingNotebook]
         let lessonsAdded: Set<Int>
         var stationLessonsAdded: Set<String>?
+        var completedDiscoveryCards: Set<String>?
 
-        init(notebooks: [Int: BuildingNotebook], lessonsAdded: Set<Int>, stationLessonsAdded: Set<String>) {
+        init(notebooks: [Int: BuildingNotebook],
+             lessonsAdded: Set<Int>,
+             stationLessonsAdded: Set<String>,
+             completedDiscoveryCards: Set<String>) {
             self.notebooks = notebooks
             self.lessonsAdded = lessonsAdded
             self.stationLessonsAdded = stationLessonsAdded
+            self.completedDiscoveryCards = completedDiscoveryCards
         }
     }
 }
