@@ -284,6 +284,72 @@ extension View {
     }
 }
 
+// MARK: - Theme-aware card chrome (collapses .background+.overlay double-shape pattern)
+
+/// Theme-aware fill + stroke + shadow in one modifier — replaces the
+/// `.background(RoundedRectangle.fill(settings.cardBackground)).overlay(RoundedRectangle.stroke(settings.cardBorderColor))`
+/// pattern that was duplicated 30+ times across overlays and visual cards.
+struct ThemedCardModifier: ViewModifier {
+    var radius: CGFloat
+    var shadow: RenaissanceShadow
+
+    @MainActor
+    func body(content: Content) -> some View {
+        let settings = GameSettings.shared
+        return content
+            .background(
+                RoundedRectangle(cornerRadius: radius)
+                    .fill(settings.cardBackground)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: radius)
+                    .stroke(settings.cardBorderColor, lineWidth: 1)
+            )
+            .renaissanceShadow(shadow)
+    }
+}
+
+extension View {
+    /// Theme-aware card chrome — fills with `settings.cardBackground`, strokes
+    /// with `settings.cardBorderColor`, and applies a shadow. One call replaces
+    /// an inline `.background(RoundedRectangle.fill).overlay(RoundedRectangle.stroke).renaissanceShadow()` chain.
+    @MainActor
+    func themedCard(radius: CGFloat = CornerRadius.md,
+                    shadow: RenaissanceShadow = .card) -> some View {
+        modifier(ThemedCardModifier(radius: radius, shadow: shadow))
+    }
+}
+
+// MARK: - Pill background (consolidates capsule chrome on top-bar pills + nav buttons)
+
+/// Capsule-shaped background with theme-aware fill + stroke. Replaces the
+/// `.background(Capsule.fill).overlay(Capsule.strokeBorder)` chain that
+/// appeared three times in GameTopBarView (title pill, florins pill, nav buttons).
+struct PillBackgroundModifier: ViewModifier {
+    var fill: Color?
+    var stroke: Color?
+    var lineWidth: CGFloat = 1
+
+    @MainActor
+    func body(content: Content) -> some View {
+        let settings = GameSettings.shared
+        let fillColor = fill ?? settings.cardBackground
+        let strokeColor = stroke ?? settings.cardBorderColor
+        return content
+            .background(Capsule().fill(fillColor))
+            .overlay(Capsule().stroke(strokeColor, lineWidth: lineWidth))
+    }
+}
+
+extension View {
+    /// Theme-aware capsule background + stroke. Pass nil for either to use
+    /// the active theme's defaults (cardBackground / cardBorderColor).
+    @MainActor
+    func pillBackground(fill: Color? = nil, stroke: Color? = nil, lineWidth: CGFloat = 1) -> some View {
+        modifier(PillBackgroundModifier(fill: fill, stroke: stroke, lineWidth: lineWidth))
+    }
+}
+
 // MARK: - 10. Parchment Button Background (single source of truth)
 
 /// Reusable parchment texture background for ALL buttons in the app.

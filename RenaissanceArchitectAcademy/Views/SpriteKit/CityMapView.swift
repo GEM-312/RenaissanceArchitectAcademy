@@ -677,11 +677,6 @@ struct CityMapView: View {
                 .transition(.move(edge: .trailing))  // Slide in from right
             }
 
-            // Workshop prompt removed — KnowledgeCardsOverlay handles workshop guidance
-            if false {
-                EmptyView()
-            }
-
             // Building detail overlay (shown for info/help)
             if showBuildingDetail, let plot = selectedPlot {
                 BuildingDetailOverlay(
