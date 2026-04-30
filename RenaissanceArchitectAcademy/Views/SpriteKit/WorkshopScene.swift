@@ -808,9 +808,10 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
         updatePlayerScreenPosition()
 
-        // Smoothly follow the player while walking to a station — preserve
-        // whatever zoom the player set themselves. No auto zoom-in during
-        // approach, no auto zoom-out on arrival.
+        // Smoothly follow the player while walking to a station + gradually
+        // zoom in during the approach. The on-arrival snap-zoom is removed
+        // (zoomCameraToStation only pans), so the camera stays wherever the
+        // gradual zoom landed when the player gets there.
         if isFollowingPlayer {
             let target = playerNode.position
             let current = cameraNode.position
@@ -819,6 +820,21 @@ class WorkshopScene: SKScene, ScrollZoomable {
                 x: current.x + (target.x - current.x) * lerpFactor,
                 y: current.y + (target.y - current.y) * lerpFactor
             )
+
+            // Gradual zoom: ease from overview → close-up during approach
+            if let dest = walkTargetPosition {
+                let totalDist = hypot(dest.x - cameraNode.position.x, dest.y - cameraNode.position.y)
+                let closeZoom: CGFloat = 0.60
+                let farZoom: CGFloat = 0.80
+                let zoomStartDist: CGFloat = 700
+
+                if totalDist < zoomStartDist {
+                    let progress = 1.0 - (totalDist / zoomStartDist)
+                    let targetScale = farZoom - (farZoom - closeZoom) * progress
+                    let currentScale = cameraNode.xScale
+                    cameraNode.setScale(currentScale + (targetScale - currentScale) * 0.06)
+                }
+            }
         }
 
         // Clamp camera every frame — prevents SKActions from bypassing bounds
@@ -1183,10 +1199,16 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
     // MARK: - Station Camera Zoom
 
-    /// Stage 1: Start following player — set state only, preserve player's chosen zoom.
+    /// Stage 1: Start following player — gentle initial zoom into walking range.
+    /// Gradual zoom toward closeZoom continues in update() as the player approaches.
     private func startFollowingPlayer(toward target: CGPoint) {
+        guard let cameraNode = cameraNode else { return }
         isFollowingPlayer = true
         walkTargetPosition = target
+
+        let zoomAction = SKAction.scale(to: 0.80, duration: 0.5)
+        zoomAction.timingMode = .easeInEaseOut
+        cameraNode.run(zoomAction, withKey: "cameraZoom")
     }
 
     /// Stage 2: Settle camera on the station after player arrives — pan only, no zoom change.

@@ -328,9 +328,10 @@ class CityScene: SKScene, ScrollZoomable {
             applyTheme()
         }
 
-        // Smoothly follow the player while walking to a building — preserve
-        // whatever zoom the player set themselves. No auto zoom-in during
-        // approach, no auto zoom-out on arrival.
+        // Smoothly follow the player while walking to a building + gradually
+        // zoom in during the approach. The on-arrival snap-zoom is removed
+        // (zoomCameraToBuilding only pans), so the camera stays wherever the
+        // gradual zoom landed when the player gets there.
         if isFollowingPlayer {
             let target = playerNode.position
             let current = cameraNode.position
@@ -339,6 +340,21 @@ class CityScene: SKScene, ScrollZoomable {
                 x: current.x + (target.x - current.x) * lerpFactor,
                 y: current.y + (target.y - current.y) * lerpFactor
             )
+
+            // Gradual zoom: ease from overview → close-up during approach
+            if let dest = walkTargetPosition {
+                let totalDist = hypot(dest.x - cameraNode.position.x, dest.y - cameraNode.position.y)
+                let closeZoom: CGFloat = 0.55
+                let farZoom: CGFloat = 0.8
+                let zoomStartDist: CGFloat = 800  // city map is bigger, start zooming earlier
+
+                if totalDist < zoomStartDist {
+                    let progress = 1.0 - (totalDist / zoomStartDist)
+                    let targetScale = farZoom - (farZoom - closeZoom) * progress
+                    let currentScale = cameraNode.xScale
+                    cameraNode.setScale(currentScale + (targetScale - currentScale) * 0.06)
+                }
+            }
         }
 
         // Spotlight follows player, fades in/out with walking
@@ -926,10 +942,16 @@ class CityScene: SKScene, ScrollZoomable {
 
     // MARK: - Camera Follow & Zoom
 
-    /// Start following player — set state only, preserve player's chosen zoom.
+    /// Start following player — gentle initial zoom into walking range.
+    /// Gradual zoom toward closeZoom continues in update() as the player approaches.
     private func startFollowingPlayer(toward target: CGPoint) {
+        guard let cameraNode = cameraNode else { return }
         isFollowingPlayer = true
         walkTargetPosition = target
+
+        let zoomAction = SKAction.scale(to: 0.8, duration: 0.5)
+        zoomAction.timingMode = .easeInEaseOut
+        cameraNode.run(zoomAction, withKey: "cameraZoom")
     }
 
     /// Settle camera on the building after player arrives — pan only, no zoom change.
