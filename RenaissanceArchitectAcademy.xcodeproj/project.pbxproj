@@ -60,6 +60,7 @@
 		059 /* NotebookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159 /* NotebookView.swift */; };
 		2D3 /* NotebookPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3 /* NotebookPickerView.swift */; };
 		2D4 /* BirdModalOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D4 /* BirdModalOverlay.swift */; };
+		2D6 /* SpeakerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D6 /* SpeakerButton.swift */; };
 		060 /* NotebookCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160 /* NotebookCanvasView.swift */; };
 		061 /* PlayerSave.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161 /* PlayerSave.swift */; };
 		062 /* BuildingProgressRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162 /* BuildingProgressRecord.swift */; };
@@ -116,6 +117,7 @@
 		0D2 /* StationCompounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D2 /* StationCompounds.swift */; };
 		0D3 /* APIKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D3 /* APIKeys.swift */; };
 		2D2 /* WorkerClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2 /* WorkerClient.swift */; };
+		2D5 /* TTSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5 /* TTSService.swift */; };
 		0D4 /* WolframService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D4 /* WolframService.swift */; };
 		0D5 /* WolframGeometryHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D5 /* WolframGeometryHelper.swift */; };
 		0D6 /* WolframGeometryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D6 /* WolframGeometryView.swift */; };
@@ -323,6 +325,7 @@
 		159 /* NotebookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookView.swift; sourceTree = "<group>"; };
 		3D3 /* NotebookPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookPickerView.swift; sourceTree = "<group>"; };
 		3D4 /* BirdModalOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdModalOverlay.swift; sourceTree = "<group>"; };
+		3D6 /* SpeakerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerButton.swift; sourceTree = "<group>"; };
 		160 /* NotebookCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookCanvasView.swift; sourceTree = "<group>"; };
 		161 /* PlayerSave.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerSave.swift; sourceTree = "<group>"; };
 		162 /* BuildingProgressRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingProgressRecord.swift; sourceTree = "<group>"; };
@@ -379,6 +382,7 @@
 		1D2 /* StationCompounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationCompounds.swift; sourceTree = "<group>"; };
 		1D3 /* APIKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeys.swift; sourceTree = "<group>"; };
 		3D2 /* WorkerClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkerClient.swift; sourceTree = "<group>"; };
+		3D5 /* TTSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TTSService.swift; sourceTree = "<group>"; };
 		1D4 /* WolframService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WolframService.swift; sourceTree = "<group>"; };
 		1D5 /* WolframGeometryHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WolframGeometryHelper.swift; sourceTree = "<group>"; };
 		1D6 /* WolframGeometryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WolframGeometryView.swift; sourceTree = "<group>"; };
@@ -657,6 +661,7 @@
 				159 /* NotebookView.swift */,
 				3D3 /* NotebookPickerView.swift */,
 				3D4 /* BirdModalOverlay.swift */,
+				3D6 /* SpeakerButton.swift */,
 				160 /* NotebookCanvasView.swift */,
 				168 /* MathVisualView.swift */,
 				169 /* GradientSlopeVisual.swift */,
@@ -778,6 +783,7 @@
 				1D0 /* PubChemService.swift */,
 				1D3 /* APIKeys.swift */,
 				3D2 /* WorkerClient.swift */,
+				3D5 /* TTSService.swift */,
 				1D4 /* WolframService.swift */,
 				3CD /* SketchValidator.swift */,
 				1D5 /* WolframGeometryHelper.swift */,
@@ -1161,6 +1167,7 @@
 				059 /* NotebookView.swift in Sources */,
 				2D3 /* NotebookPickerView.swift in Sources */,
 				2D4 /* BirdModalOverlay.swift in Sources */,
+				2D6 /* SpeakerButton.swift in Sources */,
 				060 /* NotebookCanvasView.swift in Sources */,
 				061 /* PlayerSave.swift in Sources */,
 				062 /* BuildingProgressRecord.swift in Sources */,
@@ -1204,6 +1211,7 @@
 				0D2 /* StationCompounds.swift in Sources */,
 				0D3 /* APIKeys.swift in Sources */,
 				2D2 /* WorkerClient.swift in Sources */,
+				2D5 /* TTSService.swift in Sources */,
 				0D4 /* WolframService.swift in Sources */,
 				2CD /* SketchValidator.swift in Sources */,
 				2CE /* SketchResultView.swift in Sources */,

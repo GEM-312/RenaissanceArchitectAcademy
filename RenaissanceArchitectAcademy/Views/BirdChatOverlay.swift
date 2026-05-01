@@ -68,6 +68,7 @@ struct BirdChatOverlay: View {
         }
         .onDisappear {
             chatViewModel.endSession()
+            TTSService.shared.stop()
         }
     }
 
@@ -196,15 +197,20 @@ struct BirdChatOverlay: View {
                 .background(RenaissanceColors.ochre.opacity(0.12))
                 .clipShape(Circle())
 
-            Text(text)
-                .font(RenaissanceFont.bodySmall)
-                .foregroundStyle(settings.cardTextColor)
-                .lineSpacing(LineHeight.normal)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(settings.dialogBackground)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .borderCard(radius: 12)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(text)
+                    .font(RenaissanceFont.bodySmall)
+                    .foregroundStyle(settings.cardTextColor)
+                    .lineSpacing(LineHeight.normal)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(settings.dialogBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .borderCard(radius: 12)
+
+                SpeakerButton(text: text, color: RenaissanceColors.ochre, size: 12)
+                    .padding(.leading, 8)
+            }
 
             Spacer(minLength: 40)
         }

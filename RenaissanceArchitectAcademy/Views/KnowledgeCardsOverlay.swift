@@ -259,6 +259,7 @@ struct KnowledgeCardsOverlay: View {
         .onDisappear {
             fishingTimer?.invalidate()
             fishingTimer = nil
+            TTSService.shared.stop()
         }
     }
 
@@ -653,6 +654,15 @@ struct KnowledgeCardsOverlay: View {
             // card's full width; height is intrinsic (VStack hugs content).
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: Spacing.sm) {
+                    HStack(spacing: 6) {
+                        SpeakerButton(text: card.lessonText, color: card.color)
+                        Text("Read aloud")
+                            .font(RenaissanceFont.caption)
+                            .foregroundStyle(card.color.opacity(0.6))
+                        Spacer()
+                    }
+                    .opacity(showFlippedContent ? 1 : 0)
+
                     highlightedLessonText(card: card)
                         .fixedSize(horizontal: false, vertical: true)  // force multi-line wrap
                         .lineSpacing(5)
