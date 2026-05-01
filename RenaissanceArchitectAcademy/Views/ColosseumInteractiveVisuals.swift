@@ -210,11 +210,11 @@ private struct DrainFoundationVisual: View {
                         p.move(to: CGPoint(x: w * 0.1, y: groundY))
                         p.addLine(to: CGPoint(x: w * 0.9, y: groundY))
                     }
-                    .stroke(Color.brown.opacity(0.4), lineWidth: 1.5)
+                    .stroke(RenaissanceColors.warmBrown.opacity(0.4), lineWidth: 1.5)
 
                     // Earth layers below ground
                     Rectangle()
-                        .fill(Color.brown.opacity(0.1))
+                        .fill(RenaissanceColors.warmBrown.opacity(0.1))
                         .frame(width: w * 0.6, height: h * 0.5)
                         .position(x: cx, y: groundY + h * 0.25)
 
@@ -229,7 +229,7 @@ private struct DrainFoundationVisual: View {
                         ForEach(0..<5, id: \.self) { i in
                             let px = w * 0.25 + CGFloat(i) * w * 0.12
                             Rectangle()
-                                .fill(Color.brown.opacity(0.6))
+                                .fill(RenaissanceColors.warmBrown.opacity(0.6))
                                 .frame(width: 4, height: h * 0.3)
                                 .position(x: px, y: groundY + h * 0.2)
                         }
@@ -590,13 +590,13 @@ private struct HypogeumElevatorVisual: View {
                         p.move(to: CGPoint(x: cx + shaftW * 0.3, y: arenaY - 10))
                         p.addLine(to: CGPoint(x: cx + shaftW * 0.3, y: platformY))
                     }
-                    .stroke(Color.brown.opacity(0.4), lineWidth: 1)
+                    .stroke(RenaissanceColors.warmBrown.opacity(0.4), lineWidth: 1)
 
                     // Platform (draggable)
                     let platformY = arenaY + (bottomY - arenaY) * (1.0 - liftProgress)
 
                     RoundedRectangle(cornerRadius: 3)
-                        .fill(Color.brown.opacity(0.5))
+                        .fill(RenaissanceColors.warmBrown.opacity(0.5))
                         .frame(width: shaftW - 8, height: 10)
                         .position(x: cx, y: platformY)
                         .gesture(
@@ -617,7 +617,7 @@ private struct HypogeumElevatorVisual: View {
                     // Trap door opening
                     if liftProgress > 0.8 {
                         Rectangle()
-                            .fill(Color.brown.opacity(0.3))
+                            .fill(RenaissanceColors.warmBrown.opacity(0.3))
                             .frame(width: shaftW - 4, height: 4)
                             .position(x: cx, y: arenaY)
                             .opacity(Double(liftProgress - 0.8) * 5)
@@ -963,7 +963,7 @@ private struct VelariumCanvasVisual: View {
                                 p.move(to: CGPoint(x: cx + rx * cos(angle), y: cy + ry * sin(angle)))
                                 p.addLine(to: CGPoint(x: cx + openRx * cos(angle), y: cy + openRy * sin(angle)))
                             }
-                            .stroke(Color.brown.opacity(0.3), lineWidth: 0.5)
+                            .stroke(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 0.5)
                         }
                     }
 
@@ -1439,7 +1439,7 @@ private struct VelariumTensionVisual: View {
                     // Left and right masts
                     ForEach([-1.0, 1.0], id: \.self) { side in
                         Rectangle()
-                            .fill(Color.brown.opacity(0.5))
+                            .fill(RenaissanceColors.warmBrown.opacity(0.5))
                             .frame(width: 4, height: mastH)
                             .position(x: cx + side * w * 0.35, y: mastY)
                     }
@@ -1454,7 +1454,7 @@ private struct VelariumTensionVisual: View {
                                 control: CGPoint(x: cx + billowOffset, y: ropeY + windSpeed * 15)
                             )
                         }
-                        .stroke(Color.brown.opacity(0.3), lineWidth: 0.8)
+                        .stroke(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 0.8)
                     }
 
                     // Canvas fill (billows with wind)

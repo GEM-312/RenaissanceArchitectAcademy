@@ -193,13 +193,13 @@ private struct GromaSurveyVisual: View {
                 ZStack {
                     // Vertical pole
                     Rectangle()
-                        .fill(Color.brown.opacity(0.5))
+                        .fill(RenaissanceColors.warmBrown.opacity(0.5))
                         .frame(width: 4, height: h * 0.45)
                         .position(x: cx, y: cy + h * 0.05)
 
                     // Cross arms (horizontal bar)
                     Rectangle()
-                        .fill(Color.brown.opacity(0.5))
+                        .fill(RenaissanceColors.warmBrown.opacity(0.5))
                         .frame(width: armLen * 2, height: 4)
                         .position(x: cx, y: cy - h * 0.1)
 
@@ -216,7 +216,7 @@ private struct GromaSurveyVisual: View {
                             p.move(to: CGPoint(x: armX, y: armY))
                             p.addLine(to: CGPoint(x: armX + sway, y: armY + plumbLen))
                         }
-                        .stroke(Color.brown.opacity(0.4), lineWidth: 1)
+                        .stroke(RenaissanceColors.warmBrown.opacity(0.4), lineWidth: 1)
 
                         // Plumb weight
                         Circle()
@@ -232,7 +232,7 @@ private struct GromaSurveyVisual: View {
                             p.move(to: CGPoint(x: fwd, y: armY + 2))
                             p.addLine(to: CGPoint(x: fwd + sway * 0.5, y: armY + plumbLen * 0.7))
                         }
-                        .stroke(Color.brown.opacity(0.25), lineWidth: 0.8)
+                        .stroke(RenaissanceColors.warmBrown.opacity(0.25), lineWidth: 0.8)
 
                         Circle()
                             .fill(IVMaterialColors.stoneGray.opacity(0.5))
@@ -324,7 +324,7 @@ private struct FourLayersVisual: View {
                         p.move(to: CGPoint(x: w * 0.15, y: baseY + layerH * 0.5))
                         p.addLine(to: CGPoint(x: w * 0.85, y: baseY + layerH * 0.5))
                     }
-                    .stroke(Color.brown.opacity(0.3), lineWidth: 1)
+                    .stroke(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 1)
 
                     // Built layers (bottom to top)
                     ForEach(0..<layersBuilt, id: \.self) { i in
@@ -763,7 +763,7 @@ private struct CamberDrainageVisual: View {
                             p.move(to: CGPoint(x: ditchX, y: roadY))
                             p.addLine(to: CGPoint(x: ditchX, y: roadY + h * 0.12))
                         }
-                        .stroke(Color.brown.opacity(0.3), lineWidth: 1.5)
+                        .stroke(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 1.5)
                     }
 
                     // Camber dimension

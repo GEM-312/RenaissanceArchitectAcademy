@@ -104,7 +104,7 @@ private struct OnagerLaunchVisual: View {
                             .position(x: cx + side * w * 0.12, y: baseY + 10)
                     }
                     // Torsion bundle
-                    Circle().fill(Color.brown.opacity(0.4)).frame(width: 12, height: 12).position(x: cx, y: baseY - 6)
+                    Circle().fill(RenaissanceColors.warmBrown.opacity(0.4)).frame(width: 12, height: 12).position(x: cx, y: baseY - 6)
                     // Arm
                     Path { p in
                         p.move(to: CGPoint(x: cx, y: baseY - 6))
@@ -161,7 +161,7 @@ private struct LaunchAngleVisual: View {
                 let range = w * 0.7 * sin(2 * angleRad)
                 ZStack {
                     Path { p in p.move(to: CGPoint(x: w * 0.1, y: baseY)); p.addLine(to: CGPoint(x: w * 0.9, y: baseY)) }
-                        .stroke(Color.brown.opacity(0.3), lineWidth: 1)
+                        .stroke(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 1)
                     // Parabolic arc
                     Path { p in
                         for t in stride(from: 0.0, through: 1.0, by: 0.02) {
@@ -204,7 +204,7 @@ private struct TorsionSpringVisual: View {
                     ForEach(0..<Int(4 + twists * 8), id: \.self) { i in
                         let offset = CGFloat(i) * 3 - CGFloat(Int(4 + twists * 8)) * 1.5
                         Path { p in p.move(to: CGPoint(x: cx + offset, y: h * 0.2)); p.addLine(to: CGPoint(x: cx + offset, y: h * 0.55)) }
-                            .stroke(Color.brown.opacity(0.3 + twists * 0.3), lineWidth: 2)
+                            .stroke(RenaissanceColors.warmBrown.opacity(0.3 + twists * 0.3), lineWidth: 2)
                     }
                     // Tension meter
                     ZStack(alignment: .leading) {
@@ -307,7 +307,7 @@ private struct SiegeTowerVisual: View {
                             RoundedRectangle(cornerRadius: 1).fill(oakBrown).frame(width: towerW * 0.8, height: 4)
                                 .position(x: cx + towerW * 0.4, y: y).rotationEffect(.degrees(-15), anchor: .leading)
                         } else if i == 5 { // Wet hide
-                            RoundedRectangle(cornerRadius: 2).fill(Color.brown.opacity(0.2)).frame(width: towerW + 4, height: floorH * CGFloat(levelsBuilt - 1))
+                            RoundedRectangle(cornerRadius: 2).fill(RenaissanceColors.warmBrown.opacity(0.2)).frame(width: towerW + 4, height: floorH * CGFloat(levelsBuilt - 1))
                                 .position(x: cx, y: baseY - floorH * 2)
                         } else {
                             RoundedRectangle(cornerRadius: 2).fill(oakBrown.opacity(0.3)).frame(width: towerW, height: floorH - 2)
@@ -363,7 +363,7 @@ private struct BloomerySmelterVisual: View {
                          stepLabel: isSmelting ? "Spongy bloom — hammer to expel slag." : "Drag bellows to heat — 1,100°C smelts iron.", height: height) {
             GeometryReader { geo in let w = geo.size.width; let h = geo.size.height; let cx = w * 0.5
                 ZStack {
-                    RoundedRectangle(cornerRadius: 4).fill(isSmelting ? IVMaterialColors.ironDark.opacity(0.8) : Color.brown.opacity(0.3 + temperature * 0.3))
+                    RoundedRectangle(cornerRadius: 4).fill(isSmelting ? IVMaterialColors.ironDark.opacity(0.8) : RenaissanceColors.warmBrown.opacity(0.3 + temperature * 0.3))
                         .frame(width: 55, height: 40).shadow(color: tempC > 800 ? IVMaterialColors.hotRed.opacity(0.3) : .clear, radius: 8).position(x: cx, y: h * 0.35)
                     Text("\(tempC)°C").font(.custom("EBGaramond-Bold", size: 16)).foregroundStyle(isSmelting ? RenaissanceColors.sageGreen : IVMaterialColors.sepiaInk).monospacedDigit().position(x: cx, y: h * 0.15)
                     Text(isSmelting ? "Iron bloom" : tempC > 600 ? "Heating..." : "Iron ore").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6)).position(x: cx, y: h * 0.52)

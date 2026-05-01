@@ -542,7 +542,7 @@ private struct MarineConcreteVisual: View {
         .padding(.vertical, 4)
         .background(
             RoundedRectangle(cornerRadius: 4)
-                .fill(active ? color.opacity(0.08) : Color.gray.opacity(0.03))
+                .fill(active ? color.opacity(0.08) : IVMaterialColors.stoneGray.opacity(0.03))
         )
     }
 }

@@ -183,7 +183,7 @@ private struct CircularLayoutVisual: View {
 
                 // Step 2: quadrant coloring
                 if step >= 2 {
-                    let quadColors: [Color] = [soilBrown, IVMaterialColors.waterBlue, Color.gray.opacity(0.5), infrared]
+                    let quadColors: [Color] = [soilBrown, IVMaterialColors.waterBlue, IVMaterialColors.stoneGray.opacity(0.5), infrared]
                     for (i, qColor) in quadColors.enumerated() {
                         let startAngle = CGFloat(i) * .pi / 2
                         let endAngle = startAngle + .pi / 2
@@ -663,8 +663,8 @@ private struct GreenhouseGlassVisual: View {
                 ctx.stroke(Path(glass), with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 1.5)
 
                 // Lead came frame
-                ctx.fill(Path(CGRect(x: glassX - glassW / 2 - 2, y: topY, width: 2, height: botY - topY)), with: .color(Color.gray.opacity(0.4)))
-                ctx.fill(Path(CGRect(x: glassX + glassW / 2, y: topY, width: 2, height: botY - topY)), with: .color(Color.gray.opacity(0.4)))
+                ctx.fill(Path(CGRect(x: glassX - glassW / 2 - 2, y: topY, width: 2, height: botY - topY)), with: .color(IVMaterialColors.stoneGray.opacity(0.4)))
+                ctx.fill(Path(CGRect(x: glassX + glassW / 2, y: topY, width: 2, height: botY - topY)), with: .color(IVMaterialColors.stoneGray.opacity(0.4)))
 
                 // Sunlight (left side)
                 if step >= 1 {
@@ -860,7 +860,7 @@ private struct SoilSubstrateVisual: View {
             VStack(spacing: 0) {
                 ForEach(Array(layers.enumerated()), id: \.offset) { _, layer in
                     Rectangle()
-                        .fill(active ? layer.1 : Color.gray.opacity(0.1))
+                        .fill(active ? layer.1 : IVMaterialColors.stoneGray.opacity(0.1))
                         .frame(height: 22)
                         .overlay {
                             Text(layer.0)

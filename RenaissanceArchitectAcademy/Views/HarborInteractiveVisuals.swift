@@ -333,12 +333,12 @@ private struct CofferdamVisual: View {
                     // Double pile walls
                     ForEach([-1.0, 1.0], id: \.self) { side in
                         RoundedRectangle(cornerRadius: 2)
-                            .fill(Color.brown.opacity(0.5))
+                            .fill(RenaissanceColors.warmBrown.opacity(0.5))
                             .frame(width: 6, height: cofferH)
                             .position(x: cx + side * cofferW * 0.5, y: baseY)
 
                         RoundedRectangle(cornerRadius: 2)
-                            .fill(Color.brown.opacity(0.4))
+                            .fill(RenaissanceColors.warmBrown.opacity(0.4))
                             .frame(width: 4, height: cofferH)
                             .position(x: cx + side * (cofferW * 0.5 + 8), y: baseY)
                     }
@@ -352,7 +352,7 @@ private struct CofferdamVisual: View {
                     // Dry building area
                     if waterDrained < 0.2 {
                         Rectangle()
-                            .fill(Color.brown.opacity(0.15))
+                            .fill(RenaissanceColors.warmBrown.opacity(0.15))
                             .frame(width: cofferW - 12, height: cofferH * 0.3)
                             .position(x: cx, y: baseY + cofferH * 0.25)
 
@@ -760,7 +760,7 @@ private struct HullProtectionVisual: View {
     let visual: CardVisual; let color: Color; var height: CGFloat = 275
     @State private var step: Int = 1
     @State private var layersAdded: Int = 0
-    private let parts = [("Oak planks", Color.brown.opacity(0.5)), ("Lead sheet", IVMaterialColors.leadGray), ("Copper tacks", Color(red: 0.80, green: 0.55, blue: 0.35))]
+    private let parts = [("Oak planks", RenaissanceColors.warmBrown.opacity(0.5)), ("Lead sheet", IVMaterialColors.leadGray), ("Copper tacks", Color(red: 0.80, green: 0.55, blue: 0.35))]
 
     var body: some View {
         TeachingContainer(title: visual.title, color: color, totalSteps: 3, step: $step,
@@ -800,12 +800,12 @@ private struct WarehouseTrussVisual: View {
                 let trussW = w * 0.65; let trussY = h * 0.35; let deflect = loadWeight * 6
                 ZStack {
                     Path { p in p.move(to: CGPoint(x: cx - trussW*0.5, y: trussY)); p.addQuadCurve(to: CGPoint(x: cx + trussW*0.5, y: trussY), control: CGPoint(x: cx, y: trussY + deflect)) }
-                        .stroke(Color.brown.opacity(0.6), lineWidth: 3)
+                        .stroke(RenaissanceColors.warmBrown.opacity(0.6), lineWidth: 3)
                     Path { p in p.move(to: CGPoint(x: cx - trussW*0.5, y: trussY + h*0.15)); p.addLine(to: CGPoint(x: cx + trussW*0.5, y: trussY + h*0.15)) }
-                        .stroke(Color.brown.opacity(0.4), lineWidth: 2)
+                        .stroke(RenaissanceColors.warmBrown.opacity(0.4), lineWidth: 2)
                     ForEach([-0.25, 0.25], id: \.self) { off in
                         Path { p in p.move(to: CGPoint(x: cx + trussW * off, y: trussY + deflect * abs(off) * 2)); p.addLine(to: CGPoint(x: cx + trussW * off, y: trussY + h*0.15)) }
-                            .stroke(Color.brown.opacity(0.5), lineWidth: 2)
+                            .stroke(RenaissanceColors.warmBrown.opacity(0.5), lineWidth: 2)
                     }
                     Text("\(tons) tons").font(RenaissanceFont.ivFormula).foregroundStyle(IVMaterialColors.sepiaInk).position(x: cx, y: h * 0.12)
                     if step >= 2 { Slider(value: $loadWeight, in: 0...1).tint(color).frame(width: w*0.5).position(x: cx, y: h*0.72)
@@ -832,7 +832,7 @@ private struct PoplarPilesVisual: View {
                     Rectangle().fill(seaBlue.opacity(0.1)).frame(width: w, height: h * 0.5).position(x: cx, y: h * 0.6)
                     Path { p in p.move(to: CGPoint(x: w*0.1, y: seaY)); p.addLine(to: CGPoint(x: w*0.9, y: seaY)) }.stroke(seaBlue.opacity(0.3), lineWidth: 1)
                     ForEach(0..<pilesHammered, id: \.self) { i in
-                        RoundedRectangle(cornerRadius: 1).fill(Color.brown.opacity(0.5)).frame(width: 6, height: h * 0.35)
+                        RoundedRectangle(cornerRadius: 1).fill(RenaissanceColors.warmBrown.opacity(0.5)).frame(width: 6, height: h * 0.35)
                             .position(x: w * 0.25 + CGFloat(i) * w * 0.12, y: h * 0.52).transition(.move(edge: .top))
                     }
                     if step >= 2 && pilesHammered < 5 {

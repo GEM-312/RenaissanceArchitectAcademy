@@ -514,7 +514,7 @@ private struct GrindUltramarineVisual: View {
                     if step >= 3 {
                         Circle().fill(ultraBlue.opacity(0.3)).frame(width: 25, height: 25)
                             .overlay { Text("2nd").font(RenaissanceFont.ivBody).foregroundStyle(.white.opacity(0.6)) }
-                        Circle().fill(Color.gray.opacity(0.3)).frame(width: 20, height: 20)
+                        Circle().fill(IVMaterialColors.stoneGray.opacity(0.3)).frame(width: 20, height: 20)
                             .overlay { Text("3rd").font(RenaissanceFont.ivBody).foregroundStyle(.white.opacity(0.5)) }
                     }
                 }

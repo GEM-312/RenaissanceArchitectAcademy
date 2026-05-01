@@ -192,7 +192,7 @@ private struct LayerDigVisual: View {
                         p.move(to: CGPoint(x: 10, y: groundY))
                         p.addLine(to: CGPoint(x: w - 10, y: groundY))
                     }
-                    .stroke(Color.brown.opacity(0.5), lineWidth: 2)
+                    .stroke(RenaissanceColors.warmBrown.opacity(0.5), lineWidth: 2)
                     Text("Ground level")
                         .font(RenaissanceFont.ivBody.italic())
                         .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
@@ -233,7 +233,7 @@ private struct LayerDigVisual: View {
                     if step >= 3 {
                         let trenchL = (w - ringW) / 2
                         RoundedRectangle(cornerRadius: 3)
-                            .fill(Color.gray.opacity(0.35))
+                            .fill(IVMaterialColors.stoneGray.opacity(0.35))
                             .overlay(RoundedRectangle(cornerRadius: 3).stroke(IVMaterialColors.sepiaInk.opacity(0.5), lineWidth: 1.5))
                             .frame(width: ringW, height: ringH)
                             .position(x: w / 2, y: trenchBottom - ringH / 2)
@@ -770,7 +770,7 @@ private struct TimelineAgingVisual: View {
                     VStack(spacing: 4) {
                         ZStack {
                             RoundedRectangle(cornerRadius: 6)
-                                .fill(Color.gray.opacity(max(0.1, 0.5 - (step >= 3 ? yearSlider * 0.4 : 0))))
+                                .fill(IVMaterialColors.stoneGray.opacity(max(0.1, 0.5 - (step >= 3 ? yearSlider * 0.4 : 0))))
                                 .frame(width: 70, height: 55)
                                 .overlay(RoundedRectangle(cornerRadius: 6).stroke(IVMaterialColors.sepiaInk.opacity(0.3), lineWidth: 1))
 
@@ -1123,7 +1123,7 @@ private struct CenteringBuildVisual: View {
                             p.addArc(center: CGPoint(x: cx, y: baseY), radius: archR * 0.92,
                                      startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
                         }
-                        .stroke(Color.brown.opacity(0.7), lineWidth: 4)
+                        .stroke(RenaissanceColors.warmBrown.opacity(0.7), lineWidth: 4)
 
                         ForEach(0..<7, id: \.self) { i in
                             let ang = (180.0 - Double(i) * 30.0) * .pi / 180
@@ -1132,12 +1132,12 @@ private struct CenteringBuildVisual: View {
                                 p.addLine(to: CGPoint(x: cx + archR * 0.92 * cos(ang),
                                                       y: baseY + archR * 0.92 * sin(ang)))
                             }
-                            .stroke(Color.brown.opacity(0.4), lineWidth: 1.5)
+                            .stroke(RenaissanceColors.warmBrown.opacity(0.4), lineWidth: 1.5)
                         }
 
                         Text("Oak centering")
                             .font(RenaissanceFont.ivLabel)
-                            .foregroundStyle(Color.brown)
+                            .foregroundStyle(RenaissanceColors.warmBrown)
                             .position(x: cx, y: baseY - archR * 0.4)
                     }
 
@@ -1247,7 +1247,7 @@ private struct ScaffoldClimbVisual: View {
                             p.move(to: CGPoint(x: scaffL, y: tierBot))
                             p.addLine(to: CGPoint(x: scaffL + 14, y: tierTop))
                         }
-                        .stroke(Color.brown.opacity(0.5), lineWidth: 1.5)
+                        .stroke(RenaissanceColors.warmBrown.opacity(0.5), lineWidth: 1.5)
 
                         // Right scaffold
                         Path { p in
@@ -1260,7 +1260,7 @@ private struct ScaffoldClimbVisual: View {
                             p.move(to: CGPoint(x: scaffR, y: tierBot))
                             p.addLine(to: CGPoint(x: scaffR - 14, y: tierTop))
                         }
-                        .stroke(Color.brown.opacity(0.5), lineWidth: 1.5)
+                        .stroke(RenaissanceColors.warmBrown.opacity(0.5), lineWidth: 1.5)
 
                         // Height tick mark
                         DimLabel(text: heights[level])

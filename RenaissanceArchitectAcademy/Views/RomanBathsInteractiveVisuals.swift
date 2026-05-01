@@ -1005,21 +1005,21 @@ private struct TrussLoadVisual: View {
                             control: CGPoint(x: cx, y: trussY + deflection)
                         )
                     }
-                    .stroke(Color.brown.opacity(0.6), lineWidth: 3)
+                    .stroke(RenaissanceColors.warmBrown.opacity(0.6), lineWidth: 3)
 
                     // Bottom chord
                     Path { p in
                         p.move(to: CGPoint(x: cx - trussW * 0.5, y: trussY + trussH))
                         p.addLine(to: CGPoint(x: cx + trussW * 0.5, y: trussY + trussH))
                     }
-                    .stroke(Color.brown.opacity(0.5), lineWidth: 2)
+                    .stroke(RenaissanceColors.warmBrown.opacity(0.5), lineWidth: 2)
 
                     // King post (vertical center)
                     Path { p in
                         p.move(to: CGPoint(x: cx, y: trussY + deflection))
                         p.addLine(to: CGPoint(x: cx, y: trussY + trussH))
                     }
-                    .stroke(Color.brown.opacity(0.6), lineWidth: 2.5)
+                    .stroke(RenaissanceColors.warmBrown.opacity(0.6), lineWidth: 2.5)
 
                     // Diagonal struts
                     ForEach([-1.0, 1.0], id: \.self) { side in
@@ -1027,7 +1027,7 @@ private struct TrussLoadVisual: View {
                             p.move(to: CGPoint(x: cx, y: trussY + trussH))
                             p.addLine(to: CGPoint(x: cx + side * trussW * 0.35, y: trussY + deflection * 0.5))
                         }
-                        .stroke(Color.brown.opacity(0.4), lineWidth: 1.5)
+                        .stroke(RenaissanceColors.warmBrown.opacity(0.4), lineWidth: 1.5)
                     }
 
                     // Support points
@@ -1476,7 +1476,7 @@ private struct AmphoraVisual: View {
                     // Pine pitch lining (inner glow)
                     if layersAdded >= 2 {
                         Ellipse()
-                            .fill(Color.brown.opacity(0.2))
+                            .fill(RenaissanceColors.warmBrown.opacity(0.2))
                             .frame(width: ampW - 12, height: h * 0.2)
                             .position(x: cx, y: h * 0.4)
                             .transition(.opacity)
@@ -1485,7 +1485,7 @@ private struct AmphoraVisual: View {
                     // Cork stopper
                     if layersAdded >= 3 {
                         RoundedRectangle(cornerRadius: 2)
-                            .fill(Color.brown.opacity(0.5))
+                            .fill(RenaissanceColors.warmBrown.opacity(0.5))
                             .frame(width: 18, height: 10)
                             .position(x: cx, y: h * 0.195)
                             .transition(.scale)

@@ -172,9 +172,9 @@ private struct MortarVsConcreteVisual: View {
 
                             // Earth sides
                             HStack {
-                                Rectangle().fill(Color.brown.opacity(0.2)).frame(width: 4)
+                                Rectangle().fill(RenaissanceColors.warmBrown.opacity(0.2)).frame(width: 4)
                                 Spacer()
-                                Rectangle().fill(Color.brown.opacity(0.2)).frame(width: 4)
+                                Rectangle().fill(RenaissanceColors.warmBrown.opacity(0.2)).frame(width: 4)
                             }
                             .frame(width: panelW, height: panelH)
 
@@ -499,18 +499,18 @@ private struct UndergroundRevealVisual: View {
                 ZStack {
                     // Filled terrain (Bézier hills) — earth color below the curve
                     terrainFill(w: w, h: h, margin: margin)
-                        .fill(Color.brown.opacity(0.12))
+                        .fill(RenaissanceColors.warmBrown.opacity(0.12))
 
                     // Terrain outline (Bézier curve)
                     terrainPath(w: w, h: h, margin: margin)
-                        .stroke(Color.brown.opacity(0.5), lineWidth: 2)
+                        .stroke(RenaissanceColors.warmBrown.opacity(0.5), lineWidth: 2)
 
                     // Aqueduct channel path (step 2+ as sections are revealed)
                     if !revealedSections.isEmpty {
                         // Underground sections: dashed, inside terrain
                         aqueductPath(w: w, h: h, margin: margin, underground: true)
                             .stroke(style: StrokeStyle(lineWidth: 2, dash: [4, 3]))
-                            .foregroundStyle(Color.brown.opacity(0.5))
+                            .foregroundStyle(RenaissanceColors.warmBrown.opacity(0.5))
 
                         // Above-ground sections: solid with arch supports
                         aqueductPath(w: w, h: h, margin: margin, underground: false)
@@ -528,7 +528,7 @@ private struct UndergroundRevealVisual: View {
                     // Source and destination
                     Image(systemName: "mountain.2.fill")
                         .font(.system(size: 14))
-                        .foregroundStyle(Color.brown.opacity(0.5))
+                        .foregroundStyle(RenaissanceColors.warmBrown.opacity(0.5))
                         .position(x: margin + 8, y: h * 0.08)
                     Text("Springs")
                         .font(RenaissanceFont.ivBody)
@@ -537,7 +537,7 @@ private struct UndergroundRevealVisual: View {
 
                     Image(systemName: "building.columns.fill")
                         .font(.system(size: 14))
-                        .foregroundStyle(Color.brown.opacity(0.5))
+                        .foregroundStyle(RenaissanceColors.warmBrown.opacity(0.5))
                         .position(x: w - margin - 8, y: h * 0.32)
                     Text("Rome")
                         .font(RenaissanceFont.ivBody)
@@ -578,7 +578,7 @@ private struct UndergroundRevealVisual: View {
                                 // Label: tunnel or arches
                                 Text(isUnderground[i] ? "tunnel" : "arches")
                                     .font(RenaissanceFont.ivBody)
-                                    .foregroundStyle(isUnderground[i] ? Color.brown.opacity(0.5) : IVMaterialColors.stoneGray)
+                                    .foregroundStyle(isUnderground[i] ? RenaissanceColors.warmBrown.opacity(0.5) : IVMaterialColors.stoneGray)
                                     .position(x: x, y: h * 0.75)
                                     .transition(.scale.combined(with: .opacity))
                             }
@@ -592,7 +592,7 @@ private struct UndergroundRevealVisual: View {
                                 HStack(spacing: 4) {
                                     Path { p in p.move(to: .zero); p.addLine(to: CGPoint(x: 16, y: 0)) }
                                         .stroke(style: StrokeStyle(lineWidth: 2, dash: [4, 3]))
-                                        .foregroundStyle(Color.brown.opacity(0.5))
+                                        .foregroundStyle(RenaissanceColors.warmBrown.opacity(0.5))
                                         .frame(width: 16, height: 2)
                                     DimLabel(text: "53 km underground")
                                 }
@@ -782,7 +782,7 @@ private struct ChorobatesTiltVisual: View {
                         p.move(to: CGPoint(x: w * 0.08, y: cy + legH + beamH / 2))
                         p.addLine(to: CGPoint(x: w * 0.92, y: cy + legH + beamH / 2))
                     }
-                    .stroke(Color.brown.opacity(0.2), lineWidth: 1)
+                    .stroke(RenaissanceColors.warmBrown.opacity(0.2), lineWidth: 1)
 
                     // Beam assembly (rotates)
                     Group {
@@ -794,12 +794,12 @@ private struct ChorobatesTiltVisual: View {
                                 p.move(to: CGPoint(x: x, y: 0))
                                 p.addLine(to: CGPoint(x: x, y: legH))
                             }
-                            .stroke(Color.brown.opacity(0.6), lineWidth: 3)
+                            .stroke(RenaissanceColors.warmBrown.opacity(0.6), lineWidth: 3)
                         }
 
                         // Main beam
                         RoundedRectangle(cornerRadius: 2)
-                            .fill(Color.brown.opacity(0.5))
+                            .fill(RenaissanceColors.warmBrown.opacity(0.5))
                             .frame(width: beamW, height: beamH)
                             .offset(y: -legH / 2 - beamH / 2 + legH / 2)
 
@@ -807,7 +807,7 @@ private struct ChorobatesTiltVisual: View {
                         ZStack {
                             // Channel trough
                             RoundedRectangle(cornerRadius: 1)
-                                .fill(Color.brown.opacity(0.3))
+                                .fill(RenaissanceColors.warmBrown.opacity(0.3))
                                 .frame(width: beamW * 0.85, height: 6)
 
                             // Water surface (counter-rotates to stay level)
@@ -965,11 +965,11 @@ private struct GradientSliderVisual: View {
                     // Source & destination icons
                     Image(systemName: "mountain.2.fill")
                         .font(.system(size: 13))
-                        .foregroundStyle(Color.brown.opacity(0.3))
+                        .foregroundStyle(RenaissanceColors.warmBrown.opacity(0.3))
                         .position(x: leftX - 2, y: leftY - 22)
                     Image(systemName: "building.columns.fill")
                         .font(.system(size: 13))
-                        .foregroundStyle(Color.brown.opacity(0.3))
+                        .foregroundStyle(RenaissanceColors.warmBrown.opacity(0.3))
                         .position(x: rightX + 2, y: rightY - 22)
                 }
             }
@@ -1037,7 +1037,7 @@ private struct VoussoirArchBuildVisual: View {
                                 startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
                     }
                     .stroke(style: StrokeStyle(lineWidth: 1, dash: [4, 4]))
-                    .foregroundStyle(Color.brown.opacity(keystonePlaced ? 0 : 0.3))
+                    .foregroundStyle(RenaissanceColors.warmBrown.opacity(keystonePlaced ? 0 : 0.3))
                     .animation(.easeOut(duration: 0.5), value: keystonePlaced)
 
                     // Voussoir slots (step 2+)
@@ -1459,7 +1459,7 @@ private struct FistulaPipeFabVisual: View {
                         // Wood core (dashed circle inside)
                         Circle()
                             .strokeBorder(style: StrokeStyle(lineWidth: 1, dash: [3, 3]))
-                            .foregroundStyle(Color.brown.opacity(0.3))
+                            .foregroundStyle(RenaissanceColors.warmBrown.opacity(0.3))
                             .frame(width: pipeSize * 0.5, height: pipeSize * 0.5)
                             .position(x: cx, y: cy + 2)
 

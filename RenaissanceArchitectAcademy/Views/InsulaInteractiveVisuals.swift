@@ -107,7 +107,7 @@ private struct ApartmentFloorsVisual: View {
                         p.move(to: CGPoint(x: w * 0.2, y: baseY + floorH * 0.5))
                         p.addLine(to: CGPoint(x: w * 0.8, y: baseY + floorH * 0.5))
                     }
-                    .stroke(Color.brown.opacity(0.3), lineWidth: 1)
+                    .stroke(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 1)
 
                     // Built floors
                     ForEach(0..<floorsBuilt, id: \.self) { i in
@@ -199,7 +199,7 @@ private struct HeightLimitVisual: View {
                         p.move(to: CGPoint(x: w * 0.15, y: baseY))
                         p.addLine(to: CGPoint(x: w * 0.85, y: baseY))
                     }
-                    .stroke(Color.brown.opacity(0.3), lineWidth: 1)
+                    .stroke(RenaissanceColors.warmBrown.opacity(0.3), lineWidth: 1)
 
                     // Building
                     RoundedRectangle(cornerRadius: 3)
@@ -725,7 +725,7 @@ private struct TileInterlockVisual: View {
                         p.move(to: CGPoint(x: w * 0.2, y: h * 0.55))
                         p.addLine(to: CGPoint(x: w * 0.8, y: h * 0.45))
                     }
-                    .stroke(Color.brown.opacity(0.2), lineWidth: 1)
+                    .stroke(RenaissanceColors.warmBrown.opacity(0.2), lineWidth: 1)
 
                     if step >= 2 {
                         ForEach(0..<4, id: \.self) { i in
