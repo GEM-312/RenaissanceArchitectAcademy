@@ -299,17 +299,16 @@ struct KnowledgeCardsOverlay: View {
                                 handleCardTap(card: card, isCompleted: isCompleted)
                             }
 
-                        // BACK face — only rendered during/after flip to save ~150 MB
-                        // (each back instantiates CardVisualView with full Canvas drawing)
-                        if angle > 0 {
-                            flippedCardBack(card: card, isCompleted: isCompleted)
-                                .frame(maxWidth: flippedW, maxHeight: flippedH)
-                                .fixedSize(horizontal: false, vertical: true)
-                                .scaleEffect(isThisFlipped ? 1.0 : 0.15)
+                        // BACK chrome — lightweight visual back used only during the
+                        // 3D rotation OF THE ACTIVE CARD. Gated on `isThisFlipped` so it
+                        // disappears instantly when the card unflips after completion,
+                        // instead of leaving a shrinking parchment square on screen.
+                        if angle > 0 && isThisFlipped {
+                            cardBackChrome(card: card)
+                                .frame(width: flippedW, height: flippedH)
                                 .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
                                 .opacity(angle >= 90 ? 1 : 0)
                                 .allowsHitTesting(false)
-                                .animation(.spring(response: 0.5, dampingFraction: 0.7), value: isThisFlipped)
                         }
                     }
                     .rotation3DEffect(.degrees(angle), axis: (x: 0, y: 1, z: 0), perspective: 0.4)
@@ -386,6 +385,11 @@ struct KnowledgeCardsOverlay: View {
     }
 
     private func handleBackgroundTap() {
+        // Infographic reveal owns the flow until the user taps "Continue".
+        // Background taps would otherwise drop the card back to reading and
+        // strand the completion in pendingCompleteCard.
+        if showInfographic != nil { return }
+
         if let open = flippedOpenCard, cardPhases[open] == .activity {
             withAnimation(.easeInOut(duration: 0.4)) {
                 cardPhases[open] = .reading
@@ -499,6 +503,22 @@ struct KnowledgeCardsOverlay: View {
     }
 
     // MARK: - Card Back (reading ↔ activity)
+
+    /// Lightweight stand-in for the back face during the 3D flip rotation.
+    /// Matches `flippedCardBack`'s outer chrome (parchment fill, colored stroke,
+    /// shadow) but skips the heavy inner content (Canvas-based CardVisualView,
+    /// activity views, ScrollView). The flat overlay above the rotation renders
+    /// the full interactive instance once the flip settles.
+    private func cardBackChrome(card: KnowledgeCard) -> some View {
+        let color = card.color
+        return RoundedRectangle(cornerRadius: 14)
+            .fill(settings.dialogBackground)
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(color.opacity(0.4), lineWidth: 2)
+            )
+            .shadow(color: color.opacity(0.15), radius: 8, y: 3)
+    }
 
     private func flippedCardBack(card: KnowledgeCard, isCompleted: Bool) -> some View {
         let isActivity = cardPhases[card.id] == .activity
@@ -1638,11 +1658,13 @@ struct KnowledgeCardsOverlay: View {
     }
 
     private func completeCard(_ card: KnowledgeCard) {
-        // If card has an infographic, show it as a reward before finalizing
+        // If card has an infographic, show it as a reward before finalizing.
+        // Keep the card flipped open so the InfographicRevealView renders
+        // inside the live flat overlay — its Continue callback will then call
+        // finalizeCardCompletion which performs the unflip + completion.
         if let infographic = card.infographic {
             pendingCompleteCard = card
-            withAnimation(.spring(response: 0.4)) {
-                flippedOpenCard = nil
+            withAnimation(.spring(response: 0.3)) {
                 showInfographic = infographic
             }
             return
@@ -1667,15 +1689,15 @@ struct KnowledgeCardsOverlay: View {
             notebookState: notebookState
         )
 
-        // Mark card as completed with simple flip-back animation
+        // Mark card as completed and flip back in one transaction so the
+        // green-checkmark front face fades in directly — no intermediate
+        // "shrinking parchment square" between the activity and the
+        // learned-card state.
         SoundManager.shared.play(.correctChime)
-        withAnimation(.easeOut(duration: 0.4)) {
+        completedCardIDs.insert(card.id)
+        cardPhases[card.id] = .completed
+        withAnimation(.spring(response: 0.55, dampingFraction: 0.8)) {
             flippedOpenCard = nil
-        }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            completedCardIDs.insert(card.id)
-            cardPhases[card.id] = .completed
             flipAngles[card.id] = 0
         }
 
