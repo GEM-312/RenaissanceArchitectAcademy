@@ -179,6 +179,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
         setupWalkingPaths()
         setupStations()
         setupAmbientEffects()
+        setupQuarryAnimation()
         setupPlayer()
 
         // Dark tint node — toggled by theme (2x mapSize to cover edge fill area)
@@ -333,6 +334,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
     private var smallSmokeAccent2: SKEmitterNode?
     private var volcanoLava: SKEmitterNode?
     private var volcanoGlow: SKSpriteNode?
+    private var quarryAnimation: SKSpriteNode?
 
     /// Adds non-interactive ambient animations layered over the painted terrain
     /// — the workshop "breathes" even when the player isn't acting on a station.
@@ -430,6 +432,58 @@ class WorkshopScene: SKScene, ScrollZoomable {
         let breatheIn  = SKAction.group([scaleUp,   fadeUp])
         let breatheOut = SKAction.group([scaleDown, fadeDown])
         glow.run(SKAction.repeatForever(SKAction.sequence([breatheIn, breatheOut])))
+    }
+
+    // MARK: - Quarry Animation Overlay
+    //
+    // Loads QuarryFrame00..14 from Assets.xcassets and plays them as a
+    // continuous frame loop on top of the painted quarry. The cleaned PNGs
+    // are transparent except for the moving crane + workers, so the static
+    // rocks/cliffs in WorkshopTerrain show through.
+    //
+    // Position is intentionally code-set to a sensible starting value and
+    // exposed via editor mode — tap EDITOR → tap the sprite → drag to align,
+    // then read the new coords from the console and paste them back here.
+
+    private func setupQuarryAnimation() {
+        // Load whichever frames exist, stop at the first missing imageset.
+        // This keeps the animation working with 2 frames during pipeline
+        // testing and 15 once the full set is shipped.
+        var textures: [SKTexture] = []
+        for i in 0..<15 {
+            let name = String(format: "QuarryFrame%02d", i)
+            #if os(iOS)
+            guard UIImage(named: name) != nil else { break }
+            #else
+            guard NSImage(named: name) != nil else { break }
+            #endif
+            textures.append(SKTexture(imageNamed: name))
+        }
+        guard !textures.isEmpty else { return }
+
+        let sprite = SKSpriteNode(texture: textures[0])
+        // Native frames are 1928×1072; size below covers the painted quarry
+        // footprint on terrain. Adjust here if the ratio needs to change —
+        // editor mode only nudges position, not size.
+        sprite.size = CGSize(width: 1500, height: 836)
+        sprite.position = stationPositions[.quarry] ?? CGPoint(x: 1227, y: 1818)
+        sprite.zPosition = 12   // above terrain (-100), below station label pills (9-10)
+        sprite.name = "quarryAnimation"
+        addChild(sprite)
+        quarryAnimation = sprite
+
+        // Continuous loop. SKAction is the right primitive for ambient world
+        // animation (matches the volcano/chimney emitter pattern); the
+        // CLAUDE.md "play ONCE never loop" rule is for SwiftUI Timer-based
+        // avatar animations, not SpriteKit.
+        let timePerFrame: TimeInterval = textures.count <= 2 ? 0.5 : 0.15
+        let cycle = SKAction.animate(
+            with: textures,
+            timePerFrame: timePerFrame,
+            resize: false,
+            restore: false
+        )
+        sprite.run(SKAction.repeatForever(cycle), withKey: "quarryFrameLoop")
     }
 
     private func makeVolcanoSmokeEmitter() -> SKEmitterNode {
@@ -1426,6 +1480,9 @@ class WorkshopScene: SKScene, ScrollZoomable {
         }
         if let glow = volcanoGlow {
             editorMode.registerNode(glow, name: "glow_volcano")
+        }
+        if let quarry = quarryAnimation {
+            editorMode.registerNode(quarry, name: "anim_quarry")
         }
 
         // Waypoint dots (hidden until editor mode)
