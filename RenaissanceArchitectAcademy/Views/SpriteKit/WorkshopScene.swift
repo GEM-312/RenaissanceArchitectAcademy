@@ -180,6 +180,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
         setupStations()
         setupAmbientEffects()
         setupQuarryAnimation()
+        setupSwayingTrees()
         setupPlayer()
 
         // Dark tint node — toggled by theme (2x mapSize to cover edge fill area)
@@ -336,6 +337,15 @@ class WorkshopScene: SKScene, ScrollZoomable {
     private var volcanoGlow: SKSpriteNode?
     private var quarryAnimation: SKSpriteNode?
 
+    /// Trees that sway in the wind (continuous) and react to the player walking
+    /// past them (one-shot stronger pulse). Pivots are anchored at the trunk
+    /// base so the tops sweep like real trees.
+    private struct SwayingTree {
+        let node: SKSpriteNode
+        var lastDisturbed: TimeInterval = 0
+    }
+    private var swayingTrees: [SwayingTree] = []
+
     /// Adds non-interactive ambient animations layered over the painted terrain
     /// — the workshop "breathes" even when the player isn't acting on a station.
     /// Particles are scene-space (`targetNode = self`) so they drift independently
@@ -466,7 +476,9 @@ class WorkshopScene: SKScene, ScrollZoomable {
         // footprint on terrain. Adjust here if the ratio needs to change —
         // editor mode only nudges position, not size.
         sprite.size = CGSize(width: 1500, height: 836)
-        sprite.position = stationPositions[.quarry] ?? CGPoint(x: 1227, y: 1818)
+        // Aligned with the painted crane on WorkshopTerrain via editor mode.
+        // Re-tune by pressing E → drag the sprite → paste the new console coords.
+        sprite.position = CGPoint(x: 903, y: 1863)
         sprite.zPosition = 12   // above terrain (-100), below station label pills (9-10)
         sprite.name = "quarryAnimation"
         addChild(sprite)
@@ -484,6 +496,130 @@ class WorkshopScene: SKScene, ScrollZoomable {
             restore: false
         )
         sprite.run(SKAction.repeatForever(cycle), withKey: "quarryFrameLoop")
+    }
+
+    // MARK: - Swaying Trees
+    //
+    // Two-layer wind animation on cut-out tree PNGs (Tree1..9):
+    //   1. Continuous gentle ±2° sway (each tree starts at a random phase so
+    //      the workshop doesn't pulse in unison)
+    //   2. Player-disturbance pulse — when the apprentice walks within 150pt
+    //      of a tree, layer a stronger ±6° one-shot sway with 2s cooldown
+    //
+    // Pivot is at trunk base (anchorPoint y = 0) so the tops sweep like real
+    // trees instead of rotating around the center.
+    //
+    // Each tree is registered with editor mode — press E, tap a tree, drag
+    // to align with the painted footprint, paste new coords here.
+
+    private func setupSwayingTrees() {
+        // Default positions spread across the workshop map. Marina uses editor
+        // mode to drag each tree to its real spot in WorkshopTerrain.
+        let defaults: [(name: String, position: CGPoint)] = [
+            ("Tree1", CGPoint(x:  500, y: 1000)),
+            ("Tree2", CGPoint(x:  800, y: 1100)),
+            ("Tree3", CGPoint(x: 1100, y: 1000)),
+            ("Tree4", CGPoint(x: 1400, y: 1100)),
+            ("Tree5", CGPoint(x: 1700, y: 1000)),
+            ("Tree6", CGPoint(x: 2000, y: 1100)),
+            ("Tree7", CGPoint(x: 2300, y: 1000)),
+            ("Tree8", CGPoint(x: 2600, y: 1100)),
+            ("Tree9", CGPoint(x: 2900, y: 1000)),
+        ]
+        for entry in defaults {
+            addSwayingTree(image: entry.name, position: entry.position)
+        }
+    }
+
+    private func addSwayingTree(image: String, position: CGPoint, scale: CGFloat = 1.0) {
+        // Skip silently if the imageset hasn't been added yet — keeps the
+        // function idempotent so dropping new tree PNGs in just works.
+        #if os(iOS)
+        guard UIImage(named: image) != nil else { return }
+        #else
+        guard NSImage(named: image) != nil else { return }
+        #endif
+
+        let tree = SKSpriteNode(imageNamed: image)
+        tree.anchorPoint = CGPoint(x: 0.5, y: 0.0)
+        tree.position = position
+        tree.setScale(scale)
+        tree.zPosition = 8        // below stations (10), above terrain (-100)
+        tree.name = image
+        addChild(tree)
+
+        // Top-only wind sway via per-vertex warp. The grid is 1 column × 3
+        // rows = 8 vertices in row-major order from the bottom-left. The
+        // bottom row stays anchored (trunk doesn't move), and each higher
+        // row shifts proportionally more in x, so the canopy bends like a
+        // tree in wind. Quadratic y-weight (yWeight = y²) accentuates the
+        // top motion so the very tip swings noticeably while the mid-trunk
+        // barely moves.
+        let cols = 1
+        let rows = 3
+        let src: [SIMD2<Float>] = [
+            SIMD2(0, 0),    SIMD2(1, 0),       // bottom (anchored — trunk base)
+            SIMD2(0, 0.33), SIMD2(1, 0.33),    // mid-low
+            SIMD2(0, 0.66), SIMD2(1, 0.66),    // mid-high
+            SIMD2(0, 1),    SIMD2(1, 1)        // top (full lean)
+        ]
+        func lean(_ amp: Float) -> [SIMD2<Float>] {
+            return src.map { p in
+                let yWeight = p.y * p.y
+                return SIMD2(p.x + amp * yWeight, p.y)
+            }
+        }
+        let amp: Float = 0.10
+        let baseGrid  = SKWarpGeometryGrid(columns: cols, rows: rows,
+                                           sourcePositions: src,
+                                           destinationPositions: src)
+        let leftGrid  = SKWarpGeometryGrid(columns: cols, rows: rows,
+                                           sourcePositions: src,
+                                           destinationPositions: lean(-amp))
+        let rightGrid = SKWarpGeometryGrid(columns: cols, rows: rows,
+                                           sourcePositions: src,
+                                           destinationPositions: lean(amp))
+
+        tree.warpGeometry = baseGrid
+
+        let duration = Double.random(in: 1.6...2.4)
+        let phase = Double.random(in: 0...duration)
+
+        guard let toRight = SKAction.warp(to: rightGrid, duration: duration),
+              let toLeft  = SKAction.warp(to: leftGrid,  duration: duration)
+        else { return }
+        toRight.timingMode = .easeInEaseOut
+        toLeft.timingMode  = .easeInEaseOut
+
+        let cycle = SKAction.sequence([toRight, toLeft])
+        tree.run(SKAction.sequence([
+            SKAction.wait(forDuration: phase),
+            SKAction.repeatForever(cycle)
+        ]), withKey: "windWarp")
+
+        swayingTrees.append(SwayingTree(node: tree))
+    }
+
+    /// Called from update(_:). Cheap O(n) distance check — n = 9 trees.
+    private func disturbTreesNearPlayer() {
+        guard !swayingTrees.isEmpty else { return }
+        let triggerRadius: CGFloat = 150
+        let now = CACurrentMediaTime()
+        for i in swayingTrees.indices {
+            let dx = swayingTrees[i].node.position.x - playerNode.position.x
+            let dy = swayingTrees[i].node.position.y - playerNode.position.y
+            let dist = hypot(dx, dy)
+            if dist < triggerRadius && now - swayingTrees[i].lastDisturbed > 2.0 {
+                let strong = SKAction.sequence([
+                    SKAction.rotate(byAngle:  .pi / 30, duration: 0.4),
+                    SKAction.rotate(byAngle: -.pi / 15, duration: 0.6),
+                    SKAction.rotate(byAngle:  .pi / 30, duration: 0.4)
+                ])
+                strong.timingMode = .easeInEaseOut
+                swayingTrees[i].node.run(strong, withKey: "treeDisturbance")
+                swayingTrees[i].lastDisturbed = now
+            }
+        }
     }
 
     private func makeVolcanoSmokeEmitter() -> SKEmitterNode {
@@ -861,6 +997,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
         }
 
         updatePlayerScreenPosition()
+        disturbTreesNearPlayer()
 
         // Smoothly follow the player while walking to a station + gradually
         // zoom in during the approach. The on-arrival snap-zoom is removed
@@ -1483,6 +1620,9 @@ class WorkshopScene: SKScene, ScrollZoomable {
         }
         if let quarry = quarryAnimation {
             editorMode.registerNode(quarry, name: "anim_quarry")
+        }
+        for entry in swayingTrees {
+            editorMode.registerNode(entry.node, name: entry.node.name ?? "tree")
         }
 
         // Waypoint dots (hidden until editor mode)
