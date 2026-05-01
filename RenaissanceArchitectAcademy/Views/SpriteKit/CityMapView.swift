@@ -395,12 +395,15 @@ struct CityMapView: View {
                 SketchStudyOverlay(
                     sketch: sketch,
                     onDismiss: {
-                        withAnimation {
+                        withAnimation(.easeOut(duration: 0.35)) {
                             showSketchStudy = false
                             activeSketch = nil
                         }
-                        // After sketch study dismissed — continue to next card (stay zoomed in)
-                        continueCardFlow(for: plot)
+                        // Wait for the sketch fade-out to finish before bringing in
+                        // the next card — otherwise the two overlays overlap mid-transition.
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            continueCardFlow(for: plot)
+                        }
                     },
                     onComplete: { florins in
                         // Mark sketch study as completed
@@ -409,12 +412,15 @@ struct CityMapView: View {
                                 .completedSketchStudyIDs.insert(sketch.id)
                         }
                         viewModel.earnFlorins(florins)
-                        withAnimation {
+                        withAnimation(.easeOut(duration: 0.35)) {
                             showSketchStudy = false
                             activeSketch = nil
                         }
-                        // After sketch study complete — continue to next card (stay zoomed in)
-                        continueCardFlow(for: plot)
+                        // Wait for the sketch fade-out to finish before bringing in
+                        // the next card — otherwise the two overlays overlap mid-transition.
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            continueCardFlow(for: plot)
+                        }
                     }
                 )
                 .transition(.opacity)
