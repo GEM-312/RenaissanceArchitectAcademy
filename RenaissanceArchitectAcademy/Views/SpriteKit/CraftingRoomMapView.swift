@@ -59,13 +59,6 @@ struct CraftingRoomMapView: View {
                     ODRLoadingView(tag: AssetManager.craftingRoom, message: "Preparing the crafting room...")
                 }
 
-                // Furnace fire glow — positioned over the furnace in the background
-                if workshop.isProcessing {
-                    FurnaceFireView(width: geometry.size.width * 0.22, height: geometry.size.height * 0.3)
-                        .position(x: geometry.size.width * 0.12, y: geometry.size.height * 0.32)
-                        .allowsHitTesting(false)
-                }
-
                 // Layer 2: Nav panel (inventory moved to its own layer)
                 VStack(spacing: 0) {
                     navigationPanel
@@ -276,6 +269,12 @@ struct CraftingRoomMapView: View {
             if isWalking && showGuidance {
                 withAnimation(.easeOut(duration: 0.2)) { showGuidance = false }
             }
+        }
+        .onChange(of: workshop.isProcessing) { _, isProcessing in
+            // Idle furnace shows small ambient embers; once a recipe starts
+            // firing, the flame ramps up and the halo brightens. Goes back
+            // to idle when processing finishes.
+            sceneHolder.scene?.setFurnaceActive(isProcessing)
         }
     }
 
