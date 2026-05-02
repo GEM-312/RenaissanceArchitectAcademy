@@ -307,8 +307,35 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
 
     override func update(_ currentTime: TimeInterval) {
         updatePlayerScreenPosition()
+        updatePlayerDepthScale()
         // Clamp camera every frame — prevents SKActions from bypassing bounds
         clampCamera()
+    }
+
+    // MARK: - Depth Perspective
+    //
+    // The crafting room is painted from a slightly elevated viewpoint, so the
+    // player should look bigger when standing "closer to the viewer" (low y,
+    // pigment table / shelf foreground) and smaller when "further into" the
+    // scene (high y, near the window / furnace / workbench at the back).
+    //
+    // Direction is encoded in the SIGN of xScale (PlayerNode.setFacingDirection
+    // flips xScale negative when walking right), so the depth update preserves
+    // the sign and only changes magnitude. yScale is always positive.
+
+    private let depthYClose: CGFloat = 21
+    private let depthYFar: CGFloat = 915
+    private let depthScaleClose: CGFloat = 7.0
+    private let depthScaleFar: CGFloat = 5.0
+
+    private func updatePlayerDepthScale() {
+        let y = playerNode.position.y
+        let raw = (y - depthYClose) / (depthYFar - depthYClose)
+        let t = max(0, min(1, raw))
+        let scale = depthScaleClose + t * (depthScaleFar - depthScaleClose)
+        let signX: CGFloat = playerNode.xScale < 0 ? -1 : 1
+        playerNode.xScale = scale * signX
+        playerNode.yScale = scale
     }
 
     // MARK: - Input Handling
