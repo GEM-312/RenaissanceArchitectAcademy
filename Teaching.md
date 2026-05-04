@@ -330,3 +330,16 @@ Task { @MainActor in
 **IN OUR CODE:** `MascotDialogueView.swift` — `Eye` struct's blink timer was anonymous. Now stored as `@State private var blinkTimer: Timer?` and invalidated in `.onDisappear`.
 
 **KEY TAKEAWAY:** Every repeating `Timer` needs a stored reference and a corresponding `.invalidate()` on cleanup.
+
+## pbxproj Build Phase Structure
+
+THE CONCEPT: In Xcode's `.pbxproj`, each source file gets TWO entries: a definition in `PBXBuildFile` and a reference in `PBXSourcesBuildPhase`. They share the same 24-hex ID — this is by design, not a duplicate.
+
+STEP BY STEP:
+1. `PBXBuildFile` section: `<ID> /* Foo.swift in Sources */ = {isa = PBXBuildFile; fileRef = ...};` — defines the build file object
+2. `PBXSourcesBuildPhase` section: `<ID> /* Foo.swift in Sources */,` — references it in the compile phase
+3. Each ID appears exactly twice — once per section
+
+IN OUR CODE: Running `grep "in Sources"` on `project.pbxproj` will find 2 hits per file — don't mistake this for a duplication bug.
+
+KEY TAKEAWAY: A health-check script must scope its duplicate search to only within the `files = (...)` list of PBXSourcesBuildPhase, not the whole file.
