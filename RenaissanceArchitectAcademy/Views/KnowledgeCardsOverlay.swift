@@ -655,7 +655,7 @@ struct KnowledgeCardsOverlay: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: Spacing.sm) {
                     HStack(spacing: 6) {
-                        SpeakerButton(text: card.lessonText, color: card.color)
+                        SpeakerButton(text: speakText(for: card), voiceID: TTSVoice.storyteller, color: card.color)
                         Text("Read aloud")
                             .font(RenaissanceFont.caption)
                             .foregroundStyle(card.color.opacity(0.6))
@@ -721,6 +721,17 @@ struct KnowledgeCardsOverlay: View {
     }
 
     // MARK: - Wolfram Geometry Helper
+
+    // MARK: - Narration Text
+
+    /// Builds the string fed to ElevenLabs for the storyteller voice. Lead cards
+    /// (the building's welcome card) get the apprentice's name prepended so the
+    /// first read of a building feels personal. Non-lead cards play as written.
+    /// The vocative is audio-only — never shown on screen.
+    private func speakText(for card: KnowledgeCard) -> String {
+        guard card.isLeadCard, !playerName.isEmpty else { return card.lessonText }
+        return "Hey, \(playerName)… \(card.lessonText)"
+    }
 
     // MARK: - Highlighted Lesson Text
 

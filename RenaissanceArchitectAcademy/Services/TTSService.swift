@@ -19,9 +19,13 @@ import Foundation
 /// once a voice is locked in. Same string the Worker passes through to
 /// `https://api.elevenlabs.io/v1/text-to-speech/{voiceId}`.
 enum TTSVoice {
-    /// Bird companion — narrates lessons, card readings, chat replies.
-    /// Apprentice teacher voice. Same voice for cards and chat.
-    static let bird = "PASTE_BIRD_VOICE_ID_HERE"
+    /// Bird companion — chat replies and bird-dialog bubbles.
+    /// "Curious Bird" voice: thick Roman Italian accent, early 30s, playful.
+    static let bird = "bNHG92L4700oZ2OVXQSc"
+
+    /// Knowledge-card narrator — lesson readings on flipped cards.
+    /// "Storyteller in Piazza Navona" voice: thick Roman Italian accent, 50s, theatrical.
+    static let storyteller = "yUUnPL3w0TMlYSSSuEO8"
 
     /// Male historical NPCs (Brunelleschi, Medici, Barovier, station masters).
     static let npcMale = "PASTE_NPC_MALE_VOICE_ID_HERE"
@@ -75,19 +79,23 @@ final class TTSService: NSObject, ObservableObject {
         guard !trimmed.isEmpty else { return }
         guard GameSettings.shared.isSubscribed else {
             lastError = "Subscribe to unlock the bird's voice."
+            print("[TTS] Skipped — subscription off. Flip the Apprentice toggle in Profile (DEBUG).")
             return
         }
         guard WorkerClient.isConfigured else {
             lastError = "Proxy token missing — paste it in APIKeys.swift"
+            print("[TTS] Skipped — proxy token missing in APIKeys.swift.")
             return
         }
         guard TTSVoice.isConfigured(voiceID) else {
             lastError = "Voice ID not set — generate one in ElevenLabs and paste into TTSVoice"
+            print("[TTS] Skipped — voiceID '\(voiceID)' is still a placeholder.")
             return
         }
 
         currentText = trimmed
         isPlaying = true
+        print("[TTS] Speaking with voice \(voiceID): '\(trimmed.prefix(60))…'")
 
         fetchTask = Task { [weak self] in
             guard let self = self else { return }
@@ -99,6 +107,7 @@ final class TTSService: NSObject, ObservableObject {
                 // Cancelled by a newer speak() or stop() call — silent.
             } catch {
                 self.lastError = "TTS failed: \(error.localizedDescription)"
+                print("[TTS] Failed: \(error.localizedDescription)")
                 self.isPlaying = false
                 self.currentText = nil
             }
@@ -127,8 +136,10 @@ final class TTSService: NSObject, ObservableObject {
     private func audioData(for text: String, voiceID: String) async throws -> Data {
         let cacheURL = cacheURL(for: text, voiceID: voiceID)
         if let cached = try? Data(contentsOf: cacheURL), !cached.isEmpty {
+            print("[TTS] Cache hit — playing instantly.")
             return cached
         }
+        print("[TTS] Cache miss — fetching from ElevenLabs (flash v2.5)…")
 
         var request = URLRequest(url: WorkerClient.ttsURL(voiceID: voiceID))
         request.httpMethod = "POST"
@@ -136,7 +147,7 @@ final class TTSService: NSObject, ObservableObject {
         request.setValue(WorkerClient.proxyToken, forHTTPHeaderField: "X-Proxy-Token")
         request.httpBody = try JSONSerialization.data(withJSONObject: [
             "text": text,
-            "model_id": "eleven_multilingual_v2",
+            "model_id": "eleven_flash_v2_5",
             "voice_settings": [
                 "stability": 0.55,
                 "similarity_boost": 0.75
