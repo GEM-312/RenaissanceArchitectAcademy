@@ -1,89 +1,82 @@
 import SwiftUI
 import AVFoundation
 
-/// Full-screen transition played after character selection
-/// Girl: sprite frames on parchment + audio with crossfade; Boy: video playback
+/// Avatar introduction shown after character select. Sprite frames on parchment
+/// + audio voiceover. Same pattern for both genders — boy uses BoyIntroFrame00-29
+/// + BoyIntroAudio.m4a, girl uses GirlIntroFrame00-29 + GirlIntroAudio.m4a.
+/// If frames are missing for a gender (e.g. boy assets not generated yet),
+/// the view skips immediately to onFinished.
 struct AvatarTransitionView: View {
     let gender: ApprenticeGender
     var onFinished: () -> Void
 
-    // Video (boy)
-    @State private var player: AVPlayer?
-
-    // Sprite frames (girl) — direct frame swap at ~6.4 fps for smooth playback
     @State private var currentFrame: Int = 0
     @State private var frameTimer: Timer?
     @State private var audioPlayer: AVAudioPlayer?
     @State private var showContent = false
 
-    private let girlFrameCount = 30
-    private let girlDuration: Double = 4.7  // match audio length
-    private var frameInterval: Double { girlDuration / Double(girlFrameCount - 1) }
+    private let frameCount = 30
+    private let duration: Double = 4.7  // matches audio length
+    private var frameInterval: Double { duration / Double(frameCount - 1) }
+
+    private var framePrefix: String {
+        gender == .boy ? "BoyIntroFrame" : "GirlIntroFrame"
+    }
+
+    private var audioName: String {
+        gender == .boy ? "BoyIntroAudio" : "GirlIntroAudio"
+    }
+
+    private var firstFrameName: String {
+        "\(framePrefix)00"
+    }
 
     var body: some View {
         ZStack {
-            if gender == .girl {
-                // Parchment background + crossfading sprite frames + audio
-                RenaissanceColors.parchment
-                    .ignoresSafeArea()
+            RenaissanceColors.parchment
+                .ignoresSafeArea()
 
-                VStack(spacing: 0) {
-                    Spacer()
+            VStack(spacing: 0) {
+                Spacer()
 
-                    Image("GirlIntroFrame\(String(format: "%02d", currentFrame))")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxHeight: 600)
-                        .opacity(showContent ? 1 : 0)
-                        .scaleEffect(showContent ? 1 : 0.95)
+                Image("\(framePrefix)\(String(format: "%02d", currentFrame))")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(maxHeight: 600)
+                    .opacity(showContent ? 1 : 0)
+                    .scaleEffect(showContent ? 1 : 0.95)
 
-                    Spacer()
-                }
-                .padding(.horizontal, 40)
-            } else {
-                // Boy: video playback (unchanged)
-                Color.black.ignoresSafeArea()
-
-                if let player = player {
-                    PlayerLayerView(player: player)
-                        .ignoresSafeArea()
-                }
+                Spacer()
             }
+            .padding(.horizontal, 40)
         }
-        .onAppear {
-            if gender == .girl {
-                startGirlTransition()
-            } else {
-                startBoyVideo()
-            }
-        }
+        .onAppear { startTransition() }
         .onDisappear {
             frameTimer?.invalidate()
             frameTimer = nil
             audioPlayer?.stop()
             audioPlayer = nil
-            player?.pause()
-            player = nil
         }
     }
 
-    // MARK: - Girl: Sprite Frames + Audio
+    private func startTransition() {
+        // If frames aren't bundled yet (e.g. boy assets not generated), skip.
+        guard assetExists(named: firstFrameName) else {
+            onFinished()
+            return
+        }
 
-    private func startGirlTransition() {
-        // Fade in
         withAnimation(.easeOut(duration: 0.5)) {
             showContent = true
         }
 
-        // Start audio
-        if let url = Bundle.main.url(forResource: "GirlIntroAudio", withExtension: "m4a") {
+        if let url = Bundle.main.url(forResource: audioName, withExtension: "m4a") {
             audioPlayer = try? AVAudioPlayer(contentsOf: url)
             audioPlayer?.play()
         }
 
-        // Direct frame swap — 30 frames at ~6.4 fps for smooth playback
         frameTimer = Timer.scheduledTimer(withTimeInterval: frameInterval, repeats: true) { timer in
-            if currentFrame < girlFrameCount - 1 {
+            if currentFrame < frameCount - 1 {
                 currentFrame += 1
             } else {
                 timer.invalidate()
@@ -95,75 +88,11 @@ struct AvatarTransitionView: View {
         }
     }
 
-    // MARK: - Boy: Video Playback
-
-    private func startBoyVideo() {
-        guard let url = Bundle.main.url(forResource: "BoyAvatarTransition", withExtension: "mp4") else {
-            onFinished()
-            return
-        }
-        let avPlayer = AVPlayer(url: url)
-        self.player = avPlayer
-
-        NotificationCenter.default.addObserver(
-            forName: .AVPlayerItemDidPlayToEndTime,
-            object: avPlayer.currentItem,
-            queue: .main
-        ) { _ in
-            onFinished()
-        }
-
-        avPlayer.play()
+    private func assetExists(named name: String) -> Bool {
+        #if os(iOS)
+        return UIImage(named: name) != nil
+        #else
+        return NSImage(named: name) != nil
+        #endif
     }
 }
-
-// MARK: - Raw AVPlayerLayer wrapper (no controls)
-
-#if os(iOS)
-struct PlayerLayerView: UIViewRepresentable {
-    let player: AVPlayer
-
-    func makeUIView(context: Context) -> PlayerUIView {
-        let view = PlayerUIView()
-        view.playerLayer.player = player
-        view.playerLayer.videoGravity = .resizeAspect
-        return view
-    }
-
-    func updateUIView(_ uiView: PlayerUIView, context: Context) {
-        uiView.playerLayer.player = player
-    }
-
-    class PlayerUIView: UIView {
-        override class var layerClass: AnyClass { AVPlayerLayer.self }
-        var playerLayer: AVPlayerLayer { layer as! AVPlayerLayer }
-    }
-}
-#else
-struct PlayerLayerView: NSViewRepresentable {
-    let player: AVPlayer
-
-    func makeNSView(context: Context) -> PlayerNSView {
-        let view = PlayerNSView()
-        view.wantsLayer = true
-        let playerLayer = AVPlayerLayer(player: player)
-        playerLayer.videoGravity = .resizeAspect
-        view.layer?.addSublayer(playerLayer)
-        view.playerLayer = playerLayer
-        return view
-    }
-
-    func updateNSView(_ nsView: PlayerNSView, context: Context) {
-        nsView.playerLayer?.player = player
-    }
-
-    class PlayerNSView: NSView {
-        var playerLayer: AVPlayerLayer?
-
-        override func layout() {
-            super.layout()
-            playerLayer?.frame = bounds
-        }
-    }
-}
-#endif

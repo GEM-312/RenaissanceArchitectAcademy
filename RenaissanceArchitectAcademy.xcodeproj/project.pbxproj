@@ -45,8 +45,6 @@
 		044 /* StationLessonOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144 /* StationLessonOverlay.swift */; };
 		045 /* footstep.wav in Resources */ = {isa = PBXBuildFile; fileRef = 145 /* footstep.wav */; };
 		046 /* AvatarTransitionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146 /* AvatarTransitionView.swift */; };
-		047 /* BoyAvatarTransition.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 147 /* BoyAvatarTransition.mp4 */; };
-		048 /* GirlAvatarTransition.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 148 /* GirlAvatarTransition.mp4 */; };
 		049 /* ForestScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149 /* ForestScene.swift */; };
 		050 /* ForestMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 150 /* ForestMapView.swift */; };
 		051 /* BuildingProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 151 /* BuildingProgress.swift */; };
@@ -58,9 +56,6 @@
 		057 /* NotebookContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157 /* NotebookContent.swift */; };
 		058 /* NotebookState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158 /* NotebookState.swift */; };
 		059 /* NotebookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159 /* NotebookView.swift */; };
-		2D3 /* NotebookPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3 /* NotebookPickerView.swift */; };
-		2D4 /* BirdModalOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D4 /* BirdModalOverlay.swift */; };
-		2D6 /* SpeakerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D6 /* SpeakerButton.swift */; };
 		060 /* NotebookCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160 /* NotebookCanvasView.swift */; };
 		061 /* PlayerSave.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161 /* PlayerSave.swift */; };
 		062 /* BuildingProgressRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162 /* BuildingProgressRecord.swift */; };
@@ -116,8 +111,6 @@
 		0D1 /* PubChemMoleculeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D1 /* PubChemMoleculeView.swift */; };
 		0D2 /* StationCompounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D2 /* StationCompounds.swift */; };
 		0D3 /* APIKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D3 /* APIKeys.swift */; };
-		2D2 /* WorkerClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2 /* WorkerClient.swift */; };
-		2D5 /* TTSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5 /* TTSService.swift */; };
 		0D4 /* WolframService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D4 /* WolframService.swift */; };
 		0D5 /* WolframGeometryHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D5 /* WolframGeometryHelper.swift */; };
 		0D6 /* WolframGeometryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D6 /* WolframGeometryView.swift */; };
@@ -171,6 +164,11 @@
 		2CE /* SketchResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE /* SketchResultView.swift */; };
 		2D0 /* GameCenterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0 /* GameCenterManager.swift */; };
 		2D1 /* GameCenterDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1 /* GameCenterDashboardView.swift */; };
+		2D2 /* WorkerClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2 /* WorkerClient.swift */; };
+		2D3 /* NotebookPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3 /* NotebookPickerView.swift */; };
+		2D4 /* BirdModalOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D4 /* BirdModalOverlay.swift */; };
+		2D5 /* TTSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5 /* TTSService.swift */; };
+		2D6 /* SpeakerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D6 /* SpeakerButton.swift */; };
 		2E3 /* InfographicRevealView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3 /* InfographicRevealView.swift */; };
 		3C0 /* BottomDialogPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0 /* BottomDialogPanel.swift */; };
 		3C1 /* BirdGuidanceContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1 /* BirdGuidanceContent.swift */; };
@@ -323,9 +321,6 @@
 		157 /* NotebookContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookContent.swift; sourceTree = "<group>"; };
 		158 /* NotebookState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookState.swift; sourceTree = "<group>"; };
 		159 /* NotebookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookView.swift; sourceTree = "<group>"; };
-		3D3 /* NotebookPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookPickerView.swift; sourceTree = "<group>"; };
-		3D4 /* BirdModalOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdModalOverlay.swift; sourceTree = "<group>"; };
-		3D6 /* SpeakerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerButton.swift; sourceTree = "<group>"; };
 		160 /* NotebookCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookCanvasView.swift; sourceTree = "<group>"; };
 		161 /* PlayerSave.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerSave.swift; sourceTree = "<group>"; };
 		162 /* BuildingProgressRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingProgressRecord.swift; sourceTree = "<group>"; };
@@ -381,8 +376,6 @@
 		1D1 /* PubChemMoleculeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PubChemMoleculeView.swift; sourceTree = "<group>"; };
 		1D2 /* StationCompounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationCompounds.swift; sourceTree = "<group>"; };
 		1D3 /* APIKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeys.swift; sourceTree = "<group>"; };
-		3D2 /* WorkerClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkerClient.swift; sourceTree = "<group>"; };
-		3D5 /* TTSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TTSService.swift; sourceTree = "<group>"; };
 		1D4 /* WolframService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WolframService.swift; sourceTree = "<group>"; };
 		1D5 /* WolframGeometryHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WolframGeometryHelper.swift; sourceTree = "<group>"; };
 		1D6 /* WolframGeometryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WolframGeometryView.swift; sourceTree = "<group>"; };
@@ -443,6 +436,11 @@
 		3CE /* SketchResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchResultView.swift; sourceTree = "<group>"; };
 		3D0 /* GameCenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterManager.swift; sourceTree = "<group>"; };
 		3D1 /* GameCenterDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterDashboardView.swift; sourceTree = "<group>"; };
+		3D2 /* WorkerClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkerClient.swift; sourceTree = "<group>"; };
+		3D3 /* NotebookPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookPickerView.swift; sourceTree = "<group>"; };
+		3D4 /* BirdModalOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdModalOverlay.swift; sourceTree = "<group>"; };
+		3D5 /* TTSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TTSService.swift; sourceTree = "<group>"; };
+		3D6 /* SpeakerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerButton.swift; sourceTree = "<group>"; };
 		3E3 /* InfographicRevealView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfographicRevealView.swift; sourceTree = "<group>"; };
 		544299972F3646ED00F92073 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BuildingNode.swift; path = Views/SpriteKit/BuildingNode.swift; sourceTree = "<group>"; };
 		544299982F3646ED00F92073 /* CityMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityMapView.swift; path = Views/SpriteKit/CityMapView.swift; sourceTree = "<group>"; };
@@ -943,7 +941,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 601 /* Build configuration list for PBXProject "RenaissanceArchitectAcademy" */;
+			buildConfigurationList = 601 /* Build configuration list for PBXProject " " */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -1021,8 +1019,6 @@
 				AC7 /* crafting_ambient.wav in Resources */,
 				AC8 /* music_lesson.wav in Resources */,
 				543AD36C2F60C199001895ED /* GirlIntroAudio.m4a in Resources */,
-				047 /* BoyAvatarTransition.mp4 in Resources */,
-				048 /* GirlAvatarTransition.mp4 in Resources */,
 				F011 /* EBGaramond-ExtraBoldItalic.ttf in Resources */,
 				F012 /* EBGaramond-Italic.ttf in Resources */,
 				F013 /* EBGaramond-Italic-VariableFont_wght.ttf in Resources */,
@@ -1457,7 +1453,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		601 /* Build configuration list for PBXProject "RenaissanceArchitectAcademy" */ = {
+		601 /* Build configuration list for PBXProject " " */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				700 /* Debug */,
