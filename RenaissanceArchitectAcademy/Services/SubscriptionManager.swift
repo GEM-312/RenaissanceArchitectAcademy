@@ -106,17 +106,18 @@ final class SubscriptionManager: ObservableObject {
         purchasedAt = UserDefaults.standard.object(forKey: Self.dateKey) as? Date
     }
 
-    // MARK: - Dev helpers
+    // MARK: - Local reset
 
-    #if DEBUG
-    /// Resets the tier choice — useful for re-testing the onboarding picker.
-    func devReset() {
+    /// Clears the locally-cached tier choice. The Apple-side receipt is
+    /// untouched — call `restorePurchase()` to recover. Used by the
+    /// onboarding-reset and full-wipe data management flows.
+    func clearLocalState() {
         tier = nil
         plan = nil
         purchasedAt = nil
         UserDefaults.standard.removeObject(forKey: Self.tierKey)
         UserDefaults.standard.removeObject(forKey: Self.planKey)
         UserDefaults.standard.removeObject(forKey: Self.dateKey)
+        syncLegacyFlag()
     }
-    #endif
 }

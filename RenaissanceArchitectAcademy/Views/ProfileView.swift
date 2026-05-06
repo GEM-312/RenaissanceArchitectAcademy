@@ -9,11 +9,15 @@ struct ProfileView: View {
     var onboardingState: OnboardingState
     var onNavigate: ((SidebarDestination) -> Void)? = nil
     var onBackToMenu: (() -> Void)? = nil
+    var onResetOnboarding: (() -> Void)? = nil
+    var onDeleteAllData: (() -> Void)? = nil
 
     @Environment(\.horizontalSizeClass) private var sizeClass
     private var isLargeScreen: Bool { sizeClass == .regular }
 
     @State private var selectedCategory: Achievement.AchievementCategory?
+    @State private var showingDeleteConfirmation = false
+    @State private var showingRelaunchAlert = false
 
     /// Display name from onboarding, fallback to "Young Architect"
     private var displayName: String {
@@ -193,11 +197,88 @@ struct ProfileView: View {
 
                 #if DEBUG
                 DebugSubscriptionToggle()
+
+                if let onResetOnboarding {
+                    Button {
+                        onResetOnboarding()
+                    } label: {
+                        Text("Reset Onboarding (DEBUG)")
+                            .font(RenaissanceFont.buttonSmall)
+                            .foregroundStyle(RenaissanceColors.errorRed)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, Spacing.xs)
+                    }
+                    .buttonStyle(.plain)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: CornerRadius.sm)
+                            .stroke(RenaissanceColors.errorRed.opacity(0.4),
+                                    style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                    )
+                }
                 #endif
+
+                // ── Danger Zone — Delete all data ──
+                if onDeleteAllData != nil {
+                    dangerZone
+                }
             }
             .padding()
         }
         .background(RenaissanceColors.parchmentGradient)
+        .confirmationDialog(
+            "Delete all data?",
+            isPresented: $showingDeleteConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Delete All Data", role: .destructive) {
+                onDeleteAllData?()
+                showingRelaunchAlert = true
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This will permanently delete your apprentice, all building progress, lessons, and inventory on this device. Your subscription is not affected — you can use Restore Purchase to recover it after a fresh start. This action cannot be undone.")
+        }
+        .alert("Please relaunch the app", isPresented: $showingRelaunchAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("All data on this device has been deleted. Quit and reopen the app to start fresh.")
+        }
+    }
+
+    // MARK: - Danger Zone
+
+    private var dangerZone: some View {
+        VStack(alignment: .leading, spacing: Spacing.sm) {
+            Text("Danger Zone")
+                .font(RenaissanceFont.cardTitle)
+                .foregroundStyle(RenaissanceColors.errorRed)
+
+            Text("Deleting your data wipes your apprentice, every building's progress, all lessons read, and your inventory on this device. Your App Store subscription is not affected.")
+                .font(RenaissanceFont.caption)
+                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.75))
+                .fixedSize(horizontal: false, vertical: true)
+
+            Button {
+                showingDeleteConfirmation = true
+            } label: {
+                Text("Delete All Data")
+                    .font(RenaissanceFont.button)
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, Spacing.sm)
+            }
+            .buttonStyle(.plain)
+            .parchmentButton(color: RenaissanceColors.errorRed, radius: CornerRadius.md)
+        }
+        .padding(Spacing.md)
+        .background(
+            RoundedRectangle(cornerRadius: CornerRadius.md)
+                .fill(RenaissanceColors.errorRed.opacity(0.05))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: CornerRadius.md)
+                .stroke(RenaissanceColors.errorRed.opacity(0.3), lineWidth: 1)
+        )
     }
 }
 
