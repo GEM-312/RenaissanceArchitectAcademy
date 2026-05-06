@@ -9,6 +9,9 @@ struct StoryPage: Identifiable {
     let showBird: Bool
     /// Optional animated background frames prefix (e.g. "WorkshopWelcomeFrame"), 15 frames 00-14
     var backgroundFramePrefix: String? = nil
+    /// Optional audio narration filename (without extension), played on page appear.
+    /// Looked up as both .mp3 and .m4a in the bundle.
+    var audioName: String? = nil
 }
 
 /// A historical lesson the bird teaches before the player's first visit to a workshop station
@@ -38,14 +41,13 @@ enum OnboardingContent {
             title: "The Letter Is Sealed",
             text: """
             The year is 1485. In the Palazzo Medici, Lorenzo lifts his quill from the page. \
-            He has been searching for new talent across Italy — and tonight, he has found one.
+            He has been searching for new talent across all of Italy, and tonight, he has found one.
 
-            He folds the letter. He seals it in red wax with the Medici crest. \
-            And he opens his window to the night air.
-
-            "Carry it true," he whispers — and lets the letter go.
+            He seals the letter in red wax with the Medici crest. And he sends it flying. \
+            Across mountains, across rivers, all the way to you.
             """,
-            showBird: false
+            showBird: false,
+            audioName: "LorenzoLetterNarration"
         ),
         StoryPage(
             title: "The Letter Arrives",

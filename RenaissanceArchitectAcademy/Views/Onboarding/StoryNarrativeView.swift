@@ -1,4 +1,5 @@
 import SwiftUI
+import AVFoundation
 
 /// Reusable animated story page — typewriter text reveal with optional BirdCharacter
 struct StoryNarrativeView: View {
@@ -19,6 +20,7 @@ struct StoryNarrativeView: View {
     @State private var showBird = false
     @State private var showButton = false
     @State private var typewriterTimer: Timer?
+    @State private var audioPlayer: AVAudioPlayer?
 
     // Animated background frames
     @State private var bgFrame: Int = 0
@@ -107,11 +109,14 @@ struct StoryNarrativeView: View {
         .onAppear {
             startReveal()
             startBackgroundAnimation()
+            startNarration()
         }
         .onDisappear {
             stopTypewriter()
             bgTimer?.invalidate()
             bgTimer = nil
+            audioPlayer?.stop()
+            audioPlayer = nil
         }
         // Tap to skip typewriter and reveal all text
         .onTapGesture {
@@ -167,6 +172,18 @@ struct StoryNarrativeView: View {
     private func stopTypewriter() {
         typewriterTimer?.invalidate()
         typewriterTimer = nil
+    }
+
+    private func startNarration() {
+        guard let name = page.audioName else { return }
+        // Look up .mp3 first, then .m4a — supports either format depending on
+        // how the narration was exported (ElevenLabs / OpenArt → mp3,
+        // GarageBand / iOS recordings → m4a).
+        let url = Bundle.main.url(forResource: name, withExtension: "mp3")
+            ?? Bundle.main.url(forResource: name, withExtension: "m4a")
+        guard let url else { return }
+        audioPlayer = try? AVAudioPlayer(contentsOf: url)
+        audioPlayer?.play()
     }
 
     private func startBackgroundAnimation() {
