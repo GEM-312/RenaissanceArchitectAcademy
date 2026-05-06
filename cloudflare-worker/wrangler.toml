@@ -6,3 +6,10 @@ compatibility_date = "2026-04-29"
 # so you can see request logs, errors, and console.log output live.
 [observability]
 enabled = true
+
+# Server-side cache for upstream responses that are deterministic
+# (Wolfram Alpha queries, future: PubChem). One user's call benefits
+# all users — collapses repeated upstream calls to a single fetch.
+[[kv_namespaces]]
+binding = "CACHE"
+id = "408ebab40cab4250b88e8268cd15d36f"

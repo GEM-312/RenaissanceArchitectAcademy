@@ -20,6 +20,9 @@ export interface Env {
   ANTHROPIC_API_KEY: string;
   WOLFRAM_APP_ID: string;
   ELEVENLABS_API_KEY: string;
+  /// Server-side cache for deterministic upstream responses (currently
+  /// Wolfram Alpha results). 24h TTL. Bound in wrangler.toml.
+  CACHE: KVNamespace;
 }
 
 export default {
@@ -75,11 +78,26 @@ async function handleChat(request: Request, env: Env): Promise<Response> {
     return json({ error: "anthropic_key_not_configured" }, 500);
   }
 
-  let body: unknown;
+  let body: any;
   try {
     body = await request.json();
   } catch {
     return json({ error: "invalid_json" }, 400);
+  }
+
+  // Anthropic prompt caching: wrap the system prompt in the array form
+  // with an ephemeral cache marker. The bird's system prompt is identical
+  // on every call, so this drops cached-input cost to ~10% of normal after
+  // the first request within the 5-minute TTL window. Transparent to iOS —
+  // we accept the existing string-shaped `system` and rewrite it server-side.
+  if (typeof body?.system === "string" && body.system.length > 0) {
+    body.system = [
+      {
+        type: "text",
+        text: body.system,
+        cache_control: { type: "ephemeral" },
+      },
+    ];
   }
 
   const upstream = await fetch("https://api.anthropic.com/v1/messages", {
@@ -112,19 +130,18 @@ async function handleWolframQuery(url: URL, env: Env): Promise<Response> {
     return json({ error: "missing_input" }, 400);
   }
 
-  const encoded = encodeURIComponent(input);
-  const upstreamURL =
-    `https://api.wolframalpha.com/v2/query?input=${encoded}` +
-    `&appid=${env.WOLFRAM_APP_ID}&format=plaintext,image`;
-
-  const upstream = await fetch(upstreamURL);
-
-  // Wolfram Full Results returns XML; preserve content-type so the iOS
-  // XML parser sees the same shape it would from a direct call.
-  const contentType = upstream.headers.get("content-type") ?? "application/xml";
-  return new Response(upstream.body, {
-    status: upstream.status,
-    headers: { "content-type": contentType },
+  return cachedWolfram(env, "query", input, async () => {
+    const encoded = encodeURIComponent(input);
+    const upstreamURL =
+      `https://api.wolframalpha.com/v2/query?input=${encoded}` +
+      `&appid=${env.WOLFRAM_APP_ID}&format=plaintext,image`;
+    const upstream = await fetch(upstreamURL);
+    return {
+      status: upstream.status,
+      body: await upstream.arrayBuffer(),
+      contentType:
+        upstream.headers.get("content-type") ?? "application/xml",
+    };
   });
 }
 
@@ -140,17 +157,71 @@ async function handleWolframResult(url: URL, env: Env): Promise<Response> {
     return json({ error: "missing_input" }, 400);
   }
 
-  const encoded = encodeURIComponent(input);
-  const upstreamURL =
-    `https://api.wolframalpha.com/v1/result?i=${encoded}&appid=${env.WOLFRAM_APP_ID}`;
+  return cachedWolfram(env, "result", input, async () => {
+    const encoded = encodeURIComponent(input);
+    const upstreamURL =
+      `https://api.wolframalpha.com/v1/result?i=${encoded}` +
+      `&appid=${env.WOLFRAM_APP_ID}`;
+    const upstream = await fetch(upstreamURL);
+    return {
+      status: upstream.status,
+      body: await upstream.arrayBuffer(),
+      contentType: upstream.headers.get("content-type") ?? "text/plain",
+    };
+  });
+}
 
-  const upstream = await fetch(upstreamURL);
+// MARK: - Wolfram cache helper
 
-  // Short Answer returns plain text/plain.
-  const contentType = upstream.headers.get("content-type") ?? "text/plain";
+/// Wolfram queries we issue (geometry, conversions) are deterministic —
+/// the same input always returns the same result. Cache in KV for 24h
+/// so repeated queries from any user collapse to one upstream call.
+/// Only successful (HTTP 200) responses are cached.
+async function cachedWolfram(
+  env: Env,
+  route: "query" | "result",
+  input: string,
+  fetchUpstream: () => Promise<{ status: number; body: ArrayBuffer; contentType: string }>,
+): Promise<Response> {
+  const cacheKey = `wolfram:${route}:${input}`;
+  const cached = await env.CACHE.getWithMetadata<{ contentType: string }>(
+    cacheKey,
+    { type: "arrayBuffer" },
+  );
+
+  if (cached.value && cached.metadata?.contentType) {
+    return new Response(cached.value, {
+      status: 200,
+      headers: {
+        "content-type": cached.metadata.contentType,
+        "x-cache": "HIT",
+      },
+    });
+  }
+
+  const upstream = await fetchUpstream();
+
+  if (upstream.status === 200) {
+    // Await the cache write so it completes before the worker terminates.
+    // Fire-and-forget without ctx.waitUntil() doesn't survive the response.
+    // KV writes are fast (~10ms); the added latency is negligible vs. the
+    // upstream Wolfram call (~1–5s). expirationTtl: 24h safety cap.
+    try {
+      await env.CACHE.put(cacheKey, upstream.body, {
+        expirationTtl: 86400,
+        metadata: { contentType: upstream.contentType },
+      });
+    } catch {
+      // Cache write failure shouldn't block the user response.
+    }
+  }
+
   return new Response(upstream.body, {
     status: upstream.status,
-    headers: { "content-type": contentType },
+    headers: {
+      "content-type": upstream.contentType,
+      "x-cache": "MISS",
+    },
   });
 }
 
