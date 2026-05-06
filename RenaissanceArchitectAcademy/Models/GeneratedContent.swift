@@ -58,26 +58,6 @@ struct RenaissanceNPC: Equatable {
     var portraitPrompt: String
 }
 
-// MARK: - Medici Commission (Onboarding)
-
-/// Dynamically generated commission speech from Lorenzo de' Medici.
-/// Used during onboarding — different each playthrough for replayability.
-@available(iOS 26.0, macOS 26.0, *)
-@Generable
-struct MediciCommission: Equatable {
-    /// Lorenzo's commission speech, addressing the apprentice directly
-    @Guide(description: "Lorenzo de' Medici's commission speech to a new apprentice, 3-4 sentences, grand but warm, mentioning Florence and architecture")
-    var commissionSpeech: String
-
-    /// A specific building or project Lorenzo mentions wanting built
-    @Guide(description: "A specific real building or architectural project in Renaissance Florence that Lorenzo commissions")
-    var projectMention: String
-
-    /// A historical detail about Medici patronage
-    @Guide(description: "A real historical fact about Medici patronage of architecture or science, under 30 words")
-    var patronageFact: String
-}
-
 // MARK: - Bird Teaching Response (Structured Chat)
 
 /// Structured response from the bird companion, replacing plain text.

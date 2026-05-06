@@ -299,26 +299,4 @@ class GenerationService: ObservableObject {
         )
     }
 
-    /// Generate a Medici commission speech for onboarding.
-    func generateMediciCommission() async throws -> MediciCommission {
-        let instructions = """
-            You are writing dialogue for Lorenzo de' Medici (1449-1492), the most powerful \
-            patron of arts and architecture in Renaissance Florence. He is commissioning a \
-            young apprentice. Tone: grand but warm, a man who values talent and curiosity. \
-            Use historically accurate details about Medici patronage.
-            """
-
-        let prompt = """
-            Lorenzo de' Medici is writing a commission letter to a talented young apprentice \
-            he has discovered. He wants them to come to Florence to learn architecture and \
-            engineering under the finest masters.
-            """
-
-        return try await generate(
-            MediciCommission.self,
-            prompt: prompt,
-            contextId: "medici_intro",
-            instructions: instructions
-        )
-    }
 }

@@ -3,13 +3,16 @@ import SwiftUI
 /// Reusable animated story page — typewriter text reveal with optional BirdCharacter
 struct StoryNarrativeView: View {
     let page: StoryPage
-    /// Optional dynamic text override (e.g., generated Medici commission).
-    /// When set, replaces page.text. Typewriter animation works identically.
-    var dynamicTextOverride: String? = nil
+    /// Apprentice's name from onboarding. Pages with `{name}` tokens substitute
+    /// this in at render time. Falls back to "apprentice" if empty.
+    var apprenticeName: String = ""
     var onContinue: () -> Void
 
-    /// The text to display — dynamic override if available, otherwise static page text
-    private var displayText: String { dynamicTextOverride ?? page.text }
+    /// The text to display — `{name}` tokens are replaced with the apprentice's name.
+    private var displayText: String {
+        let nameValue = apprenticeName.isEmpty ? "apprentice" : apprenticeName
+        return page.text.replacingOccurrences(of: "{name}", with: nameValue)
+    }
 
     @State private var showTitle = false
     @State private var revealedCharCount = 0

@@ -23,85 +23,69 @@ struct StationLesson: Identifiable {
 /// All static narrative content for the onboarding system
 enum OnboardingContent {
 
-    // MARK: - Dynamic Medici Commission (Foundation Models)
-
-    /// Generate a unique Medici commission speech for each playthrough.
-    /// Returns nil if generation fails — caller uses static text as fallback.
-    /// Called during avatar transition (~5-10 seconds before story page 0).
-    @available(iOS 26.0, macOS 26.0, *)
-    @MainActor
-    static func generateMediciCommission() async -> MediciCommission? {
-        guard GenerationService.isAvailable else { return nil }
-
-        do {
-            return try await GenerationService.shared.generateMediciCommission()
-        } catch {
-            print("[OnboardingContent] Medici generation failed: \(error)")
-            return nil
-        }
-    }
-
-    /// Convert a generated MediciCommission into story page text format.
-    /// Preserves the narrative framing while injecting dynamic content.
-    @available(iOS 26.0, macOS 26.0, *)
-    static func mediciStoryText(from commission: MediciCommission) -> String {
-        """
-        The year is 1485. In a small town near Florence, a talented youth has been noticed \
-        by the most powerful family in Italy.
-
-        A letter arrives, sealed with the crest of the Medici:
-
-        "\(commission.commissionSpeech)"
-
-        The letter mentions \(commission.projectMention) — \(commission.patronageFact)
-        """
-    }
-
-    // MARK: - Story Pages (3 cinematic pages)
+    // MARK: - Story Pages (5 cinematic pages)
+    //
+    // Use the `{name}` token for the apprentice's name — StoryNarrativeView
+    // substitutes it at render time using onboardingState.apprenticeName.
+    //
+    // Florence arrival + Workshop entry are intentionally NOT here — they
+    // belong later in the game: arrival when the player begins the Duomo
+    // (building 17, Apprentice finale), and the workshop entry in the
+    // Architect level (Ray's scope).
 
     static let storyPages: [StoryPage] = [
         StoryPage(
-            title: "The Discovery",
+            title: "The Letter Is Sealed",
             text: """
-            The year is 1485. In a small town near Florence, a talented youth has been noticed \
-            by the most powerful family in Italy.
+            The year is 1485. In the Palazzo Medici, Lorenzo lifts his quill from the page. \
+            He has been searching for new talent across Italy — and tonight, he has found one.
 
-            A letter arrives, sealed with the crest of the Medici:
+            He folds the letter. He seals it in red wax with the Medici crest. \
+            And he opens his window to the night air.
 
-            "We have heard of your gifts in drawing and your curiosity for how things work. \
-            Come to Florence. Lorenzo de' Medici himself will sponsor your apprenticeship \
-            under the finest architects of the age."
+            "Carry it true," he whispers — and lets the letter go.
             """,
             showBird: false
         ),
         StoryPage(
-            title: "The Workshop",
+            title: "The Letter Arrives",
             text: """
-            You arrive at the bustling bottega — a Renaissance workshop alive with creation. \
-            Marble dust fills the air. Apprentices carve columns while masters debate the geometry \
-            of perfect arches.
+            Far across Italy, you are sketching by candlelight when something taps the windowpane.
 
-            The Medici have arranged for you to study under the finest architects and engineers. \
-            You will learn to build structures that blend beauty with science — from Roman aqueducts \
-            to soaring cathedral domes.
+            A folded letter — sealed in red wax — drifts down through the air as if guided by hand. \
+            You reach out. You catch it.
 
-            "But first," says the workshop master, "you will need a teacher..."
+            The seal is warm. It glows faintly in your hand. Whoever sent this wanted you, \
+            {name}, and only you, to read what is inside.
             """,
-            showBird: false,
-            backgroundFramePrefix: "WorkshopWelcomeFrame"
+            showBird: false
         ),
         StoryPage(
-            title: "Leonardo's Bird",
+            title: "The Invitation",
             text: """
-            A small bird lands on your shoulder — bright-eyed and ancient beyond its years. \
-            It cocks its head and speaks:
+            You break the seal. The handwriting is bold and sure:
 
-            "Ciao, apprendista! Maestro Leonardo da Vinci sent me to guide you. I have perched \
-            on Brunelleschi's scaffolding as he raised the dome, and watched the Romans pour \
-            concrete that still stands two thousand years later."
+            "We have heard of your gifts, {name}. Your drawings. Your curiosity for how things work. \
+            Lorenzo de' Medici will sponsor your apprenticeship under the finest architects of the age — \
+            but you must come to Florence. The road is long. Days and nights across Italy. \
+            Find us by the Duomo when you arrive."
 
-            "Leonardo says you have the eye of an architect. I will teach you the thirteen \
-            sciences behind the greatest structures ever built. Are you ready?"
+            Below the signature: a promise of florins — Florence's gold — for every step of your apprenticeship.
+            """,
+            showBird: false
+        ),
+        StoryPage(
+            title: "The Bird Arrives",
+            text: """
+            A small bird flies through the open window and lands on your shoulder — \
+            bright-eyed and ancient beyond its years. It cocks its head and speaks:
+
+            "Ciao, apprendista! Maestro Leonardo da Vinci sends me to you. I have flown across \
+            the centuries — I perched on Brunelleschi's scaffolding as he raised the dome, \
+            I watched the Romans pour concrete that still stands two thousand years later."
+
+            "I will travel with you to Florence, {name}. I will teach you the thirteen sciences \
+            behind the greatest structures ever built. Are you ready?"
             """,
             showBird: true
         ),
@@ -116,7 +100,7 @@ enum OnboardingContent {
             legendary school, where Michelangelo once studied and the spirit of Brunelleschi lives \
             in every stone.
 
-            But first, the workshop calls. There is much to learn.
+            But first, the journey calls. There is much to learn, {name}.
             """,
             showBird: false
         ),
