@@ -170,6 +170,9 @@
 		2D5 /* TTSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5 /* TTSService.swift */; };
 		2D6 /* SpeakerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D6 /* SpeakerButton.swift */; };
 		2E3 /* InfographicRevealView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3 /* InfographicRevealView.swift */; };
+		2E4 /* SubscriptionTier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E4 /* SubscriptionTier.swift */; };
+		2E5 /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E5 /* SubscriptionManager.swift */; };
+		2E6 /* SubscriptionPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E6 /* SubscriptionPickerView.swift */; };
 		3C0 /* BottomDialogPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0 /* BottomDialogPanel.swift */; };
 		3C1 /* BirdGuidanceContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1 /* BirdGuidanceContent.swift */; };
 		3C2 /* SceneTransitionOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2 /* SceneTransitionOverlay.swift */; };
@@ -442,6 +445,9 @@
 		3D5 /* TTSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TTSService.swift; sourceTree = "<group>"; };
 		3D6 /* SpeakerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakerButton.swift; sourceTree = "<group>"; };
 		3E3 /* InfographicRevealView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfographicRevealView.swift; sourceTree = "<group>"; };
+		3E4 /* SubscriptionTier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionTier.swift; sourceTree = "<group>"; };
+		3E5 /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
+		3E6 /* SubscriptionPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionPickerView.swift; sourceTree = "<group>"; };
 		544299972F3646ED00F92073 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BuildingNode.swift; path = Views/SpriteKit/BuildingNode.swift; sourceTree = "<group>"; };
 		544299982F3646ED00F92073 /* CityMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityMapView.swift; path = Views/SpriteKit/CityMapView.swift; sourceTree = "<group>"; };
 		544299992F3646ED00F92073 /* CityScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityScene.swift; path = Views/SpriteKit/CityScene.swift; sourceTree = "<group>"; };
@@ -752,6 +758,7 @@
 				1E7 /* KnowledgeCardContentRenaissance.swift */,
 				1E8 /* DiscoveryCard.swift */,
 				1F8 /* GeneratedContent.swift */,
+				3E4 /* SubscriptionTier.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -790,6 +797,7 @@
 				1FE /* NPCEncounterManager.swift */,
 				3A0 /* VisualEditorState.swift */,
 				3D0 /* GameCenterManager.swift */,
+				3E5 /* SubscriptionManager.swift */,
 				306 /* Styles */,
 			);
 			path = Services;
@@ -816,6 +824,7 @@
 				143 /* StoryNarrativeView.swift */,
 				144 /* StationLessonOverlay.swift */,
 				146 /* AvatarTransitionView.swift */,
+				3E6 /* SubscriptionPickerView.swift */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -1235,6 +1244,9 @@
 				2D0 /* GameCenterManager.swift in Sources */,
 				2D1 /* GameCenterDashboardView.swift in Sources */,
 				2E3 /* InfographicRevealView.swift in Sources */,
+				2E4 /* SubscriptionTier.swift in Sources */,
+				2E5 /* SubscriptionManager.swift in Sources */,
+				2E6 /* SubscriptionPickerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
