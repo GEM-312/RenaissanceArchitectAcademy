@@ -131,7 +131,7 @@ struct ForestMapView: View {
                 if showTimberFloat {
                     HStack(spacing: 8) {
                         Text("+\(timberFloatAmount) 🪵")
-                            .font(.custom("Cinzel-Bold", size: 22))
+                            .font(RenaissanceFont.title2Bold)
                             .foregroundStyle(settings.cardTextColor)
                         if timberFloatFlorins > 0 {
                             Text("+\(timberFloatFlorins) florins")
@@ -883,7 +883,7 @@ struct ForestMapView: View {
                 Image(systemName: cardData.category.icon)
                     .font(.system(size: 16))
                 Text(cardData.category.rawValue)
-                    .font(.custom("Cinzel-Bold", size: 16))
+                    .font(RenaissanceFont.visualTitle)
                 Spacer()
                 if isActivity {
                     Button {
@@ -1423,7 +1423,7 @@ struct ForestMapView: View {
                     .tracking(Tracking.button)
 
                 Text(truffle.name)
-                    .font(.custom("Cinzel-Bold", size: 22))
+                    .font(RenaissanceFont.title2Bold)
                     .foregroundStyle(settings.cardTextColor)
 
                 HStack(spacing: 8) {
@@ -1631,7 +1631,7 @@ struct ForestMapView: View {
                             Image(systemName: "chevron.left")
                             Text("Workshop")
                         }
-                        .font(.custom("EBGaramond-Regular", size: 16))
+                        .font(RenaissanceFont.bodyMedium)
                         .foregroundStyle(settings.cardTextColor)
                         .padding(.horizontal, Spacing.md)
                         .padding(.vertical, Spacing.xs)
@@ -1664,7 +1664,7 @@ struct ForestMapView: View {
                         .font(.system(size: 28))
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Need Axe")
-                            .font(.custom("Cinzel-Bold", size: 15))
+                            .font(RenaissanceFont.cardTitle)
                             .foregroundStyle(settings.cardTextColor)
                         Text("l'Ascia")
                             .font(.custom("EBGaramond-Italic", size: 14))
@@ -1673,7 +1673,7 @@ struct ForestMapView: View {
                 }
 
                 Text("Renaissance woodcutters used broad-headed axes forged by local blacksmiths. Each tree species required a different cutting angle.")
-                    .font(.custom("EBGaramond-Regular", size: 14))
+                    .font(RenaissanceFont.footnote)
                     .foregroundStyle(settings.cardTextColor.opacity(0.8))
                     .fixedSize(horizontal: false, vertical: true)
 
@@ -1685,7 +1685,7 @@ struct ForestMapView: View {
                         Text("🏪")
                             .font(.subheadline)
                         Text("Go to Market")
-                            .font(.custom("EBGaramond-SemiBold", size: 15))
+                            .font(RenaissanceFont.buttonSmall)
                     }
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
@@ -1700,7 +1700,7 @@ struct ForestMapView: View {
                     dismissToolDialog()
                 } label: {
                     Text("Close")
-                        .font(.custom("EBGaramond-Regular", size: 13))
+                        .font(RenaissanceFont.caption)
                         .foregroundStyle(settings.cardTextColor.opacity(0.4))
                         .frame(maxWidth: .infinity)
                 }

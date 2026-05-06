@@ -213,7 +213,7 @@ private struct TorsionSpringVisual: View {
                             .frame(width: w * 0.5 * twists, height: 16)
                     }.position(x: cx, y: h * 0.65)
                     Text("\(power)× power").font(.custom("EBGaramond-Bold", size: 16)).foregroundStyle(isDangerous ? RenaissanceColors.errorRed : IVMaterialColors.sepiaInk).position(x: cx, y: h * 0.12)
-                    if isDangerous { Text("⚠️ SNAP RISK").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(RenaissanceColors.errorRed).position(x: cx, y: h * 0.22) }
+                    if isDangerous { Text("⚠️ SNAP RISK").font(RenaissanceFont.visualTitle).foregroundStyle(RenaissanceColors.errorRed).position(x: cx, y: h * 0.22) }
                     if step >= 2 {
                         Slider(value: $twists, in: 0.1...0.95).tint(isDangerous ? RenaissanceColors.errorRed : color).frame(width: w * 0.5).position(x: cx, y: h * 0.78)
                             .onChange(of: twists) { _, v in if v > 0.7 { withAnimation { step = 3 } } }
@@ -266,7 +266,7 @@ private struct BatteringRamVisual: View {
                             withAnimation(.easeInOut(duration: 0.4)) { swingPhase += .pi }
                             if swingCount >= 5 { DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { withAnimation { step = 3 } } }
                         } label: {
-                            Text("SWING").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(color)
+                            Text("SWING").font(RenaissanceFont.visualTitle).foregroundStyle(color)
                                 .padding(.horizontal, 20).padding(.vertical, 10).background(color.opacity(0.1)).cornerRadius(8)
                         }.buttonStyle(.plain).position(x: cx, y: h * 0.9)
                     }
@@ -424,13 +424,13 @@ private struct WetDryWoodVisual: View {
                 ZStack {
                     HStack(spacing: w * 0.06) {
                         VStack(spacing: 4) {
-                            Text("SOAKED").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
+                            Text("SOAKED").font(RenaissanceFont.visualTitle).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             RoundedRectangle(cornerRadius: 4).fill(oakBrown.opacity(0.7)).frame(width: w*0.25, height: h*0.2)
                                 .overlay { if tested { Image(systemName: "checkmark").foregroundStyle(RenaissanceColors.sageGreen) } }
                             if tested { Text("Flexes").font(RenaissanceFont.ivFormula).foregroundStyle(RenaissanceColors.sageGreen) }
                         }
                         VStack(spacing: 4) {
-                            Text("DRY").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
+                            Text("DRY").font(RenaissanceFont.visualTitle).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             ZStack {
                                 RoundedRectangle(cornerRadius: 4).fill(oakBrown.opacity(tested ? 0.3 : 0.5)).frame(width: w*0.25, height: h*0.2)
                                 if tested { ForEach(0..<3, id: \.self) { i in
@@ -464,13 +464,13 @@ private struct GreenOakVisual: View {
                 ZStack {
                     HStack(spacing: w * 0.06) {
                         VStack(spacing: 4) {
-                            Text("GREEN OAK").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
+                            Text("GREEN OAK").font(RenaissanceFont.visualTitle).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             RoundedRectangle(cornerRadius: 4).fill(RenaissanceColors.sageGreen.opacity(0.3)).frame(width: w*0.25, height: h*0.2)
                             Text("500 shots").font(RenaissanceFont.ivFormula).foregroundStyle(RenaissanceColors.sageGreen)
                             Text("Flexible").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                         }
                         VStack(spacing: 4) {
-                            Text("DRY OAK").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
+                            Text("DRY OAK").font(RenaissanceFont.visualTitle).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             RoundedRectangle(cornerRadius: 4).fill(oakBrown.opacity(0.3)).frame(width: w*0.25, height: h*0.2)
                             Text("50 shots").font(RenaissanceFont.ivFormula).foregroundStyle(RenaissanceColors.errorRed)
                             Text("Brittle").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
@@ -493,13 +493,13 @@ private struct WalnutPrecisionVisual: View {
                 ZStack {
                     HStack(spacing: w * 0.06) {
                         VStack(spacing: 4) {
-                            Text("WALNUT").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
+                            Text("WALNUT").font(RenaissanceFont.visualTitle).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             RoundedRectangle(cornerRadius: 4).fill(Color(red: 0.45, green: 0.32, blue: 0.22)).frame(width: w*0.25, height: h*0.2)
                                 .overlay { if tested { Image(systemName: "checkmark.circle.fill").foregroundStyle(RenaissanceColors.sageGreen) } }
                             if tested { Text("Stable").font(RenaissanceFont.ivFormula).foregroundStyle(RenaissanceColors.sageGreen) }
                         }
                         VStack(spacing: 4) {
-                            Text("OTHER").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
+                            Text("OTHER").font(RenaissanceFont.visualTitle).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             RoundedRectangle(cornerRadius: 4).fill(oakBrown.opacity(0.3)).frame(width: w*0.25, height: h*0.2)
                                 .overlay { if tested { Image(systemName: "xmark.circle.fill").foregroundStyle(RenaissanceColors.errorRed.opacity(0.5)) } }
                             if tested { Text("Swells").font(RenaissanceFont.ivFormula).foregroundStyle(RenaissanceColors.errorRed) }
@@ -545,7 +545,7 @@ private struct MilitaryJointsVisual: View {
                                 .frame(width: w * 0.15, height: 18)
                             if revealed {
                                 VStack(alignment: .leading, spacing: 1) {
-                                    Text(joints[i].0).font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(IVMaterialColors.sepiaInk)
+                                    Text(joints[i].0).font(RenaissanceFont.visualTitle).foregroundStyle(IVMaterialColors.sepiaInk)
                                     Text(joints[i].1).font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                                 }.transition(.opacity)
                             }

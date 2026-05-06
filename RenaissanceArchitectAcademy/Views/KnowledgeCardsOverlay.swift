@@ -481,7 +481,7 @@ struct KnowledgeCardsOverlay: View {
                             Image(systemName: "bird.fill")
                                 .font(.system(size: 11))
                             Text("Ask the Bird")
-                                .font(.custom("EBGaramond-Regular", size: 12))
+                                .font(RenaissanceFont.footnoteSmall)
                         }
                         .foregroundStyle(RenaissanceColors.sageGreen)
                         .padding(.horizontal, 10)
@@ -495,7 +495,7 @@ struct KnowledgeCardsOverlay: View {
                 } else {
                     // Tap hint text (matches Discovery)
                     Text("Tap to learn")
-                        .font(.custom("EBGaramond-Regular", size: 13))
+                        .font(RenaissanceFont.caption)
                         .foregroundStyle(color.opacity(0.7))
                 }
             }
@@ -531,7 +531,7 @@ struct KnowledgeCardsOverlay: View {
                 Image(systemName: card.icon)
                     .font(.system(size: 16))
                 Text(card.title)
-                    .font(.custom("Cinzel-Bold", size: 16))
+                    .font(RenaissanceFont.visualTitle)
                     .lineLimit(1)
                 Spacer()
                 if isActivity {
@@ -1122,7 +1122,7 @@ struct KnowledgeCardsOverlay: View {
                 ForEach(Array(upperWord.enumerated()), id: \.offset) { index, _ in
                     let filled = index < spelledTiles.count
                     Text(filled ? String(spelledTiles[index].character) : "_")
-                        .font(.custom("Cinzel-Bold", size: 22))
+                        .font(RenaissanceFont.title2Bold)
                         .foregroundStyle(filled ? color : settings.cardTextColor.opacity(0.3))
                         .frame(width: 28, height: 36)
                         .background(
@@ -1171,7 +1171,7 @@ struct KnowledgeCardsOverlay: View {
                         Image(systemName: "arrow.uturn.backward")
                             .font(.system(size: 13))
                         Text("Undo")
-                            .font(.custom("EBGaramond-SemiBold", size: 14))
+                            .font(RenaissanceFont.footnoteBold)
                     }
                     .foregroundStyle(color.opacity(0.6))
                     .padding(.horizontal, Spacing.md)
@@ -1237,12 +1237,12 @@ struct KnowledgeCardsOverlay: View {
                     .foregroundStyle(settings.cardTextColor.opacity(0.5))
                 if fishingAnswered {
                     Text("\(correctAnswer)")
-                        .font(.custom("Cinzel-Bold", size: 22))
+                        .font(RenaissanceFont.title2Bold)
                         .foregroundStyle(RenaissanceColors.goldSuccess)
                         .transition(.scale.combined(with: .opacity))
                 } else {
                     Text("?")
-                        .font(.custom("Cinzel-Bold", size: 22))
+                        .font(RenaissanceFont.title2Bold)
                         .foregroundStyle(color.opacity(0.4))
                 }
             }
@@ -1378,7 +1378,7 @@ struct KnowledgeCardsOverlay: View {
                         .frame(width: 10, height: 10)
                 }
                 Text("\(hangmanWrongCount)/\(maxWrong)")
-                    .font(.custom("EBGaramond-Regular", size: 12))
+                    .font(RenaissanceFont.footnoteSmall)
                     .foregroundStyle(settings.cardTextColor.opacity(0.4))
             }
 
@@ -1398,7 +1398,7 @@ struct KnowledgeCardsOverlay: View {
                         guessHangmanLetter(letter, word: upperWord, card: card)
                     } label: {
                         Text(String(letter))
-                            .font(.custom("EBGaramond-SemiBold", size: 14))
+                            .font(RenaissanceFont.footnoteBold)
                             .foregroundStyle(
                                 isCorrectLetter ? RenaissanceColors.sageGreen
                                 : isWrongLetter ? RenaissanceColors.errorRed.opacity(0.5)
@@ -1784,12 +1784,12 @@ struct KnowledgeCardsOverlay: View {
                 VStack(spacing: 4) {
                     if let florins = earnedFlorinsFloat {
                         Text("+\(florins)")
-                            .font(.custom("Cinzel-Bold", size: 32))
+                            .font(RenaissanceFont.largeTitle)
                             .foregroundStyle(RenaissanceColors.goldSuccess)
                             .shadow(color: RenaissanceColors.goldSuccess.opacity(0.6), radius: 10)
                     }
                     Text("florins")
-                        .font(.custom("EBGaramond-SemiBold", size: 18))
+                        .font(RenaissanceFont.button)
                         .foregroundStyle(RenaissanceColors.goldSuccess.opacity(0.8))
                 }
                 .offset(y: screenSize.height * 0.28)
@@ -1985,7 +1985,7 @@ struct KnowledgeCardsOverlay: View {
                 Text("·")
                     .foregroundStyle(settings.cardTextColor.opacity(0.3))
                 Text("Here: \(completedCardIDs.count)/\(cards.count)")
-                    .font(.custom("EBGaramond-Regular", size: 12))
+                    .font(RenaissanceFont.footnoteSmall)
                     .foregroundStyle(settings.cardTextColor.opacity(0.6))
             }
         }
@@ -2035,7 +2035,7 @@ struct KnowledgeCardsOverlay: View {
                         Image(systemName: actionInfo.icon)
                             .font(.system(size: 14))
                         Text(actionInfo.label)
-                            .font(.custom("EBGaramond-SemiBold", size: 15))
+                            .font(RenaissanceFont.buttonSmall)
                     }
                     .foregroundStyle(.white)
                     .padding(.horizontal, 18)

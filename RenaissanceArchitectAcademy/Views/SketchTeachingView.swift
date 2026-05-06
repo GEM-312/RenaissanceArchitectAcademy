@@ -240,7 +240,7 @@ struct SketchTeachingView: View {
                                 .font(.system(size: 40))
                                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.2))
                             Text(sketch.title)
-                                .font(.custom("EBGaramond-Regular", size: 14))
+                                .font(RenaissanceFont.footnote)
                                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
                                 .multilineTextAlignment(.center)
                         }
@@ -252,7 +252,7 @@ struct SketchTeachingView: View {
                             .font(.system(size: 40))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.2))
                         Text("Architectural Study")
-                            .font(.custom("EBGaramond-Regular", size: 14))
+                            .font(RenaissanceFont.footnote)
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
                     }
                     .padding()
@@ -563,7 +563,7 @@ struct SketchTeachingView: View {
                     .font(.caption)
                     .foregroundStyle(RenaissanceColors.renaissanceBlue)
                 Text("Step \(step.rawValue + 1): \(step.title)")
-                    .font(.custom("EBGaramond-Regular", size: 14))
+                    .font(RenaissanceFont.footnote)
                     .foregroundStyle(RenaissanceColors.renaissanceBlue)
             }
 
@@ -584,9 +584,9 @@ struct SketchTeachingView: View {
         } label: {
             HStack(spacing: 6) {
                 Text("Continue")
-                    .font(.custom("Cinzel-Bold", size: 15))
+                    .font(RenaissanceFont.cardTitle)
                 Text("+\(florinsPerStep) florins")
-                    .font(.custom("EBGaramond-Regular", size: 14))
+                    .font(RenaissanceFont.footnote)
                     .foregroundStyle(RenaissanceColors.ochre)
             }
             .foregroundStyle(.white)
@@ -605,7 +605,7 @@ struct SketchTeachingView: View {
             onSkip()
         } label: {
             Text("Skip to drawing")
-                .font(.custom("EBGaramond-Regular", size: 13))
+                .font(RenaissanceFont.caption)
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
         }
         .buttonStyle(.plain)

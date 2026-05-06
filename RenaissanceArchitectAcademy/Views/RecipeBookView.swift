@@ -334,7 +334,7 @@ private struct FlowingIngredients: View {
             VStack(spacing: 3) {
                 MaterialIconView(material: entry.material, size: 36)
                 Text(entry.material.rawValue)
-                    .font(.custom("EBGaramond-Regular", size: 11))
+                    .font(RenaissanceFont.captionSmall)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .lineLimit(1)
                 Text("\u{00D7}\(entry.count)")

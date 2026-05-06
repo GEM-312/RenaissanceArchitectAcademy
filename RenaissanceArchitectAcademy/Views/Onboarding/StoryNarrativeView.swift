@@ -69,7 +69,7 @@ struct StoryNarrativeView: View {
 
                 // Typewriter text
                 Text(revealedText)
-                    .font(.custom("EBGaramond-Regular", size: 19))
+                    .font(RenaissanceFont.bodyLarge)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
                     .multilineTextAlignment(.center)
                     .lineSpacing(6)

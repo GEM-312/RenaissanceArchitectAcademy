@@ -33,7 +33,7 @@ struct SettingsView: View {
                 // Theme toggle
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Appearance")
-                        .font(.custom("Cinzel-Bold", size: 16))
+                        .font(RenaissanceFont.visualTitle)
                         .foregroundStyle(settings.cardTextColor)
 
                     HStack(spacing: 12) {
@@ -85,7 +85,7 @@ struct SettingsView: View {
                 // Language
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Language")
-                        .font(.custom("Cinzel-Bold", size: 16))
+                        .font(RenaissanceFont.visualTitle)
                         .foregroundStyle(settings.cardTextColor)
 
                     HStack(spacing: 6) {
@@ -102,7 +102,7 @@ struct SettingsView: View {
                     }
 
                     Text("Controls AI-generated content (NPC dialogue, bird chat)")
-                        .font(.custom("EBGaramond-Regular", size: 12))
+                        .font(RenaissanceFont.footnoteSmall)
                         .foregroundStyle(settings.cardTextColor.opacity(0.5))
                 }
 
@@ -112,7 +112,7 @@ struct SettingsView: View {
                 // Volume sliders
                 VStack(alignment: .leading, spacing: 14) {
                     Text("Audio")
-                        .font(.custom("Cinzel-Bold", size: 16))
+                        .font(RenaissanceFont.visualTitle)
                         .foregroundStyle(settings.cardTextColor)
 
                     volumeRow(label: "Music", icon: "music.note", value: $settings.musicVolume, testAction: nil)
@@ -133,7 +133,7 @@ struct SettingsView: View {
                 // Game Center
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Game Center")
-                        .font(.custom("Cinzel-Bold", size: 16))
+                        .font(RenaissanceFont.visualTitle)
                         .foregroundStyle(settings.cardTextColor)
 
                     let gc = GameCenterManager.shared
@@ -142,7 +142,7 @@ struct SettingsView: View {
                             .font(.caption)
                             .foregroundStyle(gc.isAuthenticated ? RenaissanceColors.sageGreen : RenaissanceColors.warmBrown.opacity(0.5))
                         Text(gc.isAuthenticated ? (gc.playerDisplayName ?? "Signed In") : "Not signed in")
-                            .font(.custom("EBGaramond-Regular", size: 14))
+                            .font(RenaissanceFont.footnote)
                             .foregroundStyle(settings.cardTextColor)
                     }
 
@@ -154,7 +154,7 @@ struct SettingsView: View {
                                 Image(systemName: "trophy.fill")
                                     .font(.caption)
                                 Text("Leaderboards & Achievements")
-                                    .font(.custom("EBGaramond-SemiBold", size: 14))
+                                    .font(RenaissanceFont.footnoteBold)
                             }
                             .foregroundStyle(RenaissanceColors.ochre)
                             .padding(.horizontal, 14)
@@ -193,7 +193,7 @@ struct SettingsView: View {
                     .font(.caption)
                     .foregroundStyle(RenaissanceColors.warmBrown)
                 Text(label)
-                    .font(.custom("EBGaramond-Regular", size: 14))
+                    .font(RenaissanceFont.footnote)
                     .foregroundStyle(settings.cardTextColor)
                 Spacer()
                 if let testAction {
@@ -204,7 +204,7 @@ struct SettingsView: View {
                             Image(systemName: "play.fill")
                                 .font(.system(size: 10))
                             Text("Try")
-                                .font(.custom("EBGaramond-Regular", size: 12))
+                                .font(RenaissanceFont.footnoteSmall)
                         }
                         .foregroundStyle(RenaissanceColors.ochre)
                         .padding(.horizontal, 8)
@@ -239,17 +239,17 @@ struct SettingsView: View {
                     .font(.caption)
                     .foregroundStyle(RenaissanceColors.warmBrown)
                 Text("Card Text Size")
-                    .font(.custom("Cinzel-Bold", size: 16))
+                    .font(RenaissanceFont.visualTitle)
                     .foregroundStyle(settings.cardTextColor)
                 Spacer()
                 Text("\(Int(settings.cardTextScale * 100))%")
-                    .font(.custom("EBGaramond-SemiBold", size: 14))
+                    .font(RenaissanceFont.footnoteBold)
                     .foregroundStyle(settings.cardTextColor.opacity(0.7))
                     .monospacedDigit()
             }
             HStack(spacing: 10) {
                 Text("A")
-                    .font(.custom("EBGaramond-Regular", size: 12))
+                    .font(RenaissanceFont.footnoteSmall)
                     .foregroundStyle(RenaissanceColors.warmBrown.opacity(0.6))
                 Slider(value: $settings.cardTextScale, in: 0.8...1.3, step: 0.05)
                     .tint(RenaissanceColors.ochre)
@@ -258,7 +258,7 @@ struct SettingsView: View {
                     .foregroundStyle(RenaissanceColors.warmBrown.opacity(0.6))
             }
             Text("Adjusts text size inside knowledge card visuals")
-                .font(.custom("EBGaramond-Regular", size: 12))
+                .font(RenaissanceFont.footnoteSmall)
                 .foregroundStyle(settings.cardTextColor.opacity(0.5))
         }
     }

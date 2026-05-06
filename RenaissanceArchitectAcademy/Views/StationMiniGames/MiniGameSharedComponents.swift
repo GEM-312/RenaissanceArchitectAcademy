@@ -72,7 +72,7 @@ struct MiniGameIntroCard<Rules: View>: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
-                        .font(.custom("Cinzel-Bold", size: 22))
+                        .font(RenaissanceFont.title2Bold)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text(subtitle)
                         .font(RenaissanceFont.dialogSubtitle)

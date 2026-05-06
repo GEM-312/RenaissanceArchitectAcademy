@@ -127,7 +127,7 @@ struct HintOverlayView: View {
                         } else {
                             // Number
                             Text("\(step)")
-                                .font(.custom("EBGaramond-Regular", size: 15))
+                                .font(RenaissanceFont.bodySmall)
                                 .foregroundStyle(
                                     step == activeStep ? .white : settings.cardTextColor.opacity(0.6)
                                 )
@@ -256,10 +256,10 @@ struct HintOverlayView: View {
                         .foregroundStyle(settings.cardTextColor)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Craft a Hint Scroll")
-                            .font(.custom("EBGaramond-Regular", size: 17, relativeTo: .body))
+                            .font(RenaissanceFont.body)
                             .foregroundStyle(settings.cardTextColor)
                         Text("Costs 2 raw materials")
-                            .font(.custom("EBGaramond-Regular", size: 13))
+                            .font(RenaissanceFont.caption)
                             .foregroundStyle(settings.cardTextColor.opacity(0.6))
                     }
                     Spacer()
@@ -268,7 +268,7 @@ struct HintOverlayView: View {
                             .foregroundStyle(settings.cardTextColor)
                     } else {
                         Text("Not enough")
-                            .font(.custom("EBGaramond-Regular", size: 12))
+                            .font(RenaissanceFont.footnoteSmall)
                             .foregroundStyle(RenaissanceColors.errorRed)
                     }
                 }
@@ -300,10 +300,10 @@ struct HintOverlayView: View {
                         .foregroundStyle(settings.cardTextColor)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Earn by Activity")
-                            .font(.custom("EBGaramond-Regular", size: 17, relativeTo: .body))
+                            .font(RenaissanceFont.body)
                             .foregroundStyle(settings.cardTextColor)
                         Text("Answer correctly to earn 3 materials")
-                            .font(.custom("EBGaramond-Regular", size: 13))
+                            .font(RenaissanceFont.caption)
                             .foregroundStyle(settings.cardTextColor.opacity(0.6))
                     }
                     Spacer()
@@ -332,7 +332,7 @@ struct HintOverlayView: View {
     private var craftingCard: some View {
         VStack(spacing: 24) {
             Text("Crafting Hint Scroll...")
-                .font(.custom("EBGaramond-SemiBold", size: 22))
+                .font(RenaissanceFont.dialogTitle)
                 .foregroundStyle(settings.cardTextColor)
 
             ZStack {
@@ -368,7 +368,7 @@ struct HintOverlayView: View {
 
             if case .trueFalse(let statement, _, let explanation) = hintData.activityType {
                 Text(statement)
-                    .font(.custom("EBGaramond-Regular", size: 17, relativeTo: .body))
+                    .font(RenaissanceFont.body)
                     .foregroundStyle(settings.cardTextColor.opacity(0.9))
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
@@ -378,13 +378,13 @@ struct HintOverlayView: View {
                 if !pendingEarnReward.isEmpty {
                     HStack(spacing: 4) {
                         Text("Reward:")
-                            .font(.custom("EBGaramond-Regular", size: 14))
+                            .font(RenaissanceFont.footnote)
                             .foregroundStyle(settings.cardTextColor)
                         ForEach(pendingEarnReward, id: \.0) { material, count in
                             HStack(spacing: 2) {
                                 MaterialIconView(material: material, size: 18)
                                 Text("×\(count)")
-                                    .font(.custom("EBGaramond-Regular", size: 15))
+                                    .font(RenaissanceFont.bodySmall)
                                     .foregroundStyle(settings.cardTextColor.opacity(0.7))
                             }
                         }
@@ -400,7 +400,7 @@ struct HintOverlayView: View {
 
                 if let answer = trueFalseAnswer, !isAnswerCorrect(answer) {
                     Text(explanation)
-                        .font(.custom("EBGaramond-Regular", size: 14))
+                        .font(RenaissanceFont.footnote)
                         .foregroundStyle(RenaissanceColors.errorRed.opacity(0.8))
                         .multilineTextAlignment(.center)
                         .padding(.top, 4)
@@ -424,14 +424,14 @@ struct HintOverlayView: View {
 
             VStack(spacing: 16) {
                 Text("Hint Scroll")
-                    .font(.custom("EBGaramond-SemiBold", size: 22))
+                    .font(RenaissanceFont.dialogTitle)
                     .foregroundStyle(settings.cardTextColor)
 
                 Divider()
                     .background(RenaissanceColors.ochre.opacity(0.3))
 
                 Text(hintData.detailedHint)
-                    .font(.custom("EBGaramond-Regular", size: 17, relativeTo: .body))
+                    .font(RenaissanceFont.body)
                     .foregroundStyle(settings.cardTextColor.opacity(0.9))
                     .multilineTextAlignment(.center)
                     .lineSpacing(5)
@@ -444,7 +444,7 @@ struct HintOverlayView: View {
 
                     VStack(spacing: 6) {
                         Text("You spent:")
-                            .font(.custom("EBGaramond-Regular", size: 14))
+                            .font(RenaissanceFont.footnote)
                             .foregroundStyle(settings.cardTextColor)
 
                         HStack(spacing: 12) {
@@ -452,7 +452,7 @@ struct HintOverlayView: View {
                                 HStack(spacing: 4) {
                                     MaterialIconView(material: material, size: 20)
                                     Text("×\(count)")
-                                        .font(.custom("EBGaramond-Regular", size: 16))
+                                        .font(RenaissanceFont.bodyMedium)
                                         .foregroundStyle(settings.cardTextColor.opacity(0.8))
                                 }
                             }
@@ -539,7 +539,7 @@ struct HintOverlayView: View {
             }
         } label: {
             Text(label)
-                .font(.custom("EBGaramond-SemiBold", size: 18))
+                .font(RenaissanceFont.button)
                 .foregroundStyle(
                     hasAnswered && wasSelected
                         ? .white

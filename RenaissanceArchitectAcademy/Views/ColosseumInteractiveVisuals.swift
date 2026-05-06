@@ -370,7 +370,7 @@ private struct ColumnOrdersVisual: View {
 
                         // Order label
                         Text(orders[orderIdx])
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(RenaissanceFont.visualTitle)
                             .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
                             .position(x: cx + w * 0.32, y: y - floorH * 0.5)
                     }
@@ -672,7 +672,7 @@ private struct TravertineQuarryVisual: View {
                     // Travertine block (left)
                     VStack(spacing: 4) {
                         Text("TRAVERTINE")
-                            .font(.custom("Cinzel-Bold", size: 16)).tracking(0.5)
+                            .font(RenaissanceFont.visualTitle).tracking(0.5)
                             .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
 
                         ZStack {
@@ -707,7 +707,7 @@ private struct TravertineQuarryVisual: View {
                     // Marble block (right)
                     VStack(spacing: 4) {
                         Text("MARBLE")
-                            .font(.custom("Cinzel-Bold", size: 16)).tracking(0.5)
+                            .font(RenaissanceFont.visualTitle).tracking(0.5)
                             .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
 
                         RoundedRectangle(cornerRadius: 4)
@@ -1152,7 +1152,7 @@ private struct GradedConcreteVisual: View {
 
                         // Layer label
                         HStack(spacing: 4) {
-                            Text(layers[i].0).font(.custom("Cinzel-Bold", size: 16))
+                            Text(layers[i].0).font(RenaissanceFont.visualTitle)
                             Text(layers[i].1).font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                         }
                         .foregroundStyle(IVMaterialColors.sepiaInk)
@@ -1354,7 +1354,7 @@ private struct SeatingMathVisual: View {
 
                             // Tier label
                             HStack(spacing: 4) {
-                                Text(tiers[i].0).font(.custom("Cinzel-Bold", size: 16))
+                                Text(tiers[i].0).font(RenaissanceFont.visualTitle)
                                 Text(tiers[i].1).font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                             }
                             .foregroundStyle(IVMaterialColors.sepiaInk)
@@ -1515,7 +1515,7 @@ private struct VelariumTensionVisual: View {
 
                     if isDangerous && step >= 2 {
                         Text("RETRACT!")
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(RenaissanceFont.visualTitle)
                             .foregroundStyle(RenaissanceColors.errorRed)
                             .position(x: cx, y: h * 0.2)
                     }

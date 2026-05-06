@@ -1508,7 +1508,7 @@ struct WorkshopMapView: View {
                             Image(systemName: "chevron.left")
                             Text("Back")
                         }
-                        .font(.custom("EBGaramond-Regular", size: 16))
+                        .font(RenaissanceFont.bodyMedium)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .padding(.horizontal, Spacing.md)
                         .padding(.vertical, Spacing.xs)
@@ -1570,7 +1570,7 @@ struct WorkshopMapView: View {
                 ToolIconView(tool: tool, size: 108)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Need \(tool.displayName)")
-                        .font(.custom("Cinzel-Bold", size: 15))
+                        .font(RenaissanceFont.cardTitle)
                         .foregroundStyle(settings.cardTextColor)
                     Text(tool.italianName)
                         .font(.custom("EBGaramond-Italic", size: 14))
@@ -1579,7 +1579,7 @@ struct WorkshopMapView: View {
             }
 
             Text(tool.educationalText)
-                .font(.custom("EBGaramond-Regular", size: 14))
+                .font(RenaissanceFont.footnote)
                 .foregroundStyle(settings.cardTextColor.opacity(0.8))
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -1601,7 +1601,7 @@ struct WorkshopMapView: View {
                     Text("🏪")
                         .font(.subheadline)
                     Text("Go to Market")
-                        .font(.custom("EBGaramond-SemiBold", size: 15))
+                        .font(RenaissanceFont.buttonSmall)
                 }
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
@@ -1620,7 +1620,7 @@ struct WorkshopMapView: View {
                 }
             } label: {
                 Text("Close")
-                    .font(.custom("EBGaramond-Regular", size: 13))
+                    .font(RenaissanceFont.caption)
                     .foregroundStyle(settings.cardTextColor.opacity(0.4))
                     .frame(maxWidth: .infinity)
             }
@@ -1912,7 +1912,7 @@ struct WorkshopMapView: View {
                         .font(.caption)
                         .foregroundStyle(settings.pillTextColor)
                     Text("\(vm.goldFlorins)")
-                        .font(.custom("EBGaramond-Regular", size: 13))
+                        .font(RenaissanceFont.caption)
                         .foregroundStyle(settings.cardTextColor)
                 }
             }
@@ -2291,7 +2291,7 @@ struct WorkshopMapView: View {
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Earn Florins")
-                            .font(.custom("Cinzel-Bold", size: 22))
+                            .font(RenaissanceFont.title2Bold)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("You need more florins! Here's how:")
                             .font(RenaissanceFont.dialogSubtitle)
@@ -2376,7 +2376,7 @@ struct WorkshopMapView: View {
                     )
 
                 Text(title)
-                    .font(.custom("EBGaramond-Regular", size: 16))
+                    .font(RenaissanceFont.bodyMedium)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 Spacer()
@@ -2562,7 +2562,7 @@ struct WorkshopMapView: View {
                         .foregroundStyle(RenaissanceColors.warmBrown)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Bottega Job Board")
-                            .font(.custom("Cinzel-Bold", size: 22))
+                            .font(RenaissanceFont.title2Bold)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("Choose a commission from the workshop master")
                             .font(RenaissanceFont.dialogSubtitle)
@@ -2645,7 +2645,7 @@ struct WorkshopMapView: View {
                     Text("·")
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.3))
                     Text(job.tier.rawValue)
-                        .font(.custom("EBGaramond-Regular", size: 12))
+                        .font(RenaissanceFont.footnoteSmall)
                         .foregroundStyle(tierColor(job.tier))
                 }
 
@@ -2661,7 +2661,7 @@ struct WorkshopMapView: View {
                         HStack(spacing: 2) {
                             MaterialIconView(material: material, size: 16)
                             Text("×\(job.requirements[material]!)")
-                                .font(.custom("EBGaramond-Regular", size: 12))
+                                .font(RenaissanceFont.footnoteSmall)
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                         }
                     }
@@ -2673,7 +2673,7 @@ struct WorkshopMapView: View {
                             Text(target.icon)
                                 .font(.caption2)
                             Text(target.rawValue)
-                                .font(.custom("EBGaramond-Regular", size: 12))
+                                .font(RenaissanceFont.footnoteSmall)
                                 .foregroundStyle(RenaissanceColors.sageGreen)
                         }
                     }
@@ -2997,7 +2997,7 @@ struct WorkshopMapView: View {
                 }
 
                 Text("Do you need some help to collect the material?")
-                    .font(.custom("EBGaramond-Regular", size: 15))
+                    .font(RenaissanceFont.bodySmall)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 8)
@@ -3019,7 +3019,7 @@ struct WorkshopMapView: View {
                                 Text("Need \(Self.masterHelpCost) florins (you have \(viewModel?.goldFlorins ?? 0))")
                             }
                         }
-                        .font(.custom("EBGaramond-SemiBold", size: 15))
+                        .font(RenaissanceFont.buttonSmall)
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
@@ -3036,7 +3036,7 @@ struct WorkshopMapView: View {
                         declineMasterHelp()
                     } label: {
                         Text(afford ? "I'll try again" : "Close")
-                            .font(.custom("EBGaramond-Regular", size: 14))
+                            .font(RenaissanceFont.footnote)
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)

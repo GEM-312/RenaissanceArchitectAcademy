@@ -102,7 +102,7 @@ private struct MortarVsConcreteVisual: View {
                     VStack(spacing: 0) {
                         // Wall label
                         Text("MORTAR")
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(RenaissanceFont.visualTitle)
                             .tracking(1)
                             .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
 
@@ -160,7 +160,7 @@ private struct MortarVsConcreteVisual: View {
 
                     VStack(spacing: 0) {
                         Text("CONCRETE")
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(RenaissanceFont.visualTitle)
                             .tracking(1)
                             .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
 
@@ -934,12 +934,12 @@ private struct GradientSliderVisual: View {
                         // Stagnation / erosion feedback
                         if slopeValue < 0.3 {
                             Text("STAGNANT")
-                                .font(.custom("Cinzel-Bold", size: 16))
+                                .font(RenaissanceFont.visualTitle)
                                 .foregroundStyle(RenaissanceColors.sageGreen.opacity(0.6))
                                 .position(x: w * 0.5, y: channelY - 30)
                         } else if slopeValue > 0.7 {
                             Text("EROSION")
-                                .font(.custom("Cinzel-Bold", size: 16))
+                                .font(RenaissanceFont.visualTitle)
                                 .foregroundStyle(RenaissanceColors.errorRed.opacity(0.6))
                                 .position(x: w * 0.5, y: channelY - 30)
                         } else {
@@ -1151,7 +1151,7 @@ private struct UnderwaterComparisonVisual: View {
                     // Left block: Normal mortar
                     VStack(spacing: 4) {
                         Text("Normal Mortar")
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(RenaissanceFont.visualTitle)
                             .tracking(0.5)
                             .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
 
@@ -1186,7 +1186,7 @@ private struct UnderwaterComparisonVisual: View {
                     // Right block: Pozzolanic concrete
                     VStack(spacing: 4) {
                         Text("Pozzolanic")
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(RenaissanceFont.visualTitle)
                             .tracking(0.5)
                             .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
 
@@ -1505,7 +1505,7 @@ private struct FistulaPipeFabVisual: View {
 
                         // Emperor stamp text
                         Text("IMP · CLAVDIVS")
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(RenaissanceFont.visualTitle)
                             .tracking(2)
                             .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             .position(x: cx, y: cy)

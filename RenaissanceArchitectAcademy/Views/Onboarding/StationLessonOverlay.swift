@@ -36,11 +36,11 @@ struct StationLessonOverlay: View {
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text(lesson.stationLabel)
-                            .font(.custom("EBGaramond-Regular", size: 14))
+                            .font(RenaissanceFont.footnote)
                             .foregroundStyle(settings.cardTextColor.opacity(0.6))
 
                         Text(lesson.title)
-                            .font(.custom("EBGaramond-SemiBold", size: 22))
+                            .font(RenaissanceFont.dialogTitle)
                             .foregroundStyle(settings.cardTextColor)
                     }
                 }
@@ -50,7 +50,7 @@ struct StationLessonOverlay: View {
 
                 // Typewriter text
                 Text(revealedText)
-                    .font(.custom("EBGaramond-Regular", size: 17, relativeTo: .body))
+                    .font(RenaissanceFont.body)
                     .foregroundStyle(settings.cardTextColor.opacity(0.85))
                     .multilineTextAlignment(.leading)
                     .lineSpacing(5)
@@ -70,7 +70,7 @@ struct StationLessonOverlay: View {
                                     .font(.caption2)
                             }
                             Text(science.rawValue)
-                                .font(.custom("EBGaramond-Regular", size: 12))
+                                .font(RenaissanceFont.footnoteSmall)
                         }
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
@@ -88,7 +88,7 @@ struct StationLessonOverlay: View {
                     onDismiss()
                 } label: {
                     Text("Continue")
-                        .font(.custom("EBGaramond-SemiBold", size: 18))
+                        .font(RenaissanceFont.button)
                         .foregroundStyle(.white)
                         .padding(.horizontal, 32)
                         .padding(.vertical, 10)

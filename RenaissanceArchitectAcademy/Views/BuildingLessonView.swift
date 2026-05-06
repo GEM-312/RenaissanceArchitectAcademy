@@ -672,7 +672,7 @@ struct BuildingLessonView: View {
             HStack(spacing: 12) {
                 // Letter label
                 Text(String(UnicodeScalar(65 + index)!))
-                    .font(.custom("EBGaramond-Regular", size: 16))
+                    .font(RenaissanceFont.bodyMedium)
                     .foregroundStyle(isRevealed && isCorrect ? .white : RenaissanceColors.sepiaInk)
                     .frame(width: 28, height: 28)
                     .background(
@@ -1173,7 +1173,7 @@ struct BuildingLessonView: View {
                         Image(systemName: prompt.icon)
                             .font(.system(size: 13))
                         Text(primaryButtonLabel(promptState, destination: prompt.destination))
-                            .font(.custom("EBGaramond-Regular", size: 16))
+                            .font(RenaissanceFont.bodyMedium)
                     }
                     .foregroundStyle(.white)
                     .padding(.horizontal, Spacing.md)
@@ -1193,7 +1193,7 @@ struct BuildingLessonView: View {
                             Image(systemName: "dollarsign.circle.fill")
                                 .font(.system(size: 13))
                             Text("Buy (\(status.totalCostToBuy) f)")
-                                .font(.custom("EBGaramond-Regular", size: 16))
+                                .font(RenaissanceFont.bodyMedium)
                         }
                         .foregroundStyle(.white)
                         .padding(.horizontal, Spacing.md)
@@ -1385,7 +1385,7 @@ struct BuildingLessonView: View {
                 // Science badges earned
                 VStack(spacing: 8) {
                     Text("Sciences Studied")
-                        .font(.custom("EBGaramond-Regular", size: 16))
+                        .font(RenaissanceFont.bodyMedium)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     HStack(spacing: 12) {
@@ -1484,7 +1484,7 @@ struct BuildingLessonView: View {
                                     Image(systemName: "book.closed.fill")
                                         .font(RenaissanceFont.dialogSubtitle)
                                     Text("View in Notebook")
-                                        .font(.custom("EBGaramond-Regular", size: 16))
+                                        .font(RenaissanceFont.bodyMedium)
                                 }
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                                 .padding(.horizontal, Spacing.md)
@@ -1506,7 +1506,7 @@ struct BuildingLessonView: View {
                     onDismiss()
                 } label: {
                     Text("Return to Map")
-                        .font(.custom("EBGaramond-Regular", size: 16))
+                        .font(RenaissanceFont.bodyMedium)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
                 .buttonStyle(.plain)

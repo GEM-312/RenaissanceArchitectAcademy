@@ -203,11 +203,11 @@ struct MoleculeView: View {
     private var formulaLabel: some View {
         VStack(spacing: 2) {
             Text(molecule.formula)
-                .font(.custom("EBGaramond-SemiBold", size: 18))
+                .font(RenaissanceFont.button)
                 .foregroundColor(RenaissanceColors.sepiaInk)
 
             Text(molecule.name)
-                .font(.custom("EBGaramond-Regular", size: 13))
+                .font(RenaissanceFont.caption)
                 .foregroundColor(RenaissanceColors.sepiaInk)
         }
     }

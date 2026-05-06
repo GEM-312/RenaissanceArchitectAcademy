@@ -100,7 +100,7 @@ private struct RadialRoadsVisual: View {
                         .position(x: cx, y: cy)
 
                     Text("ROMA")
-                        .font(.custom("Cinzel-Bold", size: 16))
+                        .font(RenaissanceFont.visualTitle)
                         .foregroundStyle(RenaissanceColors.ochre)
                         .position(x: cx, y: cy + 18)
 
@@ -243,7 +243,7 @@ private struct GromaSurveyVisual: View {
                     // Alignment indicator
                     if step >= 2 {
                         Text(isAligned ? "ALIGNED" : "Tilted")
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(RenaissanceFont.visualTitle)
                             .foregroundStyle(isAligned ? RenaissanceColors.sageGreen : RenaissanceColors.errorRed.opacity(0.5))
                             .position(x: cx, y: h * 0.72)
 
@@ -338,7 +338,7 @@ private struct FourLayersVisual: View {
 
                         // Latin name
                         Text(layers[i].latin)
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(RenaissanceFont.visualTitle)
                             .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
                             .position(x: cx + w * 0.35, y: y - 6)
 
@@ -1116,7 +1116,7 @@ private struct MilestoneCarveVisual: View {
                     // Inscriptions (appear as carved)
                     ForEach(0..<inscriptions, id: \.self) { i in
                         Text(carvings[i].0)
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(RenaissanceFont.visualTitle)
                             .tracking(1.5)
                             .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
                             .position(x: cx, y: h * 0.25 + CGFloat(i) * 22)

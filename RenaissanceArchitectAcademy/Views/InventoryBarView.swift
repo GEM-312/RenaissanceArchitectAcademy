@@ -45,7 +45,7 @@ struct InventoryBarView: View {
                             HStack(spacing: 3) {
                                 MaterialIconView(material: material, size: 20)
                                 Text("\(count)")
-                                    .font(.custom("EBGaramond-Regular", size: 12))
+                                    .font(RenaissanceFont.footnoteSmall)
                                     .foregroundStyle(settings.cardTextColor)
                             }
                             .padding(.horizontal, 6)
@@ -72,7 +72,7 @@ struct InventoryBarView: View {
                             HStack(spacing: 3) {
                                 CraftedItemIconView(item: item, size: 16)
                                 Text("\(count)")
-                                    .font(.custom("EBGaramond-Regular", size: 12))
+                                    .font(RenaissanceFont.footnoteSmall)
                                     .foregroundStyle(RenaissanceColors.sageGreen)
                             }
                             .padding(.horizontal, 6)

@@ -503,7 +503,7 @@ struct CityMapView: View {
                             sceneHolder.scene?.resetMascot()
                         } label: {
                             Text("Stay on Map")
-                                .font(.custom("EBGaramond-Regular", size: 16))
+                                .font(RenaissanceFont.bodyMedium)
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                         }
                         .buttonStyle(.plain)
@@ -1212,7 +1212,7 @@ struct CityMapView: View {
         #endif
 
         return Text(hintText)
-            .font(.custom("EBGaramond-Regular", size: 16))
+            .font(RenaissanceFont.bodyMedium)
             .foregroundColor(RenaissanceColors.sepiaInk.opacity(0.8))
             .padding(.horizontal, Spacing.xl)
             .padding(.vertical, Spacing.sm)
@@ -1329,7 +1329,7 @@ struct BuildingPromptBubble: View {
                                 onAccept()
                             } label: {
                                 Text("Yes, let's build!")
-                                    .font(.custom("EBGaramond-SemiBold", size: 14))
+                                    .font(RenaissanceFont.footnoteBold)
                                     .foregroundStyle(.white)
                                     .padding(.horizontal, 14)
                                     .padding(.vertical, 7)

@@ -146,7 +146,7 @@ private struct LensGrindingVisual: View {
                         ctx.fill(lens, with: .color(lensGlass.opacity(step >= 1 ? 0.4 : 0.1)))
                         ctx.stroke(lens, with: .color(color.opacity(0.4)), lineWidth: 1)
                     }.frame(width: 50, height: 40)
-                    Text("Convex").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
+                    Text("Convex").font(RenaissanceFont.visualTitle).foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                 }
                 VStack(spacing: 4) {
                     Canvas { ctx, size in
@@ -157,7 +157,7 @@ private struct LensGrindingVisual: View {
                         ctx.fill(lens, with: .color(lensGlass.opacity(step >= 1 ? 0.3 : 0.1)))
                         ctx.stroke(lens, with: .color(color.opacity(0.4)), lineWidth: 1)
                     }.frame(width: 50, height: 40)
-                    Text("Concave").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
+                    Text("Concave").font(RenaissanceFont.visualTitle).foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                 }
             }
             if step >= 3 {
@@ -417,7 +417,7 @@ private struct UltramarineFrescoVisual: View {
                         }
                     }
                     .padding(.horizontal, 20)
-                if step >= 1 { Text("Lapis Lazuli").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(ultraBlue) }
+                if step >= 1 { Text("Lapis Lazuli").font(RenaissanceFont.visualTitle).foregroundStyle(ultraBlue) }
                 if step >= 2 { Text("6,000 km · costlier than gold").font(RenaissanceFont.ivFormula).foregroundStyle(IVMaterialColors.dimColor) }
             }
         }
@@ -479,7 +479,7 @@ private struct LeadTubeVisual: View {
                     VStack(spacing: 2) {
                         RoundedRectangle(cornerRadius: 3).fill(Color(red: 0.55, green: 0.42, blue: 0.28).opacity(0.4))
                             .frame(width: 40, height: 12)
-                        Text("Mandrel").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
+                        Text("Mandrel").font(RenaissanceFont.visualTitle).foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                     }
                     if step >= 2 {
                         Image(systemName: "arrow.right").font(.system(size: 13)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3))
@@ -487,7 +487,7 @@ private struct LeadTubeVisual: View {
                             RoundedRectangle(cornerRadius: 3).fill(leadGray.opacity(0.5)).frame(width: 45, height: 14)
                                 .overlay(RoundedRectangle(cornerRadius: 2).fill(Color.clear).frame(width: 36, height: 8)
                                     .overlay(RoundedRectangle(cornerRadius: 1).strokeBorder(IVMaterialColors.sepiaInk.opacity(0.15), lineWidth: 0.5)))
-                            Text("Lead tube").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(IVMaterialColors.sepiaInk)
+                            Text("Lead tube").font(RenaissanceFont.visualTitle).foregroundStyle(IVMaterialColors.sepiaInk)
                         }
                     }
                 }

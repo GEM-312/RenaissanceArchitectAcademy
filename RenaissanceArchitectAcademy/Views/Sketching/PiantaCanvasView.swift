@@ -142,7 +142,7 @@ struct PiantaCanvasView: View {
                         .font(.system(size: 48))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.2))
                     Text("Blueprint for \(buildingName) coming soon")
-                        .font(.custom("EBGaramond-Italic", size: 16))
+                        .font(RenaissanceFont.bodyItalic)
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
                 }
                 .allowsHitTesting(false)
@@ -176,7 +176,7 @@ struct PiantaCanvasView: View {
                     Image(systemName: "book")
                     Text("Study")
                 }
-                .font(.custom("EBGaramond-SemiBold", size: 14))
+                .font(RenaissanceFont.footnoteBold)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 7)
@@ -259,7 +259,7 @@ struct PiantaCanvasView: View {
             Image(systemName: "checkmark.circle.fill")
                 .foregroundStyle(RenaissanceColors.sageGreen)
             Text("Saved to your notebook")
-                .font(.custom("EBGaramond-SemiBold", size: 15))
+                .font(RenaissanceFont.buttonSmall)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
         }
         .padding(.horizontal, 16)
@@ -386,7 +386,7 @@ struct PeekButton: View {
             Image(systemName: "eye")
                 .font(.system(size: 14))
             Text(isPeeking ? "Peeking..." : "Hold to Peek")
-                .font(.custom("EBGaramond-SemiBold", size: 15))
+                .font(RenaissanceFont.buttonSmall)
         }
         .foregroundStyle(isPeeking ? .white : RenaissanceColors.sepiaInk)
         .frame(maxWidth: .infinity)
@@ -442,10 +442,10 @@ struct StudyModeView: View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Study the Blueprint")
-                    .font(.custom("Cinzel-Bold", size: 26))
+                    .font(RenaissanceFont.title)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                 Text("\(buildingName) — plan, elevation, and section")
-                    .font(.custom("EBGaramond-Italic", size: 15))
+                    .font(RenaissanceFont.italicSmall)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
             }
             Spacer()
@@ -488,7 +488,7 @@ struct StudyModeView: View {
                             .font(.system(size: 60))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.3))
                         Text("Blueprint for \(buildingName) coming soon")
-                            .font(.custom("EBGaramond-Italic", size: 17))
+                            .font(RenaissanceFont.italic)
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                     }
                 )
@@ -514,7 +514,7 @@ struct StudyModeView: View {
                 .font(.custom("Cinzel-Bold", size: 14))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
             Text(body)
-                .font(.custom("EBGaramond-Regular", size: 14))
+                .font(RenaissanceFont.footnote)
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
                 .lineSpacing(3)
         }
@@ -534,7 +534,7 @@ struct StudyModeView: View {
                 onBeginSketching()
             } label: {
                 Text("Begin Sketching")
-                    .font(.custom("EBGaramond-SemiBold", size: 18))
+                    .font(RenaissanceFont.button)
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
@@ -547,7 +547,7 @@ struct StudyModeView: View {
                 onJustStudyToday()
             } label: {
                 Text("Just Study Today")
-                    .font(.custom("EBGaramond-Regular", size: 15))
+                    .font(RenaissanceFont.bodySmall)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.75))
                     .underline()
             }

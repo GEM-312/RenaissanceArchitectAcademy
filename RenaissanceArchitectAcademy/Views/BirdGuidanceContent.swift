@@ -47,7 +47,7 @@ struct BirdGuidanceContent: View {
                                 Image(systemName: "figure.walk")
                                     .font(.system(size: 12))
                                 Text("Go!")
-                                    .font(.custom("EBGaramond-SemiBold", size: 14))
+                                    .font(RenaissanceFont.footnoteBold)
                             }
                             .foregroundStyle(.white)
                             .padding(.horizontal, 14)
@@ -67,7 +67,7 @@ struct BirdGuidanceContent: View {
                                 Image(systemName: Self.iconName(for: dest))
                                     .font(.system(size: 12))
                                 Text("Go!")
-                                    .font(.custom("EBGaramond-SemiBold", size: 14))
+                                    .font(RenaissanceFont.footnoteBold)
                             }
                             .foregroundStyle(.white)
                             .padding(.horizontal, 14)

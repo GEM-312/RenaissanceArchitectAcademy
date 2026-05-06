@@ -200,7 +200,7 @@ private struct OctagonStressVisual: View {
         .frame(maxWidth: .infinity)
         .overlay(alignment: .bottom) {
             Text(label)
-                .font(.custom("Cinzel-Bold", size: 16))
+                .font(RenaissanceFont.visualTitle)
                 .foregroundStyle(active ? color : IVMaterialColors.sepiaInk.opacity(0.4))
         }
     }
@@ -230,7 +230,7 @@ private struct OctagonStressVisual: View {
         .frame(maxWidth: .infinity)
         .overlay(alignment: .bottom) {
             Text("∞")
-                .font(.custom("Cinzel-Bold", size: 16))
+                .font(RenaissanceFont.visualTitle)
                 .foregroundStyle(active ? color : IVMaterialColors.sepiaInk.opacity(0.4))
         }
     }
@@ -519,7 +519,7 @@ private struct CarraraMarbleVisual: View {
                 }
 
             Text(label)
-                .font(.custom("Cinzel-Bold", size: 16))
+                .font(RenaissanceFont.visualTitle)
                 .foregroundStyle(active ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
             Text(sublabel)
                 .font(RenaissanceFont.ivBody)
@@ -578,7 +578,7 @@ private struct BrickProductionVisual: View {
             .overlay(alignment: .bottom) {
                 if step >= 3 {
                     Text("4,000,000")
-                        .font(.custom("Cinzel-Bold", size: 16))
+                        .font(RenaissanceFont.visualTitle)
                         .foregroundStyle(color)
                         .offset(y: -42)
                 }
@@ -763,7 +763,7 @@ private struct MortarSetVisual: View {
                                 .foregroundStyle(step == 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                         }
                     Text("Lime")
-                        .font(.custom("Cinzel-Bold", size: 16))
+                        .font(RenaissanceFont.visualTitle)
                         .foregroundStyle(step == 1 || step == 3 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                     if step >= 3 {
                         Text("→ horizontal")
@@ -783,7 +783,7 @@ private struct MortarSetVisual: View {
                                 .foregroundStyle(step >= 2 ? color : IVMaterialColors.sepiaInk.opacity(0.3))
                         }
                     Text("Gypsum")
-                        .font(.custom("Cinzel-Bold", size: 16))
+                        .font(RenaissanceFont.visualTitle)
                         .foregroundStyle(step >= 2 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                     if step >= 3 {
                         Text("→ vertical")

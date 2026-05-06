@@ -243,7 +243,7 @@ struct MoleculeInfoCard: View {
                     .foregroundStyle(RenaissanceColors.warmBrown)
                 if !molecule.educationalText.isEmpty {
                     Text(molecule.educationalText)
-                        .font(.custom("EBGaramond-Regular", size: 12))
+                        .font(RenaissanceFont.footnoteSmall)
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                         .multilineTextAlignment(.center)
                         .lineLimit(3)

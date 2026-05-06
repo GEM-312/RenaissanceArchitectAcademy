@@ -114,7 +114,7 @@ struct DiscoveryCardOverlay: View {
 
                 // Tap hint
                 Text("Tap to discover")
-                    .font(.custom("EBGaramond-Regular", size: 13))
+                    .font(RenaissanceFont.caption)
                     .foregroundStyle(card.color.opacity(0.7))
             }
             .padding(20)
@@ -171,7 +171,7 @@ struct DiscoveryCardOverlay: View {
                     if showContent {
                         // Story text with fade-in
                         Text(card.storyText)
-                            .font(.custom("EBGaramond-Regular", size: 16))
+                            .font(RenaissanceFont.bodyMedium)
                             .lineSpacing(6)
                             .foregroundStyle(settings.cardTextColor)
                             .opacity(animateStory ? 1 : 0)
@@ -196,7 +196,7 @@ struct DiscoveryCardOverlay: View {
 
                         // Building teaser
                         Text(card.buildingTeaser)
-                            .font(.custom("EBGaramond-Regular", size: 13))
+                            .font(RenaissanceFont.caption)
                             .foregroundStyle(settings.cardTextColor.opacity(0.6))
                             .multilineTextAlignment(.center)
                             .opacity(animateStory ? 1 : 0)
@@ -209,7 +209,7 @@ struct DiscoveryCardOverlay: View {
                                 .frame(width: 40, height: 40)
 
                             Text("Interesting, \(playerName)! To collect this station's knowledge cards and earn florins, choose a building to work on first!")
-                                .font(.custom("EBGaramond-Regular", size: 14))
+                                .font(RenaissanceFont.footnote)
                                 .foregroundStyle(settings.cardTextColor)
                                 .lineSpacing(4)
                         }
@@ -247,7 +247,7 @@ struct DiscoveryCardOverlay: View {
                                 onDismiss()
                             } label: {
                                 Text("Keep Exploring")
-                                    .font(.custom("EBGaramond-Regular", size: 14))
+                                    .font(RenaissanceFont.footnote)
                                     .foregroundStyle(settings.cardTextColor.opacity(0.7))
                                     .padding(.horizontal, Spacing.sm)
                                     .padding(.vertical, Spacing.xs)

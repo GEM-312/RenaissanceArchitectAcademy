@@ -9,7 +9,7 @@ struct MathVisualView: View {
         VStack(alignment: .leading, spacing: 16) {
             // Title
             Text(visual.title)
-                .font(.custom("EBGaramond-SemiBold", size: 22))
+                .font(RenaissanceFont.dialogTitle)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
             // Science badge
@@ -26,7 +26,7 @@ struct MathVisualView: View {
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
                 Text(visual.science.rawValue)
-                    .font(.custom("EBGaramond-Regular", size: 11))
+                    .font(RenaissanceFont.captionSmall)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
             .padding(.horizontal, 6)
@@ -41,7 +41,7 @@ struct MathVisualView: View {
 
             // Caption
             Text(visual.caption)
-                .font(.custom("EBGaramond-Regular", size: 14))
+                .font(RenaissanceFont.footnote)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
                 .lineSpacing(2)
 
@@ -69,7 +69,7 @@ struct MathVisualView: View {
                     } label: {
                         HStack(spacing: 6) {
                             Text("Next Step")
-                                .font(.custom("EBGaramond-SemiBold", size: 14))
+                                .font(RenaissanceFont.footnoteBold)
                             Image(systemName: "chevron.right")
                                 .font(.custom("EBGaramond-SemiBold", size: 12, relativeTo: .caption))
                         }
@@ -89,7 +89,7 @@ struct MathVisualView: View {
                             .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
                             .foregroundStyle(RenaissanceColors.sageGreen)
                         Text("Complete")
-                            .font(.custom("EBGaramond-SemiBold", size: 14))
+                            .font(RenaissanceFont.footnoteBold)
                             .foregroundStyle(RenaissanceColors.sageGreen)
                     }
                 }

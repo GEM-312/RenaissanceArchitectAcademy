@@ -63,7 +63,7 @@ struct BlueprintStudyView: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(buildingName)
-                    .font(.custom("Cinzel-Bold", size: 22))
+                    .font(RenaissanceFont.title2Bold)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                 Text("Pianta: Floor Plan")
                     .font(.custom("EBGaramond-Italic", size: 14))
@@ -108,7 +108,7 @@ struct BlueprintStudyView: View {
                             .font(.system(size: 48))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.3))
                         Text("Blueprint for \(buildingName) coming soon")
-                            .font(.custom("EBGaramond-Italic", size: 15))
+                            .font(RenaissanceFont.italicSmall)
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.5))
                     }
                     .padding(20)
@@ -124,10 +124,10 @@ struct BlueprintStudyView: View {
     private func card(title: String, body: String) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
-                .font(.custom("Cinzel-Bold", size: 16))
+                .font(RenaissanceFont.visualTitle)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
             Text(body)
-                .font(.custom("EBGaramond-Regular", size: 16))
+                .font(RenaissanceFont.bodyMedium)
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.9))
                 .lineSpacing(4)
                 .fixedSize(horizontal: false, vertical: true)
@@ -146,7 +146,7 @@ struct BlueprintStudyView: View {
             Image(systemName: "checkmark.circle.fill")
                 .foregroundStyle(RenaissanceColors.sageGreen)
             Text("Saved to your notebook")
-                .font(.custom("EBGaramond-SemiBold", size: 15))
+                .font(RenaissanceFont.buttonSmall)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
         }
         .padding(.horizontal, 16)
@@ -187,7 +187,7 @@ struct BlueprintStudyView: View {
             }
         } label: {
             Text("Mark as Studied")
-                .font(.custom("EBGaramond-SemiBold", size: 17))
+                .font(RenaissanceFont.bodySemibold)
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)

@@ -58,7 +58,7 @@ struct ConstructionSequenceView: View {
                 .foregroundStyle(settings.cardTextColor)
 
             Text(sequence.buildingName)
-                .font(.custom("Cinzel-Regular", size: 18))
+                .font(RenaissanceFont.title3)
                 .foregroundStyle(RenaissanceColors.warmBrown)
 
             Rectangle()
@@ -67,14 +67,14 @@ struct ConstructionSequenceView: View {
                 .padding(.horizontal, 30)
 
             Text(sequence.introduction)
-                .font(.custom("EBGaramond-Regular", size: 16))
+                .font(RenaissanceFont.bodyMedium)
                 .foregroundStyle(settings.cardTextColor.opacity(0.8))
                 .multilineTextAlignment(.center)
                 .lineSpacing(5)
                 .padding(.horizontal, 20)
 
             Text("Arrange the 8 construction steps in the correct order — from first to last.")
-                .font(.custom("EBGaramond-Regular", size: 14))
+                .font(RenaissanceFont.footnote)
                 .foregroundStyle(settings.cardTextColor.opacity(0.5))
                 .multilineTextAlignment(.center)
 
@@ -84,7 +84,7 @@ struct ConstructionSequenceView: View {
                 }
             } label: {
                 Text("Begin")
-                    .font(.custom("EBGaramond-SemiBold", size: 18))
+                    .font(RenaissanceFont.button)
                     .foregroundStyle(.white)
                     .padding(.horizontal, 50)
                     .padding(.vertical, 12)
@@ -119,7 +119,7 @@ struct ConstructionSequenceView: View {
                         Image(systemName: "xmark")
                         Text("Close")
                     }
-                    .font(.custom("EBGaramond-Regular", size: 14))
+                    .font(RenaissanceFont.footnote)
                     .foregroundStyle(settings.cardTextColor.opacity(0.5))
                 }
 
@@ -163,7 +163,7 @@ struct ConstructionSequenceView: View {
                             Image(systemName: "checkmark.circle.fill")
                             Text("Complete!")
                         }
-                        .font(.custom("EBGaramond-SemiBold", size: 18))
+                        .font(RenaissanceFont.button)
                         .foregroundStyle(.white)
                         .padding(.vertical, 12)
                         .frame(maxWidth: .infinity)
@@ -198,7 +198,7 @@ struct ConstructionSequenceView: View {
                             }
                         } label: {
                             Text("Show Answer")
-                                .font(.custom("EBGaramond-Regular", size: 14))
+                                .font(RenaissanceFont.footnote)
                                 .foregroundStyle(settings.cardTextColor.opacity(0.5))
                                 .padding(.vertical, 12)
                                 .padding(.horizontal, 16)
@@ -249,7 +249,7 @@ struct ConstructionSequenceView: View {
                         .font(.system(size: 13))
                         .foregroundStyle(scienceColor)
                     Text(step.name)
-                        .font(.custom("EBGaramond-SemiBold", size: 15))
+                        .font(RenaissanceFont.buttonSmall)
                         .foregroundStyle(settings.cardTextColor)
                 }
 
@@ -260,7 +260,7 @@ struct ConstructionSequenceView: View {
                 // Show description when correct
                 if isCorrect {
                     Text(step.description)
-                        .font(.custom("EBGaramond-Regular", size: 12))
+                        .font(RenaissanceFont.footnoteSmall)
                         .foregroundStyle(settings.cardTextColor.opacity(0.7))
                         .lineSpacing(3)
                         .padding(.top, 2)
@@ -305,7 +305,7 @@ struct ConstructionSequenceView: View {
                 Image(systemName: step.icon)
                     .foregroundStyle(scienceColor)
                 Text(step.name)
-                    .font(.custom("EBGaramond-SemiBold", size: 14))
+                    .font(RenaissanceFont.footnoteBold)
                     .foregroundStyle(settings.cardTextColor)
             }
             .padding(.horizontal, 14)
@@ -347,7 +347,7 @@ struct ConstructionSequenceView: View {
                 .foregroundStyle(settings.cardTextColor)
 
             Text(sequence.buildingName)
-                .font(.custom("Cinzel-Regular", size: 18))
+                .font(RenaissanceFont.title3)
                 .foregroundStyle(RenaissanceColors.warmBrown)
 
             Rectangle()
@@ -356,7 +356,7 @@ struct ConstructionSequenceView: View {
                 .padding(.horizontal, 30)
 
             Text(sequence.completionText)
-                .font(.custom("EBGaramond-Italic", size: 17))
+                .font(RenaissanceFont.italic)
                 .foregroundStyle(settings.cardTextColor.opacity(0.8))
                 .multilineTextAlignment(.center)
                 .lineSpacing(5)
@@ -381,7 +381,7 @@ struct ConstructionSequenceView: View {
                 onComplete()
             } label: {
                 Text("Continue")
-                    .font(.custom("EBGaramond-SemiBold", size: 18))
+                    .font(RenaissanceFont.button)
                     .foregroundStyle(.white)
                     .padding(.horizontal, 50)
                     .padding(.vertical, 12)

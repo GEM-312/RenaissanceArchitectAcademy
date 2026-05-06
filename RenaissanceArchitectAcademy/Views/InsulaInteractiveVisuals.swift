@@ -248,7 +248,7 @@ private struct HeightLimitVisual: View {
 
                     if overAugustus {
                         Text("ILLEGAL")
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(RenaissanceFont.visualTitle)
                             .foregroundStyle(RenaissanceColors.errorRed)
                             .position(x: cx, y: h * 0.08)
                     }
@@ -612,7 +612,7 @@ private struct CheapMortarVisual: View {
                         // Cheap mortar block
                         VStack(spacing: 4) {
                             Text("INSULA 1:4")
-                                .font(.custom("Cinzel-Bold", size: 16)).tracking(0.5)
+                                .font(RenaissanceFont.visualTitle).tracking(0.5)
                                 .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             ZStack {
                                 RoundedRectangle(cornerRadius: 4)
@@ -640,7 +640,7 @@ private struct CheapMortarVisual: View {
                         // Roman concrete block
                         VStack(spacing: 4) {
                             Text("ROMAN 1:3")
-                                .font(.custom("Cinzel-Bold", size: 16)).tracking(0.5)
+                                .font(RenaissanceFont.visualTitle).tracking(0.5)
                                 .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             RoundedRectangle(cornerRadius: 4)
                                 .fill(IVMaterialColors.stoneGray.opacity(0.5))
@@ -830,7 +830,7 @@ private struct GlassMicaVisual: View {
                 ZStack {
                     // Glass window (left)
                     VStack(spacing: 4) {
-                        Text("GLASS").font(.custom("Cinzel-Bold", size: 16)).tracking(0.5).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
+                        Text("GLASS").font(RenaissanceFont.visualTitle).tracking(0.5).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                         RoundedRectangle(cornerRadius: 4)
                             .fill(tappedGlass ? Color(red: 0.85, green: 0.92, blue: 0.95).opacity(0.6) : IVMaterialColors.stoneGray.opacity(0.1))
                             .frame(width: winW, height: winH)
@@ -864,7 +864,7 @@ private struct GlassMicaVisual: View {
 
                     // Mica window (right)
                     VStack(spacing: 4) {
-                        Text("MICA").font(.custom("Cinzel-Bold", size: 16)).tracking(0.5).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
+                        Text("MICA").font(RenaissanceFont.visualTitle).tracking(0.5).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                         RoundedRectangle(cornerRadius: 4)
                             .fill(tappedMica ? Color(red: 0.85, green: 0.82, blue: 0.75).opacity(0.4) : IVMaterialColors.stoneGray.opacity(0.1))
                             .frame(width: winW, height: winH)
@@ -1021,7 +1021,7 @@ private struct OakPoplarFireVisual: View {
                     HStack(spacing: w * 0.08) {
                         // Oak block
                         VStack(spacing: 4) {
-                            Text("OAK").font(.custom("Cinzel-Bold", size: 16)).tracking(0.5).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
+                            Text("OAK").font(RenaissanceFont.visualTitle).tracking(0.5).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             RoundedRectangle(cornerRadius: 4)
                                 .fill(oakBrown)
                                 .frame(width: w * 0.25, height: h * 0.3)
@@ -1043,7 +1043,7 @@ private struct OakPoplarFireVisual: View {
 
                         // Poplar block
                         VStack(spacing: 4) {
-                            Text("POPLAR").font(.custom("Cinzel-Bold", size: 16)).tracking(0.5).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
+                            Text("POPLAR").font(RenaissanceFont.visualTitle).tracking(0.5).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             ZStack {
                                 RoundedRectangle(cornerRadius: 4)
                                     .fill(poplarLight.opacity(1.0 - burnProgress * 0.6))

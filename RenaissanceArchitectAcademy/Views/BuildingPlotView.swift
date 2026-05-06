@@ -118,7 +118,7 @@ struct BuildingPlotView: View {
                                 Image(systemName: "checkmark.seal.fill")
                                     .font(.caption2)
                                 Text("Completed")
-                                    .font(.custom("EBGaramond-Regular", size: 12, relativeTo: .caption2))
+                                    .font(RenaissanceFont.footnoteSmall)
                             }
                             .foregroundStyle(RenaissanceColors.sageGreen)
                         }

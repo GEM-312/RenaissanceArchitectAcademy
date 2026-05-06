@@ -81,7 +81,7 @@ private struct BottegaVisual: View {
                 HStack(spacing: 12) {
                     VStack(spacing: 2) {
                         Circle().fill(color.opacity(0.5)).frame(width: 18, height: 18)
-                        Text("Master").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(color)
+                        Text("Master").font(RenaissanceFont.visualTitle).foregroundStyle(color)
                     }
                     ForEach(0..<(step >= 3 ? 6 : step >= 1 ? 3 : 0), id: \.self) { _ in
                         Circle().fill(IVMaterialColors.sepiaInk.opacity(0.25)).frame(width: 12, height: 12)
@@ -362,7 +362,7 @@ private struct WhiteWallsVisual: View {
                         .fill(Color(red: 0.55, green: 0.52, blue: 0.48).opacity(0.5))
                         .frame(width: 55, height: 50)
                     Text("Stone")
-                        .font(.custom("Cinzel-Bold", size: 16))
+                        .font(RenaissanceFont.visualTitle)
                         .foregroundStyle(IVMaterialColors.sepiaInk.opacity(step >= 2 ? 0.4 : 0.3))
                     if step >= 2 {
                         Text("40%")
@@ -382,7 +382,7 @@ private struct WhiteWallsVisual: View {
                         .frame(width: 55, height: 50)
                         .shadow(color: step >= 3 ? RenaissanceColors.candleGlow.opacity(0.15) : .clear, radius: 8)
                     Text("Lime")
-                        .font(.custom("Cinzel-Bold", size: 16))
+                        .font(RenaissanceFont.visualTitle)
                         .foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                     if step >= 2 {
                         Text("85%")
@@ -470,7 +470,7 @@ private struct CastingSandVisual: View {
                         .fill(Color(red: 0.72, green: 0.62, blue: 0.45).opacity(step >= 1 ? 0.5 : 0.15))
                         .frame(height: 55)
                     Text("Arno Sand")
-                        .font(.custom("Cinzel-Bold", size: 16))
+                        .font(RenaissanceFont.visualTitle)
                         .foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                     Text("Clay-rich")
                         .font(RenaissanceFont.ivBody)
@@ -488,7 +488,7 @@ private struct CastingSandVisual: View {
                         .fill(Color(red: 0.85, green: 0.82, blue: 0.75).opacity(step >= 1 ? 0.5 : 0.15))
                         .frame(height: 55)
                     Text("Mountain")
-                        .font(.custom("Cinzel-Bold", size: 16))
+                        .font(RenaissanceFont.visualTitle)
                         .foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                     Text("Pure SiO₂")
                         .font(RenaissanceFont.ivBody)
@@ -674,7 +674,7 @@ private struct PigmentGrindVisual: View {
                         .fill(ultraBlue.opacity(step >= 1 ? 0.5 : 0.15))
                         .frame(width: 35, height: 35)
                     Text("Lapis")
-                        .font(.custom("Cinzel-Bold", size: 16))
+                        .font(RenaissanceFont.visualTitle)
                         .foregroundStyle(step >= 1 ? ultraBlue : ultraBlue.opacity(0.3))
                     if step >= 2 {
                         Text("3 hours")
@@ -689,7 +689,7 @@ private struct PigmentGrindVisual: View {
                         .fill(ochreYellow.opacity(step >= 1 ? 0.5 : 0.15))
                         .frame(width: 35, height: 35)
                     Text("Ochre")
-                        .font(.custom("Cinzel-Bold", size: 16))
+                        .font(RenaissanceFont.visualTitle)
                         .foregroundStyle(step >= 1 ? ochreYellow : ochreYellow.opacity(0.3))
                     if step >= 2 {
                         Text("1 hour")
@@ -701,7 +701,7 @@ private struct PigmentGrindVisual: View {
                 if step >= 3 {
                     VStack(spacing: 2) {
                         Text("+")
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(RenaissanceFont.visualTitle)
                             .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3))
                         Text("Linseed")
                             .font(RenaissanceFont.ivBody)

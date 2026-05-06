@@ -117,7 +117,7 @@ struct ProfileView: View {
                             .font(.system(size: 14))
                             .foregroundStyle(RenaissanceColors.iconOchre)
                         Text("\(viewModel.goldFlorins)")
-                            .font(.custom("EBGaramond-Regular", size: 16))
+                            .font(RenaissanceFont.bodyMedium)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                     .padding(.horizontal, 10)
@@ -235,7 +235,7 @@ struct ProfileHeaderRow: View {
                         Text(masteryLevel.icon)
                             .font(.custom("EBGaramond-Regular", size: 28, relativeTo: .title3))
                         Text(masteryLevel.rawValue)
-                            .font(.custom("EBGaramond-Regular", size: 14))
+                            .font(RenaissanceFont.footnote)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                     .padding(8)
@@ -248,7 +248,7 @@ struct ProfileHeaderRow: View {
 
                     // Center — Name
                     Text(displayName)
-                        .font(.custom("EBGaramond-SemiBold", size: 22))
+                        .font(RenaissanceFont.dialogTitle)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
@@ -270,7 +270,7 @@ struct ProfileHeaderRow: View {
                                 .foregroundStyle(.white)
                         }
                         Text("\(goldFlorins)")
-                            .font(.custom("EBGaramond-Regular", size: 15))
+                            .font(RenaissanceFont.bodySmall)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                     }
                     .padding(8)
@@ -333,7 +333,7 @@ struct MaterialsCard: View {
                 Image(systemName: "shippingbox.fill")
                     .foregroundStyle(RenaissanceColors.iconOchre)
                 Text("Materials")
-                    .font(.custom("Cinzel-Bold", size: 15))
+                    .font(RenaissanceFont.cardTitle)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
 
@@ -341,14 +341,14 @@ struct MaterialsCard: View {
                 // Raw materials
                 if !rawItems.isEmpty {
                     Text("Raw")
-                        .font(.custom("EBGaramond-Regular", size: 11))
+                        .font(RenaissanceFont.captionSmall)
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 50))], spacing: 6) {
                         ForEach(rawItems, id: \.0) { mat, count in
                             VStack(spacing: 2) {
                                 MaterialIconView(material: mat, size: 24)
                                 Text("\(count)")
-                                    .font(.custom("EBGaramond-Regular", size: 11))
+                                    .font(RenaissanceFont.captionSmall)
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                         }
@@ -358,7 +358,7 @@ struct MaterialsCard: View {
                 // Crafted materials
                 if !craftedItems.isEmpty {
                     Text("Crafted")
-                        .font(.custom("EBGaramond-Regular", size: 11))
+                        .font(RenaissanceFont.captionSmall)
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                         .padding(.top, 4)
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 50))], spacing: 6) {
@@ -367,7 +367,7 @@ struct MaterialsCard: View {
                                 Text(item.icon)
                                     .font(.custom("EBGaramond-Regular", size: 20, relativeTo: .title3))
                                 Text("\(count)")
-                                    .font(.custom("EBGaramond-Regular", size: 11))
+                                    .font(RenaissanceFont.captionSmall)
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
                             }
                         }
@@ -375,7 +375,7 @@ struct MaterialsCard: View {
                 }
             } else {
                 Text("Visit the Workshop\nto collect materials!")
-                    .font(.custom("EBGaramond-Regular", size: 12))
+                    .font(RenaissanceFont.footnoteSmall)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
@@ -409,11 +409,11 @@ struct AchievementsSection: View {
                 Image(systemName: "seal.fill")
                     .foregroundStyle(RenaissanceColors.iconOchre)
                 Text("Achievements")
-                    .font(.custom("Cinzel-Bold", size: 15))
+                    .font(RenaissanceFont.cardTitle)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                 Spacer()
                 Text("\(achievements.filter { $0.isUnlocked }.count)/\(achievements.count)")
-                    .font(.custom("EBGaramond-Regular", size: 12))
+                    .font(RenaissanceFont.footnoteSmall)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
             }
 
@@ -458,7 +458,7 @@ struct CategoryChip: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.custom("EBGaramond-Regular", size: 11))
+                .font(RenaissanceFont.captionSmall)
                 .fontWeight(isSelected ? .semibold : .regular)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 4)
@@ -523,7 +523,7 @@ struct SciencesRow: View {
                 Image(systemName: "books.vertical.fill")
                     .foregroundStyle(RenaissanceColors.iconOchre)
                 Text("Sciences")
-                    .font(.custom("Cinzel-Bold", size: 15))
+                    .font(RenaissanceFont.cardTitle)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
             .padding(.horizontal, 12)
@@ -589,7 +589,7 @@ struct ScienceMasteryCard: View {
 
             // Science name
             Text(mastery.science.rawValue)
-                .font(.custom("EBGaramond-Regular", size: 11))
+                .font(RenaissanceFont.captionSmall)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
@@ -633,14 +633,14 @@ struct StatisticsCard: View {
                 Image(systemName: "chart.bar.fill")
                     .foregroundStyle(RenaissanceColors.iconOchre)
                 Text("Statistics")
-                    .font(.custom("Cinzel-Bold", size: 15))
+                    .font(RenaissanceFont.cardTitle)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
 
             // Buildings completed — individual icons
             VStack(alignment: .leading, spacing: 6) {
                 Text("Buildings (\(completedPlots.count)/\(buildingPlots.count))")
-                    .font(.custom("EBGaramond-Regular", size: 12))
+                    .font(RenaissanceFont.footnoteSmall)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
 
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 36))], spacing: 6) {
@@ -671,11 +671,11 @@ struct StatisticsCard: View {
                     .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
                     .foregroundStyle(RenaissanceColors.iconOchre)
                 Text("Play Time")
-                    .font(.custom("EBGaramond-Regular", size: 12))
+                    .font(RenaissanceFont.footnoteSmall)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                 Spacer()
                 Text(formatPlayTime(totalPlayTime))
-                    .font(.custom("EBGaramond-Regular", size: 14))
+                    .font(RenaissanceFont.footnote)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
 
@@ -685,12 +685,12 @@ struct StatisticsCard: View {
                     .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
                     .foregroundStyle(RenaissanceColors.iconOchre)
                 Text("Exploration")
-                    .font(.custom("EBGaramond-Regular", size: 12))
+                    .font(RenaissanceFont.footnoteSmall)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                 Spacer()
                 let visited = buildingPlots.filter { $0.challengeProgress > 0 || $0.isCompleted }.count
                 Text("\(visited) visited")
-                    .font(.custom("EBGaramond-Regular", size: 14))
+                    .font(RenaissanceFont.footnote)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
         }
@@ -723,7 +723,7 @@ struct MasteryLevelCard: View {
                 Text(masteryLevel.icon)
                     .font(.custom("EBGaramond-Regular", size: 24, relativeTo: .title3))
                 Text("Mastery Level")
-                    .font(.custom("Cinzel-Bold", size: 15))
+                    .font(RenaissanceFont.cardTitle)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
 
@@ -732,7 +732,7 @@ struct MasteryLevelCard: View {
                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
             Text(masteryLevel.description)
-                .font(.custom("EBGaramond-Regular", size: 12))
+                .font(RenaissanceFont.footnoteSmall)
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
 
             // Progress bar
@@ -757,7 +757,7 @@ struct MasteryLevelCard: View {
                 .frame(height: 8)
 
                 Text("\(Int(progress * 100))% Progress")
-                    .font(.custom("EBGaramond-Regular", size: 11))
+                    .font(RenaissanceFont.captionSmall)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
             }
 
@@ -838,10 +838,10 @@ struct DebugSubscriptionToggle: View {
             Toggle(isOn: $isSubscribed) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Apprentice subscription")
-                        .font(.custom("EBGaramond-Regular", size: 14))
+                        .font(RenaissanceFont.footnote)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text("Unlocks watercolor sketch bloom after Pianta")
-                        .font(.custom("EBGaramond-Regular", size: 11))
+                        .font(RenaissanceFont.captionSmall)
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                 }
             }

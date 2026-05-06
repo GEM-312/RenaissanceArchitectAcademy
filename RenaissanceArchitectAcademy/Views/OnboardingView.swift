@@ -63,7 +63,7 @@ struct OnboardingView: View {
                     onComplete()
                 } label: {
                     Text("Skip")
-                        .font(.custom("EBGaramond-Regular", size: 15))
+                        .font(RenaissanceFont.bodySmall)
                         .foregroundStyle(.white.opacity(0.7))
                         .padding(.horizontal, 14)
                         .padding(.vertical, 6)

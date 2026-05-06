@@ -70,7 +70,7 @@ struct GoldsmithMapView: View {
                                 Image(systemName: "chevron.left")
                                 Text("Back to Workshop")
                             }
-                            .font(.custom("EBGaramond-Regular", size: 16))
+                            .font(RenaissanceFont.bodyMedium)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                             .padding(.horizontal, Spacing.md)
                             .padding(.vertical, Spacing.xs)
@@ -128,16 +128,16 @@ struct GoldsmithMapView: View {
         VStack(spacing: 12) {
             // Station title
             Text(station.displayName)
-                .font(.custom("Cinzel-Bold", size: 22))
+                .font(RenaissanceFont.title2Bold)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
             Text(station.italianName)
-                .font(.custom("EBGaramond-Italic", size: 16))
+                .font(RenaissanceFont.bodyItalic)
                 .foregroundStyle(RenaissanceColors.warmBrown)
 
             // Educational text
             Text(station.educationalText)
-                .font(.custom("EBGaramond-Regular", size: 15))
+                .font(RenaissanceFont.bodySmall)
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
@@ -148,7 +148,7 @@ struct GoldsmithMapView: View {
                     activeStation = nil
                 }
             }
-            .font(.custom("EBGaramond-Regular", size: 16))
+            .font(RenaissanceFont.bodyMedium)
             .foregroundStyle(.white)
             .padding(.horizontal, 24)
             .padding(.vertical, 8)
