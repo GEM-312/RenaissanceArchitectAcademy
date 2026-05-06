@@ -342,10 +342,13 @@ class SoundManager: ObservableObject {
         let steps = 20
         let interval = duration / Double(steps)
         let increment = targetVolume / Float(steps)
+        var step = 0
 
-        for i in 1...steps {
-            DispatchQueue.main.asyncAfter(deadline: .now() + interval * Double(i)) {
-                player.volume = min(targetVolume, increment * Float(i))
+        Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { timer in
+            step += 1
+            player.volume = min(targetVolume, increment * Float(step))
+            if step >= steps {
+                timer.invalidate()
             }
         }
     }
@@ -355,13 +358,14 @@ class SoundManager: ObservableObject {
         let interval = duration / Double(steps)
         let startVolume = player.volume
         let decrement = startVolume / Float(steps)
+        var step = 0
 
-        for i in 1...steps {
-            DispatchQueue.main.asyncAfter(deadline: .now() + interval * Double(i)) {
-                player.volume = max(0, startVolume - decrement * Float(i))
-                if i == steps {
-                    player.stop()
-                }
+        Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { timer in
+            step += 1
+            player.volume = max(0, startVolume - decrement * Float(step))
+            if step >= steps {
+                player.stop()
+                timer.invalidate()
             }
         }
     }

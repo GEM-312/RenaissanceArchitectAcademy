@@ -34,6 +34,9 @@ class AssetManager: ObservableObject {
     #if os(iOS)
     /// Active resource requests — must retain to keep assets available
     private var activeRequests: [String: NSBundleResourceRequest] = [:]
+
+    /// Continuations waiting for an in-flight load of a given tag
+    private var pendingWaiters: [String: [CheckedContinuation<Bool, Never>]] = [:]
     #endif
 
     private init() {}
@@ -54,11 +57,11 @@ class AssetManager: ObservableObject {
         #else
         // iOS: use NSBundleResourceRequest
         if loadingTags.contains(tag) {
-            // Already downloading — wait for it
-            while loadingTags.contains(tag) {
-                try? await Task.sleep(for: .milliseconds(100))
+            // Already downloading — register a continuation that will be
+            // resumed by the original loader when it finishes.
+            return await withCheckedContinuation { cont in
+                pendingWaiters[tag, default: []].append(cont)
             }
-            return loadedTags.contains(tag)
         }
 
         loadingTags.insert(tag)
@@ -75,34 +78,36 @@ class AssetManager: ObservableObject {
             }
         }
 
+        let result: Bool
         do {
             // Check if already available (cached by OS)
             let available = await request.conditionallyBeginAccessingResources()
             if available {
                 loadedTags.insert(tag)
-                loadingTags.remove(tag)
                 loadProgress[tag] = 1.0
-                progressObserver.invalidate()
-                return true
+                result = true
+            } else {
+                // Download
+                try await request.beginAccessingResources()
+                loadedTags.insert(tag)
+                loadProgress[tag] = 1.0
+                result = true
             }
-
-            // Download
-            try await request.beginAccessingResources()
-            loadedTags.insert(tag)
-            loadingTags.remove(tag)
-            loadProgress[tag] = 1.0
-            progressObserver.invalidate()
-            return true
         } catch {
             // If tag doesn't exist (no assets tagged yet), assets are in the main bundle — treat as loaded
             loadedTags.insert(tag)
-            loadingTags.remove(tag)
             loadProgress[tag] = 1.0
             activeRequests.removeValue(forKey: tag)
-            progressObserver.invalidate()
             print("AssetManager: '\(tag)' not tagged yet — using bundled assets. (\(error.localizedDescription))")
-            return true
+            result = true
         }
+
+        loadingTags.remove(tag)
+        progressObserver.invalidate()
+        // Resume any callers that were waiting on this in-flight load
+        let waiters = pendingWaiters.removeValue(forKey: tag) ?? []
+        for w in waiters { w.resume(returning: result) }
+        return result
         #endif
     }
 
