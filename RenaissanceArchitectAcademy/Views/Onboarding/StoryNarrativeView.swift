@@ -65,11 +65,9 @@ struct StoryNarrativeView: View {
     @State private var typewriterTimer: Timer?
     @State private var audioPlayer: AVAudioPlayer?
 
-    // Animated background frames
+    // Animated background frames — count + duration come from the page
     @State private var bgFrame: Int = 0
     @State private var bgTimer: Timer?
-    private let bgFrameCount = 15
-    private let bgFPS: Double = 10
 
     private let charsPerTick = 2
     private let tickInterval: TimeInterval = 0.03
@@ -232,8 +230,10 @@ struct StoryNarrativeView: View {
 
     private func startBackgroundAnimation() {
         guard page.backgroundFramePrefix != nil else { return }
-        bgTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / bgFPS, repeats: true) { timer in
-            if bgFrame < bgFrameCount - 1 {
+        let frameCount = page.backgroundFrameCount
+        let interval = page.backgroundFrameDuration / Double(max(frameCount - 1, 1))
+        bgTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { timer in
+            if bgFrame < frameCount - 1 {
                 bgFrame += 1
             } else {
                 timer.invalidate()

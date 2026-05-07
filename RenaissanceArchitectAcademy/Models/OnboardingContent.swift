@@ -14,8 +14,16 @@ struct StoryPage: Identifiable {
     var outroText: String? = nil
     /// Whether the bird companion should appear on this page
     let showBird: Bool
-    /// Optional animated background frames prefix (e.g. "WorkshopWelcomeFrame"), 15 frames 00-14
+    /// Optional animated background frames prefix (e.g. "LorenzoLetterFrame").
+    /// Frames are looked up as `{prefix}00`, `{prefix}01`, etc., up to `backgroundFrameCount - 1`.
     var backgroundFramePrefix: String? = nil
+    /// Number of frames in the background animation. Default 15 matches the
+    /// historical WorkshopWelcomeFrame pattern. Set explicitly for longer sequences.
+    var backgroundFrameCount: Int = 15
+    /// Total duration the animation should play over (seconds). Each frame
+    /// holds for `duration / (frameCount - 1)`. Default 1.5s matches the
+    /// historical 10fps pattern for 15 frames.
+    var backgroundFrameDuration: Double = 1.5
     /// Optional static background image filename in Assets.xcassets (e.g. "InvitationParchment").
     /// Takes precedence over the solid parchment color. Renders behind the text.
     var backgroundImage: String? = nil
@@ -57,6 +65,9 @@ enum OnboardingContent {
             Across mountains, across rivers, all the way to you.
             """,
             showBird: false,
+            backgroundFramePrefix: "LorenzoLetterFrame",
+            backgroundFrameCount: 56,
+            backgroundFrameDuration: 17.98,
             audioName: "LorenzoLetterNarration"
         ),
         StoryPage(
