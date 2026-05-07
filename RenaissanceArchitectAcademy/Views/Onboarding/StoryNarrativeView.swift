@@ -96,8 +96,11 @@ struct StoryNarrativeView: View {
                 RenaissanceColors.parchment
                     .opacity(0.55)
                     .ignoresSafeArea()
-            } else if let bgImage = page.backgroundImage {
-                // Static background image (e.g. parchment letter for The Invitation)
+            } else if let bgImage = page.backgroundImage, assetExists(named: bgImage) {
+                // Static background image (e.g. parchment letter for The Invitation).
+                // Only renders if the imageset actually exists — otherwise the
+                // empty Image() with .scaledToFill().ignoresSafeArea() can
+                // claim unexpected layout dimensions and break parent sizing.
                 Image(bgImage)
                     .resizable()
                     .scaledToFill()
@@ -109,48 +112,44 @@ struct StoryNarrativeView: View {
 
             DecorativeCorners()
 
-            // Title + divider + body text. Wrapped in a ScrollView so long
-            // pages (e.g. The Invitation) can scroll vertically on shorter
-            // viewports (iPad landscape) without pushing the Continue button
-            // off-screen.
-            //
-            // Important: explicit top/bottom padding instead of Spacer() —
-            // Spacer inside a ScrollView behaves unpredictably because the
-            // ScrollView's height tracks its content, so the Spacer can
-            // collapse or expand in ways that hide the title.
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack(spacing: 24) {
-                    // Title
-                    Text(page.title)
-                        .font(.custom("Cinzel-Regular", size: isLargeScreen ? 36 : 26))
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
-                        .opacity(showTitle ? 1 : 0)
-                        .offset(y: showTitle ? 0 : -15)
+            // Layout: title + divider FIXED at the top (always visible),
+            // body text scrollable in the middle (only scrolls when content
+            // exceeds available space), Continue button via safeAreaInset
+            // FIXED at the bottom. This keeps every key element on-screen
+            // regardless of orientation.
+            VStack(spacing: 24) {
+                // Title — fixed, always visible at the top
+                Text(page.title)
+                    .font(.custom("Cinzel-Regular", size: isLargeScreen ? 36 : 26))
+                    .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .opacity(showTitle ? 1 : 0)
+                    .offset(y: showTitle ? 0 : -15)
 
-                    DividerOrnament()
-                        .frame(width: 180)
-                        .opacity(showTitle ? 1 : 0)
+                DividerOrnament()
+                    .frame(width: 180)
+                    .opacity(showTitle ? 1 : 0)
 
-                    // Typewriter text — uses AttributedString so different sections
-                    // can render in different fonts (narrator body vs. handwritten letter).
-                    Text(revealedAttributedText)
-                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
-                        .multilineTextAlignment(.center)
-                        .lineSpacing(6)
-                        .adaptiveWidth(520)
+                // Body text — scrollable middle. ScrollView fills the
+                // remaining vertical space in the VStack.
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack(spacing: 24) {
+                        Text(revealedAttributedText)
+                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
+                            .multilineTextAlignment(.center)
+                            .lineSpacing(6)
+                            .adaptiveWidth(520)
 
-                    // Bird companion (only on final story page)
-                    if page.showBird && showBird {
-                        BirdCharacter(isSitting: false)
-                            .frame(width: 180, height: 180)
+                        if page.showBird && showBird {
+                            BirdCharacter(isSitting: false)
+                                .frame(width: 180, height: 180)
+                        }
                     }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.top, 60)
-                .padding(.bottom, 140)
-                .padding(.horizontal, 32)
             }
-
+            .padding(.top, 60)
+            .padding(.horizontal, 32)
         }
         // Continue button as a safe-area inset — guaranteed to sit at the
         // bottom of the screen above the home indicator, on every device
@@ -282,6 +281,16 @@ struct StoryNarrativeView: View {
             audioDone = true
             showContinueIfReady()
         }
+    }
+
+    /// Returns true if the named asset is present in the bundle. Prevents
+    /// rendering empty placeholder images that can break parent layout.
+    private func assetExists(named name: String) -> Bool {
+        #if os(iOS)
+        return UIImage(named: name) != nil
+        #else
+        return NSImage(named: name) != nil
+        #endif
     }
 
     private func startBackgroundAnimation() {
