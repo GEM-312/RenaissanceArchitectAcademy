@@ -39,6 +39,7 @@ struct OnboardingView: View {
                     StoryNarrativeView(
                         page: pages[index],
                         apprenticeName: onboardingState.apprenticeName,
+                        apprenticeGender: onboardingState.apprenticeGender,
                     ) {
                         let nextIndex = index + 1
                         if nextIndex < pages.count {

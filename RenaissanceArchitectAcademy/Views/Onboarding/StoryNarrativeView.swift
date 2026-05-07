@@ -7,6 +7,12 @@ struct StoryNarrativeView: View {
     /// Apprentice's name from onboarding. Pages with `{name}` tokens substitute
     /// this in at render time. Falls back to "apprentice" if empty.
     var apprenticeName: String = ""
+    /// Apprentice's gender from onboarding. Pages with `{gender}` tokens in
+    /// any string field (backgroundFramePrefix, audioName, backgroundImage)
+    /// substitute "Boy" or "Girl" at render time. Lets a single page support
+    /// gender-specific assets — e.g. `"{gender}CatchingLetterFrame"` resolves
+    /// to `BoyCatchingLetterFrame` or `GirlCatchingLetterFrame`.
+    var apprenticeGender: ApprenticeGender = .boy
     var onContinue: () -> Void
 
     /// Apprentice name with fallback for substitution.
@@ -14,9 +20,20 @@ struct StoryNarrativeView: View {
         apprenticeName.isEmpty ? "apprentice" : apprenticeName
     }
 
+    /// Capitalized gender token used in asset name substitutions.
+    private var genderToken: String {
+        apprenticeGender == .girl ? "Girl" : "Boy"
+    }
+
     /// Substitutes `{name}` tokens in the given source string.
     private func substitute(_ source: String) -> String {
         source.replacingOccurrences(of: "{name}", with: nameValue)
+    }
+
+    /// Substitutes `{gender}` tokens in asset-name strings. Used for
+    /// gender-specific lookups in backgroundFramePrefix, audioName, etc.
+    private func substituteGender(_ source: String) -> String {
+        source.replacingOccurrences(of: "{gender}", with: genderToken)
     }
 
     /// The full attributed text for this page, with per-section font runs:
@@ -47,6 +64,20 @@ struct StoryNarrativeView: View {
     /// Total character count across all sections — drives the typewriter timer.
     private var totalCharCount: Int {
         fullAttributedText.characters.count
+    }
+
+    /// Page asset names with `{gender}` resolved to the apprentice's choice.
+    /// Returns nil if the page doesn't define that asset.
+    private var resolvedFramePrefix: String? {
+        page.backgroundFramePrefix.map(substituteGender)
+    }
+
+    private var resolvedBackgroundImage: String? {
+        page.backgroundImage.map(substituteGender)
+    }
+
+    private var resolvedAudioName: String? {
+        page.audioName.map(substituteGender)
     }
 
     /// Typewriter-truncated attributed text. Preserves font runs across the slice.
@@ -84,7 +115,7 @@ struct StoryNarrativeView: View {
 
     var body: some View {
         ZStack {
-            if let prefix = page.backgroundFramePrefix {
+            if let prefix = resolvedFramePrefix, assetExists(named: "\(prefix)00") {
                 // Animated background frames (looping)
                 Image(String(format: "%@%02d", prefix, bgFrame))
                     .resizable()
@@ -96,7 +127,7 @@ struct StoryNarrativeView: View {
                 RenaissanceColors.parchment
                     .opacity(0.55)
                     .ignoresSafeArea()
-            } else if let bgImage = page.backgroundImage, assetExists(named: bgImage) {
+            } else if let bgImage = resolvedBackgroundImage, assetExists(named: bgImage) {
                 // Static background image (e.g. parchment letter for The Invitation).
                 // Only renders if the imageset actually exists — otherwise the
                 // empty Image() with .scaledToFill().ignoresSafeArea() can
@@ -262,7 +293,7 @@ struct StoryNarrativeView: View {
     }
 
     private func startNarration() {
-        guard let name = page.audioName else { return }
+        guard let name = resolvedAudioName else { return }
         // Look up .mp3 first, then .m4a — supports either format depending on
         // how the narration was exported (ElevenLabs / OpenArt → mp3,
         // GarageBand / iOS recordings → m4a).
@@ -294,7 +325,12 @@ struct StoryNarrativeView: View {
     }
 
     private func startBackgroundAnimation() {
-        guard page.backgroundFramePrefix != nil else { return }
+        // Skip if the page doesn't declare an animation OR if the resolved
+        // first frame isn't in the bundle (e.g. girl assets not generated yet
+        // for a `{gender}`-templated page). animationDone stays true so the
+        // Continue gate doesn't wait on an animation that will never play.
+        guard let prefix = resolvedFramePrefix,
+              assetExists(named: "\(prefix)00") else { return }
         let frameCount = page.backgroundFrameCount
         let interval = page.backgroundFrameDuration / Double(max(frameCount - 1, 1))
         animationDone = false

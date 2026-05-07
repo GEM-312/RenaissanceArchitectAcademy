@@ -81,7 +81,11 @@ enum OnboardingContent {
             The seal is warm. It glows faintly in your hand. Whoever sent this wanted you, \
             {name}, and only you, to read what is inside.
             """,
-            showBird: false
+            showBird: false,
+            backgroundFramePrefix: "{gender}CatchingLetterFrame",
+            backgroundFrameCount: 30,
+            backgroundFrameDuration: 5.04,
+            audioName: "LetterArrivesNarration"
         ),
         StoryPage(
             title: "The Invitation",
