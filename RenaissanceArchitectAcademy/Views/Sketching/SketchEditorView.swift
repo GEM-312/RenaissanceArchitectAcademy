@@ -94,7 +94,7 @@ struct SketchEditorView: View {
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
 
             TextField("Add a note about this sketch...", text: $annotation, axis: .vertical)
-                .font(.custom("EBGaramond-Regular", size: 15))
+                .font(RenaissanceFont.bodySmall)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
                 .lineLimit(2...4)
                 .padding(10)
@@ -128,7 +128,7 @@ struct SketchEditorView: View {
         VStack {
             Spacer()
             Text("Drawing edits are available on iPad.")
-                .font(.custom("EBGaramond-Italic", size: 15))
+                .font(RenaissanceFont.italicSmall)
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
             Spacer()
         }
@@ -147,7 +147,7 @@ struct SketchEditorView: View {
                     Image(systemName: "trash")
                     Text("Delete")
                 }
-                .font(.custom("EBGaramond-SemiBold", size: 15))
+                .font(RenaissanceFont.buttonSmall)
                 .foregroundStyle(RenaissanceColors.errorRed)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 11)

@@ -447,7 +447,7 @@ private struct IstrianStoneVisual: View {
                                 .strokeBorder(IVMaterialColors.sepiaInk.opacity(0.3), lineWidth: 1)
                         )
                     Text("Istrian")
-                        .font(.custom("Cinzel-Bold", size: 16))
+                        .font(RenaissanceFont.visualTitle)
                         .foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                 }
 
@@ -455,7 +455,7 @@ private struct IstrianStoneVisual: View {
                 if step >= 3 {
                     VStack(spacing: 4) {
                         Text("3×")
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(RenaissanceFont.visualTitle)
                             .foregroundStyle(color)
                         Text("harder")
                             .font(RenaissanceFont.ivBody)
@@ -474,7 +474,7 @@ private struct IstrianStoneVisual: View {
                                     .strokeBorder(IVMaterialColors.sepiaInk.opacity(0.15), lineWidth: 1)
                             )
                         Text("Marble")
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(RenaissanceFont.visualTitle)
                             .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                     }
                 }
@@ -719,7 +719,7 @@ private struct TimberSeasonVisual: View {
                             .font(RenaissanceFont.ivFormula)
                             .foregroundStyle(step >= 1 ? IVMaterialColors.waterBlue : IVMaterialColors.waterBlue.opacity(0.3))
                         Text("Fresh")
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(RenaissanceFont.visualTitle)
                             .foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                     }
 
@@ -744,7 +744,7 @@ private struct TimberSeasonVisual: View {
                                 .font(RenaissanceFont.ivFormula)
                                 .foregroundStyle(color)
                             Text("Seasoned")
-                                .font(.custom("Cinzel-Bold", size: 16))
+                                .font(RenaissanceFont.visualTitle)
                                 .foregroundStyle(IVMaterialColors.sepiaInk)
                         }
                     }

@@ -7,8 +7,9 @@ struct OnboardingView: View {
 
     enum Phase: Equatable {
         case characterSelect
-        case avatarTransition   // travel video after choosing character
+        case avatarTransition   // sprite-frame intro after choosing character
         case story(Int)         // index into OnboardingContent.storyPages
+        case tierPicker         // subscription picker — fires after the last story page
     }
 
     @State private var phase: Phase = .characterSelect
@@ -45,25 +46,34 @@ struct OnboardingView: View {
                                 phase = .story(nextIndex)
                             }
                         } else {
-                            // Story complete — mark onboarding done and exit
-                            onboardingState.completeOnboarding()
-                            onComplete()
+                            // Story complete — show the tier picker before exiting onboarding
+                            withAnimation(.easeInOut(duration: 0.6)) {
+                                phase = .tierPicker
+                            }
                         }
                     }
                     .id(index) // force view recreation per page
                     .transition(.opacity)
                 }
+
+            case .tierPicker:
+                SubscriptionPickerView(onboardingState: onboardingState) {
+                    onboardingState.completeOnboarding()
+                    onComplete()
+                }
+                .transition(.opacity)
             }
         }
         .overlay(alignment: .topTrailing) {
-            // Skip button — available after character select
-            if phase != .characterSelect {
+            // Skip button — available during avatar intro and story pages only.
+            // The tier picker has no skip — players must choose a tier to enter the game.
+            if showsSkipButton {
                 Button {
                     onboardingState.completeOnboarding()
                     onComplete()
                 } label: {
                     Text("Skip")
-                        .font(.custom("EBGaramond-Regular", size: 15))
+                        .font(RenaissanceFont.bodySmall)
                         .foregroundStyle(.white.opacity(0.7))
                         .padding(.horizontal, 14)
                         .padding(.vertical, 6)
@@ -76,5 +86,12 @@ struct OnboardingView: View {
             }
         }
         .animation(.easeInOut(duration: 0.5), value: phase)
+    }
+
+    private var showsSkipButton: Bool {
+        switch phase {
+        case .characterSelect, .tierPicker: return false
+        case .avatarTransition, .story:     return true
+        }
     }
 }

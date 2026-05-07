@@ -66,7 +66,7 @@ struct InfographicRevealView: View {
                     onDismiss()
                 } label: {
                     Text("Continue")
-                        .font(.custom("EBGaramond-SemiBold", size: 14))
+                        .font(RenaissanceFont.footnoteBold)
                         .foregroundStyle(.white)
                         .padding(.horizontal, 24)
                         .padding(.vertical, 8)

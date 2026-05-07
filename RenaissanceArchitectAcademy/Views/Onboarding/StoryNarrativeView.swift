@@ -1,4 +1,5 @@
 import SwiftUI
+import AVFoundation
 
 /// Reusable animated story page — typewriter text reveal with optional BirdCharacter
 struct StoryNarrativeView: View {
@@ -8,10 +9,53 @@ struct StoryNarrativeView: View {
     var apprenticeName: String = ""
     var onContinue: () -> Void
 
-    /// The text to display — `{name}` tokens are replaced with the apprentice's name.
-    private var displayText: String {
-        let nameValue = apprenticeName.isEmpty ? "apprentice" : apprenticeName
-        return page.text.replacingOccurrences(of: "{name}", with: nameValue)
+    /// Apprentice name with fallback for substitution.
+    private var nameValue: String {
+        apprenticeName.isEmpty ? "apprentice" : apprenticeName
+    }
+
+    /// Substitutes `{name}` tokens in the given source string.
+    private func substitute(_ source: String) -> String {
+        source.replacingOccurrences(of: "{name}", with: nameValue)
+    }
+
+    /// The full attributed text for this page, with per-section font runs:
+    /// intro (default body) → letter (PetitFormalScript) → outro (default body).
+    /// Pages without `letterText` collapse to a single body run.
+    private var fullAttributedText: AttributedString {
+        var result = AttributedString()
+
+        var intro = AttributedString(substitute(page.text))
+        intro.font = RenaissanceFont.bodyLarge
+        result += intro
+
+        if let letter = page.letterText {
+            var letterAttr = AttributedString("\n\n" + substitute(letter))
+            letterAttr.font = .custom("PetitFormalScript-Regular", size: 22)
+            result += letterAttr
+        }
+
+        if let outro = page.outroText {
+            var outroAttr = AttributedString("\n\n" + substitute(outro))
+            outroAttr.font = RenaissanceFont.bodyLarge
+            result += outroAttr
+        }
+
+        return result
+    }
+
+    /// Total character count across all sections — drives the typewriter timer.
+    private var totalCharCount: Int {
+        fullAttributedText.characters.count
+    }
+
+    /// Typewriter-truncated attributed text. Preserves font runs across the slice.
+    private var revealedAttributedText: AttributedString {
+        let full = fullAttributedText
+        let n = min(revealedCharCount, full.characters.count)
+        guard n > 0 else { return AttributedString("") }
+        let endIndex = full.characters.index(full.characters.startIndex, offsetBy: n)
+        return AttributedString(full[full.characters.startIndex..<endIndex])
     }
 
     @State private var showTitle = false
@@ -19,6 +63,7 @@ struct StoryNarrativeView: View {
     @State private var showBird = false
     @State private var showButton = false
     @State private var typewriterTimer: Timer?
+    @State private var audioPlayer: AVAudioPlayer?
 
     // Animated background frames
     @State private var bgFrame: Int = 0
@@ -46,6 +91,12 @@ struct StoryNarrativeView: View {
                 RenaissanceColors.parchment
                     .opacity(0.55)
                     .ignoresSafeArea()
+            } else if let bgImage = page.backgroundImage {
+                // Static background image (e.g. parchment letter for The Invitation)
+                Image(bgImage)
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
             } else {
                 RenaissanceColors.parchment
                     .ignoresSafeArea()
@@ -67,9 +118,9 @@ struct StoryNarrativeView: View {
                     .frame(width: 180)
                     .opacity(showTitle ? 1 : 0)
 
-                // Typewriter text
-                Text(revealedText)
-                    .font(.custom("EBGaramond-Regular", size: 19))
+                // Typewriter text — uses AttributedString so different sections
+                // can render in different fonts (narrator body vs. handwritten letter).
+                Text(revealedAttributedText)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
                     .multilineTextAlignment(.center)
                     .lineSpacing(6)
@@ -107,29 +158,26 @@ struct StoryNarrativeView: View {
         .onAppear {
             startReveal()
             startBackgroundAnimation()
+            startNarration()
         }
         .onDisappear {
             stopTypewriter()
             bgTimer?.invalidate()
             bgTimer = nil
+            audioPlayer?.stop()
+            audioPlayer = nil
         }
         // Tap to skip typewriter and reveal all text
         .onTapGesture {
-            if revealedCharCount < displayText.count {
+            if revealedCharCount < totalCharCount {
                 stopTypewriter()
-                revealedCharCount = displayText.count
+                revealedCharCount = totalCharCount
                 finishReveal()
             }
         }
     }
 
     // MARK: - Typewriter Logic
-
-    private var revealedText: String {
-        let text = displayText
-        let endIndex = text.index(text.startIndex, offsetBy: min(revealedCharCount, text.count))
-        return String(text[text.startIndex..<endIndex])
-    }
 
     private func startReveal() {
         withAnimation(.easeOut(duration: 0.6)) {
@@ -138,9 +186,10 @@ struct StoryNarrativeView: View {
 
         // Start typewriter after title animation
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+            let total = totalCharCount
             typewriterTimer = Timer.scheduledTimer(withTimeInterval: tickInterval, repeats: true) { timer in
-                if revealedCharCount < displayText.count {
-                    revealedCharCount = min(revealedCharCount + charsPerTick, displayText.count)
+                if revealedCharCount < total {
+                    revealedCharCount = min(revealedCharCount + charsPerTick, total)
                 } else {
                     timer.invalidate()
                     finishReveal()
@@ -167,6 +216,18 @@ struct StoryNarrativeView: View {
     private func stopTypewriter() {
         typewriterTimer?.invalidate()
         typewriterTimer = nil
+    }
+
+    private func startNarration() {
+        guard let name = page.audioName else { return }
+        // Look up .mp3 first, then .m4a — supports either format depending on
+        // how the narration was exported (ElevenLabs / OpenArt → mp3,
+        // GarageBand / iOS recordings → m4a).
+        let url = Bundle.main.url(forResource: name, withExtension: "mp3")
+            ?? Bundle.main.url(forResource: name, withExtension: "m4a")
+        guard let url else { return }
+        audioPlayer = try? AVAudioPlayer(contentsOf: url)
+        audioPlayer?.play()
     }
 
     private func startBackgroundAnimation() {

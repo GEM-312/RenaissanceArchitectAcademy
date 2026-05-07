@@ -57,7 +57,7 @@ struct CityView: View {
                                         Image(systemName: "chevron.left")
                                             .font(.caption)
                                         Text("Map")
-                                            .font(.custom("EBGaramond-Regular", size: 14))
+                                            .font(RenaissanceFont.footnote)
                                     }
                                     .foregroundStyle(RenaissanceColors.renaissanceBlue)
                                 }
@@ -86,7 +86,7 @@ struct CityView: View {
                                         Image(systemName: "chevron.left")
                                             .font(.caption)
                                         Text("Map")
-                                            .font(.custom("EBGaramond-Regular", size: 14))
+                                            .font(RenaissanceFont.footnote)
                                     }
                                     .foregroundStyle(RenaissanceColors.renaissanceBlue)
                                 }
@@ -194,7 +194,7 @@ struct CityView: View {
                 Image(systemName: "hammer.fill")
                     .font(.caption)
                 Text("Workshop")
-                    .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .caption))
+                    .font(RenaissanceFont.footnote)
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
@@ -221,7 +221,7 @@ struct CityHeaderView: View {
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 Text("\(completedCount)/\(totalCount) buildings completed")
-                    .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .caption))
+                    .font(RenaissanceFont.footnote)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
             }
 
@@ -257,7 +257,7 @@ struct CityProgressBar: View {
                 Spacer()
 
                 Text("\(completedCount)/\(totalCount)")
-                    .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .caption))
+                    .font(RenaissanceFont.footnote)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
             }
 

@@ -279,7 +279,7 @@ private struct CristalloChemVisual: View {
                                 .strokeBorder(glassGreen.opacity(step >= 1 ? 0.6 : 0.1), lineWidth: 1.5)
                         )
                     Text("Raw")
-                        .font(.custom("Cinzel-Bold", size: 16))
+                        .font(RenaissanceFont.visualTitle)
                         .foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                     Text("Fe → green")
                         .font(RenaissanceFont.ivBody)
@@ -290,7 +290,7 @@ private struct CristalloChemVisual: View {
                 if step >= 2 {
                     VStack(spacing: 2) {
                         Text("+")
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(RenaissanceFont.visualTitle)
                             .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.4))
                         Text("MnO₂")
                             .font(RenaissanceFont.ivFormula)
@@ -317,7 +317,7 @@ private struct CristalloChemVisual: View {
                             )
                             .shadow(color: crystalClear.opacity(0.2), radius: 4)
                         Text("Cristallo")
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(RenaissanceFont.visualTitle)
                             .foregroundStyle(color)
                         Text("Clear")
                             .font(RenaissanceFont.ivBody)
@@ -427,7 +427,7 @@ private struct FluxMeltingVisual: View {
                             .font(RenaissanceFont.ivFormula)
                             .foregroundStyle(step >= 1 ? IVMaterialColors.cherryRed : IVMaterialColors.cherryRed.opacity(0.3))
                         Text("SiO₂")
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(RenaissanceFont.visualTitle)
                             .foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                     }
 
@@ -461,7 +461,7 @@ private struct FluxMeltingVisual: View {
                                 .font(RenaissanceFont.ivFormula)
                                 .foregroundStyle(color)
                             Text("+ Flux")
-                                .font(.custom("Cinzel-Bold", size: 16))
+                                .font(RenaissanceFont.visualTitle)
                                 .foregroundStyle(color)
                         }
                     }
@@ -630,7 +630,7 @@ private struct FuelConsumptionVisual: View {
 
                 if step >= 3 {
                     Text("2,000 tons / year")
-                        .font(.custom("Cinzel-Bold", size: 16))
+                        .font(RenaissanceFont.visualTitle)
                         .foregroundStyle(IVMaterialColors.cherryRed.opacity(0.7))
                 }
             }

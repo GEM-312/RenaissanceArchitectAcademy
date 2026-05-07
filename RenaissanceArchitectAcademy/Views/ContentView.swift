@@ -223,6 +223,26 @@ struct ContentView: View {
         }
     }
 
+    /// DEBUG-only: clears the onboarding-completion flag and the subscription tier,
+    /// then routes back to onboarding immediately. Keeps game progress + settings.
+    private func resetOnboarding() {
+        DataManagementService.wipeOnboardingOnly(
+            persistence: persistenceManager,
+            onboardingState: onboardingState
+        )
+        withAnimation(.easeInOut(duration: 0.5)) {
+            showingOnboarding = true
+            showingMainMenu = false
+        }
+    }
+
+    /// Full data wipe: SwiftData, every UserDefaults key, on-disk caches.
+    /// Apple-side subscription receipts are untouched. The view shows a
+    /// "Please relaunch" alert after this fires (handled by ProfileView).
+    private func deleteAllData() {
+        DataManagementService.wipeAllData(persistence: persistenceManager)
+    }
+
     /// Detail view based on sidebar selection
     @ViewBuilder
     private var detailView: some View {
@@ -234,7 +254,15 @@ struct ContentView: View {
         case .era(let era):
             CityView(viewModel: cityViewModel, filterEra: era, workshopState: workshopState, onNavigate: navigateTo)
         case .profile:
-            ProfileView(viewModel: cityViewModel, workshopState: workshopState, onboardingState: onboardingState, onNavigate: navigateTo, onBackToMenu: backToMenu)
+            ProfileView(
+                viewModel: cityViewModel,
+                workshopState: workshopState,
+                onboardingState: onboardingState,
+                onNavigate: navigateTo,
+                onBackToMenu: backToMenu,
+                onResetOnboarding: resetOnboarding,
+                onDeleteAllData: deleteAllData
+            )
         case .workshop:
             WorkshopView(workshop: workshopState, viewModel: cityViewModel, notebookState: notebookState, onNavigate: navigateTo, onBackToMenu: backToMenu, onboardingState: onboardingState, returnToLessonPlotId: $returnToLessonPlotId)
         case .forest:

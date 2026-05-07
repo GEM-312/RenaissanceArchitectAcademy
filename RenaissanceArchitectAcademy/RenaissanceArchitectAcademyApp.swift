@@ -55,9 +55,7 @@ struct RenaissanceArchitectAcademyApp: App {
             "LibreBaskerville-Italic", "LibreBaskerville-SemiBold",
             "LibreFranklin-Regular", "LibreFranklin-Bold",
             "LibreFranklin-Medium", "LibreFranklin-SemiBold", "LibreFranklin-Italic",
-            "Delius-Regular", "EBGaramond-Regular", "EBGaramond-Regular",
-            "EBGaramond-Medium", "EBGaramond-SemiBold", "EBGaramond-Bold",
-            "EBGaramond-Italic", "EBGaramond-Italic"
+            "Delius-Regular"
         ]
 
         for fontFile in fontFiles {

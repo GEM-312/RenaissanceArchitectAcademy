@@ -627,7 +627,7 @@ struct CraftingRoomMapView: View {
                             Image(systemName: "chevron.left")
                             Text("Back")
                         }
-                        .font(.custom("EBGaramond-Regular", size: 16))
+                        .font(RenaissanceFont.bodyMedium)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .padding(.horizontal, Spacing.md)
                         .padding(.vertical, Spacing.xs)
@@ -677,7 +677,7 @@ struct CraftingRoomMapView: View {
                                     .foregroundStyle(owned ? RenaissanceColors.stoneGray : RenaissanceColors.ochre)
                                 if owned {
                                     Text("(owned)")
-                                        .font(.custom("EBGaramond-Regular", size: 12))
+                                        .font(RenaissanceFont.footnoteSmall)
                                         .foregroundStyle(RenaissanceColors.sageGreen)
                                 } else {
                                     Image(systemName: "hammer.fill")
@@ -871,7 +871,7 @@ struct CraftingRoomMapView: View {
                 }
 
                 Text("Ah, young apprentice — the recipes are not mine to memorize for you. I keep every one in my book on this bench. Every master opens it a thousand times. Read, try, fail, try again. That is the path.")
-                    .font(.custom("EBGaramond-Regular", size: 14))
+                    .font(RenaissanceFont.footnote)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
                     .lineSpacing(3)
                     .multilineTextAlignment(.center)
@@ -889,7 +889,7 @@ struct CraftingRoomMapView: View {
                             Image(systemName: "book.closed.fill")
                                 .font(.system(size: 14))
                             Text("Open the Book")
-                                .font(.custom("EBGaramond-SemiBold", size: 15))
+                                .font(RenaissanceFont.buttonSmall)
                         }
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
@@ -906,7 +906,7 @@ struct CraftingRoomMapView: View {
                         withAnimation(.spring(response: 0.3)) { showBarovierOverlay = false }
                     } label: {
                         Text("Close")
-                            .font(.custom("EBGaramond-Regular", size: 14))
+                            .font(RenaissanceFont.footnote)
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 8)
@@ -1116,7 +1116,7 @@ struct CraftingRoomMapView: View {
 
                     // Mortar slots
                     Text("Mortar")
-                        .font(.custom("EBGaramond-Regular", size: 16))
+                        .font(RenaissanceFont.bodyMedium)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     HStack(spacing: 20) {
@@ -1152,7 +1152,7 @@ struct CraftingRoomMapView: View {
                                     .font(.title2)
                                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.3))
                                 Text("Output")
-                                    .font(.custom("EBGaramond-Regular", size: 12))
+                                    .font(RenaissanceFont.footnoteSmall)
                                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.4))
                             }
                             .padding(10)
@@ -1274,7 +1274,7 @@ struct CraftingRoomMapView: View {
 
                     // Recipe reference
                     Text("Grinding Recipes")
-                        .font(.custom("EBGaramond-Regular", size: 16))
+                        .font(RenaissanceFont.bodyMedium)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     VStack(spacing: 6) {
@@ -1354,7 +1354,7 @@ struct CraftingRoomMapView: View {
                     HStack(spacing: 2) {
                         MaterialIconView(material: material, size: 16)
                         Text("×\(recipe.ingredients[material]!)")
-                            .font(.custom("EBGaramond-Regular", size: 12))
+                            .font(RenaissanceFont.footnoteSmall)
                     }
                 }
             }
@@ -1401,7 +1401,7 @@ struct CraftingRoomMapView: View {
                 // Raw materials
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Raw Materials")
-                        .font(.custom("EBGaramond-Regular", size: 16))
+                        .font(RenaissanceFont.bodyMedium)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     let materialsWithStock = Material.allCases.filter { (workshop.rawMaterials[$0] ?? 0) > 0 }
@@ -1439,7 +1439,7 @@ struct CraftingRoomMapView: View {
                 // Crafted items
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Crafted Items")
-                        .font(.custom("EBGaramond-Regular", size: 16))
+                        .font(RenaissanceFont.bodyMedium)
                         .foregroundStyle(RenaissanceColors.sageGreen)
 
                     let craftedWithStock = CraftedItem.allCases.filter { (workshop.craftedMaterials[$0] ?? 0) > 0 }
@@ -1547,7 +1547,7 @@ struct CraftingRoomMapView: View {
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Earn Florins")
-                            .font(.custom("Cinzel-Bold", size: 22))
+                            .font(RenaissanceFont.title2Bold)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text("Here's how to earn more:")
                             .font(RenaissanceFont.dialogSubtitle)
@@ -1605,7 +1605,7 @@ struct CraftingRoomMapView: View {
                     )
 
                 Text(title)
-                    .font(.custom("EBGaramond-Regular", size: 16))
+                    .font(RenaissanceFont.bodyMedium)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 Spacer()

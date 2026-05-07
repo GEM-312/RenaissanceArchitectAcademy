@@ -83,7 +83,7 @@ private struct VesaliusVisual: View {
                     // Left — Galen / Old Dogma
                     VStack(spacing: 6) {
                         Text("THE OLD DOGMA")
-                            .font(.custom("Cinzel-Bold", size: 15))
+                            .font(RenaissanceFont.cardTitle)
                             .foregroundStyle(dogmaBlue)
                         Text("(Pre-1543)")
                             .font(RenaissanceFont.ivBody)
@@ -132,7 +132,7 @@ private struct VesaliusVisual: View {
                     // Right — Vesalius / New Observation
                     VStack(spacing: 6) {
                         Text("NEW OBSERVATION")
-                            .font(.custom("Cinzel-Bold", size: 15))
+                            .font(RenaissanceFont.cardTitle)
                             .foregroundStyle(observationRed)
                         Text("(Vesalius)")
                             .font(RenaissanceFont.ivBody)
@@ -191,7 +191,7 @@ private struct VesaliusVisual: View {
                                 .foregroundStyle(IVMaterialColors.sepiaInk)
                         }
                         Text("of Revolutionary Science")
-                            .font(.custom("EBGaramond-Italic", size: 16))
+                            .font(RenaissanceFont.bodyItalic)
                             .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
                     }
                     .padding(.vertical, 6)
@@ -344,7 +344,7 @@ private struct FunnelShapeVisual: View {
                 // --- Callout labels ---
                 if step >= 1 {
                     // "Standing Room Only" — left side
-                    let calloutFont = Font.custom("EBGaramond-SemiBold", size: 15)
+                    let calloutFont = RenaissanceFont.buttonSmall
                     let standingLabel = ctx.resolve(Text("Standing\nRoom Only")
                         .font(calloutFont).foregroundColor(IVMaterialColors.sepiaInk.opacity(0.7)))
                     let midTierY = bottomY - 3.5 * tierH
@@ -360,7 +360,7 @@ private struct FunnelShapeVisual: View {
 
                 if step >= 2 {
                     // "Bird's-Eye View" — right side
-                    let calloutFont = Font.custom("EBGaramond-SemiBold", size: 15)
+                    let calloutFont = RenaissanceFont.buttonSmall
                     let birdLabel = ctx.resolve(Text("Bird's-Eye\nView ↓")
                         .font(calloutFont).foregroundColor(IVMaterialColors.sepiaInk.opacity(0.7)))
                     let upperTierY = bottomY - 4.5 * tierH
@@ -670,7 +670,7 @@ private struct TimberPrepVisual: View {
                         .font(RenaissanceFont.ivFormula)
                         .foregroundStyle(step >= 1 ? IVMaterialColors.waterBlue : IVMaterialColors.waterBlue.opacity(0.3))
                     Text("Soak")
-                        .font(.custom("Cinzel-Bold", size: 16))
+                        .font(RenaissanceFont.visualTitle)
                         .foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                 }
 
@@ -699,7 +699,7 @@ private struct TimberPrepVisual: View {
                             .font(RenaissanceFont.ivFormula)
                             .foregroundStyle(IVMaterialColors.dimColor)
                         Text("Air Dry")
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(RenaissanceFont.visualTitle)
                             .foregroundStyle(IVMaterialColors.sepiaInk)
                     }
 
@@ -716,7 +716,7 @@ private struct TimberPrepVisual: View {
                             .font(RenaissanceFont.ivFormula)
                             .foregroundStyle(color)
                         Text("Ready")
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(RenaissanceFont.visualTitle)
                             .foregroundStyle(color)
                     }
                 }

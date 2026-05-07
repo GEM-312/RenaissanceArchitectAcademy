@@ -65,7 +65,7 @@ struct WolframGeometryView: View {
                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
             Text(geometry.description)
-                .font(.custom("EBGaramond-Regular", size: 14))
+                .font(RenaissanceFont.footnote)
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                 .lineSpacing(2)
         }
@@ -122,7 +122,7 @@ struct WolframGeometryView: View {
     private func valueCard(_ result: WolframGeometryResult) -> some View {
         VStack(spacing: 2) {
             Text(result.label)
-                .font(.custom("EBGaramond-Regular", size: 11))
+                .font(RenaissanceFont.captionSmall)
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
 
             HStack(spacing: 2) {
@@ -162,19 +162,19 @@ struct WolframGeometryView: View {
         VStack(spacing: 8) {
             HStack {
                 Text(param.label)
-                    .font(.custom("EBGaramond-Regular", size: 13))
+                    .font(RenaissanceFont.caption)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
 
                 Spacer()
 
                 HStack(spacing: 2) {
                     Text(String(format: param.step < 1 ? "%.1f" : "%.0f", sliderValue))
-                        .font(.custom("Cinzel-Bold", size: 16))
+                        .font(RenaissanceFont.visualTitle)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .contentTransition(.numericText())
 
                     Text(param.unit)
-                        .font(.custom("EBGaramond-Regular", size: 12))
+                        .font(RenaissanceFont.footnoteSmall)
                         .foregroundStyle(RenaissanceColors.warmBrown)
                 }
 
@@ -203,16 +203,16 @@ struct WolframGeometryView: View {
                         .foregroundStyle(RenaissanceColors.ochre)
 
                     Text("\(result.label): ")
-                        .font(.custom("EBGaramond-Regular", size: 13))
+                        .font(RenaissanceFont.caption)
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
 
                     Text(result.value)
-                        .font(.custom("Cinzel-Bold", size: 15))
+                        .font(RenaissanceFont.cardTitle)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .contentTransition(.numericText())
 
                     Text(result.unit)
-                        .font(.custom("EBGaramond-Regular", size: 11))
+                        .font(RenaissanceFont.captionSmall)
                         .foregroundStyle(RenaissanceColors.warmBrown)
 
                     if result.isFromWolfram {
@@ -633,7 +633,7 @@ struct WolframGeometryView: View {
         // Label
         let midPoint = CGPoint(x: (from.x + to.x) / 2, y: (from.y + to.y) / 2)
         let text = Text(label)
-            .font(.custom("EBGaramond-Regular", size: 11))
+            .font(RenaissanceFont.captionSmall)
             .foregroundColor(color.opacity(0.7))
         let resolved = context.resolve(text)
 

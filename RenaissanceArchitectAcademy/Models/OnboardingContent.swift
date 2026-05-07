@@ -4,11 +4,24 @@ import Foundation
 struct StoryPage: Identifiable {
     let id = UUID()
     let title: String
+    /// Narrator text (default body font). On pages with a letter, this is the
+    /// pre-letter intro line.
     let text: String
+    /// Optional letter / handwritten content (rendered in PetitFormalScript-Regular).
+    /// Appears between `text` and `outroText` on the page.
+    var letterText: String? = nil
+    /// Optional narrator outro shown after the letter content.
+    var outroText: String? = nil
     /// Whether the bird companion should appear on this page
     let showBird: Bool
     /// Optional animated background frames prefix (e.g. "WorkshopWelcomeFrame"), 15 frames 00-14
     var backgroundFramePrefix: String? = nil
+    /// Optional static background image filename in Assets.xcassets (e.g. "InvitationParchment").
+    /// Takes precedence over the solid parchment color. Renders behind the text.
+    var backgroundImage: String? = nil
+    /// Optional audio narration filename (without extension), played on page appear.
+    /// Looked up as both .mp3 and .m4a in the bundle.
+    var audioName: String? = nil
 }
 
 /// A historical lesson the bird teaches before the player's first visit to a workshop station
@@ -38,14 +51,13 @@ enum OnboardingContent {
             title: "The Letter Is Sealed",
             text: """
             The year is 1485. In the Palazzo Medici, Lorenzo lifts his quill from the page. \
-            He has been searching for new talent across Italy — and tonight, he has found one.
+            He has been searching for new talent across all of Italy, and tonight, he has found one.
 
-            He folds the letter. He seals it in red wax with the Medici crest. \
-            And he opens his window to the night air.
-
-            "Carry it true," he whispers — and lets the letter go.
+            He seals the letter in red wax with the Medici crest. And he sends it flying. \
+            Across mountains, across rivers, all the way to you.
             """,
-            showBird: false
+            showBird: false,
+            audioName: "LorenzoLetterNarration"
         ),
         StoryPage(
             title: "The Letter Arrives",
@@ -62,17 +74,17 @@ enum OnboardingContent {
         ),
         StoryPage(
             title: "The Invitation",
-            text: """
-            You break the seal. The handwriting is bold and sure:
+            text: "You break the seal. The handwriting is bold and sure:",
+            letterText: """
+            We have heard of your gifts, {name}. Your drawings. Your curiosity for how things work.
 
-            "We have heard of your gifts, {name}. Your drawings. Your curiosity for how things work. \
             Lorenzo de' Medici will sponsor your apprenticeship under the finest architects of the age — \
-            but you must come to Florence. The road is long. Days and nights across Italy. \
-            Find us by the Duomo when you arrive."
-
-            Below the signature: a promise of florins — Florence's gold — for every step of your apprenticeship.
+            but you must come to Florence. The road is long. Days and nights across Italy. Find us by \
+            the Duomo when you arrive.
             """,
-            showBird: false
+            outroText: "Below the signature: a promise of florins — Florence's gold — for every step of your apprenticeship.",
+            showBird: false,
+            backgroundImage: "InvitationParchment"
         ),
         StoryPage(
             title: "The Bird Arrives",

@@ -254,7 +254,7 @@ struct RiverMiniGameView: View {
                             Image(systemName: "arrow.triangle.2.circlepath")
                                 .foregroundStyle(.white.opacity(0.7))
                             Text("Moves: \(moveCount)")
-                                .font(.custom("EBGaramond-Regular", size: 14))
+                                .font(RenaissanceFont.footnote)
                                 .foregroundStyle(.white.opacity(0.8))
                         }
 
@@ -263,7 +263,7 @@ struct RiverMiniGameView: View {
                         HStack(spacing: 4) {
                             Text("\u{1FAA3}")
                             Text("Le Tubature")
-                                .font(.custom("Cinzel-Bold", size: 16))
+                                .font(RenaissanceFont.visualTitle)
                                 .foregroundStyle(.white)
                         }
 
@@ -316,7 +316,7 @@ struct RiverMiniGameView: View {
                                 .fill(RenaissanceColors.renaissanceBlue)
                                 .frame(width: 10, height: 10)
                             Text("Source")
-                                .font(.custom("EBGaramond-Regular", size: 12))
+                                .font(RenaissanceFont.footnoteSmall)
                                 .foregroundStyle(.white.opacity(0.6))
                         }
                         Spacer()
@@ -325,7 +325,7 @@ struct RiverMiniGameView: View {
                                 .fill(RenaissanceColors.sageGreen)
                                 .frame(width: 10, height: 10)
                             Text("Drain")
-                                .font(.custom("EBGaramond-Regular", size: 12))
+                                .font(RenaissanceFont.footnoteSmall)
                                 .foregroundStyle(.white.opacity(0.6))
                         }
                     }
@@ -711,7 +711,7 @@ struct RiverMiniGameView: View {
                                     .frame(width: 10, height: 10)
                             }
                             Text("\(sandCollected)/\(sandNeeded)")
-                                .font(.custom("EBGaramond-Regular", size: 13))
+                                .font(RenaissanceFont.caption)
                                 .foregroundStyle(.white.opacity(0.7))
                         }
 
@@ -720,7 +720,7 @@ struct RiverMiniGameView: View {
                         HStack(spacing: 4) {
                             Text("\u{1FAA3}")
                             Text("Il Setaccio")
-                                .font(.custom("Cinzel-Bold", size: 16))
+                                .font(RenaissanceFont.visualTitle)
                                 .foregroundStyle(.white)
                         }
 
@@ -945,7 +945,7 @@ struct RiverMiniGameView: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(selectedMaterial == .water ? "Bucket Filled!" : "Sabbia Pura!")
-                        .font(.custom("Cinzel-Bold", size: 22))
+                        .font(RenaissanceFont.title2Bold)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text("You collected 1x \(selectedMaterial.rawValue)")
                         .font(RenaissanceFont.dialogSubtitle)
@@ -967,7 +967,7 @@ struct RiverMiniGameView: View {
                     Text(selectedMaterial == .water
                          ? "Bucket filled in \(moveCount) moves"
                          : "Your bucket is full! \(sandCollected) grains, \(sieveMisses) mistake\(sieveMisses == 1 ? "" : "s")")
-                        .font(.custom("EBGaramond-Regular", size: 16))
+                        .font(RenaissanceFont.bodyMedium)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     Spacer()
@@ -993,7 +993,7 @@ struct RiverMiniGameView: View {
                             )
 
                         Text(selectedMaterial == .water ? "Efficient plumbing!" : "Your bucket is full!")
-                            .font(.custom("EBGaramond-Regular", size: 16))
+                            .font(RenaissanceFont.bodyMedium)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         Spacer()
@@ -1046,7 +1046,7 @@ struct RiverMiniGameView: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(selectedMaterial == .water ? "Pipes Leaking!" : "Too Much Debris!")
-                        .font(.custom("Cinzel-Bold", size: 22))
+                        .font(RenaissanceFont.title2Bold)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text(selectedMaterial == .water
                          ? "The water escaped through gaps."
@@ -1059,7 +1059,7 @@ struct RiverMiniGameView: View {
             Text(selectedMaterial == .water
                  ? "Roman plumbers tested every joint before opening the valves. Patience and precision — that's how you move water uphill."
                  : "A good builder can tell pure sand by feel. SiO₂ quartz grains are smooth and angular — shells and clay feel different. Try again with sharper eyes.")
-                .font(.custom("EBGaramond-Regular", size: 16))
+                .font(RenaissanceFont.bodyMedium)
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
 
             VStack(spacing: 10) {
@@ -1078,7 +1078,7 @@ struct RiverMiniGameView: View {
                                         .fill(RenaissanceColors.warmBrown.opacity(0.1))
                                 )
                             Text("Ask the Master for help")
-                                .font(.custom("EBGaramond-Regular", size: 16))
+                                .font(RenaissanceFont.bodyMedium)
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                             Spacer()
                             Image(systemName: "chevron.right")
@@ -1115,7 +1115,7 @@ struct RiverMiniGameView: View {
                             )
 
                         Text("Try Again")
-                            .font(.custom("EBGaramond-Regular", size: 16))
+                            .font(RenaissanceFont.bodyMedium)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         Spacer()
@@ -1146,7 +1146,7 @@ struct RiverMiniGameView: View {
                             )
 
                         Text("Leave River")
-                            .font(.custom("EBGaramond-Regular", size: 16))
+                            .font(RenaissanceFont.bodyMedium)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         Spacer()

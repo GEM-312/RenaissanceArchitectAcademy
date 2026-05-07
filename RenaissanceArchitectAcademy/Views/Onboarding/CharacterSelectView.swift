@@ -68,7 +68,7 @@ struct CharacterSelectView: View {
                 // Name entry
                 VStack(spacing: 12) {
                     Text("Your Name")
-                        .font(.custom("EBGaramond-SemiBold", size: 18))
+                        .font(RenaissanceFont.button)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     TextField("Enter your name...", text: $name)

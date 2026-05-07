@@ -74,7 +74,7 @@ struct NotebookPickerView: View {
                     Image(systemName: "chevron.left")
                     Text("Back")
                 }
-                .font(.custom("EBGaramond-Regular", size: 16))
+                .font(RenaissanceFont.bodyMedium)
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
             }
             .padding(.leading, 20)
@@ -83,7 +83,7 @@ struct NotebookPickerView: View {
 
             VStack(spacing: 2) {
                 Text("My Notebook")
-                    .font(.custom("Cinzel-Bold", size: 22))
+                    .font(RenaissanceFont.title2Bold)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                 Text("Tap a section to read")
                     .font(.custom("EBGaramond-Italic", size: 13))
@@ -119,7 +119,7 @@ struct NotebookPickerView: View {
                         .font(.custom("Cinzel-Bold", size: 17))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text("\(row.entryCount) " + (row.entryCount == 1 ? "entry" : "entries") + " · " + relativeDate(row.lastModified))
-                        .font(.custom("EBGaramond-Regular", size: 13))
+                        .font(RenaissanceFont.caption)
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                 }
 
@@ -155,7 +155,7 @@ struct NotebookPickerView: View {
                 .font(.custom("Cinzel-Bold", size: 18))
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
             Text("Read building lessons, complete knowledge cards, sketch floor plans, and discover stations — they'll all appear here.")
-                .font(.custom("EBGaramond-Regular", size: 15))
+                .font(RenaissanceFont.bodySmall)
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.55))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)

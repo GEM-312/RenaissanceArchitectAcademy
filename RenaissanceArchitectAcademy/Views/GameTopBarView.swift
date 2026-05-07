@@ -44,7 +44,7 @@ struct GameTopBarView: View {
                             } label: {
                                 HStack(spacing: 6) {
                                     Text(title)
-                                        .font(.custom("EBGaramond-SemiBold", size: 18))
+                                        .font(RenaissanceFont.button)
                                         .foregroundStyle(settings.pillTextColor)
                                     Image(systemName: "chevron.down")
                                         .font(.system(size: 11, weight: .semibold))

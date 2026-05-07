@@ -274,7 +274,7 @@ struct VolcanoMiniGameView: View {
                                     .frame(width: 10, height: 10)
                             }
                             Text("\(ashCollected)/\(ashNeeded)")
-                                .font(.custom("EBGaramond-Regular", size: 13))
+                                .font(RenaissanceFont.caption)
                                 .foregroundStyle(.white.opacity(0.7))
                         }
 
@@ -283,7 +283,7 @@ struct VolcanoMiniGameView: View {
                         HStack(spacing: 4) {
                             Text("\u{1F9F9}")
                             Text("La Pozzolana")
-                                .font(.custom("Cinzel-Bold", size: 16))
+                                .font(RenaissanceFont.visualTitle)
                                 .foregroundStyle(.white)
                         }
 
@@ -305,7 +305,7 @@ struct VolcanoMiniGameView: View {
 
                     if let fb = ashFeedback {
                         Text(fb)
-                            .font(.custom("EBGaramond-SemiBold", size: 15))
+                            .font(RenaissanceFont.buttonSmall)
                             .foregroundStyle(ashFeedbackColor)
                             .transition(.opacity)
                             .lineLimit(2)
@@ -560,7 +560,7 @@ struct VolcanoMiniGameView: View {
                                     .foregroundStyle(i < crystalsExtracted ? Color(red: 0.85, green: 0.2, blue: 0.2) : Color.white.opacity(0.2))
                             }
                             Text("\(crystalsExtracted)/\(crystalsNeeded)")
-                                .font(.custom("EBGaramond-Regular", size: 13))
+                                .font(RenaissanceFont.caption)
                                 .foregroundStyle(.white.opacity(0.7))
                         }
 
@@ -569,7 +569,7 @@ struct VolcanoMiniGameView: View {
                         HStack(spacing: 4) {
                             Text("\u{1F9F9}")
                             Text("Il Cinabro")
-                                .font(.custom("Cinzel-Bold", size: 16))
+                                .font(RenaissanceFont.visualTitle)
                                 .foregroundStyle(.white)
                         }
 
@@ -591,7 +591,7 @@ struct VolcanoMiniGameView: View {
 
                     if let fb = cinnabarFeedback {
                         Text(fb)
-                            .font(.custom("EBGaramond-SemiBold", size: 15))
+                            .font(RenaissanceFont.buttonSmall)
                             .foregroundStyle(cinnabarFeedbackColor)
                             .transition(.opacity)
                             .padding(.horizontal, Spacing.md)
@@ -845,7 +845,7 @@ struct VolcanoMiniGameView: View {
                                     .foregroundStyle(i < sulfurCollected ? Color(red: 0.85, green: 0.80, blue: 0.15) : Color.white.opacity(0.2))
                             }
                             Text("\(sulfurCollected)/\(sulfurNeeded)")
-                                .font(.custom("EBGaramond-Regular", size: 13))
+                                .font(RenaissanceFont.caption)
                                 .foregroundStyle(.white.opacity(0.7))
                         }
 
@@ -854,7 +854,7 @@ struct VolcanoMiniGameView: View {
                         HStack(spacing: 4) {
                             Text("\u{1F9F9}")
                             Text("Lo Zolfo")
-                                .font(.custom("Cinzel-Bold", size: 16))
+                                .font(RenaissanceFont.visualTitle)
                                 .foregroundStyle(.white)
                         }
 
@@ -865,7 +865,7 @@ struct VolcanoMiniGameView: View {
                                 .font(.caption)
                                 .foregroundStyle(isGasClear ? RenaissanceColors.sageGreen : Color(red: 0.6, green: 0.7, blue: 0.2))
                             Text(isGasClear ? "Clear" : "Gas!")
-                                .font(.custom("EBGaramond-Regular", size: 12))
+                                .font(RenaissanceFont.footnoteSmall)
                                 .foregroundStyle(isGasClear ? RenaissanceColors.sageGreen : RenaissanceColors.errorRed)
                         }
                     }
@@ -877,7 +877,7 @@ struct VolcanoMiniGameView: View {
 
                     if let fb = sulfurFeedback {
                         Text(fb)
-                            .font(.custom("EBGaramond-SemiBold", size: 15))
+                            .font(RenaissanceFont.buttonSmall)
                             .foregroundStyle(sulfurFeedbackColor)
                             .transition(.opacity)
                     }
@@ -939,7 +939,7 @@ struct VolcanoMiniGameView: View {
                     // Missed counter
                     if sulfurMissed > 0 {
                         Text("Crystals lost: \(sulfurMissed)/\(sulfurMaxMissed)")
-                            .font(.custom("EBGaramond-Regular", size: 13))
+                            .font(RenaissanceFont.caption)
                             .foregroundStyle(RenaissanceColors.errorRed.opacity(0.7))
                     }
 
@@ -1136,7 +1136,7 @@ struct VolcanoMiniGameView: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(successTitle)
-                        .font(.custom("Cinzel-Bold", size: 22))
+                        .font(RenaissanceFont.title2Bold)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text("You collected 1x \(selectedMaterial.rawValue)")
                         .font(RenaissanceFont.dialogSubtitle)
@@ -1156,7 +1156,7 @@ struct VolcanoMiniGameView: View {
                         )
 
                     Text(successDetail)
-                        .font(.custom("EBGaramond-Regular", size: 16))
+                        .font(RenaissanceFont.bodyMedium)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     Spacer()
@@ -1182,7 +1182,7 @@ struct VolcanoMiniGameView: View {
                             )
 
                         Text("Perfect collection!")
-                            .font(.custom("EBGaramond-Regular", size: 16))
+                            .font(RenaissanceFont.bodyMedium)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         Spacer()
@@ -1257,7 +1257,7 @@ struct VolcanoMiniGameView: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(failTitle)
-                        .font(.custom("Cinzel-Bold", size: 22))
+                        .font(RenaissanceFont.title2Bold)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text(failSubtitle)
                         .font(RenaissanceFont.dialogSubtitle)
@@ -1266,7 +1266,7 @@ struct VolcanoMiniGameView: View {
             }
 
             Text(failEncouragement)
-                .font(.custom("EBGaramond-Regular", size: 16))
+                .font(RenaissanceFont.bodyMedium)
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
 
             VStack(spacing: 10) {
@@ -1351,7 +1351,7 @@ struct VolcanoMiniGameView: View {
                 )
 
             Text(text)
-                .font(.custom("EBGaramond-Regular", size: 16))
+                .font(RenaissanceFont.bodyMedium)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
             Spacer()

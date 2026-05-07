@@ -212,7 +212,7 @@ private struct OilInkVisual: View {
                 VStack(spacing: 4) {
                     Circle().fill(IVMaterialColors.waterBlue.opacity(step >= 1 ? 0.3 : 0.1)).frame(width: 35, height: 35)
                         .overlay { if step >= 1 { Image(systemName: "xmark").font(.system(size: 13)).foregroundStyle(.red.opacity(0.5)) } }
-                    Text("Water").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(step >= 1 ? .red.opacity(0.5) : IVMaterialColors.sepiaInk.opacity(0.3))
+                    Text("Water").font(RenaissanceFont.visualTitle).foregroundStyle(step >= 1 ? .red.opacity(0.5) : IVMaterialColors.sepiaInk.opacity(0.3))
                     Text("Beads off").font(RenaissanceFont.ivBody).foregroundStyle(step >= 1 ? IVMaterialColors.dimColor : IVMaterialColors.dimColor.opacity(0.3))
                 }
                 if step >= 2 {
@@ -221,7 +221,7 @@ private struct OilInkVisual: View {
                     VStack(spacing: 4) {
                         Circle().fill(inkBlack.opacity(0.6)).frame(width: 35, height: 35)
                             .overlay { if step >= 3 { Image(systemName: "checkmark").font(.system(size: 13)).foregroundStyle(Color(red: 0.30, green: 0.58, blue: 0.32)) } }
-                        Text("Oil").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(color)
+                        Text("Oil").font(RenaissanceFont.visualTitle).foregroundStyle(color)
                         Text("Clings").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.dimColor)
                     }
                 }
@@ -246,7 +246,7 @@ private struct CompositorVisual: View {
                     HStack(spacing: 2) {
                         ForEach(Array("PRINT".enumerated()), id: \.offset) { _, ch in
                             Text(String(ch))
-                                .font(.custom("Cinzel-Bold", size: 16))
+                                .font(RenaissanceFont.visualTitle)
                                 .foregroundStyle(IVMaterialColors.sepiaInk)
                                 .frame(width: 18, height: 22)
                                 .background(RoundedRectangle(cornerRadius: 2).fill(leadGray.opacity(0.3)))
@@ -286,7 +286,7 @@ private struct TypeAlloyVisual: View {
     @ViewBuilder private func orePill(_ name: String, formula: String, temp: String, active: Bool) -> some View {
         VStack(spacing: 2) {
             Text(formula).font(RenaissanceFont.ivFormula).foregroundStyle(active ? IVMaterialColors.dimColor : IVMaterialColors.dimColor.opacity(0.2))
-            Text(name).font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(active ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.2))
+            Text(name).font(RenaissanceFont.visualTitle).foregroundStyle(active ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.2))
             Text(temp).font(RenaissanceFont.ivBody).foregroundStyle(active ? color : color.opacity(0.2))
         }.padding(.horizontal, 4).padding(.vertical, 3)
         .background(RoundedRectangle(cornerRadius: 3).fill(active ? color.opacity(0.06) : Color.clear))
@@ -408,7 +408,7 @@ private struct TypeCasesVisual: View {
                         .overlay {
                             HStack(spacing: 2) {
                                 ForEach(["A","B","C","D","E"], id: \.self) { ch in
-                                    Text(ch).font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
+                                    Text(ch).font(RenaissanceFont.visualTitle).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                                         .frame(width: 16, height: 16)
                                         .background(RoundedRectangle(cornerRadius: 1).fill(paperCream.opacity(0.3)))
                                 }
@@ -455,7 +455,7 @@ private struct PunchMatrixVisual: View {
                     RoundedRectangle(cornerRadius: 2).fill(ironDark.opacity(step >= 1 ? 0.5 : 0.15))
                         .frame(width: 22, height: 35)
                         .overlay(alignment: .bottom) {
-                            Text("A").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(.white.opacity(step >= 1 ? 0.6 : 0))
+                            Text("A").font(RenaissanceFont.visualTitle).foregroundStyle(.white.opacity(step >= 1 ? 0.6 : 0))
                                 .padding(.bottom, 2)
                         }
                     Text("Punch").font(RenaissanceFont.ivBody).foregroundStyle(step >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
@@ -467,7 +467,7 @@ private struct PunchMatrixVisual: View {
                         RoundedRectangle(cornerRadius: 2).fill(copperRose.opacity(0.4))
                             .frame(width: 22, height: 30)
                             .overlay {
-                                Text("A").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(copperRose.opacity(0.3))
+                                Text("A").font(RenaissanceFont.visualTitle).foregroundStyle(copperRose.opacity(0.3))
                                     .scaleEffect(x: -1)
                             }
                         Text("Matrix").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk)
@@ -480,7 +480,7 @@ private struct PunchMatrixVisual: View {
                         RoundedRectangle(cornerRadius: 2).fill(leadGray.opacity(0.4))
                             .frame(width: 22, height: 30)
                             .overlay(alignment: .top) {
-                                Text("A").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(leadGray.opacity(0.7))
+                                Text("A").font(RenaissanceFont.visualTitle).foregroundStyle(leadGray.opacity(0.7))
                                     .scaleEffect(x: -1).padding(.top, 2)
                             }
                         Text("Type").font(RenaissanceFont.ivBody).foregroundStyle(color)

@@ -274,7 +274,7 @@ struct FarmMiniGameView: View {
                         HStack(spacing: 4) {
                             Text("\u{1F531}")
                             Text(selectedMaterial.rawValue)
-                                .font(.custom("Cinzel-Bold", size: 16))
+                                .font(RenaissanceFont.visualTitle)
                                 .foregroundStyle(.white)
                         }
 
@@ -322,7 +322,7 @@ struct FarmMiniGameView: View {
                         // Feedback
                         if let fb = showCatchFeedback {
                             Text(fb.text)
-                                .font(.custom("Cinzel-Bold", size: 22))
+                                .font(RenaissanceFont.title2Bold)
                                 .foregroundStyle(fb.color)
                                 .shadow(color: .black.opacity(0.5), radius: 3)
                                 .transition(.opacity)
@@ -385,7 +385,7 @@ struct FarmMiniGameView: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Raccolto!")
-                        .font(.custom("Cinzel-Bold", size: 22))
+                        .font(RenaissanceFont.title2Bold)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text("Your pitchfork caught 1x \(selectedMaterial.rawValue)")
                         .font(RenaissanceFont.dialogSubtitle)
@@ -405,7 +405,7 @@ struct FarmMiniGameView: View {
                         )
 
                     Text("\(catches) caught on pitchfork, \(drops) dropped")
-                        .font(.custom("EBGaramond-Regular", size: 16))
+                        .font(RenaissanceFont.bodyMedium)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     Spacer()
@@ -431,7 +431,7 @@ struct FarmMiniGameView: View {
                             )
 
                         Text("\(perfectCatches) perfect pitchfork catch\(perfectCatches == 1 ? "" : "es")")
-                            .font(.custom("EBGaramond-Regular", size: 16))
+                            .font(RenaissanceFont.bodyMedium)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         Spacer()
@@ -486,7 +486,7 @@ struct FarmMiniGameView: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Harvest Lost!")
-                        .font(.custom("Cinzel-Bold", size: 22))
+                        .font(RenaissanceFont.title2Bold)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text("Too many slipped past your pitchfork.")
                         .font(RenaissanceFont.dialogSubtitle)
@@ -495,7 +495,7 @@ struct FarmMiniGameView: View {
             }
 
             Text("A Renaissance farmhand's hands were always ready. The bees don't wait, the hens don't pause, and the ox horn burns on its own schedule. Stay alert.")
-                .font(.custom("EBGaramond-Regular", size: 16))
+                .font(RenaissanceFont.bodyMedium)
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
 
             VStack(spacing: 10) {
@@ -514,7 +514,7 @@ struct FarmMiniGameView: View {
                                         .fill(RenaissanceColors.warmBrown.opacity(0.1))
                                 )
                             Text("Ask the Master for help")
-                                .font(.custom("EBGaramond-Regular", size: 16))
+                                .font(RenaissanceFont.bodyMedium)
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                             Spacer()
                             Image(systemName: "chevron.right")
@@ -545,7 +545,7 @@ struct FarmMiniGameView: View {
                             )
 
                         Text("Try Again")
-                            .font(.custom("EBGaramond-Regular", size: 16))
+                            .font(RenaissanceFont.bodyMedium)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         Spacer()
@@ -576,7 +576,7 @@ struct FarmMiniGameView: View {
                             )
 
                         Text("Leave Farm")
-                            .font(.custom("EBGaramond-Regular", size: 16))
+                            .font(RenaissanceFont.bodyMedium)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         Spacer()

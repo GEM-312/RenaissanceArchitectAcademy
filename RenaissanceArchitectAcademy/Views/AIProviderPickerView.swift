@@ -75,11 +75,11 @@ struct AIProviderPickerView: View {
 
                 VStack(alignment: .leading, spacing: 3) {
                     Text(provider.displayName)
-                        .font(.custom("EBGaramond-SemiBold", size: 17))
+                        .font(RenaissanceFont.bodySemibold)
                         .foregroundStyle(available ? settings.cardTextColor : RenaissanceColors.stoneGray)
 
                     Text(provider.description)
-                        .font(.custom("EBGaramond-Regular", size: 13))
+                        .font(RenaissanceFont.caption)
                         .foregroundStyle(available ? settings.cardTextColor.opacity(0.6) : RenaissanceColors.stoneGray.opacity(0.5))
 
                     if let subtitle {

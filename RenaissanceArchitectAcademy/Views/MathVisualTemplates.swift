@@ -56,7 +56,7 @@ struct RatioDiagramVisual: View {
             VStack {
                 Spacer()
                 Text(stepLabel)
-                    .font(.custom("EBGaramond-Regular", size: 12))
+                    .font(RenaissanceFont.footnoteSmall)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                     .padding(.bottom, 8)
             }
@@ -205,7 +205,7 @@ struct ForceArrowVisual: View {
             VStack {
                 Spacer()
                 Text(stepLabel)
-                    .font(.custom("EBGaramond-Regular", size: 12))
+                    .font(RenaissanceFont.footnoteSmall)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                     .padding(.bottom, 8)
             }
@@ -352,7 +352,7 @@ struct FlowCycleVisual: View {
             VStack {
                 Spacer()
                 Text(stepLabel)
-                    .font(.custom("EBGaramond-Regular", size: 12))
+                    .font(RenaissanceFont.footnoteSmall)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                     .padding(.bottom, 8)
             }
@@ -487,7 +487,7 @@ struct GraphCurveVisual: View {
             VStack {
                 Spacer()
                 Text(stepLabel)
-                    .font(.custom("EBGaramond-Regular", size: 12))
+                    .font(RenaissanceFont.footnoteSmall)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                     .padding(.bottom, 8)
             }
@@ -547,7 +547,7 @@ struct GraphCurveVisual: View {
 
         // Formula
         let formulaText = Text(config.formulaText)
-            .font(.custom("EBGaramond-SemiBold", size: 14))
+            .font(RenaissanceFont.footnoteBold)
             .foregroundColor(RenaissanceColors.sepiaInk)
         context.draw(context.resolve(formulaText), at: CGPoint(x: originX + axisW * 0.6, y: originY - axisH - 10), anchor: .center)
 
@@ -634,7 +634,7 @@ struct LayerStackVisual: View {
             VStack {
                 Spacer()
                 Text(stepLabel)
-                    .font(.custom("EBGaramond-Regular", size: 12))
+                    .font(RenaissanceFont.footnoteSmall)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                     .padding(.bottom, 8)
             }
@@ -743,7 +743,7 @@ struct MechanismVisual: View {
             VStack {
                 Spacer()
                 Text(stepLabel)
-                    .font(.custom("EBGaramond-Regular", size: 12))
+                    .font(RenaissanceFont.footnoteSmall)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                     .padding(.bottom, 8)
             }
@@ -1016,7 +1016,7 @@ struct GeometryDiagramVisual: View {
             VStack {
                 Spacer()
                 Text(stepLabel)
-                    .font(.custom("EBGaramond-Regular", size: 12))
+                    .font(RenaissanceFont.footnoteSmall)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                     .padding(.bottom, 8)
             }
@@ -1139,7 +1139,7 @@ struct GeometryDiagramVisual: View {
         // Formula
         if currentStep >= 3 {
             let formulaText = Text(config.formulaText)
-                .font(.custom("EBGaramond-SemiBold", size: 14))
+                .font(RenaissanceFont.footnoteBold)
                 .foregroundColor(RenaissanceColors.sepiaInk)
             context.draw(context.resolve(formulaText), at: CGPoint(x: cx, y: size.height * 0.12), anchor: .center)
         }

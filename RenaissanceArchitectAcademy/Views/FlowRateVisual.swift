@@ -126,7 +126,7 @@ struct FlowRateVisual: View {
             let highlighted = currentStep >= 4
 
             let formulaText = Text("speed  \u{00D7}  time  =  total")
-                .font(.custom("EBGaramond-SemiBold", size: 18))
+                .font(RenaissanceFont.button)
                 .foregroundColor(highlighted ? RenaissanceColors.goldSuccess : RenaissanceColors.warmBrown)
             context.draw(context.resolve(formulaText), at: CGPoint(x: w / 2, y: formulaY), anchor: .center)
 
@@ -157,7 +157,7 @@ struct FlowRateVisual: View {
 
             // "cups" label
             let cupsText = Text("cups")
-                .font(.custom("EBGaramond-Regular", size: 13))
+                .font(RenaissanceFont.caption)
                 .foregroundColor(RenaissanceColors.sepiaInk)
             context.draw(context.resolve(cupsText), at: CGPoint(x: counterPos.x, y: counterPos.y + 22), anchor: .center)
 
@@ -168,7 +168,7 @@ struct FlowRateVisual: View {
             context.draw(context.resolve(clockText), at: CGPoint(x: pipeStartX + 30, y: h * 0.65), anchor: .center)
 
             let timeLabel = Text("1 hour")
-                .font(.custom("EBGaramond-Regular", size: 12))
+                .font(RenaissanceFont.footnoteSmall)
                 .foregroundColor(RenaissanceColors.sepiaInk)
             context.draw(context.resolve(timeLabel), at: CGPoint(x: pipeStartX + 30, y: h * 0.73), anchor: .center)
         }
@@ -261,7 +261,7 @@ struct FlowRateVisual: View {
         switch currentStep {
         case 0:
             Text("Tap \"Next Step\" to begin")
-                .font(.custom("EBGaramond-Regular", size: 15))
+                .font(RenaissanceFont.bodySmall)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
         case 1:
             Text("A pipe delivers water into a large stone basin.")
@@ -273,7 +273,7 @@ struct FlowRateVisual: View {
                     .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                 Text("speed \u{00D7} time = total water")
-                    .font(.custom("EBGaramond-SemiBold", size: 15))
+                    .font(RenaissanceFont.buttonSmall)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
         case 3:
@@ -286,7 +286,7 @@ struct FlowRateVisual: View {
                     .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                 Text("500 \u{00D7} 3,600 = 1,800,000")
-                    .font(.custom("EBGaramond-SemiBold", size: 14))
+                    .font(RenaissanceFont.footnoteBold)
                     .foregroundStyle(RenaissanceColors.sageGreen)
             }
         case 5:

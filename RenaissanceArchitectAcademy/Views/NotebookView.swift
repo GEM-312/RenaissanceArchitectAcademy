@@ -161,7 +161,7 @@ struct NotebookView: View {
 
                     HStack(spacing: 6) {
                         Text(era.rawValue)
-                            .font(.custom("EBGaramond-Regular", size: 13))
+                            .font(RenaissanceFont.caption)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         ForEach(sciences, id: \.self) { science in
@@ -182,12 +182,12 @@ struct NotebookView: View {
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                 let count = notebook?.entries.count ?? 0
                 Text("\(count) \(count == 1 ? "entry" : "entries")")
-                    .font(.custom("EBGaramond-Regular", size: 14))
+                    .font(RenaissanceFont.footnote)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 if isDrawingMode {
                     Text("  Drawing Mode")
-                        .font(.custom("EBGaramond-Regular", size: 14))
+                        .font(RenaissanceFont.footnote)
                         .foregroundStyle(RenaissanceColors.errorRed)
                 }
             }
@@ -220,7 +220,7 @@ struct NotebookView: View {
                 Image(systemName: tab.icon)
                     .font(.custom("Delius-Regular", size: 12, relativeTo: .caption))
                 Text(tab.label)
-                    .font(.custom("EBGaramond-Regular", size: 14))
+                    .font(RenaissanceFont.footnote)
             }
             .foregroundStyle(selectedTab == tab ? .white : RenaissanceColors.sepiaInk)
             .padding(.horizontal, 14)
@@ -275,7 +275,7 @@ struct NotebookView: View {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(entry.title)
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(RenaissanceFont.visualTitle)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text(entry.body)
                             .font(.custom("EBGaramond-Italic", size: 13))
@@ -297,7 +297,7 @@ struct NotebookView: View {
 
                 if let annotation = entry.userAnnotation, !annotation.isEmpty {
                     Text(annotation)
-                        .font(.custom("EBGaramond-Regular", size: 14))
+                        .font(RenaissanceFont.footnote)
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
                         .lineLimit(3)
                         .padding(.top, 4)
@@ -383,7 +383,7 @@ struct NotebookView: View {
                     }
                     Spacer()
                     Text(entry.dateAdded, style: .date)
-                        .font(.custom("EBGaramond-Regular", size: 11))
+                        .font(RenaissanceFont.captionSmall)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
 
@@ -438,11 +438,11 @@ struct NotebookView: View {
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                         .rotationEffect(.degrees(-30))
                     Text("Fun Fact")
-                        .font(.custom("EBGaramond-Regular", size: 16))
+                        .font(RenaissanceFont.bodyMedium)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Spacer()
                     Text(entry.dateAdded, style: .date)
-                        .font(.custom("EBGaramond-Regular", size: 11))
+                        .font(RenaissanceFont.captionSmall)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
 
@@ -487,7 +487,7 @@ struct NotebookView: View {
             if isAddingNote {
                 VStack(spacing: 10) {
                     TextField("Title", text: $newNoteTitle)
-                        .font(.custom("EBGaramond-SemiBold", size: 18))
+                        .font(RenaissanceFont.button)
                         .textFieldStyle(.plain)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
@@ -534,7 +534,7 @@ struct NotebookView: View {
                                 Image(systemName: "checkmark")
                                 Text("Save")
                             }
-                            .font(.custom("EBGaramond-Regular", size: 16))
+                            .font(RenaissanceFont.bodyMedium)
                             .foregroundStyle(.white)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
@@ -559,7 +559,7 @@ struct NotebookView: View {
                         Image(systemName: "plus.circle.fill")
                             .font(.custom("Delius-Regular", size: 16, relativeTo: .subheadline))
                         Text("Add Note")
-                            .font(.custom("EBGaramond-Regular", size: 16))
+                            .font(RenaissanceFont.bodyMedium)
                     }
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .frame(maxWidth: .infinity)
@@ -648,7 +648,7 @@ struct NotebookView: View {
             Text(isDiscoveries
                  ? "Visit a workshop station, forest tree, or crafting tool without an active building to discover Renaissance trivia and fill this section."
                  : "Complete the lesson to fill your notebook with knowledge about \(buildingName).")
-                .font(.custom("EBGaramond-Regular", size: 15))
+                .font(RenaissanceFont.bodySmall)
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
@@ -672,7 +672,7 @@ struct NotebookView: View {
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
             Text(science.rawValue)
-                .font(.custom("EBGaramond-Regular", size: 11))
+                .font(RenaissanceFont.captionSmall)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
         }
         .padding(.horizontal, 6)

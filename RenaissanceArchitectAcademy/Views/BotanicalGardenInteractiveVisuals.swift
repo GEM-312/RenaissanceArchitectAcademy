@@ -127,7 +127,7 @@ private struct GardenOriginVisual: View {
             .overlay {
                 if step >= 1 {
                     Text("1545")
-                        .font(.custom("Cinzel-Bold", size: 16))
+                        .font(RenaissanceFont.visualTitle)
                         .foregroundStyle(color)
                         .position(x: 999, y: 999) // Canvas draws it
                 }
@@ -889,7 +889,7 @@ private struct SoilSubstrateVisual: View {
             )
 
             Text(label)
-                .font(.custom("Cinzel-Bold", size: 16))
+                .font(RenaissanceFont.visualTitle)
                 .foregroundStyle(active ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)

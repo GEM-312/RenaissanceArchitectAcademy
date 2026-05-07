@@ -301,7 +301,7 @@ struct QuarryMiniGameView: View {
                                     )
                             }
                             Text("\(hits)/\(hitsNeeded)")
-                                .font(.custom("EBGaramond-Regular", size: 13))
+                                .font(RenaissanceFont.caption)
                                 .foregroundStyle(.white.opacity(0.7))
                         }
 
@@ -311,7 +311,7 @@ struct QuarryMiniGameView: View {
                         HStack(spacing: 4) {
                             Text("\u{26CF}\u{FE0F}")
                             Text(selectedMaterial.rawValue)
-                                .font(.custom("Cinzel-Bold", size: 16))
+                                .font(RenaissanceFont.visualTitle)
                                 .foregroundStyle(.white)
                         }
 
@@ -518,7 +518,7 @@ struct QuarryMiniGameView: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Pietra Spaccata!")
-                        .font(.custom("Cinzel-Bold", size: 22))
+                        .font(RenaissanceFont.title2Bold)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text("You extracted 1x \(selectedMaterial.rawValue)")
                         .font(RenaissanceFont.dialogSubtitle)
@@ -539,7 +539,7 @@ struct QuarryMiniGameView: View {
                         )
 
                     Text("\(hits) hits, \(misses) miss\(misses == 1 ? "" : "es")")
-                        .font(.custom("EBGaramond-Regular", size: 16))
+                        .font(RenaissanceFont.bodyMedium)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     Spacer()
@@ -565,7 +565,7 @@ struct QuarryMiniGameView: View {
                             )
 
                         Text("\(perfectHits) perfect pickaxe strike\(perfectHits == 1 ? "" : "s")")
-                            .font(.custom("EBGaramond-Regular", size: 16))
+                            .font(RenaissanceFont.bodyMedium)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         Spacer()
@@ -600,7 +600,7 @@ struct QuarryMiniGameView: View {
                             .font(.custom("Cinzel-Bold", size: 14))
                             .foregroundStyle(RenaissanceColors.sepiaInk)
                         Text(mol.educationalText)
-                            .font(.custom("EBGaramond-Regular", size: 12))
+                            .font(RenaissanceFont.footnoteSmall)
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                             .lineLimit(2)
                     }
@@ -653,7 +653,7 @@ struct QuarryMiniGameView: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Stone Cracked Wrong")
-                        .font(.custom("Cinzel-Bold", size: 22))
+                        .font(RenaissanceFont.title2Bold)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text("The fracture ran the wrong way.")
                         .font(RenaissanceFont.dialogSubtitle)
@@ -662,7 +662,7 @@ struct QuarryMiniGameView: View {
             }
 
             Text("A good quarryman reads the grain before striking. Try again — the stone is patient.")
-                .font(.custom("EBGaramond-Regular", size: 16))
+                .font(RenaissanceFont.bodyMedium)
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
 
             VStack(spacing: 10) {
@@ -681,7 +681,7 @@ struct QuarryMiniGameView: View {
                                         .fill(RenaissanceColors.warmBrown.opacity(0.1))
                                 )
                             Text("Ask the Master for help")
-                                .font(.custom("EBGaramond-Regular", size: 16))
+                                .font(RenaissanceFont.bodyMedium)
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                             Spacer()
                             Image(systemName: "chevron.right")
@@ -712,7 +712,7 @@ struct QuarryMiniGameView: View {
                             )
 
                         Text("Try Again")
-                            .font(.custom("EBGaramond-Regular", size: 16))
+                            .font(RenaissanceFont.bodyMedium)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         Spacer()
@@ -743,7 +743,7 @@ struct QuarryMiniGameView: View {
                             )
 
                         Text("Leave Quarry")
-                            .font(.custom("EBGaramond-Regular", size: 16))
+                            .font(RenaissanceFont.bodyMedium)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         Spacer()

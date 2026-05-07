@@ -52,7 +52,7 @@ struct SketchResultView: View {
                         .foregroundStyle(scoreColor)
                         .contentTransition(.numericText(value: Double(displayedScore)))
                     Text("of 100")
-                        .font(.custom("EBGaramond-Regular", size: 14))
+                        .font(RenaissanceFont.footnote)
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.55))
                 }
             }
@@ -94,7 +94,7 @@ struct SketchResultView: View {
                         }
                     } else {
                         Text("You need a score of at least 70 to pass. Try again!")
-                            .font(.custom("EBGaramond-Regular", size: 14))
+                            .font(RenaissanceFont.footnote)
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                             .multilineTextAlignment(.center)
                     }
@@ -105,7 +105,7 @@ struct SketchResultView: View {
                                 onRetry()
                             } label: {
                                 Text("Try Again")
-                                    .font(.custom("EBGaramond-SemiBold", size: 17))
+                                    .font(RenaissanceFont.bodySemibold)
                                     .foregroundStyle(.white)
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 14)
@@ -121,7 +121,7 @@ struct SketchResultView: View {
                             onContinue()
                         } label: {
                             Text(passed ? "Continue" : "Skip")
-                                .font(.custom("EBGaramond-SemiBold", size: 17))
+                                .font(RenaissanceFont.bodySemibold)
                                 .foregroundStyle(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 14)
@@ -161,7 +161,7 @@ struct SketchResultView: View {
                         .foregroundStyle(tint)
                         .padding(.top, 2)
                     Text(item)
-                        .font(.custom("EBGaramond-Regular", size: 15))
+                        .font(RenaissanceFont.bodySmall)
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
                         .fixedSize(horizontal: false, vertical: true)
                     Spacer(minLength: 0)

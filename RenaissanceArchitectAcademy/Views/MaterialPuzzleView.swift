@@ -232,7 +232,7 @@ struct MaterialPuzzleView: View {
                         .font(.system(size: 36))
                         .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
                     Text("Swipe adjacent tiles to match 3")
-                        .font(.custom("EBGaramond-Regular", size: 15))
+                        .font(RenaissanceFont.bodySmall)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                 }
                 .padding(20)
@@ -288,7 +288,7 @@ struct MaterialPuzzleView: View {
             Button("Return to City") {
                 onDismiss()
             }
-            .font(.custom("EBGaramond-Regular", size: 16))
+            .font(RenaissanceFont.bodyMedium)
             .foregroundColor(settings.cardTextColor)
             .padding(.bottom, isLargeScreen ? 20 : 10)
         }
@@ -348,7 +348,7 @@ struct MaterialPuzzleView: View {
                 .foregroundColor(settings.cardTextColor)
 
             Text("for the \(buildingName)")
-                .font(.custom("EBGaramond-Regular", size: 17))
+                .font(RenaissanceFont.body)
                 .foregroundColor(settings.cardTextColor)
         }
     }
@@ -382,7 +382,7 @@ struct MaterialPuzzleView: View {
             }
 
             Text(formula.description)
-                .font(.custom("EBGaramond-Regular", size: 14))
+                .font(RenaissanceFont.footnote)
                 .foregroundColor(settings.cardTextColor)
         }
         .padding()
@@ -397,7 +397,7 @@ struct MaterialPuzzleView: View {
     private var elementProgressView: some View {
         VStack(spacing: 8) {
             Text("Discovered Elements:")
-                .font(.custom("EBGaramond-Regular", size: 15))
+                .font(RenaissanceFont.bodySmall)
                 .foregroundColor(settings.cardTextColor)
 
             HStack(spacing: 16) {
@@ -412,7 +412,7 @@ struct MaterialPuzzleView: View {
                                 .fill(RenaissanceColors.stoneGray.opacity(0.3))
                                 .frame(width: 45, height: 45)
                             Text("?")
-                                .font(.custom("EBGaramond-SemiBold", size: 22))
+                                .font(RenaissanceFont.dialogTitle)
                                 .foregroundColor(settings.cardTextColor)
                         }
                     }
@@ -439,13 +439,13 @@ struct MaterialPuzzleView: View {
                                         .foregroundColor(RenaissanceColors.sageGreen)
                                 } else {
                                     Text(element)
-                                        .font(.custom("EBGaramond-SemiBold", size: 18))
+                                        .font(RenaissanceFont.button)
                                         .foregroundColor(settings.cardTextColor)
                                 }
                             }
 
                             Text("\(min(collected, required))/\(required)")
-                                .font(.custom("EBGaramond-Regular", size: 13))
+                                .font(RenaissanceFont.caption)
                                 .foregroundColor(isComplete ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray)
                         }
                     }
@@ -459,7 +459,7 @@ struct MaterialPuzzleView: View {
                                     .fill(RenaissanceColors.stoneGray.opacity(0.3))
                                     .frame(width: 45, height: 45)
                                 Text("?")
-                                    .font(.custom("EBGaramond-SemiBold", size: 22))
+                                    .font(RenaissanceFont.dialogTitle)
                                     .foregroundColor(settings.cardTextColor)
                             }
                         }
@@ -552,7 +552,7 @@ struct MaterialPuzzleView: View {
                 Image(systemName: "lightbulb.fill")
                 Text("Need a hint?")
             }
-            .font(.custom("EBGaramond-Regular", size: 14))
+            .font(RenaissanceFont.footnote)
             .foregroundColor(settings.cardTextColor)
             .padding(.horizontal, 16)
             .padding(.vertical, 8)
@@ -579,11 +579,11 @@ struct MaterialPuzzleView: View {
                     .foregroundColor(settings.cardTextColor)
 
                 Text("\(formula.reactants) \u{2192} \(formula.product)")
-                    .font(.custom("EBGaramond-Regular", size: 20))
+                    .font(RenaissanceFont.buttonLarge)
                     .foregroundColor(settings.cardTextColor)
 
                 Text("You created \(formula.name)!")
-                    .font(.custom("EBGaramond-Regular", size: 17))
+                    .font(RenaissanceFont.body)
                     .foregroundColor(settings.cardTextColor)
 
                 if let moleculeData = MoleculeData.molecule(forFormula: formula.name) {

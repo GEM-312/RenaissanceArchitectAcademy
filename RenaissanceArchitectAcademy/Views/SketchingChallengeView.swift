@@ -116,7 +116,7 @@ struct SketchingChallengeView: View {
 
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(phase.title)
-                                    .font(.custom("EBGaramond-Regular", size: 15, relativeTo: .body))
+                                    .font(RenaissanceFont.bodySmall)
                                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                                 HStack(spacing: 4) {
@@ -160,7 +160,7 @@ struct SketchingChallengeView: View {
                     Button("Back") {
                         onDismiss()
                     }
-                    .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .caption))
+                    .font(RenaissanceFont.footnote)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .buttonStyle(.plain)
                 }
@@ -323,7 +323,7 @@ struct SketchingChallengeView: View {
                                 .foregroundStyle(completedPhases.contains(phase.phaseType)
                                                  ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray)
                             Text(phase.phaseType.italianTitle)
-                                .font(.custom("EBGaramond-Regular", size: 12, relativeTo: .caption2))
+                                .font(RenaissanceFont.footnoteSmall)
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
                         }
                     }

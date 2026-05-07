@@ -136,7 +136,7 @@ private struct ThermaeFloorPlanVisual: View {
                                                 .font(.system(size: 14))
                                                 .foregroundStyle(rooms[i].color)
                                             Text(rooms[i].name)
-                                                .font(.custom("Cinzel-Bold", size: 16))
+                                                .font(RenaissanceFont.visualTitle)
                                                 .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.6))
                                         }
                                     } else {
@@ -391,7 +391,7 @@ private struct CastellumVisual: View {
 
                         // Label
                         Text(outlet.name)
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(RenaissanceFont.visualTitle)
                             .foregroundStyle(outlet.active ? outlet.color : IVMaterialColors.sepiaInk.opacity(0.3))
                             .position(x: pipeEndX + 25, y: oy)
 
@@ -484,7 +484,7 @@ private struct BathGradientVisual: View {
 
                                 VStack(spacing: 6) {
                                     Text(room.name)
-                                        .font(.custom("Cinzel-Bold", size: 16))
+                                        .font(RenaissanceFont.visualTitle)
                                         .foregroundStyle(visited ? room.color : IVMaterialColors.sepiaInk.opacity(0.4))
 
                                     RoundedRectangle(cornerRadius: 6)
@@ -717,7 +717,7 @@ private struct BathWallLayersVisual: View {
                         HStack(spacing: 4) {
                             Circle().fill(layers[i].color).frame(width: 8, height: 8)
                             VStack(alignment: .leading, spacing: 1) {
-                                Text(layers[i].name).font(.custom("Cinzel-Bold", size: 16))
+                                Text(layers[i].name).font(RenaissanceFont.visualTitle)
                                 Text(layers[i].desc).font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             }
                         }
@@ -1143,12 +1143,12 @@ private struct FurnaceGradientVisual: View {
 
                         // Labels
                         Text("Furnace")
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(RenaissanceFont.visualTitle)
                             .foregroundStyle(IVMaterialColors.hotRed)
                             .position(x: w * 0.2, y: h * 0.3)
 
                         Text("Bath floor")
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(RenaissanceFont.visualTitle)
                             .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             .position(x: w * 0.8, y: h * 0.3)
                     }

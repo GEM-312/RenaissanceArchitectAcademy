@@ -64,7 +64,7 @@ struct CardVisualView: View {
         VStack(spacing: 6) {
             // Title
             Text(visual.title)
-                .font(.custom("Cinzel-Bold", size: 16))
+                .font(RenaissanceFont.visualTitle)
                 .tracking(1)
                 .foregroundStyle(color)
 
@@ -98,7 +98,7 @@ struct CardVisualView: View {
                                 Image(systemName: "chevron.left")
                                     .font(.system(size: 13))
                                 Text("Back")
-                                    .font(.custom("EBGaramond-Regular", size: 15))
+                                    .font(RenaissanceFont.bodySmall)
                             }
                             .foregroundStyle(color.opacity(0.6))
                         }
@@ -125,7 +125,7 @@ struct CardVisualView: View {
                         } label: {
                             HStack(spacing: 2) {
                                 Text("Next")
-                                    .font(.custom("EBGaramond-Regular", size: 15))
+                                    .font(RenaissanceFont.bodySmall)
                                 Image(systemName: "chevron.right")
                                     .font(.system(size: 13))
                             }
@@ -144,7 +144,7 @@ struct CardVisualView: View {
             // Caption
             if let caption = visual.caption {
                 Text(caption)
-                    .font(.custom("EBGaramond-Italic", size: 15))
+                    .font(RenaissanceFont.italicSmall)
                     .tracking(0.5)
                     .foregroundStyle(GameSettings.shared.cardTextColor.opacity(0.6))
                     .multilineTextAlignment(.center)
@@ -242,7 +242,7 @@ struct CardVisualView: View {
         // Condition label above arrow (e.g. "900°C" or "heat")
         if visual.labels.count > 2 {
             context.draw(
-                Text(visual.labels[2]).font(.custom("EBGaramond-Italic", size: 15)).foregroundColor(color),
+                Text(visual.labels[2]).font(RenaissanceFont.italicSmall).foregroundColor(color),
                 at: CGPoint(x: w * 0.5, y: centerY - 18)
             )
         }
@@ -262,7 +262,7 @@ struct CardVisualView: View {
         if let key = visual.values.keys.first, let val = visual.values[key] {
             let annotation = "\(key): \(val.formatted())"
             context.draw(
-                Text(annotation).font(.custom("EBGaramond-Regular", size: 15)).foregroundColor(sepiaInk.opacity(0.6)),
+                Text(annotation).font(RenaissanceFont.bodySmall).foregroundColor(sepiaInk.opacity(0.6)),
                 at: CGPoint(x: w * 0.5, y: h * 0.8)
             )
         }
@@ -309,7 +309,7 @@ struct CardVisualView: View {
             context.stroke(rect, with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
 
             context.draw(
-                Text(visual.labels[i]).font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(sepiaInk),
+                Text(visual.labels[i]).font(RenaissanceFont.buttonSmall).foregroundColor(sepiaInk),
                 at: CGPoint(x: w * 0.5, y: y + layerHeight / 2)
             )
         }
@@ -331,7 +331,7 @@ struct CardVisualView: View {
 
             let shownDepth = totalVal * Double(visibleLayers) / Double(layerCount)
             context.draw(
-                Text(String(format: "%.1f m", shownDepth)).font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(color),
+                Text(String(format: "%.1f m", shownDepth)).font(RenaissanceFont.buttonSmall).foregroundColor(color),
                 at: CGPoint(x: dimX + 24, y: (topY + botY) / 2)
             )
         }
@@ -383,7 +383,7 @@ struct CardVisualView: View {
             let labelY = baseY + labelR * sin(midAngle)
 
             context.draw(
-                Text(visual.labels[i]).font(.custom("EBGaramond-Regular", size: 15)).foregroundColor(sepiaInk),
+                Text(visual.labels[i]).font(RenaissanceFont.bodySmall).foregroundColor(sepiaInk),
                 at: CGPoint(x: labelX, y: labelY)
             )
         }
@@ -460,7 +460,7 @@ struct CardVisualView: View {
 
         // "sphere" label
         context.draw(
-            Text("perfect sphere").font(.custom("EBGaramond-Italic", size: 15)).foregroundColor(RenaissanceColors.renaissanceBlue.opacity(0.6)),
+            Text("perfect sphere").font(RenaissanceFont.italicSmall).foregroundColor(RenaissanceColors.renaissanceBlue.opacity(0.6)),
             at: CGPoint(x: centerX, y: baseY - circleR * 1.0)
         )
 
@@ -478,7 +478,7 @@ struct CardVisualView: View {
                 context.stroke(tick, with: .color(sepiaInk.opacity(0.4)), lineWidth: 1)
             }
             context.draw(
-                Text("\(diameter.formatted()) m").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(color),
+                Text("\(diameter.formatted()) m").font(RenaissanceFont.buttonSmall).foregroundColor(color),
                 at: CGPoint(x: centerX, y: dimY + 12)
             )
         }
@@ -499,14 +499,14 @@ struct CardVisualView: View {
                 context.stroke(tick, with: .color(sepiaInk.opacity(0.4)), lineWidth: 1)
             }
             context.draw(
-                Text("\(height.formatted()) m").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(color),
+                Text("\(height.formatted()) m").font(RenaissanceFont.buttonSmall).foregroundColor(color),
                 at: CGPoint(x: dimX + 20, y: baseY - domeHeight / 2)
             )
         }
 
         // "height = diameter" insight
         context.draw(
-            Text("height = diameter").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(color),
+            Text("height = diameter").font(RenaissanceFont.buttonSmall).foregroundColor(color),
             at: CGPoint(x: centerX, y: baseY - domeHeight - 10)
         )
 
@@ -591,7 +591,7 @@ struct CardVisualView: View {
             // Name
             if i < visual.labels.count {
                 context.draw(
-                    Text(visual.labels[i]).font(.custom("EBGaramond-Regular", size: 15)).foregroundColor(sepiaInk.opacity(0.7)),
+                    Text(visual.labels[i]).font(RenaissanceFont.bodySmall).foregroundColor(sepiaInk.opacity(0.7)),
                     at: CGPoint(x: labelX, y: labelY + 14)
                 )
             }
@@ -655,7 +655,7 @@ struct CardVisualView: View {
             context.stroke(tick, with: .color(sepiaInk.opacity(0.3)), lineWidth: 1)
         }
         context.draw(
-            Text("6 meters").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(color),
+            Text("6 meters").font(RenaissanceFont.buttonSmall).foregroundColor(color),
             at: CGPoint(x: centerX, y: dimY - 10)
         )
 
@@ -670,7 +670,7 @@ struct CardVisualView: View {
 
         // Water surface label
         context.draw(
-            Text("water channel").font(.custom("EBGaramond-Italic", size: 15)).foregroundColor(Color(red: 0.35, green: 0.55, blue: 0.75)),
+            Text("water channel").font(RenaissanceFont.italicSmall).foregroundColor(Color(red: 0.35, green: 0.55, blue: 0.75)),
             at: CGPoint(x: centerX, y: beamY - 24)
         )
 
@@ -686,7 +686,7 @@ struct CardVisualView: View {
         // Step 3: Gradient annotation — the beam shows how tiny the slope is
         let slopeLabel = "1:4800 slope — 14m drop over 69 km"
         context.draw(
-            Text(slopeLabel).font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(color),
+            Text(slopeLabel).font(RenaissanceFont.buttonSmall).foregroundColor(color),
             at: CGPoint(x: centerX, y: groundY + 18)
         )
 
@@ -695,7 +695,7 @@ struct CardVisualView: View {
         let tiltEnd = CGPoint(x: centerX + beamW / 2 + 16, y: beamY + beamH / 2 + 12)
         drawArrow(context: context, from: tiltStart, to: tiltEnd, color: Color.red.opacity(0.5))
         context.draw(
-            Text("tiny drop").font(.custom("EBGaramond-Italic", size: 15)).foregroundColor(Color.red.opacity(0.5)),
+            Text("tiny drop").font(RenaissanceFont.italicSmall).foregroundColor(Color.red.opacity(0.5)),
             at: CGPoint(x: centerX + beamW / 2 + 16, y: beamY + beamH / 2 + 22)
         )
     }
@@ -722,7 +722,7 @@ struct CardVisualView: View {
 
         if visual.labels.count >= 1 {
             context.draw(
-                Text(visual.labels[0]).font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(color),
+                Text(visual.labels[0]).font(RenaissanceFont.buttonSmall).foregroundColor(color),
                 at: CGPoint(x: w / 2, y: barY - 24)
             )
         }
@@ -740,7 +740,7 @@ struct CardVisualView: View {
         context.stroke(seg1, with: .color(color), lineWidth: 1.5)
 
         context.draw(
-            Text(firstEntry.key).font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(sepiaInk),
+            Text(firstEntry.key).font(RenaissanceFont.buttonSmall).foregroundColor(sepiaInk),
             at: CGPoint(x: pad + firstW / 2, y: barY + barHeight / 2)
         )
 
@@ -760,7 +760,7 @@ struct CardVisualView: View {
             context.stroke(seg, with: .color(segColor), lineWidth: 1)
 
             context.draw(
-                Text(entry.key).font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(sepiaInk),
+                Text(entry.key).font(RenaissanceFont.buttonSmall).foregroundColor(sepiaInk),
                 at: CGPoint(x: offsetX + segWidth / 2, y: barY + barHeight / 2)
             )
             offsetX += segWidth
@@ -773,7 +773,7 @@ struct CardVisualView: View {
             let segWidth = barWidth * fraction
             let pct = Int(fraction * 100)
             context.draw(
-                Text("\(pct)%").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(color.opacity(0.7)),
+                Text("\(pct)%").font(RenaissanceFont.buttonSmall).foregroundColor(color.opacity(0.7)),
                 at: CGPoint(x: pctX + segWidth / 2, y: barY + barHeight + 16)
             )
             pctX += segWidth
@@ -809,7 +809,7 @@ struct CardVisualView: View {
 
         // Y axis label
         context.draw(
-            Text("°C").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(sepiaInk.opacity(0.6)),
+            Text("°C").font(RenaissanceFont.buttonSmall).foregroundColor(sepiaInk.opacity(0.6)),
             at: CGPoint(x: pad - 12, y: pad + 10)
         )
 
@@ -855,18 +855,18 @@ struct CardVisualView: View {
         context.stroke(transLine, with: .color(Color.red.opacity(0.4)), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
 
         context.draw(
-            Text("\(Int(transitionTemp))°C").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(Color.red.opacity(0.7)),
+            Text("\(Int(transitionTemp))°C").font(RenaissanceFont.buttonSmall).foregroundColor(Color.red.opacity(0.7)),
             at: CGPoint(x: w - pad - 25, y: transY - 12)
         )
 
         // Phase labels
         if visual.labels.count >= 2 {
             context.draw(
-                Text(visual.labels[0]).font(.custom("EBGaramond-Italic", size: 15)).foregroundColor(sepiaInk.opacity(0.5)),
+                Text(visual.labels[0]).font(RenaissanceFont.italicSmall).foregroundColor(sepiaInk.opacity(0.5)),
                 at: CGPoint(x: pad + graphW * 0.15, y: h - pad + 12)
             )
             context.draw(
-                Text(visual.labels[1]).font(.custom("EBGaramond-Italic", size: 15)).foregroundColor(sepiaInk.opacity(0.5)),
+                Text(visual.labels[1]).font(RenaissanceFont.italicSmall).foregroundColor(sepiaInk.opacity(0.5)),
                 at: CGPoint(x: pad + graphW * 0.75, y: h - pad + 12)
             )
         }
@@ -975,7 +975,7 @@ struct CardVisualView: View {
 
         // "×16" label
         context.draw(
-            Text("×16 columns").font(.custom("EBGaramond-Italic", size: 15)).foregroundColor(sepiaInk.opacity(0.5)),
+            Text("×16 columns").font(RenaissanceFont.italicSmall).foregroundColor(sepiaInk.opacity(0.5)),
             at: CGPoint(x: w / 2, y: floorY + 10)
         )
 
@@ -998,7 +998,7 @@ struct CardVisualView: View {
 
         if let colHeight = visual.values["height"] {
             context.draw(
-                Text("\(Int(colHeight))m tall").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(color),
+                Text("\(Int(colHeight))m tall").font(RenaissanceFont.buttonSmall).foregroundColor(color),
                 at: CGPoint(x: dimX + 22, y: (entablatureY + floorY) / 2)
             )
         }
@@ -1008,7 +1008,7 @@ struct CardVisualView: View {
         // Step 3: Weight per column
         if let perCol = visual.values["perColumn"] {
             context.draw(
-                Text("\(Int(perCol)) tons each").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(color),
+                Text("\(Int(perCol)) tons each").font(RenaissanceFont.buttonSmall).foregroundColor(color),
                 at: CGPoint(x: w / 2, y: entablatureY - 42)
             )
         }
@@ -1059,7 +1059,7 @@ struct CardVisualView: View {
         // "9m" label
         if let diameter = visual.values["diameter"] {
             context.draw(
-                Text("\(Int(diameter))m").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(color),
+                Text("\(Int(diameter))m").font(RenaissanceFont.buttonSmall).foregroundColor(color),
                 at: CGPoint(x: centerX, y: oculusY)
             )
         }
@@ -1081,7 +1081,7 @@ struct CardVisualView: View {
 
         // "Compression" label
         context.draw(
-            Text("compression").font(.custom("EBGaramond-Italic", size: 15)).foregroundColor(Color.orange.opacity(0.7)),
+            Text("compression").font(RenaissanceFont.italicSmall).foregroundColor(Color.orange.opacity(0.7)),
             at: CGPoint(x: centerX, y: oculusY + oculusRadius + 16)
         )
 
@@ -1090,7 +1090,7 @@ struct CardVisualView: View {
         // Step 3: Annotations
         for (i, label) in visual.labels.enumerated() {
             context.draw(
-                Text(label).font(.custom("EBGaramond-Italic", size: 15)).foregroundColor(sepiaInk.opacity(0.6)),
+                Text(label).font(RenaissanceFont.italicSmall).foregroundColor(sepiaInk.opacity(0.6)),
                 at: CGPoint(x: centerX, y: baseY + 30 + CGFloat(i) * 14)
             )
         }
@@ -1148,7 +1148,7 @@ struct CardVisualView: View {
         let keystoneAngle = (startAngle + endAngle) / 2
         let keystoneLabelR = archRadius * 0.55
         context.draw(
-            Text("keystone").font(.custom("EBGaramond-Italic", size: 15)).foregroundColor(color),
+            Text("keystone").font(RenaissanceFont.italicSmall).foregroundColor(color),
             at: CGPoint(x: centerX + keystoneLabelR * cos(keystoneAngle), y: baseY + keystoneLabelR * sin(keystoneAngle) + 12)
         )
 
@@ -1169,7 +1169,7 @@ struct CardVisualView: View {
         }
 
         context.draw(
-            Text("compression").font(.custom("EBGaramond-Italic", size: 15)).foregroundColor(Color.red.opacity(0.5)),
+            Text("compression").font(RenaissanceFont.italicSmall).foregroundColor(Color.red.opacity(0.5)),
             at: CGPoint(x: centerX, y: baseY - archRadius - 12)
         )
 
@@ -1191,7 +1191,7 @@ struct CardVisualView: View {
             }
 
             context.draw(
-                Text("\(Int(height))m").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(color),
+                Text("\(Int(height))m").font(RenaissanceFont.buttonSmall).foregroundColor(color),
                 at: CGPoint(x: dimX + 16, y: baseY - archRadius / 2 + pierHeight / 2)
             )
         }
@@ -1200,7 +1200,7 @@ struct CardVisualView: View {
         let labelAngle = startAngle - 0.2 * (startAngle - endAngle)
         let labelR = archRadius * 1.2
         context.draw(
-            Text("voussoir").font(.custom("EBGaramond-Italic", size: 15)).foregroundColor(sepiaInk.opacity(0.5)),
+            Text("voussoir").font(RenaissanceFont.italicSmall).foregroundColor(sepiaInk.opacity(0.5)),
             at: CGPoint(x: centerX + labelR * cos(labelAngle), y: baseY + labelR * sin(labelAngle))
         )
     }
@@ -1295,7 +1295,7 @@ struct CardVisualView: View {
 
         // "poplar" label
         context.draw(
-            Text("poplar").font(.custom("EBGaramond-Italic", size: 15)).foregroundColor(wood.opacity(0.5)),
+            Text("poplar").font(RenaissanceFont.italicSmall).foregroundColor(wood.opacity(0.5)),
             at: CGPoint(x: scaffoldLeft, y: groundY - domeRadius * 0.5)
         )
 
@@ -1318,7 +1318,7 @@ struct CardVisualView: View {
         }
 
         context.draw(
-            Text("43m").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(color),
+            Text("43m").font(RenaissanceFont.buttonSmall).foregroundColor(color),
             at: CGPoint(x: dimX + 16, y: (groundY + topPlatY) / 2)
         )
 
@@ -1336,12 +1336,12 @@ struct CardVisualView: View {
 
         // Step 3: "Steps 2-5" labels + lifecycle
         context.draw(
-            Text("Steps 2→3→4→5").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(color),
+            Text("Steps 2→3→4→5").font(RenaissanceFont.buttonSmall).foregroundColor(color),
             at: CGPoint(x: centerX, y: groundY - domeRadius - 16)
         )
 
         context.draw(
-            Text("walls → coffers → concrete → dome").font(.custom("EBGaramond-Italic", size: 15)).foregroundColor(sepiaInk.opacity(0.5)),
+            Text("walls → coffers → concrete → dome").font(RenaissanceFont.italicSmall).foregroundColor(sepiaInk.opacity(0.5)),
             at: CGPoint(x: centerX, y: groundY - domeRadius - 4)
         )
     }
@@ -1417,7 +1417,7 @@ struct CardVisualView: View {
 
         // "28 rows" label
         context.draw(
-            Text("28 rows of coffers").font(.custom("EBGaramond-Italic", size: 15)).foregroundColor(sepiaInk.opacity(0.5)),
+            Text("28 rows of coffers").font(RenaissanceFont.italicSmall).foregroundColor(sepiaInk.opacity(0.5)),
             at: CGPoint(x: centerX, y: baseY - domeRadius * 0.5)
         )
 
@@ -1444,7 +1444,7 @@ struct CardVisualView: View {
 
         // "sunken panel" label inside the dome
         context.draw(
-            Text("each panel removes ~2 tons").font(.custom("EBGaramond-Italic", size: 15)).foregroundColor(color),
+            Text("each panel removes ~2 tons").font(RenaissanceFont.italicSmall).foregroundColor(color),
             at: CGPoint(x: centerX, y: baseY - domeRadius * 0.3)
         )
 
@@ -1470,19 +1470,19 @@ struct CardVisualView: View {
 
         // Labels on bars
         context.draw(
-            Text("4,535 t (with coffers)").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(color),
+            Text("4,535 t (with coffers)").font(RenaissanceFont.buttonSmall).foregroundColor(color),
             at: CGPoint(x: centerX - barW / 2 + reducedW / 2, y: barY + barH / 2)
         )
 
         // Strikethrough section showing removed weight
         context.draw(
-            Text("6,935 t").font(.custom("EBGaramond-Regular", size: 15)).foregroundColor(sepiaInk.opacity(0.4)),
+            Text("6,935 t").font(RenaissanceFont.bodySmall).foregroundColor(sepiaInk.opacity(0.4)),
             at: CGPoint(x: centerX - barW / 2 + barW * 0.85, y: barY + barH / 2)
         )
 
         // Summary below
         context.draw(
-            Text("–2,400 tons removed by hollowing each panel").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(color),
+            Text("–2,400 tons removed by hollowing each panel").font(RenaissanceFont.buttonSmall).foregroundColor(color),
             at: CGPoint(x: centerX, y: barY + barH + 14)
         )
     }
@@ -1569,14 +1569,14 @@ struct CardVisualView: View {
 
         if let doorHeight = visual.values["height"] {
             context.draw(
-                Text("\(Int(doorHeight))m tall").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(color),
+                Text("\(Int(doorHeight))m tall").font(RenaissanceFont.buttonSmall).foregroundColor(color),
                 at: CGPoint(x: dimX + 24, y: (doorTop + floorY) / 2)
             )
         }
 
         // "Bronze" material label
         context.draw(
-            Text("bronze").font(.custom("EBGaramond-Italic", size: 15)).foregroundColor(Color.brown.opacity(0.6)),
+            Text("bronze").font(RenaissanceFont.italicSmall).foregroundColor(Color.brown.opacity(0.6)),
             at: CGPoint(x: centerX, y: doorTop + doorH * 0.5)
         )
 
@@ -1585,14 +1585,14 @@ struct CardVisualView: View {
         // Step 3: "200 tons melted" annotation
         if let melted = visual.values["melted"] {
             context.draw(
-                Text("\(Int(melted)) tons melted by Urban VIII").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(color),
+                Text("\(Int(melted)) tons melted by Urban VIII").font(RenaissanceFont.buttonSmall).foregroundColor(color),
                 at: CGPoint(x: centerX, y: doorTop - 24)
             )
         }
 
         // Pivot label
         context.draw(
-            Text("swings on bronze pivots").font(.custom("EBGaramond-Italic", size: 15)).foregroundColor(sepiaInk.opacity(0.5)),
+            Text("swings on bronze pivots").font(RenaissanceFont.italicSmall).foregroundColor(sepiaInk.opacity(0.5)),
             at: CGPoint(x: centerX, y: floorY + 12)
         )
     }
@@ -1644,7 +1644,7 @@ struct CardVisualView: View {
 
         // "OAK" label
         context.draw(
-            Text("oak centering").font(.custom("EBGaramond-Italic", size: 15)).foregroundColor(Color.brown.opacity(0.6)),
+            Text("oak centering").font(RenaissanceFont.italicSmall).foregroundColor(Color.brown.opacity(0.6)),
             at: CGPoint(x: centerX, y: baseY - archRadius * 0.5)
         )
 
@@ -1664,7 +1664,7 @@ struct CardVisualView: View {
         }
 
         context.draw(
-            Text("wet concrete").font(.custom("EBGaramond-Italic", size: 15)).foregroundColor(Color.red.opacity(0.5)),
+            Text("wet concrete").font(RenaissanceFont.italicSmall).foregroundColor(Color.red.opacity(0.5)),
             at: CGPoint(x: centerX, y: baseY - archRadius - 16)
         )
 
@@ -1672,7 +1672,7 @@ struct CardVisualView: View {
 
         // Step 3: "3 weeks" label + annotations
         context.draw(
-            Text("holds for 3 weeks → then removed").font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(color),
+            Text("holds for 3 weeks → then removed").font(RenaissanceFont.buttonSmall).foregroundColor(color),
             at: CGPoint(x: centerX, y: baseY + 30)
         )
     }
@@ -1720,7 +1720,7 @@ struct CardVisualView: View {
         // Labels
         if visual.labels.count >= 1 {
             context.draw(
-                Text(visual.labels[0]).font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(color),
+                Text(visual.labels[0]).font(RenaissanceFont.buttonSmall).foregroundColor(color),
                 at: CGPoint(x: w / 2, y: h * 0.15)
             )
         }
@@ -1771,7 +1771,7 @@ struct CardVisualView: View {
             context.fill(atomCircle, with: .color(RenaissanceColors.parchment))
             context.stroke(atomCircle, with: .color(sepiaInk.opacity(0.5)), lineWidth: 1)
             context.draw(
-                Text(atom).font(.custom("EBGaramond-Regular", size: 15)).foregroundColor(sepiaInk),
+                Text(atom).font(RenaissanceFont.bodySmall).foregroundColor(sepiaInk),
                 at: CGPoint(x: x, y: y)
             )
         }
@@ -1779,7 +1779,7 @@ struct CardVisualView: View {
         // Formula label
         if currentStep >= 3, let formula = visual.caption {
             context.draw(
-                Text(formula).font(.custom("EBGaramond-SemiBold", size: 15)).foregroundColor(color),
+                Text(formula).font(RenaissanceFont.buttonSmall).foregroundColor(color),
                 at: CGPoint(x: centerX, y: h * 0.88)
             )
         }
@@ -1806,7 +1806,7 @@ struct CardVisualView: View {
         // Split multiline labels
         let leftLines = visual.labels[0].split(separator: "\n")
         for (i, line) in leftLines.enumerated() {
-            let font: Font = i == 0 ? .custom("EBGaramond-SemiBold", size: 15) : .custom("EBGaramond-Regular", size: 15)
+            let font: Font = i == 0 ? RenaissanceFont.buttonSmall : RenaissanceFont.bodySmall
             let textColor = i == 0 ? sepiaInk : sepiaInk.opacity(0.6)
             context.draw(
                 Text(String(line)).font(font).foregroundColor(textColor),
@@ -1826,7 +1826,7 @@ struct CardVisualView: View {
         // "=" or transformation label above arrow
         let arrowLabel = isEqual ? "= same formula" : "heat + pressure"
         context.draw(
-            Text(arrowLabel).font(.custom("EBGaramond-Italic", size: 15)).foregroundColor(color.opacity(0.7)),
+            Text(arrowLabel).font(RenaissanceFont.italicSmall).foregroundColor(color.opacity(0.7)),
             at: CGPoint(x: w / 2, y: arrowY - 14)
         )
 
@@ -1838,7 +1838,7 @@ struct CardVisualView: View {
 
         let rightLines = visual.labels[1].split(separator: "\n")
         for (i, line) in rightLines.enumerated() {
-            let font: Font = i == 0 ? .custom("EBGaramond-SemiBold", size: 15) : .custom("EBGaramond-Regular", size: 15)
+            let font: Font = i == 0 ? RenaissanceFont.buttonSmall : RenaissanceFont.bodySmall
             let textColor = i == 0 ? sepiaInk : sepiaInk.opacity(0.6)
             context.draw(
                 Text(String(line)).font(font).foregroundColor(textColor),
@@ -1850,7 +1850,7 @@ struct CardVisualView: View {
 
         // Step 3: Key insight below
         context.draw(
-            Text(visual.labels[2]).font(.custom("EBGaramond-Italic", size: 15)).foregroundColor(color),
+            Text(visual.labels[2]).font(RenaissanceFont.italicSmall).foregroundColor(color),
             at: CGPoint(x: w / 2, y: boxY + boxH + 20)
         )
     }

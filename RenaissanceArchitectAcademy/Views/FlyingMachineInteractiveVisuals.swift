@@ -418,7 +418,7 @@ private struct SilkCoveringVisual: View {
 
                 if step >= 1 {
                     Text("Silk taffeta")
-                        .font(.custom("Cinzel-Bold", size: 16))
+                        .font(RenaissanceFont.visualTitle)
                         .foregroundStyle(IVMaterialColors.sepiaInk)
                 }
 
@@ -516,12 +516,12 @@ private struct IronCablesVisual: View {
                 if step >= 3 {
                     HStack(spacing: 16) {
                         VStack(spacing: 2) {
-                            Text("Cast").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
+                            Text("Cast").font(RenaissanceFont.visualTitle).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             RoundedRectangle(cornerRadius: 2).fill(ironWire.opacity(0.3)).frame(width: 40, height: 20)
                             Text("1×").font(RenaissanceFont.ivFormula).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                         }
                         VStack(spacing: 2) {
-                            Text("Drawn").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(color)
+                            Text("Drawn").font(RenaissanceFont.visualTitle).foregroundStyle(color)
                             RoundedRectangle(cornerRadius: 2).fill(ironWire.opacity(0.5)).frame(width: 40, height: 40)
                             Text("2×").font(RenaissanceFont.ivFormula).foregroundStyle(color)
                         }

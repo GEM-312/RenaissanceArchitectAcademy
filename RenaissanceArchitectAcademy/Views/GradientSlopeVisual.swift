@@ -271,7 +271,7 @@ struct GradientSlopeVisual: View {
         switch currentStep {
         case 0:
             Text("Tap \"Next Step\" to begin")
-                .font(.custom("EBGaramond-Regular", size: 15))
+                .font(RenaissanceFont.bodySmall)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
         case 1:
             Text("A flat aqueduct channel sits on its stone arches.")
@@ -287,7 +287,7 @@ struct GradientSlopeVisual: View {
                     .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                 Text("Gradient = drop \u{00F7} distance = 1 : 200")
-                    .font(.custom("EBGaramond-SemiBold", size: 14))
+                    .font(RenaissanceFont.footnoteBold)
                     .foregroundStyle(RenaissanceColors.sepiaInk)
             }
         case 4:

@@ -43,7 +43,7 @@ struct BuildingChecklistView: View {
                             .heroEffect(id: "building-name-\(plot.id)", namespace: heroNamespace)
 
                         Text("Construction Requirements")
-                            .font(.custom("EBGaramond-Regular", size: 17))
+                            .font(RenaissanceFont.body)
                             .foregroundStyle(settings.cardTextColor)
                     }
 
@@ -65,7 +65,7 @@ struct BuildingChecklistView: View {
                                     .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
                                     .foregroundStyle(settings.cardTextColor.opacity(0.5))
                                 Text("No lesson available yet")
-                                    .font(.custom("EBGaramond-Regular", size: 14))
+                                    .font(RenaissanceFont.footnote)
                                     .foregroundStyle(settings.cardTextColor)
                             }
                         }
@@ -108,16 +108,16 @@ struct BuildingChecklistView: View {
                                             .foregroundStyle(RenaissanceColors.renaissanceBlue)
 
                                         Text("Floor Plan (Pianta)")
-                                            .font(.custom("EBGaramond-Regular", size: 15))
+                                            .font(RenaissanceFont.bodySmall)
                                             .foregroundStyle(settings.cardTextColor)
 
                                         Spacer()
 
                                         Text("Begin Sketch")
-                                            .font(.custom("EBGaramond-Regular", size: 13))
+                                            .font(RenaissanceFont.caption)
                                             .foregroundStyle(RenaissanceColors.renaissanceBlue)
                                         Image(systemName: "chevron.right")
-                                            .font(.custom("EBGaramond-Regular", size: 11, relativeTo: .caption2))
+                                            .font(RenaissanceFont.captionSmall)
                                             .foregroundStyle(RenaissanceColors.renaissanceBlue)
                                     }
                                 }
@@ -129,7 +129,7 @@ struct BuildingChecklistView: View {
                                     .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
                                     .foregroundStyle(settings.cardTextColor.opacity(0.5))
                                 Text("Not required for this building")
-                                    .font(.custom("EBGaramond-Regular", size: 14))
+                                    .font(RenaissanceFont.footnote)
                                     .foregroundStyle(settings.cardTextColor)
                             }
                         }
@@ -148,13 +148,13 @@ struct BuildingChecklistView: View {
                                     .font(.custom("EBGaramond-Regular", size: 18, relativeTo: .body))
 
                                 Text(item.rawValue)
-                                    .font(.custom("EBGaramond-Regular", size: 15))
+                                    .font(RenaissanceFont.bodySmall)
                                     .foregroundStyle(settings.cardTextColor)
 
                                 Spacer()
 
                                 Text("\(have)/\(needed)")
-                                    .font(.custom("EBGaramond-Regular", size: 15))
+                                    .font(RenaissanceFont.bodySmall)
                                     .foregroundStyle(have >= needed ? RenaissanceColors.sageGreen : RenaissanceColors.errorRed)
                             }
                         }
@@ -176,7 +176,7 @@ struct BuildingChecklistView: View {
                             if allRequirementsMet {
                                 let totalReward = GameRewards.buildCompleteFlorins + (ConstructionSequenceContent.sequence(for: plot.building.name) != nil ? GameRewards.constructionSequenceFlorins : 0)
                                 Text("+\(totalReward)")
-                                    .font(.custom("EBGaramond-Regular", size: 16))
+                                    .font(RenaissanceFont.bodyMedium)
                                     .foregroundStyle(RenaissanceColors.goldSuccess)
                                 Image(systemName: "dollarsign.circle.fill")
                                     .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
@@ -200,7 +200,7 @@ struct BuildingChecklistView: View {
                         onDismiss()
                     } label: {
                         Text("Close")
-                            .font(.custom("EBGaramond-Regular", size: 16))
+                            .font(RenaissanceFont.bodyMedium)
                             .foregroundStyle(settings.cardTextColor)
                     }
                     .buttonStyle(.plain)
@@ -226,7 +226,7 @@ struct BuildingChecklistView: View {
                     .font(.custom("EBGaramond-Regular", size: 14, relativeTo: .footnote))
                     .foregroundStyle(settings.cardTextColor)
                 Text(title)
-                    .font(.custom("EBGaramond-Regular", size: 16))
+                    .font(RenaissanceFont.bodyMedium)
                     .foregroundStyle(settings.cardTextColor)
             }
 
@@ -260,7 +260,7 @@ struct BuildingChecklistView: View {
             }
 
             Text(label)
-                .font(.custom("EBGaramond-Regular", size: 15))
+                .font(RenaissanceFont.bodySmall)
                 .foregroundStyle(isMet ? settings.cardTextColor : settings.cardTextColor.opacity(0.6))
 
             Spacer()

@@ -272,7 +272,7 @@ struct ClayPitMiniGameView: View {
                     // HUD
                     HStack {
                         Text("Depth: \(Int(digProgress * 100))%")
-                            .font(.custom("EBGaramond-Regular", size: 14))
+                            .font(RenaissanceFont.footnote)
                             .foregroundStyle(.white.opacity(0.8))
 
                         Spacer()
@@ -280,7 +280,7 @@ struct ClayPitMiniGameView: View {
                         HStack(spacing: 4) {
                             Text("\u{1FA8F}")
                             Text("Lo Scavo")
-                                .font(.custom("Cinzel-Bold", size: 16))
+                                .font(RenaissanceFont.visualTitle)
                                 .foregroundStyle(.white)
                         }
 
@@ -367,7 +367,7 @@ struct ClayPitMiniGameView: View {
                         Image(systemName: "checkmark")
                             .foregroundStyle(RenaissanceColors.sageGreen)
                         Text(layer.name)
-                            .font(.custom("EBGaramond-Regular", size: 13))
+                            .font(RenaissanceFont.caption)
                             .foregroundStyle(.white.opacity(0.4))
                         if !layer.scienceFact.isEmpty {
                             Spacer()
@@ -384,7 +384,7 @@ struct ClayPitMiniGameView: View {
                         Text(layer.icon)
                             .font(.title3)
                         Text(layer.name)
-                            .font(.custom("EBGaramond-Regular", size: 15))
+                            .font(RenaissanceFont.bodySmall)
                             .foregroundStyle(.white.opacity(0.5))
                         Spacer()
                         if layer.hasRock {
@@ -402,10 +402,10 @@ struct ClayPitMiniGameView: View {
 
                         VStack(alignment: .leading, spacing: 2) {
                             Text(layer.name)
-                                .font(.custom("EBGaramond-SemiBold", size: 15))
+                                .font(RenaissanceFont.buttonSmall)
                                 .foregroundStyle(.white)
                             Text("Tap \(layer.tapsRequired - digTapsOnLayer) more time\(layer.tapsRequired - digTapsOnLayer == 1 ? "" : "s")")
-                                .font(.custom("EBGaramond-Regular", size: 12))
+                                .font(RenaissanceFont.footnoteSmall)
                                 .foregroundStyle(.white.opacity(0.6))
                         }
 
@@ -552,7 +552,7 @@ struct ClayPitMiniGameView: View {
                     HStack {
                         HStack(spacing: 6) {
                             Text("Round \(kneadRound + 1)/\(kneadTotalRounds)")
-                                .font(.custom("EBGaramond-Regular", size: 14))
+                                .font(RenaissanceFont.footnote)
                                 .foregroundStyle(.white.opacity(0.8))
                         }
 
@@ -561,7 +561,7 @@ struct ClayPitMiniGameView: View {
                         HStack(spacing: 4) {
                             Text("\u{1FA8F}")
                             Text("L'Impasto")
-                                .font(.custom("Cinzel-Bold", size: 16))
+                                .font(RenaissanceFont.visualTitle)
                                 .foregroundStyle(.white)
                         }
 
@@ -625,7 +625,7 @@ struct ClayPitMiniGameView: View {
 
                         // Air bubble percentage
                         Text("Air: \(Int(airBubbles * 100))%")
-                            .font(.custom("EBGaramond-SemiBold", size: 14))
+                            .font(RenaissanceFont.footnoteBold)
                             .foregroundStyle(.white.opacity(0.6))
                             .offset(y: 75)
                     }
@@ -633,7 +633,7 @@ struct ClayPitMiniGameView: View {
                     // Pattern display or status
                     if kneadShowingPattern {
                         Text("Watch the pattern...")
-                            .font(.custom("EBGaramond-Italic", size: 16))
+                            .font(RenaissanceFont.bodyItalic)
                             .foregroundStyle(RenaissanceColors.goldSuccess)
                     } else {
                         Text("Your turn — repeat the sequence!")
@@ -898,7 +898,7 @@ struct ClayPitMiniGameView: View {
                                     .frame(width: 10, height: 10)
                             }
                             Text("\(washCollected)/\(washNeeded)")
-                                .font(.custom("EBGaramond-Regular", size: 13))
+                                .font(RenaissanceFont.caption)
                                 .foregroundStyle(.white.opacity(0.7))
                         }
 
@@ -907,7 +907,7 @@ struct ClayPitMiniGameView: View {
                         HStack(spacing: 4) {
                             Text("\u{1FA8F}")
                             Text("La Levigazione")
-                                .font(.custom("Cinzel-Bold", size: 16))
+                                .font(RenaissanceFont.visualTitle)
                                 .foregroundStyle(.white)
                         }
 
@@ -1157,7 +1157,7 @@ struct ClayPitMiniGameView: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(selectedGame.successTitle)
-                        .font(.custom("Cinzel-Bold", size: 22))
+                        .font(RenaissanceFont.title2Bold)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text("You collected 1x Clay")
                         .font(RenaissanceFont.dialogSubtitle)
@@ -1177,7 +1177,7 @@ struct ClayPitMiniGameView: View {
                         )
 
                     Text(successDetail)
-                        .font(.custom("EBGaramond-Regular", size: 16))
+                        .font(RenaissanceFont.bodyMedium)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
 
                     Spacer()
@@ -1203,7 +1203,7 @@ struct ClayPitMiniGameView: View {
                             )
 
                         Text(selectedGame.bonusText)
-                            .font(.custom("EBGaramond-Regular", size: 16))
+                            .font(RenaissanceFont.bodyMedium)
                             .foregroundStyle(RenaissanceColors.sepiaInk)
 
                         Spacer()
@@ -1267,7 +1267,7 @@ struct ClayPitMiniGameView: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(selectedGame.failTitle)
-                        .font(.custom("Cinzel-Bold", size: 22))
+                        .font(RenaissanceFont.title2Bold)
                         .foregroundStyle(RenaissanceColors.sepiaInk)
                     Text(selectedGame.failSubtitle)
                         .font(RenaissanceFont.dialogSubtitle)
@@ -1276,7 +1276,7 @@ struct ClayPitMiniGameView: View {
             }
 
             Text(selectedGame.failEncouragement)
-                .font(.custom("EBGaramond-Regular", size: 16))
+                .font(RenaissanceFont.bodyMedium)
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
 
             VStack(spacing: 10) {
@@ -1328,7 +1328,7 @@ struct ClayPitMiniGameView: View {
                 )
 
             Text(text)
-                .font(.custom("EBGaramond-Regular", size: 16))
+                .font(RenaissanceFont.bodyMedium)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
             Spacer()

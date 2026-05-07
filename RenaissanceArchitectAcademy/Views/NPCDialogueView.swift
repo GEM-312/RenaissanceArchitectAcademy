@@ -55,7 +55,7 @@ struct NPCDialogContent: View {
                         .foregroundStyle(RenaissanceColors.ochre)
 
                     Text("at the \(stationName)")
-                        .font(.custom("EBGaramond-Regular", size: 11))
+                        .font(RenaissanceFont.captionSmall)
                         .foregroundStyle(settings.cardTextColor.opacity(0.5))
                 }
 
@@ -120,7 +120,7 @@ struct NPCDialogContent: View {
                     dismiss()
                 } label: {
                     Text("Continue")
-                        .font(.custom("EBGaramond-SemiBold", size: 15))
+                        .font(RenaissanceFont.buttonSmall)
                         .foregroundStyle(.white)
                         .padding(.horizontal, 28)
                         .padding(.vertical, 8)

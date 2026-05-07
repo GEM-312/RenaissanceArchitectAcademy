@@ -357,7 +357,7 @@ private struct CofferdamVisual: View {
                             .position(x: cx, y: baseY + cofferH * 0.25)
 
                         Text("DRY")
-                            .font(.custom("Cinzel-Bold", size: 16))
+                            .font(RenaissanceFont.visualTitle)
                             .foregroundStyle(RenaissanceColors.sageGreen)
                             .position(x: cx, y: baseY)
                     }
@@ -630,7 +630,7 @@ private struct HarborStoneVisual: View {
                 ZStack {
                     // Tufa block (left)
                     VStack(spacing: 4) {
-                        Text("TUFA").font(.custom("Cinzel-Bold", size: 16)).tracking(0.5).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
+                        Text("TUFA").font(RenaissanceFont.visualTitle).tracking(0.5).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                         ZStack {
                             RoundedRectangle(cornerRadius: 4).fill(tufaBrown).frame(width: blockW, height: blockH)
                             // Pores (visible)
@@ -655,7 +655,7 @@ private struct HarborStoneVisual: View {
 
                     // Marble block (right)
                     VStack(spacing: 4) {
-                        Text("MARBLE").font(.custom("Cinzel-Bold", size: 16)).tracking(0.5).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
+                        Text("MARBLE").font(RenaissanceFont.visualTitle).tracking(0.5).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                         ZStack {
                             RoundedRectangle(cornerRadius: 4).fill(Color(red: 0.90, green: 0.88, blue: 0.86)).frame(width: blockW, height: blockH)
                             if saltPoured {
@@ -723,13 +723,13 @@ private struct MarineConcreteVisual: View {
                 ZStack {
                     HStack(spacing: w * 0.06) {
                         VStack(spacing: 4) {
-                            Text("ROMAN").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
+                            Text("ROMAN").font(RenaissanceFont.visualTitle).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             RoundedRectangle(cornerRadius: 4).fill(IVMaterialColors.stoneGray.opacity(0.4 + years * 0.4))
                                 .frame(width: w * 0.25, height: h * 0.25)
                             Text(years > 0.5 ? "Stronger" : "").font(RenaissanceFont.ivFormula).foregroundStyle(RenaissanceColors.sageGreen)
                         }
                         VStack(spacing: 4) {
-                            Text("MODERN").font(.custom("Cinzel-Bold", size: 16)).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
+                            Text("MODERN").font(RenaissanceFont.visualTitle).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             RoundedRectangle(cornerRadius: 4).fill(IVMaterialColors.stoneGray.opacity(0.6 - years * 0.4))
                                 .frame(width: w * 0.25, height: h * 0.25)
                                 .overlay { if years > 0.5 {
