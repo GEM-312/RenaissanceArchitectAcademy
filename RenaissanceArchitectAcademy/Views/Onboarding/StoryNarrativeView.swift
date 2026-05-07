@@ -83,7 +83,7 @@ struct StoryNarrativeView: View {
     private var isLargeScreen: Bool { sizeClass == .regular }
 
     var body: some View {
-        ZStack {
+        ZStack(alignment: .bottom) {
             if let prefix = page.backgroundFramePrefix {
                 // Animated background frames (looping)
                 Image(String(format: "%@%02d", prefix, bgFrame))
@@ -154,28 +154,31 @@ struct StoryNarrativeView: View {
             // Continue button — pinned to the bottom of the ZStack so it's
             // always visible regardless of content height. Hidden until all
             // cinematic gates (typewriter + audio + animation) finish.
-            VStack {
-                Spacer()
-                Button {
-                    stopTypewriter()
-                    audioPlayer?.stop()
-                    bgTimer?.invalidate()
-                    onContinue()
-                } label: {
-                    Text("Continue")
-                        .font(.custom("EBGaramond-SemiBold", size: 20))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 40)
-                        .padding(.vertical, 14)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(RenaissanceColors.renaissanceBlue)
-                        )
-                }
-                .opacity(showButton ? 1 : 0)
-                .offset(y: showButton ? 0 : 15)
-                .padding(.bottom, 40)
+            //
+            // `.allowsHitTesting(showButton)` is critical: while the button
+            // is invisible, it must NOT intercept touches — otherwise scroll
+            // gestures on the ScrollView below get swallowed by the
+            // bottom-anchored button frame.
+            Button {
+                stopTypewriter()
+                audioPlayer?.stop()
+                bgTimer?.invalidate()
+                onContinue()
+            } label: {
+                Text("Continue")
+                    .font(.custom("EBGaramond-SemiBold", size: 20))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 40)
+                    .padding(.vertical, 14)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(RenaissanceColors.renaissanceBlue)
+                    )
             }
+            .opacity(showButton ? 1 : 0)
+            .offset(y: showButton ? 0 : 15)
+            .padding(.bottom, 40)
+            .allowsHitTesting(showButton)
         }
         .onAppear {
             startReveal()
