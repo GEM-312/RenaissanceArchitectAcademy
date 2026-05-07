@@ -53,7 +53,7 @@ struct AvatarTransitionView: View {
 
                     Spacer()
                 }
-                .padding(.horizontal, 40)
+                .padding(.horizontal, Spacing.xxxl)
             }
         }
         .onAppear { startTransition() }

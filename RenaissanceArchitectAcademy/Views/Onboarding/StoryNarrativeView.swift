@@ -48,7 +48,7 @@ struct StoryNarrativeView: View {
 
         if let letter = page.letterText {
             var letterAttr = AttributedString("\n\n" + substitute(letter))
-            letterAttr.font = .custom("PetitFormalScript-Regular", size: 22)
+            letterAttr.font = RenaissanceFont.letter
             result += letterAttr
         }
 
@@ -164,7 +164,7 @@ struct StoryNarrativeView: View {
             // exceeds available space), Continue button via safeAreaInset
             // FIXED at the bottom. This keeps every key element on-screen
             // regardless of orientation.
-            VStack(spacing: 24) {
+            VStack(spacing: Spacing.xl) {
                 // Title — fixed, always visible at the top
                 Text(page.title)
                     .font(.custom("Cinzel-Regular", size: isLargeScreen ? 36 : 26))
@@ -179,7 +179,7 @@ struct StoryNarrativeView: View {
                 // Body text — scrollable middle. ScrollView fills the
                 // remaining vertical space in the VStack.
                 ScrollView(.vertical, showsIndicators: false) {
-                    VStack(spacing: 24) {
+                    VStack(spacing: Spacing.xl) {
                         Text(revealedAttributedText)
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
                             .multilineTextAlignment(.center)
@@ -192,11 +192,11 @@ struct StoryNarrativeView: View {
                         }
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
+                    .padding(.vertical, Spacing.sm)
                 }
             }
             .padding(.top, 60)
-            .padding(.horizontal, 32)
+            .padding(.horizontal, Spacing.xxl)
         }
         // Continue button as a safe-area inset — guaranteed to sit at the
         // bottom of the screen above the home indicator, on every device
@@ -213,7 +213,7 @@ struct StoryNarrativeView: View {
                 Text("Continue")
                     .font(.custom("EBGaramond-SemiBold", size: 20))
                     .foregroundStyle(.white)
-                    .padding(.horizontal, 40)
+                    .padding(.horizontal, Spacing.xxxl)
                     .padding(.vertical, 14)
                     .background(
                         RoundedRectangle(cornerRadius: 10)
@@ -222,7 +222,7 @@ struct StoryNarrativeView: View {
             }
             .opacity(showButton ? 1 : 0)
             .offset(y: showButton ? 0 : 15)
-            .padding(.bottom, 24)
+            .padding(.bottom, Spacing.xl)
             .allowsHitTesting(showButton)
         }
         .onAppear {

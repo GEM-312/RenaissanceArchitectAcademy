@@ -178,7 +178,7 @@ struct SubscriptionPickerView: View {
 
     private func priceLabel(for tier: SubscriptionTier) -> some View {
         let (price, period) = priceText(for: tier)
-        return HStack(alignment: .firstTextBaseline, spacing: 4) {
+        return HStack(alignment: .firstTextBaseline, spacing: Spacing.xxs) {
             Text(price)
                 .font(RenaissanceFont.title2Bold)
                 .foregroundStyle(RenaissanceColors.sepiaInk)

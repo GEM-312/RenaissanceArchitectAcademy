@@ -89,8 +89,8 @@ struct OnboardingView: View {
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .padding(.top, 16)
-                .padding(.trailing, 20)
+                .padding(.top, Spacing.md)
+                .padding(.trailing, Spacing.lg)
                 .transition(.opacity)
             }
         }

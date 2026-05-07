@@ -28,13 +28,13 @@ struct StationLessonOverlay: View {
                 }
 
             // Lesson card
-            VStack(spacing: 16) {
+            VStack(spacing: Spacing.md) {
                 // Bird + title
-                HStack(spacing: 12) {
+                HStack(spacing: Spacing.sm) {
                     BirdCharacter(isSitting: true)
                         .frame(width: 80, height: 80)
 
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: Spacing.xxs) {
                         Text(lesson.stationLabel)
                             .font(RenaissanceFont.footnote)
                             .foregroundStyle(settings.cardTextColor.opacity(0.6))
@@ -53,13 +53,13 @@ struct StationLessonOverlay: View {
                     .font(RenaissanceFont.body)
                     .foregroundStyle(settings.cardTextColor.opacity(0.85))
                     .multilineTextAlignment(.leading)
-                    .lineSpacing(5)
+                    .lineSpacing(LineHeight.relaxed)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 // Science badges
-                HStack(spacing: 8) {
+                HStack(spacing: Spacing.xs) {
                     ForEach(lesson.sciences, id: \.self) { science in
-                        HStack(spacing: 4) {
+                        HStack(spacing: Spacing.xxs) {
                             if let imageName = science.customImageName {
                                 Image(imageName)
                                     .resizable()
@@ -72,8 +72,8 @@ struct StationLessonOverlay: View {
                             Text(science.rawValue)
                                 .font(RenaissanceFont.footnoteSmall)
                         }
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
+                        .padding(.horizontal, Spacing.xs)
+                        .padding(.vertical, Spacing.xxs)
                         .background(
                             Capsule()
                                 .fill(RenaissanceColors.renaissanceBlue.opacity(0.1))
@@ -90,10 +90,10 @@ struct StationLessonOverlay: View {
                     Text("Continue")
                         .font(RenaissanceFont.button)
                         .foregroundStyle(.white)
-                        .padding(.horizontal, 32)
+                        .padding(.horizontal, Spacing.xxl)
                         .padding(.vertical, 10)
                         .background(
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: CornerRadius.sm)
                                 .fill(RenaissanceColors.renaissanceBlue)
                         )
                         .frame(minHeight: 44)
@@ -101,13 +101,13 @@ struct StationLessonOverlay: View {
                 }
                 .opacity(showButton ? 1 : 0)
             }
-            .padding(24)
+            .padding(Spacing.xl)
             .adaptiveWidth(480)
             .background(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: CornerRadius.lg)
                     .fill(settings.dialogBackground)
             )
-            .padding(.horizontal, 32)
+            .padding(.horizontal, Spacing.xxl)
             .opacity(showContent ? 1 : 0)
             .scaleEffect(showContent ? 1 : 0.9)
         }

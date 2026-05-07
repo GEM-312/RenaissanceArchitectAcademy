@@ -36,6 +36,10 @@ enum RenaissanceFont {
 
     // Special
     static let tagline     = Font.custom("PetitFormalScript-Regular", size: 20, relativeTo: .title3)
+    /// Handwritten-letter style used for in-story letter passages (e.g. the
+    /// Lorenzo invitation typewriter run on Story Page 3). PetitFormalScript
+    /// at the larger 22pt size — distinct from the 20pt `tagline` use.
+    static let letter      = Font.custom("PetitFormalScript-Regular", size: 22, relativeTo: .title2)
     static let dialogTitle = Font.custom("EBGaramond-SemiBold", size: 22, relativeTo: .title2)
     static let dialogSubtitle = Font.custom("EBGaramond-Regular", size: 14, relativeTo: .caption)
 

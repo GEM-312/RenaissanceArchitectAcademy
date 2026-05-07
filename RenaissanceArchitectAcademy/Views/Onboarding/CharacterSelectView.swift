@@ -33,11 +33,11 @@ struct CharacterSelectView: View {
             // Audit 2026-05-07.
             GeometryReader { geo in
                 ScrollView {
-                    VStack(spacing: 32) {
+                    VStack(spacing: Spacing.xxl) {
                         Spacer(minLength: 20)
 
                         // Title
-                        VStack(spacing: 8) {
+                        VStack(spacing: Spacing.xs) {
                             DividerOrnament()
                                 .frame(width: 200)
 
@@ -60,12 +60,12 @@ struct CharacterSelectView: View {
                         // Gender cards — 2x bigger with animated avatars
                         Group {
                             if isLargeScreen {
-                                HStack(spacing: 24) {
+                                HStack(spacing: Spacing.xl) {
                                     genderCard(gender: .boy)
                                     genderCard(gender: .girl)
                                 }
                             } else {
-                                HStack(spacing: 12) {
+                                HStack(spacing: Spacing.sm) {
                                     genderCard(gender: .boy)
                                     genderCard(gender: .girl)
                                 }
@@ -74,7 +74,7 @@ struct CharacterSelectView: View {
                         .opacity(showContent ? 1 : 0)
 
                         // Name entry
-                        VStack(spacing: 12) {
+                        VStack(spacing: Spacing.sm) {
                             Text("Your Name")
                                 .font(RenaissanceFont.button)
                                 .foregroundStyle(RenaissanceColors.sepiaInk)
@@ -83,14 +83,14 @@ struct CharacterSelectView: View {
                                 .textFieldStyle(.plain)
                                 .font(.custom("EBGaramond-Regular", size: 18))
                                 .multilineTextAlignment(.center)
-                                .padding(.horizontal, 20)
-                                .padding(.vertical, 12)
+                                .padding(.horizontal, Spacing.lg)
+                                .padding(.vertical, Spacing.sm)
                                 .frame(maxWidth: 280)
                                 .background(
-                                    RoundedRectangle(cornerRadius: 8)
+                                    RoundedRectangle(cornerRadius: CornerRadius.sm)
                                         .fill(RenaissanceColors.parchment)
                                         .overlay(
-                                            RoundedRectangle(cornerRadius: 8)
+                                            RoundedRectangle(cornerRadius: CornerRadius.sm)
                                                 .strokeBorder(RenaissanceColors.ochre.opacity(0.4), lineWidth: 1)
                                         )
                                 )
@@ -120,7 +120,7 @@ struct CharacterSelectView: View {
                             Text("Continue")
                                 .font(.custom("EBGaramond-SemiBold", size: 20))
                                 .foregroundStyle(.white)
-                                .padding(.horizontal, 40)
+                                .padding(.horizontal, Spacing.xxxl)
                                 .padding(.vertical, 14)
                                 .background(
                                     RoundedRectangle(cornerRadius: 10)
@@ -131,9 +131,9 @@ struct CharacterSelectView: View {
                         }
                         .disabled(selectedGender == nil)
                         .opacity(showContent ? 1 : 0)
-                        .padding(.bottom, 40)
+                        .padding(.bottom, Spacing.xxxl)
                     }
-                    .padding(.horizontal, 32)
+                    .padding(.horizontal, Spacing.xxl)
                     .frame(maxWidth: .infinity)
                     .frame(minHeight: geo.size.height)
                 }
@@ -172,7 +172,7 @@ struct CharacterSelectView: View {
                 selectedGender = gender
             }
         } label: {
-            VStack(spacing: 12) {
+            VStack(spacing: Spacing.sm) {
                 // Animated avatar from extracted frames
                 Image(frameName)
                     .resizable()
@@ -186,13 +186,13 @@ struct CharacterSelectView: View {
             }
             .frame(width: isLargeScreen ? 240 : 160, height: isLargeScreen ? 300 : 210)
             .background(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: CornerRadius.lg)
                     .fill(isSelected
                           ? RenaissanceColors.ochre.opacity(0.1)
                           : RenaissanceColors.parchment)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: CornerRadius.lg)
                     .strokeBorder(
                         isSelected ? RenaissanceColors.ochre : RenaissanceColors.ochre.opacity(0.3),
                         lineWidth: isSelected ? 2.5 : 1
