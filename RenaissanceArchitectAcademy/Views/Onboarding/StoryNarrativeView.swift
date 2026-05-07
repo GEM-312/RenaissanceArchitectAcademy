@@ -80,6 +80,16 @@ struct StoryNarrativeView: View {
         page.audioName.map(substituteGender)
     }
 
+    /// Frame count for the animation, honoring per-gender variants when set.
+    private var resolvedFrameCount: Int {
+        page.backgroundFrameVariants[apprenticeGender]?.count ?? page.backgroundFrameCount
+    }
+
+    /// Frame animation duration in seconds, honoring per-gender variants when set.
+    private var resolvedFrameDuration: Double {
+        page.backgroundFrameVariants[apprenticeGender]?.duration ?? page.backgroundFrameDuration
+    }
+
     /// Typewriter-truncated attributed text. Preserves font runs across the slice.
     private var revealedAttributedText: AttributedString {
         let full = fullAttributedText
@@ -331,8 +341,8 @@ struct StoryNarrativeView: View {
         // Continue gate doesn't wait on an animation that will never play.
         guard let prefix = resolvedFramePrefix,
               assetExists(named: "\(prefix)00") else { return }
-        let frameCount = page.backgroundFrameCount
-        let interval = page.backgroundFrameDuration / Double(max(frameCount - 1, 1))
+        let frameCount = resolvedFrameCount
+        let interval = resolvedFrameDuration / Double(max(frameCount - 1, 1))
         animationDone = false
         bgTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { timer in
             if bgFrame < frameCount - 1 {

@@ -1,5 +1,13 @@
 import Foundation
 
+/// Per-gender override for animated background frames. Set on a `StoryPage`
+/// when boy and girl variants have different frame counts or video durations
+/// (e.g. Page 2 — the Boy catch animation runs ~4s, Girl runs ~1.8s).
+struct FrameVariant {
+    let count: Int
+    let duration: Double
+}
+
 /// A single page in the onboarding story sequence
 struct StoryPage: Identifiable {
     let id = UUID()
@@ -16,6 +24,7 @@ struct StoryPage: Identifiable {
     let showBird: Bool
     /// Optional animated background frames prefix (e.g. "LorenzoLetterFrame").
     /// Frames are looked up as `{prefix}00`, `{prefix}01`, etc., up to `backgroundFrameCount - 1`.
+    /// Supports `{gender}` token substitution at render time.
     var backgroundFramePrefix: String? = nil
     /// Number of frames in the background animation. Default 15 matches the
     /// historical WorkshopWelcomeFrame pattern. Set explicitly for longer sequences.
@@ -24,6 +33,11 @@ struct StoryPage: Identifiable {
     /// holds for `duration / (frameCount - 1)`. Default 1.5s matches the
     /// historical 10fps pattern for 15 frames.
     var backgroundFrameDuration: Double = 1.5
+    /// Optional per-gender overrides for the animation timing. When a gender
+    /// has an entry here, its `count` and `duration` are used instead of the
+    /// page-level defaults — letting boy and girl frames play at their own
+    /// native pace and freeze on the last frame while narration finishes.
+    var backgroundFrameVariants: [ApprenticeGender: FrameVariant] = [:]
     /// Optional static background image filename in Assets.xcassets (e.g. "InvitationParchment").
     /// Takes precedence over the solid parchment color. Renders behind the text.
     var backgroundImage: String? = nil
@@ -84,7 +98,11 @@ enum OnboardingContent {
             showBird: false,
             backgroundFramePrefix: "{gender}CatchingLetterFrame",
             backgroundFrameCount: 30,
-            backgroundFrameDuration: 5.04,
+            backgroundFrameDuration: 4.01,
+            backgroundFrameVariants: [
+                .boy:  FrameVariant(count: 30, duration: 4.01),
+                .girl: FrameVariant(count: 30, duration: 1.78),
+            ],
             audioName: "LetterArrivesNarration"
         ),
         StoryPage(
