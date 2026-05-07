@@ -83,7 +83,7 @@ struct StoryNarrativeView: View {
     private var isLargeScreen: Bool { sizeClass == .regular }
 
     var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack {
             if let prefix = page.backgroundFramePrefix {
                 // Animated background frames (looping)
                 Image(String(format: "%@%02d", prefix, bgFrame))
@@ -151,14 +151,13 @@ struct StoryNarrativeView: View {
                 .padding(.horizontal, 32)
             }
 
-            // Continue button — pinned to the bottom of the ZStack so it's
-            // always visible regardless of content height. Hidden until all
-            // cinematic gates (typewriter + audio + animation) finish.
-            //
-            // `.allowsHitTesting(showButton)` is critical: while the button
-            // is invisible, it must NOT intercept touches — otherwise scroll
-            // gestures on the ScrollView below get swallowed by the
-            // bottom-anchored button frame.
+        }
+        // Continue button as a safe-area inset — guaranteed to sit at the
+        // bottom of the screen above the home indicator, on every device
+        // and orientation. The ScrollView inside the ZStack automatically
+        // gets bottom space reserved for the inset so content can't render
+        // underneath the button.
+        .safeAreaInset(edge: .bottom) {
             Button {
                 stopTypewriter()
                 audioPlayer?.stop()
@@ -177,7 +176,7 @@ struct StoryNarrativeView: View {
             }
             .opacity(showButton ? 1 : 0)
             .offset(y: showButton ? 0 : 15)
-            .padding(.bottom, 40)
+            .padding(.bottom, 24)
             .allowsHitTesting(showButton)
         }
         .onAppear {
