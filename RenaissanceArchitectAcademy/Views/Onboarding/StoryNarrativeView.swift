@@ -110,13 +110,16 @@ struct StoryNarrativeView: View {
             DecorativeCorners()
 
             // Title + divider + body text. Wrapped in a ScrollView so long
-            // pages (e.g. The Invitation, with intro + handwritten letter +
-            // outro) don't push the Continue button off-screen on shorter
-            // viewports.
+            // pages (e.g. The Invitation) can scroll vertically on shorter
+            // viewports (iPad landscape) without pushing the Continue button
+            // off-screen.
+            //
+            // Important: explicit top/bottom padding instead of Spacer() —
+            // Spacer inside a ScrollView behaves unpredictably because the
+            // ScrollView's height tracks its content, so the Spacer can
+            // collapse or expand in ways that hide the title.
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 24) {
-                    Spacer(minLength: 60)
-
                     // Title
                     Text(page.title)
                         .font(.custom("Cinzel-Regular", size: isLargeScreen ? 36 : 26))
@@ -141,12 +144,10 @@ struct StoryNarrativeView: View {
                         BirdCharacter(isSitting: false)
                             .frame(width: 180, height: 180)
                     }
-
-                    // Reserve space at the bottom so the last line of text
-                    // never sits under the pinned Continue button.
-                    Spacer(minLength: 140)
                 }
                 .frame(maxWidth: .infinity)
+                .padding(.top, 60)
+                .padding(.bottom, 140)
                 .padding(.horizontal, 32)
             }
 
