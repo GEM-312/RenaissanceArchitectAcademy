@@ -264,13 +264,6 @@
 		F030 /* LibreFranklin-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B232F313B22007D8C64 /* LibreFranklin-SemiBold.ttf */; };
 		F031 /* LibreFranklin-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B242F313B22007D8C64 /* LibreFranklin-Italic.ttf */; };
 		F032 /* Delius-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B252F313B22007D8C64 /* Delius-Regular.ttf */; };
-		F033 /* Mulish-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B262F313B22007D8C64 /* Mulish-Light.ttf */; };
-		F034 /* Mulish-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B272F313B22007D8C64 /* Mulish-Regular.ttf */; };
-		F035 /* Mulish-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B282F313B22007D8C64 /* Mulish-Medium.ttf */; };
-		F036 /* Mulish-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B292F313B22007D8C64 /* Mulish-SemiBold.ttf */; };
-		F037 /* Mulish-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B2A2F313B22007D8C64 /* Mulish-Bold.ttf */; };
-		F038 /* Mulish-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B2B2F313B22007D8C64 /* Mulish-Italic.ttf */; };
-		F039 /* Mulish-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B2C2F313B22007D8C64 /* Mulish-LightItalic.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -496,13 +489,6 @@
 		54477B232F313B22007D8C64 /* LibreFranklin-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LibreFranklin-SemiBold.ttf"; sourceTree = "<group>"; };
 		54477B242F313B22007D8C64 /* LibreFranklin-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LibreFranklin-Italic.ttf"; sourceTree = "<group>"; };
 		54477B252F313B22007D8C64 /* Delius-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Delius-Regular.ttf"; sourceTree = "<group>"; };
-		54477B262F313B22007D8C64 /* Mulish-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Mulish-Light.ttf"; sourceTree = "<group>"; };
-		54477B272F313B22007D8C64 /* Mulish-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Mulish-Regular.ttf"; sourceTree = "<group>"; };
-		54477B282F313B22007D8C64 /* Mulish-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Mulish-Medium.ttf"; sourceTree = "<group>"; };
-		54477B292F313B22007D8C64 /* Mulish-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Mulish-SemiBold.ttf"; sourceTree = "<group>"; };
-		54477B2A2F313B22007D8C64 /* Mulish-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Mulish-Bold.ttf"; sourceTree = "<group>"; };
-		54477B2B2F313B22007D8C64 /* Mulish-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Mulish-Italic.ttf"; sourceTree = "<group>"; };
-		54477B2C2F313B22007D8C64 /* Mulish-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Mulish-LightItalic.ttf"; sourceTree = "<group>"; };
 		5448B9A92F9297B30071F5FB /* RenaissanceArchitectAcademy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RenaissanceArchitectAcademy.entitlements; sourceTree = "<group>"; };
 		5475D2EE2F3146CB003AA131 /* building_complete.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = building_complete.mp3; sourceTree = "<group>"; };
 		5475D2F92F319000003AA131 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -879,13 +865,6 @@
 				54477B1F2F313B22007D8C64 /* LibreBaskerville-SemiBold.ttf */,
 				54477B202F313B22007D8C64 /* LibreFranklin-Regular.ttf */,
 				54477B252F313B22007D8C64 /* Delius-Regular.ttf */,
-				54477B262F313B22007D8C64 /* Mulish-Light.ttf */,
-				54477B272F313B22007D8C64 /* Mulish-Regular.ttf */,
-				54477B282F313B22007D8C64 /* Mulish-Medium.ttf */,
-				54477B292F313B22007D8C64 /* Mulish-SemiBold.ttf */,
-				54477B2A2F313B22007D8C64 /* Mulish-Bold.ttf */,
-				54477B2B2F313B22007D8C64 /* Mulish-Italic.ttf */,
-				54477B2C2F313B22007D8C64 /* Mulish-LightItalic.ttf */,
 				54477B212F313B22007D8C64 /* LibreFranklin-Bold.ttf */,
 				54477B222F313B22007D8C64 /* LibreFranklin-Medium.ttf */,
 				54477B232F313B22007D8C64 /* LibreFranklin-SemiBold.ttf */,
@@ -1053,13 +1032,6 @@
 				F026 /* LibreBaskerville-SemiBold.ttf in Resources */,
 				F027 /* LibreFranklin-Regular.ttf in Resources */,
 				F032 /* Delius-Regular.ttf in Resources */,
-				F033 /* Mulish-Light.ttf in Resources */,
-				F034 /* Mulish-Regular.ttf in Resources */,
-				F035 /* Mulish-Medium.ttf in Resources */,
-				F036 /* Mulish-SemiBold.ttf in Resources */,
-				F037 /* Mulish-Bold.ttf in Resources */,
-				F038 /* Mulish-Italic.ttf in Resources */,
-				F039 /* Mulish-LightItalic.ttf in Resources */,
 				F028 /* LibreFranklin-Bold.ttf in Resources */,
 				F029 /* LibreFranklin-Medium.ttf in Resources */,
 				F030 /* LibreFranklin-SemiBold.ttf in Resources */,
