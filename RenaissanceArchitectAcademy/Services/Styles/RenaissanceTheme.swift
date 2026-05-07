@@ -29,9 +29,10 @@ enum RenaissanceFont {
     static let footnoteBold = Font.custom("EBGaramond-SemiBold", size: 14, relativeTo: .caption)
 
     // Buttons (EBGaramond-SemiBold)
-    static let buttonLarge = Font.custom("EBGaramond-Regular", size: 20, relativeTo: .body)
-    static let button      = Font.custom("EBGaramond-SemiBold", size: 18, relativeTo: .body)
-    static let buttonSmall = Font.custom("EBGaramond-SemiBold", size: 15, relativeTo: .body)
+    static let buttonLarge   = Font.custom("EBGaramond-Regular", size: 20, relativeTo: .body)
+    static let button        = Font.custom("EBGaramond-SemiBold", size: 18, relativeTo: .body)
+    static let buttonRegular = Font.custom("EBGaramond-Regular", size: 18, relativeTo: .body)
+    static let buttonSmall   = Font.custom("EBGaramond-SemiBold", size: 15, relativeTo: .body)
 
     // Special
     static let tagline     = Font.custom("PetitFormalScript-Regular", size: 20, relativeTo: .title3)
