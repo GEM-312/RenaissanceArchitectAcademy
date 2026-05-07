@@ -20,7 +20,7 @@ struct GameSceneKitView: NSViewRepresentable {
     func makeNSView(context: Context) -> GameSCNView {
         let scnView = GameSCNView()
         scnView.scene = scene
-        scnView.backgroundColor = NSColor(red: 0.961, green: 0.902, blue: 0.827, alpha: 1.0)
+        scnView.backgroundColor = PlatformColor(RenaissanceColors.parchment)
         scnView.allowsCameraControl = false
         scnView.autoenablesDefaultLighting = false
         scnView.antialiasingMode = .multisampling4X
@@ -64,7 +64,7 @@ struct GameSceneKitView: UIViewRepresentable {
     func makeUIView(context: Context) -> SCNView {
         let scnView = SCNView()
         scnView.scene = scene
-        scnView.backgroundColor = UIColor(red: 0.961, green: 0.902, blue: 0.827, alpha: 1.0)
+        scnView.backgroundColor = PlatformColor(RenaissanceColors.parchment)
         scnView.allowsCameraControl = false
         scnView.autoenablesDefaultLighting = false
         scnView.antialiasingMode = .multisampling4X
