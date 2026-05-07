@@ -69,6 +69,13 @@ struct StoryNarrativeView: View {
     @State private var bgFrame: Int = 0
     @State private var bgTimer: Timer?
 
+    // The Continue button only appears once typewriter, audio narration, and
+    // frame animation are all done — otherwise the player can advance past a
+    // cinematic that is still mid-flight.
+    @State private var typewriterDone = false
+    @State private var audioDone = true
+    @State private var animationDone = true
+
     private let charsPerTick = 2
     private let tickInterval: TimeInterval = 0.03
 
@@ -165,14 +172,28 @@ struct StoryNarrativeView: View {
             audioPlayer?.stop()
             audioPlayer = nil
         }
-        // Tap to skip typewriter and reveal all text
+        // Tap to skip — fast-forwards typewriter, audio, and frame animation,
+        // then shows the Continue button immediately.
         .onTapGesture {
-            if revealedCharCount < totalCharCount {
-                stopTypewriter()
-                revealedCharCount = totalCharCount
-                finishReveal()
-            }
+            skipToEnd()
         }
+    }
+
+    /// Marks all gates done and reveals the Continue button. Stops audio + animation.
+    private func skipToEnd() {
+        if revealedCharCount < totalCharCount {
+            stopTypewriter()
+            revealedCharCount = totalCharCount
+        }
+        audioPlayer?.stop()
+        audioPlayer = nil
+        bgTimer?.invalidate()
+        bgTimer = nil
+        bgFrame = max(page.backgroundFrameCount - 1, 0)
+        typewriterDone = true
+        audioDone = true
+        animationDone = true
+        showContinueIfReady()
     }
 
     // MARK: - Typewriter Logic
@@ -190,13 +211,19 @@ struct StoryNarrativeView: View {
                     revealedCharCount = min(revealedCharCount + charsPerTick, total)
                 } else {
                     timer.invalidate()
-                    finishReveal()
+                    typewriterDone = true
+                    showContinueIfReady()
                 }
             }
         }
     }
 
-    private func finishReveal() {
+    /// Reveals the Continue button (and bird, if applicable) — but only when
+    /// every cinematic gate has finished: typewriter text, audio narration,
+    /// and the bg frame animation. Each of those calls this when it's done.
+    private func showContinueIfReady() {
+        guard typewriterDone, audioDone, animationDone else { return }
+        guard !showButton else { return }
         if page.showBird {
             withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
                 showBird = true
@@ -224,20 +251,33 @@ struct StoryNarrativeView: View {
         let url = Bundle.main.url(forResource: name, withExtension: "mp3")
             ?? Bundle.main.url(forResource: name, withExtension: "m4a")
         guard let url else { return }
-        audioPlayer = try? AVAudioPlayer(contentsOf: url)
-        audioPlayer?.play()
+        guard let player = try? AVAudioPlayer(contentsOf: url) else { return }
+        audioPlayer = player
+        audioDone = false
+        player.play()
+        // Reveal the Continue button once the audio's duration has elapsed.
+        // The exact moment of `player.isPlaying == false` is harder to observe
+        // without a delegate; the duration-based timer is good enough for
+        // narration files where the runtime is known and fixed.
+        DispatchQueue.main.asyncAfter(deadline: .now() + player.duration) {
+            audioDone = true
+            showContinueIfReady()
+        }
     }
 
     private func startBackgroundAnimation() {
         guard page.backgroundFramePrefix != nil else { return }
         let frameCount = page.backgroundFrameCount
         let interval = page.backgroundFrameDuration / Double(max(frameCount - 1, 1))
+        animationDone = false
         bgTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { timer in
             if bgFrame < frameCount - 1 {
                 bgFrame += 1
             } else {
                 timer.invalidate()
                 bgTimer = nil
+                animationDone = true
+                showContinueIfReady()
             }
         }
     }

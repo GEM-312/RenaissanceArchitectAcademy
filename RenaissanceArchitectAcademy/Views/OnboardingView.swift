@@ -67,10 +67,13 @@ struct OnboardingView: View {
         .overlay(alignment: .topTrailing) {
             // Skip button — available during avatar intro and story pages only.
             // The tier picker has no skip — players must choose a tier to enter the game.
+            // Skip jumps to the tier picker phase, NOT past it. Without this,
+            // players could bypass the paywall by tapping Skip during the story.
             if showsSkipButton {
                 Button {
-                    onboardingState.completeOnboarding()
-                    onComplete()
+                    withAnimation(.easeInOut(duration: 0.5)) {
+                        phase = .tierPicker
+                    }
                 } label: {
                     Text("Skip")
                         .font(RenaissanceFont.bodySmall)
