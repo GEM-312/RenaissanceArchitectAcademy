@@ -130,85 +130,71 @@ struct StoryNarrativeView: View {
     }
 
     var body: some View {
-        ZStack {
-            if let prefix = resolvedFramePrefix, assetExists(named: "\(prefix)00") {
-                // Animated background frames (looping)
-                Image(String(format: "%@%02d", prefix, bgFrame))
-                    .resizable()
-                    .scaledToFill()
-                    .ignoresSafeArea()
-                    .opacity(0.45)
+        // Top-level VStack — title at top, body in scrollable middle,
+        // Continue at bottom via safeAreaInset. Background goes into
+        // `.background` so it can ignoreSafeArea independently of the
+        // foreground content. ZStack-as-root caused inconsistent sizing
+        // when sibling backgrounds with `.ignoresSafeArea()` interacted
+        // with the foreground VStack — title would render above the
+        // visible safe area in iPad landscape on short-body pages.
+        VStack(spacing: Spacing.xl) {
+            Text(page.title)
+                .font(.custom("Cinzel-Regular", size: isLargeScreen ? 36 : 26))
+                .foregroundStyle(RenaissanceColors.sepiaInk)
+                .multilineTextAlignment(.center)
+                .opacity(showTitle ? 1 : 0)
 
-                // Darkened overlay so text stays readable
-                RenaissanceColors.parchment
-                    .opacity(0.55)
-                    .ignoresSafeArea()
-            } else if let bgImage = resolvedBackgroundImage, assetExists(named: bgImage) {
-                // Static background image (e.g. parchment letter for The Invitation).
-                // Only renders if the imageset actually exists — otherwise the
-                // empty Image() with .scaledToFill().ignoresSafeArea() can
-                // claim unexpected layout dimensions and break parent sizing.
-                Image(bgImage)
-                    .resizable()
-                    .scaledToFill()
-                    .ignoresSafeArea()
-            } else {
-                RenaissanceColors.parchment
-                    .ignoresSafeArea()
-            }
+            DividerOrnament()
+                .frame(width: 180)
+                .opacity(showTitle ? 1 : 0)
 
-            DecorativeCorners()
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: Spacing.xl) {
+                    Text(revealedAttributedText)
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(6)
+                        .adaptiveWidth(520)
 
-            // Layout: title + divider FIXED at the top (always visible),
-            // body text scrollable in the middle (only scrolls when content
-            // exceeds available space), Continue button via safeAreaInset
-            // FIXED at the bottom.
-            //
-            // The VStack MUST fill the ZStack with top alignment — without
-            // this it sizes to content and gets centered, which leaves a
-            // huge dead gap above the title on pages with short body text
-            // (e.g. Page 2, "The Letter Arrives" in iPad landscape).
-            VStack(spacing: Spacing.xl) {
-                Text(page.title)
-                    .font(.custom("Cinzel-Regular", size: isLargeScreen ? 36 : 26))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
-                    .multilineTextAlignment(.center)
-                    .opacity(showTitle ? 1 : 0)
-                    .offset(y: showTitle ? 0 : -15)
-
-                DividerOrnament()
-                    .frame(width: 180)
-                    .opacity(showTitle ? 1 : 0)
-
-                // Body text — scrollable middle. ScrollView is greedy and
-                // fills the remaining vertical space below the title.
-                ScrollView(.vertical, showsIndicators: false) {
-                    VStack(spacing: Spacing.xl) {
-                        Text(revealedAttributedText)
-                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
-                            .multilineTextAlignment(.center)
-                            .lineSpacing(6)
-                            .adaptiveWidth(520)
-
-                        if page.showBird && showBird {
-                            BirdCharacter(isSitting: false)
-                                .frame(width: birdSize, height: birdSize)
-                        }
+                    if page.showBird && showBird {
+                        BirdCharacter(isSitting: false)
+                            .frame(width: birdSize, height: birdSize)
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, Spacing.sm)
                 }
-                .frame(maxHeight: .infinity)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, Spacing.sm)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .padding(.top, Spacing.xxl)
-            .padding(.horizontal, Spacing.xxl)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        // Continue button as a safe-area inset — guaranteed to sit at the
-        // bottom of the screen above the home indicator, on every device
-        // and orientation. The ScrollView inside the ZStack automatically
-        // gets bottom space reserved for the inset so content can't render
-        // underneath the button.
+        .padding(.top, Spacing.xxl)
+        .padding(.horizontal, Spacing.xxl)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background {
+            // Background fills entire screen including safe area. Lives
+            // in `.background` so it cannot push or shift the foreground.
+            Group {
+                if let prefix = resolvedFramePrefix, assetExists(named: "\(prefix)00") {
+                    ZStack {
+                        Image(String(format: "%@%02d", prefix, bgFrame))
+                            .resizable()
+                            .scaledToFill()
+                            .opacity(0.45)
+                        RenaissanceColors.parchment.opacity(0.55)
+                    }
+                } else if let bgImage = resolvedBackgroundImage, assetExists(named: bgImage) {
+                    Image(bgImage)
+                        .resizable()
+                        .scaledToFill()
+                } else {
+                    RenaissanceColors.parchment
+                }
+            }
+            .ignoresSafeArea()
+        }
+        .overlay {
+            DecorativeCorners()
+                .allowsHitTesting(false)
+        }
         .safeAreaInset(edge: .bottom) {
             Button {
                 stopTypewriter()
@@ -227,7 +213,6 @@ struct StoryNarrativeView: View {
                     )
             }
             .opacity(showButton ? 1 : 0)
-            .offset(y: showButton ? 0 : 15)
             .padding(.bottom, Spacing.xl)
             .allowsHitTesting(showButton)
         }
