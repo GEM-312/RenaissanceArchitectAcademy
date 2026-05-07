@@ -50,7 +50,7 @@ enum ResourceStationType: String, CaseIterable, Hashable {
         case .clayPit:      return "StationClayPit"
         case .mine:         return "StationMine"
         case .forest:       return "StationForest"
-        case .market:       return "StationMarket"
+        case .market:       return "Market"
         case .craftingRoom: return "StationCraftingRoom"
         case .farm:         return nil  // shape fallback until Midjourney asset
         case .goldsmithWorkshop: return nil  // shape fallback until Midjourney asset

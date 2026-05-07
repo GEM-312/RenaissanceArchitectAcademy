@@ -16,7 +16,7 @@ struct RenaissanceButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.custom("EBGaramond-Regular", size: 20, relativeTo: .body))
+                .font(RenaissanceFont.buttonLarge)
                 .tracking(2)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
                 .frame(maxWidth: .infinity)
@@ -126,7 +126,7 @@ struct RenaissanceSecondaryButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.custom("EBGaramond-Regular", size: 18, relativeTo: .body))
+                .font(RenaissanceFont.buttonRegular)
                 .tracking(2)
             .foregroundStyle(RenaissanceColors.sepiaInk)
             .padding(.horizontal, 20)

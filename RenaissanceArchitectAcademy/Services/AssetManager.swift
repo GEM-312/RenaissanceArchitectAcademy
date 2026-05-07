@@ -183,12 +183,12 @@ struct ODRLoadingView: View {
                 .frame(width: 200)
 
             Text(message)
-                .font(.custom("EBGaramond-Italic", size: 16))
+                .font(RenaissanceFont.bodyItalic)
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
 
             if let error = assetManager.loadErrors[tag] {
                 Text(error)
-                    .font(.custom("EBGaramond-Regular", size: 13))
+                    .font(RenaissanceFont.caption)
                     .foregroundStyle(RenaissanceColors.errorRed)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 40)
@@ -196,7 +196,7 @@ struct ODRLoadingView: View {
                 Button("Retry") {
                     assetManager.prefetchAssets(tag: tag)
                 }
-                .font(.custom("EBGaramond-SemiBold", size: 14))
+                .font(RenaissanceFont.footnoteBold)
                 .foregroundStyle(RenaissanceColors.renaissanceBlue)
             }
         }
