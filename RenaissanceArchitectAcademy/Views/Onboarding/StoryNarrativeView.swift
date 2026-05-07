@@ -162,13 +162,17 @@ struct StoryNarrativeView: View {
             // Layout: title + divider FIXED at the top (always visible),
             // body text scrollable in the middle (only scrolls when content
             // exceeds available space), Continue button via safeAreaInset
-            // FIXED at the bottom. This keeps every key element on-screen
-            // regardless of orientation.
+            // FIXED at the bottom.
+            //
+            // The VStack MUST fill the ZStack with top alignment — without
+            // this it sizes to content and gets centered, which leaves a
+            // huge dead gap above the title on pages with short body text
+            // (e.g. Page 2, "The Letter Arrives" in iPad landscape).
             VStack(spacing: Spacing.xl) {
-                // Title — fixed, always visible at the top
                 Text(page.title)
                     .font(.custom("Cinzel-Regular", size: isLargeScreen ? 36 : 26))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
+                    .multilineTextAlignment(.center)
                     .opacity(showTitle ? 1 : 0)
                     .offset(y: showTitle ? 0 : -15)
 
@@ -176,8 +180,8 @@ struct StoryNarrativeView: View {
                     .frame(width: 180)
                     .opacity(showTitle ? 1 : 0)
 
-                // Body text — scrollable middle. ScrollView fills the
-                // remaining vertical space in the VStack.
+                // Body text — scrollable middle. ScrollView is greedy and
+                // fills the remaining vertical space below the title.
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: Spacing.xl) {
                         Text(revealedAttributedText)
@@ -194,8 +198,10 @@ struct StoryNarrativeView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, Spacing.sm)
                 }
+                .frame(maxHeight: .infinity)
             }
-            .padding(.top, 60)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .padding(.top, Spacing.xxl)
             .padding(.horizontal, Spacing.xxl)
         }
         // Continue button as a safe-area inset — guaranteed to sit at the
