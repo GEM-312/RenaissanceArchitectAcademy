@@ -306,8 +306,6 @@
 		144 /* StationLessonOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationLessonOverlay.swift; sourceTree = "<group>"; };
 		145 /* footstep.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = footstep.wav; sourceTree = "<group>"; };
 		146 /* AvatarTransitionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarTransitionView.swift; sourceTree = "<group>"; };
-		147 /* BoyAvatarTransition.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = BoyAvatarTransition.mp4; sourceTree = "<group>"; };
-		148 /* GirlAvatarTransition.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = GirlAvatarTransition.mp4; sourceTree = "<group>"; };
 		149 /* ForestScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ForestScene.swift; path = Views/SpriteKit/ForestScene.swift; sourceTree = "<group>"; };
 		150 /* ForestMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForestMapView.swift; sourceTree = "<group>"; };
 		151 /* BuildingProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingProgress.swift; sourceTree = "<group>"; };
@@ -614,8 +612,6 @@
 				BC6 /* workshop_ambient.wav */,
 				BC7 /* crafting_ambient.wav */,
 				BC8 /* music_lesson.wav */,
-				147 /* BoyAvatarTransition.mp4 */,
-				148 /* GirlAvatarTransition.mp4 */,
 				303 /* Views */,
 				304 /* ViewModels */,
 				305 /* Models */,

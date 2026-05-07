@@ -109,39 +109,56 @@ struct StoryNarrativeView: View {
 
             DecorativeCorners()
 
-            VStack(spacing: 24) {
-                Spacer()
+            // Title + divider + body text. Wrapped in a ScrollView so long
+            // pages (e.g. The Invitation, with intro + handwritten letter +
+            // outro) don't push the Continue button off-screen on shorter
+            // viewports.
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 24) {
+                    Spacer(minLength: 60)
 
-                // Title
-                Text(page.title)
-                    .font(.custom("Cinzel-Regular", size: isLargeScreen ? 36 : 26))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
-                    .opacity(showTitle ? 1 : 0)
-                    .offset(y: showTitle ? 0 : -15)
+                    // Title
+                    Text(page.title)
+                        .font(.custom("Cinzel-Regular", size: isLargeScreen ? 36 : 26))
+                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .opacity(showTitle ? 1 : 0)
+                        .offset(y: showTitle ? 0 : -15)
 
-                DividerOrnament()
-                    .frame(width: 180)
-                    .opacity(showTitle ? 1 : 0)
+                    DividerOrnament()
+                        .frame(width: 180)
+                        .opacity(showTitle ? 1 : 0)
 
-                // Typewriter text — uses AttributedString so different sections
-                // can render in different fonts (narrator body vs. handwritten letter).
-                Text(revealedAttributedText)
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(6)
-                    .adaptiveWidth(520)
+                    // Typewriter text — uses AttributedString so different sections
+                    // can render in different fonts (narrator body vs. handwritten letter).
+                    Text(revealedAttributedText)
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(6)
+                        .adaptiveWidth(520)
 
-                // Bird companion (only on final story page)
-                if page.showBird && showBird {
-                    BirdCharacter(isSitting: false)
-                        .frame(width: 180, height: 180)
+                    // Bird companion (only on final story page)
+                    if page.showBird && showBird {
+                        BirdCharacter(isSitting: false)
+                            .frame(width: 180, height: 180)
+                    }
+
+                    // Reserve space at the bottom so the last line of text
+                    // never sits under the pinned Continue button.
+                    Spacer(minLength: 140)
                 }
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 32)
+            }
 
+            // Continue button — pinned to the bottom of the ZStack so it's
+            // always visible regardless of content height. Hidden until all
+            // cinematic gates (typewriter + audio + animation) finish.
+            VStack {
                 Spacer()
-
-                // Continue button
                 Button {
                     stopTypewriter()
+                    audioPlayer?.stop()
+                    bgTimer?.invalidate()
                     onContinue()
                 } label: {
                     Text("Continue")
@@ -158,7 +175,6 @@ struct StoryNarrativeView: View {
                 .offset(y: showButton ? 0 : 15)
                 .padding(.bottom, 40)
             }
-            .padding(.horizontal, 32)
         }
         .onAppear {
             startReveal()
