@@ -121,7 +121,13 @@ struct StoryNarrativeView: View {
     private let tickInterval: TimeInterval = 0.03
 
     @Environment(\.horizontalSizeClass) private var sizeClass
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
     private var isLargeScreen: Bool { sizeClass == .regular }
+    /// BirdCharacter size — shrinks on compact vertical (iPhone landscape) so
+    /// it doesn't crowd Page 4's body text. Audit 2026-05-07.
+    private var birdSize: CGFloat {
+        verticalSizeClass == .compact ? 120 : 180
+    }
 
     var body: some View {
         ZStack {
@@ -182,7 +188,7 @@ struct StoryNarrativeView: View {
 
                         if page.showBird && showBird {
                             BirdCharacter(isSitting: false)
-                                .frame(width: 180, height: 180)
+                                .frame(width: birdSize, height: birdSize)
                         }
                     }
                     .frame(maxWidth: .infinity)

@@ -25,107 +25,120 @@ struct CharacterSelectView: View {
 
             DecorativeCorners()
 
-            VStack(spacing: 32) {
-                Spacer()
+            // Wrap content in GeometryReader + ScrollView so the name field
+            // doesn't get pushed under the keyboard on iPhone, and the
+            // composition still centers vertically on tall screens.
+            // `Spacer(minLength:)` + `frame(minHeight: geo.size.height)`
+            // gives "centered when there's room, scrollable when there isn't".
+            // Audit 2026-05-07.
+            GeometryReader { geo in
+                ScrollView {
+                    VStack(spacing: 32) {
+                        Spacer(minLength: 20)
 
-                // Title
-                VStack(spacing: 8) {
-                    DividerOrnament()
-                        .frame(width: 200)
+                        // Title
+                        VStack(spacing: 8) {
+                            DividerOrnament()
+                                .frame(width: 200)
 
-                    Text("Choose Your Apprentice")
-                        .font(.custom("Cinzel-Regular", size: isLargeScreen ? 32 : 24))
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
-                        .multilineTextAlignment(.center)
-                        .frame(maxWidth: .infinity)
+                            Text("Choose Your Apprentice")
+                                .font(.custom("Cinzel-Regular", size: isLargeScreen ? 32 : 24))
+                                .foregroundStyle(RenaissanceColors.sepiaInk)
+                                .multilineTextAlignment(.center)
+                                .frame(maxWidth: .infinity)
 
-                    Text("Florence, 1485")
-                        .font(.custom("EBGaramond-Regular", size: 18))
-                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
+                            Text("Florence, 1485")
+                                .font(.custom("EBGaramond-Regular", size: 18))
+                                .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
 
-                    DividerOrnament()
-                        .frame(width: 200)
-                }
-                .opacity(showContent ? 1 : 0)
-                .offset(y: showContent ? 0 : -20)
-
-                // Gender cards — 2x bigger with animated avatars
-                Group {
-                    if isLargeScreen {
-                        HStack(spacing: 24) {
-                            genderCard(gender: .boy)
-                            genderCard(gender: .girl)
+                            DividerOrnament()
+                                .frame(width: 200)
                         }
-                    } else {
-                        HStack(spacing: 12) {
-                            genderCard(gender: .boy)
-                            genderCard(gender: .girl)
+                        .opacity(showContent ? 1 : 0)
+                        .offset(y: showContent ? 0 : -20)
+
+                        // Gender cards — 2x bigger with animated avatars
+                        Group {
+                            if isLargeScreen {
+                                HStack(spacing: 24) {
+                                    genderCard(gender: .boy)
+                                    genderCard(gender: .girl)
+                                }
+                            } else {
+                                HStack(spacing: 12) {
+                                    genderCard(gender: .boy)
+                                    genderCard(gender: .girl)
+                                }
+                            }
                         }
-                    }
-                }
-                .opacity(showContent ? 1 : 0)
+                        .opacity(showContent ? 1 : 0)
 
-                // Name entry
-                VStack(spacing: 12) {
-                    Text("Your Name")
-                        .font(RenaissanceFont.button)
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
+                        // Name entry
+                        VStack(spacing: 12) {
+                            Text("Your Name")
+                                .font(RenaissanceFont.button)
+                                .foregroundStyle(RenaissanceColors.sepiaInk)
 
-                    TextField("Enter your name...", text: $name)
-                        .textFieldStyle(.plain)
-                        .font(.custom("EBGaramond-Regular", size: 18))
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 12)
-                        .frame(maxWidth: 280)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(RenaissanceColors.parchment)
-                                .overlay(
+                            TextField("Enter your name...", text: $name)
+                                .textFieldStyle(.plain)
+                                .font(.custom("EBGaramond-Regular", size: 18))
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 12)
+                                .frame(maxWidth: 280)
+                                .background(
                                     RoundedRectangle(cornerRadius: 8)
-                                        .strokeBorder(RenaissanceColors.ochre.opacity(0.4), lineWidth: 1)
+                                        .fill(RenaissanceColors.parchment)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .strokeBorder(RenaissanceColors.ochre.opacity(0.4), lineWidth: 1)
+                                        )
                                 )
-                        )
-                        .foregroundStyle(RenaissanceColors.sepiaInk)
-                        .colorScheme(.light)
-                        .focused($nameFieldFocused)
-                        .submitLabel(.done)
-                        .onSubmit {
-                            nameFieldFocused = false
+                                .foregroundStyle(RenaissanceColors.sepiaInk)
+                                .colorScheme(.light)
+                                .focused($nameFieldFocused)
+                                .submitLabel(.done)
+                                .onSubmit {
+                                    nameFieldFocused = false
+                                }
+                                #if os(iOS)
+                                .textInputAutocapitalization(.words)
+                                #endif
                         }
-                        #if os(iOS)
-                        .textInputAutocapitalization(.words)
-                        #endif
-                }
-                .opacity(showContent ? 1 : 0)
+                        .opacity(showContent ? 1 : 0)
 
-                Spacer()
+                        Spacer(minLength: 20)
 
-                // Continue button — ochre instead of blue
-                Button {
-                    if let gender = selectedGender {
-                        onboardingState.apprenticeGender = gender
-                        onboardingState.apprenticeName = name.isEmpty ? "Apprentice" : name
-                        onContinue()
+                        // Continue button — ochre instead of blue
+                        Button {
+                            if let gender = selectedGender {
+                                onboardingState.apprenticeGender = gender
+                                onboardingState.apprenticeName = name.isEmpty ? "Apprentice" : name
+                                onContinue()
+                            }
+                        } label: {
+                            Text("Continue")
+                                .font(.custom("EBGaramond-SemiBold", size: 20))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 40)
+                                .padding(.vertical, 14)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(selectedGender != nil
+                                              ? RenaissanceColors.ochre
+                                              : RenaissanceColors.stoneGray.opacity(0.4))
+                                )
+                        }
+                        .disabled(selectedGender == nil)
+                        .opacity(showContent ? 1 : 0)
+                        .padding(.bottom, 40)
                     }
-                } label: {
-                    Text("Continue")
-                        .font(.custom("EBGaramond-SemiBold", size: 20))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 40)
-                        .padding(.vertical, 14)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(selectedGender != nil
-                                      ? RenaissanceColors.ochre
-                                      : RenaissanceColors.stoneGray.opacity(0.4))
-                        )
+                    .padding(.horizontal, 32)
+                    .frame(maxWidth: .infinity)
+                    .frame(minHeight: geo.size.height)
                 }
-                .disabled(selectedGender == nil)
-                .opacity(showContent ? 1 : 0)
-                .padding(.bottom, 40)
+                .scrollDismissesKeyboard(.interactively)
             }
-            .padding(.horizontal, 32)
         }
         .onAppear {
             withAnimation(.easeOut(duration: 0.8)) {

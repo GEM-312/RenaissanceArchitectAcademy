@@ -96,6 +96,8 @@ struct StationLessonOverlay: View {
                             RoundedRectangle(cornerRadius: 8)
                                 .fill(RenaissanceColors.renaissanceBlue)
                         )
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
                 }
                 .opacity(showButton ? 1 : 0)
             }

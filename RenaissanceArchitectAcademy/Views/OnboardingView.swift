@@ -82,6 +82,11 @@ struct OnboardingView: View {
                         .padding(.horizontal, 14)
                         .padding(.vertical, 6)
                         .background(Capsule().fill(.black.opacity(0.3)))
+                        // 44pt minimum tap target — Apple HIG. Capsule
+                        // visually stays at its compact size; the frame
+                        // expands the hit region only.
+                        .frame(minWidth: 44, minHeight: 44)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .padding(.top, 16)

@@ -170,6 +170,8 @@ struct SubscriptionPickerView: View {
                 .background(
                     Capsule().fill(isSelected ? accentColor(for: tier) : .clear)
                 )
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }
@@ -251,6 +253,8 @@ struct SubscriptionPickerView: View {
                     .font(RenaissanceFont.caption)
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.6))
                     .underline()
+                    .frame(minHeight: 44)
+                    .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
         }

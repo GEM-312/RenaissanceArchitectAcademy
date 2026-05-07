@@ -32,23 +32,29 @@ struct AvatarTransitionView: View {
     }
 
     var body: some View {
-        ZStack {
-            RenaissanceColors.parchment
-                .ignoresSafeArea()
+        // GeometryReader so the image cap can scale with available height.
+        // On iPad landscape (~768pt tall) a hardcoded 600pt frame consumes
+        // ~78% of the viewport — capping at 70% of geo.size.height keeps the
+        // composition balanced on every device. Audit 2026-05-07.
+        GeometryReader { geo in
+            ZStack {
+                RenaissanceColors.parchment
+                    .ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                Spacer()
+                VStack(spacing: 0) {
+                    Spacer()
 
-                Image("\(framePrefix)\(String(format: "%02d", currentFrame))")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxHeight: 600)
-                    .opacity(showContent ? 1 : 0)
-                    .scaleEffect(showContent ? 1 : 0.95)
+                    Image("\(framePrefix)\(String(format: "%02d", currentFrame))")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxHeight: min(600, geo.size.height * 0.7))
+                        .opacity(showContent ? 1 : 0)
+                        .scaleEffect(showContent ? 1 : 0.95)
 
-                Spacer()
+                    Spacer()
+                }
+                .padding(.horizontal, 40)
             }
-            .padding(.horizontal, 40)
         }
         .onAppear { startTransition() }
         .onDisappear {
@@ -70,7 +76,11 @@ struct AvatarTransitionView: View {
             showContent = true
         }
 
-        if let url = Bundle.main.url(forResource: audioName, withExtension: "m4a") {
+        // Look up .mp3 first, then .m4a — matches StoryNarrativeView's
+        // dual-format fallback so ElevenLabs/OpenArt mp3 exports work
+        // alongside iOS-recorded m4a files.
+        if let url = Bundle.main.url(forResource: audioName, withExtension: "mp3")
+            ?? Bundle.main.url(forResource: audioName, withExtension: "m4a") {
             audioPlayer = try? AVAudioPlayer(contentsOf: url)
             audioPlayer?.play()
         }
