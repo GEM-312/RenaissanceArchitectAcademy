@@ -38,22 +38,29 @@ struct StoryNarrativeView: View {
 
     /// The full attributed text for this page, with per-section font runs:
     /// intro (default body) → letter (PetitFormalScript) → outro (default body).
-    /// Pages without `letterText` collapse to a single body run.
+    /// Empty sections are skipped — pages with `text: ""` (e.g. Invitation,
+    /// where the avatars already broke the seal in the prior animation)
+    /// drop straight into the letter without leading blank lines.
     private var fullAttributedText: AttributedString {
         var result = AttributedString()
 
-        var intro = AttributedString(substitute(page.text))
-        intro.font = RenaissanceFont.bodyLarge
-        result += intro
+        let introText = substitute(page.text)
+        if !introText.isEmpty {
+            var intro = AttributedString(introText)
+            intro.font = RenaissanceFont.bodyLarge
+            result += intro
+        }
 
         if let letter = page.letterText {
-            var letterAttr = AttributedString("\n\n" + substitute(letter))
+            let prefix = result.characters.isEmpty ? "" : "\n\n"
+            var letterAttr = AttributedString(prefix + substitute(letter))
             letterAttr.font = RenaissanceFont.letter
             result += letterAttr
         }
 
         if let outro = page.outroText {
-            var outroAttr = AttributedString("\n\n" + substitute(outro))
+            let prefix = result.characters.isEmpty ? "" : "\n\n"
+            var outroAttr = AttributedString(prefix + substitute(outro))
             outroAttr.font = RenaissanceFont.bodyLarge
             result += outroAttr
         }

@@ -107,7 +107,7 @@ enum OnboardingContent {
         ),
         StoryPage(
             title: "The Invitation",
-            text: "You break the seal. The handwriting is bold and sure:",
+            text: "",
             letterText: """
             We have heard of your gifts, {name}. Your drawings. Your curiosity for how things work.
 
