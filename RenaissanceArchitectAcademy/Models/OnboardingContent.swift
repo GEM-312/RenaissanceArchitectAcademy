@@ -138,7 +138,14 @@ enum OnboardingContent {
             "I will travel with you to Florence, {name}. I will teach you the thirteen sciences \
             behind the greatest structures ever built. Are you ready?"
             """,
-            showBird: true
+            showBird: false, // replaced by gender-specific bird arrival video
+            backgroundFramePrefix: "BirdArrival{gender}Frame",
+            backgroundFrameCount: 30,
+            backgroundFrameDuration: 4.08, // girl native duration
+            backgroundFrameVariants: [
+                .boy:  FrameVariant(count: 30, duration: 4.34), // boy assets pending
+                .girl: FrameVariant(count: 30, duration: 4.08),
+            ]
         ),
     ]
 
