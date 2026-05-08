@@ -174,12 +174,20 @@ struct StoryNarrativeView: View {
             // in `.background` so it cannot push or shift the foreground.
             Group {
                 if let prefix = resolvedFramePrefix, assetExists(named: "\(prefix)00") {
-                    ZStack {
+                    // Parchment is the full-screen base. The animated frame
+                    // sits anchored to the BOTTOM of the screen at ~67% of
+                    // its previous full-fill size and reduced opacity, so
+                    // the typewriter text up top reads on a clean parchment
+                    // and the figure tucks beneath it. Tuneables:
+                    //   videoMaxSize  — bump to 800 for a bigger figure, drop to 540 for smaller
+                    //   videoOpacity  — bump to 0.40 for more presence, drop to 0.20 to fade
+                    ZStack(alignment: .bottom) {
+                        RenaissanceColors.parchment
                         Image(String(format: "%@%02d", prefix, bgFrame))
                             .resizable()
-                            .scaledToFill()
-                            .opacity(0.45)
-                        RenaissanceColors.parchment.opacity(0.55)
+                            .scaledToFit()
+                            .frame(maxWidth: 680, maxHeight: 680)
+                            .opacity(0.30)
                     }
                 } else if let bgImage = resolvedBackgroundImage, assetExists(named: bgImage) {
                     Image(bgImage)
