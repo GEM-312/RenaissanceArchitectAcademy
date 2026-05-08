@@ -13,9 +13,10 @@ class BuildingNode: SKNode {
     let buildingName: String
     let era: String
 
-    /// Container for the current visual (signpost, blueprint, or building)
+    /// Container for the current visual (blueprint, ghost, or building)
     private var visualContainer: SKNode!
     private var labelNode: SKLabelNode!
+    private var pillLabelNode: SKNode?
     private var stateIndicator: SKSpriteNode?
     private var tierBadge: SKNode?
     private(set) var currentState: BuildingState = .available
@@ -53,17 +54,22 @@ class BuildingNode: SKNode {
     func updateState(_ state: BuildingState) {
         currentState = state
 
-        // Clear previous visual
+        // Clear previous visual + pill label + state icon
         visualContainer.removeAllChildren()
         stateIndicator?.removeFromParent()
         stateIndicator = nil
         labelNode?.removeFromParent()
         labelNode = nil
+        pillLabelNode?.removeFromParent()
+        pillLabelNode = nil
+        // Also clean any stray lock icons left over from a prior locked state
+        children.filter { $0.name == "buildingLockIcon" }.forEach { $0.removeFromParent() }
 
         // Debug: show all buildings as complete to preview sprites
         if BuildingNode.debugShowAllComplete && state != .locked {
             setupCompletedBuilding()
             addStateIcon("StateComplete")
+            addPillLabel(isLocked: false)
             return
         }
 
@@ -71,194 +77,68 @@ class BuildingNode: SKNode {
 
         switch state {
         case .locked:
-            setupSignpost(isLocked: true)
+            // No in-world signpost graphic — pill label alone marks the
+            // location, with reduced alpha + lock icon to communicate state.
+            addLockIcon()
 
         case .available:
             if hasSprite {
                 setupGhostBuilding()
-            } else {
-                setupSignpost(isLocked: false)
             }
 
         case .sketched:
             if hasSprite {
                 setupGhostBuilding()
-                addStateIcon("StateAvailable")
             } else {
                 setupBlueprint()
-                addStateIcon("StateAvailable")
             }
+            addStateIcon("StateAvailable")
 
         case .construction:
             if hasSprite {
                 setupGhostBuilding()
-                addStateIcon("StateConstruction")
             } else {
                 setupBlueprint()
                 setupScaffolding()
-                addStateIcon("StateConstruction")
             }
+            addStateIcon("StateConstruction")
 
         case .complete:
             setupCompletedBuilding()
             addStateIcon("StateComplete")
         }
+
+        // Pill label — same style workshop uses for stations.
+        addPillLabel(isLocked: state == .locked)
     }
 
-    // MARK: - Wooden Signpost (locked & available states)
+    // MARK: - Pill Label (matches workshop station label style)
 
-    private func setupSignpost(isLocked: Bool) {
-        let alpha: CGFloat = isLocked ? 0.5 : 1.0
-        let poleColor = PlatformColor(RenaissanceColors.warmBrown)
-        let plankColor = PlatformColor(RenaissanceColors.ochre)
-        let plankFill = PlatformColor(RenaissanceColors.ochre.opacity(isLocked ? 0.3 : 0.7))
-
-        // Vertical pole
-        let pole = SKShapeNode(rectOf: CGSize(width: 6, height: 80))
-        pole.fillColor = poleColor
-        pole.strokeColor = PlatformColor(RenaissanceColors.sepiaInk.opacity(0.5))
-        pole.lineWidth = 1
-        pole.position = CGPoint(x: 0, y: -10)
-        pole.alpha = alpha
-        visualContainer.addChild(pole)
-
-        // Horizontal crossbar at top
-        let crossbar = SKShapeNode(rectOf: CGSize(width: 50, height: 5))
-        crossbar.fillColor = poleColor
-        crossbar.strokeColor = PlatformColor(RenaissanceColors.sepiaInk.opacity(0.4))
-        crossbar.lineWidth = 0.5
-        crossbar.position = CGPoint(x: 0, y: 28)
-        crossbar.alpha = alpha
-        visualContainer.addChild(crossbar)
-
-        // Wooden plank (the sign board) — hanging below crossbar
-        let plankWidth: CGFloat = 70
-        let plankHeight: CGFloat = 40
-        let plank = SKShapeNode(rectOf: CGSize(width: plankWidth, height: plankHeight), cornerRadius: 3)
-        plank.fillColor = plankFill
-        plank.strokeColor = PlatformColor(RenaissanceColors.warmBrown.opacity(0.6))
-        plank.lineWidth = 1.5
-        plank.position = CGPoint(x: 0, y: 2)
-        plank.alpha = alpha
-        plank.name = "plank"
-        visualContainer.addChild(plank)
-
-        // Wood grain lines on plank (horizontal)
-        for yOffset: CGFloat in [-10, -3, 4, 11] {
-            let grainPath = CGMutablePath()
-            grainPath.move(to: CGPoint(x: -plankWidth / 2 + 4, y: yOffset))
-            grainPath.addLine(to: CGPoint(x: plankWidth / 2 - 4, y: yOffset))
-            let grain = SKShapeNode(path: grainPath)
-            grain.strokeColor = PlatformColor(RenaissanceColors.warmBrown.opacity(isLocked ? 0.15 : 0.3))
-            grain.lineWidth = 0.5
-            grain.position = plank.position
-            grain.alpha = alpha
-            visualContainer.addChild(grain)
-        }
-
-        // Hanging chains/ropes (two short lines from crossbar to plank corners)
-        for xOff: CGFloat in [-22, 22] {
-            let ropePath = CGMutablePath()
-            ropePath.move(to: CGPoint(x: xOff, y: 28))
-            ropePath.addLine(to: CGPoint(x: xOff, y: 22))
-            let rope = SKShapeNode(path: ropePath)
-            rope.strokeColor = PlatformColor(RenaissanceColors.sepiaInk.opacity(0.3))
-            rope.lineWidth = 1
-            rope.alpha = alpha
-            visualContainer.addChild(rope)
-        }
-
-        // Nail dots at top of plank
-        for xOff: CGFloat in [-22, 22] {
-            let nail = SKShapeNode(circleOfRadius: 2)
-            nail.fillColor = PlatformColor(RenaissanceColors.sepiaInk.opacity(0.4))
-            nail.strokeColor = .clear
-            nail.position = CGPoint(x: xOff, y: 20)
-            nail.alpha = alpha
-            visualContainer.addChild(nail)
-        }
-
-        // Building name on the plank
-        let nameLabel = SKLabelNode(text: shortName())
-        nameLabel.fontName = "Cinzel-Regular"
-        nameLabel.fontSize = 10
-        nameLabel.fontColor = PlatformColor(RenaissanceColors.sepiaInk.opacity(isLocked ? 0.4 : 0.8))
-        nameLabel.position = CGPoint(x: 0, y: 5)
-        nameLabel.zPosition = 5
-        nameLabel.verticalAlignmentMode = .center
-        nameLabel.horizontalAlignmentMode = .center
-        visualContainer.addChild(nameLabel)
-
-        // Small building icon hint (below name, on the plank)
-        let iconLabel = SKLabelNode(text: buildingIcon())
-        iconLabel.fontSize = 12
-        iconLabel.position = CGPoint(x: 0, y: -7)
-        iconLabel.zPosition = 5
-        iconLabel.verticalAlignmentMode = .center
-        iconLabel.alpha = isLocked ? 0.3 : 0.6
-        visualContainer.addChild(iconLabel)
-
-        // Ground base (small mound)
-        let basePath = CGMutablePath()
-        basePath.addEllipse(in: CGRect(x: -18, y: -55, width: 36, height: 12))
-        let base = SKShapeNode(path: basePath)
-        base.fillColor = PlatformColor(RenaissanceColors.warmBrown.opacity(0.2))
-        base.strokeColor = .clear
-        base.alpha = alpha
-        visualContainer.addChild(base)
-
-        // Lock icon for locked state
+    /// Building name as a clean uppercase pill label — same style as the
+    /// workshop's `SKNode.makePillLabel`. Replaces the old wooden-signpost
+    /// graphic + tiny 10pt Cinzel text that was unreadable on city map.
+    private func addPillLabel(isLocked: Bool) {
+        let pill = SKNode.makePillLabel(
+            text: buildingName,
+            fontSize: 24,
+            position: CGPoint(x: 0, y: -56),
+            zPosition: 9
+        )
         if isLocked {
-            let lockLabel = SKLabelNode(text: "🔒")
-            lockLabel.fontSize = 14
-            lockLabel.position = CGPoint(x: 28, y: 25)
-            lockLabel.zPosition = 15
-            visualContainer.addChild(lockLabel)
+            pill.alpha = 0.5
         }
-
-        // Building name already shown on signpost plank — no extra label needed
-        labelNode = SKLabelNode()
+        addChild(pill)
+        pillLabelNode = pill
     }
 
-    /// Short name that fits on the signpost plank
-    private func shortName() -> String {
-        switch buildingName {
-        case "Roman Baths": return "Baths"
-        case "Roman Roads": return "Roads"
-        case "Siege Workshop": return "Siege"
-        case "Botanical Garden": return "Garden"
-        case "Anatomy Theater": return "Anatomy"
-        case "Leonardo's Workshop": return "Leonardo"
-        case "Flying Machine": return "Flying"
-        case "Vatican Observatory": return "Vatican"
-        case "Printing Press": return "Press"
-        case "Il Duomo": return "Duomo"
-        default: return buildingName
-        }
-    }
-
-    /// Small icon/emoji hint for the building type
-    private func buildingIcon() -> String {
-        switch buildingId {
-        case "aqueduct": return "💧"
-        case "colosseum": return "🏛"
-        case "romanBaths": return "♨️"
-        case "pantheon": return "⭕"
-        case "romanRoads": return "🛤"
-        case "harbor": return "⚓"
-        case "siegeWorkshop": return "🛡"
-        case "insula": return "🏠"
-        case "duomo": return "⛪"
-        case "botanicalGarden": return "🌿"
-        case "glassworks": return "💎"
-        case "arsenal": return "🔨"
-        case "anatomyTheater": return "🧬"
-        case "leonardoWorkshop": return "⚙️"
-        case "flyingMachine": return "✈️"
-        case "vaticanObservatory": return "⭐"
-        case "printingPress": return "📖"
-        default: return "🏗"
-        }
+    /// Small lock glyph beside the pill for `.locked` state.
+    private func addLockIcon() {
+        let lock = SKLabelNode(text: "🔒")
+        lock.name = "buildingLockIcon"
+        lock.fontSize = 18
+        lock.position = CGPoint(x: 0, y: -90)
+        lock.zPosition = 15
+        addChild(lock)
     }
 
     /// Map buildingId to sprite asset name
@@ -274,19 +154,6 @@ class BuildingNode: SKNode {
         #else
         return NSImage(named: name) != nil
         #endif
-    }
-
-    /// Gentle sway animation for available signpost
-    private func addSignpostSway() {
-        guard let plank = visualContainer.childNode(withName: "plank") else { return }
-
-        let rotateLeft = SKAction.rotate(toAngle: 0.03, duration: 1.5)
-        rotateLeft.timingMode = .easeInEaseOut
-        let rotateRight = SKAction.rotate(toAngle: -0.03, duration: 1.5)
-        rotateRight.timingMode = .easeInEaseOut
-
-        let sway = SKAction.sequence([rotateLeft, rotateRight])
-        plank.run(SKAction.repeatForever(sway))
     }
 
     // MARK: - Blueprint (sketched & construction states)
@@ -317,15 +184,6 @@ class BuildingNode: SKNode {
         inner.strokeColor = PlatformColor(RenaissanceColors.blueprintBlue.opacity(0.25))
         inner.lineWidth = 0.8
         visualContainer.addChild(inner)
-
-        // Building name label
-        labelNode = SKLabelNode(text: buildingName)
-        labelNode.fontName = "Cinzel-Regular"
-        labelNode.fontSize = 12
-        labelNode.fontColor = PlatformColor(RenaissanceColors.sepiaInk.opacity(0.6))
-        labelNode.position = CGPoint(x: 0, y: -buildingSize.height * 0.4)
-        labelNode.zPosition = 10
-        addChild(labelNode)
     }
 
     // MARK: - Scaffolding (construction state overlay)
@@ -373,8 +231,7 @@ class BuildingNode: SKNode {
 
     private func setupGhostBuilding() {
         guard let imageName = buildingSpriteImageName(), spriteImageExists(imageName) else {
-            // No sprite available — fall back to signpost
-            setupSignpost(isLocked: false)
+            // No sprite available — pill label alone marks the location.
             return
         }
 
@@ -388,15 +245,6 @@ class BuildingNode: SKNode {
         sprite.alpha = 0.5
 
         visualContainer.addChild(sprite)
-
-        // Building name label
-        labelNode = SKLabelNode(text: buildingName)
-        labelNode.fontName = "Cinzel-Regular"
-        labelNode.fontSize = 12
-        labelNode.fontColor = PlatformColor(RenaissanceColors.sepiaInk.opacity(0.5))
-        labelNode.position = CGPoint(x: 0, y: -spriteSize.height * 0.45)
-        labelNode.zPosition = 10
-        addChild(labelNode)
     }
 
     // MARK: - Completed Building (full color sprite)
@@ -408,15 +256,6 @@ class BuildingNode: SKNode {
             let sprite = SKSpriteNode(texture: texture)
             sprite.size = spriteSize
             visualContainer.addChild(sprite)
-
-            // Building name label
-            labelNode = SKLabelNode(text: buildingName)
-            labelNode.fontName = "Cinzel-Regular"
-            labelNode.fontSize = 14
-            labelNode.fontColor = PlatformColor(RenaissanceColors.sepiaInk)
-            labelNode.position = CGPoint(x: 0, y: -spriteSize.height * 0.45)
-            labelNode.zPosition = 10
-            addChild(labelNode)
             return
         }
 
@@ -438,15 +277,6 @@ class BuildingNode: SKNode {
         glow.lineWidth = 1
         glow.zPosition = -2
         visualContainer.addChild(glow)
-
-        // Building name label
-        labelNode = SKLabelNode(text: buildingName)
-        labelNode.fontName = "Cinzel-Regular"
-        labelNode.fontSize = 14
-        labelNode.fontColor = PlatformColor(RenaissanceColors.sepiaInk)
-        labelNode.position = CGPoint(x: 0, y: -buildingSize.height * 0.4)
-        labelNode.zPosition = 10
-        addChild(labelNode)
     }
 
     private func createIsometricBuildingPath() -> CGPath {
