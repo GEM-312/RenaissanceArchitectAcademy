@@ -55,6 +55,17 @@ struct StoryNarrativeView: View {
             let prefix = result.characters.isEmpty ? "" : "\n\n"
             var letterAttr = AttributedString(prefix + substitute(letter))
             letterAttr.font = RenaissanceFont.letter
+
+            // Emphasize destination words so the player's eye lands on
+            // where they are going + who is hosting them. Same font, larger
+            // size — keeps the handwritten feel.
+            let emphasisFont = Font.custom("PetitFormalScript-Regular", size: 30, relativeTo: .title)
+            for keyword in ["Duomo", "Medici", "Florence", "Giardino di San Marco"] {
+                if let range = letterAttr.range(of: keyword) {
+                    letterAttr[range].font = emphasisFont
+                }
+            }
+
             result += letterAttr
         }
 

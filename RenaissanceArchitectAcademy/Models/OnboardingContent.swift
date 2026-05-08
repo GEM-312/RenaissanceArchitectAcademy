@@ -111,9 +111,9 @@ enum OnboardingContent {
             letterText: """
             We have heard of your gifts, {name}. Your drawings. Your curiosity for how things work.
 
-            I will sponsor your apprenticeship under the finest architects of the age. Before you \
-            stretches the ancient world — Rome's mighty aqueducts, its towering Colosseum, the \
-            perfect dome of the Pantheon. You will study them all.
+            I, Lorenzo de' Medici, will sponsor your apprenticeship under the finest architects of \
+            the age. Before you stretches the ancient world — Rome's mighty aqueducts, its towering \
+            Colosseum, the perfect dome of the Pantheon. You will study them all.
 
             And when you have mastered the apprentice's craft and earned the Architect's Seal, a \
             greater journey awaits: the Giardino di San Marco — my school here in Florence, where \
