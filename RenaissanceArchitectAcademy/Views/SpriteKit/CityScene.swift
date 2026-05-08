@@ -490,13 +490,13 @@ class CityScene: SKScene, ScrollZoomable {
             // ========================================
             // Positions rescaled for new 3500x1955 map (Y × 0.782 from old 2500 height)
             // Use editor mode (E) to fine-tune positions over baked-in buildings
-            ("aqueduct", "Aqueduct", CGPoint(x: 2607, y: 1247), "rome", 0),
+            ("aqueduct", "Aqueduct", CGPoint(x: 2771, y: 1558), "rome", 0),
             ("colosseum", "Colosseum", CGPoint(x: 799, y: 687), "rome", 0),
-            ("romanBaths", "Roman Baths", CGPoint(x: 720, y: 1757), "rome", 0),
-            ("pantheon", "Pantheon", CGPoint(x: 1635, y: 650), "rome", 0),
-            ("romanRoads", "Roman Roads", CGPoint(x: 2535, y: 723), "rome", 0),
-            ("harbor", "Harbor", CGPoint(x: 3121, y: 1366), "rome", 0),
-            ("siegeWorkshop", "Siege Workshop", CGPoint(x: 1888, y: 1455), "rome", 0),
+            ("romanBaths", "Roman Baths", CGPoint(x: 801, y: 1878), "rome", 0),
+            ("pantheon", "Pantheon", CGPoint(x: 344, y: 2194), "rome", 0),
+            ("romanRoads", "Roman Roads", CGPoint(x: 2607, y: 861), "rome", 0),
+            ("harbor", "Harbor", CGPoint(x: 2877, y: 2269), "rome", 0),
+            ("siegeWorkshop", "Siege Workshop", CGPoint(x: 1667, y: 1891), "rome", 0),
             ("insula", "Insula", CGPoint(x: 372, y: 966), "rome", 0),
 
             // ========================================
@@ -504,23 +504,23 @@ class CityScene: SKScene, ScrollZoomable {
             // ========================================
 
             // Florence
-            ("duomo", "Il Duomo", CGPoint(x: 2040, y: 724), "florence", 0),
+            ("duomo", "Il Duomo", CGPoint(x: 1750, y: 936), "florence", 0),
             ("botanicalGarden", "Botanical Garden", CGPoint(x: 2497, y: 151), "florence", 0),
 
             // Venice
-            ("glassworks", "Glassworks", CGPoint(x: 2190, y: 280), "venice", 0),
-            ("arsenal", "Arsenal", CGPoint(x: 1300, y: 113), "venice", 0),
+            ("glassworks", "Glassworks", CGPoint(x: 1657, y: 548), "venice", 0),
+            ("arsenal", "Arsenal", CGPoint(x: 2906, y: 709), "venice", 0),
 
             // Padua
-            ("anatomyTheater", "Anatomy Theater", CGPoint(x: 1236, y: 1285), "padua", 0),
+            ("anatomyTheater", "Anatomy Theater", CGPoint(x: 2393, y: 1934), "padua", 0),
 
             // Milan
             ("leonardoWorkshop", "Leonardo's Workshop", CGPoint(x: 536, y: 471), "milan", 0),
-            ("flyingMachine", "Flying Machine", CGPoint(x: 3125, y: 687), "milan", 0),
+            ("flyingMachine", "Flying Machine", CGPoint(x: 922, y: 1321), "milan", 0),
 
             // Renaissance Rome
             ("vaticanObservatory", "Vatican Observatory", CGPoint(x: 1028, y: 254), "renaissanceRome", 0),
-            ("printingPress", "Printing Press", CGPoint(x: 3339, y: 336), "renaissanceRome", 0)
+            ("printingPress", "Printing Press", CGPoint(x: 3121, y: 262), "renaissanceRome", 0)
         ]
 
         for building in buildings {
