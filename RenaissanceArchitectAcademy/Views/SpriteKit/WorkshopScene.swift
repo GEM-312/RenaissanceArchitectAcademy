@@ -520,9 +520,11 @@ class WorkshopScene: SKScene, ScrollZoomable {
         guard !textures.isEmpty else { return }
 
         let sprite = SKSpriteNode(texture: textures[0])
-        // Native trim 611x377 scaled up to roughly match terrain footprint
-        // (terrain stretches ~1.2x horizontal, ~1.5x vertical from source).
-        sprite.size = CGSize(width: 750, height: 460)
+        // Frames are padded to a uniform 627x445 canvas (transparent fill,
+        // content centered) — so SpriteKit doesn't have to stretch each frame
+        // differently, which was causing the loop to "jump" between frames.
+        // Sprite size matches the 1.41:1 canvas aspect ratio.
+        sprite.size = CGSize(width: 770, height: 545)
         // Anchored near the .river station; nudge with editor mode.
         sprite.position = CGPoint(x: 1057, y: 1104)
         sprite.zPosition = 12   // above terrain (-100), below station label pills (9-10)
