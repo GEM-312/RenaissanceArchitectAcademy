@@ -180,6 +180,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
         setupStations()
         setupAmbientEffects()
         setupQuarryAnimation()
+        setupRiverFlowAnimation()
         setupSwayingTrees()
         setupPlayer()
 
@@ -334,6 +335,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
     private var smallSmokeAccent1: SKEmitterNode?
     private var smallSmokeAccent2: SKEmitterNode?
     private var volcanoLava: SKEmitterNode?
+    private var riverFlowAnimation: SKSpriteNode?
     private var volcanoGlow: SKSpriteNode?
     private var quarryAnimation: SKSpriteNode?
 
@@ -496,6 +498,46 @@ class WorkshopScene: SKScene, ScrollZoomable {
             restore: false
         )
         sprite.run(SKAction.repeatForever(cycle), withKey: "quarryFrameLoop")
+    }
+
+    // MARK: - River Flow Animation
+    //
+    // 15-frame loop overlaid on the painted river near the .river station.
+    // Trimmed assets are 611x377 (river-only crop from the 1928x1072 source).
+    // Re-tune position via editor mode (press E → drag → console prints coords).
+
+    private func setupRiverFlowAnimation() {
+        var textures: [SKTexture] = []
+        for i in 0..<15 {
+            let name = String(format: "RiverFlowFrame%02d", i)
+            #if os(iOS)
+            guard UIImage(named: name) != nil else { break }
+            #else
+            guard NSImage(named: name) != nil else { break }
+            #endif
+            textures.append(SKTexture(imageNamed: name))
+        }
+        guard !textures.isEmpty else { return }
+
+        let sprite = SKSpriteNode(texture: textures[0])
+        // Native trim 611x377 scaled up to roughly match terrain footprint
+        // (terrain stretches ~1.2x horizontal, ~1.5x vertical from source).
+        sprite.size = CGSize(width: 750, height: 460)
+        // Anchored near the .river station; nudge with editor mode.
+        sprite.position = CGPoint(x: 1057, y: 1104)
+        sprite.zPosition = 12   // above terrain (-100), below station label pills (9-10)
+        sprite.name = "riverFlowAnimation"
+        addChild(sprite)
+        riverFlowAnimation = sprite
+
+        let timePerFrame: TimeInterval = textures.count <= 2 ? 0.5 : 0.15
+        let cycle = SKAction.animate(
+            with: textures,
+            timePerFrame: timePerFrame,
+            resize: false,
+            restore: false
+        )
+        sprite.run(SKAction.repeatForever(cycle), withKey: "riverFrameLoop")
     }
 
     // MARK: - Swaying Trees
@@ -1620,6 +1662,9 @@ class WorkshopScene: SKScene, ScrollZoomable {
         }
         if let quarry = quarryAnimation {
             editorMode.registerNode(quarry, name: "anim_quarry")
+        }
+        if let river = riverFlowAnimation {
+            editorMode.registerNode(river, name: "anim_river")
         }
         for entry in swayingTrees {
             editorMode.registerNode(entry.node, name: entry.node.name ?? "tree")
