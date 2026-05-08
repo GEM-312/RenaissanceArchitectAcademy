@@ -38,6 +38,12 @@ struct StoryPage: Identifiable {
     /// page-level defaults — letting boy and girl frames play at their own
     /// native pace and freeze on the last frame while narration finishes.
     var backgroundFrameVariants: [ApprenticeGender: FrameVariant] = [:]
+    /// When true, animated frames render full-screen (scaledToFill, anchored
+    /// to bottom) instead of the smaller 680pt figure-style. Use for cinematic
+    /// frames where the composition extends to the screen edges and a visible
+    /// image edge mid-screen would look broken (e.g. Lorenzo's letter folding
+    /// where the hands extend beyond the figure box).
+    var backgroundFillsScreen: Bool = false
     /// Optional static background image filename in Assets.xcassets (e.g. "InvitationParchment").
     /// Takes precedence over the solid parchment color. Renders behind the text.
     var backgroundImage: String? = nil
@@ -82,6 +88,7 @@ enum OnboardingContent {
             backgroundFramePrefix: "LorenzoLetterFrame",
             backgroundFrameCount: 56,
             backgroundFrameDuration: 17.98,
+            backgroundFillsScreen: true, // letter-folding extends past the 680 figure box
             audioName: "LorenzoLetterNarration"
         ),
         StoryPage(
