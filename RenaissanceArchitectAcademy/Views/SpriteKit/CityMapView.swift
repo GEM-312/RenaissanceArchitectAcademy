@@ -687,35 +687,39 @@ struct CityMapView: View {
 
             // DEBUG: skip straight into a building's sketch — bypasses mascot, cards,
             // checklist, everything. One button per building with a blueprint asset.
-            VStack {
-                HStack(spacing: 6) {
-                    ForEach(["Pantheon", "Colosseum", "Aqueduct", "Roman Baths"], id: \.self) { name in
-                        Button {
-                            if let plot = viewModel.buildingPlots.first(where: { $0.building.name == name }) {
-                                selectedPlot = plot
-                                showMascotDialogue = false
-                                showBuildingChecklist = false
-                                showKnowledgeCards = false
-                                showBuildingLesson = false
-                                showEnvironmentPicker = false
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                    showSketching = true
+            // Only visible while editor mode is active (press E to toggle) so they
+            // don't clutter the map during normal testing.
+            if sceneHolder.scene?.isEditorActive == true {
+                VStack {
+                    HStack(spacing: 6) {
+                        ForEach(["Pantheon", "Colosseum", "Aqueduct", "Roman Baths"], id: \.self) { name in
+                            Button {
+                                if let plot = viewModel.buildingPlots.first(where: { $0.building.name == name }) {
+                                    selectedPlot = plot
+                                    showMascotDialogue = false
+                                    showBuildingChecklist = false
+                                    showKnowledgeCards = false
+                                    showBuildingLesson = false
+                                    showEnvironmentPicker = false
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                        showSketching = true
+                                    }
                                 }
+                            } label: {
+                                Text("🧪 \(name)")
+                                    .font(.custom("EBGaramond-SemiBold", size: 11))
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 6)
+                                    .background(Color.red.opacity(0.85), in: RoundedRectangle(cornerRadius: 6))
                             }
-                        } label: {
-                            Text("🧪 \(name)")
-                                .font(.custom("EBGaramond-SemiBold", size: 11))
-                                .foregroundStyle(.white)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 6)
-                                .background(Color.red.opacity(0.85), in: RoundedRectangle(cornerRadius: 6))
                         }
+                        Spacer()
                     }
+                    .padding(.leading, 12)
+                    .padding(.top, 80)
                     Spacer()
                 }
-                .padding(.leading, 12)
-                .padding(.top, 80)
-                Spacer()
             }
             #endif
 
