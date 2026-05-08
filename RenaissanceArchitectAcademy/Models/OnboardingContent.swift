@@ -130,7 +130,8 @@ enum OnboardingContent {
             """,
             outroText: "Below the signature: a promise of florins — Florence's gold — for every step of your apprenticeship.",
             showBird: false,
-            backgroundImage: "InvitationParchment"
+            backgroundImage: "InvitationParchment",
+            audioName: "InvitationLetterNarration"
         ),
         StoryPage(
             title: "The Bird Arrives",
@@ -152,7 +153,8 @@ enum OnboardingContent {
             backgroundFrameVariants: [
                 .boy:  FrameVariant(count: 30, duration: 4.34), // boy assets pending
                 .girl: FrameVariant(count: 30, duration: 4.08),
-            ]
+            ],
+            audioName: "BirdArrivesNarration"
         ),
     ]
 

@@ -176,6 +176,8 @@
 		2E7 /* DataManagementService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E7 /* DataManagementService.swift */; };
 		2E8 /* LorenzoLetterNarration.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3E8 /* LorenzoLetterNarration.mp3 */; };
 		2E9 /* LetterArrivesNarration.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3E9 /* LetterArrivesNarration.mp3 */; };
+		2EA /* InvitationLetterNarration.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3EA /* InvitationLetterNarration.mp3 */; };
+		2EB /* BirdArrivesNarration.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3EB /* BirdArrivesNarration.mp3 */; };
 		3C0 /* BottomDialogPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0 /* BottomDialogPanel.swift */; };
 		3C1 /* BirdGuidanceContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1 /* BirdGuidanceContent.swift */; };
 		3C2 /* SceneTransitionOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2 /* SceneTransitionOverlay.swift */; };
@@ -445,6 +447,8 @@
 		3E7 /* DataManagementService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManagementService.swift; sourceTree = "<group>"; };
 		3E8 /* LorenzoLetterNarration.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = LorenzoLetterNarration.mp3; sourceTree = "<group>"; };
 		3E9 /* LetterArrivesNarration.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = LetterArrivesNarration.mp3; sourceTree = "<group>"; };
+		3EA /* InvitationLetterNarration.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = InvitationLetterNarration.mp3; sourceTree = "<group>"; };
+		3EB /* BirdArrivesNarration.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = BirdArrivesNarration.mp3; sourceTree = "<group>"; };
 		544299972F3646ED00F92073 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BuildingNode.swift; path = Views/SpriteKit/BuildingNode.swift; sourceTree = "<group>"; };
 		544299982F3646ED00F92073 /* CityMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityMapView.swift; path = Views/SpriteKit/CityMapView.swift; sourceTree = "<group>"; };
 		544299992F3646ED00F92073 /* CityScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityScene.swift; path = Views/SpriteKit/CityScene.swift; sourceTree = "<group>"; };
@@ -578,6 +582,8 @@
 				182 /* GirlIntroAudio.m4a */,
 				3E8 /* LorenzoLetterNarration.mp3 */,
 				3E9 /* LetterArrivesNarration.mp3 */,
+				3EA /* InvitationLetterNarration.mp3 */,
+				3EB /* BirdArrivesNarration.mp3 */,
 				183 /* card_flip.mp3 */,
 				184 /* correct_chime.mp3 */,
 				185 /* wrong_buzz.mp3 */,
@@ -1014,6 +1020,8 @@
 				543AD36C2F60C199001895ED /* GirlIntroAudio.m4a in Resources */,
 				2E8 /* LorenzoLetterNarration.mp3 in Resources */,
 				2E9 /* LetterArrivesNarration.mp3 in Resources */,
+				2EA /* InvitationLetterNarration.mp3 in Resources */,
+				2EB /* BirdArrivesNarration.mp3 in Resources */,
 				F011 /* EBGaramond-ExtraBoldItalic.ttf in Resources */,
 				F012 /* EBGaramond-Italic.ttf in Resources */,
 				F013 /* EBGaramond-Italic-VariableFont_wght.ttf in Resources */,
