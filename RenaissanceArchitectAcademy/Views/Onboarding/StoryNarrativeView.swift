@@ -205,7 +205,7 @@ struct StoryNarrativeView: View {
                             .resizable()
                             .scaledToFit()
                             .frame(maxWidth: 680, maxHeight: 680)
-                            .opacity(0.30)
+                            .opacity(0.7)
                     }
                 } else if let bgImage = resolvedBackgroundImage, assetExists(named: bgImage) {
                     Image(bgImage)
