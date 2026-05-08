@@ -58,7 +58,7 @@ struct StationLesson: Identifiable {
 /// All static narrative content for the onboarding system
 enum OnboardingContent {
 
-    // MARK: - Story Pages (5 cinematic pages)
+    // MARK: - Story Pages (4 cinematic pages)
     //
     // Use the `{name}` token for the apprentice's name — StoryNarrativeView
     // substitutes it at render time using onboardingState.apprenticeName.
@@ -111,9 +111,15 @@ enum OnboardingContent {
             letterText: """
             We have heard of your gifts, {name}. Your drawings. Your curiosity for how things work.
 
-            Lorenzo de' Medici will sponsor your apprenticeship under the finest architects of the age — \
-            but you must come to Florence. The road is long. Days and nights across Italy. Find us by \
-            the Duomo when you arrive.
+            I will sponsor your apprenticeship under the finest architects of the age. Before you \
+            stretches the ancient world — Rome's mighty aqueducts, its towering Colosseum, the \
+            perfect dome of the Pantheon. You will study them all.
+
+            And when you have mastered the apprentice's craft and earned the Architect's Seal, a \
+            greater journey awaits: the Giardino di San Marco — my school here in Florence, where \
+            Michelangelo once studied and the spirit of Brunelleschi lives in every stone.
+
+            Find us by the Duomo when you arrive. There is much to learn, {name}.
             """,
             outroText: "Below the signature: a promise of florins — Florence's gold — for every step of your apprenticeship.",
             showBird: false,
@@ -133,21 +139,6 @@ enum OnboardingContent {
             behind the greatest structures ever built. Are you ready?"
             """,
             showBird: true
-        ),
-        StoryPage(
-            title: "The Road Ahead",
-            text: """
-            Before you stretches the ancient world — Rome's mighty aqueducts, its towering \
-            Colosseum, the perfect dome of the Pantheon. You will study them all.
-
-            And when you have mastered the apprentice's craft and earned the Architect's Seal, \
-            a greater journey awaits: the Giardino di San Marco in Florence — Lorenzo de' Medici's \
-            legendary school, where Michelangelo once studied and the spirit of Brunelleschi lives \
-            in every stone.
-
-            But first, the journey calls. There is much to learn, {name}.
-            """,
-            showBird: false
         ),
     ]
 
