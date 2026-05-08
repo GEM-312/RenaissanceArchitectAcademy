@@ -525,8 +525,8 @@ class WorkshopScene: SKScene, ScrollZoomable {
         // differently, which was causing the loop to "jump" between frames.
         // Sprite size matches the ~1.58:1 canvas aspect ratio.
         sprite.size = CGSize(width: 770, height: 484)
-        // Anchored near the .river station; nudge with editor mode.
-        sprite.position = CGPoint(x: 1057, y: 1104)
+        // Aligned with painted river via editor mode.
+        sprite.position = CGPoint(x: 1042, y: 570)
         sprite.zPosition = 12   // above terrain (-100), below station label pills (9-10)
         sprite.name = "riverFlowAnimation"
         addChild(sprite)
