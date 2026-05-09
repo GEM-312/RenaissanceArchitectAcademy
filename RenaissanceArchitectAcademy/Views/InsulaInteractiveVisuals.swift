@@ -72,7 +72,7 @@ private struct ApartmentFloorsVisual: View {
     @State private var floorsBuilt: Int = 0
 
     private let floors: [(name: String, desc: String, color: Color)] = [
-        ("Shops", "Tabernae — street level", IVMaterialColors.stoneGray),
+        ("Shops", "Tabernae — street level", RenaissanceColors.stoneGray),
         ("Rich", "Large apartments, running water", Color(red: 0.80, green: 0.70, blue: 0.50)),
         ("Middle", "Smaller rooms, no water", Color(red: 0.70, green: 0.62, blue: 0.48)),
         ("Middle", "Cramped, shared kitchen", Color(red: 0.65, green: 0.58, blue: 0.46)),
@@ -307,7 +307,7 @@ private struct TabernaShopVisual: View {
                 ZStack {
                     // Shop outline
                     RoundedRectangle(cornerRadius: 4)
-                        .strokeBorder(IVMaterialColors.stoneGray, lineWidth: 2)
+                        .strokeBorder(RenaissanceColors.stoneGray, lineWidth: 2)
                         .frame(width: shopW, height: shopH)
                         .position(x: cx, y: h * 0.38)
 
@@ -510,13 +510,13 @@ private struct SpiralStaircaseVisual: View {
                 ZStack {
                     // Outer circle (stairwell wall)
                     Circle()
-                        .strokeBorder(IVMaterialColors.stoneGray, lineWidth: 2)
+                        .strokeBorder(RenaissanceColors.stoneGray, lineWidth: 2)
                         .frame(width: radius * 2, height: radius * 2)
                         .position(x: cx, y: cy)
 
                     // Center column
                     Circle()
-                        .fill(IVMaterialColors.stoneGray.opacity(0.4))
+                        .fill(RenaissanceColors.stoneGray.opacity(0.4))
                         .frame(width: 12, height: 12)
                         .position(x: cx, y: cy)
 
@@ -535,7 +535,7 @@ private struct SpiralStaircaseVisual: View {
                                     clockwise: false)
                             p.closeSubpath()
                         }
-                        .fill(IVMaterialColors.stoneGray.opacity(i % 2 == 0 ? 0.25 : 0.15))
+                        .fill(RenaissanceColors.stoneGray.opacity(i % 2 == 0 ? 0.25 : 0.15))
 
                         Path { p in
                             p.move(to: CGPoint(x: cx, y: cy))
@@ -544,7 +544,7 @@ private struct SpiralStaircaseVisual: View {
                                 y: cy + (radius - 2) * sin(angle)
                             ))
                         }
-                        .stroke(IVMaterialColors.stoneGray.opacity(0.4), lineWidth: 0.8)
+                        .stroke(RenaissanceColors.stoneGray.opacity(0.4), lineWidth: 0.8)
                     }
 
                     // Drag gesture (step 2)
@@ -643,7 +643,7 @@ private struct CheapMortarVisual: View {
                                 .font(RenaissanceFont.visualTitle).tracking(0.5)
                                 .foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                             RoundedRectangle(cornerRadius: 4)
-                                .fill(IVMaterialColors.stoneGray.opacity(0.5))
+                                .fill(RenaissanceColors.stoneGray.opacity(0.5))
                                 .frame(width: w * 0.28, height: h * 0.25)
                                 .overlay {
                                     if tested {
@@ -832,18 +832,18 @@ private struct GlassMicaVisual: View {
                     VStack(spacing: 4) {
                         Text("GLASS").font(RenaissanceFont.visualTitle).tracking(0.5).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(tappedGlass ? Color(red: 0.85, green: 0.92, blue: 0.95).opacity(0.6) : IVMaterialColors.stoneGray.opacity(0.1))
+                            .fill(tappedGlass ? Color(red: 0.85, green: 0.92, blue: 0.95).opacity(0.6) : RenaissanceColors.stoneGray.opacity(0.1))
                             .frame(width: winW, height: winH)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 4)
-                                    .strokeBorder(IVMaterialColors.stoneGray, lineWidth: 1.5)
+                                    .strokeBorder(RenaissanceColors.stoneGray, lineWidth: 1.5)
                             )
                             .overlay {
                                 if tappedGlass {
                                     // Window grid
                                     VStack(spacing: winH * 0.3) {
                                         ForEach(0..<2, id: \.self) { _ in
-                                            Rectangle().fill(IVMaterialColors.stoneGray.opacity(0.3)).frame(height: 1)
+                                            Rectangle().fill(RenaissanceColors.stoneGray.opacity(0.3)).frame(height: 1)
                                         }
                                     }
                                     .padding(4)
@@ -866,11 +866,11 @@ private struct GlassMicaVisual: View {
                     VStack(spacing: 4) {
                         Text("MICA").font(RenaissanceFont.visualTitle).tracking(0.5).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(tappedMica ? Color(red: 0.85, green: 0.82, blue: 0.75).opacity(0.4) : IVMaterialColors.stoneGray.opacity(0.1))
+                            .fill(tappedMica ? Color(red: 0.85, green: 0.82, blue: 0.75).opacity(0.4) : RenaissanceColors.stoneGray.opacity(0.1))
                             .frame(width: winW, height: winH)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 4)
-                                    .strokeBorder(IVMaterialColors.stoneGray, lineWidth: 1.5)
+                                    .strokeBorder(RenaissanceColors.stoneGray, lineWidth: 1.5)
                             )
                             .overlay {
                                 if tappedMica {
@@ -949,7 +949,7 @@ private struct BeamDepthVisual: View {
                     // Support walls
                     ForEach([-1.0, 1.0], id: \.self) { side in
                         RoundedRectangle(cornerRadius: 2)
-                            .fill(IVMaterialColors.stoneGray.opacity(0.4))
+                            .fill(RenaissanceColors.stoneGray.opacity(0.4))
                             .frame(width: 8, height: h * 0.25)
                             .position(x: cx + side * beamW * 0.52, y: beamY + h * 0.13)
                     }
@@ -1129,12 +1129,12 @@ private struct AgedLimeVisual: View {
                 ZStack {
                     // Bowl
                     Ellipse()
-                        .fill(IVMaterialColors.stoneGray.opacity(0.2))
+                        .fill(RenaissanceColors.stoneGray.opacity(0.2))
                         .frame(width: bowlW, height: bowlH)
                         .position(x: cx, y: h * 0.38)
 
                     Ellipse()
-                        .strokeBorder(IVMaterialColors.stoneGray, lineWidth: 1.5)
+                        .strokeBorder(RenaissanceColors.stoneGray, lineWidth: 1.5)
                         .frame(width: bowlW, height: bowlH)
                         .position(x: cx, y: h * 0.38)
 

@@ -103,13 +103,13 @@ private struct CrowdFlowVisual: View {
                         .position(x: cx, y: cy)
 
                     Ellipse()
-                        .strokeBorder(IVMaterialColors.stoneGray, lineWidth: 2)
+                        .strokeBorder(RenaissanceColors.stoneGray, lineWidth: 2)
                         .frame(width: rx * 2, height: ry * 2)
                         .position(x: cx, y: cy)
 
                     // Inner arena floor
                     Ellipse()
-                        .strokeBorder(IVMaterialColors.stoneGray.opacity(0.3), lineWidth: 1)
+                        .strokeBorder(RenaissanceColors.stoneGray.opacity(0.3), lineWidth: 1)
                         .frame(width: rx * 1.2, height: ry * 1.2)
                         .position(x: cx, y: cy)
 
@@ -123,7 +123,7 @@ private struct CrowdFlowVisual: View {
 
                             // Gate marker
                             RoundedRectangle(cornerRadius: 2)
-                                .fill(opened ? RenaissanceColors.sageGreen : IVMaterialColors.stoneGray.opacity(0.3))
+                                .fill(opened ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray.opacity(0.3))
                                 .frame(width: 16, height: 10)
                                 .rotationEffect(.radians(Double(angle) + .pi / 2))
                                 .position(x: gateX, y: gateY)
@@ -240,7 +240,7 @@ private struct DrainFoundationVisual: View {
                     // Concrete raft (step 3)
                     if concreteVisible {
                         RoundedRectangle(cornerRadius: 3)
-                            .fill(IVMaterialColors.stoneGray.opacity(0.4))
+                            .fill(RenaissanceColors.stoneGray.opacity(0.4))
                             .frame(width: w * 0.55, height: h * 0.08)
                             .position(x: cx, y: groundY + h * 0.06)
 
@@ -337,7 +337,7 @@ private struct ColumnOrdersVisual: View {
                     ForEach(0..<4, id: \.self) { i in
                         let y = baseY - CGFloat(i) * floorH
                         Rectangle()
-                            .strokeBorder(IVMaterialColors.stoneGray.opacity(0.2), lineWidth: 0.5)
+                            .strokeBorder(RenaissanceColors.stoneGray.opacity(0.2), lineWidth: 0.5)
                             .frame(width: w * 0.5, height: floorH)
                             .position(x: cx, y: y - floorH * 0.5)
 
@@ -395,9 +395,9 @@ private struct ColumnOrdersVisual: View {
                                     Text(orders[i])
                                         .font(RenaissanceFont.ivLabel)
                                         .padding(.horizontal, 8).padding(.vertical, 4)
-                                        .background(isPlaced ? IVMaterialColors.stoneGray.opacity(0.1) : (isNext ? color.opacity(0.15) : IVMaterialColors.stoneGray.opacity(0.05)))
+                                        .background(isPlaced ? RenaissanceColors.stoneGray.opacity(0.1) : (isNext ? color.opacity(0.15) : RenaissanceColors.stoneGray.opacity(0.05)))
                                         .cornerRadius(4)
-                                        .overlay(RoundedRectangle(cornerRadius: 4).stroke(isNext ? color : IVMaterialColors.stoneGray.opacity(0.2), lineWidth: isNext ? 2 : 0.5))
+                                        .overlay(RoundedRectangle(cornerRadius: 4).stroke(isNext ? color : RenaissanceColors.stoneGray.opacity(0.2), lineWidth: isNext ? 2 : 0.5))
                                         .foregroundStyle(isPlaced ? IVMaterialColors.sepiaInk.opacity(0.3) : IVMaterialColors.sepiaInk)
                                 }
                                 .buttonStyle(.plain)
@@ -456,7 +456,7 @@ private struct AcousticBowlVisual: View {
                             control: CGPoint(x: cx, y: cy + depth)
                         )
                     }
-                    .stroke(IVMaterialColors.stoneGray, lineWidth: 2.5)
+                    .stroke(RenaissanceColors.stoneGray, lineWidth: 2.5)
 
                     // Seating rows (lines along the bowl)
                     ForEach(0..<5, id: \.self) { row in
@@ -468,7 +468,7 @@ private struct AcousticBowlVisual: View {
                             p.move(to: CGPoint(x: cx - rowW * 0.5, y: rowY))
                             p.addLine(to: CGPoint(x: cx + rowW * 0.5, y: rowY))
                         }
-                        .stroke(IVMaterialColors.stoneGray.opacity(0.3), lineWidth: 0.8)
+                        .stroke(RenaissanceColors.stoneGray.opacity(0.3), lineWidth: 0.8)
                     }
 
                     // Sound waves from center
@@ -554,7 +554,7 @@ private struct HypogeumElevatorVisual: View {
                         p.move(to: CGPoint(x: w * 0.15, y: arenaY))
                         p.addLine(to: CGPoint(x: w * 0.85, y: arenaY))
                     }
-                    .stroke(IVMaterialColors.stoneGray, lineWidth: 2)
+                    .stroke(RenaissanceColors.stoneGray, lineWidth: 2)
 
                     Text("Arena Floor")
                         .font(RenaissanceFont.ivBody)
@@ -563,7 +563,7 @@ private struct HypogeumElevatorVisual: View {
 
                     // Elevator shaft
                     Rectangle()
-                        .strokeBorder(IVMaterialColors.stoneGray.opacity(0.4), lineWidth: 1)
+                        .strokeBorder(RenaissanceColors.stoneGray.opacity(0.4), lineWidth: 1)
                         .frame(width: shaftW, height: bottomY - arenaY)
                         .position(x: cx, y: (arenaY + bottomY) / 2)
 
@@ -574,7 +574,7 @@ private struct HypogeumElevatorVisual: View {
                             p.move(to: CGPoint(x: cx - shaftW * 0.8, y: ly))
                             p.addLine(to: CGPoint(x: cx + shaftW * 0.8, y: ly))
                         }
-                        .stroke(IVMaterialColors.stoneGray.opacity(0.2), style: StrokeStyle(lineWidth: 0.5, dash: [3, 3]))
+                        .stroke(RenaissanceColors.stoneGray.opacity(0.2), style: StrokeStyle(lineWidth: 0.5, dash: [3, 3]))
 
                         Text(level == 0 ? "Animal cages" : "Storage tunnels")
                             .font(RenaissanceFont.ivBody)
@@ -715,7 +715,7 @@ private struct TravertineQuarryVisual: View {
                             .frame(width: blockW, height: blockH)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 4)
-                                    .strokeBorder(IVMaterialColors.stoneGray.opacity(0.3), lineWidth: 0.5)
+                                    .strokeBorder(RenaissanceColors.stoneGray.opacity(0.3), lineWidth: 0.5)
                             )
 
                         if cracked {
@@ -803,7 +803,7 @@ private struct IronClampVisual: View {
 
                     // Joint gap
                     Rectangle()
-                        .fill(IVMaterialColors.stoneGray.opacity(0.2))
+                        .fill(RenaissanceColors.stoneGray.opacity(0.2))
                         .frame(width: 8, height: blockH)
                         .position(x: cx, y: blockY)
 
@@ -921,7 +921,7 @@ private struct VelariumCanvasVisual: View {
                 ZStack {
                     // Arena outline
                     Ellipse()
-                        .strokeBorder(IVMaterialColors.stoneGray, lineWidth: 2)
+                        .strokeBorder(RenaissanceColors.stoneGray, lineWidth: 2)
                         .frame(width: rx * 2, height: ry * 2)
                         .position(x: cx, y: cy)
 
@@ -931,7 +931,7 @@ private struct VelariumCanvasVisual: View {
                         let mx = cx + rx * cos(angle)
                         let my = cy + ry * sin(angle)
                         Circle()
-                            .fill(IVMaterialColors.stoneGray)
+                            .fill(RenaissanceColors.stoneGray)
                             .frame(width: 4, height: 4)
                             .position(x: mx, y: my)
                     }
@@ -1032,7 +1032,7 @@ private struct CuringTimeLapseVisual: View {
                 ZStack {
                     // Concrete block (changes texture with time)
                     RoundedRectangle(cornerRadius: 4)
-                        .fill(IVMaterialColors.stoneGray.opacity(0.3 + timeProgress * 0.5))
+                        .fill(RenaissanceColors.stoneGray.opacity(0.3 + timeProgress * 0.5))
                         .frame(width: blockW, height: blockH)
                         .position(x: cx, y: h * 0.38)
 
@@ -1126,7 +1126,7 @@ private struct GradedConcreteVisual: View {
                 ZStack {
                     // Vault outline
                     RoundedRectangle(cornerRadius: 4)
-                        .strokeBorder(IVMaterialColors.stoneGray.opacity(0.3), lineWidth: 1)
+                        .strokeBorder(RenaissanceColors.stoneGray.opacity(0.3), lineWidth: 1)
                         .frame(width: vaultW, height: layerH * 3 + 8)
                         .position(x: cx, y: baseY - layerH * 1.5)
 
@@ -1236,7 +1236,7 @@ private struct MarblePolishVisual: View {
                             let dotCount = max(0, 15 - polishStage * 5)
                             ForEach(0..<dotCount, id: \.self) { i in
                                 Circle()
-                                    .fill(IVMaterialColors.stoneGray.opacity(0.3))
+                                    .fill(RenaissanceColors.stoneGray.opacity(0.3))
                                     .frame(width: CGFloat(4 - polishStage))
                                     .offset(
                                         x: CGFloat(i * 47 % 100 - 50) / 100.0 * slabW * 0.8,
@@ -1261,7 +1261,7 @@ private struct MarblePolishVisual: View {
                         ForEach(0..<3, id: \.self) { i in
                             VStack(spacing: 2) {
                                 Circle()
-                                    .fill(i < polishStage ? RenaissanceColors.sageGreen : IVMaterialColors.stoneGray.opacity(0.2))
+                                    .fill(i < polishStage ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray.opacity(0.2))
                                     .frame(width: 10, height: 10)
                                 Text(stages[i].0)
                                     .font(RenaissanceFont.ivBody)
@@ -1362,7 +1362,7 @@ private struct SeatingMathVisual: View {
                         } else {
                             // Empty slot
                             RoundedRectangle(cornerRadius: 2)
-                                .strokeBorder(IVMaterialColors.stoneGray.opacity(0.2), lineWidth: 0.5)
+                                .strokeBorder(RenaissanceColors.stoneGray.opacity(0.2), lineWidth: 0.5)
                                 .frame(width: rowW, height: tierH - 3)
                                 .position(x: cx, y: y)
                         }

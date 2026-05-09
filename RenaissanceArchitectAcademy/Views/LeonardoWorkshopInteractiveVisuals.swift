@@ -412,7 +412,7 @@ private struct BronzeGearsVisual: View {
                 // Large gear
                 let gearR: CGFloat = 28
                 drawGear(ctx: &ctx, center: CGPoint(x: cx - 18, y: cy), radius: gearR, teeth: 10,
-                         color: step >= 1 ? IVMaterialColors.bronzeGold : IVMaterialColors.stoneGray.opacity(0.1))
+                         color: step >= 1 ? IVMaterialColors.bronzeGold : RenaissanceColors.stoneGray.opacity(0.1))
                 // Small meshing gear
                 if step >= 2 {
                     drawGear(ctx: &ctx, center: CGPoint(x: cx + 22, y: cy - 5), radius: gearR * 0.6, teeth: 6,

@@ -178,7 +178,7 @@ private struct TypeMetalVisual: View {
                         ForEach(Array(metals.enumerated()), id: \.offset) { i, metal in
                             let active = step >= 1
                             Rectangle()
-                                .fill(active ? metal.3 : IVMaterialColors.stoneGray.opacity(0.1))
+                                .fill(active ? metal.3 : RenaissanceColors.stoneGray.opacity(0.1))
                                 .frame(width: geo.size.width * metal.2)
                                 .overlay {
                                     VStack(spacing: 1) {

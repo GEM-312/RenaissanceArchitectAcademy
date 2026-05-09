@@ -170,11 +170,11 @@ private struct FurnaceColorVisual: View {
                     let active = (step == 1 && i == 0) || (step == 2 && i <= 2) || (step == 3)
                     VStack(spacing: 4) {
                         RoundedRectangle(cornerRadius: 6)
-                            .fill(active ? temp.1 : IVMaterialColors.stoneGray.opacity(0.1))
+                            .fill(active ? temp.1 : RenaissanceColors.stoneGray.opacity(0.1))
                             .frame(height: 55)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 6)
-                                    .strokeBorder(active ? temp.1.opacity(0.8) : IVMaterialColors.stoneGray.opacity(0.15), lineWidth: 1)
+                                    .strokeBorder(active ? temp.1.opacity(0.8) : RenaissanceColors.stoneGray.opacity(0.15), lineWidth: 1)
                             )
                             .shadow(color: active && i == 3 ? moltenYellow.opacity(0.3) : .clear, radius: 6)
 
@@ -225,7 +225,7 @@ private struct ThreeChamberVisual: View {
 
                     let rect = CGRect(x: cx - furnaceW / 2, y: y, width: furnaceW, height: chamberH)
                     ctx.fill(Path(roundedRect: rect, cornerRadius: 4),
-                             with: .color(active ? fillColor : IVMaterialColors.stoneGray.opacity(0.05)))
+                             with: .color(active ? fillColor : RenaissanceColors.stoneGray.opacity(0.05)))
                     ctx.stroke(Path(roundedRect: rect, cornerRadius: 4),
                                with: .color(active ? IVMaterialColors.sepiaInk.opacity(0.4) : IVMaterialColors.sepiaInk.opacity(0.1)), lineWidth: 1)
                 }
@@ -417,10 +417,10 @@ private struct FluxMeltingVisual: View {
                     VStack(spacing: 4) {
                         ZStack(alignment: .bottom) {
                             RoundedRectangle(cornerRadius: 4)
-                                .fill(IVMaterialColors.stoneGray.opacity(0.1))
+                                .fill(RenaissanceColors.stoneGray.opacity(0.1))
                                 .frame(width: 35, height: 90)
                             RoundedRectangle(cornerRadius: 4)
-                                .fill(step >= 1 ? IVMaterialColors.cherryRed.opacity(0.6) : IVMaterialColors.stoneGray.opacity(0.1))
+                                .fill(step >= 1 ? IVMaterialColors.cherryRed.opacity(0.6) : RenaissanceColors.stoneGray.opacity(0.1))
                                 .frame(width: 35, height: 90)
                         }
                         Text("1,700°C")
@@ -451,7 +451,7 @@ private struct FluxMeltingVisual: View {
                         VStack(spacing: 4) {
                             ZStack(alignment: .bottom) {
                                 RoundedRectangle(cornerRadius: 4)
-                                    .fill(IVMaterialColors.stoneGray.opacity(0.1))
+                                    .fill(RenaissanceColors.stoneGray.opacity(0.1))
                                     .frame(width: 35, height: 90)
                                 RoundedRectangle(cornerRadius: 4)
                                     .fill(furnaceOrange.opacity(0.5))
@@ -754,7 +754,7 @@ private struct GlassBatchVisual: View {
                         ForEach(Array(ingredients.enumerated()), id: \.offset) { i, ing in
                             let active = (step == 1 && i == 0) || (step >= 2)
                             Rectangle()
-                                .fill(active ? ing.3 : IVMaterialColors.stoneGray.opacity(0.1))
+                                .fill(active ? ing.3 : RenaissanceColors.stoneGray.opacity(0.1))
                                 .frame(width: geo.size.width * ing.2)
                                 .overlay {
                                     VStack(spacing: 1) {
@@ -809,7 +809,7 @@ private struct CruciblePreheatVisual: View {
                     VStack(spacing: 4) {
                         // Crucible shape getting warmer
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(active ? stage.1 : IVMaterialColors.stoneGray.opacity(0.08))
+                            .fill(active ? stage.1 : RenaissanceColors.stoneGray.opacity(0.08))
                             .frame(height: 45)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 4)

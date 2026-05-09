@@ -233,7 +233,7 @@ private struct LayerDigVisual: View {
                     if step >= 3 {
                         let trenchL = (w - ringW) / 2
                         RoundedRectangle(cornerRadius: 3)
-                            .fill(IVMaterialColors.stoneGray.opacity(0.35))
+                            .fill(RenaissanceColors.stoneGray.opacity(0.35))
                             .overlay(RoundedRectangle(cornerRadius: 3).stroke(IVMaterialColors.sepiaInk.opacity(0.5), lineWidth: 1.5))
                             .frame(width: ringW, height: ringH)
                             .position(x: w / 2, y: trenchBottom - ringH / 2)
@@ -770,7 +770,7 @@ private struct TimelineAgingVisual: View {
                     VStack(spacing: 4) {
                         ZStack {
                             RoundedRectangle(cornerRadius: 6)
-                                .fill(IVMaterialColors.stoneGray.opacity(max(0.1, 0.5 - (step >= 3 ? yearSlider * 0.4 : 0))))
+                                .fill(RenaissanceColors.stoneGray.opacity(max(0.1, 0.5 - (step >= 3 ? yearSlider * 0.4 : 0))))
                                 .frame(width: 70, height: 55)
                                 .overlay(RoundedRectangle(cornerRadius: 6).stroke(IVMaterialColors.sepiaInk.opacity(0.3), lineWidth: 1))
 

@@ -114,12 +114,12 @@ private struct OnagerLaunchVisual: View {
                     let tipX = cx + armLen * sin(armAngle)
                     let tipY = baseY - 6 - armLen * cos(armAngle)
                     if !launched {
-                        Circle().fill(IVMaterialColors.stoneGray).frame(width: 10, height: 10).position(x: tipX, y: tipY)
+                        Circle().fill(RenaissanceColors.stoneGray).frame(width: 10, height: 10).position(x: tipX, y: tipY)
                     } else {
                         // Parabolic flight
                         let flightX = tipX + projectileT * w * 0.5
                         let flightY = tipY + projectileT * projectileT * h * 0.8 - projectileT * h * 0.5
-                        Circle().fill(IVMaterialColors.stoneGray).frame(width: 10, height: 10).position(x: flightX, y: flightY)
+                        Circle().fill(RenaissanceColors.stoneGray).frame(width: 10, height: 10).position(x: flightX, y: flightY)
                     }
                     // Drag area (step 2)
                     if step >= 2 && !launched {
@@ -208,7 +208,7 @@ private struct TorsionSpringVisual: View {
                     }
                     // Tension meter
                     ZStack(alignment: .leading) {
-                        RoundedRectangle(cornerRadius: 3).fill(IVMaterialColors.stoneGray.opacity(0.15)).frame(width: w * 0.5, height: 16)
+                        RoundedRectangle(cornerRadius: 3).fill(RenaissanceColors.stoneGray.opacity(0.15)).frame(width: w * 0.5, height: 16)
                         RoundedRectangle(cornerRadius: 3).fill(isDangerous ? RenaissanceColors.errorRed : color)
                             .frame(width: w * 0.5 * twists, height: 16)
                     }.position(x: cx, y: h * 0.65)
@@ -255,7 +255,7 @@ private struct BatteringRamVisual: View {
                     Circle().fill(IVMaterialColors.ironDark).frame(width: 14, height: 14)
                         .position(x: cx + ramLen * sin(swing), y: pivotY + ramLen * cos(swing))
                     // Wall target
-                    RoundedRectangle(cornerRadius: 2).fill(IVMaterialColors.stoneGray).frame(width: 12, height: h * 0.35)
+                    RoundedRectangle(cornerRadius: 2).fill(RenaissanceColors.stoneGray).frame(width: 12, height: h * 0.35)
                         .position(x: w * 0.82, y: h * 0.5)
                     // Force counter
                     Text("Force: \(swingCount * 6) men").font(RenaissanceFont.ivFormula).foregroundStyle(IVMaterialColors.sepiaInk).position(x: cx, y: h * 0.78)
@@ -293,7 +293,7 @@ private struct SiegeTowerVisual: View {
                 let floorH = h * 0.09; let towerW = w * 0.25; let baseY = h * 0.68
                 ZStack {
                     // Enemy wall
-                    RoundedRectangle(cornerRadius: 2).fill(IVMaterialColors.stoneGray).frame(width: 10, height: h * 0.5).position(x: w * 0.82, y: h * 0.45)
+                    RoundedRectangle(cornerRadius: 2).fill(RenaissanceColors.stoneGray).frame(width: 10, height: h * 0.5).position(x: w * 0.82, y: h * 0.45)
                     Text("Wall").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.3)).position(x: w * 0.82, y: h * 0.15)
                     // Tower levels
                     ForEach(0..<levelsBuilt, id: \.self) { i in
@@ -385,7 +385,7 @@ private struct BronzeGearVisual: View {
             GeometryReader { geo in let w = geo.size.width; let h = geo.size.height; let cx = w * 0.5
                 ZStack {
                     // Gear shape
-                    Circle().fill(copperAdded && tinAdded ? bronzeGold : IVMaterialColors.stoneGray.opacity(0.2)).frame(width: 60, height: 60).position(x: cx, y: h * 0.35)
+                    Circle().fill(copperAdded && tinAdded ? bronzeGold : RenaissanceColors.stoneGray.opacity(0.2)).frame(width: 60, height: 60).position(x: cx, y: h * 0.35)
                     if copperAdded && tinAdded {
                         ForEach(0..<8, id: \.self) { i in
                             let a = CGFloat(i) / 8.0 * .pi * 2
@@ -396,15 +396,15 @@ private struct BronzeGearVisual: View {
                     HStack(spacing: 16) {
                         Button { guard !copperAdded else { return }; withAnimation(.spring(response: 0.3)) { copperAdded = true }; SoundManager.shared.play(.tapSoft) } label: {
                             VStack { Text("90%").font(RenaissanceFont.ivFormula); Text("Copper").font(RenaissanceFont.ivBody) }
-                                .frame(width: 55, height: 40).background(copperAdded ? IVMaterialColors.stoneGray.opacity(0.1) : Color(red: 0.80, green: 0.55, blue: 0.35).opacity(0.2)).cornerRadius(6)
-                                .overlay(RoundedRectangle(cornerRadius: 6).stroke(!copperAdded ? color : IVMaterialColors.stoneGray.opacity(0.2), lineWidth: !copperAdded ? 2 : 0.5))
+                                .frame(width: 55, height: 40).background(copperAdded ? RenaissanceColors.stoneGray.opacity(0.1) : Color(red: 0.80, green: 0.55, blue: 0.35).opacity(0.2)).cornerRadius(6)
+                                .overlay(RoundedRectangle(cornerRadius: 6).stroke(!copperAdded ? color : RenaissanceColors.stoneGray.opacity(0.2), lineWidth: !copperAdded ? 2 : 0.5))
                         }.buttonStyle(.plain).opacity(copperAdded ? 0.4 : 1).foregroundStyle(IVMaterialColors.sepiaInk)
                         Button { guard copperAdded && !tinAdded else { return }; withAnimation(.spring(response: 0.3)) { tinAdded = true }; SoundManager.shared.play(.tapSoft)
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { withAnimation { step = 3 } }
                         } label: {
                             VStack { Text("10%").font(RenaissanceFont.ivFormula); Text("Tin").font(RenaissanceFont.ivBody) }
-                                .frame(width: 55, height: 40).background(tinAdded ? IVMaterialColors.stoneGray.opacity(0.1) : IVMaterialColors.stoneGray.opacity(0.15)).cornerRadius(6)
-                                .overlay(RoundedRectangle(cornerRadius: 6).stroke(copperAdded && !tinAdded ? color : IVMaterialColors.stoneGray.opacity(0.2), lineWidth: copperAdded && !tinAdded ? 2 : 0.5))
+                                .frame(width: 55, height: 40).background(tinAdded ? RenaissanceColors.stoneGray.opacity(0.1) : RenaissanceColors.stoneGray.opacity(0.15)).cornerRadius(6)
+                                .overlay(RoundedRectangle(cornerRadius: 6).stroke(copperAdded && !tinAdded ? color : RenaissanceColors.stoneGray.opacity(0.2), lineWidth: copperAdded && !tinAdded ? 2 : 0.5))
                         }.buttonStyle(.plain).opacity(tinAdded ? 0.4 : 1).foregroundStyle(IVMaterialColors.sepiaInk)
                     }.position(x: cx, y: h * 0.65)
                     if step >= 3 { FormulaText(text: "Precision starts in wax", highlighted: true).position(x: cx, y: h * 0.85).transition(.opacity) }
@@ -532,7 +532,7 @@ private struct MilitaryJointsVisual: View {
                         let y = h * 0.2 + CGFloat(i) * h * 0.2
                         let revealed = i < jointsRevealed
                         HStack(spacing: 8) {
-                            RoundedRectangle(cornerRadius: 3).fill(revealed ? oakBrown.opacity(0.4) : IVMaterialColors.stoneGray.opacity(0.1))
+                            RoundedRectangle(cornerRadius: 3).fill(revealed ? oakBrown.opacity(0.4) : RenaissanceColors.stoneGray.opacity(0.1))
                                 .frame(width: w * 0.15, height: 18)
                             if revealed {
                                 // Joint connection
@@ -541,7 +541,7 @@ private struct MilitaryJointsVisual: View {
                                 RoundedRectangle(cornerRadius: 1).strokeBorder(style: StrokeStyle(lineWidth: 1, dash: [2,2]))
                                     .foregroundStyle(color.opacity(0.3)).frame(width: 8, height: 12)
                             }
-                            RoundedRectangle(cornerRadius: 3).fill(revealed ? oakBrown.opacity(0.4) : IVMaterialColors.stoneGray.opacity(0.1))
+                            RoundedRectangle(cornerRadius: 3).fill(revealed ? oakBrown.opacity(0.4) : RenaissanceColors.stoneGray.opacity(0.1))
                                 .frame(width: w * 0.15, height: 18)
                             if revealed {
                                 VStack(alignment: .leading, spacing: 1) {
@@ -579,7 +579,7 @@ private struct TemperingCycleVisual: View {
                     HStack(spacing: 8) {
                         ForEach(0..<3, id: \.self) { i in
                             VStack(spacing: 2) {
-                                Circle().fill(i < phase ? phases[i].2 : IVMaterialColors.stoneGray.opacity(0.2)).frame(width: 10, height: 10)
+                                Circle().fill(i < phase ? phases[i].2 : RenaissanceColors.stoneGray.opacity(0.2)).frame(width: 10, height: 10)
                                 Text(phases[i].0).font(RenaissanceFont.ivBody).foregroundStyle(i < phase ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                             }
                         }

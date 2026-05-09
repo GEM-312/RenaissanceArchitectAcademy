@@ -495,12 +495,12 @@ private struct CarraraMarbleVisual: View {
     private func marbleSwatch(label: String, sublabel: String, color: Color, borderColor: Color, active: Bool) -> some View {
         VStack(spacing: 4) {
             RoundedRectangle(cornerRadius: 6)
-                .fill(active ? color : IVMaterialColors.stoneGray.opacity(0.1))
+                .fill(active ? color : RenaissanceColors.stoneGray.opacity(0.1))
                 .frame(maxWidth: .infinity)
                 .frame(height: 70)
                 .overlay(
                     RoundedRectangle(cornerRadius: 6)
-                        .strokeBorder(active ? borderColor : IVMaterialColors.stoneGray.opacity(0.2), lineWidth: 1.5)
+                        .strokeBorder(active ? borderColor : RenaissanceColors.stoneGray.opacity(0.2), lineWidth: 1.5)
                 )
                 .overlay {
                     if active {
@@ -855,7 +855,7 @@ private struct BrickFiringVisual: View {
                             .foregroundStyle(step >= 3 ? IVMaterialColors.dimColor : IVMaterialColors.dimColor.opacity(0.3))
                         Text("Brown")
                             .font(.custom("Cinzel-Bold", size: 18))
-                            .foregroundStyle(step >= 3 ? Color(red: 0.4, green: 0.28, blue: 0.2) : IVMaterialColors.stoneGray.opacity(0.3))
+                            .foregroundStyle(step >= 3 ? Color(red: 0.4, green: 0.28, blue: 0.2) : RenaissanceColors.stoneGray.opacity(0.3))
                     }
                 }
 
@@ -914,11 +914,11 @@ private struct SinopiaVisual: View {
                 if step == 2 {
                     // Slab
                     let slab = CGRect(x: cx - 30, y: size.height * 0.3, width: 60, height: 8)
-                    ctx.fill(Path(slab), with: .color(IVMaterialColors.stoneGray.opacity(0.3)))
+                    ctx.fill(Path(slab), with: .color(RenaissanceColors.stoneGray.opacity(0.3)))
                     ctx.stroke(Path(slab), with: .color(IVMaterialColors.sepiaInk.opacity(0.3)), lineWidth: 0.5)
                     // Muller
                     let muller = Path(ellipseIn: CGRect(x: cx - 10, y: size.height * 0.25, width: 20, height: 14))
-                    ctx.fill(muller, with: .color(IVMaterialColors.stoneGray.opacity(0.5)))
+                    ctx.fill(muller, with: .color(RenaissanceColors.stoneGray.opacity(0.5)))
                     // Ground pigment
                     let pigment = Path(ellipseIn: CGRect(x: cx - 20, y: size.height * 0.32, width: 40, height: 6))
                     ctx.fill(pigment, with: .color(sinopiaRed.opacity(0.4)))
