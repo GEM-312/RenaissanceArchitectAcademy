@@ -103,13 +103,10 @@ class GameSettings {
 
     // MARK: - Theme Colors (computed, SwiftUI)
 
-    private static let darkCardBackground = Color(red: 0.18, green: 0.16, blue: 0.13)
-    private static let lightCardBackground = Color(red: 0.93, green: 0.87, blue: 0.78)
-
     /// Pill label / nav button background color
     var pillBackground: Color {
         isDarkMode
-            ? Self.darkCardBackground.opacity(0.65)
+            ? RenaissanceColors.darkCardBg.opacity(0.65)
             : RenaissanceColors.parchment.opacity(0.65)
     }
 
@@ -137,15 +134,15 @@ class GameSettings {
     /// Card background (avatar card, inventory bar, dialog panels)
     var cardBackground: Color {
         isDarkMode
-            ? Self.darkCardBackground.opacity(0.92)
-            : Self.lightCardBackground.opacity(0.95)
+            ? RenaissanceColors.darkCardBg.opacity(0.92)
+            : RenaissanceColors.lightCardBg.opacity(0.95)
     }
 
     /// Dialog/modal background — full opacity for overlays
     var dialogBackground: Color {
         isDarkMode
-            ? Self.darkCardBackground
-            : Self.lightCardBackground
+            ? RenaissanceColors.darkCardBg
+            : RenaissanceColors.lightCardBg
     }
 
     /// Card border color
@@ -163,7 +160,7 @@ class GameSettings {
     /// Item badge background (inventory items)
     var itemBadgeBackground: Color {
         isDarkMode
-            ? Self.darkCardBackground.opacity(0.8)
+            ? RenaissanceColors.darkCardBg.opacity(0.8)
             : RenaissanceColors.parchment.opacity(0.8)
     }
 

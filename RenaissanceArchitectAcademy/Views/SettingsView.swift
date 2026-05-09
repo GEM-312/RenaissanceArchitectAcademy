@@ -47,7 +47,7 @@ struct SettingsView: View {
                                     // Preview swatch
                                     RoundedRectangle(cornerRadius: 10)
                                         .fill(theme == .dark
-                                              ? Color(red: 0.18, green: 0.16, blue: 0.13)
+                                              ? RenaissanceColors.darkCardBg
                                               : RenaissanceColors.parchment)
                                         .frame(width: 80, height: 50)
                                         .overlay(
