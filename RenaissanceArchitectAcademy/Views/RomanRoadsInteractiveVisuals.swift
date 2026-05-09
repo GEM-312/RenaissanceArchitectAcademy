@@ -120,7 +120,7 @@ private struct RadialRoadsVisual: View {
                                 p.addLine(to: CGPoint(x: extended ? endX : midX * 0.3 + cx * 0.7,
                                                       y: extended ? endY : midY * 0.3 + cy * 0.7))
                             }
-                            .stroke(extended ? color : IVMaterialColors.stoneGray.opacity(0.3),
+                            .stroke(extended ? color : RenaissanceColors.stoneGray.opacity(0.3),
                                     lineWidth: extended ? 1.5 : 0.8)
 
                             // Road name label
@@ -220,7 +220,7 @@ private struct GromaSurveyVisual: View {
 
                         // Plumb weight
                         Circle()
-                            .fill(IVMaterialColors.stoneGray)
+                            .fill(RenaissanceColors.stoneGray)
                             .frame(width: 8, height: 8)
                             .position(x: armX + sway, y: armY + plumbLen)
                     }
@@ -235,7 +235,7 @@ private struct GromaSurveyVisual: View {
                         .stroke(RenaissanceColors.warmBrown.opacity(0.25), lineWidth: 0.8)
 
                         Circle()
-                            .fill(IVMaterialColors.stoneGray.opacity(0.5))
+                            .fill(RenaissanceColors.stoneGray.opacity(0.5))
                             .frame(width: 5, height: 5)
                             .position(x: fwd + sway * 0.5, y: armY + plumbLen * 0.7)
                     }
@@ -745,7 +745,7 @@ private struct CamberDrainageVisual: View {
                         p.addLine(to: CGPoint(x: w * 0.15, y: roadY + h * 0.08))
                         p.closeSubpath()
                     }
-                    .fill(IVMaterialColors.stoneGray.opacity(0.4))
+                    .fill(RenaissanceColors.stoneGray.opacity(0.4))
 
                     Path { p in
                         p.move(to: CGPoint(x: w * 0.15, y: roadY))
@@ -754,7 +754,7 @@ private struct CamberDrainageVisual: View {
                             control: CGPoint(x: cx, y: roadY - camberH)
                         )
                     }
-                    .stroke(IVMaterialColors.stoneGray, lineWidth: 2)
+                    .stroke(RenaissanceColors.stoneGray, lineWidth: 2)
 
                     // Side ditches
                     ForEach([0.12, 0.88], id: \.self) { xFrac in
@@ -879,11 +879,11 @@ private struct RoadMortarRecipeVisual: View {
                     let barW = geo.size.width - 20
                     HStack(spacing: 2) {
                         RoundedRectangle(cornerRadius: 3)
-                            .fill(limeScoops >= 1 ? IVMaterialColors.limeTan : IVMaterialColors.stoneGray.opacity(0.15))
+                            .fill(limeScoops >= 1 ? IVMaterialColors.limeTan : RenaissanceColors.stoneGray.opacity(0.15))
                             .frame(width: barW * 0.25)
                             .overlay { if limeScoops >= 1 { Text("1").font(RenaissanceFont.ivFormula).foregroundStyle(IVMaterialColors.sepiaInk) } }
                         RoundedRectangle(cornerRadius: 3)
-                            .fill(rockScoops >= 3 ? basaltDark.opacity(0.4) : (rockScoops > 0 ? basaltDark.opacity(0.15 * CGFloat(rockScoops)) : IVMaterialColors.stoneGray.opacity(0.15)))
+                            .fill(rockScoops >= 3 ? basaltDark.opacity(0.4) : (rockScoops > 0 ? basaltDark.opacity(0.15 * CGFloat(rockScoops)) : RenaissanceColors.stoneGray.opacity(0.15)))
                             .frame(width: barW * 0.75)
                             .overlay { if rockScoops > 0 { Text("\(rockScoops)").font(RenaissanceFont.ivFormula).foregroundStyle(IVMaterialColors.sepiaInk) } }
                     }
@@ -905,9 +905,9 @@ private struct RoadMortarRecipeVisual: View {
                                 Text("Lime").font(RenaissanceFont.ivBody)
                             }
                             .frame(width: 60, height: 50)
-                            .background(limeScoops >= 1 ? IVMaterialColors.stoneGray.opacity(0.1) : IVMaterialColors.limeTan.opacity(0.3))
+                            .background(limeScoops >= 1 ? RenaissanceColors.stoneGray.opacity(0.1) : IVMaterialColors.limeTan.opacity(0.3))
                             .cornerRadius(6)
-                            .overlay(RoundedRectangle(cornerRadius: 6).stroke(limeScoops < 1 ? color : IVMaterialColors.stoneGray.opacity(0.3), lineWidth: limeScoops < 1 ? 2 : 1))
+                            .overlay(RoundedRectangle(cornerRadius: 6).stroke(limeScoops < 1 ? color : RenaissanceColors.stoneGray.opacity(0.3), lineWidth: limeScoops < 1 ? 2 : 1))
                         }
                         .buttonStyle(.plain)
                         .opacity(limeScoops >= 1 ? 0.4 : 1)
@@ -922,9 +922,9 @@ private struct RoadMortarRecipeVisual: View {
                                 Text("Volcanic Rock").font(RenaissanceFont.ivBody)
                             }
                             .frame(width: 80, height: 50)
-                            .background(rockScoops >= 3 ? IVMaterialColors.stoneGray.opacity(0.1) : basaltDark.opacity(0.15))
+                            .background(rockScoops >= 3 ? RenaissanceColors.stoneGray.opacity(0.1) : basaltDark.opacity(0.15))
                             .cornerRadius(6)
-                            .overlay(RoundedRectangle(cornerRadius: 6).stroke((limeScoops >= 1 && rockScoops < 3) ? color : IVMaterialColors.stoneGray.opacity(0.3), lineWidth: (limeScoops >= 1 && rockScoops < 3) ? 2 : 1))
+                            .overlay(RoundedRectangle(cornerRadius: 6).stroke((limeScoops >= 1 && rockScoops < 3) ? color : RenaissanceColors.stoneGray.opacity(0.3), lineWidth: (limeScoops >= 1 && rockScoops < 3) ? 2 : 1))
                         }
                         .buttonStyle(.plain)
                         .opacity(rockScoops >= 3 ? 0.4 : 1)
@@ -1007,7 +1007,7 @@ private struct LimeFiringVisual: View {
                 HStack(spacing: 20) {
                     VStack(spacing: 4) {
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(IVMaterialColors.stoneGray.opacity(converted ? 0.3 : 0.6))
+                            .fill(RenaissanceColors.stoneGray.opacity(converted ? 0.3 : 0.6))
                             .frame(width: 50, height: 40)
                         Text("CaCO₃").font(RenaissanceFont.ivFormula).foregroundStyle(IVMaterialColors.sepiaInk)
                         Text("Limestone").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
@@ -1023,7 +1023,7 @@ private struct LimeFiringVisual: View {
                             .frame(width: 50, height: 40)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 4)
-                                    .strokeBorder(converted ? RenaissanceColors.sageGreen : IVMaterialColors.stoneGray.opacity(0.2), lineWidth: 1)
+                                    .strokeBorder(converted ? RenaissanceColors.sageGreen : RenaissanceColors.stoneGray.opacity(0.2), lineWidth: 1)
                             )
                         Text("CaO").font(RenaissanceFont.ivFormula).foregroundStyle(converted ? RenaissanceColors.sageGreen : IVMaterialColors.sepiaInk.opacity(0.3))
                         Text("Quicklime").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
@@ -1105,11 +1105,11 @@ private struct MilestoneCarveVisual: View {
                 ZStack {
                     // Milestone column
                     RoundedRectangle(cornerRadius: 6)
-                        .fill(IVMaterialColors.stoneGray.opacity(0.4))
+                        .fill(RenaissanceColors.stoneGray.opacity(0.4))
                         .frame(width: stoneW, height: stoneH)
                         .overlay(
                             RoundedRectangle(cornerRadius: 6)
-                                .strokeBorder(IVMaterialColors.stoneGray, lineWidth: 1.5)
+                                .strokeBorder(RenaissanceColors.stoneGray, lineWidth: 1.5)
                         )
                         .position(x: cx, y: h * 0.4)
 

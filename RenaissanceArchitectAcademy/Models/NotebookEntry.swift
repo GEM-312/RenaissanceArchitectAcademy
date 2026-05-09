@@ -112,21 +112,16 @@ enum StrokeColor: String, Codable, CaseIterable {
 
     #if os(macOS)
     var nsColor: NSColor {
-        switch self {
-        case .yellow: return NSColor(red: 1.0, green: 0.85, blue: 0.3, alpha: 1.0)
-        case .sepia:  return NSColor(red: 0.29, green: 0.25, blue: 0.21, alpha: 1.0)
-        case .red:    return NSColor(red: 0.8, green: 0.36, blue: 0.36, alpha: 1.0)
-        case .blue:   return NSColor(red: 0.36, green: 0.56, blue: 0.64, alpha: 1.0)
-        }
+        NSColor(swiftUIColor)
     }
     #endif
 
     var swiftUIColor: Color {
         switch self {
-        case .yellow: return Color(red: 1.0, green: 0.85, blue: 0.3)
-        case .sepia:  return Color(red: 0.29, green: 0.25, blue: 0.21)
-        case .red:    return Color(red: 0.8, green: 0.36, blue: 0.36)
-        case .blue:   return Color(red: 0.36, green: 0.56, blue: 0.64)
+        case .yellow: return RenaissanceColors.notebookYellow
+        case .sepia:  return RenaissanceColors.sepiaInk
+        case .red:    return RenaissanceColors.errorRed
+        case .blue:   return RenaissanceColors.renaissanceBlue
         }
     }
 }

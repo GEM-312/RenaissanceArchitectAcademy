@@ -20,8 +20,8 @@ struct RenaissanceButton: View {
                 .tracking(2)
                 .foregroundStyle(RenaissanceColors.sepiaInk)
                 .frame(maxWidth: .infinity)
-                .padding(.horizontal, 24)
-                .padding(.vertical, 14)
+                .padding(.horizontal, Spacing.xl)
+                .padding(.vertical, Spacing.buttonV)
                 .overlay(
                     RoundedRectangle(cornerRadius: 20)
                         .stroke(RenaissanceColors.ochre.opacity(0.25), lineWidth: 1)
@@ -129,8 +129,8 @@ struct RenaissanceSecondaryButton: View {
                 .font(RenaissanceFont.buttonRegular)
                 .tracking(2)
             .foregroundStyle(RenaissanceColors.sepiaInk)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 10)
+            .padding(.horizontal, Spacing.lg)
+            .padding(.vertical, Spacing.buttonSecondaryV)
             .background(
                 ZStack {
                     RoundedRectangle(cornerRadius: 2)

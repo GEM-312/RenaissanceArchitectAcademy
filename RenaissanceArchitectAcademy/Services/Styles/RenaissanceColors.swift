@@ -64,6 +64,16 @@ enum RenaissanceColors {
     /// Light parchment for card fills (slightly warmer): #FDF5E0
     static let parchmentLight = Color(red: 0.99, green: 0.96, blue: 0.88)
 
+    /// Card background fills for dark/light theme modes. Previously declared
+    /// as private statics in `GameSettings` — surfacing here so any view can
+    /// reference the same value.
+    static let darkCardBg  = Color(red: 0.18, green: 0.16, blue: 0.13)
+    static let lightCardBg = Color(red: 0.93, green: 0.87, blue: 0.78)
+
+    /// Bright lemon-yellow for notebook stroke pen tool. Brighter and less
+    /// amber than `candleGlow` (which has more red/green and less blue).
+    static let notebookYellow = Color(red: 1.0, green: 0.85, blue: 0.3)
+
     // MARK: - Gradients
 
     /// Parchment gradient for backgrounds

@@ -109,7 +109,7 @@ private struct MortarVsConcreteVisual: View {
                         // Stone blocks with gaps
                         ZStack {
                             RoundedRectangle(cornerRadius: 4)
-                                .fill(IVMaterialColors.stoneGray.opacity(0.3))
+                                .fill(RenaissanceColors.stoneGray.opacity(0.3))
                                 .frame(width: panelW, height: panelH)
 
                             // Draw stone blocks
@@ -118,7 +118,7 @@ private struct MortarVsConcreteVisual: View {
                                     HStack(spacing: 3) {
                                         ForEach(0..<(row % 2 == 0 ? 3 : 2), id: \.self) { _ in
                                             RoundedRectangle(cornerRadius: 2)
-                                                .fill(IVMaterialColors.stoneGray)
+                                                .fill(RenaissanceColors.stoneGray)
                                                 .frame(height: panelH * 0.25)
                                         }
                                     }
@@ -167,7 +167,7 @@ private struct MortarVsConcreteVisual: View {
                         ZStack(alignment: .bottom) {
                             // Pit outline
                             RoundedRectangle(cornerRadius: 4)
-                                .strokeBorder(IVMaterialColors.stoneGray, lineWidth: 2)
+                                .strokeBorder(RenaissanceColors.stoneGray, lineWidth: 2)
                                 .frame(width: panelW, height: panelH)
 
                             // Earth sides
@@ -181,13 +181,13 @@ private struct MortarVsConcreteVisual: View {
                             // Concrete fill
                             if concreteApplied {
                                 RoundedRectangle(cornerRadius: 2)
-                                    .fill(IVMaterialColors.stoneGray.opacity(0.5))
+                                    .fill(RenaissanceColors.stoneGray.opacity(0.5))
                                     .frame(width: panelW - 8, height: panelH * 0.85)
                                     .overlay {
                                         // Aggregate dots
                                         ForEach(0..<8, id: \.self) { i in
                                             Circle()
-                                                .fill(IVMaterialColors.stoneGray)
+                                                .fill(RenaissanceColors.stoneGray)
                                                 .frame(width: CGFloat.random(in: 4...8))
                                                 .offset(
                                                     x: CGFloat.random(in: -panelW * 0.3...panelW * 0.3),
@@ -235,9 +235,9 @@ private struct MortarVsConcreteVisual: View {
                                     Text("Pour Concrete")
                                         .font(RenaissanceFont.ivLabel)
                                         .padding(.horizontal, 12).padding(.vertical, 6)
-                                        .background(IVMaterialColors.stoneGray.opacity(0.3))
+                                        .background(RenaissanceColors.stoneGray.opacity(0.3))
                                         .cornerRadius(6)
-                                        .overlay(RoundedRectangle(cornerRadius: 6).stroke(IVMaterialColors.stoneGray, lineWidth: 1))
+                                        .overlay(RoundedRectangle(cornerRadius: 6).stroke(RenaissanceColors.stoneGray, lineWidth: 1))
                                 }
                                 .buttonStyle(.plain)
                             }
@@ -293,11 +293,11 @@ private struct SpecusCrossSectionVisual: View {
                     let stoneW = chW + 24
                     let stoneH = chH + 12
                     RoundedRectangle(cornerRadius: 4)
-                        .fill(revealedLayers.contains(0) ? IVMaterialColors.stoneGray : IVMaterialColors.stoneGray.opacity(0.15))
+                        .fill(revealedLayers.contains(0) ? RenaissanceColors.stoneGray : RenaissanceColors.stoneGray.opacity(0.15))
                         .frame(width: stoneW, height: stoneH)
                         .overlay(
                             RoundedRectangle(cornerRadius: 4)
-                                .strokeBorder(IVMaterialColors.stoneGray, lineWidth: revealedLayers.contains(0) ? 2 : 1)
+                                .strokeBorder(RenaissanceColors.stoneGray, lineWidth: revealedLayers.contains(0) ? 2 : 1)
                         )
                         .position(x: cx, y: cy)
                         .onTapGesture {
@@ -316,7 +316,7 @@ private struct SpecusCrossSectionVisual: View {
                         .overlay(
                             RoundedRectangle(cornerRadius: 3)
                                 .strokeBorder(
-                                    revealedLayers.contains(1) ? RenaissanceColors.terracotta : IVMaterialColors.stoneGray.opacity(0.3),
+                                    revealedLayers.contains(1) ? RenaissanceColors.terracotta : RenaissanceColors.stoneGray.opacity(0.3),
                                     lineWidth: revealedLayers.contains(1) ? 2 : 1
                                 )
                         )
@@ -336,7 +336,7 @@ private struct SpecusCrossSectionVisual: View {
                             .overlay(
                                 RoundedRectangle(cornerRadius: 2)
                                     .strokeBorder(
-                                        revealedLayers.contains(2) ? IVMaterialColors.waterBlue : IVMaterialColors.stoneGray.opacity(0.2),
+                                        revealedLayers.contains(2) ? IVMaterialColors.waterBlue : RenaissanceColors.stoneGray.opacity(0.2),
                                         lineWidth: revealedLayers.contains(2) ? 1.5 : 0.5
                                     )
                             )
@@ -514,7 +514,7 @@ private struct UndergroundRevealVisual: View {
 
                         // Above-ground sections: solid with arch supports
                         aqueductPath(w: w, h: h, margin: margin, underground: false)
-                            .stroke(IVMaterialColors.stoneGray, lineWidth: 2.5)
+                            .stroke(RenaissanceColors.stoneGray, lineWidth: 2.5)
 
                         // Draw arch piers under above-ground sections
                         archPiers(w: w, h: h, margin: margin)
@@ -578,7 +578,7 @@ private struct UndergroundRevealVisual: View {
                                 // Label: tunnel or arches
                                 Text(isUnderground[i] ? "tunnel" : "arches")
                                     .font(RenaissanceFont.ivBody)
-                                    .foregroundStyle(isUnderground[i] ? RenaissanceColors.warmBrown.opacity(0.5) : IVMaterialColors.stoneGray)
+                                    .foregroundStyle(isUnderground[i] ? RenaissanceColors.warmBrown.opacity(0.5) : RenaissanceColors.stoneGray)
                                     .position(x: x, y: h * 0.75)
                                     .transition(.scale.combined(with: .opacity))
                             }
@@ -597,7 +597,7 @@ private struct UndergroundRevealVisual: View {
                                     DimLabel(text: "53 km underground")
                                 }
                                 HStack(spacing: 4) {
-                                    Rectangle().fill(IVMaterialColors.stoneGray).frame(width: 16, height: 2)
+                                    Rectangle().fill(RenaissanceColors.stoneGray).frame(width: 16, height: 2)
                                     DimLabel(text: "16 km on arches")
                                 }
                             }
@@ -671,7 +671,7 @@ private struct UndergroundRevealVisual: View {
                     var pier = Path()
                     pier.move(to: CGPoint(x: px, y: aqY))
                     pier.addLine(to: CGPoint(x: px, y: terrY))
-                    context.stroke(pier, with: .color(IVMaterialColors.stoneGray.opacity(0.5)), lineWidth: 1.5)
+                    context.stroke(pier, with: .color(RenaissanceColors.stoneGray.opacity(0.5)), lineWidth: 1.5)
 
                     // Small arch between piers
                     if p < pierCount - 1 {
@@ -682,7 +682,7 @@ private struct UndergroundRevealVisual: View {
                             to: CGPoint(x: nextPx, y: aqY + 2),
                             control: CGPoint(x: (px + nextPx) / 2, y: aqY + (terrY - aqY) * 0.25)
                         )
-                        context.stroke(arch, with: .color(IVMaterialColors.stoneGray.opacity(0.4)), lineWidth: 1)
+                        context.stroke(arch, with: .color(RenaissanceColors.stoneGray.opacity(0.4)), lineWidth: 1)
                     }
                 }
             }
@@ -902,7 +902,7 @@ private struct GradientSliderVisual: View {
                         p.addLine(to: CGPoint(x: leftX, y: leftY + 8))
                         p.closeSubpath()
                     }
-                    .fill(IVMaterialColors.stoneGray.opacity(0.3))
+                    .fill(RenaissanceColors.stoneGray.opacity(0.3))
 
                     Path { p in
                         p.move(to: CGPoint(x: leftX, y: leftY - 8))
@@ -911,7 +911,7 @@ private struct GradientSliderVisual: View {
                         p.addLine(to: CGPoint(x: leftX, y: leftY + 8))
                         p.closeSubpath()
                     }
-                    .stroke(IVMaterialColors.stoneGray, lineWidth: 1.5)
+                    .stroke(RenaissanceColors.stoneGray, lineWidth: 1.5)
 
                     // Water drops flowing
                     if step >= 2 {
@@ -1022,11 +1022,11 @@ private struct VoussoirArchBuildVisual: View {
                 ZStack {
                     // Support piers
                     RoundedRectangle(cornerRadius: 2)
-                        .fill(IVMaterialColors.stoneGray)
+                        .fill(RenaissanceColors.stoneGray)
                         .frame(width: pierW, height: pierH)
                         .position(x: cx - archRadius - pierW / 2, y: archCenterY + pierH * 0.2)
                     RoundedRectangle(cornerRadius: 2)
-                        .fill(IVMaterialColors.stoneGray)
+                        .fill(RenaissanceColors.stoneGray)
                         .frame(width: pierW, height: pierH)
                         .position(x: cx + archRadius + pierW / 2, y: archCenterY + pierH * 0.2)
 
@@ -1066,12 +1066,12 @@ private struct VoussoirArchBuildVisual: View {
 
                             // Stone wedge
                             RoundedRectangle(cornerRadius: 2)
-                                .fill(placed ? (isKeystone ? color.opacity(0.6) : IVMaterialColors.stoneGray) : IVMaterialColors.stoneGray.opacity(0.1))
+                                .fill(placed ? (isKeystone ? color.opacity(0.6) : RenaissanceColors.stoneGray) : RenaissanceColors.stoneGray.opacity(0.1))
                                 .frame(width: 18, height: 24)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 2)
                                         .strokeBorder(
-                                            placed ? IVMaterialColors.stoneGray : (canPlace ? color : IVMaterialColors.stoneGray.opacity(0.2)),
+                                            placed ? RenaissanceColors.stoneGray : (canPlace ? color : RenaissanceColors.stoneGray.opacity(0.2)),
                                             lineWidth: canPlace && !placed ? 2 : 1
                                         )
                                 )
@@ -1307,11 +1307,11 @@ private struct OpusSigninumCoatsVisual: View {
                 ZStack {
                     // Base stone wall
                     RoundedRectangle(cornerRadius: 4)
-                        .fill(IVMaterialColors.stoneGray.opacity(0.3))
+                        .fill(RenaissanceColors.stoneGray.opacity(0.3))
                         .frame(width: wallW, height: wallH)
                         .overlay(
                             RoundedRectangle(cornerRadius: 4)
-                                .strokeBorder(IVMaterialColors.stoneGray, lineWidth: 1.5)
+                                .strokeBorder(RenaissanceColors.stoneGray, lineWidth: 1.5)
                         )
                         .position(x: cx, y: cy)
 
@@ -1344,17 +1344,17 @@ private struct OpusSigninumCoatsVisual: View {
                     if step >= 2 {
                         VStack(alignment: .leading, spacing: 8) {
                             HStack(spacing: 4) {
-                                Circle().fill(coatsApplied >= 1 ? coatColors[0] : IVMaterialColors.stoneGray.opacity(0.2)).frame(width: 8, height: 8)
+                                Circle().fill(coatsApplied >= 1 ? coatColors[0] : RenaissanceColors.stoneGray.opacity(0.2)).frame(width: 8, height: 8)
                                 Text("Coarse").font(RenaissanceFont.ivBody)
                                     .foregroundStyle(coatsApplied >= 1 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                             }
                             HStack(spacing: 4) {
-                                Circle().fill(coatsApplied >= 2 ? coatColors[1] : IVMaterialColors.stoneGray.opacity(0.2)).frame(width: 8, height: 8)
+                                Circle().fill(coatsApplied >= 2 ? coatColors[1] : RenaissanceColors.stoneGray.opacity(0.2)).frame(width: 8, height: 8)
                                 Text("Medium").font(RenaissanceFont.ivBody)
                                     .foregroundStyle(coatsApplied >= 2 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                             }
                             HStack(spacing: 4) {
-                                Circle().fill(coatsApplied >= 3 ? coatColors[2] : IVMaterialColors.stoneGray.opacity(0.2)).frame(width: 8, height: 8)
+                                Circle().fill(coatsApplied >= 3 ? coatColors[2] : RenaissanceColors.stoneGray.opacity(0.2)).frame(width: 8, height: 8)
                                 Text("Finest").font(RenaissanceFont.ivBody)
                                     .foregroundStyle(coatsApplied >= 3 ? IVMaterialColors.sepiaInk : IVMaterialColors.sepiaInk.opacity(0.3))
                             }
@@ -1558,7 +1558,7 @@ private struct AqueductMortarRecipeVisual: View {
                     HStack(spacing: 2) {
                         // Lime portion
                         RoundedRectangle(cornerRadius: 3)
-                            .fill(ingredientsAdded >= 1 ? Color.white.opacity(0.8) : IVMaterialColors.stoneGray.opacity(0.15))
+                            .fill(ingredientsAdded >= 1 ? Color.white.opacity(0.8) : RenaissanceColors.stoneGray.opacity(0.15))
                             .frame(width: barW * (1.0 / totalParts))
                             .overlay {
                                 if ingredientsAdded >= 1 {
@@ -1569,7 +1569,7 @@ private struct AqueductMortarRecipeVisual: View {
                         // Sand portion
                         RoundedRectangle(cornerRadius: 3)
                             .fill(ingredientsAdded >= 3 ? RenaissanceColors.candleGlow.opacity(0.3) :
-                                    ingredientsAdded >= 2 ? RenaissanceColors.candleGlow.opacity(0.15) : IVMaterialColors.stoneGray.opacity(0.15))
+                                    ingredientsAdded >= 2 ? RenaissanceColors.candleGlow.opacity(0.15) : RenaissanceColors.stoneGray.opacity(0.15))
                             .frame(width: barW * (2.0 / totalParts))
                             .overlay {
                                 if ingredientsAdded >= 2 {
@@ -1580,7 +1580,7 @@ private struct AqueductMortarRecipeVisual: View {
 
                         // Pozzolana portion
                         RoundedRectangle(cornerRadius: 3)
-                            .fill(ingredientsAdded >= 4 ? pozzolanaRed.opacity(0.4) : IVMaterialColors.stoneGray.opacity(0.15))
+                            .fill(ingredientsAdded >= 4 ? pozzolanaRed.opacity(0.4) : RenaissanceColors.stoneGray.opacity(0.15))
                             .frame(width: barW * (0.5 / totalParts))
                             .overlay {
                                 if ingredientsAdded >= 4 {
@@ -1606,10 +1606,10 @@ private struct AqueductMortarRecipeVisual: View {
                             Text("Lime").font(RenaissanceFont.ivBody)
                         }
                         .frame(width: 60, height: 50)
-                        .background(ingredientsAdded >= 1 ? IVMaterialColors.stoneGray.opacity(0.1) : Color.white.opacity(0.5))
+                        .background(ingredientsAdded >= 1 ? RenaissanceColors.stoneGray.opacity(0.1) : Color.white.opacity(0.5))
                         .cornerRadius(6)
                         .overlay(RoundedRectangle(cornerRadius: 6).stroke(
-                            ingredientsAdded == 0 ? color : IVMaterialColors.stoneGray.opacity(0.3), lineWidth: ingredientsAdded == 0 ? 2 : 1))
+                            ingredientsAdded == 0 ? color : RenaissanceColors.stoneGray.opacity(0.3), lineWidth: ingredientsAdded == 0 ? 2 : 1))
                     }
                     .buttonStyle(.plain)
                     .opacity(ingredientsAdded >= 1 ? 0.4 : 1)
@@ -1625,10 +1625,10 @@ private struct AqueductMortarRecipeVisual: View {
                             Text("Sand").font(RenaissanceFont.ivBody)
                         }
                         .frame(width: 60, height: 50)
-                        .background(ingredientsAdded >= 3 ? IVMaterialColors.stoneGray.opacity(0.1) : RenaissanceColors.candleGlow.opacity(0.15))
+                        .background(ingredientsAdded >= 3 ? RenaissanceColors.stoneGray.opacity(0.1) : RenaissanceColors.candleGlow.opacity(0.15))
                         .cornerRadius(6)
                         .overlay(RoundedRectangle(cornerRadius: 6).stroke(
-                            (ingredientsAdded >= 1 && ingredientsAdded <= 2) ? color : IVMaterialColors.stoneGray.opacity(0.3),
+                            (ingredientsAdded >= 1 && ingredientsAdded <= 2) ? color : RenaissanceColors.stoneGray.opacity(0.3),
                             lineWidth: (ingredientsAdded >= 1 && ingredientsAdded <= 2) ? 2 : 1))
                     }
                     .buttonStyle(.plain)
@@ -1645,10 +1645,10 @@ private struct AqueductMortarRecipeVisual: View {
                             Text("Pozzolana").font(RenaissanceFont.ivBody)
                         }
                         .frame(width: 70, height: 50)
-                        .background(ingredientsAdded >= 4 ? IVMaterialColors.stoneGray.opacity(0.1) : pozzolanaRed.opacity(0.15))
+                        .background(ingredientsAdded >= 4 ? RenaissanceColors.stoneGray.opacity(0.1) : pozzolanaRed.opacity(0.15))
                         .cornerRadius(6)
                         .overlay(RoundedRectangle(cornerRadius: 6).stroke(
-                            ingredientsAdded == 3 ? color : IVMaterialColors.stoneGray.opacity(0.3),
+                            ingredientsAdded == 3 ? color : RenaissanceColors.stoneGray.opacity(0.3),
                             lineWidth: ingredientsAdded == 3 ? 2 : 1))
                     }
                     .buttonStyle(.plain)
@@ -1854,7 +1854,7 @@ private struct DailyFlowVisual: View {
 
                     // Basin outline
                     RoundedRectangle(cornerRadius: 4)
-                        .strokeBorder(IVMaterialColors.stoneGray, lineWidth: 2)
+                        .strokeBorder(RenaissanceColors.stoneGray, lineWidth: 2)
                         .frame(width: basinW, height: basinH)
                         .position(x: cx, y: basinY)
 

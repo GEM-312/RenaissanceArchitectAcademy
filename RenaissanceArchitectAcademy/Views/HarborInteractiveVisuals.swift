@@ -131,7 +131,7 @@ private struct HarborPlanVisual: View {
                                 radius: w * 0.35,
                                 startAngle: .degrees(160), endAngle: .degrees(20), clockwise: true)
                     }
-                    .stroke(IVMaterialColors.stoneGray, lineWidth: 3)
+                    .stroke(RenaissanceColors.stoneGray, lineWidth: 3)
 
                     // Placeable items
                     if step >= 2 {
@@ -248,7 +248,7 @@ private struct WaveForceVisual: View {
 
                     // Breakwater wall
                     RoundedRectangle(cornerRadius: 2)
-                        .fill(IVMaterialColors.stoneGray)
+                        .fill(RenaissanceColors.stoneGray)
                         .frame(width: 12, height: h * 0.5)
                         .position(x: wallX, y: seaLevel)
 
@@ -445,11 +445,11 @@ private struct BreakwaterVisual: View {
                         let y = baseY - CGFloat(row) * blockH
 
                         RoundedRectangle(cornerRadius: 3)
-                            .fill(IVMaterialColors.stoneGray.opacity(0.5))
+                            .fill(RenaissanceColors.stoneGray.opacity(0.5))
                             .frame(width: blockW, height: blockH - 2)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 3)
-                                    .strokeBorder(IVMaterialColors.stoneGray, lineWidth: 1)
+                                    .strokeBorder(RenaissanceColors.stoneGray, lineWidth: 1)
                             )
                             .position(x: x, y: y)
                             .transition(.move(edge: .top).combined(with: .opacity))
@@ -529,7 +529,7 @@ private struct LighthouseVisual: View {
                         p.addLine(to: CGPoint(x: cx + towerW * 0.7, y: h * 0.7))
                         p.closeSubpath()
                     }
-                    .fill(IVMaterialColors.stoneGray.opacity(0.4))
+                    .fill(RenaissanceColors.stoneGray.opacity(0.4))
 
                     // Fire at top
                     Image(systemName: "flame.fill")
@@ -724,13 +724,13 @@ private struct MarineConcreteVisual: View {
                     HStack(spacing: w * 0.06) {
                         VStack(spacing: 4) {
                             Text("ROMAN").font(RenaissanceFont.visualTitle).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
-                            RoundedRectangle(cornerRadius: 4).fill(IVMaterialColors.stoneGray.opacity(0.4 + years * 0.4))
+                            RoundedRectangle(cornerRadius: 4).fill(RenaissanceColors.stoneGray.opacity(0.4 + years * 0.4))
                                 .frame(width: w * 0.25, height: h * 0.25)
                             Text(years > 0.5 ? "Stronger" : "").font(RenaissanceFont.ivFormula).foregroundStyle(RenaissanceColors.sageGreen)
                         }
                         VStack(spacing: 4) {
                             Text("MODERN").font(RenaissanceFont.visualTitle).foregroundStyle(IVMaterialColors.sepiaInk.opacity(0.5))
-                            RoundedRectangle(cornerRadius: 4).fill(IVMaterialColors.stoneGray.opacity(0.6 - years * 0.4))
+                            RoundedRectangle(cornerRadius: 4).fill(RenaissanceColors.stoneGray.opacity(0.6 - years * 0.4))
                                 .frame(width: w * 0.25, height: h * 0.25)
                                 .overlay { if years > 0.5 {
                                     ForEach(0..<3, id: \.self) { i in
@@ -864,13 +864,13 @@ private struct MarineMortarVisual: View {
                 HStack(spacing: 12) {
                     Button { guard scoops == 0 else { return }; withAnimation(.spring(response: 0.3)) { scoops = 1 }; SoundManager.shared.play(.tapSoft) } label: {
                         Text("+ Lime").font(RenaissanceFont.ivLabel).padding(.horizontal, 12).padding(.vertical, 6)
-                            .background(scoops >= 1 ? IVMaterialColors.stoneGray.opacity(0.1) : Color.white.opacity(0.3)).cornerRadius(6)
-                            .overlay(RoundedRectangle(cornerRadius: 6).stroke(scoops < 1 ? color : IVMaterialColors.stoneGray.opacity(0.2), lineWidth: scoops < 1 ? 2 : 0.5))
+                            .background(scoops >= 1 ? RenaissanceColors.stoneGray.opacity(0.1) : Color.white.opacity(0.3)).cornerRadius(6)
+                            .overlay(RoundedRectangle(cornerRadius: 6).stroke(scoops < 1 ? color : RenaissanceColors.stoneGray.opacity(0.2), lineWidth: scoops < 1 ? 2 : 0.5))
                     }.buttonStyle(.plain).opacity(scoops >= 1 ? 0.4 : 1).foregroundStyle(IVMaterialColors.sepiaInk)
                     Button { guard scoops >= 1 && scoops < 4 else { return }; withAnimation(.spring(response: 0.3)) { scoops += 1 }; SoundManager.shared.play(.tapSoft) } label: {
                         Text("+ Ash").font(RenaissanceFont.ivLabel).padding(.horizontal, 12).padding(.vertical, 6)
-                            .background(scoops >= 4 ? IVMaterialColors.stoneGray.opacity(0.1) : Color(red: 0.65, green: 0.40, blue: 0.30).opacity(0.15)).cornerRadius(6)
-                            .overlay(RoundedRectangle(cornerRadius: 6).stroke((scoops >= 1 && scoops < 4) ? color : IVMaterialColors.stoneGray.opacity(0.2), lineWidth: (scoops >= 1 && scoops < 4) ? 2 : 0.5))
+                            .background(scoops >= 4 ? RenaissanceColors.stoneGray.opacity(0.1) : Color(red: 0.65, green: 0.40, blue: 0.30).opacity(0.15)).cornerRadius(6)
+                            .overlay(RoundedRectangle(cornerRadius: 6).stroke((scoops >= 1 && scoops < 4) ? color : RenaissanceColors.stoneGray.opacity(0.2), lineWidth: (scoops >= 1 && scoops < 4) ? 2 : 0.5))
                     }.buttonStyle(.plain).opacity(scoops >= 4 ? 0.4 : 1).foregroundStyle(IVMaterialColors.sepiaInk)
                 }
                 if scoops >= 4 && !seawaterAdded {

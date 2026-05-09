@@ -209,7 +209,7 @@ struct CardVisualView: View {
     private func drawReaction(context: GraphicsContext, size: CGSize) {
         let w = size.width, h = size.height
         let centerY = h * 0.5
-        let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
+        let sepiaInk = RenaissanceColors.sepiaInk
 
         guard currentStep >= 1 else { return }
 
@@ -272,7 +272,7 @@ struct CardVisualView: View {
 
     private func drawCrossSection(context: GraphicsContext, size: CGSize) {
         let w = size.width, h = size.height
-        let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
+        let sepiaInk = RenaissanceColors.sepiaInk
 
         guard !visual.labels.isEmpty else { return }
 
@@ -341,7 +341,7 @@ struct CardVisualView: View {
 
     private func drawDomeLayers(context: GraphicsContext, size: CGSize) {
         let w = size.width, h = size.height
-        let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
+        let sepiaInk = RenaissanceColors.sepiaInk
         let centerX = w * 0.5
         let baseY = h * 0.7
         let domeRadius = min(w * 0.4, baseY - 10)
@@ -413,7 +413,7 @@ struct CardVisualView: View {
         }
 
         let w = size.width, h = size.height
-        let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
+        let sepiaInk = RenaissanceColors.sepiaInk
 
         // Dome cross-section with inscribed sphere (Pantheon pattern from WolframGeometryView)
         let pad: CGFloat = 15
@@ -525,7 +525,7 @@ struct CardVisualView: View {
 
     private func drawTessellation(context: GraphicsContext, size: CGSize) {
         let w = size.width, h = size.height
-        let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
+        let sepiaInk = RenaissanceColors.sepiaInk
         let centerX = w * 0.5, centerY = h * 0.45
 
         // Stone colors matching real Pantheon floor
@@ -602,7 +602,7 @@ struct CardVisualView: View {
 
     private func drawChorobatesBeam(context: GraphicsContext, size: CGSize) {
         let w = size.width, h = size.height
-        let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
+        let sepiaInk = RenaissanceColors.sepiaInk
         let wood = Color(red: 0.6, green: 0.45, blue: 0.3)
 
         let beamW = w * 0.75
@@ -705,7 +705,7 @@ struct CardVisualView: View {
     private func drawRatio(context: GraphicsContext, size: CGSize) {
         let w = size.width, h = size.height
         let pad: CGFloat = 12
-        let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
+        let sepiaInk = RenaissanceColors.sepiaInk
         let barWidth = w - pad * 2
         let barHeight: CGFloat = 40
         let barY = h * 0.35
@@ -792,7 +792,7 @@ struct CardVisualView: View {
     private func drawTemperature(context: GraphicsContext, size: CGSize) {
         let w = size.width, h = size.height
         let pad: CGFloat = 20
-        let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
+        let sepiaInk = RenaissanceColors.sepiaInk
 
         guard currentStep >= 1 else { return }
 
@@ -876,7 +876,7 @@ struct CardVisualView: View {
 
     private func drawForce(context: GraphicsContext, size: CGSize) {
         let w = size.width, h = size.height
-        let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
+        let sepiaInk = RenaissanceColors.sepiaInk
 
         // Special case: Oculus compression ring
         if visual.values["oculus"] == 1 {
@@ -1024,7 +1024,7 @@ struct CardVisualView: View {
 
     private func drawOculusCompression(context: GraphicsContext, size: CGSize) {
         let w = size.width, h = size.height
-        let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
+        let sepiaInk = RenaissanceColors.sepiaInk
         let centerX = w * 0.5
         let baseY = h * 0.7
         let domeRadius = min(w * 0.4, baseY - 10)
@@ -1100,7 +1100,7 @@ struct CardVisualView: View {
 
     private func drawVoussoirArch(context: GraphicsContext, size: CGSize) {
         let w = size.width, h = size.height
-        let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
+        let sepiaInk = RenaissanceColors.sepiaInk
         let centerX = w * 0.5
         let baseY = h * 0.78
         let archRadius = w * 0.36
@@ -1209,7 +1209,7 @@ struct CardVisualView: View {
 
     private func drawScaffolding(context: GraphicsContext, size: CGSize) {
         let w = size.width, h = size.height
-        let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
+        let sepiaInk = RenaissanceColors.sepiaInk
         let wood = Color.brown
         let centerX = w * 0.5
         let groundY = h * 0.72
@@ -1350,7 +1350,7 @@ struct CardVisualView: View {
 
     private func drawCoffers(context: GraphicsContext, size: CGSize) {
         let w = size.width, h = size.height
-        let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
+        let sepiaInk = RenaissanceColors.sepiaInk
         let centerX = w * 0.5
         let baseY = h * 0.55
         let domeRadius = min(w * 0.35, baseY - 8)
@@ -1491,7 +1491,7 @@ struct CardVisualView: View {
 
     private func drawBronzeDoors(context: GraphicsContext, size: CGSize) {
         let w = size.width, h = size.height
-        let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
+        let sepiaInk = RenaissanceColors.sepiaInk
         let centerX = w * 0.5
         let floorY = h * 0.88
         let doorH = h * 0.65
@@ -1601,7 +1601,7 @@ struct CardVisualView: View {
 
     private func drawCentering(context: GraphicsContext, size: CGSize) {
         let w = size.width, h = size.height
-        let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
+        let sepiaInk = RenaissanceColors.sepiaInk
         let centerX = w * 0.5
         let baseY = h * 0.7
         let archRadius = min(w * 0.4, baseY - 10)
@@ -1681,7 +1681,7 @@ struct CardVisualView: View {
 
     private func drawFlow(context: GraphicsContext, size: CGSize) {
         let w = size.width, h = size.height
-        let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
+        let sepiaInk = RenaissanceColors.sepiaInk
 
         guard currentStep >= 1 else { return }
 
@@ -1730,7 +1730,7 @@ struct CardVisualView: View {
 
     private func drawMolecule(context: GraphicsContext, size: CGSize) {
         let w = size.width, h = size.height
-        let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
+        let sepiaInk = RenaissanceColors.sepiaInk
         let centerX = w * 0.5, centerY = h * 0.45
 
         guard currentStep >= 1 else { return }
@@ -1789,7 +1789,7 @@ struct CardVisualView: View {
 
     private func drawComparison(context: GraphicsContext, size: CGSize) {
         let w = size.width, h = size.height
-        let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
+        let sepiaInk = RenaissanceColors.sepiaInk
 
         guard visual.labels.count >= 2 else { return }
 

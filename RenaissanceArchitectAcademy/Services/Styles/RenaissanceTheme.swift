@@ -90,6 +90,11 @@ enum Spacing {
     static let dialogPadding: CGFloat = 24
     static let dialogMargin: CGFloat  = 32
     static let dialogVSpacing: CGFloat = 16
+
+    // Button-specific (off-grid by design — visual choice for capsule
+    // proportions on RenaissanceButton + RenaissanceSecondaryButton)
+    static let buttonV: CGFloat          = 14
+    static let buttonSecondaryV: CGFloat = 10
 }
 
 // MARK: - 5. Corner Radius
