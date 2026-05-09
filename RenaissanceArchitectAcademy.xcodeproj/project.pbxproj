@@ -940,7 +940,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 601 /* Build configuration list for PBXProject " " */;
+			buildConfigurationList = 601 /* Build configuration list for PBXProject "RenaissanceArchitectAcademy" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -1368,7 +1368,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = RenaissanceArchitectAcademy/RenaissanceArchitectAcademy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEAD_CODE_STRIPPING = YES;
 				"ENABLE_ON_DEMAND_RESOURCES[sdk=iphoneos*]" = YES;
 				"ENABLE_ON_DEMAND_RESOURCES[sdk=iphonesimulator*]" = YES;
@@ -1408,7 +1408,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = RenaissanceArchitectAcademy/RenaissanceArchitectAcademy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEAD_CODE_STRIPPING = YES;
 				"ENABLE_ON_DEMAND_RESOURCES[sdk=iphoneos*]" = YES;
 				"ENABLE_ON_DEMAND_RESOURCES[sdk=iphonesimulator*]" = YES;
@@ -1453,7 +1453,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		601 /* Build configuration list for PBXProject " " */ = {
+		601 /* Build configuration list for PBXProject "RenaissanceArchitectAcademy" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				700 /* Debug */,
