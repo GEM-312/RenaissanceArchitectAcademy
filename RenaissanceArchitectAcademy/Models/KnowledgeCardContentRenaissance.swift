@@ -316,7 +316,7 @@ extension KnowledgeCardContent {
                 title: "Padua 1545",
                 italianTitle: "Padova 1545",
                 icon: "leaf.fill",
-                lessonText: "The world's first academic botanical garden opened in Padua in 1545 — and it's still there. The Venetian Republic funded it so medical students could study medicinal plants firsthand instead of from books. Before Padua, doctors prescribed herbs they'd never actually seen. Half of Renaissance medicine was botany. The garden that changed medicine wasn't in a hospital. It was in a university.",
+                lessonText: "And so — we begin again. Centuries have passed since we last spoke. Rome fell. The Middle Ages came. Cathedrals rose where temples had stood. And then — slowly, slowly — Italy stirred. In Florence, a man named Cosimo de Medici opened the first new academies. The rebirth had begun. La rinascita. The Renaissance. Now we are in Padua. The year is fifteen hundred forty-five. The Venetian Republic has just funded something the world has never seen before — an academic botanical garden. For medical students. Doctors before this prescribed herbs they had never seen. Half of all medicine, in those years, was botany. The garden that changed medicine — it was not built in a hospital. It was built in a university. And five hundred years later — it is still there.",
                 keywords: [
                     KeywordPair(keyword: "Padua 1545", definition: "World's first academic botanical garden"),
                     KeywordPair(keyword: "Venetian Republic", definition: "Funded the garden for medical education"),
@@ -324,8 +324,9 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Still existing", definition: "Oldest botanical garden in its original location"),
                 ],
                 activity: .numberFishing(question: "What year did the first academic botanical garden open in Padua?", correctAnswer: 1545, decoys: [1400, 1480, 1520, 1610, 1700]),
-                notebookSummary: "Padua 1545: world's first academic botanical garden. Funded by Venice for medical students. Still there today. Medicine = botany.",
-                visual: CardVisual(type: .crossSection, title: "Padua 1545", values: [:], labels: [], steps: 3, caption: "")
+                notebookSummary: "Padua 1545: world's first academic botanical garden, funded by the Venetian Republic. Medical students studied medicinal plants firsthand (before this, doctors prescribed herbs they had never seen). Half of Renaissance medicine was botany. Still there 500 years later. The Renaissance — la rinascita — has begun, decades after Cosimo de Medici opened Florence's first new academies.",
+                visual: CardVisual(type: .crossSection, title: "Padua 1545", values: [:], labels: [], steps: 3, caption: ""),
+                isLeadCard: true
             ),
 
             KnowledgeCard(
@@ -336,7 +337,7 @@ extension KnowledgeCardContent {
                 title: "Step 1: Circular Layout",
                 italianTitle: "Quadranti Circolari",
                 icon: "circle.grid.cross.fill",
-                lessonText: "Padua's garden is circular — 84 meters in diameter — divided into 4 quadrants by cross paths aligned to compass points. Each quadrant subdivided into 16 beds. The circle symbolizes the world; the quadrants represent the four elements (earth, water, air, fire). A surrounding wall protected rare plants from thieves. The geometry isn't decoration — it's a classification system you can walk through.",
+                lessonText: "Now — look at the garden from above. Perfect circle. Eighty-four meters across. Inside, two paths cross at the center — aligned to the four directions. North. South. East. West. Each quadrant — divided into sixteen smaller beds. The shape was not chosen for beauty. The circle — it symbolized the world. The four quadrants — they represented the four elements. Earth. Water. Air. Fire. The whole world, organized in a single garden. And around the outside — a wall. To keep thieves away from the rare plants. The geometry — it is not decoration. It is a classification system you can walk through.",
                 keywords: [
                     KeywordPair(keyword: "84 meters", definition: "Diameter of the circular garden"),
                     KeywordPair(keyword: "4 quadrants", definition: "Compass-aligned divisions — N, S, E, W"),
@@ -344,7 +345,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Four elements", definition: "Earth, water, air, fire — symbolic layout"),
                 ],
                 activity: .numberFishing(question: "What is the diameter (meters) of Padua's circular garden?", correctAnswer: 84, decoys: [40, 60, 100, 120, 150]),
-                notebookSummary: "Circular garden: 84m diameter, 4 quadrants (compass-aligned), 16 beds each. Circle = world. Quadrants = 4 elements.",
+                notebookSummary: "Circular garden: 84m diameter, 4 quadrants (compass-aligned N/S/E/W) of 16 beds each. Circle = the world; 4 quadrants = the 4 elements (earth, water, air, fire). Surrounding wall keeps thieves out. Classification as architecture — geometry you can walk through.",
                 visual: CardVisual(type: .crossSection, title: "Step 1: Circular Layout", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -356,7 +357,7 @@ extension KnowledgeCardContent {
                 title: "Step 5: Taxonomy",
                 italianTitle: "Nascita della Tassonomia",
                 icon: "list.bullet.indent",
-                lessonText: "Padua's professors needed to organize 6,000 plant species. They grouped them by shared features: leaf shape, flower structure, seed type. This was the beginning of taxonomy — classifying living things by observable traits. Luca Ghini, the garden's first director, invented the herbarium: pressing dried plants onto paper with labels. A pressed leaf is a data point. 6,000 data points became biology's first database.",
+                lessonText: "Now — meet a man. Luca Ghini. The first director of the garden. Six thousand plant species had to be organized. How? By shared traits. Leaf shape. Flower structure. Seed type. This is the science we now call taxonomy. Classifying living things by what you can observe. And Luca Ghini — he invented something extraordinary. He took plants. He pressed them flat. He glued them to paper. He labeled each one. Name. Origin. Date. We call this a herbarium. A pressed leaf — it is a data point. Six thousand pressed plants — biology's first database. A library you could hold in your hands.",
                 keywords: [
                     KeywordPair(keyword: "Taxonomy", definition: "Classifying living things by shared traits"),
                     KeywordPair(keyword: "Luca Ghini", definition: "Invented the herbarium — pressed plant records"),
@@ -364,7 +365,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Herbarium", definition: "Collection of pressed, labeled plant specimens"),
                 ],
                 activity: .wordScramble(word: "TAXONOMY", hint: "The science of classifying living things by shared features"),
-                notebookSummary: "Taxonomy born at Padua: 6,000 species organized by traits. Luca Ghini invented the herbarium. Pressed plants = first biology database.",
+                notebookSummary: "Luca Ghini (Padua's first director) invented the herbarium — pressed dried plants onto labeled paper. Used to organize 6,000 species by shared traits: leaf shape, flower structure, seed type. The beginning of taxonomy — classifying living things by what you can observe. Biology's first database.",
                 visual: CardVisual(type: .crossSection, title: "Step 5: Taxonomy", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -376,7 +377,7 @@ extension KnowledgeCardContent {
                 title: "Step 7: Records",
                 italianTitle: "Registri Botanici",
                 icon: "book.fill",
-                lessonText: "Every plant entering Padua was recorded: origin, date planted, soil type, growth rate, medicinal uses. The garden's catalogs — Horti Academici Patavini — became Europe's most referenced botanical texts. Seeds were exchanged with 60 other gardens across Europe via the Index Seminum (seed catalog). Information sharing at the speed of a horse. The world's first open-source scientific network ran on paper and trust.",
+                lessonText: "Every plant that entered Padua was recorded. Origin. Date planted. Soil. Growth rate. Medicinal use. The garden's catalogs had a beautiful name — Horti Academici Patavini. Across Europe, these books became the great reference works of botany. But here is the most remarkable thing. Padua exchanged seeds with sixty other gardens across Europe. Through a catalog — the Index Seminum. Letters traveled by horse. Seeds traveled in pouches. Information moving at the speed of a galloping mare. The world's first open-source scientific network. Ran on paper. And on trust. Knowledge wants to be shared. Always.",
                 keywords: [
                     KeywordPair(keyword: "Index Seminum", definition: "Seed exchange catalog shared across Europe"),
                     KeywordPair(keyword: "60 gardens", definition: "European partners in the seed exchange network"),
@@ -384,7 +385,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Open source", definition: "Free sharing of botanical knowledge"),
                 ],
                 activity: .hangman(word: "SEMINUM", hint: "Latin for 'of seeds' — the Index ___ was Europe's seed exchange catalog"),
-                notebookSummary: "Padua recorded everything. Index Seminum exchanged seeds with 60+ gardens. Horti Academici catalogs = Europe's botanical reference.",
+                notebookSummary: "Padua recorded everything about every plant: origin, date planted, soil, growth, medicinal uses. Horti Academici Patavini catalogs became Europe's botanical reference. Index Seminum: seed exchange catalog shared with 60+ gardens across Europe. The first open-source scientific network — running on paper, horseback, and trust.",
                 visual: CardVisual(type: .crossSection, title: "Step 7: Records", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -398,7 +399,7 @@ extension KnowledgeCardContent {
                 title: "Step 4: Boundary Wall",
                 italianTitle: "Pietra per il Muro di Cinta",
                 icon: "mountain.2.fill",
-                lessonText: "The garden's circular wall served two purposes: keep thieves out and retain heat. Built from local Euganean Hills trachyte — a volcanic stone that absorbs daytime sun and releases warmth at night. Plants near the wall survived winters 2°C warmer than open ground. The wall wasn't just security. It was the garden's first greenhouse — a thermal battery made of stone.",
+                lessonText: "The circular wall around the garden — it served two purposes. First, the obvious one. Keep thieves away from the precious plants. Second — and this you must understand — it stored heat. The stone is trachyte. Volcanic, from the Euganean Hills nearby. During the day, the sun strikes the wall. The wall absorbs the heat. At night, when the air grows cold, the wall slowly releases that warmth. Plants growing close to the wall survive winters two degrees warmer than the open garden. Two degrees — that is the difference between life and death for a delicate plant. The wall was the garden's first greenhouse. A thermal battery — made of stone.",
                 keywords: [
                     KeywordPair(keyword: "Trachyte", definition: "Volcanic stone from the Euganean Hills"),
                     KeywordPair(keyword: "Thermal mass", definition: "Stone absorbs heat by day, releases at night"),
@@ -406,7 +407,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Thermal battery", definition: "Wall stores and releases heat energy"),
                 ],
                 activity: .trueFalse(statement: "The garden's trachyte wall acted as a thermal battery, keeping nearby plants 2°C warmer", isTrue: true),
-                notebookSummary: "Wall: Euganean trachyte — absorbs sun by day, radiates heat at night. Plants 2°C warmer. Security wall = first greenhouse.",
+                notebookSummary: "Garden wall = Euganean Hills trachyte (volcanic stone). Absorbs the sun's heat by day, radiates it at night. Plants near the wall survive winters 2°C warmer than open ground — the difference between life and death for delicate species. Wall = first greenhouse, a thermal battery made of stone.",
                 visual: CardVisual(type: .crossSection, title: "Step 4: Boundary Wall", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -418,7 +419,7 @@ extension KnowledgeCardContent {
                 title: "Step 3: Irrigation",
                 italianTitle: "Canali di Irrigazione",
                 icon: "drop.triangle.fill",
-                lessonText: "Padua's garden drew water from the Bacchiglione River via underground terra-cotta pipes. A gravity-fed system split water to 4 quadrants through a central cistern. Each bed had adjustable sluice gates — Mediterranean plants got less water, tropical plants got more. The curator controlled each bed's moisture independently. 6,000 plants from 5 continents, each getting exactly the rain of its homeland.",
+                lessonText: "You remember the castellum at the baths? The water tank with three outlets, by height? The garden uses the same idea — but more refined. Water comes from the Bacchiglione River. Through underground terracotta pipes. To a central cistern. From the cistern — to all four quadrants. And then, the genius. Each individual bed has a small adjustable gate — a sluice. The curator opens some gates wider. Closes others. Mediterranean herbs get less water. Tropical plants get more. Each bed — receiving exactly the rain of its homeland. Six thousand plants. From five continents. Each one drinking what it would drink at home. Justice — in irrigation.",
                 keywords: [
                     KeywordPair(keyword: "Bacchiglione", definition: "River supplying the garden via underground pipes"),
                     KeywordPair(keyword: "Sluice gates", definition: "Adjustable water controls for each bed"),
@@ -426,7 +427,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "5 continents", definition: "Source range of Padua's 6,000 plant species"),
                 ],
                 activity: .wordScramble(word: "SLUICE", hint: "Adjustable gate controlling water flow to each garden bed"),
-                notebookSummary: "Gravity irrigation: Bacchiglione River → cistern → 4 quadrants. Sluice gates per bed. 6,000 plants from 5 continents, each watered differently.",
+                notebookSummary: "Gravity irrigation: Bacchiglione River → underground terracotta pipes → central cistern → 4 quadrants → adjustable sluice gates per individual bed (callback to bath castellum 3-outlet rationing). 6,000 plants from 5 continents, each watered as in its homeland. Justice in irrigation.",
                 visual: CardVisual(type: .crossSection, title: "Step 3: Irrigation", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -438,7 +439,7 @@ extension KnowledgeCardContent {
                 title: "Step 8: Observation Path",
                 italianTitle: "Geologia dei Sentieri",
                 icon: "globe.europe.africa.fill",
-                lessonText: "Garden paths were paved with local gravel — a deliberate geological choice. Limestone gravel from the Euganean Hills slowly dissolves in rainwater, releasing calcium into the soil. This natural liming kept soil pH alkaline — perfect for the Mediterranean herbs that were the garden's primary purpose. The paths weren't just for walking. They were fertilizing the beds they crossed. Infrastructure that feeds.",
+                lessonText: "Now — look at the paths between the beds. Limestone gravel. Local stone. Crushed small. Walked upon every day. But the choice of stone is not for the walker — it is for the plants. Rain falls. The rainwater slowly dissolves the limestone. Calcium is released. The calcium washes into the soil. We call this natural liming. It keeps the soil slightly alkaline — perfect for Mediterranean herbs. The garden's whole purpose. The paths are not just for walking. They are fertilizing the beds they cross. Infrastructure that feeds. Beautiful — no?",
                 keywords: [
                     KeywordPair(keyword: "Limestone gravel", definition: "Paths that dissolve and lime the soil"),
                     KeywordPair(keyword: "pH alkaline", definition: "Condition preferred by Mediterranean herbs"),
@@ -446,7 +447,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Calcium release", definition: "Gravel dissolving → natural soil fertilizer"),
                 ],
                 activity: .multipleChoice(question: "Why were garden paths made from limestone gravel?", options: ["Cheapest option", "Dissolves to fertilize soil with calcium", "Easiest to walk on", "Matched the marble walls"], correctIndex: 1),
-                notebookSummary: "Limestone gravel paths dissolve in rain → release calcium → lime soil → perfect pH for Mediterranean herbs. Paths = fertilizer.",
+                notebookSummary: "Garden paths = local limestone gravel. Rain dissolves the limestone → calcium washes into soil (natural liming) → alkaline pH, perfect for Mediterranean herbs. The paths are not just for walking — they fertilize the beds they cross. Infrastructure that feeds.",
                 visual: CardVisual(type: .crossSection, title: "Step 8: Observation Path", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -460,7 +461,7 @@ extension KnowledgeCardContent {
                 title: "Step 6: Cold House Glass",
                 italianTitle: "Vetro per Serra",
                 icon: "flask.fill",
-                lessonText: "Padua's later greenhouses used Murano glass — the clearest available. Greenhouse glass must transmit UV light for photosynthesis while trapping infrared heat inside. Venetian glass achieved 80% light transmission (modern glass: 90%). The frames were lead cames — same as stained glass windows, but with clear panes. The craft of stained glass became the science of controlled sunlight. Same tools, different purpose.",
+                lessonText: "You remember the bath glass? Made from river sand at eleven hundred degrees? The Renaissance went further. Padua's later greenhouses use Murano glass — the clearest in all of Europe. Why does this matter? Greenhouse glass has a special job. It must let in the ultraviolet light — what plants need for photosynthesis. But it must trap the infrared. The heat. Venetian glass achieved eighty percent light transmission. Your modern glass — ninety percent. The frames are lead cames. The same lead frames that hold stained glass in cathedrals. The craft of stained glass became the science of controlled sunlight. Same tools. Different purpose. And soon — we will travel to Venice, to meet the masters of this glass.",
                 keywords: [
                     KeywordPair(keyword: "80% transmission", definition: "Murano glass light transparency"),
                     KeywordPair(keyword: "UV light", definition: "Passes through glass — needed for photosynthesis"),
@@ -468,7 +469,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Greenhouse effect", definition: "Light enters, heat stays — glass trap"),
                 ],
                 activity: .trueFalse(statement: "Greenhouse glass works by transmitting UV light for photosynthesis while trapping infrared heat", isTrue: true),
-                notebookSummary: "Murano greenhouse glass: 80% light transmission. UV passes through (photosynthesis), infrared trapped (heat). Same lead cames as stained glass.",
+                notebookSummary: "Padua greenhouses used Murano glass — clearest in Europe, 80% light transmission. Greenhouse glass passes UV (for photosynthesis) but traps infrared (heat). Lead came frames = same as stained glass windows. Callback to bath glass; the craft of stained glass became the science of controlled sunlight. Glassworks comes next.",
                 visual: CardVisual(type: .crossSection, title: "Step 6: Cold House Glass", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -480,7 +481,7 @@ extension KnowledgeCardContent {
                 title: "Step 6: Cold House Heat",
                 italianTitle: "Scienza della Ritenzione Termica",
                 icon: "flame.circle.fill",
-                lessonText: "Renaissance greenhouses heated with hypocaust-inspired underfloor systems — terracotta pipes carrying warm air from a wood furnace. The floor stored heat during the day and released it at night. Thermal mass: brick floors absorbed 4× more heat than wood. The target: keep interior above 10°C when outside dropped to freezing. A 5°C difference between life and death for a tropical seedling. Precision heating for plants, not people.",
+                lessonText: "You remember the Roman hypocaust? The hot air, flowing under the floor of the bath? Fifteen hundred years later, the Renaissance gardeners revived it. For their greenhouses. Terracotta pipes — the same idea — carry warm air from a wood furnace beneath the greenhouse floor. The brick floor stores the heat by day. Releases it slowly at night. Brick absorbs four times more heat than wood. The target — keep the inside above ten degrees, when outside the air drops below freezing. Five degrees. The difference between life and death for a tropical seedling. The same trick the Romans used to warm bathers — now warming plants. Knowledge does not die. It waits.",
                 keywords: [
                     KeywordPair(keyword: "Thermal mass", definition: "Brick absorbs 4× more heat than wood"),
                     KeywordPair(keyword: "Underfloor heating", definition: "Warm air pipes beneath the greenhouse"),
@@ -488,7 +489,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Night release", definition: "Stored heat radiates when temperature drops"),
                 ],
                 activity: .numberFishing(question: "How many times more heat does brick absorb compared to wood?", correctAnswer: 4, decoys: [2, 3, 6, 8, 10]),
-                notebookSummary: "Greenhouse heating: underfloor warm air pipes + brick thermal mass (4× wood). Target: above 10°C in winter. Heat stored by day, released at night.",
+                notebookSummary: "Renaissance greenhouses revived the Roman hypocaust (bath callback). Terracotta pipes carry warm air from a wood furnace beneath the floor. Brick absorbs 4× more heat than wood — stores by day, releases at night. Target: 10°C interior (5°C above freezing — life vs death for a tropical seedling). Knowledge does not die. It waits.",
                 visual: CardVisual(type: .crossSection, title: "Step 6: Cold House Heat", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -500,7 +501,7 @@ extension KnowledgeCardContent {
                 title: "Step 2: Soil Beds",
                 italianTitle: "Scienza del Suolo",
                 icon: "leaf.arrow.circlepath",
-                lessonText: "Different plants need different soils. Padua's gardeners mixed custom substrates: sand + compost for Mediterranean herbs, clay + peat for bog plants, pure gravel for alpine species. They discovered that adding charcoal (carbon) improved drainage and prevented root rot. This was biochar — 500 years before the word existed. The first soil scientists weren't geologists. They were gardeners who paid attention.",
+                lessonText: "Each plant — needs a different soil. Padua's gardeners mixed custom soil for each. Sand and compost for Mediterranean herbs. Clay and peat for bog plants. Pure gravel for alpine species. And then — a discovery. They began adding charcoal to the soil. Pieces of carbon, leftover from the kilns. The result? Better drainage. Less root rot. Healthier plants. Your scientists today have a name for this — biochar. The gardeners of Padua were practicing it five hundred years before the word existed. The first soil scientists were not in laboratories. They were in the gardens. With dirt on their hands. Paying attention.",
                 keywords: [
                     KeywordPair(keyword: "Substrate", definition: "Custom soil mix for specific plant needs"),
                     KeywordPair(keyword: "Biochar", definition: "Charcoal in soil — improves drainage"),
@@ -508,7 +509,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Custom mixes", definition: "Sand/compost, clay/peat, pure gravel by plant type"),
                 ],
                 activity: .wordScramble(word: "BIOCHAR", hint: "Charcoal added to soil for drainage — discovered by Renaissance gardeners"),
-                notebookSummary: "Custom substrates per plant. Charcoal (biochar) prevents root rot — 500 years before the term. First soil scientists were gardeners.",
+                notebookSummary: "Custom soil substrates per plant: sand+compost (Mediterranean herbs), clay+peat (bog), pure gravel (alpine). Adding charcoal improved drainage + prevented root rot — biochar, 500 years before the word existed. The first soil scientists were gardeners with dirt on their hands, paying attention.",
                 visual: CardVisual(type: .crossSection, title: "Step 2: Soil Beds", values: [:], labels: [], steps: 3, caption: "")
             ),
         ]
