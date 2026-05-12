@@ -1487,7 +1487,7 @@ extension KnowledgeCardContent {
                 title: "50,000 Seats",
                 italianTitle: "50.000 Posti a Sedere",
                 icon: "sportscourt.fill",
-                lessonText: "The Colosseum held 50,000 spectators — and emptied in 15 minutes. 76 entrances, each numbered. Your ticket (tessera) listed your entrance, section, row, and seat. No confusion, no bottlenecks. The corridors (vomitoria) were angled to accelerate crowd flow. Modern stadiums still use this system unchanged. The Romans didn't just build a stadium — they invented crowd management.",
+                lessonText: "And now — the greatest building of Rome. The Colosseum. Fifty thousand spectators inside, all at once. And here is what astonishes me — they could empty the building in fifteen minutes. Fifteen. Seventy-six numbered entrances, ringing the outside. Each spectator carried a small clay ticket — the tessera. Carved into it: your entrance, your section, your row, your seat. No confusion. No pushing. No bottleneck. The corridors inside — we call them vomitoria — angled outward to accelerate the crowd's exit. Every modern stadium in your world still uses this same design. The Romans did not just build a stadium. They invented the very idea of crowd management.",
                 keywords: [
                     KeywordPair(keyword: "50,000", definition: "Spectator capacity of the Colosseum"),
                     KeywordPair(keyword: "76 entrances", definition: "Numbered gates for crowd distribution"),
@@ -1495,14 +1495,15 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Vomitoria", definition: "Angled corridors accelerating crowd exit"),
                 ],
                 activity: .numberFishing(question: "How many minutes to empty the Colosseum?", correctAnswer: 15, decoys: [5, 30, 45, 60, 90]),
-                notebookSummary: "Colosseum: 50,000 seats, 76 numbered entrances. Tessera tickets. Vomitoria corridors empty in 15 min. Invented crowd management.",
+                notebookSummary: "Colosseum: 50,000 spectators, 76 numbered entrances. Each ticket (tessera) carved with entrance, section, row, seat. Angled corridors (vomitoria) empty the entire building in 15 minutes. Every modern stadium uses this same design. The Romans invented the very idea of crowd management.",
                 visual: CardVisual(
                     type: .geometry,
                     title: "Colosseum — 76 Exits, 15 Minutes",
                     values: ["diameter": 188, "height": 48],
                     labels: ["76 numbered entrances", "50,000 seats", "Vomitoria angled corridors"],
                     steps: 3, caption: "Romans didn't just build a stadium — they invented crowd management"
-                )
+                ),
+                isLeadCard: true
             ),
 
             KnowledgeCard(
@@ -1513,7 +1514,7 @@ extension KnowledgeCardContent {
                 title: "Draining Nero's Lake",
                 italianTitle: "Prosciugare il Lago di Nerone",
                 icon: "drop.degreesign.fill",
-                lessonText: "Emperor Vespasian built the Colosseum on Nero's private pleasure lake — a political statement. But building on a lakebed meant solving drainage. Engineers drove hundreds of oak piles into the clay, laid a concrete raft foundation 13 meters deep, and installed a permanent drainage system of lead pipes. The lake water was redirected to the city sewers. The foundation cost more than the building above it.",
+                lessonText: "Now — listen to a story of politics, written in stone. The emperor before Vespasian was Nero. A terrible man. He built a private pleasure lake — for himself, in the center of Rome. When Vespasian took the throne, he made a statement. He drained Nero's lake. And in that place, he built the Colosseum — for the PEOPLE. But — building on a drained lakebed is not simple. So the engineers drove hundreds of oak piles into the soft clay. Then they poured a concrete raft — thirteen meters deep. Lead pipes carried the lake water to the city sewers. The foundation alone cost more than the building above it. Vespasian took what was Nero's — and gave it back.",
                 keywords: [
                     KeywordPair(keyword: "Nero's lake", definition: "Drained to build the Colosseum — a political act"),
                     KeywordPair(keyword: "13 meters", definition: "Depth of the concrete raft foundation"),
@@ -1521,7 +1522,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Vespasian", definition: "Emperor who turned Nero's luxury into public arena"),
                 ],
                 activity: .numberFishing(question: "How deep (meters) is the Colosseum's foundation?", correctAnswer: 13, decoys: [5, 8, 20, 30, 40]),
-                notebookSummary: "Built on Nero's drained lake. Oak piles + 13m concrete raft foundation + lead drain pipes. Foundation cost more than the building.",
+                notebookSummary: "Vespasian drained Nero's private pleasure lake and built the Colosseum on the lakebed — a political statement (turning luxury into public arena). Engineers drove oak piles into the clay + 13m-deep concrete raft + lead drainage pipes to the city sewers. Foundation cost more than the building above it.",
                 visual: CardVisual(
                     type: .crossSection,
                     title: "Foundation on a Drained Lake",
@@ -1539,7 +1540,7 @@ extension KnowledgeCardContent {
                 title: "Four Classical Orders",
                 italianTitle: "Quattro Ordini Classici",
                 icon: "building.columns.fill",
-                lessonText: "The Colosseum's facade is a textbook — literally. Each of the four stories uses a different column order: Doric (ground, simplest), Ionic (second, scroll capitals), Corinthian (third, acanthus leaves), Composite (top, combined). This wasn't just decoration. Each order is progressively lighter in appearance, making the building seem to float upward. Architecture is visual physics — heavier at the bottom, lighter at the top.",
+                lessonText: "Look at the facade. From the bottom — to the top. Four floors. Four different kinds of column. On the ground floor: Doric. The simplest. Sturdiest. Like the Greek temples of old. On the second floor: Ionic. Capitals carved like scrolls. On the third: Corinthian. Capitals like leaves of acanthus, curled and ornate. And on the top floor: Composite — Ionic and Corinthian combined. This is not just decoration. Each order is progressively lighter in appearance. The building seems to rise. To float upward. Architecture as visual physics. Heavier at the bottom, lighter at the top. Just like the insula walls — you remember?",
                 keywords: [
                     KeywordPair(keyword: "Doric", definition: "Ground floor — simplest, sturdiest column"),
                     KeywordPair(keyword: "Ionic", definition: "Second floor — scroll-shaped capitals"),
@@ -1547,7 +1548,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Composite", definition: "Top floor — combined Ionic + Corinthian"),
                 ],
                 activity: .multipleChoice(question: "Which column order is on the ground floor of the Colosseum?", options: ["Ionic", "Corinthian", "Doric", "Composite"], correctIndex: 2),
-                notebookSummary: "4 column orders bottom→top: Doric → Ionic → Corinthian → Composite. Each lighter than the last. Visual physics.",
+                notebookSummary: "4 classical orders ascending: Doric (ground, simplest) → Ionic (2nd, scroll capitals) → Corinthian (3rd, acanthus leaves) → Composite (top, combined). Each lighter than the last — visual physics, building seems to rise. Same idea as the insula's tapered walls — heavier at the bottom, lighter at the top.",
                 visual: CardVisual(
                     type: .crossSection,
                     title: "Four Orders — Bottom to Top",
@@ -1565,7 +1566,7 @@ extension KnowledgeCardContent {
                 title: "Step 6: Acoustic Bowl",
                 italianTitle: "Catino Acustico",
                 icon: "speaker.wave.3.fill",
-                lessonText: "The Colosseum's elliptical shape isn't arbitrary — it's acoustic engineering. Sound waves from the arena floor bounce off the curved walls and focus toward the upper seats. Spectators 50 meters away could hear announcements clearly. The seating rake (angle) was precisely 37° — steep enough for sound reflection, gentle enough for comfortable sitting. The bowl shape turns architecture into an amplifier.",
+                lessonText: "Why is the Colosseum oval? Why not a perfect circle? Listen — there is a reason. An elliptical shape — like an egg — focuses sound. The sound from the arena floor bounces off the curved walls, and the curves direct it upward — to the seats. Even the spectator fifty meters away hears the announcer clearly. And there is more. The angle of the seats — the rake — is exactly thirty-seven degrees. Steep enough to bounce the sound toward those above. Gentle enough that people can sit comfortably for hours. The Romans were not just building a stadium. They were building an amplifier. Out of stone.",
                 keywords: [
                     KeywordPair(keyword: "Elliptical shape", definition: "Oval form that focuses sound waves"),
                     KeywordPair(keyword: "37° rake", definition: "Seating angle for optimal acoustics"),
@@ -1573,7 +1574,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "50 meters", definition: "Distance at which speech remained audible"),
                 ],
                 activity: .numberFishing(question: "What angle (degrees) were the Colosseum seats raked for acoustics?", correctAnswer: 37, decoys: [15, 25, 45, 55, 70]),
-                notebookSummary: "Elliptical shape focuses sound. 37° seating rake for optimal acoustics. Speech audible 50m away. Bowl = amplifier.",
+                notebookSummary: "Colosseum's elliptical shape (egg-shaped, not circular) focuses sound — curves direct it from the arena floor upward to the seats. 37° seating rake = steep enough for acoustic reflection, gentle enough for comfort. Speech audible 50m away. An amplifier made of stone.",
                 visual: CardVisual(
                     type: .geometry,
                     title: "Acoustic Bowl — 37° Rake",
@@ -1591,7 +1592,7 @@ extension KnowledgeCardContent {
                 title: "Step 7: The Hypogeum",
                 italianTitle: "L'Ipogeo",
                 icon: "arrow.down.square.fill",
-                lessonText: "Beneath the arena floor lies the hypogeum — two levels of underground tunnels, animal cages, and 80 vertical shafts with rope-and-pulley elevators. Stagehands could lift a lion from the basement to the arena in 7 seconds. Trap doors in the wooden floor opened on cue. The audience never saw the machinery. The greatest show in Rome ran on invisible infrastructure — the definition of engineering.",
+                lessonText: "Now — go beneath the arena floor. There. Look. This is the hypogeum. Two levels of underground tunnels. Cages for the animals. Rooms for the gladiators. And eighty vertical shafts — each one with a rope-and-pulley elevator. The stagehands could lift a lion from the basement to the arena in seven seconds. Seven. Trap doors hidden in the wooden floor opened on cue. The audience above — they never saw the machinery. They only saw the lion appear, as if from nowhere. The greatest show in Rome ran on invisible infrastructure. And that, my apprentice — that is the very definition of engineering.",
                 keywords: [
                     KeywordPair(keyword: "Hypogeum", definition: "Two-level underground network beneath the arena"),
                     KeywordPair(keyword: "80 shafts", definition: "Vertical elevators for lifting animals and scenery"),
@@ -1599,7 +1600,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Trap doors", definition: "Hidden openings in the wooden arena floor"),
                 ],
                 activity: .wordScramble(word: "HYPOGEUM", hint: "Underground tunnel network beneath the Colosseum arena"),
-                notebookSummary: "Hypogeum: 2 underground levels, 80 elevator shafts, trap doors. Lion from basement to arena in 7 seconds. Invisible infrastructure.",
+                notebookSummary: "Hypogeum: 2-level underground network beneath the arena — animal cages, gladiator rooms, 80 vertical rope-and-pulley elevator shafts. A lion lifted from basement to arena in 7 seconds. Trap doors in the wooden floor opened on cue. The audience never saw the machinery. Invisible infrastructure — the definition of engineering.",
                 visual: CardVisual(
                     type: .crossSection,
                     title: "The Hypogeum — Underground Machine",
@@ -1619,7 +1620,7 @@ extension KnowledgeCardContent {
                 title: "Step 2: Travertine Foundation",
                 italianTitle: "Travertino da Tivoli",
                 icon: "mountain.2.fill",
-                lessonText: "100,000 cubic meters of travertine — quarried from Tivoli, 30 km east. Travertine is a limestone deposited by hot springs. It's riddled with air pockets that make it light (30% lighter than marble) but still strong in compression. Those holes also let iron clamps grip deep inside the stone. After the Middle Ages, people stole the clamps — the holes you see today are vandalism scars, not design.",
+                lessonText: "One hundred thousand cubic meters of stone. Travertine, all of it. Quarried from Tivoli — thirty kilometers east of Rome. What is travertine? A kind of limestone, deposited by hot springs. Look at it closely — it is riddled with small holes. Air pockets, trapped when the stone formed. These holes make travertine thirty percent lighter than marble — but it is still very strong in compression. And the holes serve another purpose. The iron clamps that hold the stones together — they grip deep into those pores. Stronger than any glue. Now — here is something sad. After the Middle Ages, when Rome had fallen, people came and pried out the iron clamps. For the metal. The holes you see in the Colosseum today are not by design. They are scars, left by greed.",
                 keywords: [
                     KeywordPair(keyword: "Travertine", definition: "Hot-spring limestone — light with air pockets"),
                     KeywordPair(keyword: "Tivoli", definition: "Town 30 km east — source of all Colosseum stone"),
@@ -1627,7 +1628,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "30% lighter", definition: "Travertine vs marble weight comparison"),
                 ],
                 activity: .hangman(word: "TRAVERTINE", hint: "Limestone from Tivoli's hot springs — 30% lighter than marble"),
-                notebookSummary: "Travertine from Tivoli: hot-spring limestone, 30% lighter than marble. 100,000 m³ used. Air pockets grip iron clamps.",
+                notebookSummary: "100,000 m³ of travertine (hot-spring limestone) quarried from Tivoli, 30 km east. Air pockets in the stone = 30% lighter than marble, still strong in compression. Pores grip iron clamps deeply. The holes visible today are not design — they are scars left by medieval looters who stole the iron.",
                 visual: CardVisual(
                     type: .comparison,
                     title: "Travertine vs Marble",
@@ -1645,7 +1646,7 @@ extension KnowledgeCardContent {
                 title: "Step 3: Iron Cramps",
                 italianTitle: "300 Tonnellate di Grappe di Ferro",
                 icon: "link",
-                lessonText: "No mortar joins the Colosseum's travertine blocks. Instead, 300 tons of iron clamps lock each stone to its neighbor. Molten lead was poured into drill holes to anchor each clamp. This system flexes slightly in earthquakes — rigid mortar would crack. After Rome fell, looters pried out the clamps for iron. The building survived 2,000 years of earthquakes but couldn't survive human greed.",
+                lessonText: "Now — listen to a Roman secret. The Colosseum is not held together by mortar. Not a single drop. Then how? Iron clamps. Three hundred tons of them, in total. Each clamp locks one stone to the next. Holes are drilled in the stone — molten lead is poured in — the clamp sits inside the hole, anchored. Why iron and lead instead of mortar? Because mortar is rigid. In an earthquake, rigid mortar cracks. But these iron clamps — they flex a little. They give. They bend without breaking. The building has survived two thousand years of earthquakes. What it could not survive — was human greed. The looters who came later, and pried the iron out, stone by stone.",
                 keywords: [
                     KeywordPair(keyword: "300 tons", definition: "Weight of iron clamps used in the Colosseum"),
                     KeywordPair(keyword: "No mortar", definition: "Blocks joined by iron clamps, not cement"),
@@ -1653,7 +1654,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Earthquake flex", definition: "Clamp joints absorb seismic movement"),
                 ],
                 activity: .trueFalse(statement: "The Colosseum uses no mortar — 300 tons of iron clamps hold the stone blocks together", isTrue: true),
-                notebookSummary: "No mortar: 300 tons iron clamps + molten lead anchors. Flexes in earthquakes. Clamps later stolen — scars visible today.",
+                notebookSummary: "No mortar in the Colosseum. 300 tons of iron clamps lock stone to stone, anchored by molten lead poured into drilled holes. Iron flexes in earthquakes (rigid mortar would crack). Survived 2,000 years of earthquakes — but not the looters who pried the iron out for the metal.",
                 visual: CardVisual(
                     type: .force,
                     title: "300 Tons of Iron Clamps",
@@ -1671,7 +1672,7 @@ extension KnowledgeCardContent {
                 title: "Step 8: Silk Canvas",
                 italianTitle: "Velario di Seta",
                 icon: "sun.max.trianglebadge.exclamationmark.fill",
-                lessonText: "Rome's sun blazed on 50,000 spectators. Solution: the velarium — a massive retractable awning made from silk and linen. 240 masts around the rim held the rigging. 1,000 sailors from the Imperial fleet operated the ropes. The silk was imported from China via the Silk Road. It took 30 minutes to deploy. The world's first retractable roof was operated by the world's first navy.",
+                lessonText: "Imagine — fifty thousand people sitting under the Roman sun. All afternoon. They would burn. So the Romans built the velarium. A vast retractable awning. Silk and linen, stretched across the open top of the Colosseum. Two hundred and forty wooden masts ringed the rim, holding the rigging. Below — one thousand sailors. Sailors from the Imperial fleet. Pulled from their ships to pull these ropes. The silk itself came from a country we knew almost nothing about. China. Carried west by camel caravans along the Silk Road. Imagine that journey. Half a world, for a single afternoon's shade. The world's first retractable roof — operated by the world's first navy.",
                 keywords: [
                     KeywordPair(keyword: "Velarium", definition: "Retractable silk awning shading the Colosseum"),
                     KeywordPair(keyword: "240 masts", definition: "Wooden poles around the rim holding rigging"),
@@ -1679,7 +1680,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Silk Road", definition: "Trade route importing silk from China"),
                 ],
                 activity: .numberFishing(question: "How many sailors operated the Colosseum's velarium?", correctAnswer: 1000, decoys: [100, 250, 500, 2000, 5000]),
-                notebookSummary: "Velarium: silk + linen retractable awning. 240 masts, 1,000 sailors. Silk from China. 30 min to deploy. First retractable roof.",
+                notebookSummary: "Velarium: massive silk + linen retractable awning shading 50,000 spectators. 240 wooden masts around the rim hold the rigging. 1,000 sailors from the Imperial fleet operated the ropes. Silk imported from China via the Silk Road. 30 min to deploy. The world's first retractable roof — operated by the world's first navy.",
                 visual: CardVisual(
                     type: .geometry,
                     title: "The Velarium — Retractable Awning",
@@ -1697,14 +1698,14 @@ extension KnowledgeCardContent {
                 title: "Foundation Curing",
                 italianTitle: "Maturazione delle Fondamenta",
                 icon: "drop.triangle.fill",
-                lessonText: "The Colosseum's concrete foundation needed 2 years to cure fully. Workers kept it wet — pouring water over the surface daily. Hydration is the key chemical reaction: water molecules bond with lime particles to form calcium hydroxide crystals. Dry concrete doesn't cure — it crumbles. The irony: the building that drained a lake needed water to set its own foundation. Water gives, water takes.",
+                lessonText: "The foundation of the Colosseum needed two full years to cure. Two. The workers kept it wet — every day, they poured water over the surface. Why? Because concrete sets by a chemical reaction we call hydration. Water molecules bond with lime particles. Crystals form — calcium hydroxide. Slowly. Inside the stone. Dry concrete does not harden. It crumbles. Now — listen to the irony. The same building that began by DRAINING a lake — needed water to cure its own foundation. Water gives. Water takes. Always both.",
                 keywords: [
                     KeywordPair(keyword: "2 years", definition: "Full curing time for the Colosseum foundation"),
                     KeywordPair(keyword: "Hydration", definition: "Water + lime = calcium hydroxide crystals"),
                     KeywordPair(keyword: "Daily watering", definition: "Workers kept the foundation wet during curing"),
                 ],
                 activity: .numberFishing(question: "How many years did the Colosseum's foundation take to cure?", correctAnswer: 2, decoys: [1, 3, 5, 7, 10]),
-                notebookSummary: "Foundation cured 2 years — kept wet daily. Hydration: water + lime → crystals. Dry concrete crumbles. Water builds.",
+                notebookSummary: "Colosseum foundation: 2 full years to cure. Workers poured water daily. Hydration reaction: water molecules bond with lime particles → calcium hydroxide crystals form slowly inside the stone. Dry concrete crumbles. The building that drained a lake needed water to set its foundation. Water gives, water takes.",
                 visual: CardVisual(
                     type: .reaction,
                     title: "Hydration Curing — 2 Years Wet",
@@ -1724,7 +1725,7 @@ extension KnowledgeCardContent {
                 title: "Step 4: Pozzolanic Vaults",
                 italianTitle: "Calcestruzzo del Colosseo",
                 icon: "flask.fill",
-                lessonText: "The Colosseum used three concrete recipes: heavy (basalt aggregate) for foundations, medium (tufa aggregate) for walls, light (pumice) for upper vaults. Same binder, different stone. This is graded concrete — the same principle as the Pantheon dome. At the workbench, you'd mix each batch separately. 6 million cubic feet of concrete total. The Colosseum is more concrete than stone.",
+                lessonText: "And now — pay attention. The Colosseum uses THREE concrete recipes. Three. Heavy concrete for the foundations — with basalt as the aggregate. Medium concrete for the walls — with tufa. Light concrete for the upper vaults — with pumice. The same binder. The same lime. The same volcanic ash. But — different stones for different jobs. The heaviest at the bottom. The lightest at the top. This is graded concrete. And — listen carefully — this is the EXACT SAME PRINCIPLE we will use at the Pantheon dome. Six million cubic feet of concrete in this single building. The Colosseum is more concrete than stone. You are starting to see, no? The Romans never wasted a kilogram.",
                 keywords: [
                     KeywordPair(keyword: "Graded concrete", definition: "Different aggregate weights for different levels"),
                     KeywordPair(keyword: "Basalt", definition: "Heavy aggregate for foundations"),
@@ -1732,7 +1733,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Pumice", definition: "Light aggregate for upper vaults"),
                 ],
                 activity: .multipleChoice(question: "Which aggregate was used in the Colosseum's upper vaults?", options: ["Basalt (heavy)", "Tufa (medium)", "Pumice (light)", "Marble (decorative)"], correctIndex: 2),
-                notebookSummary: "3 concrete grades: basalt (foundation), tufa (walls), pumice (vaults). 6M cubic feet total. More concrete than stone.",
+                notebookSummary: "Colosseum uses 3 concrete recipes (graded by aggregate weight): heavy basalt (foundation) → medium tufa (walls) → light pumice (upper vaults). Same binder, different stone. The EXACT same principle returns at the Pantheon dome. 6M cubic feet of concrete total — the Colosseum is more concrete than stone.",
                 visual: CardVisual(
                     type: .crossSection,
                     title: "Graded Concrete — 3 Weights",
@@ -1750,14 +1751,14 @@ extension KnowledgeCardContent {
                 title: "Marble Polishing",
                 italianTitle: "Lucidatura del Marmo",
                 icon: "flame.circle.fill",
-                lessonText: "The Colosseum's interior gleamed with marble veneer — thin slabs polished to a mirror finish. Polishing started with coarse sand, progressed to fine pumice powder, and ended with a paste of tin oxide heated on a felt pad. The heat opens the stone's pores, and tin fills them — creating a molecular-level smoothness. Romans polished marble the way watchmakers polish crystal. Perfection is about grit sequence.",
+                lessonText: "The inside of the Colosseum — it gleamed. Marble veneer — thin slabs over the rough concrete — polished until it reflected the spectators' faces. How was this done? Three stages. First, coarse sand rubbed across the surface. This removes the rough cuts. Then — finer pumice powder. This smooths the grain. And finally — a paste of tin oxide, heated on a felt pad. The heat opens the stone's pores. The tin fills them. Molecular-level smoothness. The Romans polished marble the way the watchmakers of your time polish crystal. Perfection — it is not about strength. It is about the sequence of the grit.",
                 keywords: [
                     KeywordPair(keyword: "Veneer", definition: "Thin decorative marble slabs over concrete"),
                     KeywordPair(keyword: "Tin oxide", definition: "Final polishing paste — fills stone pores"),
                     KeywordPair(keyword: "Grit sequence", definition: "Coarse sand → pumice → tin oxide paste"),
                 ],
                 activity: .wordScramble(word: "VENEER", hint: "Thin decorative marble slabs polished to a mirror finish"),
-                notebookSummary: "Marble polished in 3 stages: coarse sand → pumice → heated tin oxide paste. Tin fills pores. Perfection = grit sequence.",
+                notebookSummary: "Marble polishing (3 stages): coarse sand → fine pumice powder → heated tin oxide paste on a felt pad. Heat opens stone pores; tin fills them → molecular-level smoothness, mirror finish. The Romans polished marble the way watchmakers polish crystal. Perfection is about the sequence of the grit.",
                 visual: CardVisual(
                     type: .comparison,
                     title: "Marble Polishing — 3 Grit Stages",
@@ -1775,7 +1776,7 @@ extension KnowledgeCardContent {
                 title: "Seating Mathematics",
                 italianTitle: "Matematica dei Posti a Sedere",
                 icon: "number",
-                lessonText: "The Colosseum's 76 rows of seats divided into 5 social tiers. Each tier calculated by sightlines: the ratio of seat height to distance from the arena. Front-row senators sat 5 meters from the action. Back-row plebeians sat 50 meters away but on a steeper rake — so everyone had clear views. The ellipse geometry means no two rows have the same radius. Every seat is a unique coordinate. 50,000 unique solutions.",
+                lessonText: "Now — a final piece of mathematics. The Colosseum has seventy-six rows of seats. They divide into five tiers — by social class. Senators in the front. Knights behind them. Then plebeians. Then women. Then slaves at the very top. But here is what the geometry must solve. Front-row senators sit only five meters from the arena. Back-row spectators — fifty meters away. How does everyone see clearly? Sightline mathematics. The ratio of each seat's height to its distance from the arena. The back rows are steeper — so they look over the heads of those below. And since the building is an ellipse, no two rows have the same radius. Every single seat — fifty thousand of them — a unique coordinate. Fifty thousand unique solutions to one mathematical problem.",
                 keywords: [
                     KeywordPair(keyword: "76 rows", definition: "Total rows of seating in the Colosseum"),
                     KeywordPair(keyword: "5 tiers", definition: "Social divisions — senators to plebeians"),
@@ -1783,7 +1784,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Ellipse", definition: "Shape where no two rows share the same radius"),
                 ],
                 activity: .numberFishing(question: "How many rows of seating did the Colosseum have?", correctAnswer: 76, decoys: [30, 50, 64, 90, 120]),
-                notebookSummary: "76 rows, 5 social tiers. Sightline ratio: height ÷ distance. Ellipse = every row has unique radius. 50,000 unique seats.",
+                notebookSummary: "Seating math: 76 rows of seats in 5 social tiers (senators in front, slaves at top). Sightline ratio = height ÷ distance — back rows steeper to see over those below. Because the building is an ellipse, no two rows share the same radius. 50,000 unique seats — 50,000 unique solutions to one mathematical problem.",
                 visual: CardVisual(
                     type: .geometry,
                     title: "Seating Math — 76 Rows, 5 Tiers",
@@ -1801,7 +1802,7 @@ extension KnowledgeCardContent {
                 title: "Step 8: The Velarium",
                 italianTitle: "Sartiame del Velario",
                 icon: "line.diagonal",
-                lessonText: "The velarium's rigging was the Colosseum's most complex system. 240 wooden masts socketed into the top wall. Ropes ran from each mast to a central ring above the arena. Pulleys and windlasses on the ground controlled tension. Sailors adjusted each rope separately to account for wind. The geometry: a tension cone, wide at the rim, narrow at the center. A circus tent the size of a football field.",
+                lessonText: "The rigging of the velarium — this was the most complex system in the entire Colosseum. Two hundred and forty wooden masts socketed into the top wall. From each mast — a rope. Each rope ran inward, to a central ring high above the arena. Pulleys and windlasses on the ground controlled the tension. The sailors adjusted each rope separately — accounting for the wind, the heat, the weight. The shape they created — a tension cone. Wide at the rim. Narrow at the center. A circus tent — the size of a football field. And now — listen. Today, we close. We have walked from the springs of the aqueduct, through the roads, into the homes, the baths, the harbors, the workshops of war, and now this great arena. We have walked Rome. But Rome will fall. The empire will end. Centuries will pass. And then — in the same Italy — something new will begin. The rebirth. The Renaissance. Florence is calling. Come with me.",
                 keywords: [
                     KeywordPair(keyword: "Tension cone", definition: "Wide at rim, narrow at center — velarium shape"),
                     KeywordPair(keyword: "Windlass", definition: "Ground-level crank controlling rope tension"),
@@ -1809,7 +1810,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "240 ropes", definition: "One from each mast to the center ring"),
                 ],
                 activity: .hangman(word: "VELARIUM", hint: "The Colosseum's retractable silk awning operated by 1,000 sailors"),
-                notebookSummary: "Velarium rigging: 240 masts → ropes → central ring. Pulleys and windlasses control tension. Tension cone geometry. 1,000 sailors.",
+                notebookSummary: "Velarium rigging: 240 wooden masts in the top wall → ropes converge to a central ring above the arena. Pulleys + windlasses on the ground control tension. Sailors adjust each rope separately for wind. Tension cone geometry — wide at the rim, narrow at the center. A circus tent the size of a football field. (And here Rome ends — next: the Renaissance.)",
                 visual: CardVisual(
                     type: .force,
                     title: "Velarium Tension Cone",
