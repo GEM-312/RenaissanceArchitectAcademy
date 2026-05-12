@@ -1837,7 +1837,7 @@ extension KnowledgeCardContent {
                 title: "The Onager",
                 italianTitle: "L'Onagro",
                 icon: "scope",
-                lessonText: "The onager was Rome's heavy artillery — a torsion catapult hurling 25 kg stones over 300 meters. A thick rope of twisted sinew (animal tendon) stored elastic energy like a spring. Pull the arm back, lock it, release — the untwisting rope whips the arm forward. One machine, operated by 8 men, could breach a wall in hours. The onager proves that destruction is just physics with a target.",
+                lessonText: "And now — a different kind of building. We turn from making — to breaking. The Romans built siege weapons. We must understand them too, my apprentice. A Greek engineer, Heron of Alexandria, wrote books about these machines, so we would not forget. The onager. Rome's heavy artillery. A torsion catapult. It hurls a stone of twenty-five kilograms — over three hundred meters. The secret? A thick rope of twisted sinew — animal tendon. The twisted rope stores energy, like a spring. Pull the arm back. Lock it. Release. The rope untwists, whipping the arm forward. Eight men, one machine. Hours to breach a wall. Destruction — it is just physics, with a target. Remember this.",
                 keywords: [
                     KeywordPair(keyword: "Onager", definition: "Torsion catapult hurling 25 kg stones"),
                     KeywordPair(keyword: "Sinew rope", definition: "Twisted animal tendon storing elastic energy"),
@@ -1845,14 +1845,15 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "8 men", definition: "Crew needed to operate one onager"),
                 ],
                 activity: .numberFishing(question: "Maximum range (meters) of a Roman onager?", correctAnswer: 300, decoys: [50, 100, 200, 500, 800]),
-                notebookSummary: "Onager: torsion catapult. Twisted sinew stores elastic energy. 25 kg stones, 300m range, 8-man crew. Physics with a target.",
+                notebookSummary: "Onager: Rome's heavy artillery. Torsion catapult hurls 25 kg stones over 300m. 8-man crew. Twisted sinew rope stores elastic energy, untwists to whip the arm forward. Heron of Alexandria wrote about these machines so we would not forget. Destruction is just physics, with a target.",
                 visual: CardVisual(
                     type: .force,
                     title: "Onager — Torsion Catapult",
                     values: ["columns": 1, "load": 25, "arrows": 1, "perColumn": 25],
                     labels: ["Twisted sinew stores elastic energy", "25 kg stone launched 300m", "8-man crew"],
                     steps: 3, caption: "Destruction is just physics with a target"
-                )
+                ),
+                isLeadCard: true
             ),
 
             KnowledgeCard(
@@ -1863,7 +1864,7 @@ extension KnowledgeCardContent {
                 title: "Step 4: Launch Angles",
                 italianTitle: "L'Angolo di 45°",
                 icon: "angle",
-                lessonText: "Every siege engineer knew: 45° is the launch angle for maximum range. Lower angles travel faster but hit the ground sooner. Higher angles fly longer but lose horizontal distance. At 45°, the vertical and horizontal components of velocity are equal — maximizing the parabolic arc. Roman engineers used a quadrant (quarter-circle protractor) to set the angle. Mathematics makes every stone count.",
+                lessonText: "Every siege engineer must know this number. Forty-five degrees. The angle of maximum range. Why? At a lower angle, the stone travels fast — but hits the ground too soon. At a higher angle, it flies long — but loses horizontal distance. At exactly forty-five degrees, the vertical and horizontal velocities are equal. The parabolic arc reaches its furthest point. The Romans use a quadrant — a quarter-circle protractor — to set the angle of the arm. No guessing. Mathematics makes every stone count. Every stone.",
                 keywords: [
                     KeywordPair(keyword: "45°", definition: "Optimal launch angle for maximum range"),
                     KeywordPair(keyword: "Parabolic arc", definition: "Curved path of a launched projectile"),
@@ -1871,7 +1872,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Equal components", definition: "At 45°, vertical = horizontal velocity"),
                 ],
                 activity: .numberFishing(question: "What launch angle (degrees) gives maximum range?", correctAnswer: 45, decoys: [15, 30, 60, 75, 90]),
-                notebookSummary: "45° = max range. Vertical and horizontal velocity are equal. Roman quadrant measured the angle. Math makes every stone count.",
+                notebookSummary: "45° = launch angle for maximum range. At 45°, vertical and horizontal velocity components are equal — the parabolic arc reaches its furthest point. Roman engineers used a quadrant (quarter-circle protractor) to set the angle. Mathematics makes every stone count.",
                 visual: CardVisual(
                     type: .geometry,
                     title: "45° — Maximum Range Arc",
@@ -1889,7 +1890,7 @@ extension KnowledgeCardContent {
                 title: "Step 5: Torsion Springs",
                 italianTitle: "Energia di Torsione",
                 icon: "arrow.trianglehead.2.counterclockwise.rotate.90",
-                lessonText: "The secret of Roman siege weapons: torsion energy. Twist a bundle of sinew ropes 180 times. Each twist stores elastic potential energy — like winding a rubber band. The energy scales with the square of the twist count: double the twists, quadruple the power. But over-twist and the sinew snaps. The sweet spot: 70% of breaking tension. Engineering is knowing how close to the edge you can go.",
+                lessonText: "The secret of every Roman siege weapon — torsion energy. Take a bundle of sinew ropes. Twist them. One time. Two times. A hundred. A hundred eighty turns. Each twist stores energy — like winding a rubber band. Now listen — here is the beautiful part. The energy does not grow with the number of twists. It grows with the SQUARE. Double the twists, FOUR times the power. Triple them, NINE. But — there is a limit. Twist too far, and the sinew snaps. The safe limit is seventy percent of breaking tension. Always seventy. Engineering is knowing how close to the edge you can go. And no closer.",
                 keywords: [
                     KeywordPair(keyword: "Torsion", definition: "Energy stored by twisting sinew bundles"),
                     KeywordPair(keyword: "Elastic potential", definition: "Energy stored in twisted fibers — released on trigger"),
@@ -1897,7 +1898,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "70% tension", definition: "Safe operating limit before sinew snaps"),
                 ],
                 activity: .trueFalse(statement: "Doubling the twists in a torsion rope quadruples the stored energy", isTrue: true),
-                notebookSummary: "Torsion: twisted sinew stores elastic energy. Power ∝ twists². Safe limit: 70% of breaking tension. Know the edge.",
+                notebookSummary: "Torsion energy: twisted bundles of sinew rope store elastic energy. Power ∝ twists² (double twists = 4× power; triple = 9×). Safe operating limit: 70% of breaking tension. Engineering is knowing how close to the edge you can go — and no closer.",
                 visual: CardVisual(
                     type: .force,
                     title: "Torsion Energy — Square Law",
@@ -1915,7 +1916,7 @@ extension KnowledgeCardContent {
                 title: "Step 6: Battering Ram",
                 italianTitle: "Ariete a Pendolo",
                 icon: "arrow.left.arrow.right",
-                lessonText: "The battering ram was a 5-ton oak log tipped with iron, suspended from a frame by ropes. Soldiers swung it like a pendulum — each swing higher than the last. Pendulum physics: energy accumulates with each cycle. After 10 swings, the ram hits with the force of 30 men. A bronze or iron head concentrated that force onto a point the size of a fist. Rhythm beats strength.",
+                lessonText: "Now — the battering ram. A five-ton oak log, capped with an iron head shaped like a ram. Suspended from a wooden frame, hanging by ropes. The soldiers swing it. Back. Forward. Back. Forward. Each swing — higher than the last. This is pendulum physics. The energy accumulates. After ten swings, the ram hits the wall with the force of thirty men. And here is the trick — the iron head concentrates that force onto a point the size of a fist. The wall breaks where the smallest point meets the largest energy. Rhythm beats strength. Always rhythm.",
                 keywords: [
                     KeywordPair(keyword: "Pendulum", definition: "Swinging motion that accumulates energy"),
                     KeywordPair(keyword: "5 tons", definition: "Weight of a Roman battering ram"),
@@ -1923,7 +1924,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Energy accumulation", definition: "Each swing adds more force to the next"),
                 ],
                 activity: .wordScramble(word: "PENDULUM", hint: "Swinging motion that accumulates energy with each cycle"),
-                notebookSummary: "Battering ram: 5-ton oak + iron head, suspended as pendulum. Energy accumulates per swing. 10 swings = force of 30 men.",
+                notebookSummary: "Battering ram: 5-ton oak log + iron head, suspended by ropes from a frame. Soldiers swing it like a pendulum — energy accumulates per swing. After 10 swings: force of 30 men. Iron head concentrates the force onto a fist-sized point. Rhythm beats strength.",
                 visual: CardVisual(
                     type: .force,
                     title: "Battering Ram — Pendulum Physics",
@@ -1941,7 +1942,7 @@ extension KnowledgeCardContent {
                 title: "Step 7: Tower Frame",
                 italianTitle: "Torre d'Assedio",
                 icon: "building.2.crop.circle.fill",
-                lessonText: "When walls were too high to scale, Romans built mobile siege towers — 20 meters tall, rolling on wheels, with a drawbridge at the top. The tower was clad in wet hides to resist fire arrows. Inside, soldiers climbed 6 internal platforms while archers on top provided covering fire. Building a tower taller than the enemy's wall — in the middle of a battle — is engineering under maximum pressure.",
+                lessonText: "And when the wall is too high to climb? We build a wall of our own. A mobile siege tower. Twenty meters tall. Rolling on wheels. At the very top — a drawbridge. The tower is wheeled across the open ground, then lowered onto the enemy's wall. The outside is covered in wet animal hides — soaked in water, so the enemy's fire arrows cannot set us alight. Inside — six wooden platforms, soldiers climbing in waves. Archers on top, covering them with arrow fire. To build a tower taller than the enemy's wall — and to do it during a battle — that is engineering under maximum pressure.",
                 keywords: [
                     KeywordPair(keyword: "Siege tower", definition: "Mobile 20m structure rolled to enemy walls"),
                     KeywordPair(keyword: "Wet hides", definition: "Animal skins soaked to resist fire arrows"),
@@ -1949,7 +1950,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "6 platforms", definition: "Internal levels for soldiers climbing inside"),
                 ],
                 activity: .numberFishing(question: "How tall (meters) was a Roman siege tower?", correctAnswer: 20, decoys: [8, 12, 30, 40, 50]),
-                notebookSummary: "Siege tower: 20m tall on wheels. Wet hide fire protection. 6 internal platforms. Drawbridge drops onto walls. Engineering under fire.",
+                notebookSummary: "Mobile siege tower: 20m tall, rolling on wheels. Wet animal hides cover the outside — resist fire arrows. 6 internal platforms for waves of soldiers; drawbridge drops from the top onto the enemy's wall. Engineering under maximum pressure.",
                 visual: CardVisual(
                     type: .crossSection,
                     title: "Siege Tower — 20m Mobile Fortress",
@@ -1969,7 +1970,7 @@ extension KnowledgeCardContent {
                 title: "Terracotta Roof Tiles",
                 italianTitle: "Tegole di Terracotta",
                 icon: "rectangle.split.3x1.fill",
-                lessonText: "Siege workshops needed roofs that resisted fire arrows. Standard terracotta tiles were the answer — they don't burn, and their overlapping design sheds flaming oil. Tiles were fired at 1,000°C until the clay vitrified into a hard shell. A workshop's roof used 500 tiles weighing 2 kg each — one ton of fire-resistant armor overhead. The roof protects the machines that break the walls.",
+                lessonText: "The workshop where we build siege engines — it must survive fire arrows. So we cover the roof in terracotta tiles. You remember the insula roof? The tegulae, the imbrices? The same idea — but here, made for war. Tiles fired at one thousand degrees, until the clay vitrifies into a hard shell. Five hundred tiles per workshop. Two kilograms each. One ton of fire-resistant armor — over our heads. The roof protects the machines that break the walls. The defender, defended.",
                 keywords: [
                     KeywordPair(keyword: "Fire resistant", definition: "Terracotta doesn't burn — deflects fire arrows"),
                     KeywordPair(keyword: "1,000°C", definition: "Firing temperature for vitrified tiles"),
@@ -1977,7 +1978,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Vitrified", definition: "Clay fused into hard, glassy shell"),
                 ],
                 activity: .numberFishing(question: "How many terracotta tiles covered a siege workshop roof?", correctAnswer: 500, decoys: [100, 250, 750, 1000, 2000]),
-                notebookSummary: "Workshop roof: 500 terracotta tiles at 2 kg each. Fired at 1,000°C until vitrified. Fire-resistant — deflects flaming arrows.",
+                notebookSummary: "Siege workshop roof: 500 terracotta tiles (2 kg each = 1 ton of fire-resistant armor overhead). Fired at 1,000°C until vitrified, hard shell. Same tile design as the insula (callback) — built for war. The roof protects the machines that break the walls.",
                 visual: CardVisual(
                     type: .temperature,
                     title: "Terracotta Tiles — 1,000°C Vitrification",
@@ -1995,7 +1996,7 @@ extension KnowledgeCardContent {
                 title: "Step 2: Forge Fittings",
                 italianTitle: "Forgia del Ferro a 1100°C",
                 icon: "hammer.fill",
-                lessonText: "Siege weapon heads needed wrought iron — strong, tough, and able to absorb impacts without shattering. Iron ore was smelted in a bloomery furnace at 1,100°C. The bloom (spongy mass) was hammered repeatedly to expel slag. Each fold doubled the layers — 10 folds created 1,024 layers. This pattern welding produced iron as tough as cheap steel. Patience at the anvil is a form of technology.",
+                lessonText: "The heads of our siege weapons — they must be wrought iron. Strong. Tough. Able to take a blow without shattering. We smelt the iron ore in a bloomery furnace. Eleven hundred degrees. What comes out is a spongy mass — we call it the bloom. Now — the patience begins. Hammer the bloom. Fold it. Hammer again. Fold again. Each fold doubles the number of layers. Two becomes four. Four becomes eight. After ten folds — one thousand and twenty-four layers. We call this pattern welding. The result is iron as tough as steel. Patience at the anvil — it is a form of technology.",
                 keywords: [
                     KeywordPair(keyword: "1,100°C", definition: "Bloomery smelting temperature for iron"),
                     KeywordPair(keyword: "Bloom", definition: "Spongy iron mass from the furnace"),
@@ -2003,7 +2004,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "1,024 layers", definition: "Result of 10 folds (2¹⁰)"),
                 ],
                 activity: .numberFishing(question: "How many layers result from folding iron 10 times?", correctAnswer: 1024, decoys: [20, 100, 512, 2048, 5000]),
-                notebookSummary: "Wrought iron: smelted at 1,100°C, bloom hammered to expel slag. 10 folds = 1,024 layers. Pattern welding = tough iron.",
+                notebookSummary: "Wrought iron: smelted in a bloomery furnace at 1,100°C → spongy bloom hammered + folded to expel slag. Each fold doubles the layers; 10 folds = 1,024 layers (pattern welding). Result: iron as tough as steel. Patience at the anvil is a form of technology.",
                 visual: CardVisual(
                     type: .temperature,
                     title: "Bloomery Smelting — 1,100°C",
@@ -2021,7 +2022,7 @@ extension KnowledgeCardContent {
                 title: "Bronze Gear Mechanisms",
                 italianTitle: "Ingranaggi in Bronzo",
                 icon: "gearshape.2.fill",
-                lessonText: "Siege machines used bronze gears for windlasses and pulleys. Bronze (90% copper, 10% tin) is harder than iron, resists corrosion, and casts with smooth tooth surfaces. Romans cast gears using the lost-wax method: carve a wax gear, coat in clay, melt out the wax, pour in bronze. The clay mold captures every detail. One wax model, one perfect gear. Precision starts in wax.",
+                lessonText: "The siege machines need gears. For the windlasses that turn the catapult arm. For the pulleys that lift the ram. We cast them in bronze. Ninety parts copper. Ten parts tin. Harder than iron. It resists corrosion. The tooth surfaces are smooth — no friction. The method? Lost-wax casting. First — we carve the gear in wax. Every tooth. Every notch. Then we coat the wax in wet clay. The clay hardens. We heat the mold. The wax melts. Out it runs, leaving a hollow inside the clay — the exact shape of our gear. Now — pour the molten bronze. When it cools, break the clay. One perfect gear. Precision starts in wax. Remember this trick — it will return when we meet Leonardo.",
                 keywords: [
                     KeywordPair(keyword: "Lost-wax casting", definition: "Wax model → clay mold → bronze pour"),
                     KeywordPair(keyword: "90:10", definition: "Copper to tin ratio in Roman bronze"),
@@ -2029,7 +2030,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Tooth surface", definition: "Bronze casts smoother than iron — less friction"),
                 ],
                 activity: .fillInBlanks(text: "Bronze is ___% copper and ___% tin, cast using the lost-___ method", blanks: ["90", "10", "wax"], distractors: ["80", "20", "mold"]),
-                notebookSummary: "Bronze gears: 90% Cu + 10% Sn. Lost-wax casting: wax → clay → melt → pour. Smooth tooth surfaces, corrosion resistant.",
+                notebookSummary: "Bronze gears (90% Cu + 10% Sn): harder than iron, corrosion-resistant, smooth tooth surfaces. Lost-wax casting: carve gear in wax → coat in clay → heat (wax runs out) → pour bronze into the hollow → break clay. Precision starts in wax. (This same technique returns at Leonardo's Workshop.)",
                 visual: CardVisual(
                     type: .ratio,
                     title: "Bronze Alloy — 90:10",
@@ -2047,14 +2048,14 @@ extension KnowledgeCardContent {
                 title: "Soaking Wood for Resilience",
                 italianTitle: "Ammollo del Legno",
                 icon: "drop.triangle.fill",
-                lessonText: "Siege ram logs were soaked in water for weeks before use. Why? Water fills the wood's cell walls, making the fibers more flexible. A dry log shatters on impact — a soaked log bounces. The process is called water seasoning. After soaking, the log is capped with iron and hung as a pendulum. Wet wood absorbs shock. Dry wood transfers it. The ram needs to flex, not break.",
+                lessonText: "Here is a small secret. The ram logs are not used as the tree fell. They are soaked. Days. Weeks. Submerged in water. Why? Water fills the cell walls of the wood. The fibers swell. They become flexible. Now — when the ram strikes the wall, the log bounces. It does not shatter. We call this water seasoning. A dry log would crack on the first impact. A soaked log? It can strike a wall a thousand times. Wet wood absorbs the shock. Dry wood passes it through. The ram needs to flex — not break.",
                 keywords: [
                     KeywordPair(keyword: "Water seasoning", definition: "Soaking logs to increase flexibility"),
                     KeywordPair(keyword: "Cell walls", definition: "Wood fibers that absorb water and flex"),
                     KeywordPair(keyword: "Shock absorption", definition: "Wet wood bounces — dry wood shatters"),
                 ],
                 activity: .trueFalse(statement: "Siege ram logs were soaked in water to make them more flexible on impact", isTrue: true),
-                notebookSummary: "Water seasoning: soak logs for weeks. Water fills cell walls → flexible fibers. Wet = bounces on impact. Dry = shatters.",
+                notebookSummary: "Water seasoning: ram logs soaked in water for weeks. Water fills wood's cell walls → fibers swell → flexible. Wet log bounces on impact (1,000+ strikes); dry log shatters on first. Wet wood absorbs shock; dry wood passes it through. The ram needs to flex — not break.",
                 visual: CardVisual(
                     type: .comparison,
                     title: "Wet vs Dry Ram Logs",
@@ -2074,7 +2075,7 @@ extension KnowledgeCardContent {
                 title: "Step 3: Catapult Design",
                 italianTitle: "Legno per Telai di Catapulta",
                 icon: "triangle.fill",
-                lessonText: "The catapult frame endures enormous stress — torsion ropes pull inward with tons of force. Only oak can take it. Oak's interlocking fibers resist splitting. The frame is assembled from 4 main beams joined with mortise-and-tenon joints reinforced by iron plates. Green (fresh-cut) oak is preferred — it's more flexible and absorbs the vibration of each shot. A dry frame cracks after 50 shots. A green one lasts 500.",
+                lessonText: "The catapult frame endures enormous stress. Every shot — the torsion ropes pull inward with tons of force. Only oak can take it. You remember oak? Strong, slow-growing, interlocking grain that resists splitting. We assemble the frame from four main beams. Mortise-and-tenon joints, reinforced with iron plates. But here is the choice — green oak or dry oak? Green. Fresh-cut. Sap still in the fibers. Why? Because green oak is flexible. It absorbs the vibration of every shot. A dry frame cracks after fifty shots. A green frame lasts five hundred. Flexibility wins. Always flexibility.",
                 keywords: [
                     KeywordPair(keyword: "Mortise-and-tenon", definition: "Interlocking wood joint for catapult frames"),
                     KeywordPair(keyword: "Green oak", definition: "Fresh-cut — flexible, absorbs vibration"),
@@ -2082,7 +2083,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Iron plates", definition: "Reinforce joints against torsion stress"),
                 ],
                 activity: .multipleChoice(question: "Why was green (fresh) oak preferred for catapult frames?", options: ["Lighter weight", "Better color", "More flexible — absorbs vibration", "Cheaper to cut"], correctIndex: 2),
-                notebookSummary: "Catapult frame: green oak (flexible) + mortise-and-tenon joints + iron plates. Green = 500 shots. Dry = 50. Flexibility wins.",
+                notebookSummary: "Catapult frame: green (fresh-cut) oak — sap still in fibers, flexible. 4 main beams joined with mortise-and-tenon, reinforced with iron plates. Green frame lasts 500 shots; dry frame cracks after 50. Flexibility wins.",
                 visual: CardVisual(
                     type: .comparison,
                     title: "Green Oak vs Dry Oak Frames",
@@ -2100,7 +2101,7 @@ extension KnowledgeCardContent {
                 title: "Precision Mechanism Parts",
                 italianTitle: "Parti di Meccanismi di Precisione",
                 icon: "gearshape.fill",
-                lessonText: "Walnut is the precision wood. Its tight, uniform grain machines to exact dimensions without splintering. Roman engineers used walnut for trigger mechanisms, ratchet pawls, and aiming gears. A catapult's trigger must release cleanly — any rough edge causes a jerky release that throws off aim. Walnut also resists oil absorption, so it stays dimensionally stable when greased. The wood that doesn't change is the one you trust.",
+                lessonText: "Now — a special wood. For the small, precise parts. Walnut. Its grain is tight. Uniform. When you cut it — no splinters. No rough edges. So we use it for the trigger mechanism. The ratchet pawl. The aiming gear. Why does this matter? Because the trigger of a catapult must release cleanly. Any rough edge — and the release is jerky. The shot misses. And one more reason. Walnut does not absorb oil. So when you grease the mechanism — the wood stays the same size. It does not swell. It does not warp. The wood that does not change — that is the wood you trust.",
                 keywords: [
                     KeywordPair(keyword: "Walnut", definition: "Tight-grain wood for precision mechanism parts"),
                     KeywordPair(keyword: "Trigger mechanism", definition: "Must release cleanly for accurate aim"),
@@ -2108,7 +2109,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Ratchet pawl", definition: "Walnut mechanism part for incremental tensioning"),
                 ],
                 activity: .hangman(word: "WALNUT", hint: "Tight-grained wood used for precision catapult triggers"),
-                notebookSummary: "Walnut: tight grain, no splintering, oil-resistant. Used for triggers, ratchets, aiming gears. Stability = accuracy.",
+                notebookSummary: "Walnut: tight uniform grain → no splintering when cut, oil-resistant (does not swell when greased). Used for trigger mechanisms, ratchet pawls, aiming gears — anything where dimensional stability = accuracy. The wood that does not change is the one you trust.",
                 visual: CardVisual(
                     type: .comparison,
                     title: "Walnut — The Precision Wood",
@@ -2128,7 +2129,7 @@ extension KnowledgeCardContent {
                 title: "Timber Joinery",
                 italianTitle: "Giunzioni in Legno",
                 icon: "square.grid.2x2.fill",
-                lessonText: "Siege machines were assembled in the field — they had to be taken apart and rebuilt quickly. Roman military joinery used three key joints: mortise-and-tenon (strongest), dovetail (resists pulling apart), and scarf (joins two beams end-to-end). No glue — just tight fits and iron pins. A skilled carpenter could assemble an onager from numbered parts in 4 hours. Modularity before the word existed.",
+                lessonText: "And now — listen. The siege engine must be assembled in the field. Taken apart. Carried by wagon. Reassembled in a new place. Quickly. The same techniques that build — they must also break the machine into pieces, to move, and rebuild. Three joints serve this. The mortise-and-tenon — the strongest. A peg in a socket. The dovetail — fan-shaped, locked together, impossible to pull apart sideways. The scarf joint — for joining two beams end to end. No glue. Only tight fits, and iron pins. A skilled carpenter — he can build a full onager from numbered parts. In four hours. Modularity — the Romans had this idea long before any word for it existed.",
                 keywords: [
                     KeywordPair(keyword: "Mortise-and-tenon", definition: "Strongest joint — peg into socket"),
                     KeywordPair(keyword: "Dovetail", definition: "Fan-shaped joint resisting pull-apart"),
@@ -2136,7 +2137,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "4 hours", definition: "Assembly time for a field onager"),
                 ],
                 activity: .multipleChoice(question: "Which joint resists being pulled apart?", options: ["Mortise-and-tenon", "Dovetail", "Scarf", "Butt joint"], correctIndex: 1),
-                notebookSummary: "3 siege joints: mortise-and-tenon (strongest), dovetail (pull-resistant), scarf (end-to-end). No glue. Onager assembled in 4 hours.",
+                notebookSummary: "3 military joints (no glue, only tight fits + iron pins): mortise-and-tenon (strongest, peg in socket), dovetail (fan-shaped, resists pulling apart), scarf (joins beams end-to-end). A skilled carpenter assembles an onager from numbered parts in 4 hours. Modularity before the word existed.",
                 visual: CardVisual(
                     type: .comparison,
                     title: "3 Military Joints — No Glue",
@@ -2154,7 +2155,7 @@ extension KnowledgeCardContent {
                 title: "Step 2: Forge Iron",
                 italianTitle: "Tempra del Ferro",
                 icon: "flame.circle.fill",
-                lessonText: "Raw iron is too soft for siege weapon heads. Tempering fixes this. Heat the iron to cherry red (750°C), then quench in oil — the rapid cooling traps carbon atoms in the crystal lattice, creating martensite (very hard but brittle). Then reheat to 300°C (straw yellow color) and air cool — this 'tempers' the martensite, trading some hardness for toughness. Hard enough to pierce, tough enough not to shatter.",
+                lessonText: "Raw iron is too soft for the head of a siege weapon. We must change it. Tempering. This is the final art of the smith. First — heat the iron to cherry red. Seven hundred fifty degrees. Then — quench it. Plunge it into oil. The sudden cool traps the carbon atoms inside the crystal lattice. What forms is a new crystal — martensite. Very hard. Too hard. So hard it is brittle. So now — we reheat the iron. Only to three hundred degrees this time. The color of straw, golden yellow. Then let it cool slowly in the air. This is tempering. We trade some of the hardness — for toughness. Hard enough to pierce armor. Tough enough not to shatter. The smith's last gift — a balance.",
                 keywords: [
                     KeywordPair(keyword: "750°C", definition: "Cherry red — first heating for quenching"),
                     KeywordPair(keyword: "Martensite", definition: "Hard but brittle crystal structure from quenching"),
@@ -2162,7 +2163,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Oil quench", definition: "Rapid cooling that traps carbon in crystal"),
                 ],
                 activity: .fillInBlanks(text: "Tempering: heat to ___°C (cherry red), quench in ___, reheat to ___°C (straw yellow)", blanks: ["750", "oil", "300"], distractors: ["500", "water", "600"]),
-                notebookSummary: "Tempering: 750°C → oil quench (martensite) → 300°C reheat (temper). Hard enough to pierce, tough enough not to shatter.",
+                notebookSummary: "Tempering cycle: heat to 750°C (cherry red) → oil quench → carbon trapped in lattice → martensite (very hard, brittle). Then reheat to 300°C (straw yellow) → air cool → tempered martensite. Trade some hardness for toughness. Hard enough to pierce, tough enough not to shatter.",
                 visual: CardVisual(
                     type: .temperature,
                     title: "Tempering Cycle — 750°C → 300°C",
