@@ -23,7 +23,7 @@ extension KnowledgeCardContent {
                 title: "The Aqua Claudia",
                 italianTitle: "Acquedotto Claudio",
                 icon: "drop.fill",
-                lessonText: "The Aqua Claudia stretched 69 kilometers from mountain springs to Rome. Only 16 km ran on arches — the rest traveled underground through tunnels cut into rock. Emperor Claudius spent 14 years building it. The water arrived so pure that Romans drank it unboiled. The longest engineering project of the ancient world, and 85% of it was invisible.",
+                lessonText: "Welcome to Rome. Sixty-nine kilometers — that is how far this water has traveled to reach us. From mountain springs, all the way here. Emperor Claudius spent fourteen years building it. Fourteen years. And yet — most of it, you will never see. Only sixteen kilometers run on arches. The rest is hidden — carved through rock, buried in tunnels. The longest engineering project of the ancient world — and eighty-five percent of it is invisible. Remember what I tell you. In Rome, the genius is often what you cannot see. Are you ready?",
                 keywords: [
                     KeywordPair(keyword: "Aqua Claudia", definition: "69 km aqueduct built by Emperor Claudius"),
                     KeywordPair(keyword: "16 km", definition: "Length running on visible arches"),
@@ -31,14 +31,15 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Underground", definition: "85% of the aqueduct was hidden in tunnels"),
                 ],
                 activity: .numberFishing(question: "How many km long was the Aqua Claudia?", correctAnswer: 69, decoys: [32, 45, 83, 100, 120]),
-                notebookSummary: "Aqua Claudia: 69 km from springs to Rome, 14 years to build. Only 16 km on arches — 85% underground.",
+                notebookSummary: "Aqua Claudia. 69 km from mountain springs to Rome. Emperor Claudius spent 14 years building it. Only 16 km run on arches — 85% is invisible, underground.",
                 visual: CardVisual(
                     type: .crossSection,
                     title: "69 km — Mostly Underground",
                     values: ["depth": 69, "width": 16],
                     labels: ["Underground tunnel (85%)", "Above ground on arches (16 km)", "Mountain springs (source)", "Rome (destination)"],
                     steps: 4, caption: "The longest engineering project of the ancient world — 85% invisible"
-                )
+                ),
+                isLeadCard: true
             ),
 
             KnowledgeCard(
@@ -49,14 +50,14 @@ extension KnowledgeCardContent {
                 title: "Step 1: The Chorobates",
                 italianTitle: "Il Corobate",
                 icon: "level.fill",
-                lessonText: "Before laying a single stone, Roman surveyors used a chorobates — a 6-meter wooden beam with a water channel carved along the top. If the water sat perfectly level, the ground was flat. Over 69 km, the aqueduct dropped just 14 meters. That's a gradient of 1:4800 — a marble dropped on the floor rolls faster. Engineering this precise changed civilization.",
+                lessonText: "Before a single stone — we must measure. See? Here is the chorobates. Six meters long, made of wood. A channel runs along the top, filled with water. If the water sits perfectly level — the ground is level. Simple. Now look at what they measured. Over sixty-nine kilometers, the aqueduct drops just fourteen meters. Fourteen. A marble rolling across this floor moves faster. And yet — every drop of water arrives. Engineering this precise — it does not just change a city. It changes what is possible.",
                 keywords: [
                     KeywordPair(keyword: "Chorobates", definition: "6-meter leveling beam with water channel"),
                     KeywordPair(keyword: "1:4800", definition: "Gradient — 14 m drop over 69 km"),
                     KeywordPair(keyword: "Surveying", definition: "Measuring ground level before construction"),
                 ],
                 activity: .wordScramble(word: "CHOROBATES", hint: "Roman leveling tool with a water channel on top"),
-                notebookSummary: "Chorobates: 6m leveling beam with water channel. Aqua Claudia gradient: 1:4800 (14m drop over 69 km).",
+                notebookSummary: "Chorobates: 6m wooden beam with water channel on top. Tests if ground is level. Aqua Claudia drops 14m over 69 km — gradient 1:4800.",
                 visual: CardVisual(
                     type: .geometry,
                     title: "The Chorobates — 6m Leveling Beam",
@@ -74,7 +75,7 @@ extension KnowledgeCardContent {
                 title: "Step 2: Gradient Math",
                 italianTitle: "Matematica del Gradiente",
                 icon: "arrow.down.right",
-                lessonText: "Water doesn't flow without gravity. The aqueduct needed a precise downhill slope — too steep and water erodes the channel, too gentle and it stagnates. Romans calculated 34 cm drop per kilometer. That's 1:4800. They had no calculators, no satellites. Just a chorobates, string lines, and patience measured in years. Math isn't abstract when a million people need drinking water.",
+                lessonText: "Listen. Water moves only when gravity pulls it. So the slope — must be exact. Too steep, the water tears the channel apart. Too gentle, it stops. Stagnates. Vitruvius, our great architect, wrote it down for us — thirty-four centimeters of fall, for every kilometer. That is the secret. One in four thousand eight hundred. No calculators. No machines. Only a chorobates, string lines, and patience measured in years. When a million people need to drink — the math is not abstract. The math is everything.",
                 keywords: [
                     KeywordPair(keyword: "34 cm/km", definition: "Ideal gradient for aqueduct water flow"),
                     KeywordPair(keyword: "Gravity flow", definition: "Water moves downhill without pumps"),
@@ -82,7 +83,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Stagnation", definition: "Too gentle a gradient stops water movement"),
                 ],
                 activity: .trueFalse(statement: "The Aqua Claudia dropped 34 cm per kilometer — a gradient of about 1:4800", isTrue: true),
-                notebookSummary: "Aqueduct gradient: 34 cm/km (1:4800). Too steep = erosion. Too gentle = stagnation. Gravity does all the work.",
+                notebookSummary: "Vitruvius set the rule: 34 cm fall per km (1:4800). Too steep = erosion. Too gentle = stagnation. No pumps — gravity alone.",
                 visual: CardVisual(
                     type: .comparison,
                     title: "Finding the Right Gradient",
@@ -100,7 +101,7 @@ extension KnowledgeCardContent {
                 title: "Step 5: Arches & Voussoirs",
                 italianTitle: "Archi e Conci",
                 icon: "archivebox.fill",
-                lessonText: "Where the aqueduct crossed valleys, Romans stacked arches three tiers high — 30 meters tall. Each arch is built from wedge-shaped stones called voussoirs. The keystone at the top locks everything together through compression. Remove it and the arch collapses. Every stone pushes against its neighbor. The arch is strong precisely because it wants to fall apart.",
+                lessonText: "Where the aqueduct crosses a valley, we build arches. Three tiers — thirty meters high. Each arch is made of wedge-shaped stones. We call them voussoirs. At the very top — one stone. The keystone. It locks them all together. Now — think about what is happening. Every stone pushes against the next. Every stone wants to fall. But the others will not let it. Take away the keystone, and the arch collapses in an instant. The arch is strong precisely because it wants to fall apart. Beautiful — no? You will see this trick again, when we build greater things.",
                 keywords: [
                     KeywordPair(keyword: "Voussoir", definition: "Wedge-shaped stone forming an arch"),
                     KeywordPair(keyword: "Keystone", definition: "Top stone that locks the arch together"),
@@ -108,7 +109,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "30 meters", definition: "Height of triple-tiered aqueduct arches"),
                 ],
                 activity: .hangman(word: "VOUSSOIR", hint: "Wedge-shaped stone that forms an arch"),
-                notebookSummary: "Aqueduct arches: 3 tiers, 30m tall. Voussoir wedge stones + keystone hold through compression. Strong because it wants to fall.",
+                notebookSummary: "Aqueduct arches: 3 tiers, 30m tall. Wedge-shaped voussoirs + keystone hold by compression. Strong precisely because it wants to fall apart.",
                 visual: CardVisual(
                     type: .force,
                     title: "Arch with Voussoirs + Keystone",
@@ -126,7 +127,7 @@ extension KnowledgeCardContent {
                 title: "Step 6: The Specus",
                 italianTitle: "Lo Speco",
                 icon: "rectangle.and.arrow.up.right.and.arrow.down.left",
-                lessonText: "Inside every aqueduct runs the specus — a rectangular channel lined with waterproof opus signinum cement. Typically 0.9 meters wide and 1.5 meters tall. Settling tanks filtered sediment every few kilometers. Distribution castella at the city end split water three ways: public fountains, baths, and private homes — in that priority order. If water ran low, homes lost supply first.",
+                lessonText: "Inside the aqueduct — there is a channel. We call it the specus. Almost one meter wide, one and a half meters tall. Lined with waterproof cement so not a single drop is lost. Every few kilometers, a settling tank traps the sediment. Clean water continues. At the city — the castellum. The distribution tank. It splits the water three ways. First, public fountains, for everyone. Then, the baths. And only then — private homes. If the water ran low? Your home was first to lose its supply. The Roman order — fairness before comfort.",
                 keywords: [
                     KeywordPair(keyword: "Specus", definition: "Waterproof channel inside the aqueduct"),
                     KeywordPair(keyword: "Opus signinum", definition: "Waterproof cement lining the channel"),
@@ -134,7 +135,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Settling tank", definition: "Filters sediment from flowing water"),
                 ],
                 activity: .wordScramble(word: "SPECUS", hint: "The water channel inside the aqueduct"),
-                notebookSummary: "Specus: waterproof channel (0.9m × 1.5m) lined with opus signinum. Castellum distributes water: fountains → baths → homes.",
+                notebookSummary: "Specus: waterproof channel (~0.9m × 1.5m). Castellum splits water 3 ways: public fountains → baths → private homes. If water ran low, homes lost first.",
                 visual: CardVisual(
                     type: .crossSection,
                     title: "Specus Channel Cross-Section",
@@ -154,7 +155,7 @@ extension KnowledgeCardContent {
                 title: "Step 4: Mortar vs Concrete",
                 italianTitle: "Malta contro Calcestruzzo",
                 icon: "mountain.2.fill",
-                lessonText: "Here's the difference: mortar is the glue between stones — lime paste mixed with sand. Concrete is the stone itself — lime, volcanic ash, water, and aggregate chunks. Mortar holds; concrete fills. For the aqueduct, mortar bonds the voussoir arch stones together. Concrete fills the massive pier foundations. Same lime, different jobs. Understanding binders is how you choose the right recipe.",
+                lessonText: "Now — feel the difference in your hands. Mortar is the glue between stones. Lime paste, mixed with sand. It holds. Concrete is the stone itself. Lime, volcanic ash, water, and chunks of rock. It fills. Same family — different jobs. For our arches, mortar bonds the voussoirs together. For the great piers below — concrete fills them. Same lime in both. The Romans built an empire on knowing which recipe to choose.",
                 keywords: [
                     KeywordPair(keyword: "Mortar", definition: "Lime + sand paste that bonds stones together"),
                     KeywordPair(keyword: "Concrete", definition: "Lime + ash + aggregate that fills foundations"),
@@ -162,7 +163,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Aggregate", definition: "Rock chunks added to concrete for strength"),
                 ],
                 activity: .trueFalse(statement: "Mortar and concrete both use lime as their binder", isTrue: true),
-                notebookSummary: "Mortar = lime + sand (bonds stones). Concrete = lime + ash + aggregate (fills foundations). Same binder, different recipes.",
+                notebookSummary: "Mortar = lime + sand (bonds stones, like the voussoirs). Concrete = lime + ash + aggregate (fills piers + foundations). Same lime, different recipes.",
                 visual: CardVisual(
                     type: .comparison,
                     title: "Mortar vs Concrete",
@@ -180,14 +181,14 @@ extension KnowledgeCardContent {
                 title: "Step 7: Waterproof Lining",
                 italianTitle: "Presa Subacquea",
                 icon: "flame.fill",
-                lessonText: "Normal lime mortar dissolves in water. Add pozzolana and something miraculous happens — it sets HARDER underwater. The silica in volcanic ash triggers a chemical reaction with lime that doesn't need air. Romans discovered this by accident near Pozzuoli. For aqueduct foundations crossing rivers, this was everything. The material that hates water becomes the one material that conquers it.",
+                lessonText: "Listen carefully — this is the secret. Normal lime mortar? Drop it in water. It dissolves. Gone. But add pozzolana — volcanic ash from the slopes of Vesuvius — and something miraculous happens. It sets HARDER underwater. The silica in the ash triggers a reaction that needs no air. The Romans found this by accident, near a town called Pozzuoli. For our aqueduct foundations — crossing rivers — this changed everything. The material that hated water became the one that conquered it. You will see this ash again, when we build the Pantheon.",
                 keywords: [
                     KeywordPair(keyword: "Hydraulic setting", definition: "Concrete hardening underwater without air"),
                     KeywordPair(keyword: "Pozzuoli", definition: "Town near Vesuvius where the reaction was discovered"),
                     KeywordPair(keyword: "Silica reaction", definition: "Volcanic ash + lime = waterproof bond"),
                 ],
                 activity: .multipleChoice(question: "What makes Roman concrete set underwater?", options: ["Sand", "Volcanic ash (pozzolana)", "Marble dust", "Iron filings"], correctIndex: 1),
-                notebookSummary: "Pozzolana + lime = hydraulic concrete that sets HARDER underwater. Silica reaction needs no air. Discovered at Pozzuoli.",
+                notebookSummary: "Pozzolana + lime = hydraulic concrete that sets HARDER underwater. Silica reaction needs no air. Discovered by accident near Pozzuoli (Vesuvius). Same ash returns at the Pantheon.",
                 visual: CardVisual(
                     type: .comparison,
                     title: "Underwater: Dissolves vs Hardens",
@@ -205,14 +206,14 @@ extension KnowledgeCardContent {
                 title: "Opus Signinum",
                 italianTitle: "Opus Signinum",
                 icon: "drop.triangle.fill",
-                lessonText: "The specus channel needed to be perfectly waterproof. Romans crushed terracotta tiles into powder and mixed it with lime — opus signinum. The ceramic particles filled every pore. They applied it in three coats, each burnished smooth with a stone. The inside of the Aqua Claudia was smoother than modern plumbing. Crushed pottery became the first waterproof lining in history.",
+                lessonText: "The channel must hold every drop. Not a leak. Not a seep. So we crush old terracotta tiles — pottery, broken roof tiles — into a fine powder. We mix it with lime. We call it opus signinum. The ceramic particles fill every pore in the cement. Then we apply it in three coats. Each coat — burnished smooth with a polishing stone. The inside of the Aqua Claudia? Smoother than the plumbing in your modern city. Crushed pottery — the first waterproof lining in history. Strange — no?",
                 keywords: [
                     KeywordPair(keyword: "Opus signinum", definition: "Crushed terracotta + lime waterproof coating"),
                     KeywordPair(keyword: "Three coats", definition: "Applied in layers, each burnished smooth"),
                     KeywordPair(keyword: "Burnishing", definition: "Polishing with stone to seal the surface"),
                 ],
                 activity: .wordScramble(word: "SIGNINUM", hint: "Roman waterproof lining made from crushed terracotta"),
-                notebookSummary: "Opus signinum: crushed terracotta + lime, 3 burnished coats. First waterproof channel lining. Smoother than modern plumbing.",
+                notebookSummary: "Opus signinum: crushed terracotta tiles + lime, applied in 3 burnished coats. Fills every pore. First waterproof lining in history. Smoother than modern plumbing.",
                 visual: CardVisual(
                     type: .crossSection,
                     title: "3 Burnished Coats of Opus Signinum",
@@ -230,7 +231,7 @@ extension KnowledgeCardContent {
                 title: "Lead Fistulae Pipes",
                 italianTitle: "Fistulae di Piombo",
                 icon: "pipe.and.drop.fill",
-                lessonText: "At the castellum, water split into lead pipes called fistulae. Romans cast them by pouring molten lead over a sand mold, then bending the sheet into a tube and soldering the seam. Each pipe was stamped with the emperor's name and the pipe's caliber. Ten standard sizes existed. Lead was soft, bendable, and easy to repair — the perfect urban pipe. Its toxicity wasn't understood for centuries.",
+                lessonText: "At the castellum, water splits into pipes — lead pipes. We call them fistulae. The metalworkers cast them by pouring molten lead over a sand mold. Then they bend the flat sheet into a tube. Solder the seam. Stamp each one with the emperor's name and the caliber. Ten standard sizes — soft, bendable, easy to repair. The perfect pipe for a great city. And yet — we did not know then what we know now. That this metal could harm those who drank from it. The Romans did not know. Centuries would pass before we did.",
                 keywords: [
                     KeywordPair(keyword: "Fistula", definition: "Lead water pipe used in Roman cities"),
                     KeywordPair(keyword: "Caliber stamp", definition: "Size marking + emperor's name on each pipe"),
@@ -238,7 +239,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Soldered seam", definition: "Lead sheet bent and sealed into a tube"),
                 ],
                 activity: .hangman(word: "FISTULA", hint: "Roman lead pipe stamped with the emperor's name"),
-                notebookSummary: "Fistulae: lead pipes cast over sand molds, bent into tubes, soldered shut. 10 standard sizes, stamped with emperor's name.",
+                notebookSummary: "Fistulae: lead pipes cast over sand molds, bent and soldered into tubes. 10 sizes, each stamped with emperor + caliber. The Romans did not know lead could harm — centuries passed before we did.",
                 visual: CardVisual(
                     type: .crossSection,
                     title: "Making a Lead Fistula Pipe",
@@ -258,14 +259,14 @@ extension KnowledgeCardContent {
                 title: "Mixing Aqueduct Mortar",
                 italianTitle: "Mescolare la Malta",
                 icon: "flask.fill",
-                lessonText: "Aqueduct mortar needs to survive weather, vibration, and water pressure. Recipe: 1 part slaked lime, 2 parts clean river sand, half-part pozzolana. Slake the lime first — pour water over quicklime and wait. It boils and steams. Once cool, mix the paste with sand until it clings to a trowel turned upside down. Too wet: it slumps. Too dry: it crumbles. Feel is everything.",
+                lessonText: "Now — your hands get dirty. Aqueduct mortar must survive weather, vibration, the pressure of water. The recipe? One part slaked lime. Two parts clean river sand. A half-part of pozzolana. First, slake the lime — pour water over the quicklime, and step back. It boils. It steams. Once cool, you mix the paste with sand. Slowly. Until it clings to your trowel — even when you turn it upside down. Too wet? It slumps. Too dry? It crumbles. The recipe is on paper. But the feel — the feel is in your hands.",
                 keywords: [
                     KeywordPair(keyword: "1:2:½", definition: "Lime : sand : pozzolana ratio for aqueduct mortar"),
                     KeywordPair(keyword: "Slaking", definition: "Adding water to quicklime — hot reaction"),
                     KeywordPair(keyword: "Trowel test", definition: "Good mortar clings when trowel is inverted"),
                 ],
                 activity: .fillInBlanks(text: "Aqueduct mortar: ___ part lime, ___ parts sand, half-part ___", blanks: ["1", "2", "pozzolana"], distractors: ["3", "4", "marble"]),
-                notebookSummary: "Aqueduct mortar: 1 lime + 2 sand + ½ pozzolana. Slake lime first. Trowel test: good mortar clings upside down.",
+                notebookSummary: "Aqueduct mortar: 1 lime + 2 sand + ½ pozzolana. Slake the lime first (it boils + steams). Trowel test: good mortar clings upside down. Feel is everything.",
                 visual: CardVisual(
                     type: .ratio,
                     title: "Aqueduct Mortar Recipe — 1:2:½",
@@ -283,14 +284,14 @@ extension KnowledgeCardContent {
                 title: "Firing Signinum Lining",
                 italianTitle: "Cottura del Rivestimento Signino",
                 icon: "flame.circle.fill",
-                lessonText: "Before you can make opus signinum, you need terracotta. Clay tiles fire at 600-900°C until they ring when tapped. Then smash them to powder. The smaller the particles, the better the waterproofing — they fill tinier pores. Sieve through linen cloth. The finest powder goes in the final coat. Romans graded their crushed tile the way jewelers grade diamonds: by fineness.",
+                lessonText: "Before you can make opus signinum, you need terracotta. Real terracotta. Clay tiles fire in the kiln, between six hundred and nine hundred degrees. How do you know when they are ready? Listen. Tap one with your finger. When it rings clear, like a bell — it is ready. Now, smash them. Crush them to powder. The smaller the particles, the better the waterproofing. Sieve through linen cloth. The finest powder — for the final coat. The Romans graded their crushed tile the way jewelers grade diamonds. By fineness.",
                 keywords: [
                     KeywordPair(keyword: "600-900°C", definition: "Firing temperature for terracotta tiles"),
                     KeywordPair(keyword: "Ring test", definition: "Tap a tile — clear ring means properly fired"),
                     KeywordPair(keyword: "Graded powder", definition: "Finest particles for the waterproof top coat"),
                 ],
                 activity: .numberFishing(question: "Minimum firing temperature (°C) for terracotta tiles?", correctAnswer: 600, decoys: [200, 400, 800, 1100, 1500]),
-                notebookSummary: "Terracotta fires at 600-900°C (ring test). Crush to powder, sieve through linen. Finest grains for the waterproof coat.",
+                notebookSummary: "Terracotta fires at 600-900°C. Ring test: tap it, when it rings clear like a bell — it's ready. Crush, sieve through linen. Finest powder for the final coat — graded like diamonds.",
                 visual: CardVisual(
                     type: .temperature,
                     title: "Firing Terracotta — 600-900°C",
@@ -308,7 +309,7 @@ extension KnowledgeCardContent {
                 title: "Flow Rate Testing",
                 italianTitle: "Verifica della Portata",
                 icon: "gauge.with.dots.needle.33percent",
-                lessonText: "Frontinus, Rome's water commissioner, measured aqueduct flow using the quinaria — a pipe with a specific diameter. He calculated the Aqua Claudia delivered 184,000 cubic meters daily. That's 190 liters per person — more than many modern cities. His book De Aquaeductu is the world's first water management manual. Measure everything, waste nothing. Infrastructure runs on data.",
+                lessonText: "Almost done. But before we leave the aqueduct — you must meet a man. His name was Frontinus. Rome's water commissioner. He did not build the Aqua Claudia. But he made sure it ran. He measured every flow using a pipe of standard size — the quinaria. He calculated that the Aqua Claudia delivered one hundred and eighty-four thousand cubic meters of water. Every day. One hundred and ninety liters for every Roman — more than many of your modern cities. He wrote his findings in a book. De Aquaeductu. The first water manual in history. Frontinus taught us a rule that still holds today. Measure everything. Waste nothing. Infrastructure runs on data.",
                 keywords: [
                     KeywordPair(keyword: "Quinaria", definition: "Standard pipe unit for measuring water flow"),
                     KeywordPair(keyword: "Frontinus", definition: "Rome's water commissioner who measured everything"),
@@ -316,7 +317,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "De Aquaeductu", definition: "First water management book in history"),
                 ],
                 activity: .hangman(word: "FRONTINUS", hint: "Rome's water commissioner who wrote De Aquaeductu"),
-                notebookSummary: "Frontinus measured flow via quinaria pipes. Aqua Claudia: 184,000 m³/day (190 L/person). De Aquaeductu = first water manual.",
+                notebookSummary: "Frontinus, Rome's water commissioner, measured flow using quinaria pipes. Aqua Claudia: 184,000 m³/day = 190 L per person. De Aquaeductu — the first water manual. Measure everything. Waste nothing.",
                 visual: CardVisual(
                     type: .ratio,
                     title: "Daily Flow — 184,000 m³",
