@@ -1161,7 +1161,7 @@ extension KnowledgeCardContent {
                 title: "Portus — Rome's Gateway",
                 italianTitle: "Porto — La Porta di Roma",
                 icon: "ferry.fill",
-                lessonText: "Rome couldn't feed itself. Grain ships from Egypt docked at Portus, 30 km from the city. Emperor Claudius dug a 200-acre artificial harbor basin. Trajan expanded it into a hexagonal inner harbor — six straight walls distributing wave force equally. 350 ships unloaded simultaneously. The harbor that fed a million people was itself an engineering marvel no one remembers.",
+                lessonText: "Rome could not feed itself. A million people. Not enough grain in all of Italy. So the ships came — from Egypt, from Africa, from Spain. And they all docked here. Portus. Thirty kilometers from the city, where the Tiber meets the sea. Emperor Claudius dug an artificial basin — two hundred acres. Then Emperor Trajan called for his greatest architect — Apollodorus of Damascus. The same Apollodorus who, some say, designed the Pantheon. Apollodorus built a second harbor inside the first. Hexagonal. Six straight walls, distributing the force of the waves equally. Three hundred and fifty ships unloaded at once. The harbor that fed a million people — itself an engineering marvel no one remembers.",
                 keywords: [
                     KeywordPair(keyword: "Portus", definition: "Rome's main harbor — 30 km from the city"),
                     KeywordPair(keyword: "Hexagonal basin", definition: "Trajan's 6-sided harbor distributing wave force"),
@@ -1169,14 +1169,15 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "200 acres", definition: "Size of Claudius's artificial harbor basin"),
                 ],
                 activity: .numberFishing(question: "How many ships could dock simultaneously at Portus?", correctAnswer: 350, decoys: [50, 150, 500, 750, 1000]),
-                notebookSummary: "Portus: 30 km from Rome. Claudius dug 200-acre basin. Trajan added hexagonal inner harbor. 350 ships at once. Fed a million people.",
+                notebookSummary: "Portus: Rome's gateway, 30 km from the city. Claudius dug a 200-acre artificial basin. Trajan called Apollodorus of Damascus (architect, also linked to the Pantheon) to add a hexagonal inner harbor — 6 walls distributing wave force equally. 350 ships unloaded simultaneously. Fed a million people.",
                 visual: CardVisual(
                     type: .geometry,
                     title: "Portus — 200-Acre Harbor",
                     values: ["diameter": 200],
                     labels: ["Hexagonal inner harbor", "350 ships simultaneously"],
                     steps: 3, caption: "The harbor that fed a million people was itself an engineering marvel"
-                )
+                ),
+                isLeadCard: true
             ),
 
             KnowledgeCard(
@@ -1187,7 +1188,7 @@ extension KnowledgeCardContent {
                 title: "Step 1: Tides & Currents",
                 italianTitle: "Fisica delle Onde",
                 icon: "water.waves",
-                lessonText: "Mediterranean storms generate waves 3-4 meters high. A wave's force on impact equals roughly half the water's weight times the square of its speed. A 3-meter wave hits a wall with 30 tons of force per meter. Roman breakwaters needed to absorb this — not resist it. Curved walls redirect wave energy sideways. The strongest wall isn't the thickest. It's the one that refuses to fight.",
+                lessonText: "The Mediterranean is not always calm. In a storm, waves rise three meters. Sometimes four. And a wave is not just water — it is force. The math is brutal. A three-meter wave hits a wall with thirty tons of force, every meter. Imagine. So our breakwaters cannot simply stand and resist. They must absorb. They must let the energy pass through them, redirect it sideways. Curved walls, not straight ones. The strongest wall in the harbor — it is not the thickest. It is the one that refuses to fight.",
                 keywords: [
                     KeywordPair(keyword: "30 tons/meter", definition: "Impact force of a 3-meter wave"),
                     KeywordPair(keyword: "Energy absorption", definition: "Breakwater strategy — absorb, don't resist"),
@@ -1195,7 +1196,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "3-4 meters", definition: "Typical Mediterranean storm wave height"),
                 ],
                 activity: .numberFishing(question: "Force (tons per meter) of a 3-meter wave hitting a wall?", correctAnswer: 30, decoys: [5, 10, 50, 75, 100]),
-                notebookSummary: "3m wave = 30 tons/meter impact force. Breakwaters absorb, don't resist. Curved walls redirect energy sideways.",
+                notebookSummary: "Mediterranean storms: 3-4m waves. A 3m wave hits with 30 tons/meter impact force. Breakwaters absorb, do not resist. Curved walls redirect energy sideways. The strongest wall is the one that refuses to fight.",
                 visual: CardVisual(
                     type: .force,
                     title: "Wave Impact Force",
@@ -1213,7 +1214,7 @@ extension KnowledgeCardContent {
                 title: "Step 2: Underwater Concrete",
                 italianTitle: "Cassoni Stagni",
                 icon: "square.dashed",
-                lessonText: "How do you build in water? Build a wall first. Roman cofferdams were double rings of wooden piles driven into the seabed, the gap packed with clay. Workers pumped out the trapped water using Archimedean screws. Now you have a dry workspace underwater. Pour concrete, wait for it to set, remove the cofferdam. Building underwater is just building on land — if you can make the water leave first.",
+                lessonText: "How do you build in water? You make the water leave. Listen. The Romans built what we call a cofferdam. Two rings of wooden piles, driven deep into the seabed. The gap between the rings — packed tight with clay. Then the workers brought the Archimedean screw — a spiral pump invented by Archimedes himself. Turn the handle. Water rises up the spiral. Out of the enclosure. Soon — dry ground, in the middle of the sea. Pour the concrete. Wait. Set. Remove the dam. Building underwater is just building on land — if you can make the water leave first.",
                 keywords: [
                     KeywordPair(keyword: "Cofferdam", definition: "Watertight enclosure for building underwater"),
                     KeywordPair(keyword: "Double ring", definition: "Two rows of wooden piles with clay between"),
@@ -1221,7 +1222,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Dry workspace", definition: "Pumped-out area for pouring concrete"),
                 ],
                 activity: .wordScramble(word: "COFFERDAM", hint: "Watertight enclosure for building in water"),
-                notebookSummary: "Cofferdam: double ring of piles + clay. Archimedean screws pump water out. Build dry, then remove walls. Underwater = on land.",
+                notebookSummary: "Cofferdam: double ring of wooden piles driven into the seabed, gap packed with clay. Archimedean screws (spiral pumps) remove the trapped water → dry workspace underwater. Pour concrete, set, remove the dam. Make the water leave first.",
                 visual: CardVisual(
                     type: .crossSection,
                     title: "Cofferdam — Build Dry Underwater",
@@ -1239,7 +1240,7 @@ extension KnowledgeCardContent {
                 title: "Step 3: The Breakwater",
                 italianTitle: "Forza del Frangiflutti",
                 icon: "waveform.path",
-                lessonText: "Vitruvius specified breakwater blocks weighing 10-15 tons minimum. Why? Wave uplift. A wave doesn't just push — it lifts. As water surges over a block, low pressure above creates suction. A 5-ton block gets pulled off the seabed. A 15-ton block stays. The calculation: block weight must exceed 3× the uplift force. Overbuilding by 3× sounds wasteful until the first storm proves you right.",
+                lessonText: "You remember Vitruvius? Our great architect, who wrote the books that taught us everything? He returns here. For the breakwater, he wrote a rule. No block lighter than ten or fifteen tons. Why so heavy? Because a wave does not only push. It LIFTS. As the water surges over a block, low pressure forms above. Suction. A five-ton block — pulled off the seabed by a single wave. A fifteen-ton block — it stays. The rule: the block must weigh three times the uplift force. Overbuilding by three? Sounds wasteful. Until the first storm. Then — you bless Vitruvius.",
                 keywords: [
                     KeywordPair(keyword: "Wave uplift", definition: "Suction that pulls blocks upward from the seabed"),
                     KeywordPair(keyword: "3× rule", definition: "Block weight must be 3× the uplift force"),
@@ -1247,7 +1248,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Low pressure", definition: "Water flowing over creates suction above"),
                 ],
                 activity: .multipleChoice(question: "Block weight must exceed how many times the wave uplift force?", options: ["1.5×", "2×", "3×", "5×"], correctIndex: 2),
-                notebookSummary: "Breakwater: 10-15 ton blocks minimum. Wave uplift creates suction. 3× rule: block weight ≥ 3× uplift force.",
+                notebookSummary: "Vitruvius's rule (callback to Aqueduct): breakwater blocks must weigh 10-15 tons minimum. Wave uplift creates suction above the block — a 5-ton block gets ripped off; a 15-ton block stays. The 3× rule: block weight ≥ 3× the uplift force. Overbuilding sounds wasteful until the first storm.",
                 visual: CardVisual(
                     type: .force,
                     title: "Breakwater Block Resistance",
@@ -1265,7 +1266,7 @@ extension KnowledgeCardContent {
                 title: "Step 7: The Lighthouse",
                 italianTitle: "Ottica del Faro",
                 icon: "lighthouse.fill",
-                lessonText: "Portus had a lighthouse modeled after Alexandria's Pharos — 50 meters tall. At the top, a bonfire reflected off polished bronze mirrors. The curved mirror shape concentrated light into a beam visible 50 km away. Keepers fed the fire every 2 hours through the night. One lighthouse guided 350 ships daily. The simplest technology — fire and reflection — solving the hardest problem: finding your way in the dark.",
+                lessonText: "And how does a ship find Portus at night? Look. There — fifty meters tall. The lighthouse. Built in the design of the great Pharos of Alexandria — one of the seven wonders of the ancient world. At the very top, a bonfire burns. Behind the fire — polished bronze mirrors. The mirrors are curved. The curve concentrates the light into a beam. Visible fifty kilometers out to sea. The keepers feed the fire every two hours through the night. One man's job — to keep the light alive. So that three hundred and fifty ships can find their way home. The simplest technology — fire and reflection — solving the hardest problem of all. Finding your way in the dark.",
                 keywords: [
                     KeywordPair(keyword: "Pharos", definition: "Lighthouse design from Alexandria — model for Portus"),
                     KeywordPair(keyword: "Bronze mirrors", definition: "Polished curved reflectors concentrating firelight"),
@@ -1273,7 +1274,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "50 meters", definition: "Height of the Portus lighthouse"),
                 ],
                 activity: .hangman(word: "PHAROS", hint: "Ancient lighthouse design from Alexandria"),
-                notebookSummary: "Portus lighthouse: 50m tall, bronze mirror reflectors. Visible 50 km. Fire + curved reflection = beam. Guided 350 ships daily.",
+                notebookSummary: "Portus lighthouse: 50m tall, modeled on the Pharos of Alexandria (one of the 7 wonders). Bonfire at the top + curved polished bronze mirrors concentrate the light into a beam visible 50 km at sea. Keepers fed the fire every 2 hours through the night. Guided 350 ships daily.",
                 visual: CardVisual(
                     type: .geometry,
                     title: "Portus Lighthouse",
@@ -1293,14 +1294,14 @@ extension KnowledgeCardContent {
                 title: "Step 3: Breakwater Stone",
                 italianTitle: "Banchine in Pietra",
                 icon: "mountain.2.fill",
-                lessonText: "Harbor quays needed stone that resists both crushing weight and saltwater. Tufa — soft volcanic rock — was the standard. It's light enough to transport by barge, strong enough to support loaded wagons, and porous enough that salt crystals don't crack it (they fill the pores instead of expanding). Dense stones like marble crack in saltwater. The softest stone wins at the harbor.",
+                lessonText: "The harbor quays need stone — but not just any stone. The stone must hold up the weight of loaded wagons. And it must survive the salt. So — what do we choose? Marble is dense, beautiful, strong. But in the harbor — marble cracks. The salt crystals grow inside the stone. They split it from within. So we use the opposite. Tufa. Soft volcanic rock. So porous, you can press your fingernail into it. And here is the magic — when salt crystals form inside tufa, they have room. They fill the pores. They do not split anything. The softest stone wins at the harbor. The opposite of what your eyes would choose.",
                 keywords: [
                     KeywordPair(keyword: "Tufa", definition: "Soft volcanic rock ideal for harbor quays"),
                     KeywordPair(keyword: "Porous", definition: "Salt fills pores instead of cracking the stone"),
                     KeywordPair(keyword: "Salt resistance", definition: "Soft stone absorbs salt, hard stone cracks"),
                 ],
                 activity: .trueFalse(statement: "Porous tufa resists saltwater better than dense marble because salt fills its pores", isTrue: true),
-                notebookSummary: "Harbor quays: tufa — soft volcanic rock. Porous = salt fills pores instead of cracking. Soft stone beats hard at the harbor.",
+                notebookSummary: "Harbor quays: tufa (soft volcanic rock). Porous structure lets salt crystals fill the pores instead of cracking the stone. Dense stones like marble shatter in saltwater because the salt crystals grow inside and split the stone. The softest stone wins at the harbor.",
                 visual: CardVisual(
                     type: .comparison,
                     title: "Harbor Stone Selection",
@@ -1318,14 +1319,14 @@ extension KnowledgeCardContent {
                 title: "Step 2: Marine Concrete",
                 italianTitle: "Calcestruzzo Marino",
                 icon: "flame.fill",
-                lessonText: "Roman marine concrete was mixed with seawater — on purpose. The salt triggers a unique crystal: Al-tobermorite. This mineral grows inside the concrete over centuries, actually making it stronger in seawater. Modern Portland cement dissolves in salt. Roman marine concrete thrives in it. The recipe: volcanic ash, lime, seawater, and volcanic rock aggregate. The ocean that destroys everything else makes this concrete immortal.",
+                lessonText: "Now — listen to this. The Romans mixed their marine concrete with SEAWATER. On purpose. Why? Because the salt triggers something miraculous. A crystal forms inside the concrete. We did not know its name then. Modern scientists call it Al-tobermorite. The crystal grows for centuries. The concrete becomes STRONGER as the years pass. Your modern Portland cement? Dissolves in salt. Fails in decades. Roman marine concrete? Thrives in salt. The ocean that destroys everything else — makes this concrete immortal.",
                 keywords: [
                     KeywordPair(keyword: "Al-tobermorite", definition: "Crystal that grows in Roman marine concrete"),
                     KeywordPair(keyword: "Seawater", definition: "Mixed intentionally — triggers strengthening crystal"),
                     KeywordPair(keyword: "Portland cement", definition: "Modern concrete that dissolves in salt"),
                 ],
                 activity: .wordScramble(word: "TOBERMORITE", hint: "Crystal that grows inside Roman marine concrete — gets stronger in seawater"),
-                notebookSummary: "Marine concrete: ash + lime + seawater → Al-tobermorite crystal. Grows stronger over centuries in salt. Modern Portland dissolves.",
+                notebookSummary: "Marine concrete = volcanic ash + lime + SEAWATER (on purpose) + volcanic rock aggregate. Salt triggers Al-tobermorite crystal growth — the concrete gets STRONGER over centuries in seawater. Modern Portland cement dissolves in salt. The ocean that destroys everything else makes this concrete immortal.",
                 visual: CardVisual(
                     type: .comparison,
                     title: "Roman vs Modern Marine Concrete",
@@ -1343,7 +1344,7 @@ extension KnowledgeCardContent {
                 title: "Step 8: Channel Markers",
                 italianTitle: "Rivestimento in Piombo",
                 icon: "shield.lefthalf.filled",
-                lessonText: "Wooden ships rot. Marine worms (teredo) bore through hulls in months. Roman solution: nail thin lead sheets below the waterline. Lead is soft, moldable, and impervious to salt and worms. Copper tacks held it flush. The lead sheeting added weight but doubled the hull's lifespan. Every warship and grain freighter in the Roman fleet wore lead armor. Protection weighs something. It always does.",
+                lessonText: "A wooden ship has one terrible enemy. You cannot see it. The teredo. A marine worm that bores into wood, hollowing the hull from the inside. In a single year — a ship can be destroyed. So the Romans wrapped the hull in metal. Below the waterline — thin lead sheets, nailed flat with copper tacks. Lead is soft, moldable, impervious to salt and worms. The lead doubles the ship's lifespan. But — every ship in the Roman fleet now wears armor. Protection weighs something. It always does.",
                 keywords: [
                     KeywordPair(keyword: "Teredo", definition: "Marine worm that bores through wooden hulls"),
                     KeywordPair(keyword: "Lead sheeting", definition: "Thin lead nailed below the waterline"),
@@ -1351,7 +1352,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Double lifespan", definition: "Lead sheeting's benefit to wooden hulls"),
                 ],
                 activity: .hangman(word: "TEREDO", hint: "Marine worm that destroys wooden ship hulls"),
-                notebookSummary: "Lead sheeting below waterline: stops teredo worms, resists salt. Copper tacks hold it. Doubled hull lifespan. Protection has weight.",
+                notebookSummary: "Teredo (marine worm) destroys wooden hulls within a year. Lead sheets nailed below the waterline with copper tacks — impervious to salt + worms. Doubles hull lifespan, but every ship wears armor weight. Protection weighs something — it always does.",
                 visual: CardVisual(
                     type: .crossSection,
                     title: "Lead Hull Protection",
@@ -1371,7 +1372,7 @@ extension KnowledgeCardContent {
                 title: "Warehouse Trusses",
                 italianTitle: "Capriate dei Magazzini",
                 icon: "triangle.fill",
-                lessonText: "Portus had 200 warehouses (horrea) storing grain, oil, wine, and marble. Each needed wide-span roofs for forklift-free loading. Oak trusses spanned 12-15 meters — wide enough for ox carts. The truss design: two sloping rafters, a horizontal tie beam, and vertical queen posts. Oak was selected for salt air resistance — its tannins naturally repel moisture. The harbor's skeleton was oak.",
+                lessonText: "Portus has two hundred warehouses. We call them horrea. Grain, oil, wine, marble — every cargo that arrives, stored here. Each warehouse needs a wide roof. Wide enough for an ox cart to pass beneath. Twelve to fifteen meters. So we use oak trusses. Two sloping rafters, a horizontal tie beam below, and vertical posts we call queen posts. You remember the rule? Beam depth equals span divided by twenty. A fifteen-meter span — seventy-five centimeters deep. But why oak, not poplar? Because the salt air rots cheap wood. Oak has tannins — natural chemicals that repel moisture. The harbor's skeleton is oak. The trees that grew slow now hold the cargo of an empire.",
                 keywords: [
                     KeywordPair(keyword: "Horrea", definition: "Roman warehouse — 200 at Portus"),
                     KeywordPair(keyword: "Queen posts", definition: "Vertical members in the truss supporting rafters"),
@@ -1379,7 +1380,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Tannins", definition: "Oak's natural moisture-repelling chemicals"),
                 ],
                 activity: .wordScramble(word: "HORREA", hint: "Roman warehouses — 200 of them stored grain at Portus"),
-                notebookSummary: "Horrea: 200 warehouses at Portus. Oak queen-post trusses spanning 12-15m. Tannins resist salt air moisture.",
+                notebookSummary: "Horrea: 200 warehouses at Portus (grain, oil, wine, marble). Oak queen-post trusses span 12-15m for ox-cart loading. Insula 1/20 rule: 15m span → 75cm deep beams. Oak's natural tannins repel salt air moisture — the harbor's skeleton is oak.",
                 visual: CardVisual(
                     type: .force,
                     title: "Warehouse Truss Structure",
@@ -1397,7 +1398,7 @@ extension KnowledgeCardContent {
                 title: "Step 2 Support: Cofferdam",
                 italianTitle: "Casseforme per Cassoni",
                 icon: "square.stack.3d.up",
-                lessonText: "Cofferdam piles were driven into the seabed 3-4 meters deep. Poplar was the choice — it's straight, light, and its wet wood actually swells tighter. The piles formed a double ring, 2 meters apart, packed with puddle clay between. Poplar's fast growth meant replacements were always available. After the concrete set, workers pulled the piles for reuse. Temporary by design, permanent in effect.",
+                lessonText: "For the cofferdam piles — we use poplar. Driven into the seabed, three or four meters deep. Why poplar? Three reasons. First — it grows straight. Second — it is light to carry. And third — here is the magic — when poplar wood gets wet, it SWELLS. It expands. The piles press tighter against the clay. The dam becomes more watertight as it sits in the sea. Poplar grows fast. There is always more for replacements. And when the concrete sets, the workers pull the piles back up. Reused on the next project. Temporary by design. Permanent in effect.",
                 keywords: [
                     KeywordPair(keyword: "Poplar piles", definition: "Driven 3-4m into the seabed for cofferdams"),
                     KeywordPair(keyword: "Swells wet", definition: "Poplar expands in water — tighter seal"),
@@ -1405,7 +1406,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Reusable", definition: "Piles pulled and reused after concrete sets"),
                 ],
                 activity: .trueFalse(statement: "Poplar wood swells when wet, making it ideal for watertight cofferdam piles", isTrue: true),
-                notebookSummary: "Cofferdam: poplar piles 3-4m deep, double ring with puddle clay. Poplar swells wet = tighter seal. Reusable. Temporary → permanent.",
+                notebookSummary: "Cofferdam piles: poplar (straight + light + swells when wet, sealing tighter against the clay). Driven 3-4m into the seabed in a double ring with puddle clay between. Poplar's fast growth = always replacements. Piles pulled and reused. Temporary by design, permanent in effect.",
                 visual: CardVisual(
                     type: .crossSection,
                     title: "Poplar Piles Swell Tight",
@@ -1425,14 +1426,14 @@ extension KnowledgeCardContent {
                 title: "Step 3: Marine Mortar",
                 italianTitle: "Miscela di Calcestruzzo Marino",
                 icon: "flask.fill",
-                lessonText: "Marine concrete recipe: 1 part lime, 3 parts volcanic ash, seawater (not fresh!). The critical difference — mix and pour into wooden forms lowered into the sea. The concrete sets underwater in 7 days. After curing, it continues strengthening for centuries as Al-tobermorite crystals grow. Roman engineers discovered that the sea's worst quality (salt) was the concrete's best ingredient.",
+                lessonText: "You have learned many recipes by now. Aqueduct mortar — one to two to a half. Road mortar — one to three. Insula — one to four, no pozzolana. Baths — one to four with extra silica. This is the FIFTH recipe. Marine mortar. One part lime. Three parts volcanic ash. And seawater. Not fresh water — SEAWATER. Mix in wooden forms, then lower the form into the sea itself. The concrete sets underwater in seven days. After that — it grows stronger for centuries. The same salt that destroys ordinary cement — for our marine concrete, it is the ingredient that gives life.",
                 keywords: [
                     KeywordPair(keyword: "Seawater", definition: "Used instead of fresh water — triggers crystal growth"),
                     KeywordPair(keyword: "7 days", definition: "Underwater setting time for marine concrete"),
                     KeywordPair(keyword: "Wooden forms", definition: "Lowered into the sea to contain wet concrete"),
                 ],
                 activity: .fillInBlanks(text: "Marine concrete: ___ part lime, ___ parts volcanic ash, mixed with ___ (not fresh water!)", blanks: ["1", "3", "seawater"], distractors: ["2", "4", "rainwater"]),
-                notebookSummary: "Marine concrete: 1 lime + 3 ash + seawater. Pour into forms in the sea. Sets in 7 days, strengthens for centuries.",
+                notebookSummary: "Marine mortar (5th recipe learned): 1 lime + 3 volcanic ash + SEAWATER (not fresh). Mix in wooden forms lowered into the sea. Sets underwater in 7 days, then strengthens for centuries via Al-tobermorite crystals. The salt that destroys ordinary cement is what gives this concrete life.",
                 visual: CardVisual(
                     type: .ratio,
                     title: "Marine Concrete — 1:3 + Seawater",
@@ -1450,7 +1451,7 @@ extension KnowledgeCardContent {
                 title: "Lead Casting at 327°C",
                 italianTitle: "Fusione del Piombo a 327°C",
                 icon: "flame.circle.fill",
-                lessonText: "Lead melts at 327°C — one of the lowest melting points of any useful metal. Pour molten lead into flat sand molds, wait 10 minutes, and you have a sheet ready for hammering onto a ship hull. Roman foundries at Portus cast 200 sheets per day. The low temperature meant wood-fired furnaces were enough — no bellows needed. The easiest metal to melt was the most useful at the harbor.",
+                lessonText: "You remember the lead pipes? The fistulae we made for the aqueduct? The same metal returns here. But now — not for water. For ships. Lead melts at three hundred twenty-seven degrees. Lower than any other useful metal. So low, that a wood fire is enough. No bellows. No special furnace. Pour the molten lead into flat sand molds. Ten minutes — it cools. You have a sheet, ready to nail onto a ship's hull. The Roman foundries at Portus cast two hundred sheets a day. Every day. The easiest metal to melt — turned out to be the most useful at the harbor. From pipes that carry water, to armor that holds back worms. Same metal. Two empires of use.",
                 keywords: [
                     KeywordPair(keyword: "327°C", definition: "Lead's melting point — very low for a metal"),
                     KeywordPair(keyword: "Sand molds", definition: "Flat forms for casting lead sheets"),
@@ -1458,7 +1459,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "No bellows", definition: "Low temperature — wood fire is enough"),
                 ],
                 activity: .numberFishing(question: "At what temperature (°C) does lead melt?", correctAnswer: 327, decoys: [100, 200, 450, 600, 900]),
-                notebookSummary: "Lead melts at 327°C — wood fire, no bellows. Sand molds, 10 min cooling. 200 sheets/day at Portus. Easiest metal, most useful.",
+                notebookSummary: "Lead melts at 327°C (lowest of any useful metal) — wood fire is enough, no bellows. Sand molds, 10 min cooling. 200 sheets/day at Portus foundries. Same metal as the aqueduct fistulae — pipes that carry water, sheets that armor ships against teredo worms. Two empires of use.",
                 visual: CardVisual(
                     type: .temperature,
                     title: "Lead Casting at 327°C",
