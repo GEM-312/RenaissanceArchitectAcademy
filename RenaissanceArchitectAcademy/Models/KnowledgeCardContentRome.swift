@@ -561,7 +561,7 @@ extension KnowledgeCardContent {
                 title: "Thermae — Social Center",
                 italianTitle: "Le Terme — Centro Sociale",
                 icon: "building.2.fill",
-                lessonText: "Roman baths weren't just for washing. They were libraries, gyms, gardens, and meeting halls — all under one roof. The Baths of Caracalla held 1,600 bathers at once. Citizens spent entire afternoons there. Admission was almost free — emperors subsidized it. Clean citizens are happy citizens. The baths were Rome's greatest social engineering project disguised as architecture.",
+                lessonText: "And now — Act Two begins. The bath. But this is not what you think. Not a place to wash. The Romans called it the thermae. Library. Gymnasium. Garden. Meeting hall. All under one roof. Emperor Caracalla built one that held sixteen hundred bathers at the same time. Citizens spent entire afternoons here — slaves next to senators, soldiers next to scholars. Admission was almost free. The emperor paid the difference. Why? A clean citizen is a happy citizen. A happy citizen does not revolt. The thermae was Rome's greatest social engineering project — disguised as architecture.",
                 keywords: [
                     KeywordPair(keyword: "Thermae", definition: "Large public bath complex with many functions"),
                     KeywordPair(keyword: "Caracalla", definition: "Emperor who built baths for 1,600 bathers"),
@@ -569,8 +569,9 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Social engineering", definition: "Architecture designed to shape citizen behavior"),
                 ],
                 activity: .numberFishing(question: "How many bathers could the Baths of Caracalla hold?", correctAnswer: 1600, decoys: [400, 800, 2500, 5000, 10000]),
-                notebookSummary: "Thermae: baths + library + gym + garden. Caracalla: 1,600 bathers. Almost free. Social engineering as architecture.",
-                visual: CardVisual(type: .comparison, title: "Thermae — More Than a Bath", values: ["equal": 0], labels: ["Modern gym\nOne purpose\nExpensive", "Roman thermae\nBath + library + gym\n+ garden — almost free", "1,600 bathers simultaneously at Caracalla"], steps: 3, caption: "Social engineering as architecture — open to almost everyone")
+                notebookSummary: "Thermae: bath + library + gym + garden, all under one roof. Caracalla's complex held 1,600 bathers — slaves alongside senators. Almost free admission, subsidized by emperors. Social engineering disguised as architecture.",
+                visual: CardVisual(type: .comparison, title: "Thermae — More Than a Bath", values: ["equal": 0], labels: ["Modern gym\nOne purpose\nExpensive", "Roman thermae\nBath + library + gym\n+ garden — almost free", "1,600 bathers simultaneously at Caracalla"], steps: 3, caption: "Social engineering as architecture — open to almost everyone"),
+                isLeadCard: true
             ),
 
             KnowledgeCard(
@@ -581,7 +582,7 @@ extension KnowledgeCardContent {
                 title: "Step 1: The Hypocaust",
                 italianTitle: "Riscaldamento a Ipocausto",
                 icon: "flame.fill",
-                lessonText: "Under the bath floors lies Rome's greatest invention: the hypocaust. A furnace pushes hot air through a crawl space beneath raised floors supported on brick pilae stacks. Hot air rises through hollow walls — tubuli — and exits through roof vents. The floor itself becomes a radiator. Bathers walked barefoot on heated stone. Central heating, invented 2,000 years before it appeared in houses.",
+                lessonText: "Beneath the floor — the greatest Roman invention you have never heard of. The hypocaust. A furnace burns hot air. The hot air flows through a crawl space — under the floor. The floor itself sits on small brick towers we call pilae. Above, hollow tiles run inside the walls — tubuli. Heat rises through the walls. Out the roof vents. The whole building — heated. The floor is now a radiator. Bathers walked barefoot on warm stone. This — this is central heating. Two thousand years before any of your houses had it.",
                 keywords: [
                     KeywordPair(keyword: "Hypocaust", definition: "Underfloor heating system using hot air"),
                     KeywordPair(keyword: "Pilae", definition: "Brick stacks supporting the raised floor"),
@@ -589,7 +590,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Central heating", definition: "One furnace heats the entire building"),
                 ],
                 activity: .wordScramble(word: "HYPOCAUST", hint: "Roman underfloor heating — hot air beneath raised floors"),
-                notebookSummary: "Hypocaust: furnace → hot air under raised floor (pilae) → up through hollow walls (tubuli) → roof vents. First central heating.",
+                notebookSummary: "Hypocaust: furnace → hot air under raised floor (supported on pilae brick stacks) → up through hollow wall tiles (tubuli) → out roof vents. The floor itself becomes a radiator. First central heating — 2,000 years before any house had it.",
                 visual: CardVisual(type: .crossSection, title: "Hypocaust — First Central Heating", values: ["depth": 1.0], labels: ["Floor (radiates heat up)", "Pilae stacks (air gap)", "Hot air from furnace", "Tubuli (hollow walls → roof vents)"], steps: 4, caption: "Furnace → under floor → up through walls → out roof vents")
             ),
 
@@ -601,14 +602,14 @@ extension KnowledgeCardContent {
                 title: "Step 2: Water Supply",
                 italianTitle: "Castellum di Distribuzione",
                 icon: "arrow.triangle.branch",
-                lessonText: "A castellum — water distribution tank — sat at each bath complex. The aqueduct fed it from above. Three outlets at different heights: the lowest served the cold pool, the middle the warm pool, the highest the hot pool (hot water evaporates fastest). If aqueduct pressure dropped, the hot pool lost water first — saving the cold pool that served the most bathers. Gravity does the rationing.",
+                lessonText: "You remember the castellum — the tank that splits aqueduct water three ways? Here it is again. But this time — for the bath. Three outlets, three heights. The cold pool — outlet at the bottom. The warm pool — outlet in the middle. The hot pool — outlet at the top. Why? Because hot water evaporates fastest. If the aqueduct pressure drops, the hot pool loses water first. The cold pool — which serves the most bathers — keeps running. Gravity does the rationing. Without a single engineer awake to manage it. The Romans built justice into the plumbing.",
                 keywords: [
                     KeywordPair(keyword: "Castellum", definition: "Water tank distributing to different pools"),
                     KeywordPair(keyword: "Three heights", definition: "Outlets ranked by priority — cold lowest"),
                     KeywordPair(keyword: "Gravity rationing", definition: "Low pressure cuts high outlets first"),
                 ],
                 activity: .multipleChoice(question: "Which pool's outlet was placed lowest in the castellum?", options: ["Hot pool (caldarium)", "Warm pool (tepidarium)", "Cold pool (frigidarium)", "All at equal height"], correctIndex: 2),
-                notebookSummary: "Castellum: 3 outlets at different heights. Cold (lowest) → warm → hot (highest). Low pressure cuts hot first. Gravity rations.",
+                notebookSummary: "Castellum at the bath: 3 outlets at different heights (callback to aqueduct). Cold pool = lowest outlet, warm = middle, hot = highest (hot water evaporates fastest). When pressure drops, hot loses first — cold (most bathers) keeps running. Gravity rations automatically — justice built into the plumbing.",
                 visual: CardVisual(type: .crossSection, title: "Castellum — 3 Outlets by Height", values: ["depth": 2.0], labels: ["Hot water (highest outlet)", "Warm water (middle)", "Cold water (lowest — last to run dry)"], steps: 3, caption: "When water runs low, hot supply cuts first — gravity rations automatically")
             ),
 
@@ -620,7 +621,7 @@ extension KnowledgeCardContent {
                 title: "Step 5: The Tepidarium",
                 italianTitle: "Tre Vasche a Temperature Diverse",
                 icon: "thermometer.medium",
-                lessonText: "Bathers followed a specific route: frigidarium (cold, ~15°C), tepidarium (warm, ~25°C), caldarium (hot, ~40°C). The order matters — moving cold to hot opens pores, then back to cold closes them. The caldarium sat directly over the furnace. The tepidarium shared one wall with the caldarium — heat conducted through stone. The frigidarium was farthest away. Temperature gradient as floor plan.",
+                lessonText: "The bath has a route. A path the body follows. First — the frigidarium. Cold pool. Fifteen degrees. The shock that wakes you. Then — the tepidarium. Warm. Twenty-five degrees. The middle room. Then — the caldarium. Hot. Forty degrees. Pores open. The body breathes through its skin. After, you return to the cold. Pores close. The body sealed. The order matters. And here is the beautiful thing — the caldarium sits directly above the furnace. The tepidarium shares its wall. The frigidarium is far away. The architects did not place rooms by guess. They placed them by temperature. Floor plan as physics.",
                 keywords: [
                     KeywordPair(keyword: "Frigidarium", definition: "Cold pool room (~15°C)"),
                     KeywordPair(keyword: "Tepidarium", definition: "Warm room (~25°C) — between cold and hot"),
@@ -628,7 +629,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Temperature gradient", definition: "Rooms arranged cold → warm → hot"),
                 ],
                 activity: .fillInBlanks(text: "Bath route: ___ (cold 15°C) → ___ (warm 25°C) → ___ (hot 40°C)", blanks: ["frigidarium", "tepidarium", "caldarium"], distractors: ["laconicum", "natatio", "apodyterium"]),
-                notebookSummary: "Bath route: frigidarium (15°C) → tepidarium (25°C) → caldarium (40°C). Caldarium over furnace. Temperature gradient as architecture.",
+                notebookSummary: "Bath route: frigidarium (15°C, cold) → tepidarium (25°C, warm) → caldarium (40°C, hot). Cold to hot opens pores; back to cold seals them. Caldarium sits directly above the furnace; tepidarium shares a wall; frigidarium is far away. Floor plan as physics.",
                 visual: CardVisual(type: .temperature, title: "Bath Temperature Gradient", values: ["transition": 25, "max": 45], labels: ["Frigidarium 15°C", "Caldarium 40°C"], steps: 3, caption: "Cold → warm → hot: temperature gradient as architecture")
             ),
 
@@ -640,7 +641,7 @@ extension KnowledgeCardContent {
                 title: "Step 6: The Caldarium",
                 italianTitle: "Drenaggio a Gravità",
                 icon: "arrow.down.to.line",
-                lessonText: "The baths consumed 10 million liters daily. All that water had to go somewhere. Floors sloped 2% toward bronze-grated drains. Underground channels funneled everything into the Cloaca Maxima — Rome's great sewer. The bath's drain water was reused: it flushed public latrines downstream. Nothing wasted. The most sophisticated plumbing of the ancient world ran entirely on slope.",
+                lessonText: "Ten million liters of water — every day. Where does it all go? Down. Through the floor. The floor itself slopes — two percent, just enough — toward bronze grated drains. From the drains, underground channels lead to the Cloaca Maxima. The great sewer of Rome. And here is the genius — the dirty bath water does not simply disappear. It travels downhill, into the public latrines. It flushes them clean before it goes to the river. Nothing is wasted. The most sophisticated plumbing of the ancient world — it runs entirely on slope. No pumps. No machines. Only gravity, and patience.",
                 keywords: [
                     KeywordPair(keyword: "2% slope", definition: "Floor gradient toward drains"),
                     KeywordPair(keyword: "Cloaca Maxima", definition: "Rome's great sewer collecting all drainage"),
@@ -648,7 +649,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Reuse", definition: "Bath drain water flushed public latrines"),
                 ],
                 activity: .hangman(word: "CLOACA", hint: "Rome's great sewer — the Cloaca Maxima"),
-                notebookSummary: "Baths: 10M liters/day. Floors slope 2% to drains → Cloaca Maxima sewer. Drain water reused for latrines. Zero waste.",
+                notebookSummary: "Baths consumed 10 million liters/day. Floors slope 2% toward bronze-grated drains. Underground channels lead to the Cloaca Maxima (Rome's great sewer). Drain water reused downstream to flush public latrines. Nothing wasted — all on gravity, no pumps.",
                 visual: CardVisual(type: .flow, title: "10 Million Liters Daily → Zero Waste", values: ["flow": 10000000], labels: ["2% floor slope → drains → Cloaca Maxima sewer"], steps: 3, caption: "Drain water reused for latrines — nothing wasted")
             ),
 
@@ -662,14 +663,14 @@ extension KnowledgeCardContent {
                 title: "Marble and Waterproofing",
                 italianTitle: "Marmo e Impermeabilizzazione",
                 icon: "mountain.2.fill",
-                lessonText: "Bath walls needed to be beautiful AND waterproof. Solution: marble veneer over concrete walls sealed with lead clamps. But marble alone leaks through micro-cracks. Behind every slab, Romans applied three coats of opus signinum. The marble is the face; the signinum is the shield. Two materials doing two jobs, layered so perfectly that the baths stayed watertight for 400 years.",
+                lessonText: "Bath walls must be beautiful. They must also be waterproof. So we use two materials. Marble — on the outside. Polished, gleaming, the face the bathers see. And behind it — you remember? Opus signinum. The crushed pottery lining we made for the aqueduct. Three coats again. But this time, hidden. The marble takes the praise. The signinum does the work. Lead clamps fix the marble to the concrete behind. Together, this wall stayed watertight for four hundred years. Two materials. Two jobs. The face — and the shield.",
                 keywords: [
                     KeywordPair(keyword: "Marble veneer", definition: "Thin decorative slabs over concrete walls"),
                     KeywordPair(keyword: "Lead clamps", definition: "Metal fasteners holding marble to the wall"),
                     KeywordPair(keyword: "Opus signinum", definition: "Waterproof layer behind the marble"),
                 ],
                 activity: .trueFalse(statement: "Roman bath walls used opus signinum behind the marble to prevent leaks", isTrue: true),
-                notebookSummary: "Bath walls: marble veneer (beauty) over opus signinum (waterproofing) over concrete. Lead clamps hold marble. Watertight 400 years.",
+                notebookSummary: "Bath walls: marble veneer (face) over opus signinum waterproofing (shield, callback to aqueduct) over concrete core. Lead clamps hold the marble. Stayed watertight 400 years. The marble takes the praise; the signinum does the work.",
                 visual: CardVisual(type: .crossSection, title: "Bath Wall — 3 Layers", values: ["depth": 0.5], labels: ["Marble veneer (beauty)", "Opus signinum (waterproof)", "Concrete core (structure)"], steps: 3, caption: "Lead clamps hold marble — watertight for 400 years")
             ),
 
@@ -681,14 +682,14 @@ extension KnowledgeCardContent {
                 title: "Thermal Cycling Concrete",
                 italianTitle: "Calcestruzzo a Ciclo Termico",
                 icon: "flame.fill",
-                lessonText: "Bath concrete faces a unique enemy: thermal cycling. The caldarium heats to 40°C, then cools overnight. This daily expansion and contraction cracks ordinary cement. Roman bath concrete used extra pozzolana — 1 part lime to 4 parts ash instead of the usual 1:3. The excess silica fills micro-cracks as they form. Self-healing concrete. Romans engineered for the problems they couldn't see.",
+                lessonText: "And now — listen to a beautiful engineering trick. Bath concrete has a unique enemy. Thermal cycling. Hot all day, cold all night. Every day. Every night. Expansion. Contraction. Ordinary cement cracks. But — the Romans changed the recipe. You remember the pozzolana? The volcanic ash that hardens underwater? Here we use more of it. Not one part lime to three parts ash — but one to FOUR. The extra silica fills the micro-cracks AS THEY FORM. The concrete heals itself. Self-healing stone. Two thousand years ago. The Romans engineered for problems they could not see.",
                 keywords: [
                     KeywordPair(keyword: "Thermal cycling", definition: "Daily heating and cooling that cracks cement"),
                     KeywordPair(keyword: "1:4 ratio", definition: "Extra pozzolana for bath concrete"),
                     KeywordPair(keyword: "Self-healing", definition: "Excess silica fills micro-cracks as they form"),
                 ],
                 activity: .fillInBlanks(text: "Bath concrete uses ___ part lime to ___ parts pozzolana — extra silica ___ micro-cracks", blanks: ["1", "4", "heals"], distractors: ["2", "3", "prevents"]),
-                notebookSummary: "Bath concrete: 1:4 lime-to-pozzolana (vs normal 1:3). Extra silica self-heals thermal cycling cracks. Engineered for invisible problems.",
+                notebookSummary: "Bath concrete: 1:4 lime-to-pozzolana (extra silica, vs the normal 1:3 from aqueduct/roads). Caldarium 40°C by day, cool by night — thermal cycling cracks ordinary cement. The extra silica fills micro-cracks AS THEY FORM. Self-healing stone. Engineered for invisible problems.",
                 visual: CardVisual(type: .ratio, title: "Bath Concrete — 1:4 (Extra Silica)", values: ["Lime": 1, "Pozzolana": 4], labels: ["1:4 ratio (vs normal 1:3) — extra silica self-heals cracks"], steps: 3, caption: "Thermal cycling creates micro-cracks — extra silica fills them")
             ),
 
@@ -700,7 +701,7 @@ extension KnowledgeCardContent {
                 title: "Silica for Glass Windows",
                 italianTitle: "Silice per Vetrate",
                 icon: "drop.triangle.fill",
-                lessonText: "The Baths of Caracalla had glass windows — rare in the ancient world. Romans melted river sand (silica) with natron (soda ash) at 1,100°C. The molten glass was poured onto flat stone and rolled. These panes were thick, greenish, and wavy — but they let light flood the caldarium while keeping heat inside. Glass windows turned the baths from dark caves into light-filled palaces.",
+                lessonText: "The Baths of Caracalla had glass windows. Rare in the ancient world. Most buildings of Rome had no glass — only mica or open shutters. To make glass, you melt river sand — silica — with natron, a kind of soda ash. Eleven hundred degrees. The molten glass is poured onto flat stone, then rolled. The panes are thick. Greenish. Wavy as old water. But they let light flood the caldarium. The dark cave becomes a palace. And listen — we will return to this material. Soon, in Venice, glass becomes something else entirely. Patience.",
                 keywords: [
                     KeywordPair(keyword: "Silica", definition: "River sand — main ingredient in glass"),
                     KeywordPair(keyword: "Natron", definition: "Soda ash flux that lowers melting temperature"),
@@ -708,7 +709,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Cast glass", definition: "Molten glass poured and rolled flat on stone"),
                 ],
                 activity: .numberFishing(question: "What temperature (°C) melts sand into glass?", correctAnswer: 1100, decoys: [600, 800, 900, 1400, 1800]),
-                notebookSummary: "Bath glass: river sand (silica) + natron at 1,100°C. Poured and rolled flat. Thick and greenish but flooded caldarium with light.",
+                notebookSummary: "Bath glass: river sand (silica) + natron at 1,100°C, poured onto flat stone + rolled. Thick, greenish, wavy — but floods the caldarium with light. The dark cave becomes a palace. This same material returns at Venice (Glassworks).",
                 visual: CardVisual(type: .temperature, title: "Making Glass — Sand at 1,100°C", values: ["transition": 1100, "max": 1400], labels: ["Sand (SiO₂)", "Molten glass"], steps: 3, caption: "River sand + natron → poured flat → thick but floods the room with light")
             ),
 
@@ -722,7 +723,7 @@ extension KnowledgeCardContent {
                 title: "Frigidarium Roof Trusses",
                 italianTitle: "Capriate del Frigidarium",
                 icon: "triangle.fill",
-                lessonText: "The frigidarium needed the widest roof — its cold pool was the largest room. Oak trusses spanned up to 25 meters, using a king-post truss design: two angled rafters meeting at the peak, held by a vertical post. Oak's interlocking grain resists splitting under tension. Each truss carried 20 tons of terracotta roof tiles. The tree that grows slowest carries the most weight.",
+                lessonText: "The frigidarium — the cold pool — is the largest room in the bath. Its roof must span twenty-five meters. Without a single column. How? Oak trusses. The king-post design — two angled rafters meeting at the peak, held by a vertical post. You remember the rule? Depth equals span divided by twenty. Twenty-five-meter span — one and a quarter meters deep. Oak's grain interlocks — resists splitting under tension. Each truss carries twenty tons of terracotta tiles. The tree that grows slowest carries the most weight. There is a lesson in that.",
                 keywords: [
                     KeywordPair(keyword: "King-post truss", definition: "Two rafters + vertical post spanning wide rooms"),
                     KeywordPair(keyword: "25 meters", definition: "Maximum span of frigidarium roof trusses"),
@@ -730,7 +731,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Interlocking grain", definition: "Oak's structure that resists splitting"),
                 ],
                 activity: .numberFishing(question: "Maximum span (meters) of frigidarium roof trusses?", correctAnswer: 25, decoys: [10, 15, 35, 45, 60]),
-                notebookSummary: "Frigidarium: oak king-post trusses spanning 25m, carrying 20 tons of tiles each. Oak's interlocking grain resists splitting.",
+                notebookSummary: "Frigidarium: oak king-post trusses (two rafters + vertical post) span 25m without columns. Insula 1/20 rule: 25m span → 1.25m deep beams. Each truss carries 20 tons of tiles. Oak's interlocking grain resists splitting. The tree that grows slowest carries the most weight.",
                 visual: CardVisual(type: .force, title: "King-Post Truss — 25m Span", values: ["columns": 3, "height": 25, "perColumn": 20, "arrows": 3], labels: ["Oak truss carries 20 tons of tiles over 25m span"], steps: 3, caption: "Depth = span/20 rule: 25m span → 1.25m deep beams")
             ),
 
@@ -742,7 +743,7 @@ extension KnowledgeCardContent {
                 title: "Step 3 Support: Furnace Fuel",
                 italianTitle: "Combustibile per la Fornace",
                 icon: "leaf.fill",
-                lessonText: "The hypocaust furnace burned continuously. Chestnut wood was preferred — it splits easily, dries quickly, and burns with steady heat. Oak burns hotter but unevenly. The stoker fed logs every 30 minutes, maintaining exactly 300°C in the furnace so the caldarium floor stayed at 40°C. One miscalculation and bathers burn their feet. Temperature control is a craft, not a calculation.",
+                lessonText: "The furnace must never go out. Day. Night. Always burning. For this, the Romans chose chestnut wood. Why not oak? Oak burns hotter — but it burns unevenly. Chestnut splits easily. Dries quickly. Burns with steady, even heat. The stoker feeds the fire every thirty minutes. His task — keep the furnace at exactly three hundred degrees. So that the caldarium floor stays at forty. One miscalculation, and the bathers burn their feet. The stoker is invisible. No bather knows his name. But without him — no warm bath. Temperature control is a craft. Not a calculation.",
                 keywords: [
                     KeywordPair(keyword: "Chestnut", definition: "Preferred fuel — steady, even heat"),
                     KeywordPair(keyword: "300°C", definition: "Target furnace temperature"),
@@ -750,7 +751,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "30 minutes", definition: "Feeding interval for the stoker"),
                 ],
                 activity: .trueFalse(statement: "Chestnut was preferred for bath furnaces because it burns with steady, even heat", isTrue: true),
-                notebookSummary: "Chestnut: splits easily, steady heat. Stoker feeds every 30 min. Furnace 300°C → floor 40°C. Temperature control = craft.",
+                notebookSummary: "Chestnut over oak: splits easily, dries quickly, burns with steady even heat (oak burns hot but unevenly). Stoker feeds every 30 min. Furnace 300°C → floor 40°C. Bathers walk barefoot. The stoker is invisible but essential — temperature control is a craft, not a calculation.",
                 visual: CardVisual(type: .temperature, title: "Furnace 300°C → Floor 40°C", values: ["transition": 300, "max": 400], labels: ["Furnace (300°C)", "Bath floor (40°C)"], steps: 3, caption: "Chestnut burns 45 min per log — stoker feeds every 30 min for steady heat")
             ),
 
@@ -764,14 +765,14 @@ extension KnowledgeCardContent {
                 title: "Glass Recipe",
                 italianTitle: "Ricetta del Vetro",
                 icon: "flask.fill",
-                lessonText: "Roman glass recipe: 60% silica sand, 15% natron (soda ash), 10% lime, 15% recycled glass cullet. The cullet is crucial — it lowers the melting point and makes the batch more predictable. Mix dry, shovel into the crucible, heat to 1,100°C, stir with an iron rod. Green tint comes from iron impurities in the sand. To make it clear, add manganese. Chemistry corrects nature.",
+                lessonText: "The glass recipe. Sixty parts silica — river sand. Fifteen parts natron — the soda ash. Ten parts lime — yes, the same lime you have made before. And fifteen parts cullet — recycled, crushed old glass. Why? Because cullet lowers the melting point. Makes the batch more reliable. Mix dry. Shovel into the crucible. Eleven hundred degrees. Stir with an iron rod. The glass comes out greenish — that is iron in the sand. To remove the tint, add manganese. Chemistry corrects what nature gives. The Romans wasted nothing — not even broken glass.",
                 keywords: [
                     KeywordPair(keyword: "Cullet", definition: "Recycled crushed glass added to the batch"),
                     KeywordPair(keyword: "60% silica", definition: "Main glass ingredient — river sand"),
                     KeywordPair(keyword: "Manganese", definition: "Added to remove green tint from iron impurities"),
                 ],
                 activity: .multipleChoice(question: "What is 'cullet' in glassmaking?", options: ["Iron impurity", "Recycled crushed glass", "Raw silica sand", "Soda ash flux"], correctIndex: 1),
-                notebookSummary: "Roman glass: 60% silica + 15% natron + 10% lime + 15% cullet (recycled glass). 1,100°C. Manganese removes green tint.",
+                notebookSummary: "Roman glass recipe: 60% silica (river sand) + 15% natron (soda ash) + 10% lime + 15% cullet (recycled crushed glass — lowers melting point, makes batch reliable). 1,100°C. Manganese removes the green tint from iron impurities. Romans wasted nothing — not even broken glass.",
                 visual: CardVisual(type: .ratio, title: "Roman Glass Recipe", values: ["Silica": 60, "Natron": 15, "Lime": 10, "Cullet": 15], labels: ["60% silica + 15% natron + 10% lime + 15% recycled glass"], steps: 3, caption: "1,100°C — manganese removes the green tint")
             ),
 
@@ -783,14 +784,14 @@ extension KnowledgeCardContent {
                 title: "Step 3: Furnace Firing",
                 italianTitle: "Combustione nel Prefurnio",
                 icon: "flame.circle.fill",
-                lessonText: "The praefurnium is the mouth of the hypocaust furnace — a vaulted chamber where combustion happens. Air enters from below through a grate, feeds the fire, and hot gases travel through the underfloor space. The vault shape accelerates airflow (Venturi effect). A skilled stoker controlled temperature by adjusting the air grate, not just the fuel. Combustion is about oxygen, not just wood.",
+                lessonText: "The praefurnium. The mouth of the hypocaust furnace. A vaulted chamber. This is where the fire lives. Air enters from below — through a metal grate. It feeds the flames. The hot gases rush out the back, into the crawl space beneath the floor. Now — look at the shape. The vault narrows as it rises. This is no accident. Narrowing the vault — accelerates the airflow. Faster air, hotter fire. We call this the Venturi effect. The skilled stoker controls the temperature by adjusting the grate. Not the fuel. Oxygen is the real fuel. Wood is only the messenger.",
                 keywords: [
                     KeywordPair(keyword: "Praefurnium", definition: "Vaulted furnace mouth where combustion happens"),
                     KeywordPair(keyword: "Venturi effect", definition: "Narrowing vault accelerates airflow"),
                     KeywordPair(keyword: "Air grate", definition: "Controls oxygen — the real temperature dial"),
                 ],
                 activity: .wordScramble(word: "PRAEFURNIUM", hint: "The vaulted mouth of the hypocaust furnace"),
-                notebookSummary: "Praefurnium: vaulted furnace mouth. Venturi effect accelerates air. Temperature controlled by air grate, not just fuel.",
+                notebookSummary: "Praefurnium: vaulted mouth of the hypocaust furnace. Air enters via grate from below. Vault narrows upward — Venturi effect accelerates airflow → hotter fire. Temperature controlled by the air grate, not the fuel. Oxygen is the real fuel — wood is only the messenger.",
                 visual: CardVisual(type: .flow, title: "Venturi Effect in the Furnace", values: ["flow": 300], labels: ["Vaulted chamber narrows → air accelerates → hotter fire"], steps: 3, caption: "Temperature controlled by air grate opening, not just fuel")
             ),
 
@@ -802,7 +803,7 @@ extension KnowledgeCardContent {
                 title: "Waterproof Storage",
                 italianTitle: "Stoccaggio Impermeabile",
                 icon: "archivebox.fill",
-                lessonText: "Bath oils, perfumes, and cleaning supplies needed waterproof storage. Romans used amphorae lined with pine pitch — heated tree resin painted inside the clay vessel. The resin fills every pore. For extra protection, a wax seal topped the cork stopper. Quicklime was stored in sealed lead containers — one drop of water and it explodes with heat. Proper storage saves lives.",
+                lessonText: "Bath oils. Perfumes. Cleaning supplies. All these things must be stored. And the clay vessels we use — the amphorae — they leak. So inside, we paint pine pitch. Heated tree resin. It fills every pore in the clay. A cork stopper on top — sealed with hot wax. The most dangerous material we store? Quicklime. One drop of water — and it explodes with heat. So we keep quicklime in sealed lead containers. Bone dry. Always. Listen — proper storage saves lives. The most boring detail of the bath — it is also one of the most important.",
                 keywords: [
                     KeywordPair(keyword: "Pine pitch", definition: "Heated tree resin waterproofing amphora interiors"),
                     KeywordPair(keyword: "Amphora", definition: "Two-handled clay storage vessel"),
@@ -810,7 +811,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Lead container", definition: "For storing reactive quicklime safely"),
                 ],
                 activity: .hangman(word: "AMPHORA", hint: "Two-handled clay vessel lined with pine pitch"),
-                notebookSummary: "Storage: amphorae lined with pine pitch for oils. Wax-sealed cork stoppers. Quicklime in sealed lead. Proper storage saves lives.",
+                notebookSummary: "Storage: amphorae lined with pine pitch (heated tree resin fills clay pores) for oils + perfumes. Cork stoppers sealed with hot wax. Quicklime stored in sealed lead containers — one drop of water and it explodes with heat. The most boring detail saves lives.",
                 visual: CardVisual(type: .crossSection, title: "Amphora — Waterproof Storage", values: ["depth": 0.6], labels: ["Wax-sealed cork stopper", "Clay vessel", "Pine pitch lining (waterproof)"], steps: 3, caption: "Oils, perfumes, cleaning supplies — proper storage saves lives")
             ),
         ]
