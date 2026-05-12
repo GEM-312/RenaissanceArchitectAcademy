@@ -832,7 +832,7 @@ extension KnowledgeCardContent {
                 title: "First Apartment Buildings",
                 italianTitle: "I Primi Condomini",
                 icon: "building.fill",
-                lessonText: "Rome had a million residents and not enough land. The solution: build up. Insulae were the world's first apartment buildings — 6 to 7 stories tall, housing dozens of families. Ground floors held tabernae shops. Upper floors got smaller, cheaper, and more dangerous. The richest lived lowest. The poorest lived highest — closer to fire, farther from escape. Vertical cities have always sorted people by money.",
+                lessonText: "Welcome to your third building. A million Romans lived in this city — and there was not enough land. So they built up. The first apartment buildings the world had ever seen. Six stories. Sometimes seven. Housing dozens of families under one roof. Ground floors held shops. The upper floors got smaller, cheaper, more dangerous. Listen to this — the richest lived lowest. The poorest lived highest. Closer to fire. Farther from escape. You remember the aqueduct? Water flowed first to the public fountains, then to baths, then to homes. The same Roman order — only now, it climbs the stairs.",
                 keywords: [
                     KeywordPair(keyword: "Insula", definition: "Roman apartment block — 6-7 stories tall"),
                     KeywordPair(keyword: "Tabernae", definition: "Ground-floor shops in the insula"),
@@ -840,14 +840,15 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Richest lowest", definition: "Wealthy tenants lived on lower, safer floors"),
                 ],
                 activity: .numberFishing(question: "How many stories tall was a typical Roman insula?", correctAnswer: 7, decoys: [3, 4, 10, 12, 15]),
-                notebookSummary: "Insula: Rome's apartment buildings, 6-7 stories. Ground floor = shops (tabernae). Rich lived low, poor lived high. First vertical city.",
+                notebookSummary: "Insulae: Rome's first apartment buildings — 6 to 7 stories. A million Romans + not enough land = build up. Ground floor = shops (tabernae). Richest lived lowest, poorest highest. Same Roman order as the specus — now climbing stairs.",
                 visual: CardVisual(
                     type: .crossSection,
                     title: "6-7 Story Apartment",
                     values: ["height": 7],
                     labels: ["Shops (ground)", "Rich apartments", "Middle class", "Poor (top floor)", "Roof (fire risk)"],
                     steps: 4, caption: "Vertical cities have always sorted people by money"
-                )
+                ),
+                isLeadCard: true
             ),
 
             KnowledgeCard(
@@ -858,7 +859,7 @@ extension KnowledgeCardContent {
                 title: "Step 4: Five Stories",
                 italianTitle: "Limite di Altezza di Augusto",
                 icon: "ruler.fill",
-                lessonText: "After a series of catastrophic collapses, Emperor Augustus set the first building code: no insula taller than 20 meters (about 6 stories). Nero later reduced it to 17.5 meters after the Great Fire. The problem wasn't ambition — it was foundation engineering. Roman foundations couldn't reliably support more than 6 stories of heavy brick and concrete. Building codes were written in blood.",
+                lessonText: "Tall buildings fall. That is the truth no engineer can escape. After many catastrophic collapses — entire insulae crashing down on their residents — Emperor Augustus did something new. He wrote a law. No building taller than twenty meters. About six stories. After the Great Fire of Rome, Nero made it stricter — seventeen and a half meters. Why? Foundations. The Roman ground beneath the city could only carry so much weight. Brick and concrete have a price. Listen to me — building codes are written in blood. Every rule, after a tragedy.",
                 keywords: [
                     KeywordPair(keyword: "20 meters", definition: "Augustus's maximum building height"),
                     KeywordPair(keyword: "17.5 meters", definition: "Nero's reduced limit after the Great Fire"),
@@ -866,7 +867,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Foundation limit", definition: "Roman foundations couldn't support 7+ stories"),
                 ],
                 activity: .numberFishing(question: "Augustus limited insulae to what height (meters)?", correctAnswer: 20, decoys: [10, 15, 25, 30, 40]),
-                notebookSummary: "Augustus: max 20m. Nero: max 17.5m after Great Fire. First building codes — written after collapses. Foundations were the limit.",
+                notebookSummary: "Augustus: max 20m (after catastrophic collapses). Nero: max 17.5m (after the Great Fire). The first building codes in history — written in blood. The real limit was foundation engineering, not ambition.",
                 visual: CardVisual(
                     type: .comparison,
                     title: "Building Height Limits",
@@ -884,7 +885,7 @@ extension KnowledgeCardContent {
                 title: "Step 2: Tabernae Shops",
                 italianTitle: "Le Tabernae",
                 icon: "storefront.fill",
-                lessonText: "The ground floor of every insula was prime real estate. Wide arched openings faced the street — tabernae. Bakers, butchers, wine sellers, and fullers (launderers) operated from these shops. A wooden mezzanine above the counter served as the shopkeeper's bedroom. The arch opening was both door and display window. Roman retail design: maximum visibility, minimum wasted space.",
+                lessonText: "The ground floor — this was the most valuable space in the building. Wide arches opened directly to the street. We called these shops tabernae. Bakers, with their loaves. Butchers, with their hooks. Wine sellers. And the fullers — the Roman launderers, who cleaned clothes with — well, with urine. Yes. Urine. Ammonia, you see. It works. Above the counter, a wooden mezzanine — that was where the shopkeeper slept. One arch served as both door and window. Maximum visibility — minimum wasted space. Roman commerce — simple, perfect.",
                 keywords: [
                     KeywordPair(keyword: "Taberna", definition: "Ground-floor shop with arched street opening"),
                     KeywordPair(keyword: "Mezzanine", definition: "Wooden sleeping loft above the shop counter"),
@@ -892,7 +893,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Arch opening", definition: "Served as both door and display window"),
                 ],
                 activity: .wordScramble(word: "TABERNAE", hint: "Ground-floor shops in Roman apartment buildings"),
-                notebookSummary: "Tabernae: arched ground-floor shops. Bakers, butchers, wine sellers. Mezzanine bedroom above. Max visibility, min wasted space.",
+                notebookSummary: "Tabernae: arched ground-floor shops — bakers, butchers, wine sellers, fullers (who cleaned clothes with urine, for the ammonia). Mezzanine bedroom above the counter. Arch served as door + display window. Max visibility, min wasted space.",
                 visual: CardVisual(
                     type: .crossSection,
                     title: "Taberna — Ground Floor Shop",
@@ -910,7 +911,7 @@ extension KnowledgeCardContent {
                 title: "Step 4: Brick Walls",
                 italianTitle: "Muri Sempre Più Sottili",
                 icon: "arrow.up.and.line.horizontal.and.arrow.down",
-                lessonText: "Ground-floor walls were 60 cm thick — solid brick and concrete. Each floor above got thinner: 45 cm, then 30 cm, then timber-framed partitions on top. This wasn't carelessness — it was physics. Thicker lower walls carry the cumulative weight of every floor above. Thin upper walls reduce the load they contribute. The building is lightest where it's tallest. Weight management in vertical architecture.",
+                lessonText: "Look at the walls. At the bottom — sixty centimeters thick. Solid brick and concrete. As we climb — they grow thinner. Forty-five centimeters at the second floor. Thirty at the third. By the top — only wooden frames remain. This is not carelessness. This is physics. The lowest walls must carry everything above them. The highest walls — they carry only themselves. So the building grows lighter as it grows taller. Lightest where it is tallest. Strange — no? In a Roman insula, the higher you go — the less weight there is to fall.",
                 keywords: [
                     KeywordPair(keyword: "60 cm", definition: "Ground floor wall thickness — solid brick"),
                     KeywordPair(keyword: "45 cm → 30 cm", definition: "Progressive thinning on upper floors"),
@@ -918,7 +919,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Timber frame", definition: "Lightest construction on top floors"),
                 ],
                 activity: .multipleChoice(question: "Why did insula walls get thinner on upper floors?", options: ["To save money on bricks", "To reduce the load that lower walls carry", "Romans ran out of materials", "Upper floors weren't important"], correctIndex: 1),
-                notebookSummary: "Insula walls: 60cm (ground) → 45cm → 30cm → timber (top). Thinner upper floors = less cumulative load. Lightest where tallest.",
+                notebookSummary: "Insula walls taper as they climb: 60cm (ground) → 45cm → 30cm → timber (top). Lightest where it is tallest. The lowest walls carry everything above; the highest walls carry only themselves.",
                 visual: CardVisual(
                     type: .crossSection,
                     title: "Wall Thickness Taper",
@@ -936,7 +937,7 @@ extension KnowledgeCardContent {
                 title: "Spiral Stairways",
                 italianTitle: "Scale a Chiocciola",
                 icon: "arrow.uturn.up",
-                lessonText: "With 6 stories and no elevators, stairs were the insula's backbone. Roman engineers used spiral staircases — they fit in a 2-meter circle and serve every floor. Each step is a wedge: wide at the outer wall, narrow at the center column. The central column (newel) carries the weight of every step. Spiral geometry packs maximum vertical travel into minimum floor space.",
+                lessonText: "Six stories. No elevators. Climbing is daily life. So the engineers gave the insula its backbone — the spiral staircase. A perfect circle, two meters across. That is all. Each step is a wedge — wide at the outer wall, narrow at the center. In the middle, a single column — we call it the newel. It carries the weight of every step above it. Maximum height. Minimum space. Geometry as a solution to crowding. Look at any old building in modern Rome — these stairs are still there. Two thousand years of climbing.",
                 keywords: [
                     KeywordPair(keyword: "Spiral staircase", definition: "Circular stairs fitting in a 2m diameter"),
                     KeywordPair(keyword: "Newel", definition: "Central column carrying all the steps"),
@@ -944,7 +945,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Floor space", definition: "Spiral uses minimum area for maximum height"),
                 ],
                 activity: .trueFalse(statement: "Roman insula spiral staircases fit within a 2-meter diameter circle", isTrue: true),
-                notebookSummary: "Spiral stairs: 2m diameter, wedge steps, central newel column. Maximum vertical travel in minimum floor space.",
+                notebookSummary: "Spiral staircases: 2m diameter, wedge steps (wide outside, narrow at center), central newel column carries all the steps. Maximum vertical travel in minimum floor space — the same stairs still climb in old Roman buildings today.",
                 visual: CardVisual(
                     type: .geometry,
                     title: "Spiral Staircase — 2m Circle",
@@ -964,14 +965,14 @@ extension KnowledgeCardContent {
                 title: "Mortar Binding Science",
                 italianTitle: "Scienza della Malta Legante",
                 icon: "mountain.2.fill",
-                lessonText: "Insula mortar had to be cheap and strong — these weren't luxury buildings. The recipe: 1 part lime, 4 parts local sand (no expensive pozzolana). The trade-off: slower setting, weaker bond, but one-third the cost. Builders compensated by making joints thicker — 2 cm instead of 1 cm — giving more mortar area for each brick. Economy and engineering, balanced on a budget.",
+                lessonText: "Now — your hands get dirty again. But this is a third recipe. You have learned the aqueduct mortar — strong, with pozzolana. You have learned the road mortar — rougher, with crushed volcanic rock. This is the insula recipe. The cheapest of all. One part lime. Four parts local sand. No pozzolana — it costs too much. The trade-off? The mortar sets slower. Bonds weaker. But it costs one third. So the builders make the joints thicker — two centimeters instead of one — more mortar between every brick. Economy and engineering — balanced on a budget.",
                 keywords: [
                     KeywordPair(keyword: "1:4 ratio", definition: "Lime to local sand — cheaper than pozzolana mix"),
                     KeywordPair(keyword: "2 cm joints", definition: "Thicker mortar compensates for weaker recipe"),
                     KeywordPair(keyword: "Slower setting", definition: "Trade-off of using sand instead of volcanic ash"),
                 ],
                 activity: .trueFalse(statement: "Insula mortar used cheaper local sand instead of pozzolana, with thicker joints to compensate", isTrue: true),
-                notebookSummary: "Insula mortar: 1:4 lime-to-sand (no pozzolana). Weaker but 1/3 cost. 2cm joints vs 1cm. Economy + engineering balanced.",
+                notebookSummary: "Insula mortar (3rd recipe learned): 1 lime + 4 local sand. No pozzolana — too expensive. Weaker but 1/3 the cost. Compensate with thicker 2cm joints (vs 1cm). Economy + engineering balanced on a budget.",
                 visual: CardVisual(
                     type: .ratio,
                     title: "Cheap Mortar Recipe — 1:4",
@@ -989,7 +990,7 @@ extension KnowledgeCardContent {
                 title: "Tegulae and Imbrices",
                 italianTitle: "Tegole e Embrici",
                 icon: "rectangle.split.3x1.fill",
-                lessonText: "Roman roofs used two interlocking tile types: tegulae (flat tiles with raised edges) and imbrices (half-round caps covering the joints). Rainwater channeled down the tegulae grooves and off the eaves. No nails needed — gravity and overlap held everything. A single insula used 3,000 tiles, each hand-molded from river clay. The system hasn't changed in 2,000 years. Modern Italian roofs still use it.",
+                lessonText: "And now — the roof. Two tiles. The tegula — flat, with raised edges. The imbrix — half-round, like a cup turned upside down. It covers the joints between tegulae. Rain falls. Water runs down the channels, off the eaves, to the street below. No nails. Only gravity. Only careful overlap. Three thousand tiles for a single insula — all hand-molded from river clay. Walk through any Italian village today, you will see this same roof. Two thousand years — and we have not improved it. Every Roman, no matter how poor — had a roof.",
                 keywords: [
                     KeywordPair(keyword: "Tegula", definition: "Flat roof tile with raised edges"),
                     KeywordPair(keyword: "Imbrix", definition: "Half-round cap tile covering the joints"),
@@ -997,7 +998,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "No nails", definition: "Gravity and overlap hold tiles in place"),
                 ],
                 activity: .hangman(word: "TEGULAE", hint: "Flat Roman roof tiles with raised edges"),
-                notebookSummary: "Tegulae (flat + edges) + imbrices (half-round caps). 3,000 tiles per insula. No nails — gravity holds them. Still used today.",
+                notebookSummary: "Roof = tegulae (flat tiles with raised edges) + imbrices (half-round caps over the joints). 3,000 tiles per insula, hand-molded from river clay. No nails — only gravity + overlap. Still used in Italy today. Every Roman, no matter how poor, had a roof.",
                 visual: CardVisual(
                     type: .comparison,
                     title: "Tegulae + Imbrices — Interlocking Tiles",
@@ -1015,7 +1016,7 @@ extension KnowledgeCardContent {
                 title: "Step 7: Mica Windows",
                 italianTitle: "Vetro Piano e Finestre di Mica",
                 icon: "drop.triangle.fill",
-                lessonText: "Upper-floor insulae used two window materials: cast glass for the wealthy, and split mica (lapis specularis) for everyone else. Mica is a natural mineral that cleaves into paper-thin transparent sheets. It blocks wind but passes light. Romans mined it in Hispania. Glass was 10× more expensive but clearer. Most insulae had mica below the 3rd floor and open shutters above. Light was a luxury with a price tag.",
+                lessonText: "Windows. Now — listen carefully. The wealthy had cast glass. Clear. Beautiful. Expensive. The rest had mica. We call it lapis specularis — natural stone that splits into paper-thin transparent sheets. It blocks wind. It passes light. Mined far away — in Hispania. Carried back to Rome by the wagonload. Glass cost ten times more. So in the typical insula — mica below the third floor. And above? Wooden shutters. Open in summer. Closed in winter. Light, you see, is a luxury. With a price tag. What money buys — what poverty pays.",
                 keywords: [
                     KeywordPair(keyword: "Lapis specularis", definition: "Mica mineral split into transparent window sheets"),
                     KeywordPair(keyword: "Mica", definition: "Natural mineral that cleaves paper-thin"),
@@ -1023,7 +1024,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "10× cost", definition: "Glass vs mica price difference"),
                 ],
                 activity: .wordScramble(word: "MICA", hint: "Natural mineral split into transparent window sheets"),
-                notebookSummary: "Windows: cast glass (expensive, clear) or mica/lapis specularis (cheap, translucent). Mica from Hispania. Light was a priced luxury.",
+                notebookSummary: "Windows = cast glass (rich, clear, 10× more expensive) or mica/lapis specularis (cheap, translucent, mined in Hispania). Mica below 3rd floor, wooden shutters above. Light was a priced luxury — what money buys, what poverty pays.",
                 visual: CardVisual(
                     type: .comparison,
                     title: "Glass vs Mica Windows",
@@ -1043,7 +1044,7 @@ extension KnowledgeCardContent {
                 title: "Step 3: Floor Beams",
                 italianTitle: "Interasse delle Travi",
                 icon: "rectangle.split.3x1",
-                lessonText: "Oak floor beams spanned the width of each apartment — typically 4 to 5 meters. Spaced 40 cm apart, they formed the skeleton that held concrete floors and the people above. The rule: beam depth equals 1/20 of the span. A 5-meter span needs 25 cm deep beams. Too shallow and the floor bounces. Too deep wastes wood. Roman carpenters knew the ratio by apprenticeship, not textbooks.",
+                lessonText: "You will need oak. Strong, heavy, slow-growing oak — for the floor beams. Each beam spans the width of an apartment — four to five meters. Spaced forty centimeters apart. Together, they hold up the concrete floor — and every person who walks above. Now — listen. Here is the rule the master carpenter taught the apprentice. Beam depth — equals span — divided by twenty. A five-meter span? Twenty-five centimeters deep. Too shallow, the floor bounces. Too deep, wood is wasted. No books taught this rule. Only years of cutting, lifting, fitting. The carpenter knew it — by hand, by year. Like you will.",
                 keywords: [
                     KeywordPair(keyword: "40 cm spacing", definition: "Distance between floor beams"),
                     KeywordPair(keyword: "1/20 rule", definition: "Beam depth = span ÷ 20"),
@@ -1051,7 +1052,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "25 cm depth", definition: "Beam size for a 5-meter span"),
                 ],
                 activity: .numberFishing(question: "What depth beam (cm) for a 5-meter span using the 1/20 rule?", correctAnswer: 25, decoys: [10, 15, 30, 40, 50]),
-                notebookSummary: "Oak floor beams: 40cm apart, spanning 4-5m. Rule: depth = span ÷ 20. 5m span → 25cm beam. Learned by apprenticeship.",
+                notebookSummary: "Oak floor beams span 4-5m, spaced 40cm apart. Rule: beam depth = span ÷ 20. A 5m span needs a 25cm deep beam. Roman carpenters knew this by apprenticeship — by hand, by year. No textbooks.",
                 visual: CardVisual(
                     type: .ratio,
                     title: "Beam Depth Rule: Span ÷ 20",
@@ -1069,7 +1070,7 @@ extension KnowledgeCardContent {
                 title: "Lightweight Upper Frames",
                 italianTitle: "Telai Leggeri dei Piani Alti",
                 icon: "square.stack.3d.up",
-                lessonText: "Upper insula floors used poplar instead of oak. Why? Poplar weighs 40% less. On the 5th and 6th floors, every kilogram matters — the walls below carry it all. Poplar frames were filled with wattle and daub: woven sticks packed with clay. Cheap, light, and fast to build. The downside: highly flammable. Rome's great fires started on upper floors. The cheapest material had the highest cost.",
+                lessonText: "Higher up — the wood changes. Not oak. Poplar. Forty percent lighter. On the fifth floor, the sixth — every kilogram matters. Every kilogram presses down on the walls below. So we use the lighter wood. Cheap. Fast to cut. Easy to lift. Between the poplar frames — wattle and daub. Woven sticks packed with clay. Quick to build. And then — the price. Poplar burns. Wattle burns. Clay does not. But when the fire starts in a poor man's room at the top of the insula — the whole building is in trouble. Rome's great fires started in these rooms. The cheapest material — it had the highest cost.",
                 keywords: [
                     KeywordPair(keyword: "Poplar", definition: "Light wood — 40% less than oak — for upper floors"),
                     KeywordPair(keyword: "Wattle and daub", definition: "Woven sticks + clay filling between frames"),
@@ -1077,7 +1078,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Flammable", definition: "Upper floors burned easily — caused great fires"),
                 ],
                 activity: .multipleChoice(question: "Why was poplar used on upper insula floors instead of oak?", options: ["Stronger grain", "40% lighter", "Fire resistant", "Cheaper to cut"], correctIndex: 1),
-                notebookSummary: "Upper floors: poplar (40% lighter than oak) + wattle and daub. Cheap, fast, light — but flammable. Rome's fires started high.",
+                notebookSummary: "Upper floors used poplar (40% lighter than oak) + wattle and daub (woven sticks + clay). Cheap, fast, light — but flammable. Rome's great fires started in these top rooms. The cheapest material had the highest cost.",
                 visual: CardVisual(
                     type: .comparison,
                     title: "Oak vs Poplar Frames",
@@ -1097,7 +1098,7 @@ extension KnowledgeCardContent {
                 title: "Step 4: Lime Plaster",
                 italianTitle: "Ricetta della Malta di Calce",
                 icon: "flask.fill",
-                lessonText: "Insula mortar was the McDonald's of Roman cement — standardized, fast, everywhere. Recipe: 1 part aged lime putty (slaked at least 3 months), 4 parts river sand. Mix to the consistency of thick yogurt. Spread 2 cm thick between bricks. The 3-month aging is key — fresh lime putty has hot spots that crack. Patience is an ingredient. The oldest lime makes the strongest mortar.",
+                lessonText: "You have made lime mortar before. For the aqueduct. For the roads. But this — this is different. Insula mortar uses the SAME lime you have made. But it must age. Three months. Sometimes longer. Slaked lime, sitting in a pit, covered with water. Slowly — invisibly — it changes. The hot spots cool. The crystals settle. Then — and only then — you mix one part of this aged lime with four parts river sand. The consistency of thick yogurt. Spread two centimeters thick between every brick. Patience is an ingredient. The oldest lime — it makes the strongest mortar.",
                 keywords: [
                     KeywordPair(keyword: "Lime putty", definition: "Slaked lime aged 3+ months before use"),
                     KeywordPair(keyword: "3 months", definition: "Minimum aging time to eliminate hot spots"),
@@ -1105,7 +1106,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Thick yogurt", definition: "Correct mortar consistency"),
                 ],
                 activity: .numberFishing(question: "How many months must lime putty age before use?", correctAnswer: 3, decoys: [1, 2, 6, 9, 12]),
-                notebookSummary: "Insula mortar: 1 lime putty (aged 3+ months) + 4 sand. Thick yogurt consistency. 2cm joints. Aging prevents cracking.",
+                notebookSummary: "Insula plaster: 1 aged lime putty (slaked 3+ months) + 4 river sand. Aging eliminates the hot spots that crack fresh lime. Thick yogurt consistency, 2cm joints. Patience is an ingredient — the oldest lime makes the strongest mortar.",
                 visual: CardVisual(
                     type: .ratio,
                     title: "Aged Lime Putty — 3+ Months",
@@ -1123,7 +1124,7 @@ extension KnowledgeCardContent {
                 title: "Step 8: Fire Tiles",
                 italianTitle: "Terracotta a 1000°C",
                 icon: "flame.circle.fill",
-                lessonText: "Insula tiles and bricks fire at 950-1050°C. Below 900°C, the clay stays porous and crumbles in rain. Above 1100°C, it vitrifies — becomes glassy and brittle. The sweet spot fuses silica particles into a ceramic matrix that's waterproof but not brittle. Roman kilns held temperature by adjusting the air vent — wider for hotter, narrower for cooler. Precision from a hole in a wall.",
+                lessonText: "The last lesson. Brick and tile firing. The temperature must be exact. Below nine hundred degrees — the clay stays porous. Rain destroys it. Above eleven hundred — it vitrifies. Becomes glassy. Brittle. The sweet spot? Nine hundred fifty to ten hundred fifty. There, the silica fuses into a ceramic matrix — waterproof, but not fragile. How does the kiln master hold this temperature? An air vent. A hole in the wall. Wider for hotter. Narrower for cooler. Precision — from a hole in a wall. And so — we close. Today we have walked from water, to road, to home. The body of an empire is complete. But there is more, my apprentice. Soon — we will go higher. To temples. To domes that hold the sky. To gods.",
                 keywords: [
                     KeywordPair(keyword: "950-1050°C", definition: "Sweet spot for terracotta — waterproof, not brittle"),
                     KeywordPair(keyword: "Vitrification", definition: "Above 1100°C — glassy and brittle"),
@@ -1131,7 +1132,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Air vent", definition: "Kiln temperature controlled by opening width"),
                 ],
                 activity: .fillInBlanks(text: "Below ___°C clay crumbles. Above ___°C it vitrifies. Sweet spot: ___-1050°C", blanks: ["900", "1100", "950"], distractors: ["600", "800", "1200"]),
-                notebookSummary: "Terracotta: 950-1050°C sweet spot. Below 900°C = crumbly. Above 1100°C = glassy/brittle. Air vent controls kiln temperature.",
+                notebookSummary: "Brick firing sweet spot: 950-1050°C. Below 900°C = porous, crumbles in rain. Above 1100°C = vitrified, glassy + brittle. Kiln temperature held by an air vent — precision from a hole in a wall.",
                 visual: CardVisual(
                     type: .temperature,
                     title: "Brick Firing Sweet Spot",
