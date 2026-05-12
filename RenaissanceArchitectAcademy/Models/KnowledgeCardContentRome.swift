@@ -345,7 +345,7 @@ extension KnowledgeCardContent {
                 title: "400,000 Kilometers",
                 italianTitle: "400.000 Chilometri",
                 icon: "road.lanes",
-                lessonText: "At its peak, Rome's road network stretched 400,000 km — enough to circle Earth ten times. 29 highways radiated from a golden milestone in the Forum. Armies marched 30 km per day on them. Trade wagons followed. Then mail carriers. Roads didn't just connect cities — they created an economy. Every empire since has copied this idea. Control the roads, control the world.",
+                lessonText: "Welcome back. Today — we follow the roads. Look at the number. Four hundred thousand kilometers. Enough to circle the earth ten times. And every single one of them — leads here. To Rome. Twenty-nine great highways radiate from one point in the Forum. A man named Appius Claudius Caecus built the first of them — three hundred and twelve years before Christ. The Via Appia. The Queen of Roads. Armies marched on them. Trade wagons followed. Then mail. Then empire. Every road leads to Rome — literally. Control the roads — and you control the world.",
                 keywords: [
                     KeywordPair(keyword: "400,000 km", definition: "Total length of Roman road network"),
                     KeywordPair(keyword: "Golden milestone", definition: "Starting point of all roads in the Roman Forum"),
@@ -353,12 +353,13 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "30 km/day", definition: "Standard army marching pace on Roman roads"),
                 ],
                 activity: .numberFishing(question: "How many km of roads did Rome build at its peak?", correctAnswer: 400000, decoys: [50000, 150000, 250000, 600000, 800000]),
-                notebookSummary: "Rome built 400,000 km of roads. 29 highways from the golden milestone. Armies marched 30 km/day. Roads = empire.",
+                notebookSummary: "400,000 km of Roman roads — enough to circle the earth 10 times. 29 highways radiate from the golden milestone in the Forum. Appius Claudius Caecus began the Via Appia in 312 BC. Control the roads, control the world.",
                 visual: CardVisual(
                     type: .geometry, title: "400,000 km of Roads from One Point",
                     values: ["diameter": 400000], labels: ["29 highways radiate from the golden milestone", "Enough road to circle Earth 10 times"],
                     steps: 3, caption: "Every road leads to Rome — literally"
-                )
+                ),
+                isLeadCard: true
             ),
 
             KnowledgeCard(
@@ -369,14 +370,14 @@ extension KnowledgeCardContent {
                 title: "Step 1 Support: Survey Stakes",
                 italianTitle: "La Groma",
                 icon: "plus.circle",
-                lessonText: "Romans surveyed roads using the groma — a cross-shaped instrument with plumb lines hanging from each arm. Set it at a starting point, sight along the strings, and plant stakes in a perfectly straight line. Some Roman roads run dead straight for 80 km. No GPS, no lasers. Just string, lead weights, and trained eyes. The simplest tools, wielded with discipline, are enough.",
+                lessonText: "Before you can build straight — you must see straight. See? This is the groma. Cross-shaped. Plumb lines hanging from each arm. Lead weights pull the strings perfectly vertical. The surveyor sets it down, sights along two arms, plants a stake far away. Then walks to the stake and sights another — even further. For eighty kilometers, sometimes. Dead straight. No GPS. No lasers. Only string, lead, and patient eyes. The simplest tools — wielded with discipline — are enough to build an empire.",
                 keywords: [
                     KeywordPair(keyword: "Groma", definition: "Cross-shaped surveying tool with plumb lines"),
                     KeywordPair(keyword: "Plumb lines", definition: "Weighted strings for sighting straight lines"),
                     KeywordPair(keyword: "80 km", definition: "Length of some perfectly straight Roman roads"),
                 ],
                 activity: .wordScramble(word: "GROMA", hint: "Cross-shaped Roman surveying tool with plumb lines"),
-                notebookSummary: "Groma: cross-shaped tool with plumb lines for surveying. Some roads run 80 km dead straight. Simple tools + discipline.",
+                notebookSummary: "Groma: cross-shaped surveying instrument with plumb lines from each arm. Sight along arms, plant stakes in straight line. 80 km dead straight, with only string + lead weights + trained eyes.",
                 visual: CardVisual(type: .geometry, title: "The Groma — Cross-Shaped Level", values: ["diameter": 6], labels: ["Cross arms with plumb lines", "Sight along two arms = straight line", "80 km dead straight with this tool"], steps: 3, caption: "Simple tools + discipline = 80 km dead straight")
             ),
 
@@ -388,7 +389,7 @@ extension KnowledgeCardContent {
                 title: "Steps 3–6: Four Layers",
                 italianTitle: "Quattro Strati Geologici",
                 icon: "square.stack.fill",
-                lessonText: "Every Roman road is a geological sandwich. Bottom: statumen — large flat stones for drainage. Next: rudus — fist-sized gravel bound with lime. Then: nucleus — fine gravel and sand packed hard. Top: summa crusta — cut stone polygons fitted without mortar. Total depth: up to 1.5 meters. Each layer serves a different purpose. The road isn't a surface — it's a structure.",
+                lessonText: "Now — look beneath your feet. A Roman road is not a surface. It is a structure. Four layers, one upon the other. Total depth — up to one and a half meters. At the bottom: statumen. Large flat stones, for drainage. Above that: rudus. Fist-sized gravel, bound with lime. Then: nucleus. Fine gravel and sand, packed hard. And at the top: summa crusta. Cut stone polygons, fitted without mortar. Each layer — a different purpose. The road that lasts two thousand years does not happen by accident. Every layer knows its job.",
                 keywords: [
                     KeywordPair(keyword: "Statumen", definition: "Bottom layer — large flat stones for drainage"),
                     KeywordPair(keyword: "Rudus", definition: "Second layer — gravel bound with lime"),
@@ -396,7 +397,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Summa crusta", definition: "Top layer — cut stone polygons"),
                 ],
                 activity: .multipleChoice(question: "What is the bottom layer of a Roman road?", options: ["Nucleus", "Rudus", "Statumen", "Summa crusta"], correctIndex: 2),
-                notebookSummary: "4 layers bottom→top: statumen (drainage stones), rudus (lime gravel), nucleus (packed sand), summa crusta (cut polygons). Up to 1.5m deep.",
+                notebookSummary: "A Roman road is a structure, not a surface. 4 layers, 1.5m total: statumen (drainage stones), rudus (lime gravel), nucleus (packed sand), summa crusta (cut polygons). Every layer knows its job.",
                 visual: CardVisual(type: .crossSection, title: "Four Layers of a Roman Road", values: ["depth": 1.5], labels: ["Summa crusta (polygonal stones)", "Nucleus (packed sand)", "Rudus (lime gravel)", "Statumen (drainage stones)"], steps: 4, caption: "A geological sandwich up to 1.5 meters deep")
             ),
 
@@ -408,7 +409,7 @@ extension KnowledgeCardContent {
                 title: "Step 6: Basalt Paving",
                 italianTitle: "Basolato Poligonale",
                 icon: "hexagon.fill",
-                lessonText: "The Via Appia's surface stones are basalt — volcanic rock so hard it dulls iron chisels. Masons cut them into irregular polygons and fitted them together like a jigsaw puzzle. No mortar needed. The irregular shapes lock tighter under traffic weight. After 2,300 years, you can still walk on the original stones. The Romans chose the hardest rock on Earth and made it the smoothest road.",
+                lessonText: "And now — the top layer. The Via Appia's surface stones are basalt. Volcanic rock. So hard, it dulls the iron chisel that cuts it. The masons shape them into irregular polygons — like pieces of a puzzle — and fit them together. No mortar. Nothing to glue them. The shapes themselves lock tighter under every footstep, every wheel. Two thousand three hundred years later, you can still walk on the original stones. The Romans chose the hardest rock on earth. And they made it the smoothest road. Beautiful — no?",
                 keywords: [
                     KeywordPair(keyword: "Basalt", definition: "Volcanic rock used for road surface — extremely hard"),
                     KeywordPair(keyword: "Polygonal", definition: "Irregular multi-sided shape that interlocks"),
@@ -416,7 +417,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "2,300 years", definition: "Age of original basalt paving still walkable"),
                 ],
                 activity: .hangman(word: "BASALT", hint: "Volcanic rock so hard it dulls iron chisels"),
-                notebookSummary: "Via Appia: basalt polygons — no mortar, interlock under weight. 2,300 years old, still walkable. Hardest rock = smoothest road.",
+                notebookSummary: "Via Appia: basalt polygons fitted without mortar — irregular shapes interlock tighter under weight. 2,300 years old, still walked on. The hardest rock on earth, made into the smoothest road.",
                 visual: CardVisual(type: .geometry, title: "Basalt Polygons — No Mortar", values: ["tessellation": 1, "stones": 1], labels: ["Basalt (volcanic)"], steps: 3, caption: "Interlock under weight — 2,300 years old, still walkable")
             ),
 
@@ -430,7 +431,7 @@ extension KnowledgeCardContent {
                 title: "Step 3: Statumen Gravel",
                 italianTitle: "Basalto per lo Statumen",
                 icon: "mountain.2.fill",
-                lessonText: "The statumen needs flat stones that won't shift under load. Quarrymen split basalt along natural fracture lines using iron wedges hammered into drilled holes. Water poured into cracks in winter — ice expansion did the rest. The best statumen stones are hand-selected: flat bottom, rough top. Flat to sit stable, rough to grip the rudus layer above. Every stone is chosen by feel.",
+                lessonText: "The bottom layer — the statumen — needs flat stones. Stones that will not shift under load. So the quarrymen find natural cracks in the basalt. They drive iron wedges into holes drilled along the line. And then — they wait. Winter comes. Water is poured into the cracks. The water freezes. And ice does what no hammer can do. It splits the hardest rock on earth. Then the best stones are hand-selected. Flat bottom — to sit stable. Rough top — to grip the rudus layer above. Every stone is chosen — by feel.",
                 keywords: [
                     KeywordPair(keyword: "Iron wedges", definition: "Hammered into holes to split basalt"),
                     KeywordPair(keyword: "Ice splitting", definition: "Water freezes in cracks — expands and breaks rock"),
@@ -438,7 +439,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Rough top", definition: "Textured surface grips the rudus layer above"),
                 ],
                 activity: .trueFalse(statement: "Romans used frozen water in cracks to split basalt for road foundations", isTrue: true),
-                notebookSummary: "Basalt split with iron wedges + ice expansion. Statumen stones: flat bottom (stable), rough top (grips rudus). Selected by feel.",
+                notebookSummary: "Basalt split with iron wedges + frozen water (9% expansion). Statumen stones: flat bottom (sits stable), rough top (grips the rudus). Every stone chosen by feel.",
                 visual: CardVisual(type: .comparison, title: "Ice Splitting — Nature's Chisel", values: ["equal": 0], labels: ["Iron wedge\nin drill holes\nwater added", "Ice expands\ncracks basalt\nalong grain", "Water freezes → 9% expansion → splits the hardest stone"], steps: 3, caption: "Flat bottom for stability, rough top to grip the rudus layer")
             ),
 
@@ -450,14 +451,14 @@ extension KnowledgeCardContent {
                 title: "Step 4: Rudus Mortar",
                 italianTitle: "Legante del Rudus",
                 icon: "flame.fill",
-                lessonText: "The rudus layer gets its strength from volcanic lime mortar. Gravel alone shifts. Add lime mixed with pozzolana and the gaps fill with cement that hardens over years. The chemical reaction — lime + silica + water — creates calcium silicate hydrate crystals that grow into the gravel pores. The rudus literally grows stronger with time. A road that improves with age is an engineer's dream.",
+                lessonText: "Now — listen. You remember the pozzolana? The volcanic ash from Pozzuoli? The one that sets HARDER underwater? Here it is again. We use it for the rudus layer. Gravel alone would shift, would crumble. But mix in lime and pozzolana — and something miraculous begins. The silica in the ash reacts with the lime. Crystals form. Tiny crystals, growing into every pore between the stones. Slowly. For years. Decades. The road becomes stronger with age. And we are not done with this ash. It returns again — when we build the Pantheon.",
                 keywords: [
                     KeywordPair(keyword: "Calcium silicate hydrate", definition: "Crystal that forms in pozzolanic cement"),
                     KeywordPair(keyword: "Rudus", definition: "Gravel layer bound with volcanic mortar"),
                     KeywordPair(keyword: "Grows stronger", definition: "Pozzolanic reaction continues for years"),
                 ],
                 activity: .wordScramble(word: "RUDUS", hint: "Gravel road layer bound with volcanic mortar"),
-                notebookSummary: "Rudus: gravel + volcanic lime mortar. Pozzolanic reaction creates crystals in pores — gets stronger over years.",
+                notebookSummary: "Rudus: gravel bound by lime + pozzolana (callback to Aqueduct). Silica + lime → calcium silicate crystals fill the pores between stones. Gets stronger over years. Same ash returns at the Pantheon.",
                 visual: CardVisual(type: .reaction, title: "Pozzolanic Crystals in Road Mortar", values: ["durability_roman": 2000], labels: ["Lime + volcanic ash", "Calcium silicate crystals", "crystals grow in pores"], steps: 3, caption: "Gets STRONGER over years — crystals fill the gaps between gravel")
             ),
 
@@ -469,7 +470,7 @@ extension KnowledgeCardContent {
                 title: "Step 5: The Nucleus",
                 italianTitle: "Matematica del Bombamento",
                 icon: "drop.triangle.fill",
-                lessonText: "The nucleus layer isn't flat — it's crowned. Romans built a camber: the center sits 15-30 cm higher than the edges. Rainwater runs off to ditches on both sides. The cross-section is a gentle arc, calculated so water flows at walking speed — fast enough to clear, slow enough not to erode. Every Roman road is secretly a roof. Geometry keeps it dry.",
+                lessonText: "Look closely at any Roman road. From the side. Notice the shape. The nucleus layer is not flat. It is crowned. The center sits fifteen to thirty centimeters higher than the edges. Why? Because rain falls. And rain that stays — rots the road. So we make the road into a roof. A gentle arc. Water runs off to ditches on both sides. Fast enough to clear. Slow enough not to erode. Every Roman road is secretly — a roof. Geometry keeps it dry. The eye cannot see the slope. But the rain — the rain knows.",
                 keywords: [
                     KeywordPair(keyword: "Camber", definition: "Crowned surface — center higher than edges"),
                     KeywordPair(keyword: "15-30 cm", definition: "Height difference between center and edges"),
@@ -477,7 +478,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Drainage ditch", definition: "Channels on both sides collecting runoff"),
                 ],
                 activity: .numberFishing(question: "Maximum camber height (cm) above the road edges?", correctAnswer: 30, decoys: [5, 10, 50, 75, 100]),
-                notebookSummary: "Nucleus camber: center 15-30 cm higher than edges. Gentle arc drains rainwater to side ditches. Every road is a roof.",
+                notebookSummary: "Nucleus is crowned, not flat — center 15-30 cm higher than the edges. Rain runs off to side ditches. Every Roman road is secretly a roof. The eye does not see the slope, but the rain knows.",
                 visual: CardVisual(type: .flow, title: "Camber — Every Road Is a Roof", values: ["camber": 30], labels: ["Center 15-30 cm higher → water drains to side ditches"], steps: 3, caption: "A gentle arc invisible to the eye — but rain sees it perfectly")
             ),
 
@@ -491,7 +492,7 @@ extension KnowledgeCardContent {
                 title: "Step 4: Mix Road Mortar",
                 italianTitle: "Ricetta della Malta Stradale",
                 icon: "flask.fill",
-                lessonText: "Road mortar is rougher than aqueduct mortar — it needs to grip coarse gravel, not smooth stone. Recipe: 1 part lime, 3 parts crushed volcanic rock (larger grain than sand). Mix dry first, then add water slowly. It should feel like wet beach sand. Pack it between gravel stones with a wooden rammer. Each layer gets rammed 50 times per square meter. Roads are built by rhythm.",
+                lessonText: "Now — your hands get dirty again. But this is not aqueduct mortar. Road mortar is rougher. Coarser. It must grip large gravel, not smooth stone. Same lime — but a rougher cousin. One part lime. Three parts crushed volcanic rock. Bigger than sand. Mix dry first. Then add water slowly. It should feel like wet beach sand in your hands. Now — pack it between the gravel with a wooden rammer. Fifty times — every square meter. Fifty. Roads are built by rhythm. Strike, lift, strike, lift. Hour after hour.",
                 keywords: [
                     KeywordPair(keyword: "1:3 ratio", definition: "Lime to crushed volcanic rock for road mortar"),
                     KeywordPair(keyword: "Dry mix first", definition: "Combine lime + rock before adding water"),
@@ -499,7 +500,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "50 rams/m²", definition: "Compaction standard per square meter"),
                 ],
                 activity: .fillInBlanks(text: "Road mortar: ___ part lime, ___ parts crushed volcanic rock, rammed ___ times per square meter", blanks: ["1", "3", "50"], distractors: ["2", "5", "20"]),
-                notebookSummary: "Road mortar: 1 lime + 3 crushed volcanic rock. Dry mix, add water. Ram 50 times per m². Built by rhythm.",
+                notebookSummary: "Road mortar = rougher cousin of aqueduct mortar. 1 lime + 3 crushed volcanic rock (larger grain than sand). Mix dry, add water. Pack between gravel — 50 hammer strikes per m². Roads built by rhythm.",
                 visual: CardVisual(type: .ratio, title: "Road Mortar Recipe — 1:3", values: ["Lime": 1, "Volcanic rock": 3], labels: ["1 lime : 3 crushed volcanic rock"], steps: 3, caption: "Dry mix → add water → ram 50 times per m²")
             ),
 
@@ -511,14 +512,14 @@ extension KnowledgeCardContent {
                 title: "Lime Firing for Roads",
                 italianTitle: "Cottura della Calce per Strade",
                 icon: "flame.circle.fill",
-                lessonText: "Road-grade quicklime needs the hottest kiln. Limestone chunks stack inside a stone cylinder with charcoal between each layer. Light the bottom. Three days of continuous firing at 900°C drives off carbon dioxide. The white powder that remains — quicklime — is so reactive it burns skin on contact. Store it dry. One raindrop starts the reaction. The road begins in fire.",
+                lessonText: "You have made quicklime before — for the aqueduct. But for the roads, we burn it longer. Three days. Not one. Limestone chunks stacked inside a stone cylinder. Charcoal between every layer. Light the bottom — and wait. Three days of fire. Nine hundred degrees. The fire drives the carbon out of the stone. What remains is quicklime. White. Powdery. So reactive — one drop of water and it burns. Store it dry. Always dry. And remember — you will fire this powder again. In greater buildings to come.",
                 keywords: [
                     KeywordPair(keyword: "3 days", definition: "Continuous firing time for road-grade lime"),
                     KeywordPair(keyword: "900°C", definition: "Kiln temperature for limestone to quicklime"),
                     KeywordPair(keyword: "Quicklime", definition: "CaO — white powder that reacts violently with water"),
                 ],
                 activity: .trueFalse(statement: "Road-grade quicklime requires 3 days of continuous firing at 900°C", isTrue: true),
-                notebookSummary: "Lime firing: 3 days at 900°C. Limestone → quicklime (CaO). Burns skin, reacts with water. Store bone dry.",
+                notebookSummary: "Road-grade quicklime: 3 days continuous firing at 900°C (longer than aqueduct lime). CaCO₃ → CaO + CO₂. Burns skin, reacts violently with water — store bone dry. Same powder returns at the Pantheon.",
                 visual: CardVisual(type: .temperature, title: "3-Day Kiln — Limestone to Quicklime", values: ["transition": 900, "max": 1200], labels: ["Limestone (CaCO₃)", "Quicklime (CaO)"], steps: 3, caption: "3 days at 900°C — burns skin, reacts violently with water")
             ),
 
@@ -530,7 +531,7 @@ extension KnowledgeCardContent {
                 title: "Step 8: Milestones",
                 italianTitle: "Pietre Miliari",
                 icon: "signpost.right.fill",
-                lessonText: "Every Roman mile (1,480 meters), a stone column marked the distance from Rome. These milliaria listed the emperor, the road name, and distances to the next three cities. They were the world's first GPS. Soldiers, merchants, and tax collectors all depended on them. Augustus placed a golden milestone in the Forum — mile zero — where all measurements began. Navigation starts with a reference point.",
+                lessonText: "Almost done. But before we leave the roads — one last thing. Look. Every Roman mile — one thousand four hundred and eighty meters — a stone column stands. We call them milliaria. Each one carved with the emperor's name, the road's name, the distances to the next three cities. The world's first map. Soldiers, merchants, tax collectors — they all depended on these stones. And then — there is one stone that matters above all the others. Augustus, the first emperor, placed a column of gilded bronze in the Forum. The golden milestone. Mile zero. Every measurement in the empire begins at this single point. Remember this, when you build greater things. Navigation begins with a reference point.",
                 keywords: [
                     KeywordPair(keyword: "Milliarium", definition: "Stone milestone placed every Roman mile"),
                     KeywordPair(keyword: "1,480 meters", definition: "Length of one Roman mile"),
@@ -538,7 +539,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Augustus", definition: "Emperor who established the milestone system"),
                 ],
                 activity: .numberFishing(question: "How many meters in a Roman mile?", correctAnswer: 1480, decoys: [1000, 1200, 1600, 1850, 2000]),
-                notebookSummary: "Milliarium: milestone every 1,480m (1 Roman mile). Listed emperor, road, distances. Golden milestone in Forum = mile zero.",
+                notebookSummary: "Milliaria: stone columns every 1,480m (1 Roman mile). Carved with emperor + road + distances to next 3 cities — the world's first map. Augustus placed the gilded golden milestone in the Forum = mile zero. Navigation begins with a reference point.",
                 visual: CardVisual(type: .geometry, title: "Milestone Every 1,480 Meters", values: ["diameter": 1480, "height": 1.8], labels: ["1 Roman mile = 1,480 m", "Carved: emperor, road, distances"], steps: 3, caption: "Golden milestone in the Forum = mile zero for the entire empire")
             ),
         ]
