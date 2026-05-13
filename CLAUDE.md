@@ -3,101 +3,11 @@
 ## Project Overview
 Educational city-building game where students solve architectural challenges across 13+ sciences. Leonardo da Vinci notebook aesthetic with watercolor + blueprint style.
 
-**Developer:** Marina Pollak
-**School:** Columbia College Chicago - Final Semester
-**Timeline:** Jan 30 - May 15, 2025
-
-## Tech Stack
-- **SwiftUI + SpriteKit** (migrated from Unity Feb 2025)
-- Midjourney AI art (style ref: `--sref 3186415970`)
-- GitHub: https://github.com/GEM-312/RenaissanceArchitectAcademy
-- Target: iOS 17+, macOS 14+
-
-## Project Structure
-```
-RenaissanceArchitectAcademy/
-├── RenaissanceArchitectAcademy/
-│   ├── RenaissanceArchitectAcademyApp.swift  # @main + font registration (CoreText)
-│   ├── Assets.xcassets/                      # Science*, Nav*, State*, City*, BirdFrame00-12,
-│   │                                         # ApprenticeFrame00-14, VolcanoFrame00-14,
-│   │                                         # Station*, Interior*, WorkshopTerrain, etc.
-│   ├── Fonts/                                # Cinzel, EBGaramond, PetitFormalScript, Mulish,
-│   │                                         # LibreBaskerville, LibreFranklin, Delius
-│   ├── Views/
-│   │   ├── ContentView.swift                 # Root view, navigation state, shared ViewModel
-│   │   ├── MainMenuView.swift                # Title + background image
-│   │   ├── CityView.swift                    # Building plots grid + era filtering
-│   │   ├── BuildingPlotView.swift            # Individual plot card
-│   │   ├── BuildingDetailOverlay.swift       # Modal with sciences + Begin Challenge
-│   │   ├── SidebarView.swift                 # iPad sidebar navigation
-│   │   ├── ProfileView.swift                 # Student profile, science mastery
-│   │   ├── InteractiveChallengeView.swift    # Master challenge view (mixed question types)
-│   │   ├── DragDropEquationView.swift        # Chemistry drag-drop equations
-│   │   ├── HydraulicsFlowView.swift          # Water flow path tracing
-│   │   ├── MascotDialogueView.swift          # Mascot dialogue + choice buttons
-│   │   ├── MaterialPuzzleView.swift          # Match-3 puzzle for collecting materials
-│   │   ├── MoleculeView.swift                # Chemical structure diagrams (7 molecules)
-│   │   ├── WorkshopView.swift                # Workshop entry (outdoor/indoor toggle)
-│   │   ├── WorkshopMapView.swift             # SwiftUI wrapper for outdoor WorkshopScene
-│   │   ├── SketchingChallengeView.swift      # Master orchestrator for sketching mini-game
-│   │   ├── KnowledgeTestsView.swift          # Quiz challenges list
-│   │   ├── GameTopBarView.swift              # Shared top nav bar + building strip
-│   │   ├── OnboardingView.swift              # Onboarding orchestrator (character → story → bird)
-│   │   ├── Onboarding/
-│   │   │   ├── CharacterSelectView.swift     # Boy/girl selection + name entry
-│   │   │   ├── StoryNarrativeView.swift      # Animated story page with typewriter text
-│   │   │   └── StationLessonOverlay.swift    # Bird lesson modal before first station visit
-│   │   ├── Sketching/
-│   │   │   ├── PiantaCanvasView.swift        # Phase 1: Floor plan grid canvas
-│   │   │   └── SketchingToolbarView.swift    # Tool palette
-│   │   ├── BuildingLessonView.swift          # Paged lesson reader (Read to Earn)
-│   │   ├── BuildingChecklistView.swift       # Building material checklist
-│   │   ├── ForestMapView.swift               # SwiftUI wrapper for ForestScene
-│   │   ├── NotebookView.swift                # Building notebook with entries
-│   │   ├── NotebookCanvasView.swift          # Drawing canvas for notebook
-│   │   └── SpriteKit/
-│   │       ├── CityScene.swift               # Main SKScene - terrain tiles, rivers, buildings, camera
-│   │       ├── BuildingNode.swift            # Tappable building sprites
-│   │       ├── CityMapView.swift             # SwiftUI wrapper + mascot overlay
-│   │       ├── PlayerNode.swift              # Da Vinci stick figure (Workshop)
-│   │       ├── ResourceNode.swift            # Resource station nodes (Workshop)
-│   │       ├── WorkshopScene.swift           # Workshop outdoor SpriteKit scene
-│   │       ├── CraftingRoomScene.swift       # Crafting room interior SpriteKit scene
-│   │       ├── CraftingRoomMapView.swift     # SwiftUI wrapper for CraftingRoomScene
-│   │       └── ForestScene.swift             # Forest exploration SpriteKit scene
-│   ├── ViewModels/
-│   │   ├── CityViewModel.swift               # @MainActor, @Published state, 17 buildings
-│   │   ├── WorkshopState.swift               # Crafting state, station stocks, recipes
-│   │   ├── NotebookState.swift               # Notebook entries per building
-│   │   └── PersistenceManager.swift          # Save/load game progress
-│   ├── Models/
-│   │   ├── Building.swift                    # Era, RenaissanceCity, Science, Building, BuildingPlot, BuildingState
-│   │   ├── Material.swift                    # Raw materials enum
-│   │   ├── CraftedItem.swift                 # Crafted items enum
-│   │   ├── Recipe.swift                      # Crafting recipes + educational text
-│   │   ├── StudentProfile.swift              # MasteryLevel, Achievement, Resources
-│   │   ├── Challenge.swift                   # Challenge system + all building challenges
-│   │   ├── SketchingChallenge.swift          # Sketching data models
-│   │   ├── SketchingContent.swift            # Static sketching challenge data per building
-│   │   ├── OnboardingState.swift             # ApprenticeGender, OnboardingState (UserDefaults)
-│   │   ├── OnboardingContent.swift           # Story pages + 8 station lesson content
-│   │   ├── BuildingLesson.swift              # Lesson section types (reading, funFact, question, fillInBlanks, environmentPrompt)
-│   │   ├── LessonContent.swift               # Pantheon lesson + switch router for all 17 buildings
-│   │   ├── LessonContentRome.swift           # 7 Ancient Rome lessons (buildings 1-3, 5-8)
-│   │   ├── LessonContentRenaissance.swift    # 9 Renaissance lessons (buildings 9-17)
-│   │   ├── NotebookEntry.swift               # Notebook entry model + drawing strokes
-│   │   ├── NotebookContent.swift             # Pantheon vocab + switch router for all 17 buildings
-│   │   ├── NotebookContentRome.swift         # 7 Rome vocabulary sets (6 terms each)
-│   │   ├── NotebookContentRenaissance.swift  # 9 Renaissance vocabulary sets (6 terms each)
-│   │   ├── BuildingProgress.swift            # Building progress tracking
-│   │   ├── BuildingProgressRecord.swift      # Progress persistence record
-│   │   ├── PlayerSave.swift                  # Player save data model
-│   │   ├── MasterAssignment.swift            # Master crafting task assignments
-│   │   └── LessonRecord.swift               # Lesson completion tracking
-│   └── Styles/
-│       ├── RenaissanceColors.swift           # Full color palette + gradients
-│       └── RenaissanceButton.swift           # Engineering blueprint style buttons
-```
+- **Developer:** Marina Pollak (Columbia College Chicago, final semester)
+- **Ship target:** May 15, 2026
+- **Tech:** SwiftUI + SpriteKit (migrated from Unity Feb 2025), iOS 17+ / macOS 14+
+- **Art:** Midjourney (style ref `--sref 3186415970`)
+- **Repo:** https://github.com/GEM-312/RenaissanceArchitectAcademy
 
 ## 17 Buildings
 
@@ -135,234 +45,104 @@ RenaissanceArchitectAcademy/
 "vaticanObservatory": 16, "printingPress": 17
 ```
 
-## Game Systems
+## Game Systems (high level — read the code for details)
 
-### City Map (CityScene + CityMapView)
-- SpriteKit tile-based terrain (3500x2500 base, expandable via `terrainTiles` array)
-- Rivers: Tiber, Arno, Grand Canal. Zone labels I-VI
-- Player (PlayerNode) walks to tapped buildings, camera follows + zooms in
-- Terrain blur (SKEffectNode + CIGaussianBlur) activates during walking, persists while zoomed in
-- All overlays auto-dismiss on any user interaction (walk, scroll, pinch, drag)
-- Mascot (Bird) rendered as SwiftUI overlay on top of SpriteKit (position tracked via callback)
-- Tap building → player walks there → camera zooms to 0.7 → MascotDialogueView with 3 choices:
-  - "I need materials" → MaterialPuzzleView (match-3)
-  - "I don't know" → Quiz challenge
-  - "I need to sketch it" → Sketching challenge
+- **City Map** (`CityScene` + `CityMapView`): 3500×2500 SpriteKit terrain, Tiber/Arno/Grand Canal rivers, player walks to tapped buildings, camera zooms to 0.7, MascotDialogueView with 3 choices (materials → MaterialPuzzleView, quiz, sketch).
+- **Lesson System** (Read to Earn): paged reader, all 17 buildings have lessons + 6-term vocabulary. Lookup `LessonContent.lesson(for:)` and `NotebookContent.vocabularyFor(buildingName:)`. +10 florins on completion.
+- **Challenge System**: multipleChoice / dragDropEquation / hydraulicsFlow. 6 buildings have quizzes. Pow library for celebrations.
+- **Sketching Mini-Game**: 4 phases (Pianta/Alzato/Sezione/Prospettiva); Phase 1 + 2 + 3 implemented. PencilKit canvas. Content for Pantheon, Colosseum, Aqueduct, Duomo. State: `.available` → `.sketched` → `.construction` → `.complete`.
+- **Material Puzzle**: 6×6 match-3, 3 formulas (limeMortar, concrete, glass).
+- **Onboarding**: character select (boy/girl) + name → 5 cinematic narrative pages → bird companion intro. State persisted in UserDefaults via `OnboardingState` @Observable.
+- **Workshop**: 3 interiors via `WorkshopView` — `.outdoor` (10 stations), `.craftingRoom` (4 furniture), `.goldsmith` (4 furniture). All Dijkstra pathfinding on 3500×2500 maps. See `master-level-system.md` in memory.
+- **Forest** (`ForestScene` + `ForestMapView`): 5 tree POIs, truffle discovery system, 4 science cards per tree (Architecture/Furniture/Modern Use/Biology) gating timber collection.
+- **Knowledge Cards** (`KnowledgeCardsOverlay`): per-building cards across 4 environments. Pantheon has 14; 16 buildings still need content authored. Morgan Housel style, ~60-80 words/card.
+- **Construction Sequence**: drag-to-reorder puzzle, 8 steps per building, +20 florins. Lookup `ConstructionSequenceContent.sequence(for:)`.
+- **Tools System**: 9 tools, buy at Market (10 florins) or craft via `ToolRecipe`. Required at stations except Market.
+- **GameTopBarView**: shared nav bar (City/Workshop/Crafting/Forest). Building progress strip (green=complete, ochre=sketched, gray=locked).
 
-### Lesson System (Read to Earn) — ALL 17 BUILDINGS COMPLETE
-- Paged lesson experience: readings → fun facts → questions → fill-in-blanks → environment prompts
-- Models: `BuildingLesson.swift` defines section types; `LessonContent.swift` routes by building name
-- Content split across 3 files: `LessonContent.swift` (Pantheon), `LessonContentRome.swift` (7), `LessonContentRenaissance.swift` (9)
-- Each lesson: ~18-22 sections, 3 sciences per building, math questions with progressive hints
-- Lookup: `LessonContent.lesson(for: buildingName)` — returns `BuildingLesson?`
-- Vocabulary: `NotebookContent.vocabularyFor(buildingName:)` — 6 terms per building (96 total + 8 Pantheon)
-- Notebook split: `NotebookContentRome.swift` (7 buildings), `NotebookContentRenaissance.swift` (9 buildings)
-- Environment prompts link to `.workshop` and `.forest` destinations
-- +10 florins awarded on lesson completion
+## Key Architecture Patterns
 
-### Challenge System
-- Question types: multipleChoice, dragDropEquation, hydraulicsFlow
-- 6 buildings have quiz content (see table above)
-- Lookup: `ChallengeContent.interactiveChallenge(for: buildingName)`
-- Uses Pow library for celebration effects
+- **MVVM**: views observe ViewModels via `@ObservedObject` (shared) or `@StateObject`. ContentView owns `CityViewModel` and passes it down.
+- **SpriteKit + SwiftUI**: `SpriteView` bridges SKScene; callbacks communicate back.
+- **SceneHolder pattern (CRITICAL)**: NEVER store SpriteKit scenes in `@State` — use `@State var sceneHolder = SceneHolder<SomeScene>()` (class wrapper in `GameSpriteView.swift`). `@State` mutations during body eval are silently dropped.
+- **Platform conditionals**: `#if os(iOS)` / `#else` for UIKit vs AppKit. `PlatformColor` typealias lives in `CityScene.swift`.
+- **Editor Mode required**: every scene/view with positioned elements has `#if DEBUG` editor mode. Press E to toggle, drag to reposition, dumps to console. SpriteKit: `SceneEditorMode`. SwiftUI: `DragGesture`.
+- **Camera (SpriteKit)**: `.aspectFill`, zoom 0.5–3.5, `fitCameraToMap()`, `clampCamera()` 200pt padding.
+- **Scene size standard**: ALL scenes use `mapSize = 3500×2500`, grid spacing 100, walk speed 467 pts/sec. Scale smaller logical content into this space.
+- **SwiftUI Timer frame animations play ONCE**: do NOT use `% frameCount`. Stop the timer at last frame. (SKAction ambient loops are fine — see `feedback_skaction_loops_ok.md`.)
+- **pbxproj editing**: tabs for indentation; new files need entries in PBXBuildFile, PBXFileReference, PBXGroup, PBXSourcesBuildPhase.
 
-### Sketching Mini-Game (4 phases, Phase 1 implemented)
-- Phases: Pianta (floor plan), Alzato (elevation), Sezione (cross-section), Prospettiva (perspective)
-- Phase 1: SwiftUI Canvas grid, wall drawing, column placement, circle drawing, room detection
-- Strict validation: 90% wall coverage, exact circle match, neatness checks
-- Bird companion hint system (3-level progressive hints)
-- Content for: Pantheon, Colosseum, Aqueduct, Duomo
-- Lookup: `SketchingContent.sketchingChallenge(for: buildingName)`
-- BuildingState progression: `.available` → `.sketched` → `.construction` → `.complete`
+## Fonts & Style
 
-### Material Puzzle (MaterialPuzzleView)
-- Match-3 game: 6x6 grid, swap adjacent tiles, collect chemical elements
-- 3 formulas: limeMortar, concrete, glass (mapped per building)
-- Gravity, auto-reshuffle, distractor elements
+- Custom fonts registered via CoreText in `RenaissanceArchitectAcademyApp.swift`: Cinzel (titles), EBGaramond (body — replaced Mulish Feb 2026), LibreBaskerville, LibreFranklin, PetitFormalScript (tagline), Delius (handwritten).
+- Color palette: `Styles/RenaissanceColors.swift` — read it for hex values, don't duplicate here.
 
-### Onboarding System (Models/OnboardingState + OnboardingContent, Views/Onboarding/)
-- Character selection (boy/girl) + name entry → 3-page animated narrative → bird companion intro
-- `OnboardingState` @Observable with UserDefaults persistence (hasCompletedOnboarding, gender, name)
-- `StoryNarrativeView` — typewriter text reveal, BirdCharacter entrance animation
-- `StationLessonOverlay` — bird teaches history/science before first station visit (per session)
-- `stationsLessonSeen: Set<ResourceStationType>` in WorkshopState tracks which lessons shown
-- Currently always shows onboarding (skip check commented out in ContentView for development)
-- Forest station: after lesson, shows choice dialogue (Collect Timber vs Explore the Forest)
+## Asset Workflow
 
-### Workshop (outdoor SpriteKit + indoor SpriteKit)
-- **Outdoor** (WorkshopScene + WorkshopMapView): Apprentice walks between 8 resource stations + 1 crafting room (Dijkstra pathfinding, 64 waypoints)
-- **Indoor** (CraftingRoomScene + CraftingRoomMapView): Apprentice walks between 4 furniture stations (Dijkstra pathfinding, 11 waypoints)
-  - Furniture: Workbench (mix), Furnace (fire), Pigment Table (pigment collection + recipes), Storage Shelf (inventory)
-  - `CraftingStation` enum: `.workbench`, `.furnace`, `.pigmentTable`, `.shelf`
-  - Tap furniture → apprentice walks there → SwiftUI overlay appears
-  - Player spawns at door position (bottom-center), walks to furniture via waypoint graph
-- Crafting flow: Collect outdoors → enter Crafting Room → Mix at workbench → Fire in furnace → Educational popup
-- 6 resource stations have Midjourney sprites; volcano has 15-frame animation
-- Crafting room station pulses like resource stations on outdoor map
-- Footstep sound (footstep.wav) plays during apprentice walking (0.55s interval)
-- Master assignments: `MasterAssignment` model, random crafting tasks with bonus florins
-
-### GameTopBarView
-- Shared nav bar across City Map, Workshop, Crafting Room
-- Nav buttons → `onNavigate(SidebarDestination)` callback
-- Building progress strip (green=complete, ochre=sketched, gray=locked)
-
-## Models Reference
-
-### BuildingState
-`.locked` → `.available` → `.sketched` → `.construction` → `.complete`
-
-### Science (13 types)
-Mathematics, Physics, Chemistry, Geometry, Engineering, Astronomy, Biology, Geology, Optics, Hydraulics, Acoustics, Materials Science, Architecture
-
-### Color Palette (RenaissanceColors.swift)
-| Color | Hex | Usage |
-|-------|-----|-------|
-| parchment | #F5E6D3 | Aged paper background |
-| sepiaInk | #4A4035 | Text |
-| renaissanceBlue | #5B8FA3 | Accents, water |
-| terracotta | #D4876B | Rome buildings |
-| ochre | #C9A86A | Renaissance buildings |
-| sageGreen | #7A9B76 | Completion |
-| deepTeal | #2B7A8C | Venice water |
-| warmBrown | #8B6F47 | Engineering |
-| blueprintBlue | #4169E1 | Grid lines |
-| goldSuccess | #DAA520 | Success glow |
-| errorRed | #CD5C5C | Errors |
-
-### Custom Fonts (registered via CoreText in App.swift)
-- **Cinzel-Bold** (titles), **Cinzel-Regular** (labels, section headers)
-- **EBGaramond-Regular** (body text, buttons), **EBGaramond-Italic** (emphasis)
-- **LibreBaskerville** (serif body alternative), **LibreFranklin** (sans-serif alternative)
-- **Mulish** (7 weights available, previously used for body — replaced by EBGaramond Feb 2026)
-- **PetitFormalScript-Regular** (tagline), **Delius-Regular** (handwritten accent)
-
-### Resizing New Midjourney Assets
+Resize Midjourney exports before adding:
 ```bash
 sips -Z 180 "filename.png"   # Science icons
 sips -Z 120 "filename.png"   # Navigation icons
 sips -Z 512 "filename.png"   # City/station icons
 ```
 
-## GIF Frame Extraction Workflow
-For turning Midjourney/Pika animated GIFs into sprite frames:
+GIF/video → sprite frames:
+1. Extract all frames at 512×512 (Claude, PIL).
+2. Pick 15 evenly spaced → `selected/`.
+3. Marina removes backgrounds in Photoshop → `clean/`.
+4. Create `Assets.xcassets/[Name]Frame00-14.imageset/`.
 
-1. **Extract** all frames at 512x512 (Claude): `PIL Image.open → seek → resize → save`
-2. **Select** 15 key frames evenly spaced → `selected/` subfolder
-3. **Remove backgrounds** (Marina in Photoshop) → `clean/` subfolder
-4. **Create imagesets** (Claude): `Assets.xcassets/[Name]Frame00-14.imageset/`
+## Build & Run
 
-```
-Styles/[name]_frames/          # All extracted (gitignored)
-Styles/[name]_frames/selected/ # 15 key frames
-Styles/[name]_frames/clean/    # Photoshop exports (no bg)
-```
-
-## Next Steps
-
-### PRIORITY 1: Knowledge Cards — Remaining Buildings
-- [x] ~~KnowledgeCardsOverlay reusable component~~ (DONE)
-- [x] ~~Card integration across all 4 environments~~ (DONE)
-- [ ] Author cards for remaining 16 buildings (Pantheon has 14 cards, others need content)
-- [ ] Card aurora glow uses per-science color at subtle opacity (0.4/0.3) — consistent design
-
-### PRIORITY 2: Audio & Sound Design
-- [ ] Background music — ambient Renaissance lute/harpsichord loop for main menu, city map, workshop
-- [ ] Forest ambience — birds, wind, rustling leaves (looping)
-- [ ] Crafting room ambience — crackling fire, workshop sounds
-- [ ] UI sounds — button tap, overlay open/close, page turn (lessons)
-- [ ] Crafting sounds — workbench mixing, furnace fire whoosh, crafting complete chime
-- [ ] Collection sounds — resource pickup, timber chop, stone quarry hit
-- [ ] Challenge sounds — correct answer ding, wrong answer buzz, quiz complete fanfare
-- [ ] Walking sounds — footstep.wav already exists (0.55s interval), add surface variants (stone, grass, wood)
-- [ ] Transition sounds — scene enter/exit swoosh, crafting room door creak
-- [ ] Bird companion — chirp on hint, squawk on wrong answer, happy trill on success
-- [ ] Sketch sounds — pencil scratch on canvas, stamp for column placement
-- [ ] Consider AVAudioPlayer for music loops, SKAction.playSoundFileNamed for SFX
-- [ ] Volume controls — separate sliders for music vs SFX in settings/profile
-
-### PRIORITY 3: Foundation Models — On-Device AI (Mar 27 2026)
-- [ ] Test dynamic Medici commission text in onboarding
-- [ ] Test bird tool calling (calendar, progress, inventory) — ask "what should I work on?"
-- [ ] Test NPC text generation at workshop stations
-- [ ] Generate Medici character art in Midjourney for onboarding animation
-- [ ] Generate NPC character art in Midjourney for workshop stations
-- [ ] Image Playground: NO people/names/non-English — only objects, scenes, animals (see memory)
-
-### Game Flow & Progression
-- [ ] Prompt user to explore cities/buildings after workshop play (bird nudge system)
-- [ ] Trigger quizzes after certain gameplay milestones (time played, materials collected, buildings visited)
-- [ ] Award system — badges, achievements for completing challenges, crafting, sketching
-- [ ] Re-enable onboarding skip (uncomment check in ContentView after onboarding is finalized)
-
-### Content
-- [x] ~~Create lessons for all 17 buildings~~ (DONE — Feb 2026)
-- [x] ~~Create vocabulary for all 17 buildings~~ (DONE — Feb 2026)
-- [ ] Create challenges for remaining 11 buildings
-- [ ] Add building images to city map
-- [ ] Sketching Phase 2 (Alzato elevation) — drag-drop facade elements
-- [ ] Sketching Phase 3 (Sezione cross-section) — structural + light rays
-- [ ] Sketching Phase 4 (Prospettiva perspective) — vanishing points
-- [ ] Add sketching content for remaining buildings
-
-### Art & Assets
-- [ ] Remove backgrounds from volcano frames (Marina in Photoshop)
-- [x] ~~Add station sprites for remaining stations (market, crafting room)~~ (DONE — Feb 22 2026)
-
-### New Scenes
-- [ ] Building-specific scenes for each of the 17 buildings
-
-### Technical
-- [ ] Adjust 64 waypoints to match new terrain in editor mode
-- [ ] Persist progress with UserDefaults/SwiftData
-- [ ] Building construction animation
-- [ ] Full bloom animation (gray sketch → watercolor)
-- [ ] Generate expansion terrain tiles for map growth
-
-### Responsive Layout Polish (moved down — core layout done Mar 18)
-- [ ] iPhone layout testing — all mini-games (quarry, river, volcano, clay, farm) on iPhone SE
-- [ ] Test Workshop outdoor/indoor layouts on iPhone
-- [ ] Test Forest map overlays on iPhone
-- [ ] Test onboarding flow end-to-end on iPhone
-- [ ] Test lesson reader (BuildingLessonView) on iPhone — pages don't overflow
-- [ ] Test sketching challenge on iPhone — canvas sizing
-
-### Terrain & Camera Polish (moved down)
-- [ ] Improve terrain art for City Map, Workshop, Forest (higher quality Midjourney terrains)
-- [ ] Station micro-environments — detail sprites when zoomed in
-- [ ] LOD system — detail sprites fade based on camera distance + zoom
-- [ ] Terrain blur is implemented (CityScene + WorkshopScene) — see terrain-blur-system.md in memory
-
-## Key Architecture Patterns
-- **MVVM**: Views observe ViewModels via `@ObservedObject` (shared) or `@StateObject`
-- **SpriteKit + SwiftUI**: SpriteView bridges SKScene into SwiftUI; callbacks for communication
-- **Platform conditionals**: `#if os(iOS)` / `#else` for UIKit vs AppKit (PlatformColor typealias in CityScene.swift)
-- **Shared ViewModel**: ContentView owns CityViewModel, passes to child views
-- **Editor Mode REQUIRED for ALL scenes/views**: Every scene/view with positioned elements MUST have DEBUG editor mode. Press E to toggle, drag to reposition, dumps positions to console. SpriteKit: `SceneEditorMode`. SwiftUI: `#if DEBUG` + DragGesture.
-- **Camera pattern for SpriteKit**: `.aspectFill`, zoom 0.5-3.5, `fitCameraToMap()`, `clampCamera()` with padding.
-- **Frame animations play ONCE, never loop**: All Timer-based frame animations (avatars, backgrounds, etc.) must play through once and stop — do NOT use `% frameCount` to loop. Stop the timer when the last frame is reached.
-
-## How to Run
-1. Open `RenaissanceArchitectAcademy.xcodeproj` in Xcode
-2. Select iPad simulator or "My Mac"
-3. Press Cmd+R to build and run
+- Open `RenaissanceArchitectAcademy.xcodeproj` in Xcode, pick iPad sim or My Mac, Cmd+R.
+- Headless: `xcodebuild -scheme RenaissanceArchitectAcademy -destination 'platform=macOS' build`
 
 ## MANDATORY Rules
-- **NEVER change design, colors, sizes, layout, or visual appearance unless Marina specifically asks for it.** Fix only what is requested. If you think a design change would help, ASK FIRST — do not just do it.
-- **ALWAYS read the FULL file before editing it.** Never edit a file based on memory, summaries, or assumptions. Use the Read tool on every file you are about to modify, every single time, no exceptions. If the file is large, read it in chunks until you have seen all relevant sections. Failure to do this causes wrong edits, missed context, and broken code.
-- **ALWAYS read related files before making cross-file changes.** If a change touches callbacks, state, or UI across multiple files (e.g. a Scene + its MapView wrapper), read ALL of them first.
+
+- **NEVER change design, colors, sizes, layout, or visual appearance unless Marina asks.** Fix only what is requested. If a design change would help, ASK FIRST.
+- **ALWAYS read the FULL file before editing it.** Never edit from memory or summaries. Read in chunks if large.
+- **ALWAYS read related files before cross-file changes.** Callbacks/state/UI spanning Scene + MapView wrapper → read both.
+- **PLAN before ANY code update.** State the approach in 2-4 bullets — what files, what changes, what risk — and wait for Marina's nod before editing. No exceptions, no "trivial" carve-out. Even a 1-line fix gets a one-bullet plan. If the change feels too obvious to plan, that's exactly when planning catches the misread.
+- **ZERO hardcoding. Use the design system, always.**
+  - **Colors:** only `RenaissanceColors` tokens (`.parchment`, `.sepiaInk`, `.terracotta`, `.ochre`, `.candleGlow`, …). NEVER `Color(red:green:blue:)`, NEVER raw `Color.gray/.white/.black` in views. If a needed shade doesn't exist, ADD it to `RenaissanceColors.swift` and use the token.
+  - **Fonts:** only registered font tokens (`Cinzel-Bold`, `EBGaramond-Regular`, `PetitFormalScript-Regular`, …). NEVER `.font(.system(size:))`, NEVER raw `.title/.body/.caption` in shipped views. The 497-token migration (May 6) is the standard — don't regress it.
+  - **Components:** reuse existing primitives — `themedCard`, `pillBackground`, `BirdModalOverlay`, `GameTopBarView`, `RenaissanceButton`, `SceneHolder`, `KnowledgeCardsOverlay`. Search first; only create a new one if nothing fits, and make it reusable from day one.
+  - **Spacing / sizes:** no magic numbers in layout. If a value repeats, name it. Padding/corner radii/icon sizes should come from constants on the component, not littered across call sites.
+  - **Assets:** every image goes through `Assets.xcassets` (resized via `sips` per workflow above). No inline base64, no loose PNGs in the bundle root.
+- **Search before you create.** Before adding a view, modifier, color, or helper, grep for an existing one. Duplicates are the bug — consolidation is the fix.
+
+## Concurrency Rules (SwiftUI + SpriteKit)
+
+- **ViewModels touching UI are `@MainActor`.** `CityViewModel`, `WorkshopState`, `NotebookState`, `OnboardingState` all are — keep new ones that way.
+- **Prefer `.task { }` over `.onAppear { Task { } }`.** `.task` auto-cancels when the view disappears; `.onAppear`+`Task` leaks work.
+- **Prefer `try await Task.sleep(for: .seconds(x))` over `DispatchQueue.main.asyncAfter`** in new code. Old `asyncAfter` call sites can stay until they're touched.
+- **Never block the main thread.** Disk I/O, network, JSON decode of large payloads, heavy compute → background `Task`, then hop with `await MainActor.run { … }` or `@MainActor` annotation before touching state/UI.
+- **SpriteKit is NOT main-actor-isolated, but mutations from background tasks must still hop to main before touching nodes or the scene graph.** SKActions themselves run on SpriteKit's render thread — don't wrap them in `Task`.
+- **`@Observable` (iOS 17+) for any NEW ViewModel.** Existing `ObservableObject`/`@Published` ones stay until intentionally migrated — no drive-by migrations.
+- **No `[weak self]` cargo cult inside `Task { }`.** Structured tasks tied to a view's `.task` don't need it. Only use `[weak self]` when a closure escapes the owner's lifetime (timers, long SKActions, NotificationCenter).
+- **No `Thread.sleep`. Ever.** Use `try await Task.sleep`.
+
+## Optimization Rules
+
+- **`LazyVStack` / `LazyHStack` / `LazyVGrid` for any list >10 items.** Eager stacks instantiate every child up front — fine for nav rows, deadly for building grids or notebook entries.
+- **Never `AnyView`.** It erases the view type and kills SwiftUI's diffing. Use `@ViewBuilder` or `some View` instead.
+- **Don't recompute expensive things in `body`.** Body runs constantly. Hoist to a `let`, computed property, or cached `@State`. No `Date()`/JSON decode/filter-sort-map chains inside `body`.
+- **No `print()` in hot paths.** Frame loops (`update(_:)` in SKScene), `body` accessors, gesture handlers fired per drag-pixel. One tap shouldn't dump 60 logs/sec.
+- **SpriteKit textures: preload at scene init, never inside `update()`.** Use `SKTextureAtlas` for sprite frames (boy/girl walk, volcano, bird) — atlases batch into one draw call.
+- **Resize Midjourney assets BEFORE adding** (see Asset Workflow). Shipping a 4096×4096 PNG for a 120pt nav icon is a memory leak you ship to the user.
+- **`@StateObject` only at the owner.** Pass down with `@ObservedObject`. Never `@StateObject` the same VM in two views — you'll get two instances and silent state drift.
+- **Profile with Instruments before optimizing.** Don't guess at bottlenecks — Time Profiler / Allocations / Core Animation will tell you. Premature optimization is its own bug.
 
 ## Teaching System (PROACTIVE)
-- **ALWAYS teach while coding.** When introducing a new pattern, avoiding a pitfall, fixing a bug, or writing non-trivial logic, deliver a short teaching moment.
-- Print the title in green via Bash: `echo -e "\n\033[1;32m━━━ TEACHING MOMENT: [Title] ━━━\033[0m\n"`
-- Follow with: THE CONCEPT (1-2 sentences) → STEP BY STEP (numbered) → IN OUR CODE (specific reference) → KEY TAKEAWAY (1 sentence)
-- Append every teaching moment to `Teaching.md` under the appropriate section
-- Use `/teach [topic]` to request a specific lesson on demand
-- Teaching style: MIT professor — clear, step-by-step, real-world analogies, no fluff
+
+- Teach while coding when introducing a new pattern, avoiding a pitfall, fixing a bug, or writing non-trivial logic.
+- Title in green via Bash: `echo -e "\n\033[1;32m━━━ TEACHING MOMENT: [Title] ━━━\033[0m\n"`
+- Format: THE CONCEPT (1-2 sentences) → STEP BY STEP (numbered) → IN OUR CODE (specific reference) → KEY TAKEAWAY (1 sentence).
+- Append to `Teaching.md`. Use `/teach [topic]` for on-demand lessons. MIT professor style — clear, no fluff.
 
 ## Notes
-- Marina prefers direct fixes over long explanations
-- Teach concepts as you go when making changes — use the Teaching System above
-- Always push to GitHub after significant changes
-- New Midjourney assets are usually huge — always resize before adding
-- Challenge.swift contains all quiz questions
+
+- Marina prefers direct fixes over long explanations.
+- Push to GitHub after significant changes.
+- `Challenge.swift` contains all quiz questions.
+- Active work plans and session logs live in `~/.claude/projects/.../memory/` — check `MEMORY.md` for the index.
