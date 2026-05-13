@@ -1810,7 +1810,7 @@ extension KnowledgeCardContent {
                 title: "Galileo's Revolution",
                 italianTitle: "La Rivoluzione di Galileo",
                 icon: "moon.stars.fill",
-                lessonText: "In 1610, Galileo pointed a telescope at Jupiter and saw four moons — proof that not everything orbited Earth. The Church resisted: a Sun-centered universe contradicted scripture. Galileo was tried, convicted, and spent his last years under house arrest. But the Vatican eventually built its own observatory, accepting what the telescope revealed. Truth delayed is still truth. Galileo proved that seeing changes believing.",
+                lessonText: "And now — we look up. To the stars. The year is sixteen hundred and ten. A man named Galileo Galilei points his new instrument — a telescope — at the planet Jupiter. He sees four small lights. Moons. Orbiting Jupiter. Not Earth. Think about what this means. For fifteen hundred years, everyone — every priest, every scholar — believed that everything in the heavens orbited the earth. Galileo's four moons prove this is wrong. The Church resisted. A Sun-centered universe — it contradicted scripture. Galileo was tried. Convicted. He spent his last years under house arrest, forbidden to publish. But — listen — many years later, the Vatican itself built an observatory. It accepted what the telescope revealed. Truth delayed is still truth. Seeing changes believing.",
                 keywords: [
                     KeywordPair(keyword: "1610", definition: "Year Galileo discovered Jupiter's moons"),
                     KeywordPair(keyword: "Four moons", definition: "Io, Europa, Ganymede, Callisto"),
@@ -1818,8 +1818,9 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Vatican Observatory", definition: "Church eventually embraced astronomy"),
                 ],
                 activity: .numberFishing(question: "In what year did Galileo discover Jupiter's moons?", correctAnswer: 1610, decoys: [1543, 1580, 1632, 1680, 1700]),
-                notebookSummary: "1610: Galileo saw 4 Jupiter moons — proof of heliocentrism. Church resisted, convicted him. Vatican eventually built its own observatory.",
-                visual: CardVisual(type: .crossSection, title: "Galileo's Revolution", values: [:], labels: [], steps: 3, caption: "")
+                notebookSummary: "1610: Galileo Galilei pointed a telescope at Jupiter and saw 4 moons orbiting another planet — proof that not everything orbited Earth. Heliocentric universe contradicted scripture; Church convicted him, sentenced him to house arrest. Vatican eventually built its own observatory, accepting what the telescope revealed. Truth delayed is still truth.",
+                visual: CardVisual(type: .crossSection, title: "Galileo's Revolution", values: [:], labels: [], steps: 3, caption: ""),
+                isLeadCard: true
             ),
 
             KnowledgeCard(
@@ -1830,7 +1831,7 @@ extension KnowledgeCardContent {
                 title: "Step 3: Lens Grinding",
                 italianTitle: "Lavorazione delle Lenti",
                 icon: "circle.dashed",
-                lessonText: "Galileo's telescope used two lenses: a convex objective (bends light inward) and a concave eyepiece (spreads it back to the eye). The objective was ground to a parabolic curve — spherical lenses distort the edges. Grinding: rough-shape glass with iron tools, then polish with progressively finer emery paste. Each lens took 2 weeks. Galileo ground over 100 lenses to find 2 that worked. Optics is 98% rejection.",
+                lessonText: "Galileo's telescope — two pieces of glass in a tube. But the glass had to be perfect. The front lens — what we call the objective — is convex. It bulges outward. It bends light inward to a focus. The back lens — the eyepiece — is concave. It curves inward. It spreads the light back to the eye. The objective lens must be ground to a parabolic curve — not spherical. Spherical lenses distort at the edges. Grinding takes weeks. Rough-shape the glass with iron tools. Polish with finer and finer emery paste. Each lens — two weeks of work. And Galileo? He ground more than one hundred lenses. To find two that worked. Two. Optics, my apprentice — it is ninety-eight percent rejection. Patience is everything.",
                 keywords: [
                     KeywordPair(keyword: "Parabolic curve", definition: "Lens shape that focuses without edge distortion"),
                     KeywordPair(keyword: "Convex objective", definition: "Front lens that bends light inward"),
@@ -1838,7 +1839,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "100 lenses → 2", definition: "Galileo's rejection rate for quality optics"),
                 ],
                 activity: .trueFalse(statement: "Galileo ground over 100 lenses to find just 2 that worked properly", isTrue: true),
-                notebookSummary: "Telescope: convex objective + concave eyepiece. Parabolic grinding. 2 weeks per lens. 100 ground, 2 used. Optics = 98% rejection.",
+                notebookSummary: "Telescope lenses: convex objective (front, bends light inward) + concave eyepiece (back, spreads light to eye). Objective ground to a parabolic curve (spherical lenses distort at edges). 2 weeks per lens — rough-shape with iron, polish with finer emery paste. Galileo ground 100+ lenses to find 2 that worked. Optics is 98% rejection.",
                 visual: CardVisual(type: .crossSection, title: "Step 3: Lens Grinding", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1850,7 +1851,7 @@ extension KnowledgeCardContent {
                 title: "Step 5: Meridian Line",
                 italianTitle: "La Linea Meridiana",
                 icon: "line.diagonal",
-                lessonText: "A meridian line is a metal strip set into a cathedral floor, running exactly north-south. A small hole in the roof projects a dot of sunlight onto the floor. As Earth rotates, the dot crosses the line at solar noon. As seasons change, the dot travels along the line — farthest north in winter, farthest south in summer. The line becomes a calendar, clock, and proof that Earth tilts 23.5°. A strip of brass that measures the universe.",
+                lessonText: "Now — a piece of beautiful astronomy you can walk past in any old Italian cathedral. The meridian line. A strip of brass — or sometimes marble — set into the floor. Running exactly north to south. In the ceiling high above, a small hole. A pinhole, almost. As the sun moves across the sky, a single dot of sunlight projects through that hole, onto the floor. At solar noon — exactly noon — the dot crosses the brass line. And as the seasons change, the dot travels ALONG the line. Far north in the winter. Far south in the summer. From this — astronomers measured the tilt of the earth itself. Twenty-three and a half degrees. A piece of brass. A hole in the ceiling. And it measures the universe. The Jesuit Christoph Clavius — he used such lines to reform the calendar itself. The Gregorian calendar we still use today.",
                 keywords: [
                     KeywordPair(keyword: "Meridian line", definition: "North-south metal strip measuring solar position"),
                     KeywordPair(keyword: "Solar noon", definition: "Sun dot crosses the line at local midday"),
@@ -1858,7 +1859,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Gnomonic hole", definition: "Opening in the roof projecting sunlight"),
                 ],
                 activity: .numberFishing(question: "What is Earth's axial tilt in degrees, measured by meridian lines?", correctAnswer: 23, decoys: [10, 15, 30, 35, 45]),
-                notebookSummary: "Meridian line: brass strip N-S on floor. Sun through roof hole = dot that marks noon, seasons, and Earth's 23.5° tilt. Brass measures universe.",
+                notebookSummary: "Meridian line: brass strip set N-S in a cathedral floor. Pinhole in the ceiling projects a single dot of sunlight. Dot crosses the line at solar noon; travels along the line as seasons change (far north in winter, far south in summer). Measures Earth's 23.5° axial tilt. Used by the Jesuit Christoph Clavius to reform the Gregorian calendar.",
                 visual: CardVisual(type: .crossSection, title: "Step 5: Meridian Line", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1870,7 +1871,7 @@ extension KnowledgeCardContent {
                 title: "Step 6: Pendulum Clock",
                 italianTitle: "Orologio a Pendolo",
                 icon: "clock.fill",
-                lessonText: "Galileo discovered that a pendulum's swing period depends ONLY on its length — not the weight or arc width. A 1-meter pendulum swings once per second. This isochronism made precise timekeeping possible. Astronomers needed accurate clocks to measure star positions. Christiaan Huygens built the first pendulum clock in 1656, based on Galileo's principle. The universe runs on time. Measuring time runs on a weight and a string.",
+                lessonText: "Galileo, as a young man, sat in a cathedral in Pisa. He watched a lamp swinging on its chain. And he noticed something. The lamp swung in wide arcs first, then narrower. But each swing — each one — took the SAME TIME. The weight of the lamp did not matter. The width of the swing did not matter. Only one thing determined the period of the swing. The length of the chain. This is called isochronism. A one-meter pendulum swings once per second. Exactly. This discovery — listen — made precise time measurement possible. Astronomers desperately needed accurate clocks. Star positions could not be measured without them. Forty years after Galileo's notice, Christiaan Huygens — a Dutch scholar — built the first pendulum clock. The year was sixteen fifty-six. The universe runs on time. And measuring time — runs on a weight and a string.",
                 keywords: [
                     KeywordPair(keyword: "Isochronism", definition: "Swing period depends only on pendulum length"),
                     KeywordPair(keyword: "1-meter pendulum", definition: "Swings once per second"),
@@ -1878,7 +1879,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Star positions", definition: "Required accurate time measurement"),
                 ],
                 activity: .wordScramble(word: "PENDULUM", hint: "Its swing period depends only on length — Galileo's timekeeping discovery"),
-                notebookSummary: "Pendulum isochronism: period depends only on length. 1m = 1 second. Huygens built first clock (1656). Time measurement enabled astronomy.",
+                notebookSummary: "Galileo observed a swinging cathedral lamp in Pisa — discovered isochronism: a pendulum's swing period depends ONLY on its length, not on weight or arc width. 1m pendulum = 1 second per swing. Christiaan Huygens built the first pendulum clock in 1656. Accurate timekeeping enabled astronomy. The universe runs on time; measuring time runs on a weight and a string.",
                 visual: CardVisual(type: .crossSection, title: "Step 6: Pendulum Clock", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1890,7 +1891,7 @@ extension KnowledgeCardContent {
                 title: "Step 8: First Discovery",
                 italianTitle: "Le Quattro Lune di Giove",
                 icon: "sparkles",
-                lessonText: "Galileo named them the Medicean stars (for his patron). We call them the Galilean moons: Io (volcanic), Europa (ice ocean), Ganymede (largest moon in the solar system), and Callisto (cratered). Their orbits proved that moons orbit planets, not just Earth. Galileo tracked their positions nightly for months, creating the first orbital tables. Systematic observation beat philosophical argument. Data defeats dogma.",
+                lessonText: "And the four moons themselves. Listen to their names. Io. Europa. Ganymede. Callisto. Galileo did not give them these names — he called them the Medicean stars, for his patron, Cosimo de Medici. Yes — the same Medici family of Florence. Patronage moved between cities, but the name stayed. Today we call them the Galilean moons. Io has volcanoes. Europa has an ocean beneath ice. Ganymede is the largest moon in our solar system — larger than the planet Mercury itself. Callisto is covered in craters. Their orbits — visible to anyone who looks — proved that moons orbit planets. Not just Earth. Galileo tracked their positions every night, for months. He drew the first orbital tables. Systematic observation beat philosophical argument. Data — it defeats dogma.",
                 keywords: [
                     KeywordPair(keyword: "Galilean moons", definition: "Io, Europa, Ganymede, Callisto"),
                     KeywordPair(keyword: "Medicean stars", definition: "Galileo's original name for Jupiter's moons"),
@@ -1898,7 +1899,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Orbital tables", definition: "Nightly position tracking — first systematic data"),
                 ],
                 activity: .hangman(word: "GANYMEDE", hint: "Largest moon in the solar system — one of Galileo's 4 Jovian discoveries"),
-                notebookSummary: "4 Galilean moons: Io, Europa, Ganymede (largest), Callisto. Orbits proved moons orbit planets. Systematic data defeated dogma.",
+                notebookSummary: "4 Galilean moons: Io (volcanic), Europa (ocean under ice), Ganymede (largest moon in solar system — bigger than Mercury), Callisto (cratered). Galileo first called them the 'Medicean stars' after his patron Cosimo de Medici (the Florentine family thread reappears). Their orbits proved that moons orbit planets, not just Earth. Galileo's nightly position-tracking = first orbital tables. Data defeats dogma.",
                 visual: CardVisual(type: .crossSection, title: "Step 8: First Discovery", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1912,7 +1913,7 @@ extension KnowledgeCardContent {
                 title: "Step 2: Lead Dome",
                 italianTitle: "Copertura a Piombo della Cupola",
                 icon: "shield.lefthalf.filled",
-                lessonText: "Observatory domes were clad in lead sheeting — the same technique used on the Pantheon. Lead is malleable (hammered into shape), waterproof, and expands/contracts with temperature without cracking. Each sheet overlapped the next by 5 cm, sealed with molten lead solder. A dome needs to rotate smoothly on its track — lead's weight (11.3 g/cm³) actually helps by providing momentum. The heaviest roof is the one that turns easiest.",
+                lessonText: "Look up — at the dome above us. Clad in lead. The same technique used on the Pantheon, fifteen hundred years before. Lead is malleable — you can hammer it into any shape. It is waterproof. And as the temperature changes from day to night, lead expands and contracts without cracking. Each sheet overlaps the next by five centimeters. The seam is sealed with molten lead solder. Now — here is the surprising part. The observatory dome must ROTATE on a track, so the telescope inside can point in any direction. Lead is heavy — eleven point three grams per cubic centimeter. The heaviest of common metals. But that weight HELPS. Once the dome begins to turn, the momentum keeps it turning smoothly. The heaviest roof — is the one that turns easiest.",
                 keywords: [
                     KeywordPair(keyword: "Lead cladding", definition: "Waterproof, malleable dome covering"),
                     KeywordPair(keyword: "5 cm overlap", definition: "Sheet overlap sealed with lead solder"),
@@ -1920,7 +1921,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Rotating dome", definition: "Heavy lead helps maintain smooth rotation"),
                 ],
                 activity: .numberFishing(question: "What is lead's density in g/cm³?", correctAnswer: 11, decoys: [3, 5, 8, 15, 20]),
-                notebookSummary: "Observatory dome: lead sheets (11.3 g/cm³). 5cm overlap + solder. Waterproof, flexible, and heavy = smooth rotation on track.",
+                notebookSummary: "Observatory dome: lead-sheet cladding (same technique as the Pantheon, 1,500 years earlier). Lead is malleable, waterproof, expands/contracts with temperature without cracking. 5cm overlap, sealed with lead solder. Heavy (11.3 g/cm³) — but the weight HELPS the dome rotate smoothly on its track. The heaviest roof is the one that turns easiest.",
                 visual: CardVisual(type: .crossSection, title: "Step 2: Lead Dome", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1932,7 +1933,7 @@ extension KnowledgeCardContent {
                 title: "Step 5: Marble Floor",
                 italianTitle: "Linea Meridiana in Marmo",
                 icon: "mountain.2.fill",
-                lessonText: "The meridian line required the flattest possible surface — any dip causes the sun dot to wander. White Carrara marble was planed to within 0.5 mm tolerance using iron straightedges and stone-cutting saws. The brass line was inlaid into a groove cut with a chisel exactly 2 mm wide. Marble's thermal expansion is tiny: 0.006 mm per °C per meter. The floor barely breathes. Precision on this scale turns a floor into a scientific instrument.",
+                lessonText: "The floor of an observatory is not just a floor. It is an instrument. The meridian line requires the flattest possible surface — any dip in the floor, any rise, and the sun's dot wanders from the line. The stone of choice — white Carrara marble. The same marble used for sculptures. Quarried in Tuscany. We plane it to within half a millimeter of perfect flat. Iron straightedges. Stone-cutting saws. Then — a chisel cuts a groove exactly two millimeters wide. The brass line is inlaid into the groove. And marble has a beautiful property — its thermal expansion is tiny. Six thousandths of a millimeter, per degree, per meter. The floor barely breathes when the seasons change. Precision on this scale — it turns a floor into a scientific instrument.",
                 keywords: [
                     KeywordPair(keyword: "0.5 mm tolerance", definition: "Maximum surface deviation allowed"),
                     KeywordPair(keyword: "2 mm groove", definition: "Width of the brass inlay channel"),
@@ -1940,7 +1941,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Carrara marble", definition: "Whitest, flattest stone available"),
                 ],
                 activity: .trueFalse(statement: "Marble was used for meridian lines because its thermal expansion is only 0.006 mm per °C per meter", isTrue: true),
-                notebookSummary: "Meridian: Carrara marble planed to 0.5mm tolerance. Brass inlaid in 2mm groove. Marble expands just 0.006mm/°C/m. Floor = instrument.",
+                notebookSummary: "Observatory meridian-line floor: white Carrara marble (Tuscany), planed to 0.5mm tolerance with iron straightedges. Brass line inlaid in a 2mm chisel-cut groove. Marble's thermal expansion is tiny — only 0.006 mm per °C per meter. The floor barely breathes when seasons change. Precision turns a floor into a scientific instrument.",
                 visual: CardVisual(type: .crossSection, title: "Step 5: Marble Floor", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1952,7 +1953,7 @@ extension KnowledgeCardContent {
                 title: "Step 3: Pure Glass",
                 italianTitle: "Vetro Puro per Lenti",
                 icon: "drop.triangle.fill",
-                lessonText: "Telescope lenses required the purest glass available — any bubbles, streaks, or color distort the image. Venetian cristallo came closest: triple-filtered sand, soda ash from dried seagrass (barilla), and pure seashell lime. The glass was stirred continuously for 24 hours at 1,100°C to remove bubbles. Then cooled over 5 days. From a 10 kg batch, only 200 grams yielded lens-quality blanks. 2% yield. The clearest glass comes from the most rejected batches.",
+                lessonText: "You remember Murano? Where Angelo Barovier gave us cristallo? Now — the astronomers need an even purer glass than cristallo. Why? Because the lens magnifies everything. Every bubble, every streak, every faint trace of color in the glass — the telescope magnifies them too. So the glassmakers of Murano made a special batch. Triple-filtered sand. Soda ash from dried seagrass — they called it barilla. Lime from pure seashells. They stirred the molten glass continuously for twenty-four hours, at eleven hundred degrees, to release every bubble. Then cooled it for five full days. From a ten-kilogram batch — only two hundred grams of lens-quality glass emerged. Two percent yield. The clearest glass — comes from the most rejected batches.",
                 keywords: [
                     KeywordPair(keyword: "Cristallo", definition: "Venetian clear glass — purest available"),
                     KeywordPair(keyword: "2% yield", definition: "Only 200g lens-quality from 10 kg batch"),
@@ -1960,7 +1961,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "5-day cooling", definition: "Slow annealing for optical quality"),
                 ],
                 activity: .numberFishing(question: "What percentage of a glass batch yielded lens-quality blanks?", correctAnswer: 2, decoys: [10, 20, 30, 50, 75]),
-                notebookSummary: "Lens glass: cristallo, 24hr stirring, 5-day cooling. 10 kg batch → 200g usable (2% yield). Clearest glass = most rejected.",
+                notebookSummary: "Telescope lens glass = Murano cristallo refined further (callback to Barovier + Glassworks). Triple-filtered sand, soda from seagrass (barilla), seashell lime. Stirred continuously for 24 hours at 1,100°C to release bubbles. Cooled 5 days. From a 10 kg batch, only 200g (2%) of lens-quality blanks. The clearest glass comes from the most rejected batches.",
                 visual: CardVisual(type: .crossSection, title: "Step 3: Pure Glass", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1972,7 +1973,7 @@ extension KnowledgeCardContent {
                 title: "Step 2: Ultramarine Fresco",
                 italianTitle: "Lapislazzuli dall'Afghanistan",
                 icon: "diamond.fill",
-                lessonText: "Lapis lazuli — the only source of true blue pigment (ultramarine) — came from the Sar-i Sang mines in Afghanistan, 6,000 km from Rome. Traded through Persia, Egypt, and Venice. It cost more per gram than gold. Observatory ceilings painted ultramarine blue represented the night sky. The extraction process was complex: crush, mix with wax and lye, knead for weeks. The world's most expensive color required the world's longest supply chain.",
+                lessonText: "Look up at the ceiling of the observatory. Painted dark blue. The color of the night sky. The pigment is called ultramarine. The only true blue in the world. And here is where it comes from — listen carefully. A stone called lapis lazuli. Mined in only one place — the Sar-i Sang mines, in the mountains of Afghanistan. Six thousand kilometers from Rome. Six thousand. The stones traveled by camel through Persia. By ship from Egypt to Venice. By cart, finally, to Rome. By the time it arrived — it cost more per gram than gold. More than gold. Astronomers chose this color for their ceilings because they needed it to represent the night sky truthfully. The world's most expensive color — required the world's longest supply chain.",
                 keywords: [
                     KeywordPair(keyword: "Lapis lazuli", definition: "Blue stone from Afghanistan — source of ultramarine"),
                     KeywordPair(keyword: "Sar-i Sang", definition: "Afghan mines — only major lapis source"),
@@ -1980,7 +1981,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "More than gold", definition: "Ultramarine's cost per gram"),
                 ],
                 activity: .wordScramble(word: "ULTRAMARINE", hint: "Blue pigment from lapis lazuli — more expensive than gold"),
-                notebookSummary: "Lapis lazuli from Afghanistan (Sar-i Sang, 6,000 km). Costlier than gold. Crush + wax + lye + weeks of kneading = ultramarine.",
+                notebookSummary: "Ultramarine pigment for observatory ceilings = lapis lazuli, mined only at Sar-i Sang in Afghanistan (6,000 km from Rome). Traveled by camel through Persia, by ship from Egypt to Venice, by cart to Rome. More expensive per gram than gold. The world's most expensive color required the world's longest supply chain.",
                 visual: CardVisual(type: .crossSection, title: "Step 2: Ultramarine Fresco", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1994,7 +1995,7 @@ extension KnowledgeCardContent {
                 title: "Step 4: Telescope Tube",
                 italianTitle: "Assemblaggio del Telescopio",
                 icon: "scope",
-                lessonText: "Galileo's telescope was simple: two lenses in a lead tube. The objective lens (convex, ~4 cm diameter) sat at the far end. The eyepiece (concave, ~2 cm) sat near the eye. The tube length determined magnification: 20× for his best model. Alignment was critical — the two lenses' centers had to match within 0.1 mm. Galileo wrapped the lenses in leather shims and slid them into the tube. Two pieces of glass, perfectly aligned, revealed the universe.",
+                lessonText: "Galileo's telescope was a simple thing. Two lenses. A lead tube. That is all. The convex objective — four centimeters across — sat at the far end of the tube. The concave eyepiece — two centimeters across — sat where the astronomer placed his eye. The LENGTH of the tube determined the magnification. Galileo's best model magnified twenty times. Twenty. The critical thing — alignment. The centers of the two lenses had to be within one tenth of a millimeter of each other. The width of a fingernail. Galileo wrapped each lens in thin leather shims, and slid them carefully into the tube. Two pieces of glass — perfectly aligned — revealed the universe.",
                 keywords: [
                     KeywordPair(keyword: "20× magnification", definition: "Galileo's best telescope power"),
                     KeywordPair(keyword: "0.1 mm alignment", definition: "Maximum error between lens centers"),
@@ -2002,7 +2003,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Leather shims", definition: "Wrapped around lenses for precise fit"),
                 ],
                 activity: .numberFishing(question: "What magnification did Galileo's best telescope achieve?", correctAnswer: 20, decoys: [5, 10, 50, 100, 200]),
-                notebookSummary: "Telescope: convex objective + concave eyepiece in lead tube. 20× magnification. Alignment within 0.1mm. Two lenses revealed the universe.",
+                notebookSummary: "Galileo's telescope: 2 lenses in a lead tube. Convex objective (4cm) at far end + concave eyepiece (2cm) near eye. Tube length determines magnification — 20× for his best model. Alignment within 0.1mm (lenses wrapped in leather shims). Two pieces of glass, perfectly aligned, revealed the universe.",
                 visual: CardVisual(type: .crossSection, title: "Step 4: Telescope Tube", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -2014,7 +2015,7 @@ extension KnowledgeCardContent {
                 title: "Step 4: Lead Tube",
                 italianTitle: "Fusione del Piombo a 327°C",
                 icon: "flame.circle.fill",
-                lessonText: "The telescope tube was cast lead — poured around a wooden mandrel (cylinder form). Lead melts at 327°C, cools in 15 minutes, and machines easily with hand tools. After removing the mandrel, the inside was reamed smooth with an iron tool. The tube had to be perfectly cylindrical — any oval squeezes the lenses out of alignment. Lead was also used for the dome rotation track. The observatory ran on the lowest-melting metal.",
+                lessonText: "You remember the lead we have used so many times before? Roman fistulae pipes — the aqueduct. Ship armor — the harbor. The pure metal that melts at three hundred twenty-seven degrees. Here it returns. The telescope tube — cast from lead. Pour the molten lead around a wooden cylinder — we call it a mandrel. Cool fifteen minutes. Pull out the mandrel. Now you have a lead tube. Smooth it inside with an iron reaming tool. It must be perfectly cylindrical — any oval, any flaw, squeezes the lenses out of alignment. The lead is also used for the dome rotation track. The same metal — for water pipes, for ship armor, for the telescope tube. The observatory ran on the lowest-melting metal of all.",
                 keywords: [
                     KeywordPair(keyword: "327°C", definition: "Lead melting point — low and workable"),
                     KeywordPair(keyword: "Mandrel", definition: "Wooden cylinder used as tube mold"),
@@ -2022,7 +2023,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Cylindrical precision", definition: "Oval tube misaligns the lenses"),
                 ],
                 activity: .fillInBlanks(text: "Lead tube: pour at ___°C around a wooden ___, cool ___ minutes, ream smooth", blanks: ["327", "mandrel", "15"], distractors: ["450", "cylinder", "60"]),
-                notebookSummary: "Telescope tube: lead poured at 327°C around wooden mandrel. Cool 15 min. Ream smooth inside. Must be perfectly cylindrical.",
+                notebookSummary: "Telescope tube cast in lead (callback to aqueduct fistulae + harbor ship armor — same metal, third purpose). Poured at 327°C around a wooden mandrel, cooled 15 min, mandrel removed, interior reamed smooth with iron tool. Must be perfectly cylindrical — oval squeezes lenses out of alignment. The observatory ran on the lowest-melting metal.",
                 visual: CardVisual(type: .crossSection, title: "Step 4: Lead Tube", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -2034,7 +2035,7 @@ extension KnowledgeCardContent {
                 title: "Step 2: Grind Ultramarine",
                 italianTitle: "Macinazione del Lapislazzuli",
                 icon: "paintpalette.fill",
-                lessonText: "Extracting blue from lapis lazuli is alchemy-grade chemistry. Crush the stone to powder. Mix with melted pine resin, beeswax, and lye. Knead for 3 weeks. The blue lazurite particles migrate into the lye while impurities stay in the wax. Strain, dry, grind. The first extraction is the deepest blue (Fra Angelico grade). The second is paler. The third is grey. One stone yields 3 qualities of blue. Patience and chemistry, inseparable.",
+                lessonText: "And now — how do you get the blue OUT of the stone? This is alchemy. Real alchemy. Listen. First, crush the lapis lazuli to a fine powder. Then mix it with melted pine resin. Beeswax. And lye — a strong alkaline solution. Knead this mixture by hand. For three weeks. The blue lazurite particles slowly migrate into the lye. The impurities — the grey and the gold flecks — stay trapped in the wax. Strain the lye. Dry the powder. Grind it again. The first extraction is the deepest, richest blue — they call it Fra Angelico grade. The second extraction is paler. The third is grey. From one stone — three grades of blue. Patience and chemistry, inseparable.",
                 keywords: [
                     KeywordPair(keyword: "Lazurite", definition: "Blue mineral inside lapis lazuli"),
                     KeywordPair(keyword: "3-week kneading", definition: "Pine resin + wax + lye separates blue"),
@@ -2042,7 +2043,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "3 extractions", definition: "Deep blue → pale → grey from one stone"),
                 ],
                 activity: .numberFishing(question: "How many weeks of kneading to extract ultramarine from lapis?", correctAnswer: 3, decoys: [1, 2, 5, 8, 12]),
-                notebookSummary: "Ultramarine extraction: crush lapis + pine resin + wax + lye. Knead 3 weeks. 3 extractions: deep blue → pale → grey.",
+                notebookSummary: "Ultramarine extraction (alchemy-grade chemistry): crush lapis to powder → mix with pine resin + beeswax + lye → knead by hand for 3 weeks. Blue lazurite particles migrate into the lye; impurities stay trapped in the wax. 3 extractions per stone: deep blue (Fra Angelico grade) → pale → grey. Patience and chemistry, inseparable.",
                 visual: CardVisual(type: .crossSection, title: "Step 2: Grind Ultramarine", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -2054,7 +2055,7 @@ extension KnowledgeCardContent {
                 title: "Step 7: Star Charts",
                 italianTitle: "Carte Stellari e Declinazione",
                 icon: "star.fill",
-                lessonText: "Astronomers recorded star positions using two coordinates: right ascension (east-west, measured in hours) and declination (north-south, measured in degrees from the celestial equator). Each observation was logged with date, time, instrument used, and weather. Tycho Brahe's catalog of 1,000 stars — accurate to 1 arcminute — was the gold standard. Astronomers don't discover with telescopes. They discover with records. The notebook is the real instrument.",
+                lessonText: "And the final lesson of the observatory — the most important. The telescope is only as good as the notebook beside it. Astronomers record star positions using two coordinates. Right ascension — east to west, measured in hours. Declination — north to south, measured in degrees from the celestial equator. Every observation is logged. Date. Time. Instrument used. The weather. The phase of the moon. Tycho Brahe — the great Danish astronomer of the previous generation, before telescopes even existed — cataloged a thousand stars by naked eye alone. Accurate to one arcminute. The gold standard. Astronomers, you see — they do not discover with telescopes. They discover with records. The notebook — that is the real instrument. Remember this — when we visit Leonardo's workshop, soon.",
                 keywords: [
                     KeywordPair(keyword: "Right ascension", definition: "East-west coordinate measured in hours"),
                     KeywordPair(keyword: "Declination", definition: "North-south coordinate in degrees"),
@@ -2062,7 +2063,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Tycho Brahe", definition: "Cataloged 1,000 stars before telescopes existed"),
                 ],
                 activity: .hangman(word: "DECLINATION", hint: "North-south coordinate for star positions, measured in degrees"),
-                notebookSummary: "Star coordinates: right ascension (hours, east-west) + declination (degrees, north-south). Tycho's 1,000-star catalog: 1 arcminute accuracy.",
+                notebookSummary: "Star coordinates: right ascension (east-west, hours) + declination (north-south, degrees from celestial equator). Every observation logged with date, time, instrument, weather. Tycho Brahe cataloged 1,000 stars accurate to 1 arcminute — before telescopes existed. Astronomers don't discover with telescopes — they discover with records. The notebook is the real instrument. (Forward callback to Leonardo's notebooks.)",
                 visual: CardVisual(type: .crossSection, title: "Step 7: Star Charts", values: [:], labels: [], steps: 3, caption: "")
             ),
         ]
