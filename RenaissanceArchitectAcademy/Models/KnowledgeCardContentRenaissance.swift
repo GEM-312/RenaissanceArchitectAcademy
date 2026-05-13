@@ -2085,7 +2085,7 @@ extension KnowledgeCardContent {
                 title: "Gutenberg's Revolution",
                 italianTitle: "La Rivoluzione di Gutenberg",
                 icon: "book.fill",
-                lessonText: "Before Gutenberg, a monk copied one Bible in 2 years. After Gutenberg: 180 Bibles in 3 years. His press arrived in Italy in 1465. By 1500, Venice alone had 150 print shops producing 4,000 titles. Knowledge that took a lifetime to copy could now reach thousands in weeks. The printing press didn't create new knowledge. It made existing knowledge impossible to destroy. Copies are survival.",
+                lessonText: "Before the printing press — a monk copied a single Bible in two years. By hand. Letter by letter. Two years for one book. Then — Johannes Gutenberg, in Germany, near the year fourteen hundred forty, invented moveable type. After Gutenberg — one hundred eighty Bibles in three years. From a single press. The change is hard to imagine. In fourteen sixty-five, the press arrived in Italy. Venice became its heart. By the year fifteen hundred — Venice alone had one hundred fifty print shops. Four thousand different titles printed. And there is one man you must know — Aldus Manutius. A Venetian. He printed the works of the Greeks and Romans in small, affordable books. He invented italic type. The semicolon. Knowledge that took a lifetime to copy — now reached thousands in weeks. The press did not create new knowledge. It made existing knowledge impossible to destroy. Copies, my apprentice — copies are survival.",
                 keywords: [
                     KeywordPair(keyword: "Gutenberg", definition: "Invented moveable type printing (~1440)"),
                     KeywordPair(keyword: "180 Bibles", definition: "Gutenberg's first print run in 3 years"),
@@ -2093,8 +2093,9 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "1465", definition: "Printing press arrived in Italy"),
                 ],
                 activity: .numberFishing(question: "How many print shops operated in Venice by 1500?", correctAnswer: 150, decoys: [20, 50, 75, 300, 500]),
-                notebookSummary: "Gutenberg: 180 Bibles in 3 years (vs 1 per 2 years by hand). Italy 1465. Venice: 150 shops by 1500. Copies = survival.",
-                visual: CardVisual(type: .crossSection, title: "Gutenberg's Revolution", values: [:], labels: [], steps: 3, caption: "")
+                notebookSummary: "Pre-press: 1 monk copied 1 Bible in 2 years (by hand). Post-Gutenberg (Germany, ~1440): 180 Bibles in 3 years per press. Press arrived in Italy 1465. By 1500, Venice had 150 print shops + 4,000 titles. Aldus Manutius (Venetian) printed affordable Greek + Latin classics, invented italic type and the semicolon. Copies are survival.",
+                visual: CardVisual(type: .crossSection, title: "Gutenberg's Revolution", values: [:], labels: [], steps: 3, caption: ""),
+                isLeadCard: true
             ),
 
             KnowledgeCard(
@@ -2105,7 +2106,7 @@ extension KnowledgeCardContent {
                 title: "Step 1: Screw Press",
                 italianTitle: "Coppia della Pressa a Vite",
                 icon: "wrench.fill",
-                lessonText: "Gutenberg adapted the wine/olive screw press for printing. A wooden screw converts rotational force into downward pressure. The mechanical advantage: a 10 cm handle radius and 2 mm thread pitch multiplies force by 314×. A printer pulling with 10 kg of force generates 3,140 kg on the platen — enough to transfer ink evenly across a full page. The press is a force multiplier. Physics turns a gentle pull into a perfect impression.",
+                lessonText: "Now — look at the press itself. Where does Gutenberg's idea come from? Not invention — adaptation. He took the wine press. The olive press. The screw that crushes grapes and olives into juice. He turned it sideways, in a sense — to press ink and paper instead. The mechanics are beautiful. A wooden screw converts the rotation of a handle into downward pressure. A handle ten centimeters in radius. A thread pitch of two millimeters per turn. The mathematics — the mechanical advantage — multiplies force by three hundred and fourteen times. A printer pulling with the force of ten kilograms — generates three thousand one hundred forty kilograms on the page. Three tons. Enough to transfer ink evenly across every letter. Physics turns a gentle pull — into a perfect impression.",
                 keywords: [
                     KeywordPair(keyword: "Screw press", definition: "Converts rotation into downward pressure"),
                     KeywordPair(keyword: "314× force", definition: "Mechanical advantage of the screw"),
@@ -2113,7 +2114,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "3,140 kg", definition: "Pressure on the page from 10 kg pull"),
                 ],
                 activity: .numberFishing(question: "How many times does the screw press multiply force?", correctAnswer: 314, decoys: [10, 50, 100, 500, 1000]),
-                notebookSummary: "Screw press: 314× force multiplication. 10 kg pull → 3,140 kg on platen. Adapted from wine press. Gentle pull = perfect impression.",
+                notebookSummary: "Screw press: adapted from the wine/olive press. Wooden screw converts rotational force → downward pressure. 10cm handle radius × 2mm thread pitch = 314× mechanical advantage. A 10 kg pull on the handle generates 3,140 kg on the platen. Physics turns a gentle pull into a perfect impression.",
                 visual: CardVisual(type: .crossSection, title: "Step 1: Screw Press", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -2125,7 +2126,7 @@ extension KnowledgeCardContent {
                 title: "Step 2: Type Metal",
                 italianTitle: "Lega dei Caratteri Mobili",
                 icon: "textformat",
-                lessonText: "Gutenberg's genius wasn't the press — it was the type metal. He developed an alloy: 80% lead (low melting point), 15% antimony (hardens the lead), 5% tin (improves flow into molds). This alloy expands 1% on cooling — filling every detail of the letter mold. Modern type metal still uses essentially this recipe. The alloy that expands slightly when it freezes captures letters perfectly. A metal that grows makes knowledge grow.",
+                lessonText: "And now — listen. Gutenberg's true genius — it was not the press. The press was an old idea. The genius was the metal of the type itself. He developed a special alloy. Eighty parts lead — low melting point, easy to work. Fifteen parts antimony — to harden the soft lead. Five parts tin — to make the molten metal flow smoothly into the molds. But here is the magic. Most metals shrink as they cool. This alloy — does the opposite. It expands. By one percent. As it cools in the mold, it grows. Pressing outward against every detail of the letter. Every serif. Every curve. Captured perfectly. Five hundred years later, modern type metal still uses essentially this same recipe. A metal that grows — makes knowledge grow.",
                 keywords: [
                     KeywordPair(keyword: "Type metal", definition: "80% lead + 15% antimony + 5% tin"),
                     KeywordPair(keyword: "Antimony", definition: "Hardens the soft lead"),
@@ -2133,7 +2134,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Tin", definition: "Improves molten metal flow into the mold"),
                 ],
                 activity: .fillInBlanks(text: "Type metal: ___% lead, ___% antimony, ___% tin — expands 1% on cooling", blanks: ["80", "15", "5"], distractors: ["60", "25", "10"]),
-                notebookSummary: "Type metal: 80% Pb + 15% Sb + 5% Sn. Expands 1% on cooling → fills every mold detail. Recipe unchanged for 500 years.",
+                notebookSummary: "Type metal alloy: 80% lead (low melting point) + 15% antimony (hardens the lead) + 5% tin (improves flow into molds). Unique property — expands 1% on cooling instead of shrinking, pressing outward to fill every serif. Modern type metal still uses essentially this recipe 500 years later. A metal that grows makes knowledge grow.",
                 visual: CardVisual(type: .crossSection, title: "Step 2: Type Metal", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -2145,7 +2146,7 @@ extension KnowledgeCardContent {
                 title: "Step 4: Oil-Based Ink",
                 italianTitle: "Inchiostro a Base d'Olio",
                 icon: "drop.fill",
-                lessonText: "Water-based ink beads off metal type. Gutenberg invented oil-based printing ink: lampblack (carbon soot) suspended in linseed oil with a touch of turpentine. The oil clings to metal type faces, transfers cleanly to damp paper, and dries by oxidation (not evaporation). It doesn't smear after printing. This was the second critical invention — without oil ink, moveable type is useless. The press gets the credit. The ink does the work.",
+                lessonText: "Now — the ink. This is a problem you would not expect. Try to put ink on metal — and it beads off. Like water on a polished sword. The scribes' water-based ink was useless on Gutenberg's type. So he invented something new. Oil-based printing ink. The recipe — lampblack — that is carbon soot, collected from oil lamps. Suspended in linseed oil. A touch of turpentine to thin it. The oil clings to the metal type faces. Transfers cleanly to damp paper. And dries — not by evaporation, like watercolor — but by oxidation, by absorbing oxygen from the air. It does not smear after printing. This was the second great invention. Without oil ink, moveable type is useless. The press gets the credit. But the ink — the ink does the work.",
                 keywords: [
                     KeywordPair(keyword: "Lampblack", definition: "Carbon soot — the pigment in black ink"),
                     KeywordPair(keyword: "Linseed oil", definition: "Binder that clings to metal type"),
@@ -2153,7 +2154,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Oil-based", definition: "Sticks to metal (water-based beads off)"),
                 ],
                 activity: .multipleChoice(question: "Why did Gutenberg switch from water-based to oil-based ink?", options: ["Cheaper ingredients", "Water-based ink beads off metal type", "Oil ink is blacker", "Church preference"], correctIndex: 1),
-                notebookSummary: "Oil-based ink: lampblack + linseed oil + turpentine. Clings to metal type, dries by oxidation (no smearing). Press gets credit, ink does work.",
+                notebookSummary: "Oil-based printing ink: lampblack (carbon soot from oil lamps) + linseed oil + a touch of turpentine. Clings to metal type (water-based ink beads off), transfers to damp paper, dries by oxidation (absorbs oxygen — no smearing). Without oil ink, moveable type is useless. The press gets the credit. The ink does the work.",
                 visual: CardVisual(type: .crossSection, title: "Step 4: Oil-Based Ink", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -2165,7 +2166,7 @@ extension KnowledgeCardContent {
                 title: "Step 7: Compose a Page",
                 italianTitle: "Velocità del Compositore",
                 icon: "character.cursor.ibeam",
-                lessonText: "A skilled compositor picked individual type pieces from a case and arranged them into a page — backward and mirrored. Speed: 1,500 characters per hour. A Bible page has ~2,500 characters. Two hours to set one page, but that page could print 500 copies in a day. Setting is slow; printing is fast. The bottleneck is always composition. The hardest part of spreading knowledge is arranging it — letter by letter, in mirror.",
+                lessonText: "Now — meet the compositor. The man with the slowest, most patient job in the shop. He picks individual pieces of type — one at a time — from the case in front of him. And he arranges them into a page. But here is the difficult part. The type must be set BACKWARD. And MIRRORED. Because when it presses against paper, everything reverses. He reads upside-down, in a mirror, all day. A skilled compositor can set fifteen hundred characters per hour. A page of a Bible has about two thousand five hundred characters. Two hours — to set one page. But once it is set, that page can print five hundred copies in a single day. Setting is slow. Printing is fast. The bottleneck — is always composition. The hardest part of spreading knowledge — is arranging it, letter by letter, in mirror.",
                 keywords: [
                     KeywordPair(keyword: "Compositor", definition: "Person who arranges type into pages"),
                     KeywordPair(keyword: "1,500 chars/hour", definition: "Speed of a skilled compositor"),
@@ -2173,7 +2174,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "500 copies/day", definition: "Print output from one set page"),
                 ],
                 activity: .numberFishing(question: "How many characters per hour could a skilled compositor set?", correctAnswer: 1500, decoys: [200, 500, 800, 3000, 5000]),
-                notebookSummary: "Compositor: 1,500 chars/hour, backward + mirrored. One page = 2 hours to set. Then 500 copies/day. Composition is the bottleneck.",
+                notebookSummary: "Compositor: picks individual type pieces from the case, sets them BACKWARD + MIRRORED. Speed = 1,500 characters/hour. Bible page (~2,500 chars) = 2 hours to set; once set, prints 500 copies/day. Setting is slow, printing is fast — composition is always the bottleneck. The hardest part of spreading knowledge is arranging it letter by letter, in mirror.",
                 visual: CardVisual(type: .crossSection, title: "Step 7: Compose a Page", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -2187,7 +2188,7 @@ extension KnowledgeCardContent {
                 title: "Step 2: Type Alloy",
                 italianTitle: "Lega Piombo-Stagno-Antimonio",
                 icon: "cube.fill",
-                lessonText: "Mining provided the three metals for type: lead from galena ore, tin from cassiterite, antimony from stibnite. Each ore was smelted separately. Lead at 327°C, tin at 232°C, antimony at 630°C. Then combined in precise ratios. Too much lead = soft type that wears out. Too much antimony = brittle type that cracks. The alloy must be hard enough to survive 500 impressions but soft enough to melt and recast. Balance is everything.",
+                lessonText: "Where do the three metals of type come from? From the earth. Listen — the lead comes from galena ore. Smelted at three hundred twenty-seven degrees. The tin from cassiterite. Smelted at two hundred thirty-two — even lower. The antimony — from a mineral called stibnite. Six hundred thirty degrees. Each ore is smelted separately. Then the three metals are combined in precise ratios. And here is the balance the type-maker must strike. Too much lead — and the type is too soft. It wears out after a few hundred impressions. Too much antimony — and the type is brittle. It cracks. The right alloy must be hard enough to survive five hundred impressions, but soft enough to melt down and recast when worn. Balance, my apprentice. Always balance.",
                 keywords: [
                     KeywordPair(keyword: "Galena", definition: "Lead ore (PbS) — smelted at 327°C"),
                     KeywordPair(keyword: "Cassiterite", definition: "Tin ore (SnO₂) — smelted at 232°C"),
@@ -2195,7 +2196,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "500 impressions", definition: "Minimum lifespan of a single type piece"),
                 ],
                 activity: .hangman(word: "ANTIMONY", hint: "Metal from stibnite ore — hardens lead in type alloy"),
-                notebookSummary: "Type metals: lead (galena), tin (cassiterite), antimony (stibnite). Each smelted separately, combined precisely. 500 impressions per piece.",
+                notebookSummary: "Type metal ores: lead from galena (smelted 327°C), tin from cassiterite (232°C), antimony from stibnite (630°C). Each smelted separately, combined in precise ratios. Too much lead = soft type that wears out; too much antimony = brittle type that cracks. Balance: hard enough for 500 impressions, soft enough to melt and recast.",
                 visual: CardVisual(type: .crossSection, title: "Step 2: Type Alloy", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -2207,7 +2208,7 @@ extension KnowledgeCardContent {
                 title: "Step 6: Dampen Paper",
                 italianTitle: "Carta Umidificata",
                 icon: "drop.triangle.fill",
-                lessonText: "Paper goes through the press damp — not dry. Dampening softens the fibers so they absorb ink and conform to the type surface. Too wet: ink bleeds. Too dry: ink sits on top and smears. Renaissance printers dampened sheets between wet felts overnight. The ideal moisture: 20-25%. After printing, sheets hung on lines to dry — the printshop ceiling was a forest of drying pages. Wet paper receives. Dry paper keeps.",
+                lessonText: "Listen — a piece of practical wisdom most people never learn. Paper goes through the press damp. Not dry. Wet enough that the fibers soften and absorb the ink, but not so wet that the ink bleeds across the page. Too dry, and the ink sits on top of the surface and smears. The ideal — twenty to twenty-five percent moisture. The night before printing, the printers stack the sheets between wet felts. By morning, every sheet is evenly damp. After printing, the sheets are hung on lines to dry. The ceiling of every Renaissance printshop — a forest of drying pages overhead. Wet paper receives. Dry paper keeps. Both are needed.",
                 keywords: [
                     KeywordPair(keyword: "Dampened paper", definition: "20-25% moisture for optimal ink absorption"),
                     KeywordPair(keyword: "Wet felts", definition: "Sheets sandwiched overnight to dampen evenly"),
@@ -2215,7 +2216,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Drying lines", definition: "Printed sheets hung from ceiling"),
                 ],
                 activity: .numberFishing(question: "What moisture percentage is ideal for printing paper?", correctAnswer: 25, decoys: [5, 10, 40, 60, 80]),
-                notebookSummary: "Paper dampened to 20-25% moisture between wet felts overnight. Too wet = bleed. Too dry = smear. Sheets dry on ceiling lines.",
+                notebookSummary: "Paper is dampened (20-25% moisture) the night before printing — stacked between wet felts overnight for even saturation. Damp fibers absorb ink + conform to type surface. Too wet = ink bleeds; too dry = ink smears. After printing, sheets hang on ceiling lines to dry. Wet paper receives, dry paper keeps.",
                 visual: CardVisual(type: .crossSection, title: "Step 6: Dampen Paper", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -2227,7 +2228,7 @@ extension KnowledgeCardContent {
                 title: "Step 1: Iron Frame",
                 italianTitle: "Telaio della Pressa in Ferro",
                 icon: "rectangle.compress.vertical",
-                lessonText: "The press frame must resist 3,000+ kg of force without flexing. Early frames were oak (like wine presses), but Italian printers upgraded to iron. A cast-iron frame weighed 200 kg and was rigid enough for even pressure across the entire platen. Uneven pressure = faded edges. The frame was bolted to the floor and ceiling. The rigidity of the frame determines the clarity of every letter on every page.",
+                lessonText: "Three thousand kilograms of force. Every impression. The frame of the press must not flex. Not a millimeter. The earliest presses had oak frames, like the wine presses they were copied from. But the Italian printers — they upgraded to cast iron. A cast-iron frame weighs two hundred kilograms by itself. Rigid as a mountain. It distributes the screw's pressure evenly across the entire platen. Uneven pressure — produces faded letters at the edges of the page. The iron frame is bolted to the floor below and the ceiling above. Anchored. The rigidity of the frame, my apprentice — it determines the clarity of every single letter, on every single page.",
                 keywords: [
                     KeywordPair(keyword: "Cast-iron frame", definition: "200 kg frame replacing wooden structure"),
                     KeywordPair(keyword: "3,000+ kg", definition: "Force the frame must resist"),
@@ -2235,7 +2236,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Floor + ceiling bolts", definition: "Frame anchored to building structure"),
                 ],
                 activity: .trueFalse(statement: "Italian printers replaced wooden press frames with 200 kg cast-iron ones for rigidity", isTrue: true),
-                notebookSummary: "Iron press frame: 200 kg, resists 3,000+ kg. Bolted to floor and ceiling. Rigidity = even pressure = clear print edge to edge.",
+                notebookSummary: "Italian printers upgraded oak press frames to cast iron — 200 kg, rigid as a mountain. Resists 3,000+ kg without flexing. Bolted to the floor below and the ceiling above. Even rigid pressure across the platen = no faded edges. The rigidity of the frame determines the clarity of every letter on every page.",
                 visual: CardVisual(type: .crossSection, title: "Step 1: Iron Frame", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -2249,7 +2250,7 @@ extension KnowledgeCardContent {
                 title: "Step 1: Oak Press",
                 italianTitle: "Costruzione del Telaio",
                 icon: "rectangle.portrait",
-                lessonText: "The original Gutenberg press frame was oak — two massive uprights (15 cm × 15 cm) with a crossbeam carrying the screw. Oak was chosen for compression strength: the uprights absorb 1,500 kg each without crushing. The screw hole was lined with a bronze bushing for smooth rotation. Even after iron frames became standard, the screw itself often remained oak — it was cheaper to replace when the threads wore out.",
+                lessonText: "The original Gutenberg press — pure oak. Two massive uprights, fifteen centimeters by fifteen, with a crossbeam connecting them. The screw passes through the crossbeam. Oak was the natural choice — like the king-post trusses at the baths, oak handles compression like no other European wood. Each upright absorbs fifteen hundred kilograms of force without crushing. The screw hole itself was lined with a bronze bushing — for smooth rotation. And here is the interesting thing — even after iron frames became standard, the SCREW itself often remained oak. Why? Because the threads wear out with constant use. Oak was cheaper to replace than carved iron. The frame protects the body. The screw bears the work.",
                 keywords: [
                     KeywordPair(keyword: "15 × 15 cm", definition: "Cross-section of oak press uprights"),
                     KeywordPair(keyword: "1,500 kg each", definition: "Compression load per upright"),
@@ -2257,7 +2258,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Replaceable screw", definition: "Oak screw cheaper to replace than iron"),
                 ],
                 activity: .numberFishing(question: "Compression load (kg) each oak upright carries?", correctAnswer: 1500, decoys: [500, 800, 2500, 4000, 6000]),
-                notebookSummary: "Oak press: 15×15cm uprights, 1,500 kg each. Bronze bushing in screw hole. Oak screw cheaper to replace when worn.",
+                notebookSummary: "Original Gutenberg press = pure oak. 15×15cm uprights absorb 1,500 kg each (callback to baths king-post truss — same compression strength). Screw passes through a crossbeam, lined with a bronze bushing for smooth rotation. Even after iron frames became standard, the SCREW remained oak — cheaper to replace when threads wore out.",
                 visual: CardVisual(type: .crossSection, title: "Step 1: Oak Press", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -2269,7 +2270,7 @@ extension KnowledgeCardContent {
                 title: "Step 3: Type Cases",
                 italianTitle: "Casse dei Caratteri",
                 icon: "tray.2.fill",
-                lessonText: "Type was stored in walnut cases — shallow trays divided into compartments, one per character. The compositor reached into compartments by muscle memory. Capitals were stored in the upper case (angled above). Lowercase letters in the lower case (flat on the desk). This is why we say 'uppercase' and 'lowercase' — the terms come from the physical position of walnut type trays. Language preserves the memory of wooden furniture.",
+                lessonText: "Now — a beautiful piece of language history. The type is stored in shallow walnut trays. Cases. Divided into many small compartments. One for each letter. The compositor reaches into the compartments by feel — by muscle memory — without looking. The capital letters were stored in the trays angled above the desk. We called these — the UPPER cases. The small letters were stored in the flat trays at the desk level. The LOWER cases. And so — in your language today — even now — when you say a capital letter is 'uppercase' or a small letter is 'lowercase' — you are speaking of these walnut trays. The position of wooden furniture, five hundred years ago. Language preserves the memory of things we no longer see. Beautiful — no?",
                 keywords: [
                     KeywordPair(keyword: "Upper case", definition: "Top tray — capital letters stored here"),
                     KeywordPair(keyword: "Lower case", definition: "Bottom tray — small letters stored here"),
@@ -2277,7 +2278,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Muscle memory", definition: "Compositor reaches by feel, not sight"),
                 ],
                 activity: .multipleChoice(question: "Where does the term 'uppercase' come from?", options: ["Font size terminology", "The physical position of capital letter trays", "Latin grammar rules", "Gutenberg's personal preference"], correctIndex: 1),
-                notebookSummary: "Walnut type cases: upper case (capitals, top) + lower case (small letters, bottom). Terms survive in language. Furniture became vocabulary.",
+                notebookSummary: "Type stored in shallow walnut trays (cases) with compartments per character. Capital letters in the UPPER cases (angled above the desk). Small letters in the LOWER cases (flat at desk level). The compositor reaches by muscle memory. This is why we still say 'uppercase' + 'lowercase' — language preserves the memory of wooden furniture from 500 years ago.",
                 visual: CardVisual(type: .crossSection, title: "Step 3: Type Cases", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -2291,7 +2292,7 @@ extension KnowledgeCardContent {
                 title: "Step 2: Punch to Matrix",
                 italianTitle: "Punzone → Matrice → Carattere",
                 icon: "square.grid.3x3.fill",
-                lessonText: "Making type is a 3-step process. Step 1: a steel punch is hand-carved with a letter in relief (raised). Step 2: the punch is hammered into a copper bar — creating a matrix (the letter in reverse). Step 3: molten type metal is poured into the matrix — producing a type piece with the letter in relief again. One punch makes unlimited matrices. One matrix casts thousands of type pieces. Three steps from unique to infinite.",
+                lessonText: "Now — listen to the most elegant manufacturing process of the Renaissance. Three steps. From a unique craft — to infinite reproduction. Step one — the punch. A steel rod with the letter carved in relief on its tip. Carved by hand, by a master, with great care. Slow. Step two — the matrix. The steel punch is hammered into a copper bar. Hard. Once. This leaves the letter pressed into the copper, in reverse. The matrix is now a mold. Step three — the type itself. Molten type metal is poured into the matrix. Cools. Open the mold. A perfect type piece, with the letter in relief once more — ready to print. One steel punch — can make unlimited copper matrices. One copper matrix — can cast thousands of type pieces. Three steps. From one carving, to ten thousand letters, to a million books. Three steps from unique — to infinite.",
                 keywords: [
                     KeywordPair(keyword: "Punch", definition: "Steel tool with letter carved in relief"),
                     KeywordPair(keyword: "Matrix", definition: "Copper mold struck from the punch"),
@@ -2299,7 +2300,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "3-step process", definition: "Punch → matrix → type — unique to infinite"),
                 ],
                 activity: .wordScramble(word: "MATRIX", hint: "Copper mold struck from a steel punch — used to cast thousands of type pieces"),
-                notebookSummary: "Punch (steel, relief) → Matrix (copper, reverse) → Type (metal, relief). 1 punch → ∞ matrices → ∞ type. Three steps to infinity.",
+                notebookSummary: "Type manufacture in 3 steps: (1) PUNCH — steel rod with letter carved in relief, by hand. (2) MATRIX — punch hammered into a copper bar, leaving letter in reverse. (3) TYPE — molten metal poured into matrix, cooled, removed → letter in relief, ready to print. 1 punch → ∞ matrices → ∞ type pieces. From one carving to a million books. Three steps from unique to infinite.",
                 visual: CardVisual(type: .crossSection, title: "Step 2: Punch to Matrix", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -2311,7 +2312,7 @@ extension KnowledgeCardContent {
                 title: "Step 2: Cast Type",
                 italianTitle: "Metallo dei Caratteri a 240°C",
                 icon: "flame.circle.fill",
-                lessonText: "Type metal melts at 240°C — low enough for a small charcoal furnace. The caster ladles molten alloy into a hand mold containing the copper matrix. Cool for 10 seconds. Open the mold. A perfect letter, mirror-reversed, with a 1% expansion that fills every serif. A skilled caster produced 4,000 type pieces per day. Each one identical. The letter 'e' cast at dawn is indistinguishable from the 'e' cast at dusk. Uniformity is the point.",
+                lessonText: "And to finish — the casting itself. Type metal melts at only two hundred forty degrees. Low. A small charcoal furnace is enough. No bellows. The caster takes a small ladle. Dips it into the molten alloy. Pours it into the hand mold — which contains the copper matrix inside. Ten seconds to cool. Open the mold. Out comes a perfect letter — mirror-reversed, the alloy expanded one percent to fill every serif. A skilled caster — listen — could produce four THOUSAND type pieces per day. Each one identical to the last. The letter 'e' cast at dawn — indistinguishable from the 'e' cast at dusk. This — this is the whole point. Uniformity. From the same press, on the same paper — every reader receives the same words. And so the Renaissance ends in our hands. The world has changed forever. Next — we will meet Leonardo.",
                 keywords: [
                     KeywordPair(keyword: "240°C", definition: "Melting point of type metal alloy"),
                     KeywordPair(keyword: "10 seconds", definition: "Cooling time per type piece"),
@@ -2319,7 +2320,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Mirror-reversed", definition: "Type reads backward — prints forward"),
                 ],
                 activity: .numberFishing(question: "How many type pieces could a skilled caster produce per day?", correctAnswer: 4000, decoys: [500, 1000, 2000, 6000, 10000]),
-                notebookSummary: "Type metal: 240°C, 10-second cooling. 1% expansion fills every serif. 4,000 pieces/day. Every letter identical. Uniformity = the point.",
+                notebookSummary: "Type casting: alloy melts at 240°C (charcoal furnace, no bellows). Caster ladles molten metal into a hand mold containing the copper matrix. Cool 10 seconds, open the mold → perfect mirror-reversed letter, 1% expansion filling every serif. 4,000 pieces/day per skilled caster. Every letter identical — uniformity is the point.",
                 visual: CardVisual(type: .crossSection, title: "Step 2: Cast Type", values: [:], labels: [], steps: 3, caption: "")
             ),
         ]
