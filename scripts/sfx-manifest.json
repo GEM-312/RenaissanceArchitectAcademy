@@ -1,0 +1,38 @@
+[
+  {
+    "filename": "city_ambient.mp3",
+    "prompt": "A quiet Renaissance loggia at dawn. Light breeze, distant church bell tolling slowly, soft pigeon wings, a quill scratching faintly somewhere far off, leather-soled footsteps echoing on stone in the distance. Contemplative, painterly. No music, no rhythm. Suitable for seamless looping.",
+    "duration_seconds": 22,
+    "prompt_influence": 0.6
+  },
+  {
+    "filename": "volcano_rumble_ambient.mp3",
+    "prompt": "Active volcanic forge. Strong, present, continuous low rumble — clearly audible, not distant. Frequent fire crackles, ember pops, spark snaps, occasional louder magma-release whoosh. Earthy, hot, alive. Suitable for seamless looping.",
+    "duration_seconds": 15,
+    "prompt_influence": 0.7
+  },
+  {
+    "filename": "river_ambient.mp3",
+    "prompt": "Gentle flowing river water, smooth and steady, no splashes or rapids. Calm, continuous, suitable for seamless looping. Recorded from the riverbank.",
+    "duration_seconds": 15,
+    "prompt_influence": 0.5
+  },
+  {
+    "filename": "market_chatter_ambient.mp3",
+    "prompt": "Light Renaissance market square crowd ambience. Indistinct chatter, no specific words, occasional distant vendor call, soft footsteps. No music. Suitable for seamless looping.",
+    "duration_seconds": 15,
+    "prompt_influence": 0.4
+  },
+  {
+    "filename": "quarry_ambient.mp3",
+    "prompt": "Active Renaissance stone quarry. Heavy chisel strikes hitting stone — sharp, ringing, recurring every couple of seconds. Hammer-on-chisel impacts, larger rocks crashing and tumbling down a stone face, smaller chips skittering. Clearly audible, present, rhythmic working sounds. No music, no voices. Suitable for seamless looping.",
+    "duration_seconds": 15,
+    "prompt_influence": 0.7
+  },
+  {
+    "filename": "clay_pit_ambient.mp3",
+    "prompt": "Wet clay pit ambience. Soft squelching of damp earth, occasional water drips, faint mud sucking sounds, very light breeze. Earthy, organic, no music, no voices. Suitable for seamless looping.",
+    "duration_seconds": 15,
+    "prompt_influence": 0.6
+  }
+]

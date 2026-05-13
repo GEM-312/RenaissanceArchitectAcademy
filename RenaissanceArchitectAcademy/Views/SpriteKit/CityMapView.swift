@@ -744,12 +744,16 @@ struct CityMapView: View {
                 showBuildingLesson = true
                 returnToLessonPlotId = nil
             }
+            SoundManager.shared.playAmbient(.cityAmbient)
+            SoundManager.shared.playMusic(.cityMap)
             // Show bird guidance after short delay
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 showCityGuidance()
             }
         }
         .onDisappear {
+            SoundManager.shared.stopAmbient(.cityAmbient)
+            SoundManager.shared.stopMusic(.cityMap)
             // Nil out callbacks before releasing scene to break closure references
             sceneHolder.scene?.onMascotReachedBuilding = nil
             sceneHolder.scene?.onBuildingScreenPosition = nil

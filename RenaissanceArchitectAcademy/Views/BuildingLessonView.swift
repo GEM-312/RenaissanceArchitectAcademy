@@ -212,7 +212,7 @@ struct BuildingLessonView: View {
             if currentIndex < pages.count {
                 viewModel.saveLessonBookmark(for: plot.id, sectionIndex: currentIndex)
             }
-            SoundManager.shared.stopMusic()
+            SoundManager.shared.stopMusic(.lesson)
             GameCenterManager.shared.endCurrentActivity()
         }
         // Environment navigation uses onNavigate to go to full scene (not a sheet)

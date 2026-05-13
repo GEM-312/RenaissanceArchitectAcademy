@@ -10,6 +10,8 @@
 //   GET  /wolfram/query   → proxies to Wolfram Alpha Full Results API (XML)
 //   GET  /wolfram/result  → proxies to Wolfram Alpha Short Answer API (plaintext)
 //   POST /tts/:voiceId    → proxies to ElevenLabs Text-to-Speech (returns audio/mpeg)
+//   POST /sfx             → proxies to ElevenLabs Sound Generation (returns audio/mpeg)
+//   POST /music           → proxies to ElevenLabs Music Compose (returns audio/mpeg)
 //
 // Auth: all non-/health routes require X-Proxy-Token header. This is a
 // shared-secret speed bump. Phase 3 of the migration replaces it with
@@ -55,6 +57,14 @@ export default {
     if (url.pathname.startsWith("/tts/") && request.method === "POST") {
       const voiceId = url.pathname.slice("/tts/".length);
       return handleTTS(voiceId, request, env);
+    }
+
+    if (url.pathname === "/sfx" && request.method === "POST") {
+      return handleSFX(request, env);
+    }
+
+    if (url.pathname === "/music" && request.method === "POST") {
+      return handleMusic(url, request, env);
     }
 
     return json({ error: "not_found", path: url.pathname }, 404);
@@ -252,6 +262,122 @@ async function handleTTS(voiceId: string, request: Request, env: Env): Promise<R
 
   // Forward audio bytes (or JSON error) with upstream's content-type so
   // the iOS client sees the same response shape as a direct ElevenLabs call.
+  const contentType = upstream.headers.get("content-type") ?? "application/octet-stream";
+  return new Response(upstream.body, {
+    status: upstream.status,
+    headers: { "content-type": contentType },
+  });
+}
+
+// MARK: - /sfx → ElevenLabs Sound Generation
+
+/// Used during dev only — Marina runs `scripts/generate-sfx.mjs` to batch-generate
+/// ambient SFX (city, volcano rumble, river, etc.) and bundles the resulting mp3s
+/// into the app. The game never hits this route at runtime; once a sound is shipped
+/// in the bundle, AVAudioPlayer reads it from disk and the worker is irrelevant.
+async function handleSFX(request: Request, env: Env): Promise<Response> {
+  if (!env.ELEVENLABS_API_KEY) {
+    return json({ error: "elevenlabs_key_not_configured" }, 500);
+  }
+
+  let body: { text?: string; duration_seconds?: number; prompt_influence?: number };
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: "invalid_json" }, 400);
+  }
+
+  if (!body.text || typeof body.text !== "string") {
+    return json({ error: "missing_text" }, 400);
+  }
+
+  // ElevenLabs sound-generation accepts duration_seconds in [0.5, 22] and
+  // prompt_influence in [0, 1]. Pass through only the fields we trust so we
+  // can't be tricked into forwarding arbitrary upstream params.
+  const upstreamBody: Record<string, unknown> = { text: body.text };
+  if (typeof body.duration_seconds === "number") {
+    upstreamBody.duration_seconds = body.duration_seconds;
+  }
+  if (typeof body.prompt_influence === "number") {
+    upstreamBody.prompt_influence = body.prompt_influence;
+  }
+
+  const upstream = await fetch("https://api.elevenlabs.io/v1/sound-generation", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "xi-api-key": env.ELEVENLABS_API_KEY,
+      "accept": "audio/mpeg",
+    },
+    body: JSON.stringify(upstreamBody),
+  });
+
+  const contentType = upstream.headers.get("content-type") ?? "application/octet-stream";
+  return new Response(upstream.body, {
+    status: upstream.status,
+    headers: { "content-type": contentType },
+  });
+}
+
+// MARK: - /music → ElevenLabs Music Compose
+
+/// Dev-time only, same model as /sfx: Marina runs `scripts/generate-music.mjs`
+/// to batch-generate the 5 missing music tracks (city map, workshop, forest,
+/// crafting room, main menu) and bundles the mp3s into the app. The game
+/// plays them from disk at runtime — the worker is irrelevant once bundled.
+///
+/// Music endpoint differs from /sfx: prompt + music_length_ms (3s–600s),
+/// output_format is a query param, response is audio bytes.
+async function handleMusic(url: URL, request: Request, env: Env): Promise<Response> {
+  if (!env.ELEVENLABS_API_KEY) {
+    return json({ error: "elevenlabs_key_not_configured" }, 500);
+  }
+
+  let body: {
+    prompt?: string;
+    music_length_ms?: number;
+    force_instrumental?: boolean;
+    model_id?: string;
+  };
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: "invalid_json" }, 400);
+  }
+
+  if (!body.prompt || typeof body.prompt !== "string") {
+    return json({ error: "missing_prompt" }, 400);
+  }
+
+  // Whitelist the body fields we forward so we can't be tricked into
+  // sending unexpected params (e.g. `store_for_inpainting`, `seed`).
+  const upstreamBody: Record<string, unknown> = { prompt: body.prompt };
+  if (typeof body.music_length_ms === "number") {
+    upstreamBody.music_length_ms = body.music_length_ms;
+  }
+  if (typeof body.force_instrumental === "boolean") {
+    upstreamBody.force_instrumental = body.force_instrumental;
+  }
+  if (typeof body.model_id === "string") {
+    upstreamBody.model_id = body.model_id;
+  }
+
+  // output_format is a query parameter on the upstream API. Forward it
+  // through if the caller specified one.
+  const outputFormat = url.searchParams.get("output_format");
+  const upstreamURL = outputFormat
+    ? `https://api.elevenlabs.io/v1/music?output_format=${encodeURIComponent(outputFormat)}`
+    : "https://api.elevenlabs.io/v1/music";
+
+  const upstream = await fetch(upstreamURL, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "xi-api-key": env.ELEVENLABS_API_KEY,
+    },
+    body: JSON.stringify(upstreamBody),
+  });
+
   const contentType = upstream.headers.get("content-type") ?? "application/octet-stream";
   return new Response(upstream.body, {
     status: upstream.status,

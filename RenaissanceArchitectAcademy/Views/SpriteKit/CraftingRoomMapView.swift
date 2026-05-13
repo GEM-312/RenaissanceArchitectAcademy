@@ -238,7 +238,7 @@ struct CraftingRoomMapView: View {
             }
         }
         .onDisappear {
-            SoundManager.shared.stopAmbient()
+            SoundManager.shared.stopAmbient(.craftingAmbient)
             // Nil out callbacks before releasing scene to break closure references
             sceneHolder.scene?.onFurnitureReached = nil
             sceneHolder.scene?.onPlayerPositionChanged = nil

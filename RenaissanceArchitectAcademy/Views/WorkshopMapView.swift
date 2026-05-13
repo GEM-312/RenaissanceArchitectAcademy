@@ -654,7 +654,9 @@ struct WorkshopMapView: View {
             if workshop.currentAssignment == nil {
                 workshop.generateNewAssignment()
             }
-            SoundManager.shared.playAmbient(.workshopAmbient)
+            // Workshop plays music only — ambient is per-station and crossfades
+            // in when the player arrives at a station, fades out on leaving.
+            SoundManager.shared.playMusic(.workshop)
             // Show bird guidance if player has an active building with workshop cards
             checkArrivalGuidance()
             // Show material-need badges on stations
@@ -663,7 +665,11 @@ struct WorkshopMapView: View {
             }
         }
         .onDisappear {
-            SoundManager.shared.stopAmbient()
+            // Stop only if a workshop station ambient is still playing —
+            // matching set prevents killing a successor view's ambient that
+            // .onAppear may have started before this .onDisappear fired.
+            SoundManager.shared.stopAmbient(matching: Self.workshopStationAmbients)
+            SoundManager.shared.stopMusic(.workshop)
             // Nil out callbacks before releasing scene to break closure references
             sceneHolder.scene?.onPlayerPositionChanged = nil
             sceneHolder.scene?.onStationReached = nil
@@ -719,7 +725,11 @@ struct WorkshopMapView: View {
             self.playerIsWalking = isWalking
         }
 
-        // Dismiss all overlays when player starts walking to a new station
+        // Dismiss all overlays when player starts walking to a new station.
+        // Note: this callback ALSO fires on any map interaction (drag, pan,
+        // zoom) — not just walking — so do NOT touch ambient audio here.
+        // The station ambient crossfades automatically when arriving at the
+        // next station via playAmbient's built-in fade-out of the prior layer.
         newScene.onPlayerStartedWalking = {
             withAnimation(.easeOut(duration: 0.2)) {
                 dismissAllOverlays()
@@ -736,6 +746,12 @@ struct WorkshopMapView: View {
             self.activeStation = stationType
             self.lastVisitedStation = stationType
             dismissAllOverlays()
+
+            // Crossfade to the station's ambient layer (silently no-ops if the mp3
+            // hasn't been bundled yet, so it's safe to ship before all files land).
+            if let stationAmbient = Self.stationAmbient(for: stationType) {
+                SoundManager.shared.playAmbient(stationAmbient)
+            }
 
             // Start Game Center activity for this station
             if let actID = GameCenterManager.ActivityID.forStation(stationType) {
@@ -1215,6 +1231,26 @@ struct WorkshopMapView: View {
 
     /// The 5 stations that have mini-games
     private static let miniGameStations: Set<ResourceStationType> = [.quarry, .volcano, .river, .clayPit, .farm]
+
+    /// Per-station ambient layer — returns the dedicated loop for a station,
+    /// or nil to keep the base workshop ambient. Files silently no-op if not
+    /// yet bundled, so callers don't need to gate on availability.
+    static func stationAmbient(for station: ResourceStationType) -> SoundManager.AmbientSound? {
+        switch station {
+        case .quarry:  return .quarryAmbient
+        case .clayPit: return .clayPitAmbient
+        case .volcano: return .volcanoRumble
+        case .river:   return .riverAmbient
+        case .market:  return .marketChatter
+        default:       return nil
+        }
+    }
+
+    /// Ambients this view is responsible for cleaning up on disappear.
+    /// A no-track stopAmbient would kill the successor view's ambient if
+    /// SwiftUI fires .onAppear before .onDisappear during a scene transition.
+    static let workshopStationAmbients: Set<SoundManager.AmbientSound> =
+        [.quarryAmbient, .clayPitAmbient, .volcanoRumble, .riverAmbient, .marketChatter]
 
     /// Show a single overlay based on tool ownership:
     /// - No tool → tool requirement dialog (collectionOverlay)
