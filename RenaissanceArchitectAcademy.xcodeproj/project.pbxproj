@@ -245,6 +245,7 @@
 		AC8 /* music_lesson.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC8 /* music_lesson.wav */; };
 		ACE /* SketchEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE /* SketchEditorView.swift */; };
 		ATC1 /* RiverHouse.atlasc in Resources */ = {isa = PBXBuildFile; fileRef = ATC2 /* RiverHouse.atlasc */; };
+		ATC3 /* Fisherman.atlasc in Resources */ = {isa = PBXBuildFile; fileRef = ATC4 /* Fisherman.atlasc */; };
 		ECE /* FoldableInventoryBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCE /* FoldableInventoryBar.swift */; };
 		F001 /* Cinzel-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B022F313B22007D8C64 /* Cinzel-Black.ttf */; };
 		F002 /* Cinzel-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B032F313B22007D8C64 /* Cinzel-Bold.ttf */; };
@@ -521,6 +522,7 @@
 		7CE /* BlueprintStudyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueprintStudyView.swift; sourceTree = "<group>"; };
 		9CE /* ShapeSnap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeSnap.swift; sourceTree = "<group>"; };
 		ATC2 /* RiverHouse.atlasc */ = {isa = PBXFileReference; lastKnownFileType = folder; path = RiverHouse.atlasc; sourceTree = "<group>"; };
+		ATC4 /* Fisherman.atlasc */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Fisherman.atlasc; sourceTree = "<group>"; };
 		BA1 /* anvil_strike.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = anvil_strike.wav; sourceTree = "<group>"; };
 		BA2 /* clay_dig.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = clay_dig.wav; sourceTree = "<group>"; };
 		BA3 /* crafting_complete.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = crafting_complete.wav; sourceTree = "<group>"; };
@@ -597,6 +599,7 @@
 				1EA /* TerrainBlurHelper.swift */,
 				5475D2F92F319000003AA131 /* Assets.xcassets */,
 				ATC2 /* RiverHouse.atlasc */,
+				ATC4 /* Fisherman.atlasc */,
 				54477B172F313D06007D8C64 /* Info.plist */,
 				54477B162F313B22007D8C64 /* Fonts */,
 				101 /* RenaissanceArchitectAcademyApp.swift */,
@@ -1003,6 +1006,7 @@
 				5475D2F82F319000003AA131 /* Assets.xcassets in Resources */,
 				5466B5C32FB4D4120073BD90 /* market_chatter_ambient.mp3 in Resources */,
 				ATC1 /* RiverHouse.atlasc in Resources */,
+				ATC3 /* Fisherman.atlasc in Resources */,
 				F001 /* Cinzel-Black.ttf in Resources */,
 				F002 /* Cinzel-Bold.ttf in Resources */,
 				F003 /* Cinzel-ExtraBold.ttf in Resources */,
