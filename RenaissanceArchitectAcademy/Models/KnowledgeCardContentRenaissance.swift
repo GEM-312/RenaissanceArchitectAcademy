@@ -531,7 +531,7 @@ extension KnowledgeCardContent {
                 title: "Murano's Secrets",
                 italianTitle: "I Segreti di Murano",
                 icon: "drop.halffull",
-                lessonText: "In 1291, Venice moved all glassmakers to Murano island. The official reason: fire safety. The real reason: secrecy. Murano glass recipes were state secrets — masters who fled faced assassination. The isolation worked: for 300 years, Murano produced the finest glass in the world. Cristallo (clear glass) was their crown jewel. The world's best glass came from the world's most controlled island.",
+                lessonText: "Now — travel with me to Venice. To the small island of Murano. In the year twelve ninety-one, the Venetian Republic made a decision. It moved every glassmaker in Venice — every one — to this single island. The official reason? Fire safety. The glass furnaces were dangerous. But the real reason — the real reason was secrecy. The recipes of Murano glass were state secrets. A master who fled the island, who tried to sell the secrets to another country — he faced assassination. The Republic sent men to hunt them down. And it worked. For three hundred years, Murano produced the finest glass in the world. Their crown jewel — cristallo. The first truly clear glass. The world's best glass — came from the world's most controlled island.",
                 keywords: [
                     KeywordPair(keyword: "Murano", definition: "Island where Venice confined all glassmakers"),
                     KeywordPair(keyword: "1291", definition: "Year glassmakers were moved to Murano"),
@@ -539,8 +539,9 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "State secrets", definition: "Recipes protected by threat of death"),
                 ],
                 activity: .numberFishing(question: "In what year were Venetian glassmakers moved to Murano?", correctAnswer: 1291, decoys: [1100, 1200, 1350, 1450, 1550]),
-                notebookSummary: "1291: Venice moved glassmakers to Murano. Recipes = state secrets. Masters who fled faced death. 300 years of world's finest glass.",
-                visual: CardVisual(type: .crossSection, title: "Murano's Secrets", values: [:], labels: [], steps: 3, caption: "")
+                notebookSummary: "1291: Venice moved all glassmakers to Murano island — official reason fire safety, real reason secrecy. Recipes = state secrets, escapees faced assassination. For 300 years, Murano produced the world's finest glass. Crown jewel: cristallo (clear glass). The world's best glass came from the world's most controlled island.",
+                visual: CardVisual(type: .crossSection, title: "Murano's Secrets", values: [:], labels: [], steps: 3, caption: ""),
+                isLeadCard: true
             ),
 
             KnowledgeCard(
@@ -551,7 +552,7 @@ extension KnowledgeCardContent {
                 title: "Step 1: The Furnace",
                 italianTitle: "Fornace a 1100°C",
                 icon: "thermometer.sun.fill",
-                lessonText: "Murano furnaces burned continuously for months — shutting down cracked the clay crucible from thermal shock. Masters judged temperature by color: dull red (600°C), cherry red (800°C), orange (1,000°C), yellow-white (1,100°C). No thermometers existed. A master's eye was the instrument. The furnace consumed 6 tons of wood daily. One furnace, one master, one color judgment separating success from waste.",
+                lessonText: "The furnace burns. Always. Day and night, month after month. We never let it cool. Why? Because the clay crucible inside — if it cools and reheats, it cracks. Thermal shock. So the fire continues. For months. Now — the temperature. The masters had no thermometers. They had only their eyes. The color of the glow tells everything. Dull red — six hundred degrees. Cherry red — eight hundred. Orange — one thousand. Yellow-white — eleven hundred. That is where the glass is ready. The master's eye is the only instrument. Six tons of wood every single day, just to keep one furnace alive. One judgment, by color, separating a perfect cristallo — from waste.",
                 keywords: [
                     KeywordPair(keyword: "1,100°C", definition: "Working temperature for Murano glass"),
                     KeywordPair(keyword: "Color judgment", definition: "Masters read temperature by glow color"),
@@ -559,7 +560,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Thermal shock", definition: "Cracking from temperature change — never shut down"),
                 ],
                 activity: .multipleChoice(question: "How did Murano masters measure furnace temperature?", options: ["Mercury thermometer", "By the color of the glow", "Water boiling rate", "Clay test pieces"], correctIndex: 1),
-                notebookSummary: "Furnace: 1,100°C, never shut down (thermal shock). Temperature by color: red→orange→yellow-white. 6 tons wood/day. Eye = instrument.",
+                notebookSummary: "Murano furnaces burn continuously for months — shutting down cracks the clay crucible (thermal shock). No thermometers — masters judge temperature by glow color: dull red (600°C) → cherry red (800°C) → orange (1,000°C) → yellow-white (1,100°C, glass ready). 6 tons of wood per day per furnace. The master's eye is the only instrument.",
                 visual: CardVisual(type: .crossSection, title: "Step 1: The Furnace", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -571,7 +572,7 @@ extension KnowledgeCardContent {
                 title: "Step 2: Three Chambers",
                 italianTitle: "Fornace a Tre Camere",
                 icon: "rectangle.split.3x1.fill",
-                lessonText: "Murano's furnace had three chambers stacked vertically. Bottom: the firebox (combustion). Middle: the crucible chamber (1,100°C for melting). Top: the annealing lehr (slowly cooling finished pieces). Heat rises naturally from bottom to top — no energy wasted. The glassblower works at the middle, pulls finished pieces up to the lehr. Three temperatures from one fire. Efficiency is vertical.",
+                lessonText: "Look at the furnace closely. It is not one chamber. It is three. Stacked, one above the other. At the bottom — the firebox. This is where the wood burns. Hottest of all. In the middle — the crucible chamber. Eleven hundred degrees. The glass melts here. At the very top — we call it the annealing lehr. Slightly cooler. This is where finished pieces are placed to cool slowly. Now — listen. Heat rises naturally. So the hot air from the firebox passes through the crucible chamber, then up to the lehr. Three temperatures. One fire. No energy wasted. The glassblower works at the middle. He lifts each finished piece up — into the lehr. Efficiency, my apprentice — it is vertical.",
                 keywords: [
                     KeywordPair(keyword: "Firebox", definition: "Bottom chamber — combustion zone"),
                     KeywordPair(keyword: "Crucible chamber", definition: "Middle — melting at 1,100°C"),
@@ -579,7 +580,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Natural convection", definition: "Heat rises — 3 zones from 1 fire"),
                 ],
                 activity: .fillInBlanks(text: "Three chambers: ___ (bottom, fire), ___ (middle, melting), ___ (top, cooling)", blanks: ["firebox", "crucible", "lehr"], distractors: ["kiln", "furnace", "oven"]),
-                notebookSummary: "3 vertical chambers: firebox (bottom) → crucible (middle, 1,100°C) → lehr (top, cooling). Heat rises naturally. One fire, three jobs.",
+                notebookSummary: "3 vertical chambers stacked: firebox (bottom, combustion) → crucible (middle, 1,100°C melting) → annealing lehr (top, slow cooling). Heat rises naturally — no energy wasted. The glassblower works at the middle, lifts each finished piece up into the lehr. Efficiency is vertical.",
                 visual: CardVisual(type: .crossSection, title: "Step 2: Three Chambers", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -591,7 +592,7 @@ extension KnowledgeCardContent {
                 title: "Step 8: Cristallo",
                 italianTitle: "Manganese Decolorante",
                 icon: "eyedropper.halffull",
-                lessonText: "Raw glass is green — iron impurities absorb red light. Murano masters added manganese dioxide (MnO₂) to counteract iron's green. Manganese absorbs the complementary color (green-yellow), producing neutral transparency. They called it 'glassmaker's soap' — it cleans the color. Too much manganese turns glass purple. The art of clear glass is the art of balanced impurities. Cristallo isn't pure. It's perfectly impure.",
+                lessonText: "Now — meet a master. Angelo Barovier. Born in fourteen hundred and five, on this island of Murano. He gave the world cristallo. Truly clear glass. Listen to how he did it. Raw glass — when you melt it — comes out green. Why? Because the sand has tiny iron impurities. The iron absorbs red light. So the glass looks green. Barovier discovered the trick. Add a pinch of manganese dioxide to the batch. Manganese absorbs the complementary color — the green-yellow. The result? Neutral. Clear. Perfect. The masters called manganese the glassmaker's soap. It cleans the color. But add too much — and the glass turns purple. The art of clear glass is the art of balanced impurities. Cristallo is not pure. It is perfectly impure.",
                 keywords: [
                     KeywordPair(keyword: "MnO₂", definition: "Manganese dioxide — 'glassmaker's soap'"),
                     KeywordPair(keyword: "Iron impurity", definition: "Causes green color in raw glass"),
@@ -599,7 +600,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Cristallo", definition: "Clear glass — balanced, not pure"),
                 ],
                 activity: .wordScramble(word: "MANGANESE", hint: "The 'glassmaker's soap' that removes green tint from glass"),
-                notebookSummary: "Green glass = iron impurities. MnO₂ (manganese) absorbs green → clear. 'Glassmaker's soap.' Too much → purple. Cristallo = balanced impurities.",
+                notebookSummary: "Cristallo (clear glass) invented by Angelo Barovier (Murano, b.1405). Raw glass is green from iron impurities (iron absorbs red). MnO₂ (manganese dioxide) absorbs the complementary green-yellow → neutral, clear. Called 'glassmaker's soap.' Too much turns glass purple. Cristallo is not pure — it is perfectly impure.",
                 visual: CardVisual(type: .crossSection, title: "Step 8: Cristallo", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -611,7 +612,7 @@ extension KnowledgeCardContent {
                 title: "Step 7: Annealing",
                 italianTitle: "Ricottura — Rilascio delle Tensioni",
                 icon: "waveform.path.ecg",
-                lessonText: "Cool glass too fast and it shatters days later. Why? Uneven cooling creates internal stress — the outside contracts while the inside is still hot. The solution: annealing. Place the finished piece in the lehr at 500°C and cool it 1°C per minute over 24 hours. Slow cooling lets molecules rearrange evenly. A vase annealed properly lasts centuries. A rushed one shatters on its own. Patience is structural.",
+                lessonText: "Finish the piece. Set it down. And — wait. Cool the glass too quickly, and it will shatter. Not now. Days later. On its own. Sitting on a shelf. Why? Because uneven cooling creates stress inside the glass. The outside contracts as the inside still cools. The molecules pull against each other. We must give them time to settle. This is annealing. Place the finished piece in the lehr. Five hundred degrees. Cool it slowly — one degree per minute. Twenty-four hours. A full day. The molecules rearrange themselves, evenly, gently. A vase annealed with patience — it lasts centuries. A rushed vase — it shatters on its own. Patience, you see, is structural.",
                 keywords: [
                     KeywordPair(keyword: "Annealing", definition: "Slow cooling to relieve internal stress"),
                     KeywordPair(keyword: "500°C", definition: "Starting temperature in the annealing lehr"),
@@ -619,7 +620,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Internal stress", definition: "Tension from uneven cooling — causes shattering"),
                 ],
                 activity: .numberFishing(question: "What cooling rate (°C per minute) is used for annealing glass?", correctAnswer: 1, decoys: [5, 10, 20, 50, 100]),
-                notebookSummary: "Annealing: start at 500°C, cool 1°C/min for 24 hours. Slow cooling relieves internal stress. Rushed = shatters. Patience = structure.",
+                notebookSummary: "Annealing: place finished piece in the lehr at 500°C, cool 1°C per minute for 24 hours. Slow cooling lets molecules rearrange evenly, relieves internal stress. Rushed glass shatters on a shelf days later. Patience is structural.",
                 visual: CardVisual(type: .crossSection, title: "Step 7: Annealing", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -633,7 +634,7 @@ extension KnowledgeCardContent {
                 title: "Step 3: Limestone Flux",
                 italianTitle: "Calcare come Fondente",
                 icon: "mountain.2.fill",
-                lessonText: "Pure silica sand melts at 1,700°C — far too hot for any furnace. Add 10% limestone (CaCO₃) and the melting point drops to 1,100°C. Limestone is a flux — it disrupts the silica crystal structure, letting molecules flow at lower temperatures. But too much flux makes glass water-soluble. The Murano recipe: 60% silica, 15% soda, 10% lime, 15% cullet. Every percentage matters.",
+                lessonText: "Now — listen to a piece of chemistry. Pure silica sand — pure river sand — does not melt until seventeen hundred degrees. No furnace can reach this. So how do the Murano masters melt sand? They add a flux. A flux is a material that lowers the melting point. They add limestone — ten percent. And the melting point drops. From seventeen hundred to eleven hundred degrees. The limestone disrupts the silica's crystal structure. The molecules flow at a lower temperature. But — too much flux, and the glass becomes water-soluble. It dissolves in rain. The Murano recipe — sixty parts silica, fifteen soda, ten lime, fifteen cullet. Every percentage matters. Every one.",
                 keywords: [
                     KeywordPair(keyword: "Flux", definition: "Additive that lowers silica's melting point"),
                     KeywordPair(keyword: "1,700°C", definition: "Melting point of pure silica — too hot"),
@@ -641,7 +642,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Water-soluble", definition: "Too much flux dissolves the glass"),
                 ],
                 activity: .numberFishing(question: "Pure silica melts at what temperature (°C)?", correctAnswer: 1700, decoys: [800, 1100, 1400, 2000, 2500]),
-                notebookSummary: "Limestone (CaCO₃) is a flux: drops silica's melting point from 1,700°C to 1,100°C. Too much = water-soluble glass. 10% is the sweet spot.",
+                notebookSummary: "Pure silica melts at 1,700°C — too hot for any furnace. Limestone (CaCO₃) is a flux: disrupts the silica crystal structure, drops melting point to 1,100°C. But too much flux = water-soluble glass (dissolves in rain). Murano sweet spot: 60% silica + 15% soda + 10% lime + 15% cullet.",
                 visual: CardVisual(type: .crossSection, title: "Step 3: Limestone Flux", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -653,7 +654,7 @@ extension KnowledgeCardContent {
                 title: "Step 4: Crucibles",
                 italianTitle: "Crogioli di Argilla Refrattaria",
                 icon: "cup.and.saucer.fill",
-                lessonText: "The crucible holds molten glass at 1,100°C for days — ordinary clay would melt. Murano used refractory clay from the Vicenza hills, rich in alumina (Al₂O₃). Alumina raises clay's melting point above 1,500°C. Each crucible lasted 6 months before replacement. Making one took 3 weeks: hand-coiled, dried slowly to prevent cracks, then pre-fired to 1,300°C. The container was harder to make than the glass inside it.",
+                lessonText: "Now — think about the crucible. The clay pot that holds the molten glass. Eleven hundred degrees. For days. Ordinary clay would melt — it would become part of the glass itself. So we use refractory clay. A special clay from the hills near Vicenza, rich in alumina. The alumina raises the clay's melting point above fifteen hundred degrees. Each crucible lasts only six months — then it must be replaced. And making one — three weeks. Hand-coiled, layer by layer. Dried slowly so it does not crack. Then pre-fired to thirteen hundred degrees. The container, you see — it is harder to make than the glass inside it.",
                 keywords: [
                     KeywordPair(keyword: "Refractory", definition: "Clay that withstands extreme heat (>1,500°C)"),
                     KeywordPair(keyword: "Alumina", definition: "Al₂O₃ — raises clay's melting point"),
@@ -661,7 +662,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "3 weeks", definition: "Time to make a single crucible"),
                 ],
                 activity: .hangman(word: "CRUCIBLE", hint: "Clay container holding molten glass at 1,100°C for months"),
-                notebookSummary: "Refractory crucible: alumina-rich clay from Vicenza. Melting point >1,500°C. 3 weeks to make, 6 months lifespan. Harder to make than glass.",
+                notebookSummary: "Refractory crucible holds molten glass at 1,100°C for days (ordinary clay would melt). Alumina-rich clay from Vicenza hills (Al₂O₃ raises melting point >1,500°C). 3 weeks to make (hand-coiled, dried slowly, pre-fired to 1,300°C). 6-month lifespan. The container is harder to make than the glass inside it.",
                 visual: CardVisual(type: .crossSection, title: "Step 4: Crucibles", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -673,7 +674,7 @@ extension KnowledgeCardContent {
                 title: "Step 6: Blowpipes",
                 italianTitle: "Canne da Soffio in Bronzo",
                 icon: "wind",
-                lessonText: "The glassblower's pipe is a 1.5-meter bronze tube. Why bronze? It conducts heat slowly (keeping the handle cool), resists corrosion from glass chemicals, and is rigid enough not to droop with a 2 kg glass gather on the end. Iron rusts. Copper is too soft. Bronze is the Goldilocks metal. The pipe rotates constantly — gravity would pull the glass blob off-center without it. The tool spins. The art doesn't stop.",
+                lessonText: "Now — the tool itself. The glassblower's pipe. One and a half meters long. Made of bronze — you remember bronze? Ninety parts copper, ten parts tin. We have used it before. Why bronze for this pipe? Three reasons. First — bronze conducts heat slowly. The far end glows red, the master's hand stays cool. Second — bronze resists the chemicals in molten glass. Iron would rust. Copper would melt. Third — bronze is rigid enough that two kilograms of molten glass on the end will not bend it. The pipe rotates. Constantly. Without rotation, gravity pulls the glass blob to one side. The tool must spin. Hour after hour. The art does not stop.",
                 keywords: [
                     KeywordPair(keyword: "1.5 meters", definition: "Length of a glassblower's pipe"),
                     KeywordPair(keyword: "Bronze", definition: "Slow heat conductor — keeps handle cool"),
@@ -681,7 +682,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "2 kg gather", definition: "Weight of molten glass on the pipe tip"),
                 ],
                 activity: .trueFalse(statement: "Glassblowing pipes are bronze because it conducts heat slowly, keeping the handle cool", isTrue: true),
-                notebookSummary: "Blowpipe: 1.5m bronze tube. Bronze = slow heat, no rust, rigid. Constant rotation prevents gravity distortion. Tool spins continuously.",
+                notebookSummary: "Glassblower's pipe: 1.5m bronze tube (90% Cu + 10% Sn, callback to Roman bronze gears). Bronze = slow heat conductor (handle stays cool), resists chemical corrosion, rigid under 2kg gather weight. Pipe rotates constantly — without rotation, gravity pulls the molten blob off-center. The art does not stop.",
                 visual: CardVisual(type: .crossSection, title: "Step 6: Blowpipes", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -695,7 +696,7 @@ extension KnowledgeCardContent {
                 title: "Step 1 Support: Fuel",
                 italianTitle: "Combustibile per Fornace 24 Ore",
                 icon: "leaf.fill",
-                lessonText: "Murano furnaces consumed entire forests. Each furnace burned 6 tons of oak daily — 2,000 tons per year. Venice eventually stripped the Dalmatian coast bare. Oak was preferred because it burns hot and long — a single log sustains flame for 45 minutes. Softwoods like pine burn fast and leave creosote deposits. The glass industry's appetite for wood reshaped the Adriatic landscape for centuries.",
+                lessonText: "The furnaces of Murano eat forests. Each furnace burns six tons of oak — every single day. That is two thousand tons of wood per year. From one furnace. Venice had many. Over centuries, Venice stripped the Dalmatian coast bare. Forests that had stood since Roman times — gone. Why oak? Because oak burns hot and long. A single oak log sustains flame for forty-five minutes. Softwoods like pine burn fast and dirty — they leave creosote, which clogs the chimneys. The price of cristallo, you see — it was not only paid in florins. It was paid in trees. The glass industry's hunger for wood reshaped the Adriatic for centuries.",
                 keywords: [
                     KeywordPair(keyword: "6 tons/day", definition: "Oak consumption per furnace"),
                     KeywordPair(keyword: "2,000 tons/year", definition: "Annual wood consumption per furnace"),
@@ -703,7 +704,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Dalmatian coast", definition: "Deforested to feed Murano's furnaces"),
                 ],
                 activity: .numberFishing(question: "How many tons of wood did one Murano furnace burn per day?", correctAnswer: 6, decoys: [1, 3, 10, 15, 20]),
-                notebookSummary: "6 tons oak/day per furnace. 2,000 tons/year. Oak log burns 45 min. Dalmatian coast deforested. Glass reshaped landscapes.",
+                notebookSummary: "Murano furnace fuel: 6 tons oak/day per furnace (2,000 tons/year). Oak burns hot + long (1 log = 45 min flame). Softwoods leave creosote that clogs chimneys. Centuries of demand stripped the Dalmatian coast bare. The price of cristallo was paid in trees as much as in florins.",
                 visual: CardVisual(type: .crossSection, title: "Step 1 Support: Fuel", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -715,7 +716,7 @@ extension KnowledgeCardContent {
                 title: "Step 5: Ventilation",
                 italianTitle: "Convezione della Ventilazione",
                 icon: "wind",
-                lessonText: "Murano workshops were built open-sided to manage heat. The furnace at center created a convection cell: hot air rose through a chimney, pulling cool sea air in from the sides. Workers stood in this cross-draft zone. Without it, ambient temperature near the furnace reached 50°C — lethal for 12-hour shifts. Chestnut beams framed the open walls — light and rot-resistant in the salt air. Architecture saved lives.",
+                lessonText: "How does a master glassblower survive working next to a furnace that burns at eleven hundred degrees? Look at the workshop itself. Open-sided. The walls — they barely exist. The furnace stands at the center. The hot air rises straight up, through the chimney. And as it rises, it pulls air in from the open sides — cool air, off the lagoon. A natural cross-draft. The workers stand in this zone of moving air. Without it, the temperature near the furnace would reach fifty degrees. Lethal — for a twelve-hour shift. The frames around the open walls are chestnut wood. Light. Rot-resistant in the salt air. The architecture of the workshop saved lives every day.",
                 keywords: [
                     KeywordPair(keyword: "Convection cell", definition: "Hot air rises, pulls cool air in from sides"),
                     KeywordPair(keyword: "Cross-draft", definition: "Cool zone where workers stood safely"),
@@ -723,7 +724,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Chestnut frames", definition: "Light and salt-resistant for open walls"),
                 ],
                 activity: .multipleChoice(question: "What created the cooling cross-draft in Murano workshops?", options: ["Hand fans", "Natural convection from the furnace", "Water sprinklers", "Underground tunnels"], correctIndex: 1),
-                notebookSummary: "Convection: furnace heat rises → pulls cool sea air in sides. Workers in cross-draft zone. Without it: 50°C lethal. Chestnut frames the openings.",
+                notebookSummary: "Open-sided workshops: central furnace's heat rises through chimney → pulls cool lagoon air in from open sides → natural cross-draft. Workers stand in the cool zone. Without it, ambient temperature near the furnace reaches 50°C — lethal for 12-hour shifts. Chestnut frames the openings (light + salt-resistant). Architecture saved lives.",
                 visual: CardVisual(type: .crossSection, title: "Step 5: Ventilation", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -737,7 +738,7 @@ extension KnowledgeCardContent {
                 title: "Step 3: Glass Batch",
                 italianTitle: "Miscela del Vetro",
                 icon: "flask.fill",
-                lessonText: "The glass batch is mixed dry before furnace loading. Recipe: 60 parts silica sand (washed 3 times), 15 parts soda ash (natron from Egypt or barilla from Spain), 10 parts lime (from crushed seashells — purer than limestone), 15 parts cullet (crushed recycled glass). Mix for 30 minutes in a wooden trough. Cullet ensures uniform melting — new ingredients alone are unpredictable. The recycled part makes the new part work.",
+                lessonText: "You remember the Roman glass we made at the baths? Sixty parts silica, fifteen soda, ten lime, fifteen cullet. The Murano recipe — it is the same proportions. Almost twelve centuries later. But the Venetian masters refine each ingredient. The sand — washed three times until perfectly clean. The soda — either natron from Egypt or barilla from Spain. The lime — not from quarried limestone, but from crushed seashells. Seashells are purer than stone. And the cullet — fifteen percent, always fifteen — crushed glass from yesterday's broken pieces. Why? Because cullet ensures the new batch melts uniformly. New ingredients alone are unpredictable. The recycled glass — it makes the new glass work. Nothing wasted.",
                 keywords: [
                     KeywordPair(keyword: "Batch", definition: "Dry-mixed glass ingredients before melting"),
                     KeywordPair(keyword: "Barilla", definition: "Spanish soda ash alternative to Egyptian natron"),
@@ -745,7 +746,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "30 minutes", definition: "Mixing time for a uniform batch"),
                 ],
                 activity: .fillInBlanks(text: "Glass batch: ___% silica, ___% soda, ___% lime, 15% cullet", blanks: ["60", "15", "10"], distractors: ["40", "20", "25"]),
-                notebookSummary: "Glass batch: 60 silica + 15 soda + 10 lime (seashells) + 15 cullet. Mix dry 30 min. Cullet ensures uniform melting.",
+                notebookSummary: "Murano glass batch (same proportions as Roman bath glass): 60 silica (washed 3×) + 15 soda (natron Egypt OR barilla Spain) + 10 lime (crushed seashells, purer than limestone) + 15 cullet (recycled crushed glass). Mix dry 30 min. Cullet ensures uniform melting — new ingredients alone are unpredictable. The recycled makes the new work. Nothing wasted.",
                 visual: CardVisual(type: .crossSection, title: "Step 3: Glass Batch", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -757,7 +758,7 @@ extension KnowledgeCardContent {
                 title: "Step 4: Crucible Prep",
                 italianTitle: "Shock Termico del Crogiolo",
                 icon: "flame.circle.fill",
-                lessonText: "A new crucible can't go straight into the furnace — the 1,100°C shock would shatter it. Pre-heating takes 3 days: first warmed near the furnace (200°C), then moved closer (500°C), then inside (800°C), finally to working position (1,100°C). Each stage lasts 18 hours. The molecules need time to expand uniformly. Rush it and the outer surface expands faster than the core — crack. Ceramics demand respect for time.",
+                lessonText: "And the crucible — when it is new — it cannot go straight into the furnace. Eleven hundred degrees would shatter it instantly. So we pre-heat. Slowly. Patiently. Three full days. First — warm the crucible near the furnace. Two hundred degrees. Eighteen hours. Then move it closer — five hundred degrees. Eighteen more hours. Then inside the furnace — eight hundred degrees. Eighteen more. And finally — into working position. Eleven hundred. Why so slow? Because the molecules of the clay must expand uniformly. If we rush it, the outer surface expands faster than the core. A crack appears. The crucible is ruined. Three days. The clay teaches what the master already knows. Ceramics demand respect for time.",
                 keywords: [
                     KeywordPair(keyword: "Thermal shock", definition: "Rapid temperature change that shatters ceramics"),
                     KeywordPair(keyword: "3 days", definition: "Pre-heating time for a new crucible"),
@@ -765,7 +766,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "18 hours", definition: "Duration at each temperature stage"),
                 ],
                 activity: .numberFishing(question: "How many days to pre-heat a new crucible safely?", correctAnswer: 3, decoys: [1, 2, 5, 7, 10]),
-                notebookSummary: "New crucible: 3-day pre-heat in 4 stages (200→500→800→1,100°C), 18 hours each. Thermal shock shatters if rushed.",
+                notebookSummary: "New crucible pre-heat: 3 full days in 4 stages (200°C → 500°C → 800°C → 1,100°C), 18 hours each. Allows clay molecules to expand uniformly. Rushed = outer surface expands faster than core = crack. Ceramics demand respect for time.",
                 visual: CardVisual(type: .crossSection, title: "Step 4: Crucible Prep", values: [:], labels: [], steps: 3, caption: "")
             ),
         ]
