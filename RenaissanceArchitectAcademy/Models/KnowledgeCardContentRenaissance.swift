@@ -1300,7 +1300,7 @@ extension KnowledgeCardContent {
                 title: "The Bottega System",
                 italianTitle: "Il Sistema della Bottega",
                 icon: "house.fill",
-                lessonText: "Leonardo trained in Verrocchio's bottega — a Renaissance workshop where master and apprentices lived, ate, and worked together. Apprentices started at age 12, grinding pigments and sweeping. By 16, they assisted on paintings. By 20, they could accept their own commissions. Leonardo's own workshop in Milan had 6 apprentices and specialized in painting, engineering, and anatomy. The bottega wasn't a school. It was a family that built things.",
+                lessonText: "And now — we come to Milan. To the workshop of Leonardo da Vinci. The man who saw everything. Who drew everything. Leonardo did not begin great. He was the illegitimate son of a notary, in a small town called Vinci. As a boy of fourteen, he was sent to Florence — to the bottega of a master named Andrea del Verrocchio. The bottega — listen — it was not a school. A school teaches in classrooms. A bottega was a workshop where the master and his apprentices lived together. Ate together. Worked together. From dawn to candlelight. Apprentices began at twelve years old — grinding pigments, sweeping the floors. By sixteen, they assisted on paintings. By twenty, they could take their own commissions. Leonardo's own workshop in Milan had six apprentices. It made paintings. Machines. Studies of the human body. The bottega was not a school. It was a family that built things.",
                 keywords: [
                     KeywordPair(keyword: "Bottega", definition: "Workshop where master and apprentices lived and worked"),
                     KeywordPair(keyword: "Verrocchio", definition: "Leonardo's master — goldsmith, painter, sculptor"),
@@ -1308,8 +1308,9 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "6 apprentices", definition: "Size of Leonardo's Milan workshop"),
                 ],
                 activity: .wordScramble(word: "BOTTEGA", hint: "Renaissance workshop where master and apprentices lived together"),
-                notebookSummary: "Bottega: live-in workshop. Start age 12 grinding pigments. By 20, own commissions. Leonardo's Milan shop: 6 apprentices. Family that builds.",
-                visual: CardVisual(type: .crossSection, title: "The Bottega System", values: [:], labels: [], steps: 3, caption: "")
+                notebookSummary: "The bottega: Renaissance workshop where master + apprentices lived, ate, and worked together. Leonardo trained in Verrocchio's bottega in Florence from age 14. Apprentices began at 12 (grinding pigments + sweeping), assisted by 16, took own commissions by 20. Leonardo's Milan workshop = 6 apprentices, painting + engineering + anatomy. The bottega wasn't a school — it was a family that built things.",
+                visual: CardVisual(type: .crossSection, title: "The Bottega System", values: [:], labels: [], steps: 3, caption: ""),
+                isLeadCard: true
             ),
 
             KnowledgeCard(
@@ -1320,7 +1321,7 @@ extension KnowledgeCardContent {
                 title: "Step 1: North Light",
                 italianTitle: "Ottica della Luce Nord",
                 icon: "sun.max.fill",
-                lessonText: "Leonardo insisted his workshop face north. Why? North light is indirect — sunlight bouncing off the sky, never direct rays. It's consistent all day (no moving shadows), cool in color temperature, and reveals true form without harsh highlights. South-facing windows create shifting shadows that fool the painter's eye. Leonardo wrote: 'Choose north light for painting, for it does not vary.' The best light is the one that doesn't change.",
+                lessonText: "Leonardo's workshop faced north. Always north. He insisted. Why? Because north light is indirect. The sunlight bounces off the open sky before it reaches you. Never the direct rays of the sun. North light is consistent all day. It does not shift as the hours pass. It is cool in color temperature — a soft blue-white. And it reveals the TRUE form of any object, without the harsh highlights that direct sunlight creates. A south-facing window would have shifting shadows, all day long. It would fool the painter's eye. Leonardo wrote it himself, in his notebooks — 'Choose the north light for painting, for it does not vary.' The best light, my apprentice — is the one that does not change.",
                 keywords: [
                     KeywordPair(keyword: "North light", definition: "Indirect skylight — consistent all day"),
                     KeywordPair(keyword: "No moving shadows", definition: "Constant light direction for accurate painting"),
@@ -1328,7 +1329,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "True form", definition: "Objects appear accurately without harsh highlights"),
                 ],
                 activity: .multipleChoice(question: "Why did Leonardo's workshop face north?", options: ["Warmer in winter", "Better ventilation", "Consistent, shadowless light all day", "Traditional placement"], correctIndex: 2),
-                notebookSummary: "North light: indirect, consistent, cool, no moving shadows. Leonardo chose it for painting accuracy. Best light doesn't change.",
+                notebookSummary: "Leonardo's workshop faced north. North light = indirect (bounces off the sky), consistent all day (no shifting shadows), cool in color temperature, reveals true form without harsh highlights. South-facing windows create moving shadows that fool the painter's eye. Leonardo wrote: 'Choose the north light for painting, for it does not vary.' The best light is the one that does not change.",
                 visual: CardVisual(type: .crossSection, title: "Step 1: North Light", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1340,7 +1341,7 @@ extension KnowledgeCardContent {
                 title: "Step 8: Sfumato",
                 italianTitle: "Tecnica dello Sfumato",
                 icon: "circle.lefthalf.filled",
-                lessonText: "Leonardo invented sfumato — blending paint so gradually that edges disappear. He studied how smoke dissipates and how distant mountains lose definition. The technique: 20-30 translucent oil layers, each barely tinted, applied with fingertips (not brushes). The Mona Lisa's smile uses sfumato — look straight at it and it vanishes; glance sideways and it appears. Your peripheral vision is more sensitive to soft transitions. Art that exploits biology.",
+                lessonText: "And now — Leonardo's great gift to painting. Sfumato. The word comes from the Italian for smoke. It is a technique of blending paint so gradually — so softly — that edges DISAPPEAR. Leonardo studied how smoke dissipates in still air. He studied how distant mountains lose their definition in the haze. He brought that softness to paint. The method — twenty, sometimes thirty translucent layers of oil, each barely tinted. Each applied not with a brush, but with the fingertip itself. The Mona Lisa's smile — listen carefully — is painted with sfumato. Look directly at her mouth, and the smile vanishes. Look slightly to the side, with your peripheral vision — and the smile appears. This is not magic. It is biology. Your peripheral vision sees soft transitions more clearly than your direct gaze. Leonardo knew this. Art that exploits the eye that sees it.",
                 keywords: [
                     KeywordPair(keyword: "Sfumato", definition: "Gradual blending — edges disappear like smoke"),
                     KeywordPair(keyword: "20-30 layers", definition: "Translucent oil coats built up gradually"),
@@ -1348,7 +1349,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Peripheral vision", definition: "More sensitive to soft transitions than direct gaze"),
                 ],
                 activity: .hangman(word: "SFUMATO", hint: "Leonardo's painting technique — blending until edges vanish like smoke"),
-                notebookSummary: "Sfumato: 20-30 translucent layers, applied by fingertips. Edges vanish like smoke. Mona Lisa's smile appears in peripheral vision.",
+                notebookSummary: "Sfumato (from Italian for 'smoke'): Leonardo's invented technique — paint blended so gradually that edges disappear. 20-30 translucent oil layers, each barely tinted, applied with the fingertip (not brush). The Mona Lisa's smile uses sfumato: vanishes when you look directly at it, appears in peripheral vision (which is more sensitive to soft transitions). Art that exploits biology.",
                 visual: CardVisual(type: .crossSection, title: "Step 8: Sfumato", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1360,7 +1361,7 @@ extension KnowledgeCardContent {
                 title: "Step 6: Water Tank",
                 italianTitle: "Vortici nella Vasca d'Acqua",
                 icon: "water.waves",
-                lessonText: "Leonardo built glass water tanks in his workshop to study fluid dynamics. He dropped dye into flowing water and sketched the vortices. His notebooks contain 730 drawings of water movement — turbulence, eddies, waves. He discovered that water spirals clockwise when draining (in the Northern Hemisphere) centuries before Coriolis described the effect. The workshop wasn't just for art. It was a physics laboratory with paint on the walls.",
+                lessonText: "Leonardo's workshop had glass water tanks. Glass — so he could see inside. He filled them with flowing water. He dropped colored dye into the streams. And he sketched what he saw. The spirals. The vortices. The eddies. The way water curls around an obstacle, then heals itself downstream. His notebooks contain seven hundred and thirty drawings of moving water. Seven hundred thirty. He discovered, on his own, that water draining in the Northern Hemisphere spirals one way — centuries before a French scientist named Coriolis described the effect mathematically. The workshop, my apprentice — it was not only for art. It was a physics laboratory. With paint on the walls.",
                 keywords: [
                     KeywordPair(keyword: "Glass tanks", definition: "Built for observing water flow patterns"),
                     KeywordPair(keyword: "730 drawings", definition: "Water studies in Leonardo's notebooks"),
@@ -1368,7 +1369,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Vortex", definition: "Spinning water pattern Leonardo documented"),
                 ],
                 activity: .numberFishing(question: "How many water flow drawings are in Leonardo's notebooks?", correctAnswer: 730, decoys: [50, 200, 400, 1000, 2000]),
-                notebookSummary: "Glass water tanks for fluid dynamics. 730 drawings of vortices, turbulence, eddies. Workshop = physics lab with paint on walls.",
+                notebookSummary: "Leonardo built glass water tanks to study fluid dynamics — dropped colored dye into flowing water, sketched the vortices, turbulence, eddies. 730 drawings of moving water in his notebooks. Discovered Northern-Hemisphere drainage spiral centuries before Coriolis described it mathematically. The workshop was a physics laboratory with paint on the walls.",
                 visual: CardVisual(type: .crossSection, title: "Step 6: Water Tank", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1380,7 +1381,7 @@ extension KnowledgeCardContent {
                 title: "Step 3: The Forge",
                 italianTitle: "Fucina della Bottega",
                 icon: "hammer.fill",
-                lessonText: "Leonardo's workshop had its own forge — unusual for a painter. He used it to cast bronze sculptures, fabricate mechanical parts, and experiment with alloys. He designed an improved bellows system: two chambers alternating so air flows continuously (not in puffs). This doubled forge temperature consistency. Leonardo applied engineering to every problem, even airflow. The painter who built a better bellows understood that art needs infrastructure.",
+                lessonText: "Listen — what is unusual about Leonardo's workshop? It has its own forge. A painter, with a blacksmith's forge. Most painters worked from rented stalls in others' workshops. Not Leonardo. He needed to cast bronze sculptures, fabricate his own mechanical parts, experiment with alloys no one had tried before. So he built his own forge inside the workshop. And he was not satisfied with ordinary tools. He designed an improved bellows system — two chambers, alternating, so that air flows CONTINUOUSLY into the fire. Not in puffs, like an ordinary bellows. This doubled the consistency of the forge temperature. The painter who designed a better bellows — he understood something most artists never grasp. Art needs infrastructure.",
                 keywords: [
                     KeywordPair(keyword: "Workshop forge", definition: "Unusual for a painter — for bronze and experiments"),
                     KeywordPair(keyword: "Double bellows", definition: "Alternating chambers for continuous airflow"),
@@ -1388,7 +1389,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Alloy experiments", definition: "Testing metal mixtures at the forge"),
                 ],
                 activity: .trueFalse(statement: "Leonardo designed a double-chamber bellows for continuous airflow instead of puffs", isTrue: true),
-                notebookSummary: "Workshop forge: bronze casting, mechanisms, alloy experiments. Double bellows = continuous air. Art needs infrastructure.",
+                notebookSummary: "Leonardo's workshop had its own forge (unusual for a painter) — for casting bronze, fabricating mechanical parts, alloy experiments. He designed an improved double-chamber bellows: two chambers alternating so air flows continuously (not in puffs), doubling temperature consistency. The painter who designed a better bellows understood: art needs infrastructure.",
                 visual: CardVisual(type: .crossSection, title: "Step 3: The Forge", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1402,14 +1403,14 @@ extension KnowledgeCardContent {
                 title: "Step 1: White Walls",
                 italianTitle: "Intonaco di Calce per la Luce",
                 icon: "mountain.2.fill",
-                lessonText: "Leonardo's workshop walls were coated in lime plaster — burnished smooth and white. Lime plaster reflects 85% of light (vs 40% for bare stone). Combined with north-facing windows, the white walls created a naturally bright studio without candles during daylight hours. Leonardo specified three coats: rough scratch coat, smooth brown coat, polished finish coat. The whitest wall, like the whitest canvas, starts with lime and patience.",
+                lessonText: "The walls of Leonardo's workshop — what color do you imagine? White. Pure white. Coated in lime plaster, burnished smooth. You remember the same lime we made in Rome — the quicklime, fired at nine hundred degrees? It returns here, in a new form. Lime plaster reflects eighty-five percent of the light that strikes it. Bare stone — only forty percent. Combined with the north-facing windows, the white walls create a naturally bright studio. No candles needed during daylight hours. Leonardo specified three coats. A rough scratch coat first — for the plaster to grip the stone. A smooth brown coat in the middle. A polished finish coat on top. The whitest wall, my apprentice — like the whitest canvas — begins with lime, and ends with patience.",
                 keywords: [
                     KeywordPair(keyword: "85% reflection", definition: "Lime plaster's light-bouncing ability"),
                     KeywordPair(keyword: "Three coats", definition: "Scratch → brown → polished finish"),
                     KeywordPair(keyword: "North light + white", definition: "Combination for natural studio brightness"),
                 ],
                 activity: .numberFishing(question: "What percentage of light does lime plaster reflect?", correctAnswer: 85, decoys: [40, 55, 70, 90, 99]),
-                notebookSummary: "Lime plaster: 3 coats, reflects 85% of light. + North windows = bright studio without candles. Whitest wall = best workspace.",
+                notebookSummary: "Workshop walls = lime plaster, burnished smooth (callback to Roman quicklime). Reflects 85% of light vs 40% for bare stone. Combined with north windows, creates naturally bright studio without candles. 3 coats: rough scratch (grips stone) → smooth brown → polished finish. The whitest wall, like the whitest canvas, begins with lime and ends with patience.",
                 visual: CardVisual(type: .crossSection, title: "Step 1: White Walls", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1421,7 +1422,7 @@ extension KnowledgeCardContent {
                 title: "Step 5: Bronze Gears",
                 italianTitle: "Ingranaggi in Bronzo",
                 icon: "gearshape.2.fill",
-                lessonText: "Leonardo designed over 200 gear mechanisms in his notebooks — compound gear trains, worm gears, cam systems. He cast them in bronze at his workshop forge. His key innovation: involute tooth profiles that mesh smoothly at any rotation angle. Earlier gears had straight teeth that jammed. Leonardo's gears appear in his crane designs, clocks, and the mechanical lion he built for Francis I of France. The smoothest machines start with the right tooth shape.",
+                lessonText: "You remember the bronze gears at the Roman siege workshop? The lost-wax casting? Leonardo perfected it. His notebooks contain MORE THAN TWO HUNDRED gear mechanism designs. Compound gear trains. Worm gears — where a screw drives a wheel. Cam systems that turn rotation into different patterns of motion. All cast in bronze, at his own forge. His key innovation — listen — the involute tooth profile. Earlier gears had straight teeth. They jammed when one gear turned faster than another, when the angle was wrong. Leonardo curved the teeth, in a precise mathematical shape we still call involute. They mesh smoothly at any rotation angle. His gears appeared in his crane designs, his clocks. He even built a mechanical lion for King Francis the First of France. The lion walked. Opened its chest to reveal lilies. All powered by gears. The smoothest machines, my apprentice — they begin with the right shape of a single tooth.",
                 keywords: [
                     KeywordPair(keyword: "200+ mechanisms", definition: "Gear designs in Leonardo's notebooks"),
                     KeywordPair(keyword: "Involute profile", definition: "Curved tooth shape for smooth meshing"),
@@ -1429,7 +1430,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Mechanical lion", definition: "Gear-driven automaton for Francis I"),
                 ],
                 activity: .wordScramble(word: "INVOLUTE", hint: "Curved gear tooth profile that meshes smoothly at any angle"),
-                notebookSummary: "200+ gear mechanisms. Involute tooth profiles mesh smoothly (vs straight teeth that jam). Bronze cast. Mechanical lion for Francis I.",
+                notebookSummary: "200+ gear designs in Leonardo's notebooks (callback to Roman siege workshop's lost-wax casting). Compound gear trains, worm gears, cam systems — bronze-cast at his own forge. Key innovation: INVOLUTE tooth profile (curved, mathematical shape that meshes smoothly at any angle, vs straight teeth that jam). Mechanical lion for Francis I of France walked and opened its chest to reveal lilies.",
                 visual: CardVisual(type: .crossSection, title: "Step 5: Bronze Gears", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1441,7 +1442,7 @@ extension KnowledgeCardContent {
                 title: "Step 3: Casting Sand",
                 italianTitle: "Sabbia Idraulica",
                 icon: "drop.triangle.fill",
-                lessonText: "Leonardo used river sand for two purposes: as casting sand for bronze molds, and as an abrasive for polishing lenses. Casting sand must be fine-grained and clay-rich so it holds its shape when packed around a wax model. Polishing sand must be pure silica with no clay (clay scratches). Leonardo's notebooks specify: 'Arno sand for casting, mountain sand for polishing.' Same material, different sources, different jobs.",
+                lessonText: "Two kinds of sand. One workshop. Leonardo used river sand for two completely different purposes. As casting sand — packed around wax models to make bronze molds. And as abrasive — used to polish lenses, smooth metal, finish surfaces. But the two uses require opposite properties. Casting sand must be fine-grained AND rich in clay. The clay holds the shape when you pack it tight. Polishing sand must be the OPPOSITE — pure silica, with no clay at all. Why? Because clay particles scratch. They ruin the surface they were meant to smooth. So Leonardo's notebooks specify, exactly — 'Arno sand for casting. Mountain sand for polishing.' Same material — sand. Different sources, for different jobs. Knowing the difference is half of the craftsman's wisdom.",
                 keywords: [
                     KeywordPair(keyword: "Casting sand", definition: "Clay-rich — holds shape around wax models"),
                     KeywordPair(keyword: "Polishing sand", definition: "Pure silica — no clay to cause scratches"),
@@ -1449,7 +1450,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Mountain sand", definition: "Pure quartz for lens polishing"),
                 ],
                 activity: .multipleChoice(question: "Why did Leonardo use different sand sources for casting vs polishing?", options: ["Cost difference", "Casting needs clay; polishing needs pure silica", "Color preference", "Superstition"], correctIndex: 1),
-                notebookSummary: "Arno sand (clay-rich) for casting molds. Mountain sand (pure silica) for polishing. Same mineral, different sources, different jobs.",
+                notebookSummary: "Leonardo used 2 sands with opposite properties: ARNO RIVER sand (fine-grained, clay-rich) for casting bronze molds — clay holds shape around wax models. MOUNTAIN sand (pure silica, no clay) for polishing — clay scratches the surface it should smooth. Same material, different sources, different jobs. Knowing the difference = half the craftsman's wisdom.",
                 visual: CardVisual(type: .crossSection, title: "Step 3: Casting Sand", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1461,7 +1462,7 @@ extension KnowledgeCardContent {
                 title: "Step 5: Custom Tools",
                 italianTitle: "Fabbricazione di Attrezzi",
                 icon: "wrench.and.screwdriver.fill",
-                lessonText: "Leonardo made his own tools — chisels, files, wire-drawing dies, even specialized pliers. His notebooks show 50+ custom tool designs. The wire-drawing die was critical: iron pulled through progressively smaller holes creates uniform wire for springs and mechanical linkages. Each die was hardened by carburizing (packing in charcoal and heating). A craftsman who can't make his own tools depends on someone else's limitations.",
+                lessonText: "Leonardo made his own tools. All of them. The chisels. The files. The pliers. The wire-drawing dies. Fifty different designs in his notebooks for custom tools. Why so many? Because the tools available in any blacksmith's shop were not enough for what he wanted to do. Listen to one example — the wire-drawing die. Iron, pulled through a series of progressively smaller holes in a steel plate. Each pass makes the wire thinner. Uniform. For springs. For mechanical linkages. The die itself must be harder than the iron it shapes — so Leonardo hardened each die by carburizing. Packed it in charcoal, heated it in the forge. The carbon from the charcoal soaks into the steel, hardening the surface. A craftsman who cannot make his own tools — listen — that craftsman depends on someone else's limitations.",
                 keywords: [
                     KeywordPair(keyword: "50+ designs", definition: "Custom tool designs in Leonardo's notebooks"),
                     KeywordPair(keyword: "Wire-drawing die", definition: "Progressively smaller holes for uniform wire"),
@@ -1469,7 +1470,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Self-sufficiency", definition: "Making your own tools = no external limits"),
                 ],
                 activity: .hangman(word: "CARBURIZE", hint: "Hardening process — pack iron in charcoal and heat"),
-                notebookSummary: "Leonardo made his own tools: 50+ designs. Wire-drawing dies for springs. Carburized (charcoal-hardened). Self-sufficient craftsman.",
+                notebookSummary: "Leonardo made all his own tools — 50+ custom designs in his notebooks (chisels, files, wire-drawing dies, pliers). Wire-drawing die: iron pulled through progressively smaller holes → uniform wire for springs and linkages. Dies hardened by carburizing (packed in charcoal, heated — carbon soaks into the steel surface). A craftsman who cannot make his own tools depends on someone else's limitations.",
                 visual: CardVisual(type: .crossSection, title: "Step 5: Custom Tools", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1483,7 +1484,7 @@ extension KnowledgeCardContent {
                 title: "Step 2: Drawing Tables",
                 italianTitle: "Tavoli da Disegno",
                 icon: "rectangle.portrait",
-                lessonText: "Leonardo's drawing table was oak — tilted at 30° with an adjustable ledge. Oak doesn't warp in humidity (crucial for accurate drafting), and its hard surface holds paper flat under the quill's pressure. The table surface was planed with a bronze scraper to remove any grain texture that might catch the pen. A drawing table is a precision instrument. Its flatness is the foundation of every line drawn on it.",
+                lessonText: "Leonardo's drawing table — oak. Tilted at thirty degrees. With an adjustable ledge along the bottom edge to hold the page in place. Oak was chosen for one reason — it does not warp in changing humidity. The summer dampness of Milan would twist a soft-wood table into a curved surface. The lines drawn upon it would no longer be true. Oak stays flat. Its hard surface holds the paper firmly against the quill's pressure. The table surface itself was planed with a bronze scraper to remove any trace of the wood's grain. Why? Because a tiny rise in the grain could catch the pen, breaking a line. The drawing table — listen — it is a precision instrument. Its flatness is the foundation of every line that will ever be drawn on it.",
                 keywords: [
                     KeywordPair(keyword: "30° tilt", definition: "Ergonomic angle for drawing and drafting"),
                     KeywordPair(keyword: "No warping", definition: "Oak stays flat in changing humidity"),
@@ -1491,7 +1492,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Precision surface", definition: "Table flatness = accurate drawing"),
                 ],
                 activity: .numberFishing(question: "At what angle (degrees) was Leonardo's drawing table tilted?", correctAnswer: 30, decoys: [10, 15, 45, 60, 75]),
-                notebookSummary: "Drawing table: oak (no warp), 30° tilt, planed with bronze scraper. Precision surface = accurate lines. Table is an instrument.",
+                notebookSummary: "Leonardo's drawing table = oak (doesn't warp in humidity, stays flat) tilted at 30°, with an adjustable bottom ledge. Hard surface holds paper under quill pressure. Surface planed with a bronze scraper to remove grain texture (tiny ridges would catch the pen, breaking lines). The drawing table is a precision instrument — its flatness is the foundation of every line drawn on it.",
                 visual: CardVisual(type: .crossSection, title: "Step 2: Drawing Tables", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1503,7 +1504,7 @@ extension KnowledgeCardContent {
                 title: "Step 8: Poplar Panels",
                 italianTitle: "Pannello della Gioconda",
                 icon: "photo.artframe",
-                lessonText: "The Mona Lisa is painted on poplar — a single panel 77 cm × 53 cm, cut tangentially from the log (flat-sawn). Poplar was the standard for Italian panel paintings because it's light, cheap, and has minimal grain pattern that won't show through thin paint layers. Leonardo sealed both sides with gesso (chalk + rabbit-skin glue) to prevent warping. The world's most famous painting sits on the humblest wood.",
+                lessonText: "The Mona Lisa — listen carefully. The most famous painting in the world. Painted on what? On poplar. A single piece of poplar wood, seventy-seven centimeters tall, fifty-three wide. Cut tangentially from the log — flat-sawn. Why poplar? You remember poplar from the Roman insula? The cheap, fast-growing wood that built the upper floors? Here, in the bottega, poplar is the standard for Italian panel paintings. Why? Because it is light. Cheap. And — most importantly — it has a minimal grain pattern. The grain will not show through the thin layers of paint. Leonardo sealed both sides of the panel with gesso — a mixture of chalk and rabbit-skin glue. The gesso prevents the wood from warping over centuries. And five hundred years later — it has not warped. The world's most famous painting — it sits on the humblest wood.",
                 keywords: [
                     KeywordPair(keyword: "Poplar panel", definition: "Mona Lisa painted on poplar wood"),
                     KeywordPair(keyword: "77 × 53 cm", definition: "Dimensions of the Mona Lisa panel"),
@@ -1511,7 +1512,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Minimal grain", definition: "Won't show through thin paint layers"),
                 ],
                 activity: .trueFalse(statement: "The Mona Lisa is painted on a poplar wood panel, sealed with gesso", isTrue: true),
-                notebookSummary: "Mona Lisa: poplar panel 77×53cm. Light, cheap, minimal grain. Gesso (chalk + rabbit-skin glue) seals both sides. Humblest wood, greatest painting.",
+                notebookSummary: "The Mona Lisa = poplar panel (77×53cm), flat-sawn from the log (callback to Roman insula's poplar — cheap, fast-growing, light). Poplar's minimal grain pattern doesn't show through thin paint layers. Both sides sealed with gesso (chalk + rabbit-skin glue) to prevent warping — and 500 years later, it has not warped. The world's most famous painting sits on the humblest wood.",
                 visual: CardVisual(type: .crossSection, title: "Step 8: Poplar Panels", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1525,7 +1526,7 @@ extension KnowledgeCardContent {
                 title: "Step 8: Pigment Grinding",
                 italianTitle: "Macinazione dei Pigmenti",
                 icon: "paintpalette.fill",
-                lessonText: "Leonardo ground his own pigments — a task most masters delegated to apprentices. He insisted on controlling particle size. Coarse-ground lapis lazuli is pale; fine-ground is deep blue (but loses luster). His notebooks record grinding times: 3 hours for ultramarine, 1 hour for ochre. Mixed with linseed oil, the pigment becomes paint. Leonardo wrote: 'The painter who doesn't understand his materials paints with borrowed hands.'",
+                lessonText: "Most master painters in Renaissance Italy delegated the grinding of pigments to their apprentices. The work was tedious. Slow. Hours of pushing a stone muller across a slab of marble, crushing a colored mineral into powder. But Leonardo — Leonardo ground his own pigments. Always. He insisted on it. He had to control the particle size himself. You remember the ultramarine from the observatory? From the lapis stones of Afghanistan? Coarse-ground lapis is pale blue. Fine-ground is a deep, deep blue — but loses some of its luster. Leonardo recorded the exact grinding times in his notebooks. Three hours for ultramarine. One hour for ochre. Mixed with linseed oil, the powder becomes paint. Leonardo wrote it down — listen — 'The painter who does not understand his materials, paints with borrowed hands.' He never used borrowed hands.",
                 keywords: [
                     KeywordPair(keyword: "Particle size", definition: "Controls color intensity and texture"),
                     KeywordPair(keyword: "3 hours", definition: "Grinding time for ultramarine pigment"),
@@ -1533,7 +1534,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Lapis lazuli", definition: "Semi-precious stone ground for blue pigment"),
                 ],
                 activity: .numberFishing(question: "How many hours to grind lapis lazuli into ultramarine?", correctAnswer: 3, decoys: [1, 2, 5, 8, 12]),
-                notebookSummary: "Leonardo ground pigments himself. 3 hours for ultramarine, 1 for ochre. Particle size controls color. + Linseed oil = paint.",
+                notebookSummary: "Leonardo ground his own pigments (most masters delegated to apprentices) — to control particle size himself. Coarse-ground lapis = pale blue; fine-ground = deep blue (but loses luster). Notebooks record times: 3 hours for ultramarine (callback to observatory lapis from Afghanistan), 1 hour for ochre. Pigment + linseed oil = paint. Leonardo wrote: 'The painter who does not understand his materials paints with borrowed hands.'",
                 visual: CardVisual(type: .crossSection, title: "Step 8: Pigment Grinding", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1545,7 +1546,7 @@ extension KnowledgeCardContent {
                 title: "Step 3: Bronze Casting",
                 italianTitle: "Fusione di Precisione in Bronzo",
                 icon: "flame.circle.fill",
-                lessonText: "Leonardo perfected lost-wax casting for his workshop mechanisms. The process: sculpt wax model → coat in ceramic slurry (6 layers, each dried 24 hours) → fire at 700°C to melt wax out → pour molten bronze at 1,050°C → break the ceramic shell → file and polish. For his giant horse statue (never completed), he calculated 70 tons of bronze. The furnace transforms imagination into metal, one layer at a time.",
+                lessonText: "You remember the lost-wax casting from the Roman siege workshop? Leonardo perfected it. Listen to the process — six steps. First, sculpt the model in wax. The exact shape of the final bronze piece. Second, coat the wax in a slurry of fine clay. Six layers of clay, each one dried for twenty-four hours before the next. Third, fire the whole thing in a kiln, seven hundred degrees. The wax melts out. Runs from a channel at the bottom. What remains — is a hollow ceramic mold, in the shape of the original wax. Fourth, pour molten bronze. One thousand fifty degrees. It fills every hollow space. Fifth — wait. Cool. Sixth — break away the ceramic shell. Out emerges the bronze piece. File and polish. For his greatest project — a giant horse statue commissioned by the Duke of Milan — Leonardo calculated SEVENTY TONS of bronze. He never completed it. War came, and the bronze was taken for cannons. But the calculation remains, in his notebooks. The furnace, my apprentice — it transforms imagination into metal. One layer of clay at a time.",
                 keywords: [
                     KeywordPair(keyword: "Lost-wax casting", definition: "Wax → ceramic → melt → bronze pour"),
                     KeywordPair(keyword: "6 ceramic layers", definition: "Each dried 24 hours for mold strength"),
@@ -1553,7 +1554,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "70 tons", definition: "Bronze for Leonardo's giant horse (unfinished)"),
                 ],
                 activity: .fillInBlanks(text: "Lost-wax: wax → ___ layers ceramic → fire ___°C → pour bronze ___°C", blanks: ["6", "700", "1050"], distractors: ["3", "500", "800"]),
-                notebookSummary: "Lost-wax: wax → 6 ceramic layers (24hr each) → fire 700°C → pour bronze 1,050°C. Giant horse: 70 tons (never completed).",
+                notebookSummary: "Leonardo perfected lost-wax casting (callback to Roman siege workshop). 6 steps: (1) sculpt wax model → (2) coat in 6 ceramic layers, each dried 24hr → (3) fire 700°C, wax runs out → (4) pour bronze 1,050°C into hollow mold → (5) cool → (6) break ceramic shell, file/polish. His giant horse (Duke of Milan): 70 tons of bronze calculated, never completed — bronze taken for cannons when war came. The furnace transforms imagination into metal.",
                 visual: CardVisual(type: .crossSection, title: "Step 3: Bronze Casting", values: [:], labels: [], steps: 3, caption: "")
             ),
         ]
