@@ -744,6 +744,7 @@ struct CityMapView: View {
                 showBuildingLesson = true
                 returnToLessonPlotId = nil
             }
+            SoundManager.shared.stopAmbientExcept([.cityAmbient])
             SoundManager.shared.playAmbient(.cityAmbient)
             SoundManager.shared.playMusic(.cityMap)
             // Show bird guidance after short delay

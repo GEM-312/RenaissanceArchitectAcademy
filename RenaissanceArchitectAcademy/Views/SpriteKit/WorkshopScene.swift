@@ -182,6 +182,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
         setupQuarryAnimation()
         setupRiverFlowAnimation()
         setupChickenAnimation()
+        setupFishermanAnimation()
         setupSwayingTrees()
         setupPlayer()
 
@@ -338,6 +339,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
     private var volcanoLava: SKEmitterNode?
     private var riverFlowAnimation: SKSpriteNode?
     private var chickenAnimation: SKSpriteNode?
+    private var fishermanAnimation: SKSpriteNode?
     private var volcanoGlow: SKSpriteNode?
     private var quarryAnimation: SKSpriteNode?
 
@@ -539,6 +541,36 @@ class WorkshopScene: SKScene, ScrollZoomable {
     // 15-frame loop dropped near the farm. Re-tune position via editor mode
     // (press E → drag → console prints coords).
     // Source frames live in Assets.xcassets/ChickenFrame00-14.
+
+    // MARK: - Fisherman Animation
+    //
+    // 15-frame casting loop near the .river station. Loaded from
+    // Fisherman.atlasc (TexturePacker output, tight-trimmed with anchor
+    // offsets baked in — SpriteKit reads metadata, no jitter at runtime).
+    // Frame names retain the source PNG filenames.
+    // Re-tune position via editor mode (press E → drag → console prints coords).
+
+    private func setupFishermanAnimation() {
+        let atlas = SKTextureAtlas(named: "Fisherman")
+        var textures: [SKTexture] = []
+        for i in 1...15 {
+            let name = String(format: "RiverFlowFarmAnimation_%02d copy.png", i)
+            guard atlas.textureNames.contains(name) else { break }
+            textures.append(atlas.textureNamed(name))
+        }
+        guard !textures.isEmpty else { return }
+
+        let sprite = SKSpriteNode(texture: textures[0])
+        sprite.size = CGSize(width: 400, height: 500)
+        sprite.position = CGPoint(x: 1100, y: 700)
+        sprite.zPosition = 13
+        sprite.name = "fishermanAnimation"
+        addChild(sprite)
+        fishermanAnimation = sprite
+
+        let cycle = SKAction.animate(with: textures, timePerFrame: 0.18, resize: false, restore: false)
+        sprite.run(SKAction.repeatForever(cycle), withKey: "fishermanFrameLoop")
+    }
 
     private func setupChickenAnimation() {
         guard let sprite = makeLoopingFrameSprite(
@@ -1720,6 +1752,9 @@ class WorkshopScene: SKScene, ScrollZoomable {
         }
         if let chicken = chickenAnimation {
             editorMode.registerNode(chicken, name: "anim_chicken")
+        }
+        if let fisherman = fishermanAnimation {
+            editorMode.registerNode(fisherman, name: "anim_fisherman")
         }
         for entry in swayingTrees {
             editorMode.registerNode(entry.node, name: entry.node.name ?? "tree")

@@ -255,7 +255,7 @@ class SoundManager: ObservableObject {
 
     // MARK: - Ambient Sounds
 
-    enum AmbientSound: String {
+    enum AmbientSound: String, CaseIterable {
         case cityAmbient = "city_ambient"
         // Forest plays the old workshop_ambient.wav (which was always more
         // forest-y than workshop-y). forest_ambient.wav is orphaned in the
@@ -333,6 +333,15 @@ class SoundManager: ObservableObject {
     func stopAmbient(matching allowed: Set<AmbientSound>, fadeDuration: TimeInterval = 0.5) {
         guard let current = currentAmbient, allowed.contains(current) else { return }
         stopAmbient(current, fadeDuration: fadeDuration)
+    }
+
+    /// Defensive cleanup: stop any ambient that ISN'T one of `keep`. Used at
+    /// each scene's appear to clear lingering audio from views whose
+    /// .onDisappear didn't fire (SwiftUI lifecycle is unreliable in this
+    /// navigation context — verified during the May 13 audio debug).
+    func stopAmbientExcept(_ keep: Set<AmbientSound>, fadeDuration: TimeInterval = 0.5) {
+        let toClear = Set(AmbientSound.allCases).subtracting(keep)
+        stopAmbient(matching: toClear, fadeDuration: fadeDuration)
     }
 
     // MARK: - Volume Control

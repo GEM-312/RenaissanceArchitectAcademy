@@ -656,6 +656,9 @@ struct WorkshopMapView: View {
             }
             // Workshop plays music only — ambient is per-station and crossfades
             // in when the player arrives at a station, fades out on leaving.
+            // Stop any ambient — workshop owns none on arrival. Station ambients
+            // start when the player reaches a station.
+            SoundManager.shared.stopAmbientExcept(Self.workshopStationAmbients)
             SoundManager.shared.playMusic(.workshop)
             // Show bird guidance if player has an active building with workshop cards
             checkArrivalGuidance()

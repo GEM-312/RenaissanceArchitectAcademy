@@ -231,6 +231,7 @@ struct CraftingRoomMapView: View {
             if workshop.currentAssignment == nil {
                 workshop.generateNewAssignment()
             }
+            SoundManager.shared.stopAmbientExcept([.craftingAmbient])
             SoundManager.shared.playAmbient(.craftingAmbient)
             // Show bird guidance after short delay
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {

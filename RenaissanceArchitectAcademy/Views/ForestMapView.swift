@@ -232,6 +232,7 @@ struct ForestMapView: View {
         // both run but in this navigation context the audio doesn't reliably
         // start from them, while this function does fire. playAmbient's guard
         // prevents restart if the ambient is already playing.
+        SoundManager.shared.stopAmbientExcept([.forestAmbient])
         SoundManager.shared.playAmbient(.forestAmbient)
         guard selectedPOIIndex == nil && discoveredTruffle == nil else {
             return
