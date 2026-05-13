@@ -788,7 +788,7 @@ extension KnowledgeCardContent {
                 title: "16,000 Workers",
                 italianTitle: "16.000 Operai",
                 icon: "person.3.fill",
-                lessonText: "The Venetian Arsenal employed 16,000 arsenalotti — more workers than most Renaissance cities had residents. They built the ships that made Venice a superpower. At peak production in the 1500s, they launched a new galley every single day. Workers ate lunch at their stations. Each was a specialist: hull builders, mast fitters, rope makers, caulkers. The Arsenal was a city inside a city, organized to build.",
+                lessonText: "Now — come to Venice. To the Arsenal. The largest workshop in all of Europe. Sixteen thousand workers — we call them arsenalotti. Their numbers exceed the population of most Renaissance cities. They build the ships that make Venice the master of the Mediterranean. At peak production, in the fifteen hundreds, the Arsenal launches a new warship — every single day. Imagine it. Each worker is a specialist. Some only build hulls. Some only fit masts. Some only twist rope. Some only seal seams. They eat lunch at their stations. They walk to the same workbench every morning of their lives. A city inside a city — organized for one purpose. To build.",
                 keywords: [
                     KeywordPair(keyword: "16,000", definition: "Workers (arsenalotti) in the Venice Arsenal"),
                     KeywordPair(keyword: "One ship/day", definition: "Peak production rate in the 1500s"),
@@ -796,8 +796,9 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Superpower", definition: "The fleet made Venice master of the Mediterranean"),
                 ],
                 activity: .numberFishing(question: "How many workers did the Venetian Arsenal employ?", correctAnswer: 16000, decoys: [2000, 5000, 8000, 25000, 50000]),
-                notebookSummary: "Arsenal: 16,000 arsenalotti. One galley per day at peak. Each worker a specialist. A city inside a city.",
-                visual: CardVisual(type: .crossSection, title: "16,000 Workers", values: [:], labels: [], steps: 3, caption: "")
+                notebookSummary: "Venetian Arsenal: 16,000 arsenalotti (more workers than most Renaissance cities had residents). At peak in the 1500s, the Arsenal launched one new warship per day. Each worker a specialist — hull builder, mast fitter, rope maker, caulker. Workers ate lunch at their stations. A city inside a city, organized for one purpose: to build.",
+                visual: CardVisual(type: .crossSection, title: "16,000 Workers", values: [:], labels: [], steps: 3, caption: ""),
+                isLeadCard: true
             ),
 
             KnowledgeCard(
@@ -808,7 +809,7 @@ extension KnowledgeCardContent {
                 title: "Step 2: Rope Walk",
                 italianTitle: "Corderia di 316 Metri",
                 icon: "line.diagonal",
-                lessonText: "The Tana — the Arsenal's rope walk — stretched 316 meters, one of the longest buildings in Europe. Rope makers walked backward the entire length, twisting hemp fibers into cable. A single anchor cable contained 800 individual fibers twisted into strands, strands into rope, rope into cable. The twist pattern matters: S-twist strands laid in Z-twist rope won't unravel. The geometry of spirals keeps ships anchored.",
+                lessonText: "Inside the Arsenal — one building stretches three hundred and sixteen meters long. One of the longest buildings in all of Europe. We call it the Tana. The rope walk. Inside, the rope makers walk backward, the entire length of the building, twisting hemp fibers into rope. A single anchor cable contains eight hundred individual fibers — twisted into strands. Strands twisted into rope. Rope twisted into cable. And here is the genius of the twist. The strands are spun in one direction — we call it S-twist. The rope laid around them — spun in the opposite direction — Z-twist. The opposing twists fight each other. They cannot unravel. The spirals lock. The geometry of opposing spirals — keeps every ship in the Mediterranean anchored.",
                 keywords: [
                     KeywordPair(keyword: "Tana", definition: "316-meter rope walk — one of Europe's longest"),
                     KeywordPair(keyword: "800 fibers", definition: "Individual hemp strands in one anchor cable"),
@@ -816,7 +817,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Walking backward", definition: "How rope makers twisted fibers along the walk"),
                 ],
                 activity: .numberFishing(question: "How long (meters) was the Arsenal's rope walk?", correctAnswer: 316, decoys: [100, 200, 400, 500, 800]),
-                notebookSummary: "Tana: 316m rope walk. 800 fibers → strands → rope → cable. S-twist + Z-twist prevents unraveling. Spiral geometry.",
+                notebookSummary: "Tana: 316m rope walk (one of the longest buildings in Europe). Rope makers walk backward the entire length, twisting fibers into rope. An anchor cable = 800 fibers → strands → rope → cable. Strands spun S-twist, rope spun opposite Z-twist — opposing spirals lock together, cannot unravel. Geometry keeps every Mediterranean ship anchored.",
                 visual: CardVisual(type: .crossSection, title: "Step 2: Rope Walk", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -828,7 +829,7 @@ extension KnowledgeCardContent {
                 title: "Step 4: Assembly Line",
                 italianTitle: "Catena di Montaggio",
                 icon: "arrow.right.arrow.left",
-                lessonText: "300 years before Henry Ford, Venice invented the assembly line. A galley hull was floated through a canal past a series of stations: masts at Station 1, rigging at Station 2, oars at Station 3, weapons at Station 4, provisions at Station 5. Each station added one system. A complete warship — 40 meters long — assembled in one day. Ford just put the idea on wheels. Venice put it on water.",
+                lessonText: "Now — listen carefully. Three hundred years before Henry Ford, before the factories of America — Venice invented the assembly line. Here is how. A galley hull, freshly built, is floated through a canal that runs through the Arsenal. The hull passes a series of stations. At the first station — workers install the masts. The hull floats forward. At the second — rigging. Forward again. At the third — oars. Then weapons. Then provisions, water, food, everything the ship needs at sea. Five stations. The hull moves through them. Each station adds one system. By the end of the canal — a complete warship. Forty meters long. Built in one day. Ford put this idea on wheels. Venice put it on water. Three centuries earlier.",
                 keywords: [
                     KeywordPair(keyword: "Assembly line", definition: "Ship floated past stations — each adds one system"),
                     KeywordPair(keyword: "5 stations", definition: "Masts, rigging, oars, weapons, provisions"),
@@ -836,7 +837,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "300 years before Ford", definition: "Venice invented the assembly line concept"),
                 ],
                 activity: .trueFalse(statement: "The Venetian Arsenal used an assembly line concept 300 years before Henry Ford", isTrue: true),
-                notebookSummary: "Assembly line: hull floated past 5 stations (masts → rigging → oars → weapons → provisions). One warship per day. 300 years before Ford.",
+                notebookSummary: "The Arsenal invented the assembly line — 300 years before Henry Ford. Galley hull floats through a canal past 5 stations: masts → rigging → oars → weapons → provisions. Each station adds one system. By the end: complete 40m warship in 1 day. Ford put it on wheels; Venice put it on water, three centuries earlier.",
                 visual: CardVisual(type: .crossSection, title: "Step 4: Assembly Line", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -848,7 +849,7 @@ extension KnowledgeCardContent {
                 title: "Step 8: Sea Trial",
                 italianTitle: "Principio di Archimede",
                 icon: "water.waves",
-                lessonText: "Every ship hull must displace enough water to support its total weight — Archimedes' principle. A galley weighing 150 tons must displace 150 tons of seawater. Arsenal designers carved half-hull models from wood and tested them in water tanks. If the model floated at the correct waterline, the hull shape was approved. Scale models at 1:10 ratio. The physics is the same at any size — that's what makes scaling possible.",
+                lessonText: "Every ship hull must displace enough water to support its weight. This is Archimedes' principle. From the same Greek who gave us the water-pump screw, two thousand years before. A galley that weighs one hundred fifty tons — must push aside one hundred fifty tons of seawater. If it cannot, it sinks. So how do the Arsenal designers know if a hull shape will float correctly? Listen — they carve half-hull models from wood. One-tenth the size of the full ship. They place the model in a tank of water. If it floats at the correct waterline — the design is approved. If not — back to the carving. The beauty of physics is this — it is the same at any size. The model floats — the ship will float. Scaling is possible because the laws of nature do not change.",
                 keywords: [
                     KeywordPair(keyword: "Archimedes' principle", definition: "Buoyancy = weight of displaced water"),
                     KeywordPair(keyword: "150 tons", definition: "Typical galley weight — must displace equal water"),
@@ -856,7 +857,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Waterline", definition: "Model must float here before full-scale build"),
                 ],
                 activity: .hangman(word: "BUOYANCY", hint: "Archimedes' principle — a ship floats by displacing its weight in water"),
-                notebookSummary: "Archimedes: ship displaces its weight in water. 150-ton galley = 150 tons displaced. Tested at 1:10 scale in water tanks.",
+                notebookSummary: "Archimedes' principle: ship displaces its own weight in water. A 150-ton galley must displace 150 tons of seawater. Arsenal tests with half-hull wooden models at 1:10 scale in water tanks. If the model floats at correct waterline, design approved. Physics is the same at any size — that's what makes scaling possible.",
                 visual: CardVisual(type: .crossSection, title: "Step 8: Sea Trial", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -868,7 +869,7 @@ extension KnowledgeCardContent {
                 title: "Step 1: Wet Docks",
                 italianTitle: "Bacini Umidi",
                 icon: "square.dashed",
-                lessonText: "The Arsenal pioneered wet docks — enclosed basins where ships float during construction. Unlike dry docks (drained for building on blocks), wet docks let workers access the hull from boats at any height. Venice's lagoon provided natural level control. Gates sealed the basin; pumps adjusted water height. Building on water eliminated the dangerous task of launching a heavy hull down a slipway. Safer, faster, smarter.",
+                lessonText: "Venice gave the world a new kind of shipyard — the wet dock. Listen to the difference. A dry dock is a basin you drain. You build the ship on wooden blocks. When it is done, you flood the basin to launch — or worse, you slide the ship down a wooden slipway into open water. Dangerous. Heavy ships have crushed workers on that slide. The wet dock — you do not drain. The water stays. The ship floats during the entire construction. Workers reach the hull from small boats at any height. Gates seal the basin from the lagoon. Simple pumps adjust the water level. And when the ship is finished — it does not need to be launched. It is already in the water. Safer. Faster. Smarter.",
                 keywords: [
                     KeywordPair(keyword: "Wet dock", definition: "Enclosed basin — ship floats during construction"),
                     KeywordPair(keyword: "Dry dock", definition: "Drained basin — ship built on blocks"),
@@ -876,7 +877,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "No launch", definition: "Ship already floating — no slipway needed"),
                 ],
                 activity: .multipleChoice(question: "What is the advantage of a wet dock over a dry dock?", options: ["Ship already floats — no dangerous launch needed", "Cheaper to build", "Uses less wood", "Better for painting"], correctIndex: 0),
-                notebookSummary: "Wet docks: ships float during construction. No slipway launch. Gates control water level. Safer than dry docks.",
+                notebookSummary: "Wet docks (Arsenal innovation): enclosed basin where the ship floats during construction. Unlike dry docks (drained, ship built on blocks, dangerous slipway launch), wet docks keep the water — workers reach the hull from small boats at any height. Gates seal from lagoon; pumps adjust water level. Ship never has to be 'launched' — it is already floating. Safer, faster, smarter.",
                 visual: CardVisual(type: .crossSection, title: "Step 1: Wet Docks", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -890,14 +891,14 @@ extension KnowledgeCardContent {
                 title: "Step 1: Dock Stone",
                 italianTitle: "Pietra d'Istria Resistente al Sale",
                 icon: "mountain.2.fill",
-                lessonText: "Venice is built on Istrian stone — dense white limestone from the Croatian coast. It resists saltwater because its grain is tight: salt crystals can't penetrate deep enough to expand and crack it. The Arsenal's dry dock walls, loading quays, and bridge foundations all used Istrian stone. It polishes to a marble-like finish but is 3× harder. The stone that looks like marble but thinks like granite.",
+                lessonText: "Venice itself — listen carefully — Venice is built on stone that comes from across the sea. From the coast of Croatia. Istrian stone. A dense white limestone, the color of cream. You remember the tufa of the Roman harbor? Soft, porous, salt resisted by absorbing it? Istrian stone does the opposite. Its grain is so tight, so dense, that salt crystals cannot penetrate deep enough to expand and crack it. The Arsenal's dock walls, the loading quays, the bridge foundations — all Istrian stone. Polished, it looks like marble. But it is three times harder than marble. The stone that looks like marble but thinks like granite. The Adriatic teaches you to choose stones carefully.",
                 keywords: [
                     KeywordPair(keyword: "Istrian stone", definition: "Dense white limestone from Croatia"),
                     KeywordPair(keyword: "Salt resistant", definition: "Tight grain prevents salt penetration"),
                     KeywordPair(keyword: "3× harder", definition: "Than marble — despite similar appearance"),
                 ],
                 activity: .trueFalse(statement: "Istrian stone resists salt because its grain is too tight for salt crystals to penetrate", isTrue: true),
-                notebookSummary: "Istrian stone: dense white limestone from Croatia. Salt can't penetrate tight grain. Looks like marble, 3× harder. Venice's foundation stone.",
+                notebookSummary: "Istrian stone: dense white limestone from the Croatian coast. Opposite strategy from Roman harbor's porous tufa — Istrian's grain is too tight for salt crystals to penetrate at all. Used for Arsenal dock walls, loading quays, bridge foundations. Looks like marble, 3× harder. Venice's foundation stone.",
                 visual: CardVisual(type: .crossSection, title: "Step 1: Dock Stone", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -909,14 +910,14 @@ extension KnowledgeCardContent {
                 title: "Step 1: Marine Concrete",
                 italianTitle: "Longevità del Calcestruzzo Marino",
                 icon: "flame.fill",
-                lessonText: "The Arsenal's underwater foundations used Roman-style pozzolanic concrete — still sound after 500 years. Venice imported volcanic ash from the Phlegraean Fields near Naples. Mixed with seawater and lime, the same Al-tobermorite crystals formed as in ancient Rome. But Venice added crushed brick for extra alumina. Brick + ash + seawater = the longest-lasting concrete in saltwater. Two ancient recipes combined into one Renaissance innovation.",
+                lessonText: "You remember the Roman harbor? The marine concrete that grows stronger with seawater? The Al-tobermorite crystals that form for centuries? Here it returns. The Arsenal's underwater foundations use the same Roman-style pozzolanic concrete — still sound after five hundred years. Venice imports volcanic ash all the way from the Phlegraean Fields near Naples. The Roman recipe. But the Venetians added one new ingredient — crushed brick. The brick provides extra alumina. The result — a marine concrete that lasts even LONGER than the Roman version. Two ancient recipes — Roman and Venetian — combined into one Renaissance innovation. The Renaissance, you see, is not only invention. It is the rediscovery of forgotten brilliance — and the addition of new wisdom on top.",
                 keywords: [
                     KeywordPair(keyword: "Phlegraean Fields", definition: "Volcanic ash source near Naples"),
                     KeywordPair(keyword: "Crushed brick", definition: "Venice's addition for extra alumina"),
                     KeywordPair(keyword: "500 years", definition: "Arsenal foundations still sound today"),
                 ],
                 activity: .wordScramble(word: "POZZOLANIC", hint: "Type of volcanic ash concrete that lasts centuries in saltwater"),
-                notebookSummary: "Arsenal concrete: pozzolana (Phlegraean Fields) + crushed brick + seawater + lime. 500 years in saltwater. Roman recipe + Venetian innovation.",
+                notebookSummary: "Arsenal underwater foundations: Roman-style pozzolanic concrete (callback to Harbor) — volcanic ash from Phlegraean Fields + lime + seawater = Al-tobermorite crystals. Still sound after 500 years. Venice added crushed brick for extra alumina — even longer-lasting than the original Roman version. Renaissance = rediscovered brilliance + new wisdom on top.",
                 visual: CardVisual(type: .crossSection, title: "Step 1: Marine Concrete", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -928,7 +929,7 @@ extension KnowledgeCardContent {
                 title: "Step 6: Forge Anchors",
                 italianTitle: "Ancore di Ferro",
                 icon: "anchor",
-                lessonText: "Each galley carried a 200 kg wrought iron anchor. Arsenal blacksmiths forged them from 4 separate iron bars welded together — a technique called faggoting. The bars were heated to white heat (1,200°C) and hammer-welded by 4 smiths striking in rotation. 500 hammer blows per anchor. The arms curved at exactly 40° — the angle that bites deepest into seabed clay. Holding fast is geometry plus force.",
+                lessonText: "Every galley carries a single anchor. Two hundred kilograms of wrought iron. The Arsenal blacksmiths forge them by a technique they call faggoting. Listen. Four separate iron bars are placed together. Heated to white heat — twelve hundred degrees. Then — four smiths, each with a hammer, strike the iron in rotation. One after another. Boom. Boom. Boom. Boom. The hammer blows force the four bars to weld together into one bar. Five hundred blows per anchor. And the arms — the two curved flukes that bite into the seabed — they curve at exactly forty degrees. Not thirty. Not fifty. Forty. That is the angle of maximum grip in seabed clay. Holding fast — it is geometry, plus force, plus the patience of four men striking together.",
                 keywords: [
                     KeywordPair(keyword: "Faggoting", definition: "Welding 4 iron bars together by hammering"),
                     KeywordPair(keyword: "200 kg", definition: "Weight of a galley anchor"),
@@ -936,7 +937,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "500 blows", definition: "Hammer strikes to forge one anchor"),
                 ],
                 activity: .numberFishing(question: "At what angle (degrees) were anchor arms curved for best grip?", correctAnswer: 40, decoys: [15, 25, 55, 70, 90]),
-                notebookSummary: "Anchor: 200 kg, 4 bars faggot-welded, 500 hammer blows. Arms at 40° for max seabed grip. Geometry + force = hold.",
+                notebookSummary: "Galley anchor: 200 kg wrought iron, forged by 'faggoting' — 4 iron bars heated to 1,200°C and hammer-welded together by 4 smiths striking in rotation (500 blows per anchor). Arms curve at exactly 40° — the angle of maximum grip in seabed clay. Geometry + force + patience.",
                 visual: CardVisual(type: .crossSection, title: "Step 6: Forge Anchors", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -948,7 +949,7 @@ extension KnowledgeCardContent {
                 title: "Step 7: Sail Canvas",
                 italianTitle: "Fisica delle Vele",
                 icon: "wind",
-                lessonText: "A sail doesn't push a ship — it pulls it. Wind flowing over a curved sail creates low pressure on the front (like an airplane wing), generating forward lift. Arsenal sailmakers wove linen canvas in a tight twill weave that held its curved shape under wind load. Each galley had 2 lateen (triangular) sails — the triangular shape lets ships sail closer to the wind than square rigs. Shape beats size.",
+                lessonText: "Now — listen to a piece of physics that will surprise you. A sail does not push the ship. A sail PULLS the ship. How can this be? The wind flows over the curved surface of the sail. The curve forces the air to travel further on the front of the sail than on the back. Faster air on the front means lower pressure. The higher pressure behind pushes the ship forward. We call this lift. The same physics — exactly the same physics — that one day will lift airplanes into the sky. The Arsenal sailmakers do not know this yet. But they have discovered the shape that works — curved, taut, holding its form under wind load. Each galley has two lateen sails — triangular — which let the ship sail closer to the wind than any other rig. Remember this physics, apprentice. Soon — soon — Leonardo will look at the wings of birds. And he will see what these sailmakers already know.",
                 keywords: [
                     KeywordPair(keyword: "Lift", definition: "Low pressure on curved sail pulls the ship forward"),
                     KeywordPair(keyword: "Twill weave", definition: "Tight linen pattern holding sail shape"),
@@ -956,7 +957,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Airfoil", definition: "Curved shape generating lift — same as airplane wing"),
                 ],
                 activity: .trueFalse(statement: "A sail generates forward pull through low pressure on its curved surface, like an airplane wing", isTrue: true),
-                notebookSummary: "Sails pull (not push): curved shape = low pressure = lift. Lateen (triangular) sails closer to wind. Twill linen holds shape.",
+                notebookSummary: "A sail PULLS the ship, not pushes. Curved surface = wind travels further across the front than the back = faster air, lower pressure on front. Higher pressure behind drives the ship forward. Same physics that lifts airplanes (lift, airfoil). Lateen (triangular) sails point closer to the wind. Forward callback to Leonardo's flying machine — bird wings, same principle.",
                 visual: CardVisual(type: .crossSection, title: "Step 7: Sail Canvas", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -970,7 +971,7 @@ extension KnowledgeCardContent {
                 title: "Step 5: Timber Stores",
                 italianTitle: "Stagionatura del Legname — 3 Anni",
                 icon: "leaf.fill",
-                lessonText: "Fresh-cut oak contains 80% moisture. Build a ship with green wood and it warps as it dries — hull planks gap, frames twist. The Arsenal seasoned oak for 3 full years in open-air sheds. Moisture dropped to 15%. Venice maintained a strategic timber reserve — 100,000 logs at any time, aged and labeled by cut date. The world's first just-in-time inventory was made of trees.",
+                lessonText: "Fresh-cut oak — listen — contains eighty percent moisture. Eighty. If you build a ship with this green wood, it dries slowly. As it dries, the wood warps. The planks pull apart at the seams. The frames twist. The ship leaks. So the Arsenal seasons oak. Three full years. In open-air sheds, where the wind blows through but the sun does not strike. The moisture drops from eighty percent — to fifteen. And Venice maintains a strategic timber reserve. At any moment — one hundred THOUSAND logs. Aged. Labeled by the date they were cut. Stacked by species, by size, by destiny. The world's first just-in-time inventory — made of trees, waiting for the right ship.",
                 keywords: [
                     KeywordPair(keyword: "3 years", definition: "Seasoning time for ship-grade oak"),
                     KeywordPair(keyword: "80% → 15%", definition: "Moisture reduction during seasoning"),
@@ -978,7 +979,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Open-air sheds", definition: "Seasoning method — airflow removes moisture"),
                 ],
                 activity: .numberFishing(question: "How many years was Arsenal oak seasoned before use?", correctAnswer: 3, decoys: [1, 2, 5, 7, 10]),
-                notebookSummary: "Oak seasoned 3 years: 80% → 15% moisture. Venice kept 100,000 logs in reserve, labeled by cut date. First timber inventory.",
+                notebookSummary: "Fresh oak = 80% moisture (green wood warps as it dries, planks gap, frames twist). Arsenal seasoned oak 3 years in open-air sheds — moisture drops 80% → 15%. Strategic timber reserve: 100,000 logs at any time, aged + labeled by cut date, sorted by species and destiny. World's first just-in-time inventory, made of trees.",
                 visual: CardVisual(type: .crossSection, title: "Step 5: Timber Stores", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -990,7 +991,7 @@ extension KnowledgeCardContent {
                 title: "Step 3: Ship Fittings",
                 italianTitle: "Raccordi Navali di Precisione",
                 icon: "gearshape.fill",
-                lessonText: "Walnut was reserved for ship fittings requiring precision: pulley sheaves, tiller mechanisms, and compass housings. Its tight grain machines smoothly without splintering. A pulley sheave must spin freely with minimal friction — walnut's natural oils act as lubricant. One galley used 40 walnut pulleys. The Arsenal kept walnut stocks separate, marked 'per meccanismi' — for mechanisms only. Precision wood, precision use.",
+                lessonText: "You remember walnut. From the siege workshop. From the anatomy theater. The precision wood, the wood that does not change. Here it returns. The Arsenal reserves walnut for the parts of the ship that must work perfectly. Pulley sheaves — the wheels that spin inside every pulley. The tiller mechanism, which steers the ship. The compass housing. Walnut's tight grain machines smoothly. No splinters. And here is a secret — the natural oils inside walnut act as a lubricant. The pulley spins more freely than oak ever could. One galley uses forty walnut pulleys. The Arsenal keeps the walnut stocks separate from the other timber — marked with three Italian words: 'per meccanismi.' For mechanisms. Precision wood — for precision use.",
                 keywords: [
                     KeywordPair(keyword: "Pulley sheave", definition: "Wheel inside a pulley — walnut spins smoothly"),
                     KeywordPair(keyword: "Natural oils", definition: "Walnut's self-lubricating property"),
@@ -998,7 +999,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Per meccanismi", definition: "Arsenal label — walnut reserved for mechanisms"),
                 ],
                 activity: .wordScramble(word: "SHEAVE", hint: "The wheel inside a pulley — walnut spins with natural lubrication"),
-                notebookSummary: "Walnut: pulleys, tillers, compass housings. Natural oils = self-lubricating. 40 pulleys per galley. Reserved 'per meccanismi.'",
+                notebookSummary: "Walnut (callback to siege workshop + anatomy theater): reserved for ship parts requiring precision — pulley sheaves, tiller mechanism, compass housing. Tight grain machines smoothly without splintering; natural oils self-lubricate the spinning sheaves. 40 walnut pulleys per galley. Stocks marked 'per meccanismi.' Precision wood for precision use.",
                 visual: CardVisual(type: .crossSection, title: "Step 3: Ship Fittings", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1012,7 +1013,7 @@ extension KnowledgeCardContent {
                 title: "Step 3: Oakum Caulking",
                 italianTitle: "Calafataggio con Stoppa",
                 icon: "line.horizontal.3",
-                lessonText: "Between every hull plank: a gap. Into every gap: oakum — old hemp rope untwisted into loose fibers, soaked in pine tar. Caulkers hammered oakum into seams with a mallet and iron, then sealed with hot pitch. A galley had 200 meters of caulked seams. The process took 3 caulkers 2 days. Miss one seam and the ship leaks. The most important work on the ship was done between the planks.",
+                lessonText: "Now — listen to the work that everyone forgets, and the work that keeps every ship alive. Between every plank of the hull — a gap. A small space. If you do not fill it, the ship sinks. Into every gap goes oakum. What is oakum? Old hemp rope, untwisted into loose fibers, soaked in pine tar. The caulker hammers the oakum into the seam with a wooden mallet and a curved iron tool. Then seals it on top with hot pitch — almost-boiling tree resin. A single galley has two hundred meters of seams to caulk. Three caulkers can finish a ship in two days. Miss one seam — one tiny seam — and the ship will leak. The most important work on a galley is done between the planks. By the men whose names are never written down.",
                 keywords: [
                     KeywordPair(keyword: "Oakum", definition: "Tarred hemp fibers hammered into plank seams"),
                     KeywordPair(keyword: "Pine tar", definition: "Waterproof coating soaked into the hemp"),
@@ -1020,7 +1021,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Hot pitch", definition: "Final seal over the caulked seam"),
                 ],
                 activity: .hangman(word: "OAKUM", hint: "Tarred hemp fibers hammered between ship planks to prevent leaks"),
-                notebookSummary: "Oakum: untwisted hemp + pine tar. Hammered into 200m of seams per galley. Sealed with hot pitch. Work between planks = most important.",
+                notebookSummary: "Oakum caulking fills gaps between hull planks: untwisted old hemp rope fibers soaked in pine tar, hammered into seams with a wooden mallet + curved iron, sealed with hot pitch on top. 200m of seams per galley; 3 caulkers finish in 2 days. Miss one seam = ship leaks. The most important work is done between the planks, by men whose names are never written down.",
                 visual: CardVisual(type: .crossSection, title: "Step 3: Oakum Caulking", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1032,7 +1033,7 @@ extension KnowledgeCardContent {
                 title: "Step 6: Iron Quenching",
                 italianTitle: "Tempra del Ferro a 800°C",
                 icon: "flame.circle.fill",
-                lessonText: "Arsenal nails, bolts, and chain links were quenched — heated to cherry red (800°C) and plunged into seawater. The rapid cooling traps carbon in the iron lattice, hardening it. Seawater quenches faster than fresh water (salt increases heat transfer). But too fast → brittle. Arsenal smiths used warm seawater (40°C) for a controlled quench. Temperature of the quenching bath matters as much as the forge.",
+                lessonText: "And to finish — listen to the chemistry of hardening iron. The nails. The bolts. The chain links of the Arsenal. They must be hard. Resist bending. So we quench them. Heat the iron to cherry red — eight hundred degrees. Then — plunge it into water. The rapid cooling traps the carbon atoms inside the iron lattice. The iron becomes martensite. Hard. But here is the secret. Seawater quenches FASTER than fresh water. Why? The salt increases the heat transfer. But too fast a quench — and the iron becomes brittle. It cracks. So the Arsenal smiths use WARM seawater. Forty degrees. A controlled quench. The temperature of the bath — matters as much as the heat of the forge. And so we leave the Arsenal. Next — we go to Milan. To meet a man whose mind belonged to all of it. All of it.",
                 keywords: [
                     KeywordPair(keyword: "800°C", definition: "Cherry red — quenching temperature"),
                     KeywordPair(keyword: "Seawater quench", definition: "Salt increases cooling speed vs fresh water"),
@@ -1040,7 +1041,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Carbon trapping", definition: "Rapid cooling locks carbon in iron lattice"),
                 ],
                 activity: .fillInBlanks(text: "Quench iron at ___°C in ___°C seawater — salt ___ heat transfer", blanks: ["800", "40", "increases"], distractors: ["600", "20", "decreases"]),
-                notebookSummary: "Quenching: 800°C iron into 40°C seawater. Salt increases cooling speed. Traps carbon = harder. Bath temperature matters.",
+                notebookSummary: "Iron quenching: heat to cherry red 800°C, plunge into warm 40°C seawater. Salt increases heat transfer (faster than fresh water). Rapid cooling traps carbon atoms in iron lattice → martensite, harder. Too fast = brittle, so use WARM (not cold) seawater for controlled hardening. Bath temperature matters as much as forge temperature.",
                 visual: CardVisual(type: .crossSection, title: "Step 6: Iron Quenching", values: [:], labels: [], steps: 3, caption: "")
             ),
         ]
