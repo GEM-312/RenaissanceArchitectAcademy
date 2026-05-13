@@ -561,8 +561,8 @@ class WorkshopScene: SKScene, ScrollZoomable {
         guard !textures.isEmpty else { return }
 
         let sprite = SKSpriteNode(texture: textures[0])
-        sprite.size = CGSize(width: 400, height: 500)
-        sprite.position = CGPoint(x: 1100, y: 700)
+        sprite.size = CGSize(width: 1200, height: 1500)
+        sprite.position = CGPoint(x: 866, y: 642)
         sprite.zPosition = 13
         sprite.name = "fishermanAnimation"
         addChild(sprite)
