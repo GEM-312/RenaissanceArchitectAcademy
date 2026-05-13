@@ -1576,7 +1576,7 @@ extension KnowledgeCardContent {
                 title: "The Ornithopter",
                 italianTitle: "L'Ornitottero",
                 icon: "bird.fill",
-                lessonText: "Leonardo designed a flying machine that flapped like a bird — an ornithopter. His notebooks contain 35,000 words and 500 sketches on flight. The pilot would lie face-down in a wooden cradle and pump pedals connected by cables to articulated wings. Each wing spanned 12 meters. He studied bird anatomy for years before designing it. The machine that never flew was designed by the most thorough researcher who ever lived.",
+                lessonText: "Leonardo was not satisfied to paint. To sculpt. To build. He wanted to fly. To leave the ground behind. He designed a flying machine — what we now call an ornithopter. A machine that flaps its wings like a bird. His notebooks contain thirty-five thousand words on flight. Five hundred sketches. The design — listen — the pilot lies face-down in a wooden cradle. He pumps pedals with his feet. The pedals connect, by iron cables, to wings that flap above him. Each wing spans twelve meters. Twelve. Leonardo studied bird anatomy for years before drawing the first sketch. He watched eagles, hawks, ravens. He dissected dead birds to understand the muscles of flight. The machine that never flew, my apprentice — it was designed by the most thorough researcher who ever lived.",
                 keywords: [
                     KeywordPair(keyword: "Ornithopter", definition: "Flapping-wing flying machine"),
                     KeywordPair(keyword: "500 sketches", definition: "Leonardo's flight drawings"),
@@ -1584,8 +1584,9 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Face-down cradle", definition: "Pilot position for pedal-powered flight"),
                 ],
                 activity: .wordScramble(word: "ORNITHOPTER", hint: "Leonardo's flapping-wing flying machine — powered by human pedaling"),
-                notebookSummary: "Ornithopter: flapping-wing machine. 500 sketches, 35,000 words. 12m wingspan. Face-down pilot pedaling. Never flew — but most researched.",
-                visual: CardVisual(type: .crossSection, title: "The Ornithopter", values: [:], labels: [], steps: 3, caption: "")
+                notebookSummary: "Leonardo's ornithopter: flapping-wing flying machine. Pilot lies face-down in a wooden cradle, pumps pedals connected by iron cables to articulated wings. Each wing spans 12m. 35,000 words + 500 sketches in his notebooks on flight. Years of studying bird anatomy (including dissection) before drawing the first sketch. The machine that never flew was designed by the most thorough researcher who ever lived.",
+                visual: CardVisual(type: .crossSection, title: "The Ornithopter", values: [:], labels: [], steps: 3, caption: ""),
+                isLeadCard: true
             ),
 
             KnowledgeCard(
@@ -1596,7 +1597,7 @@ extension KnowledgeCardContent {
                 title: "Step 1: Bird Anatomy",
                 italianTitle: "Anatomia dell'Ala",
                 icon: "bird",
-                lessonText: "Leonardo dissected over 30 birds to understand flight. He discovered that the wing's upper surface is curved (cambered) while the lower is flatter — creating a pressure difference. Air moves faster over the top, creating low pressure = lift. He also noted that birds twist their wingtips during the downstroke for thrust and flatten them during the upstroke to reduce drag. Every flight feather is an engineering solution.",
+                lessonText: "And here — listen — is where Leonardo discovered the secret of flight. He dissected more than thirty birds. He laid each wing flat on his drawing table and looked carefully. He noticed something. The upper surface of a wing is CURVED. The lower surface is flatter. The wing has a shape — what we now call camber. And remember — you remember the sails of the Arsenal? The curved sail that PULLS the ship instead of pushing? The same principle. Air travels faster over the curved upper surface than under the flat lower surface. Fast air, low pressure. The higher pressure underneath pushes upward. We call this lift. Leonardo also noticed that birds twist their wingtips. Down for thrust. Up to reduce drag. Every flight feather on every bird is an engineering solution. We just had to learn to read it.",
                 keywords: [
                     KeywordPair(keyword: "30+ birds", definition: "Dissected by Leonardo for wing anatomy"),
                     KeywordPair(keyword: "Camber", definition: "Curved upper wing surface creating lift"),
@@ -1604,7 +1605,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Wing twist", definition: "Downstroke for thrust, upstroke reduces drag"),
                 ],
                 activity: .trueFalse(statement: "Leonardo discovered that a wing's curved upper surface creates lower pressure than the flat underside, producing lift", isTrue: true),
-                notebookSummary: "30+ bird dissections. Curved top (camber) = low pressure = lift. Wings twist: downstroke for thrust, upstroke reduces drag.",
+                notebookSummary: "Leonardo dissected 30+ birds. Discovered wing's upper surface is curved (cambered), lower is flatter. Same lift physics as the Arsenal's sail (callback) — fast air over the curve creates low pressure, higher pressure below pushes up. Wings twist: down for thrust, up to reduce drag. Every flight feather is an engineering solution.",
                 visual: CardVisual(type: .crossSection, title: "Step 1: Bird Anatomy", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1616,7 +1617,7 @@ extension KnowledgeCardContent {
                 title: "Step 2: Wing Area Math",
                 italianTitle: "Matematica della Superficie Alare",
                 icon: "function",
-                lessonText: "Leonardo calculated: a bird weighing 1 kg needs 0.1 m² of wing area. Scale that to a 90 kg pilot and machine: you need 18 m² of wing. His ornithopter had 2 wings at 12m × 0.75m = 18 m². The math was perfect. The problem wasn't area — it was power. A pigeon generates 10 watts per kilogram of body weight. Humans generate 1 watt. We're 10× too weak to fly by flapping. Mathematics showed the dream; physics showed the limit.",
+                lessonText: "Now — listen to a beautiful piece of mathematics. Leonardo calculated. A bird that weighs one kilogram — needs one tenth of a square meter of wing. Scale this to a human pilot plus the machine — together, ninety kilograms. You need eighteen square meters of wing. His ornithopter had two wings, twelve meters long, three quarters of a meter wide. Two times twelve times zero point seven five — equals exactly eighteen square meters. The mathematics was perfect. So why did the machine never fly? Listen carefully. Not the area. The PROBLEM was power. A pigeon generates ten watts per kilogram of its body weight. A human — one watt. ONE watt. We are TEN TIMES too weak to fly by flapping. Mathematics showed Leonardo the dream. Physics showed him the limit. Both are true.",
                 keywords: [
                     KeywordPair(keyword: "0.1 m²/kg", definition: "Wing area needed per kilogram of weight"),
                     KeywordPair(keyword: "18 m²", definition: "Wing area for 90 kg pilot + machine"),
@@ -1624,7 +1625,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "1 W/kg (human)", definition: "Power output per kg — humans (10× too weak)"),
                 ],
                 activity: .numberFishing(question: "How many m² of wing area does a 90 kg flyer need?", correctAnswer: 18, decoys: [5, 10, 25, 36, 50]),
-                notebookSummary: "Wing math: 0.1 m²/kg. 90 kg → 18 m². Correct! But humans = 1 W/kg vs birds = 10 W/kg. 10× too weak. Math right, physics wrong.",
+                notebookSummary: "Wing math: 0.1 m² of wing area per kg. 90 kg pilot + machine = 18 m² of wing (Leonardo's ornithopter had exactly this, 2 wings × 12m × 0.75m). The math was perfect. But humans = 1 W/kg of power output vs birds = 10 W/kg. We are 10× too weak to fly by flapping. Mathematics showed the dream; physics showed the limit. Both true.",
                 visual: CardVisual(type: .crossSection, title: "Step 2: Wing Area Math", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1636,7 +1637,7 @@ extension KnowledgeCardContent {
                 title: "Step 5: Power Ratio",
                 italianTitle: "Rapporto di Potenza 1:10",
                 icon: "bolt.fill",
-                lessonText: "Leonardo eventually realized humans can't generate enough power to flap wings. His later designs shifted to gliders — fixed wings using gravity and air currents. He studied how hawks soar without flapping, riding thermals (rising warm air). His hang glider design from 1505 shows a pilot hanging below fixed triangular wings with a control bar — nearly identical to modern hang gliders. From flapping to soaring: the greatest pivot in aviation history.",
+                lessonText: "Leonardo did not give up. He pivoted. If humans cannot generate enough power to flap — perhaps we do not need to flap at all. He looked again at the birds. The hawk. The eagle. They do not flap most of the time. They glide. They ride rising warm air — what we call thermals. The sun heats the earth, the earth heats the air, the air rises in columns. A bird with fixed wings — riding those columns — can stay aloft for hours. Leonardo's later designs are gliders. Fixed wings. No flapping. Gravity and air currents do the work. In fifteen hundred and five, he drew a design — a pilot hanging below fixed triangular wings, with a wooden control bar. Listen — that design is nearly identical to the modern hang glider. From flapping to soaring. The greatest pivot in the history of flight.",
                 keywords: [
                     KeywordPair(keyword: "Glider pivot", definition: "Leonardo shifted from flapping to fixed wings"),
                     KeywordPair(keyword: "Thermals", definition: "Rising warm air that hawks ride without flapping"),
@@ -1644,7 +1645,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Power limit", definition: "Humans produce 1/10 the power birds do"),
                 ],
                 activity: .multipleChoice(question: "Why did Leonardo shift from flapping wings to gliders?", options: ["Materials weren't strong enough", "Humans can't generate enough power to flap", "Wind was unreliable", "The Pope forbade it"], correctIndex: 1),
-                notebookSummary: "Humans = 1/10 bird power. Leonardo pivoted to gliders (1505). Fixed wings + thermals. Hang glider design = nearly identical to modern ones.",
+                notebookSummary: "Leonardo pivoted from flapping to gliding. Studied hawks + eagles soaring without flapping on thermals (rising warm air columns). 1505 design: pilot hangs below fixed triangular wings with a wooden control bar — nearly identical to the modern hang glider. From flapping to soaring: the greatest pivot in the history of flight.",
                 visual: CardVisual(type: .crossSection, title: "Step 5: Power Ratio", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1656,7 +1657,7 @@ extension KnowledgeCardContent {
                 title: "Step 7: Monte Ceceri",
                 italianTitle: "Monte Ceceri",
                 icon: "mountain.2.fill",
-                lessonText: "Leonardo wrote in Codex on the Flight of Birds (1505): 'The great bird will take its first flight from the summit of Monte Ceceri, filling the universe with amazement.' Monte Ceceri (Swan Mountain) rises 400 meters above Florence. Whether the flight happened is debated — some historians say his assistant Tommaso Masini attempted it and broke his leg. Success or failure, this was humanity's first recorded launch attempt. Every flight begins with a cliff and a decision.",
+                lessonText: "Now — the dream becomes a place. In fifteen hundred and five, Leonardo wrote in his Codex on the Flight of Birds — listen to the words — 'The great bird will take its first flight from the summit of Monte Ceceri, filling the universe with amazement.' Monte Ceceri. Swan Mountain. Four hundred meters above Florence. Historians debate whether the flight ever happened. Some say his assistant — a young man named Tommaso Masini — attempted it. That Masini leapt from the summit. And broke his leg upon landing. Whether this is true or invention, no one is certain. But this — five hundred years ago — was humanity's first RECORDED attempt at flight. Every flight begins, my apprentice, with a cliff. And a decision.",
                 keywords: [
                     KeywordPair(keyword: "Monte Ceceri", definition: "Swan Mountain — planned launch site near Florence"),
                     KeywordPair(keyword: "400 meters", definition: "Height of Monte Ceceri above Florence"),
@@ -1664,7 +1665,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Tommaso Masini", definition: "Possible test pilot — may have broken his leg"),
                 ],
                 activity: .hangman(word: "CECERI", hint: "Monte ___ — the hilltop where Leonardo planned humanity's first flight"),
-                notebookSummary: "Monte Ceceri: 400m above Florence. 1505: Leonardo predicted first flight. Possibly attempted — Masini may have broken his leg. First launch attempt.",
+                notebookSummary: "Monte Ceceri (Swan Mountain) — 400m above Florence. 1505 Codex on the Flight of Birds: 'The great bird will take its first flight from the summit of Monte Ceceri, filling the universe with amazement.' Possibly attempted by Leonardo's assistant Tommaso Masini (may have broken his leg landing). Humanity's first RECORDED launch attempt. Every flight begins with a cliff and a decision.",
                 visual: CardVisual(type: .crossSection, title: "Step 7: Monte Ceceri", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1678,7 +1679,7 @@ extension KnowledgeCardContent {
                 title: "Step 3: Silk Covering",
                 italianTitle: "Ali di Taffetà di Seta",
                 icon: "wind",
-                lessonText: "Leonardo specified taffeta di seta — tightly woven silk — for the wing covering. Why silk? It's the strongest natural fiber per weight. A silk thread can hold the weight of a spider yet weighs nearly nothing. Stretched over a wooden frame and sealed with linseed oil, silk becomes airtight and drum-taut. One wing covering weighed just 2 kg but resisted 50 kg of air pressure. Strength without weight. Nature's best material for nature's hardest problem.",
+                lessonText: "What covers the wing? You remember the velarium at the Colosseum? The silk awning that shaded fifty thousand spectators? Silk returns now — for flight. Leonardo specified taffeta di seta — tightly woven silk, smooth and tight as a drum. Why silk and not linen or cotton? Listen — silk is the strongest natural fiber per unit weight in the world. A single silk thread can hold the weight of a spider, yet weighs almost nothing. Stretched over a wooden frame and sealed with linseed oil, silk becomes airtight. Drum-taut. One full wing covering weighs only two kilograms — but resists fifty kilograms of air pressure when the wing is flapping. Strength without weight. Nature's best material for nature's hardest problem.",
                 keywords: [
                     KeywordPair(keyword: "Taffeta", definition: "Tightly woven silk for wing covering"),
                     KeywordPair(keyword: "Strongest natural fiber", definition: "Silk per unit weight"),
@@ -1686,7 +1687,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "2 kg per wing", definition: "Weight of silk wing covering"),
                 ],
                 activity: .trueFalse(statement: "Leonardo chose silk taffeta for wing covering because it's the strongest natural fiber per unit weight", isTrue: true),
-                notebookSummary: "Silk taffeta: strongest natural fiber per weight. + Linseed oil = airtight. 2 kg covering resists 50 kg air pressure. Nature's answer.",
+                notebookSummary: "Wing covering = taffeta di seta (tightly woven silk, callback to Colosseum velarium). Silk = strongest natural fiber per weight in the world. Stretched over wooden ribs + sealed with linseed oil = airtight, drum-taut. 2 kg of covering resists 50 kg of air pressure during flapping. Strength without weight — nature's best material for nature's hardest problem.",
                 visual: CardVisual(type: .crossSection, title: "Step 3: Silk Covering", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1698,7 +1699,7 @@ extension KnowledgeCardContent {
                 title: "Step 5: Bronze Pivots",
                 italianTitle: "Giunti a Perno di Bronzo",
                 icon: "gearshape.fill",
-                lessonText: "The ornithopter's wings needed pivot joints — points where rigid frames met moving parts. Leonardo used bronze bearings with leather washers for smooth, low-friction rotation. His notebooks show the joint design: a tapered pin in a matching socket, with grease channels cut into the bronze. Each wing had 6 pivot points for the flapping and twisting motion. Bronze doesn't gall (cold-weld) like iron. Every flap was smooth.",
+                lessonText: "The wing flaps. The wing twists. So the wing needs joints. Pivot points where rigid frames meet moving parts. You remember the bronze gears Leonardo perfected? The same bronze returns here. Bronze bearings with leather washers between them. The design — a tapered pin fits into a matching socket. Smooth. Low friction. Grease channels cut into the bronze itself, to keep oil flowing through the joint at every motion. Each wing has six pivot points. Six. Why bronze and not iron? Because iron, when it rubs against iron under load — it galls. Cold-welds. Locks together. Bronze on bronze never galls. Every flap of the wing is smooth, silent, exact.",
                 keywords: [
                     KeywordPair(keyword: "6 pivots", definition: "Joints per wing for flapping and twisting"),
                     KeywordPair(keyword: "Galling", definition: "Cold-welding — iron does it, bronze doesn't"),
@@ -1706,7 +1707,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Leather washers", definition: "Seal against dust and reduce friction"),
                 ],
                 activity: .numberFishing(question: "How many pivot joints did each ornithopter wing have?", correctAnswer: 6, decoys: [2, 4, 8, 10, 12]),
-                notebookSummary: "6 pivot joints per wing: bronze bearings + leather washers + grease channels. Bronze doesn't gall like iron. Smooth flapping.",
+                notebookSummary: "6 pivot joints per wing for flapping + twisting motion. Tapered bronze pin fits in matching socket, with leather washers and grease channels cut into the bronze. Bronze on bronze does not gall (cold-weld) like iron on iron under load. Every flap smooth, silent, exact.",
                 visual: CardVisual(type: .crossSection, title: "Step 5: Bronze Pivots", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1718,7 +1719,7 @@ extension KnowledgeCardContent {
                 title: "Step 5: Iron Cables",
                 italianTitle: "Tensione del Filo di Ferro",
                 icon: "line.diagonal",
-                lessonText: "Thin iron wire connected the pedal mechanism to the wing tips — tension cables that transmitted the pilot's leg power. Leonardo calculated the wire diameter: too thin and it snaps, too thick and it's too heavy. His solution: drawn wire (pulled through dies to make it thinner and stronger). Work-hardened iron wire has twice the tensile strength of cast iron. The wire that's been squeezed hardest pulls the strongest.",
+                lessonText: "How does the pilot's leg power reach the wings? Through thin iron wire. Cables. Tension cables that run from the pedals up to the wingtips, transferring every push of the foot to a movement of the wing. Leonardo calculated the wire diameter carefully. Too thin — it snaps under load. Too thick — it adds weight the pilot must lift. His solution — drawn wire. You remember the wire-drawing dies he made himself? Iron is pulled through progressively smaller holes in a steel plate. With each pass through a smaller hole, the wire grows thinner. And — listen — STRONGER. The process is called work-hardening. The drawing squeezes the iron's grain structure tighter. Drawn iron wire has TWICE the tensile strength of cast iron of the same diameter. The wire that has been squeezed hardest — pulls the strongest.",
                 keywords: [
                     KeywordPair(keyword: "Drawn wire", definition: "Pulled through dies — thinner and stronger"),
                     KeywordPair(keyword: "Work hardening", definition: "Drawing process doubles tensile strength"),
@@ -1726,7 +1727,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Diameter calculation", definition: "Balance between strength and weight"),
                 ],
                 activity: .multipleChoice(question: "Why is drawn wire stronger than cast iron?", options: ["Different alloy", "Work hardening from the drawing process", "Thicker cross-section", "Heat treatment after drawing"], correctIndex: 1),
-                notebookSummary: "Iron wire drawn through dies: work hardening doubles tensile strength. Connects pedals to wings. Thinner + stronger = ideal cables.",
+                notebookSummary: "Tension cables: thin iron wire connects pedals → wingtips, transferring pilot's leg power. Drawn through Leonardo's custom dies (callback to Leonardo's Workshop) — progressively smaller holes squeeze the iron's grain tighter (work-hardening). Drawn wire has 2× the tensile strength of cast iron at the same diameter. The wire squeezed hardest pulls the strongest.",
                 visual: CardVisual(type: .crossSection, title: "Step 5: Iron Cables", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1740,7 +1741,7 @@ extension KnowledgeCardContent {
                 title: "Step 3: Wing Ribs",
                 italianTitle: "Centine Alari Leggere",
                 icon: "leaf.fill",
-                lessonText: "Leonardo chose poplar for wing ribs — the structural skeleton inside each wing. Poplar is 40% lighter than oak and grows perfectly straight. Each rib was steam-bent to match the wing's airfoil curve. Steam bending: soak poplar in boiling water, clamp it around a form, let it dry. The fibers lock into the curve permanently. 20 ribs per wing, each 3 meters long and 2 cm thick. The skeleton of flight is poplar and steam.",
+                lessonText: "Inside each silk-covered wing — the skeleton. Twenty wooden ribs that give the wing its curved shape. The wood — you remember poplar from the Roman insulae? The lightest cheap wood, fast-growing, the wood the Romans used for upper floors and the world's first wattle-and-daub? Here, Leonardo uses it again. For wing ribs. Poplar is forty percent lighter than oak. It grows perfectly straight. And — listen — each rib must be CURVED, to match the wing's airfoil shape. How? Steam bending. Soak the poplar in boiling water. Clamp it around a wooden form. Let it dry. The fibers of the wood lock into the curve. Permanently. Twenty ribs per wing. Three meters long. Two centimeters thick. The skeleton of flight — poplar, and steam.",
                 keywords: [
                     KeywordPair(keyword: "Wing ribs", definition: "Structural skeleton inside the silk covering"),
                     KeywordPair(keyword: "Steam bending", definition: "Boiling water + clamping = permanent curve"),
@@ -1748,7 +1749,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "40% lighter", definition: "Poplar vs oak weight advantage"),
                 ],
                 activity: .numberFishing(question: "How many ribs did each ornithopter wing have?", correctAnswer: 20, decoys: [5, 10, 15, 30, 40]),
-                notebookSummary: "Wing ribs: poplar (40% lighter than oak). Steam-bent to airfoil curve. 20 ribs per wing, 3m × 2cm each. Skeleton of flight.",
+                notebookSummary: "Wing ribs = poplar (40% lighter than oak, grows perfectly straight — callback to Roman insula upper frames). 20 ribs per wing, 3m × 2cm. Steam-bent to the airfoil curve: soak in boiling water → clamp around wooden form → dry → fibers lock into the curve permanently. The skeleton of flight: poplar and steam.",
                 visual: CardVisual(type: .crossSection, title: "Step 3: Wing Ribs", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1760,7 +1761,7 @@ extension KnowledgeCardContent {
                 title: "Step 4: Oak Harness",
                 italianTitle: "Telaio dell'Imbracatura",
                 icon: "figure.walk",
-                lessonText: "The pilot's harness was oak — the only part that needed maximum strength. A cradle-like frame held the pilot face-down with leather straps. Oak carried the combined forces: the pilot's 70 kg weight pulling down, the wings' 200 kg of lift pulling up, and torsion from pedaling. The harness was the machine's weakest link — if it failed, everything failed. Leonardo reinforced joints with iron brackets. The frame that holds the human holds the dream.",
+                lessonText: "Now — the harness. The part that holds the pilot himself, face-down in the wooden cradle. This MUST be the strongest part of the machine. Made of oak. A cradle-like frame with leather straps to secure the body. Listen to what the oak must bear. The pilot weighs seventy kilograms — pulling DOWN by gravity. The wings — if they produce lift — pull UP by two hundred kilograms or more. And the pedaling — left foot, right foot, again and again — produces torsion, twisting force, that wrings the frame. Three forces, in three directions. The harness is the machine's weakest link. If it fails — everything fails. Leonardo reinforced every joint with iron brackets. The frame that holds the human — holds the dream.",
                 keywords: [
                     KeywordPair(keyword: "Oak harness", definition: "Strongest wood for the pilot's frame"),
                     KeywordPair(keyword: "Face-down position", definition: "Pilot lies prone in a cradle"),
@@ -1768,7 +1769,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Iron brackets", definition: "Reinforcement at critical harness joints"),
                 ],
                 activity: .wordScramble(word: "HARNESS", hint: "Oak frame that holds the ornithopter pilot face-down"),
-                notebookSummary: "Harness: oak cradle, pilot face-down. Bears weight + lift + torsion. Iron brackets reinforce joints. Weakest link determines everything.",
+                notebookSummary: "Pilot's harness = oak cradle, leather straps, face-down position. Bears 3 forces simultaneously: pilot weight DOWN (70 kg), wing lift UP (200+ kg), pedaling torsion. Iron brackets reinforce every joint. The harness is the machine's weakest link — if it fails, everything fails. The frame that holds the human holds the dream.",
                 visual: CardVisual(type: .crossSection, title: "Step 4: Oak Harness", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1782,7 +1783,7 @@ extension KnowledgeCardContent {
                 title: "Step 3: Silk Assembly",
                 italianTitle: "Assemblaggio Seta su Centine",
                 icon: "rectangle.grid.1x2.fill",
-                lessonText: "Attaching silk to wing ribs required tension and precision. The silk was cut to shape, soaked in warm water to shrink, then stretched over the ribs and secured with waxed linen thread through pre-drilled holes. As the silk dried, it contracted — pulling drum-tight. Then a coat of linseed oil sealed every pore. The process took 3 days per wing. Wet, stretch, dry, seal. Simple steps, in the right order, create an airfoil.",
+                lessonText: "And to finish — attaching the silk to the wooden ribs. This is where the wing becomes an airfoil. Listen — the process is simple, but the ORDER matters. First, cut the silk to the shape of the wing. Second, soak the cut silk in warm water. The water makes the silk shrink slightly. Third — stretch the wet silk over the curved ribs. Secure it with waxed linen thread, sewn through pre-drilled holes. Fourth — let it dry. As it dries, the silk contracts further. Pulls drum-tight against every rib. Fifth — paint a coat of linseed oil over the surface. The oil seals every pore. Three days per wing. Wet. Stretch. Dry. Seal. Simple steps, in the right order — and you have built the surface that holds the dream of flight. And so we leave Leonardo's machines. The flight he imagined did not happen. But four centuries later — humans flew. With wings shaped the way he sketched them. Next, we go to Florence. To the greatest building Leonardo's generation ever raised. The Duomo.",
                 keywords: [
                     KeywordPair(keyword: "Wet stretch", definition: "Silk soaked then dried on frame = drum-tight"),
                     KeywordPair(keyword: "Waxed thread", definition: "Waterproof stitching through pre-drilled holes"),
@@ -1790,7 +1791,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Linseed seal", definition: "Final coat making the wing airtight"),
                 ],
                 activity: .fillInBlanks(text: "Wing assembly: cut silk, soak in ___ water, stretch, ___ thread through holes, dry, seal with ___", blanks: ["warm", "waxed", "linseed"], distractors: ["cold", "cotton", "pine"]),
-                notebookSummary: "Silk wing assembly: soak → stretch on ribs → waxed thread → dry (contracts drum-tight) → linseed oil seal. 3 days per wing.",
+                notebookSummary: "Silk wing assembly (5 steps in strict order, 3 days per wing): (1) cut silk to shape → (2) soak in warm water (shrinks) → (3) stretch over ribs, secure with waxed linen thread through pre-drilled holes → (4) dry (contracts drum-tight) → (5) linseed oil seal closes pores. Simple steps in the right order = airfoil. (Next: the Duomo.)",
                 visual: CardVisual(type: .crossSection, title: "Step 3: Silk Assembly", values: [:], labels: [], steps: 3, caption: "")
             ),
         ]
