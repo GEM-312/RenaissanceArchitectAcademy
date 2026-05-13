@@ -203,6 +203,7 @@
 		544299C02F3A000100F92073 /* SceneEditorMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299BF2F3A000100F92073 /* SceneEditorMode.swift */; };
 		5475D2EF2F3146CC003AA131 /* building_complete.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2EE2F3146CB003AA131 /* building_complete.mp3 */; };
 		5475D2F82F319000003AA131 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2F92F319000003AA131 /* Assets.xcassets */; };
+		ATC1 /* RiverHouse.atlasc in Resources */ = {isa = PBXBuildFile; fileRef = ATC2 /* RiverHouse.atlasc */; };
 		6CE /* BlueprintStudyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE /* BlueprintStudyView.swift */; };
 		8CE /* ShapeSnap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CE /* ShapeSnap.swift */; };
 		AA1 /* anvil_strike.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA1 /* anvil_strike.wav */; };
@@ -496,6 +497,7 @@
 		5448B9A92F9297B30071F5FB /* RenaissanceArchitectAcademy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RenaissanceArchitectAcademy.entitlements; sourceTree = "<group>"; };
 		5475D2EE2F3146CB003AA131 /* building_complete.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = building_complete.mp3; sourceTree = "<group>"; };
 		5475D2F92F319000003AA131 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		ATC2 /* RiverHouse.atlasc */ = {isa = PBXFileReference; lastKnownFileType = folder; path = RiverHouse.atlasc; sourceTree = "<group>"; };
 		5CE /* PencilCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PencilCanvasView.swift; sourceTree = "<group>"; };
 		7CE /* BlueprintStudyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueprintStudyView.swift; sourceTree = "<group>"; };
 		9CE /* ShapeSnap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeSnap.swift; sourceTree = "<group>"; };
@@ -574,6 +576,7 @@
 				544299BF2F3A000100F92073 /* SceneEditorMode.swift */,
 				1EA /* TerrainBlurHelper.swift */,
 				5475D2F92F319000003AA131 /* Assets.xcassets */,
+				ATC2 /* RiverHouse.atlasc */,
 				54477B172F313D06007D8C64 /* Info.plist */,
 				54477B162F313B22007D8C64 /* Fonts */,
 				101 /* RenaissanceArchitectAcademyApp.swift */,
@@ -968,6 +971,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5475D2F82F319000003AA131 /* Assets.xcassets in Resources */,
+				ATC1 /* RiverHouse.atlasc in Resources */,
 				F001 /* Cinzel-Black.ttf in Resources */,
 				F002 /* Cinzel-Bold.ttf in Resources */,
 				F003 /* Cinzel-ExtraBold.ttf in Resources */,

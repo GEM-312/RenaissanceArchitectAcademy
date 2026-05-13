@@ -181,6 +181,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
         setupAmbientEffects()
         setupQuarryAnimation()
         setupRiverFlowAnimation()
+        setupChickenAnimation()
         setupSwayingTrees()
         setupPlayer()
 
@@ -336,6 +337,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
     private var smallSmokeAccent2: SKEmitterNode?
     private var volcanoLava: SKEmitterNode?
     private var riverFlowAnimation: SKSpriteNode?
+    private var chickenAnimation: SKSpriteNode?
     private var volcanoGlow: SKSpriteNode?
     private var quarryAnimation: SKSpriteNode?
 
@@ -503,13 +505,66 @@ class WorkshopScene: SKScene, ScrollZoomable {
     // MARK: - River Flow Animation
     //
     // 15-frame loop overlaid on the painted river near the .river station.
-    // Trimmed assets are 611x377 (river-only crop from the 1928x1072 source).
-    // Re-tune position via editor mode (press E → drag → console prints coords).
+    // Cleaned source frames are 1928×1072 px (native, like the quarry crane) —
+    // rendered at 1500×836 pt for crisp display. Re-tune position via editor
+    // mode (press E → drag → console prints coords).
 
     private func setupRiverFlowAnimation() {
+        // Loaded from RiverHouse.atlasc (TexturePacker-generated, tightly cropped
+        // with anchor offsets baked in). Frame names retain the original PNG
+        // filenames including the trailing " copy.png" suffix.
+        let atlas = SKTextureAtlas(named: "RiverHouse")
         var textures: [SKTexture] = []
-        for i in 0..<15 {
-            let name = String(format: "RiverFlowFrame%02d", i)
+        for i in 1...15 {
+            let name = String(format: "RiverFlowFarmAnimation_%02d copy.png", i)
+            guard atlas.textureNames.contains(name) else { break }
+            textures.append(atlas.textureNamed(name))
+        }
+        guard !textures.isEmpty else { return }
+
+        let sprite = SKSpriteNode(texture: textures[0])
+        sprite.size = CGSize(width: 2250, height: 1254)
+        sprite.position = CGPoint(x: 889, y: 632)
+        sprite.zPosition = 12
+        sprite.name = "riverFlowAnimation"
+        addChild(sprite)
+        riverFlowAnimation = sprite
+
+        let cycle = SKAction.animate(with: textures, timePerFrame: 0.15, resize: false, restore: false)
+        sprite.run(SKAction.repeatForever(cycle), withKey: "riverFrameLoop")
+    }
+
+    // MARK: - Chicken Animation
+    //
+    // 15-frame loop dropped near the farm. Re-tune position via editor mode
+    // (press E → drag → console prints coords).
+    // Source frames live in Assets.xcassets/ChickenFrame00-14.
+
+    private func setupChickenAnimation() {
+        guard let sprite = makeLoopingFrameSprite(
+            prefix: "ChickenFrame",
+            frameCount: 15,
+            size: CGSize(width: 165, height: 56),      // native source size — matches painted reference
+            position: CGPoint(x: 1307, y: 724),
+            nodeName: "chickenAnimation",
+            actionKey: "chickenFrameLoop"
+        ) else { return }
+        chickenAnimation = sprite
+    }
+
+    /// Shared builder for the looping frame sprites used by fisherman + chicken
+    /// (and previously the river flow). Returns nil if no frames are bundled yet.
+    private func makeLoopingFrameSprite(
+        prefix: String,
+        frameCount: Int,
+        size: CGSize,
+        position: CGPoint,
+        nodeName: String,
+        actionKey: String
+    ) -> SKSpriteNode? {
+        var textures: [SKTexture] = []
+        for i in 0..<frameCount {
+            let name = String(format: "%@%02d", prefix, i)
             #if os(iOS)
             guard UIImage(named: name) != nil else { break }
             #else
@@ -517,20 +572,14 @@ class WorkshopScene: SKScene, ScrollZoomable {
             #endif
             textures.append(SKTexture(imageNamed: name))
         }
-        guard !textures.isEmpty else { return }
+        guard !textures.isEmpty else { return nil }
 
         let sprite = SKSpriteNode(texture: textures[0])
-        // Frames are padded to a uniform 627x397 canvas (transparent fill,
-        // content centered) — so SpriteKit doesn't have to stretch each frame
-        // differently, which was causing the loop to "jump" between frames.
-        // Sprite size matches the ~1.58:1 canvas aspect ratio.
-        sprite.size = CGSize(width: 770, height: 484)
-        // Aligned with painted river via editor mode.
-        sprite.position = CGPoint(x: 1042, y: 570)
+        sprite.size = size
+        sprite.position = position
         sprite.zPosition = 12   // above terrain (-100), below station label pills (9-10)
-        sprite.name = "riverFlowAnimation"
+        sprite.name = nodeName
         addChild(sprite)
-        riverFlowAnimation = sprite
 
         let timePerFrame: TimeInterval = textures.count <= 2 ? 0.5 : 0.15
         let cycle = SKAction.animate(
@@ -539,7 +588,8 @@ class WorkshopScene: SKScene, ScrollZoomable {
             resize: false,
             restore: false
         )
-        sprite.run(SKAction.repeatForever(cycle), withKey: "riverFrameLoop")
+        sprite.run(SKAction.repeatForever(cycle), withKey: actionKey)
+        return sprite
     }
 
     // MARK: - Swaying Trees
@@ -1667,6 +1717,9 @@ class WorkshopScene: SKScene, ScrollZoomable {
         }
         if let river = riverFlowAnimation {
             editorMode.registerNode(river, name: "anim_river")
+        }
+        if let chicken = chickenAnimation {
+            editorMode.registerNode(chicken, name: "anim_chicken")
         }
         for entry in swayingTrees {
             editorMode.registerNode(entry.node, name: entry.node.name ?? "tree")
