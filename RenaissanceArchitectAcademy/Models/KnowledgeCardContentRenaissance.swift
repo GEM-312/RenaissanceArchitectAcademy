@@ -1062,7 +1062,7 @@ extension KnowledgeCardContent {
                 title: "Vesalius's Revolution",
                 italianTitle: "La Rivoluzione di Vesalio",
                 icon: "figure.stand",
-                lessonText: "In 1543, Andreas Vesalius published De Humani Corporis Fabrica — 700 pages proving that Galen, the authority for 1,300 years, was wrong about human anatomy. Galen had dissected pigs and monkeys, not humans. Vesalius dissected human cadavers at the University of Padua. The book's illustrations were revolutionary — detailed woodcuts showing muscles, bones, and organs. Seeing is correcting. The anatomy theater made seeing possible.",
+                lessonText: "Come — back to Padua. But now, a different kind of garden. A garden of the human body. In the year fifteen hundred forty-three, a young Flemish doctor named Andreas Vesalius — only twenty-eight years old — published a book. De Humani Corporis Fabrica. Seven hundred pages. In it, he proved that Galen — the Greek physician who had been the great medical authority for thirteen hundred years — was WRONG. About the human body. How? Galen had only dissected pigs and monkeys. Never humans. Vesalius dissected cadavers. He drew what he saw. His woodcut illustrations were the most accurate of human anatomy the world had ever seen. Seeing is correcting, my apprentice. And the anatomy theater — built to make seeing possible.",
                 keywords: [
                     KeywordPair(keyword: "Vesalius", definition: "Proved Galen wrong by dissecting humans"),
                     KeywordPair(keyword: "1543", definition: "Year De Humani Corporis Fabrica was published"),
@@ -1070,8 +1070,9 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "De Fabrica", definition: "700-page book with revolutionary anatomy illustrations"),
                 ],
                 activity: .numberFishing(question: "In what year did Vesalius publish De Humani Corporis Fabrica?", correctAnswer: 1543, decoys: [1400, 1480, 1520, 1600, 1650]),
-                notebookSummary: "1543: Vesalius published De Fabrica. Proved Galen wrong (dissected animals, not humans). 700 pages. The anatomy theater made seeing possible.",
-                visual: CardVisual(type: .crossSection, title: "Vesalius's Revolution", values: [:], labels: [], steps: 3, caption: "")
+                notebookSummary: "1543: Andreas Vesalius (28-year-old Flemish doctor) published De Humani Corporis Fabrica. 700 pages, revolutionary woodcut illustrations. Proved Galen — medical authority for 1,300 years — was wrong about human anatomy (Galen only dissected pigs + monkeys, never humans). Vesalius dissected human cadavers at Padua. Seeing is correcting.",
+                visual: CardVisual(type: .crossSection, title: "Vesalius's Revolution", values: [:], labels: [], steps: 3, caption: ""),
+                isLeadCard: true
             ),
 
             KnowledgeCard(
@@ -1082,7 +1083,7 @@ extension KnowledgeCardContent {
                 title: "Step 1: Funnel Shape",
                 italianTitle: "Forma a Imbuto",
                 icon: "triangle.fill",
-                lessonText: "Padua's anatomy theater (built 1594) is an inverted funnel — 6 concentric oval tiers rising steeply around a central dissection table. The narrowest tier is at the bottom (standing room only, 2 meters wide). Each tier above is wider. 300 students packed into a space 11 meters across. No seats — everyone stood, leaning on railings. The funnel shape ensures every student looks DOWN at the table. Anatomy requires a bird's-eye view.",
+                lessonText: "In fifteen ninety-four, an Italian anatomist named Hieronymus Fabricius built the permanent theater you see here. Look at its shape — strange — no? It is an inverted funnel. Narrow at the bottom. Wide at the top. Six concentric oval tiers rise steeply around a single dissection table at the center. The bottom tier is only two meters across — standing room for two or three. The top tier is much wider. Three hundred students packed in. No seats. Everyone stands. Everyone leans on the railings. And the genius of the shape — every single student looks DOWN at the table. Anatomy, you see, requires a bird's-eye view.",
                 keywords: [
                     KeywordPair(keyword: "Inverted funnel", definition: "Narrow at bottom, wide at top"),
                     KeywordPair(keyword: "6 tiers", definition: "Concentric oval standing galleries"),
@@ -1090,7 +1091,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "1594", definition: "Year the permanent theater was built"),
                 ],
                 activity: .numberFishing(question: "How many students could the anatomy theater hold?", correctAnswer: 300, decoys: [50, 100, 500, 800, 1000]),
-                notebookSummary: "Built 1594: inverted funnel, 6 oval tiers, 300 standing students in 11m diameter. Everyone looks down at the dissection table.",
+                notebookSummary: "Padua anatomy theater (built 1594 by Hieronymus Fabricius): inverted funnel — narrow at bottom (2m), wide at top, 6 concentric oval tiers. 300 standing students in 11m diameter. No seats — everyone leans on the railings. Funnel shape ensures every student looks DOWN at the dissection table. Anatomy requires a bird's-eye view.",
                 visual: CardVisual(type: .crossSection, title: "Step 1: Funnel Shape", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1102,7 +1103,7 @@ extension KnowledgeCardContent {
                 title: "Step 5: Candlelight",
                 italianTitle: "Ottica delle Candele",
                 icon: "candle.fill",
-                lessonText: "Dissections happened in winter (cold preserved the cadaver) and lasted 3 days. No windows — light came from candles held by the students themselves. Each tier had candle sconces angled at 45° toward the table. The collective light of 300 candles created shadowless illumination from every direction. Modern operating rooms use the same principle: ring lights. 300 students weren't just watching. They were the lighting system.",
+                lessonText: "Now — listen. Dissections happened only in winter. Why? Because the cold preserved the cadaver. A dissection lasted three days. Three days. With no windows in the theater. Only candles. And here is the brilliance — each student held a candle. Three hundred candles total. Each tier had sconces angled at exactly forty-five degrees toward the dissection table below. The collective light of three hundred small flames — from every direction at once — created shadowless illumination. Your modern operating rooms use this exact same principle. They call them ring lights. But the Padua students invented it. They were not just watching. They WERE the lighting system.",
                 keywords: [
                     KeywordPair(keyword: "300 candles", definition: "One per student — collective shadowless light"),
                     KeywordPair(keyword: "45° angle", definition: "Sconce angle directing light to the table"),
@@ -1110,7 +1111,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Ring light", definition: "Modern version of the same all-around principle"),
                 ],
                 activity: .trueFalse(statement: "Students held candles at 45° angles, creating shadowless illumination from all directions", isTrue: true),
-                notebookSummary: "Winter dissections, 3 days. 300 candles at 45° = shadowless light from every direction. Students = the lighting system. Same as modern ring lights.",
+                notebookSummary: "Winter dissections only (cold preserved cadavers), lasted 3 days. No windows — each student held a candle at 45° toward the table. 300 candles from every direction = shadowless illumination. Same principle as modern operating-room ring lights. The students weren't just watching — they were the lighting system.",
                 visual: CardVisual(type: .crossSection, title: "Step 5: Candlelight", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1122,7 +1123,7 @@ extension KnowledgeCardContent {
                 title: "Step 2: Sight Lines",
                 italianTitle: "Geometria delle Linee di Vista",
                 icon: "eye",
-                lessonText: "Every student needed an unobstructed view of the dissection table — from a 2-meter-wide bottom tier to an 8-meter-wide top tier. The architect calculated sight lines: each tier was raised 30 cm and set back 40 cm from the tier below. The railing height was exactly 90 cm — waist-high for a standing person, low enough to see over from the tier above. 300 clear sight lines. Zero dead angles. Geometry as democracy.",
+                lessonText: "Three hundred students. All standing. All needing to see the same thing — clearly. How does the architect solve this? Geometry. Fabricius calculated. Each tier rises thirty centimeters above the one below. Each tier sets back forty centimeters wider. The railings are ninety centimeters tall — exactly waist-high for a standing person. Low enough that the student behind can see over. High enough that no one falls into the tier below. Three hundred clear sight lines. Zero dead angles. Every student — from the front row to the back — sees the same incision, the same organ, the same truth. You remember the Colosseum's seating? Same principle. Geometry as democracy.",
                 keywords: [
                     KeywordPair(keyword: "30 cm rise", definition: "Height increase per tier for clear views"),
                     KeywordPair(keyword: "40 cm setback", definition: "Each tier wider than the one below"),
@@ -1130,7 +1131,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Zero dead angles", definition: "Every position has unobstructed view"),
                 ],
                 activity: .numberFishing(question: "How tall (cm) were the railings for optimal sight lines?", correctAnswer: 90, decoys: [50, 70, 100, 120, 150]),
-                notebookSummary: "Sight lines: 30cm rise + 40cm setback per tier. 90cm railings. 300 students, zero dead angles. Geometry = everyone sees.",
+                notebookSummary: "Sight-line geometry: each tier rises 30cm and sets back 40cm from the tier below. Railings 90cm tall (waist height — see over from above). 300 students, zero dead angles. Same principle as Colosseum seating. Geometry as democracy — every student sees the same truth.",
                 visual: CardVisual(type: .crossSection, title: "Step 2: Sight Lines", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1144,7 +1145,7 @@ extension KnowledgeCardContent {
                 title: "Step 4: Bronze Pivot",
                 italianTitle: "Meccanismi a Perno di Bronzo",
                 icon: "gearshape.fill",
-                lessonText: "The dissection table rotated on a bronze pivot — allowing the professor to turn the cadaver to face any tier. Bronze bearings provided smooth, quiet rotation. The pivot was a tapered cone fitting into a matching socket — a design borrowed from Roman door hinges. Oil it once a week and it turns silently for decades. The simplest mechanism enabled the most complex science. Form follows function.",
+                lessonText: "Now — look at the table itself. It rotates. The professor turns the cadaver to face any of the three hundred students, as he speaks. The mechanism is a bronze pivot. A tapered cone fits into a matching socket below. Smooth. Quiet. Rotation in any direction. The design — borrowed directly from Roman door hinges. You see? The Romans have not left us. Their solutions return, in new shapes. Oil the pivot once a week, and it turns silently for decades. The simplest mechanism — enables the most complex science. Form follows function.",
                 keywords: [
                     KeywordPair(keyword: "Bronze pivot", definition: "Rotating mechanism for the dissection table"),
                     KeywordPair(keyword: "Tapered cone", definition: "Self-centering bearing design"),
@@ -1152,7 +1153,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Silent rotation", definition: "Bronze-on-bronze with weekly oiling"),
                 ],
                 activity: .wordScramble(word: "PIVOT", hint: "Rotating mechanism that turns the dissection table to face any tier"),
-                notebookSummary: "Dissection table on bronze pivot — tapered cone bearing from Roman hinge design. Silent rotation, weekly oiling. Simple mechanism, complex science.",
+                notebookSummary: "Dissection table rotates on a bronze pivot — tapered cone fits into matching socket. Smooth, silent rotation in any direction. Design borrowed from Roman door hinges (Roman solutions returning in new shapes). Weekly oiling lasts decades. Simplest mechanism enables the most complex science.",
                 visual: CardVisual(type: .crossSection, title: "Step 4: Bronze Pivot", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1164,7 +1165,7 @@ extension KnowledgeCardContent {
                 title: "Step 7: Scalpel Steel",
                 italianTitle: "Leghe per Bisturi",
                 icon: "scissors",
-                lessonText: "Renaissance surgeons needed scalpels sharper than any knife. The blade: high-carbon steel (iron + 1.5% carbon), hardened to Rockwell 60 — harder than modern kitchen knives. The handle: bronze (won't rust from blood). The edge was ground on a stone wheel at 15° — half the angle of a butcher's knife. Sharper = less tissue damage. The scalpel proved that surgery is precision, not strength.",
+                lessonText: "And now — the scalpel itself. The blade of the surgeon. Sharper than any knife you have ever held. The blade is high-carbon steel — iron with one and a half percent carbon, hardened to a rating modern smiths call Rockwell sixty. Harder than the kitchen knife in your house today. The handle — bronze. Iron would rust from the blood. The edge is ground on a stone wheel — at fifteen degrees. Only fifteen. Half the angle of a butcher's knife. Why? Because the sharper the edge, the less tissue it damages on its way through. The scalpel teaches the most important truth in surgery. Precision — not strength.",
                 keywords: [
                     KeywordPair(keyword: "1.5% carbon", definition: "Steel composition for surgical sharpness"),
                     KeywordPair(keyword: "15° edge", definition: "Half the angle of a butcher's knife"),
@@ -1172,7 +1173,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Bronze handle", definition: "Won't rust from exposure to blood"),
                 ],
                 activity: .numberFishing(question: "At what angle (degrees) was a Renaissance scalpel edge ground?", correctAnswer: 15, decoys: [5, 10, 25, 30, 45]),
-                notebookSummary: "Scalpel: 1.5% carbon steel (Rockwell 60), 15° edge (half a butcher's knife). Bronze handle resists blood corrosion. Precision > strength.",
+                notebookSummary: "Scalpel: high-carbon steel blade (iron + 1.5% C, hardened to Rockwell 60 — harder than a modern kitchen knife). Bronze handle (won't rust from blood). Edge ground at 15° — half a butcher's knife. Sharper = less tissue damage. Precision, not strength.",
                 visual: CardVisual(type: .crossSection, title: "Step 7: Scalpel Steel", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1184,7 +1185,7 @@ extension KnowledgeCardContent {
                 title: "Step 3: Timber Prep",
                 italianTitle: "Ammollo del Legno per Intaglio",
                 icon: "drop.triangle.fill",
-                lessonText: "Walnut destined for the theater's carved railings was soaked in river water for 6 months. Water dissolves the sap and tannins, preventing future cracking and insect damage. The slow saturation also makes the grain easier to carve — a dry walnut blank resists the chisel. After soaking, logs air-dried for 1 year. Total prep: 18 months before a chisel touched wood. Great carving starts with great preparation.",
+                lessonText: "Now — the walnut. The wood that will become every carved railing in the theater. But before the master carver touches it — eighteen months of preparation. First, six months in the river. Submerged. The slow-moving water dissolves the sap and the tannins in the wood. Without this — the wood will crack later, and insects will attack it. The slow saturation also softens the grain. Easier to carve. Then — the wood is pulled from the river and air-dried. For one full year. Slowly. In the shade. Eighteen months. Before a single chisel touches the blank. Great carving — it does not start with skill. It starts with preparation.",
                 keywords: [
                     KeywordPair(keyword: "6 months", definition: "River soaking time for walnut logs"),
                     KeywordPair(keyword: "Tannin removal", definition: "Water dissolves sap — prevents cracking"),
@@ -1192,7 +1193,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "18 months total", definition: "Preparation time before carving begins"),
                 ],
                 activity: .numberFishing(question: "Total months to prepare walnut for carving (soak + dry)?", correctAnswer: 18, decoys: [3, 6, 12, 24, 36]),
-                notebookSummary: "Walnut prep: 6 months river soak (removes sap/tannins) + 12 months air-dry = 18 months before carving. Preparation > skill.",
+                notebookSummary: "Walnut for theater carvings: 6 months river soak (water dissolves sap + tannins → prevents future cracking + insect damage, softens grain) + 12 months slow air-dry in the shade. 18 months total prep before a chisel touches the wood. Great carving starts with preparation, not skill.",
                 visual: CardVisual(type: .crossSection, title: "Step 3: Timber Prep", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1206,7 +1207,7 @@ extension KnowledgeCardContent {
                 title: "Step 8: Walnut Carvings",
                 italianTitle: "Intagli in Noce",
                 icon: "leaf.fill",
-                lessonText: "Every railing, panel, and decorative element in the anatomy theater is carved walnut. Why walnut? Its grain is uniform in all directions — it carves equally well horizontally, vertically, and diagonally. Oak splits along the grain. Pine is too soft. Walnut holds fine detail: the floral scrolls on the railings are 3mm deep. 400 years later, every scroll is still sharp. The wood that carves best is the wood that lasts.",
+                lessonText: "You remember walnut from the siege workshop? The precision wood for triggers and ratchets? Here, again. Every railing, every panel, every decorative element in the anatomy theater — carved walnut. Why? Because walnut's grain is uniform in all directions. We have a word for this — isotropic. It carves equally well horizontally, vertically, diagonally. Oak splits along its grain. Pine is too soft. But walnut — walnut holds the fine detail. The floral scrolls you see on the railings — only three millimeters deep. Four hundred years later — every single scroll is still sharp. The wood that carves the best — is also the wood that lasts the longest.",
                 keywords: [
                     KeywordPair(keyword: "Uniform grain", definition: "Carves equally in all directions"),
                     KeywordPair(keyword: "3mm detail", definition: "Depth of fine floral scrollwork"),
@@ -1214,7 +1215,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Isotropic", definition: "Same properties in every direction"),
                 ],
                 activity: .hangman(word: "WALNUT", hint: "The only wood that carves equally well in all directions"),
-                notebookSummary: "All theater carvings: walnut. Uniform grain = carves in any direction. 3mm scrollwork still sharp after 400 years. Best carving = longest lasting.",
+                notebookSummary: "All theater carvings = walnut (callback to siege workshop's precision wood). Isotropic — uniform grain carves equally in any direction (oak splits, pine is too soft). 3mm-deep floral scrollwork still sharp after 400 years. The wood that carves best is the wood that lasts longest.",
                 visual: CardVisual(type: .crossSection, title: "Step 8: Walnut Carvings", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1226,7 +1227,7 @@ extension KnowledgeCardContent {
                 title: "Step 3: Oak Structure",
                 italianTitle: "Pali Strutturali in Quercia",
                 icon: "rectangle.portrait.fill",
-                lessonText: "The theater's 6 tiers needed invisible structural support. Oak posts — 20 cm square — were hidden inside the walnut-clad walls. Oak handles compression (vertical load) better than any other European wood. Each post carries the weight of 50 standing students above it. The walnut you see is decorative. The oak you don't see is structural. Beauty and strength share the same wall but different jobs.",
+                lessonText: "Six tiers of standing students — that is a great deal of weight to hold up. So inside the walls — hidden — are oak posts. Twenty centimeters square. Strong. Heavy. Oak holds compression — vertical load — better than any other European wood. Each post carries the weight of fifty standing students above it. And you remember the insulae of Rome? Same idea, in reverse. The Romans put the strong wood at the bottom because they could. The Renaissance architects hid the strong wood, so the eye could see only beauty. The walnut you see is decorative. The oak you do not see is structural. Beauty and strength share the same wall — but different jobs.",
                 keywords: [
                     KeywordPair(keyword: "20 cm square", definition: "Cross-section of hidden oak support posts"),
                     KeywordPair(keyword: "Compression", definition: "Vertical load — oak's strongest property"),
@@ -1234,7 +1235,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Hidden inside", definition: "Structure concealed behind decorative walnut"),
                 ],
                 activity: .trueFalse(statement: "The anatomy theater's structural oak posts are hidden inside walnut-clad walls", isTrue: true),
-                notebookSummary: "Hidden oak posts: 20cm square, carry 50 students each. Oak = compression. Walnut = decoration. Same wall, different jobs.",
+                notebookSummary: "Hidden inside the walnut-clad walls: oak posts 20cm square, each carrying the weight of 50 standing students above. Oak handles compression (vertical load) best of any European wood. Walnut = decoration on the outside; oak = structure within. Same wall, different jobs. Beauty + strength.",
                 visual: CardVisual(type: .crossSection, title: "Step 3: Oak Structure", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1246,7 +1247,7 @@ extension KnowledgeCardContent {
                 title: "Step 6: Cypress Ventilation",
                 italianTitle: "Conservazione Aromatica",
                 icon: "tree.fill",
-                lessonText: "Cypress wood contains natural oils (thujone and cedrol) that repel insects and resist fungal decay. The anatomy theater's ceiling panels are cypress — chosen because the aromatic compounds also mask decomposition odors during 3-day dissections. Cypress coffins in ancient Egypt still smell of cedar after 3,000 years. The tree of cemeteries became the wood of the anatomy theater. Death's tree preserving death's study.",
+                lessonText: "Now — the ceiling. Made of cypress. Why cypress? Because cypress contains natural oils — thujone, cedrol — that repel insects and resist the rot of fungus. But there is a deeper reason. A three-day dissection produces a smell that the living find very hard to bear. The aromatic compounds in cypress mask the smell of decomposition. The cypress also has its own meaning — the cypress is the tree of cemeteries. In ancient Egypt, the coffins were made of cypress, and three thousand years later they still smell of cedar. The tree of death — preserving the study of death. Beautiful — no? Even the choice of ceiling is part of the science.",
                 keywords: [
                     KeywordPair(keyword: "Thujone", definition: "Cypress oil that repels insects"),
                     KeywordPair(keyword: "Cedrol", definition: "Aromatic compound masking decomposition"),
@@ -1254,7 +1255,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "3-day dissections", definition: "Duration requiring odor management"),
                 ],
                 activity: .wordScramble(word: "CYPRESS", hint: "Aromatic wood whose natural oils mask decomposition and repel insects"),
-                notebookSummary: "Cypress ceiling: thujone + cedrol oils repel insects, resist fungus, mask decomposition. 3-day dissections needed odor control. Death's tree for death's study.",
+                notebookSummary: "Theater ceiling = cypress. Natural oils (thujone, cedrol) repel insects + resist fungal decay + mask the smell of decomposition during 3-day winter dissections. Cypress = the tree of cemeteries; Egyptian cypress coffins still smell of cedar after 3,000 years. The tree of death preserves the study of death. Even the ceiling is part of the science.",
                 visual: CardVisual(type: .crossSection, title: "Step 6: Cypress Ventilation", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -1268,7 +1269,7 @@ extension KnowledgeCardContent {
                 title: "Step 8: Carving Tools",
                 italianTitle: "Tecniche di Intaglio in Noce",
                 icon: "pencil.and.outline",
-                lessonText: "Renaissance carvers used 30 different chisel profiles — each for a specific curve. The process: draw the design on paper, transfer to wood with carbon dust, rough-cut with gouges, detail with V-tools and veiners, sand with 3 grits (coarse → medium → fine), seal with walnut oil. The oil darkens the wood to its signature deep brown and fills the pores against moisture. Every panel: 2 weeks of carving, 30 minutes of oiling.",
+                lessonText: "And now — to finish. The carving itself. A Renaissance master kept thirty different chisel profiles. Thirty. Each one shaped for a specific curve. The process — listen carefully. First, draw the design on paper. Second, transfer the design to the wood with carbon dust. Third, rough-cut with gouges — broad strokes, removing big pieces. Fourth, detail with V-tools and veiners — the fine work. Fifth, sand with three grits — coarse, then medium, then fine. And last — seal with walnut oil. The oil darkens the wood to that deep brown you see in every theater. It also fills the pores, against the moisture. Every single panel took two weeks of carving. And then — thirty minutes of oil. A lifetime of skill, finished in half an hour. And so — we close Padua. The Renaissance has shown you its body — the garden, the glass, the theater of the dead. Next, we go further — to the men who looked up. And to those who built machines.",
                 keywords: [
                     KeywordPair(keyword: "30 chisel profiles", definition: "Different shapes for different curves"),
                     KeywordPair(keyword: "Carbon dust transfer", definition: "Method of copying paper design onto wood"),
@@ -1276,7 +1277,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "2 weeks", definition: "Carving time per decorative panel"),
                 ],
                 activity: .numberFishing(question: "How many different chisel profiles did Renaissance carvers use?", correctAnswer: 30, decoys: [5, 10, 15, 50, 100]),
-                notebookSummary: "Carving: 30 chisel profiles. Design → carbon transfer → gouge → detail → 3-grit sand → walnut oil seal. 2 weeks per panel.",
+                notebookSummary: "Renaissance carving process: 30 chisel profiles. Steps: draw design on paper → carbon-dust transfer to wood → rough-cut with gouges → detail with V-tools + veiners → sand 3 grits (coarse/medium/fine) → seal with walnut oil (darkens to deep brown + fills pores). Every panel: 2 weeks of carving, 30 min of oiling.",
                 visual: CardVisual(type: .crossSection, title: "Step 8: Carving Tools", values: [:], labels: [], steps: 3, caption: "")
             ),
         ]
