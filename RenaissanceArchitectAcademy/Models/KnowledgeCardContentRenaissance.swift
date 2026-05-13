@@ -23,7 +23,7 @@ extension KnowledgeCardContent {
                 title: "Brunelleschi's Genius",
                 italianTitle: "Il Genio di Brunelleschi",
                 icon: "building.columns.fill",
-                lessonText: "In 1418, Florence had a problem: an octagonal hole 42 meters wide at the top of its unfinished cathedral. No centering (temporary wooden frame) large enough existed. Filippo Brunelleschi proposed building the dome without centering — an idea so bold the committee almost rejected it. He won by demonstrating an egg standing on its end. Genius isn't inventing something new. It's seeing what everyone else missed.",
+                lessonText: "And so — we have come to the end. To Florence. To the greatest building of the Renaissance. The cathedral they called Il Duomo. Listen to the story. In the year fourteen hundred and eighteen, Florence had a problem. The cathedral of Santa Maria del Fiore was not finished. At the top — an octagonal opening forty-two meters wide. A hole in the sky. No one in Europe had built a dome that wide since the Romans built the Pantheon, thirteen hundred years before. And the secret of how they had done it — was lost. The wooden centering frame required to hold up a dome that wide while it cured — no forest in Italy could supply enough oak. Then a man named Filippo Brunelleschi proposed something impossible. To build the dome WITHOUT centering. The committee almost rejected him. So Brunelleschi took an egg. He challenged them — make this egg stand on its end. They tried. They failed. Brunelleschi took the egg, tapped its bottom lightly on the table to crack the shell flat — and stood it up. The committee said this was cheating. Brunelleschi answered — if I show you my method, you will say that is cheating too. He won the commission. He built the dome. With the patronage of a young Florentine banker — a man whose family you have heard me speak of all this journey. Cosimo de Medici.",
                 keywords: [
                     KeywordPair(keyword: "Brunelleschi", definition: "Architect who built the dome without centering"),
                     KeywordPair(keyword: "42 meters", definition: "Width of the octagonal drum opening"),
@@ -31,8 +31,9 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "No centering", definition: "Built without temporary wooden support frame"),
                 ],
                 activity: .numberFishing(question: "How wide (meters) is the Duomo's dome opening?", correctAnswer: 42, decoys: [28, 35, 50, 60, 72]),
-                notebookSummary: "Brunelleschi won 1418 competition. 42m dome built WITHOUT centering. No one had done it since the Pantheon. Genius = seeing what's missed.",
-                visual: CardVisual(type: .crossSection, title: "Brunelleschi's Genius", values: [:], labels: [], steps: 3, caption: "")
+                notebookSummary: "1418 Florence: an unfinished cathedral with a 42m-wide octagonal opening at the top. No one had built a dome that wide since the Pantheon (1,300 years earlier) — the Roman method of centering was lost. Filippo Brunelleschi proposed building it WITHOUT centering. Won the commission by standing an egg on its end (tapping the bottom flat). Built with patronage from Cosimo de Medici (introduced at Botanical Garden, returns here at the finale).",
+                visual: CardVisual(type: .crossSection, title: "Brunelleschi's Genius", values: [:], labels: [], steps: 3, caption: ""),
+                isLeadCard: true
             ),
 
             KnowledgeCard(
@@ -43,14 +44,14 @@ extension KnowledgeCardContent {
                 title: "Step 1: Octagonal Drum",
                 italianTitle: "Tamburo Ottagonale",
                 icon: "octagon.fill",
-                lessonText: "Why octagonal? A circle distributes weight evenly but is hard to build in stone. A square concentrates stress at corners. An octagon splits the difference — 8 corners share the load, and flat walls are easier to construct than curves. Each of the 8 sides acts as a flat arch pushing inward. The octagon isn't a compromise between circle and square. It's better than both.",
+                lessonText: "Look at the shape of the dome from above. Not a circle. Not a square. An octagon. Eight sides. Why? Listen — a perfect circle distributes weight evenly. Beautiful. But it is very hard to build in stone, because every stone must be curved. A square is easy to build with flat walls, but it concentrates stress at the four corners. They crack. The octagon — splits the difference. Eight corners share the load. Eight flat walls are easy to construct. And here is the genius — each of the eight sides acts as a flat arch, pushing inward against the others. The pressure of one side balances the pressure of the others. The octagon, my apprentice — it is not a compromise between circle and square. It is better than both.",
                 keywords: [
                     KeywordPair(keyword: "Octagonal", definition: "8-sided shape distributing weight at 8 points"),
                     KeywordPair(keyword: "Flat arch", definition: "Each side pushes inward like an arch"),
                     KeywordPair(keyword: "Stress distribution", definition: "8 corners share load vs 4 (square) or ∞ (circle)"),
                 ],
                 activity: .multipleChoice(question: "Why is an octagonal dome better than a circular one for stone construction?", options: ["More decorative", "Flat walls are easier to build than curves", "Uses less material", "Taller profile"], correctIndex: 1),
-                notebookSummary: "Octagon: 8 sides share load (vs 4 for square). Flat walls easier than curves. Each side = flat arch pushing inward. Better than circle or square.",
+                notebookSummary: "Why octagonal? Circle = even weight but hard to build in curved stone. Square = easy flat walls but stress concentrates at 4 corners. Octagon splits the difference: 8 corners share load, 8 flat walls easy to build, each side acts as a flat arch pushing inward to balance the others. Not a compromise — better than both.",
                 visual: CardVisual(type: .crossSection, title: "Step 1: Octagonal Drum", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -62,7 +63,7 @@ extension KnowledgeCardContent {
                 title: "Step 2: Double Shell",
                 italianTitle: "Innovazione della Doppia Calotta",
                 icon: "circle.circle",
-                lessonText: "Brunelleschi's key insight: two domes, not one. An inner shell 2.1 meters thick carries the structural load. An outer shell 0.6 meters thick sheds rain and looks magnificent. Between them: a hidden staircase of 463 steps. The gap reduces weight by 25% compared to a solid dome. Two thin shells are stronger than one thick one — nature uses this trick in eggs and skulls.",
+                lessonText: "Brunelleschi's secret — listen — is that there are not one dome. There are TWO. The visitor sees only one dome from below. From outside, only one dome. But inside the walls — two shells, separated by a hollow space. The inner shell, two and one tenth meters thick, carries the structural load. The outer shell, only six tenths of a meter thick, sheds the rain and presents the magnificent profile to the city below. Between the two shells — a hidden staircase. Four hundred sixty-three steps spiraling up to the lantern. The gap between the shells reduces the total weight by twenty-five percent compared to a single solid dome. Two thin shells are STRONGER than one thick one. Nature — listen — nature uses this same trick. In an egg. In the human skull. Brunelleschi did not invent this. He observed it.",
                 keywords: [
                     KeywordPair(keyword: "Double shell", definition: "Inner (structural) + outer (protective) dome"),
                     KeywordPair(keyword: "2.1 meters", definition: "Inner shell thickness — carries the load"),
@@ -70,7 +71,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "25% lighter", definition: "Weight savings vs a single solid dome"),
                 ],
                 activity: .trueFalse(statement: "Brunelleschi's double-shell dome is 25% lighter than a single solid dome would be", isTrue: true),
-                notebookSummary: "Double shell: inner 2.1m (structure) + outer 0.6m (weather). 463-step staircase between. 25% lighter than solid. Eggs use the same trick.",
+                notebookSummary: "Brunelleschi's secret: TWO domes, not one. Inner shell 2.1m thick (structural load) + outer shell 0.6m thick (weather + magnificent profile). Hollow gap between, with 463-step hidden staircase spiraling up to the lantern. 25% lighter than a solid dome. Two thin shells stronger than one thick one — the trick nature uses in eggs and skulls. Brunelleschi observed; he did not invent.",
                 visual: CardVisual(type: .crossSection, title: "Step 2: Double Shell", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -82,7 +83,7 @@ extension KnowledgeCardContent {
                 title: "Step 4: Herringbone Brick",
                 italianTitle: "Muratura a Spina di Pesce",
                 icon: "rectangle.split.3x3.fill",
-                lessonText: "Without centering, how do you keep wet mortar from sliding off a curved surface? Brunelleschi's answer: herringbone pattern. Vertical bricks are inserted every few rows at alternating angles, creating interlocking wedges that grip the course below. Each ring of bricks becomes self-supporting as it's laid. The pattern looks decorative but is purely structural — the bricks hold EACH OTHER up while the mortar dries.",
+                lessonText: "Now — listen to the most beautiful trick. You remember the Pantheon? How the Romans built their dome on a wooden centering, week after week of timber bearing thousands of tons? Brunelleschi did not have wood enough for centering. So how did he prevent the wet mortar — applied to a curving surface — from sliding off? His answer was a brick pattern called herringbone. After every few horizontal rows of normal bricks, the masons inserted a vertical brick at an angle. Then another, at the opposite angle. Like teeth of a comb. The vertical bricks become wedges. They grip the course below them. They lock against the courses beside them. Each ring of bricks becomes self-supporting AS IT IS LAID. The mortar can be wet — the bricks hold THEMSELVES. And the next ring above grips the ring below. The pattern looks decorative. It is not. It is the engineering that made the impossible — possible.",
                 keywords: [
                     KeywordPair(keyword: "Herringbone", definition: "Zigzag brick pattern — self-supporting as laid"),
                     KeywordPair(keyword: "Vertical bricks", definition: "Inserted at angles to create interlocking wedges"),
@@ -90,7 +91,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Structural pattern", definition: "Looks decorative but serves engineering purpose"),
                 ],
                 activity: .wordScramble(word: "HERRINGBONE", hint: "Zigzag brick pattern that makes the dome self-supporting"),
-                notebookSummary: "Herringbone: vertical bricks at alternating angles create wedges. Each ring is self-supporting as laid. No centering needed.",
+                notebookSummary: "Herringbone brick pattern (callback to Pantheon's centering — Brunelleschi had no oak forest large enough). After every few horizontal courses, vertical bricks inserted at alternating angles become interlocking wedges that grip the course below. Each ring self-supporting AS LAID — mortar can be wet because the bricks hold themselves. Looks decorative — purely structural. The engineering that made the impossible possible.",
                 visual: CardVisual(type: .crossSection, title: "Step 4: Herringbone Brick", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -102,7 +103,7 @@ extension KnowledgeCardContent {
                 title: "Step 7: The Lantern",
                 italianTitle: "La Lanterna da 800 Tonnellate",
                 icon: "light.beacon.max.fill",
-                lessonText: "Atop the dome sits the lantern — a marble tower weighing 800 tons. Counterintuitive: adding weight to a dome's crown strengthens it. The lantern's weight pushes down on the dome's compression ring, locking the bricks tighter together. Without it, the dome would slowly splay outward. Brunelleschi died before it was finished. Verrocchio added the bronze ball. The heaviest piece makes everything lighter.",
+                lessonText: "Look up at the crown of the dome. A marble tower rises from the very top. We call it the lantern. It weighs eight hundred tons. Now — here is the surprise. Most people, looking at the dome, would think — that lantern is making the dome heavier. That it should fall. The opposite is true. The weight of the lantern presses DOWN on the crown of the dome. The downward force compresses every brick into its neighbor. Locks them tighter together. Without the lantern's weight — over the centuries — the dome would slowly splay outward. Crack. Fall. With it — the dome stands forever. Brunelleschi designed the lantern. He died before it could be finished. Many years later, the bronze ball at the very top was added by another master — Andrea del Verrocchio. The same Verrocchio. The man who, in his Florentine bottega, was at that moment training a young apprentice — Leonardo da Vinci. The threads of this Renaissance, you see — they are all tied together.",
                 keywords: [
                     KeywordPair(keyword: "Lantern", definition: "800-ton marble tower atop the dome"),
                     KeywordPair(keyword: "Compression ring", definition: "Lantern weight locks dome bricks together"),
@@ -110,7 +111,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Verrocchio", definition: "Added the bronze ball after Brunelleschi's death"),
                 ],
                 activity: .numberFishing(question: "How much does the Duomo's lantern weigh (tons)?", correctAnswer: 800, decoys: [200, 400, 1200, 1800, 2500]),
-                notebookSummary: "Lantern: 800 tons of marble. Weight compresses the dome ring — prevents splaying. Heaviest piece makes everything stronger.",
+                notebookSummary: "Lantern: 800-ton marble tower atop the dome. Counterintuitive: its weight presses DOWN on the dome's crown, compressing every brick into its neighbor — locks them tighter. Without it, the dome would splay outward over centuries. Brunelleschi designed it but died before completion; Andrea del Verrocchio added the bronze ball (the same Verrocchio who trained the young Leonardo da Vinci). The threads of the Renaissance tied together.",
                 visual: CardVisual(type: .crossSection, title: "Step 7: The Lantern", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -124,7 +125,7 @@ extension KnowledgeCardContent {
                 title: "Step 8: Carrara Marble",
                 italianTitle: "Marmo Policromo di Carrara",
                 icon: "mountain.2.fill",
-                lessonText: "The Duomo's facade uses three marble colors: white from Carrara, green from Prato, and pink from Maremma. Carrara marble is 99% pure calcium carbonate — the whitest in the world. Michelangelo himself later chose Carrara for the Pietà. The quarries sit 1,000 meters up in the Apuan Alps. Workers slid blocks down on wooden sledges greased with soap. The purest white comes from the highest mountains.",
+                lessonText: "Look at the facade of the Duomo. Three colors. White. Green. Pink. Three different marbles, from three different quarries. The white — listen — is from Carrara. The same Carrara from which Michelangelo would, decades later, carve the Pietà. Ninety-nine percent pure calcium carbonate — you remember calcium carbonate? The same chemistry as the limestone you fired into quicklime, back in Rome? Now in its highest form. The Carrara quarries sit one thousand meters up in the Apuan Alps. Workers slid the marble blocks down the mountain on wooden sledges greased with soap. The green marble — from Prato, just outside Florence. The pink — from Maremma on the Tuscan coast. The Duomo wears the colors of Tuscany itself. The purest white comes from the highest mountains.",
                 keywords: [
                     KeywordPair(keyword: "Carrara", definition: "Source of the world's whitest marble — 99% pure"),
                     KeywordPair(keyword: "Three colors", definition: "White (Carrara), green (Prato), pink (Maremma)"),
@@ -132,7 +133,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Soap sledges", definition: "Greased wooden slides for moving blocks downhill"),
                 ],
                 activity: .hangman(word: "CARRARA", hint: "Italian quarry producing the world's whitest marble"),
-                notebookSummary: "Duomo facade: 3 marbles — white (Carrara, 99% pure), green (Prato), pink (Maremma). Quarries at 1,000m altitude.",
+                notebookSummary: "Duomo facade = 3 marbles from 3 quarries: white from Carrara (99% pure CaCO₃ — same chemistry as Roman limestone in its highest form; later used by Michelangelo for the Pietà), green from Prato (outside Florence), pink from Maremma (Tuscan coast). Carrara quarries 1,000m up in the Apuan Alps; blocks slid down on soap-greased wooden sledges. The Duomo wears the colors of Tuscany.",
                 visual: CardVisual(type: .crossSection, title: "Step 8: Carrara Marble", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -144,7 +145,7 @@ extension KnowledgeCardContent {
                 title: "Step 4 Material: Bricks",
                 italianTitle: "Quattro Milioni di Mattoni",
                 icon: "rectangle.split.3x1.fill",
-                lessonText: "Brunelleschi's dome consumed 4 million bricks — each one a specific size for its position. The bricks were fired at Impruneta, 15 km south, using iron-rich Tuscan clay. That iron gives Florentine brick its famous warm red color. Every brick was stamped with the maker's mark. Quality control: if a batch failed the ring test, the entire kiln load was rejected. Four million chances to get it wrong.",
+                lessonText: "Four million bricks. Four MILLION. That is how many bricks went into Brunelleschi's dome. And — listen — each one was a SPECIFIC size for its specific position. A brick near the base is larger than a brick near the crown. The masons at Impruneta — a town fifteen kilometers south of Florence — fired every single one. From iron-rich Tuscan clay. The iron gives Florentine brick its famous warm red color. Every brick was stamped with the maker's mark. You remember the ring test we learned in Rome? Tap a tile — if it rings clear, it is properly fired. Every batch of bricks was tested. If even ONE batch failed the test, the ENTIRE kiln load was rejected. Four million chances to get it wrong. They got it right.",
                 keywords: [
                     KeywordPair(keyword: "4 million", definition: "Number of bricks in the Duomo's dome"),
                     KeywordPair(keyword: "Impruneta", definition: "Town 15 km south — source of dome bricks"),
@@ -152,7 +153,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Maker's mark", definition: "Stamp for quality control — reject bad batches"),
                 ],
                 activity: .numberFishing(question: "How many bricks are in the Duomo's dome?", correctAnswer: 4000000, decoys: [500000, 1000000, 2000000, 6000000, 10000000]),
-                notebookSummary: "4 million bricks from Impruneta. Iron-rich clay = red color. Each stamped with maker's mark. Failed batches rejected entirely.",
+                notebookSummary: "4 million bricks in the dome — each a SPECIFIC size for its position (larger at base, smaller at crown). Fired at Impruneta (15 km south of Florence) from iron-rich Tuscan clay (gives Florentine brick its warm red color). Each stamped with the maker's mark. Ring test (callback to Rome): one bad batch = entire kiln rejected. 4 million chances to get it wrong — they got it right.",
                 visual: CardVisual(type: .crossSection, title: "Step 4 Material: Bricks", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -164,7 +165,7 @@ extension KnowledgeCardContent {
                 title: "Step 5: Iron Chains",
                 italianTitle: "Catene di Ferro",
                 icon: "link",
-                lessonText: "Hidden inside the dome walls: iron catena — horizontal chains encircling the dome like belts. As the dome pushes outward (hoop stress), the chains pull inward, containing the force. Brunelleschi installed chains at 3 levels. Total iron: 70 tons. The chains are invisible from inside or outside — pure engineering, zero decoration. The dome's belt holds it together the way a barrel's hoops hold staves.",
+                lessonText: "And hidden inside the walls of the dome — listen — there are chains. Iron chains. We call them catena. Each one encircles the dome like a belt. Why? Because every dome pushes OUTWARD against itself as gravity pulls down. This force is called hoop stress. Without something to contain it, the dome would slowly burst outward over centuries. So Brunelleschi installed iron chains at three different levels. Three belts of iron, hidden inside the brickwork. Total weight — seventy tons of iron. They are invisible. No visitor sees them. They serve no decorative purpose. Pure engineering. The dome's belt holds it together — the same way the iron hoops on a wine barrel hold the wooden staves from bursting apart. The Renaissance learned everything from the barrel-makers, too.",
                 keywords: [
                     KeywordPair(keyword: "Catena", definition: "Iron chains hidden inside dome walls"),
                     KeywordPair(keyword: "Hoop stress", definition: "Outward force the dome exerts on itself"),
@@ -172,7 +173,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "70 tons", definition: "Total weight of iron chains"),
                 ],
                 activity: .wordScramble(word: "CATENA", hint: "Hidden iron chains encircling the dome to contain hoop stress"),
-                notebookSummary: "Catena: 70 tons of iron chains at 3 levels inside the dome. Contain hoop stress (outward push). Invisible. Pure engineering.",
+                notebookSummary: "Catena: iron chains hidden inside the dome walls at 3 levels, totaling 70 tons. Encircle the dome like belts. Every dome pushes outward as gravity pulls down (hoop stress) — without containment, the dome would slowly burst outward over centuries. The catena pull inward, holding the dome together like iron hoops hold a wine barrel's staves. Invisible. Pure engineering.",
                 visual: CardVisual(type: .crossSection, title: "Step 5: Iron Chains", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -184,7 +185,7 @@ extension KnowledgeCardContent {
                 title: "Step 8: Stained Glass",
                 italianTitle: "Cobalto per Vetrate",
                 icon: "paintbrush.fill",
-                lessonText: "The Duomo's oculus window blazes with blue stained glass — colored by cobalt oxide. Cobalt was imported from Saxony (Germany) via Venetian traders. Just 2% cobalt oxide in molten glass produces deep blue. The secret: cobalt ions absorb red and green light, transmitting only blue. Glass artists mixed different metal oxides for different colors: copper=green, gold=ruby, manganese=purple. The window is a chemistry experiment frozen in light.",
+                lessonText: "Look up at the great oculus of the Duomo. The round window at the heart of the facade. It blazes with deep blue stained glass. How did the masters of Florence make that color? Listen — the secret is a metal called cobalt. Imported from the mines of Saxony, in Germany, traded south by the merchants of Venice. Only two percent cobalt oxide, added to molten glass, produces this deep blue. The chemistry of color, in this case — listen — cobalt ions absorb red light and green light, transmitting only the blue back to your eye. The glass artists knew this — empirically, by trial — long before chemists understood why. They mixed different metal oxides for different colors. Copper for green. Gold for ruby. Manganese for purple — you remember manganese, the glassmaker's soap that gave us cristallo at Murano? The window of the Duomo, my apprentice — it is a chemistry experiment, frozen in light.",
                 keywords: [
                     KeywordPair(keyword: "Cobalt oxide", definition: "2% in glass produces deep blue color"),
                     KeywordPair(keyword: "Saxony", definition: "German source of cobalt — traded via Venice"),
@@ -192,7 +193,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Metal oxides", definition: "Each metal creates a different glass color"),
                 ],
                 activity: .multipleChoice(question: "Which metal oxide creates blue stained glass?", options: ["Copper", "Gold", "Cobalt", "Manganese"], correctIndex: 2),
-                notebookSummary: "Blue stained glass: 2% cobalt oxide absorbs red/green, transmits blue. Cobalt from Saxony. Each metal oxide = different color.",
+                notebookSummary: "Blue stained glass in the Duomo oculus = 2% cobalt oxide in molten glass. Cobalt ions absorb red and green light, transmit only blue. Cobalt imported from Saxony (Germany) via Venetian traders. Different metal oxides for different colors: copper=green, gold=ruby, manganese=purple (callback to Murano's 'glassmaker's soap' for cristallo). A chemistry experiment frozen in light.",
                 visual: CardVisual(type: .crossSection, title: "Step 8: Stained Glass", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -206,7 +207,7 @@ extension KnowledgeCardContent {
                 title: "Step 4: Herringbone Mortar",
                 italianTitle: "Malta a Spina di Pesce",
                 icon: "flask.fill",
-                lessonText: "Herringbone mortar needed to set fast — workers couldn't wait for slow-curing lime on a curved surface. Brunelleschi's recipe: quicklime mixed with gypsum (plaster of Paris). Gypsum makes mortar set in 15 minutes instead of 3 days. But gypsum weakens with moisture, so the fast-set mortar was only used for the vertical herringbone bricks. Horizontal courses used standard lime. Two mortars, two jobs, one dome.",
+                lessonText: "And now — listen to the chemistry of the mortar that made it possible. Brunelleschi needed a mortar that would set FAST. Workers high on the dome could not wait three days for lime mortar to cure before laying the next ring of bricks. So Brunelleschi created a new recipe. Quicklime — the same quicklime you have made many times before — mixed with gypsum. Plaster of Paris. Gypsum makes mortar set in FIFTEEN MINUTES. Not three days. But — listen — gypsum has a weakness. It softens in moisture. So Brunelleschi used this fast-set mortar ONLY for the vertical herringbone bricks — the wedges that hold each ring together. For the horizontal courses, he used the slow, strong, traditional lime mortar. Two mortars. Two jobs. One dome.",
                 keywords: [
                     KeywordPair(keyword: "Gypsum", definition: "Additive for fast-setting mortar (15 minutes)"),
                     KeywordPair(keyword: "15 minutes", definition: "Setting time with gypsum vs 3 days without"),
@@ -214,7 +215,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Horizontal bricks", definition: "Used standard slow-set lime mortar"),
                 ],
                 activity: .numberFishing(question: "How many minutes for gypsum mortar to set?", correctAnswer: 15, decoys: [2, 5, 30, 60, 120]),
-                notebookSummary: "Herringbone mortar: quicklime + gypsum = 15 min set (vs 3 days). Gypsum for vertical bricks only. Standard lime for horizontal.",
+                notebookSummary: "Brunelleschi's fast-set mortar: quicklime + gypsum (plaster of Paris) = sets in 15 min vs 3 days for normal lime mortar. But gypsum softens in moisture, so used ONLY for the vertical herringbone bricks (the wedges that hold each ring together). Horizontal courses used slow, strong, traditional lime. Two mortars, two jobs, one dome.",
                 visual: CardVisual(type: .crossSection, title: "Step 4: Herringbone Mortar", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -226,7 +227,7 @@ extension KnowledgeCardContent {
                 title: "Step 4: Brick Firing",
                 italianTitle: "Colore dei Mattoni all'Ossido di Ferro",
                 icon: "flame.circle.fill",
-                lessonText: "The Duomo's bricks are a distinctive warm red — not by accident but by chemistry. Tuscan clay from Impruneta is rich in iron oxide (Fe₂O₃). At 900°C in an oxygen-rich kiln, iron oxide stays red. At 1,000°C with restricted oxygen, it turns dark brown. Temperature and atmosphere control the color. Roman bricks were yellow because their clay had less iron. Color is chemistry writing its signature.",
+                lessonText: "Walk around the Duomo. Look at every brick. They are warm red. Always. Why? Not by accident. By chemistry. The Tuscan clay from Impruneta is rich in iron oxide — what we write as Fe two O three. At nine hundred degrees, in an oxygen-rich kiln, the iron stays in the form Fe two O three. RED. At one thousand degrees, with the oxygen restricted, the iron transforms into a different form. DARK BROWN. The same clay, the same iron — but the temperature and the air control the final color. Roman bricks — they were yellow. Why? Less iron in the Roman clay. The color of a building, my apprentice — it is chemistry writing its signature on every wall.",
                 keywords: [
                     KeywordPair(keyword: "Fe₂O₃", definition: "Iron oxide — gives Florentine brick its red color"),
                     KeywordPair(keyword: "900°C", definition: "Oxygen-rich kiln = red bricks"),
@@ -234,7 +235,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Kiln atmosphere", definition: "Oxygen level determines final brick color"),
                 ],
                 activity: .fillInBlanks(text: "Iron oxide (___) at ___°C with oxygen = red. At ___°C without oxygen = brown", blanks: ["Fe₂O₃", "900", "1000"], distractors: ["CaCO₃", "600", "1200"]),
-                notebookSummary: "Red brick: Fe₂O₃ + 900°C + oxygen. Restrict oxygen at 1,000°C → dark brown. Color = chemistry + kiln control.",
+                notebookSummary: "Florentine red brick: iron oxide (Fe₂O₃) in Tuscan clay from Impruneta + 900°C in oxygen-rich kiln = RED. At 1,000°C with restricted oxygen → DARK BROWN. Roman bricks were yellow because their clay had less iron. The color of a building is chemistry writing its signature on every wall.",
                 visual: CardVisual(type: .crossSection, title: "Step 4: Brick Firing", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -246,7 +247,7 @@ extension KnowledgeCardContent {
                 title: "Step 4: Sinopia Drawing",
                 italianTitle: "Ocra Rossa e Sinopia",
                 icon: "paintpalette.fill",
-                lessonText: "Before painting the dome's interior fresco, artists drew the design in sinopia — red ochre pigment dissolved in water. Red ochre is iron oxide clay (Fe₂O₃) mined from Sinop on Turkey's Black Sea coast. Ground on a marble slab with a muller, mixed with lime water to bond to wet plaster. The sinopia was the Renaissance architect's first draft — drawn directly on the wall before colors were applied.",
+                lessonText: "Before the colored frescoes were painted inside the dome — listen — the artists made a preliminary drawing. We call it sinopia. The drawing is made in red ochre — the same iron oxide as the bricks, only ground fine and mixed with water. The pigment is named after the city it came from — Sinop, on the Black Sea coast of Turkey. Six thousand kilometers from Florence. The pigment was ground on a marble slab with a stone tool we call a muller. Mixed with lime water — which bonds the pigment chemically to the wet plaster of the wall. The sinopia was the Renaissance architect's first draft. Drawn directly on the wall, full size, before any color was added. The sketch beneath the masterpiece.",
                 keywords: [
                     KeywordPair(keyword: "Sinopia", definition: "Red ochre preliminary drawing on wet plaster"),
                     KeywordPair(keyword: "Red ochre", definition: "Fe₂O₃ clay pigment from Sinop, Turkey"),
@@ -254,7 +255,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Lime water", definition: "Binder that locks pigment into wet plaster"),
                 ],
                 activity: .wordScramble(word: "SINOPIA", hint: "Red ochre preliminary drawing on plaster — named after the city of Sinop"),
-                notebookSummary: "Sinopia: red ochre (Fe₂O₃ from Sinop, Turkey) drawn on wet plaster as first draft. Ground with muller, mixed with lime water.",
+                notebookSummary: "Sinopia: preliminary fresco drawing in red ochre — iron oxide pigment (same Fe₂O₃ as the bricks) named after Sinop on Turkey's Black Sea coast (6,000 km from Florence). Ground on a marble slab with a stone muller, mixed with lime water (bonds chemically to wet plaster). The Renaissance architect's first draft, drawn full-size on the wall before colors were applied. The sketch beneath the masterpiece.",
                 visual: CardVisual(type: .crossSection, title: "Step 4: Sinopia Drawing", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -266,7 +267,7 @@ extension KnowledgeCardContent {
                 title: "Step 6: Quinto Acuto",
                 italianTitle: "Geometria del Quinto Acuto",
                 icon: "triangle",
-                lessonText: "Brunelleschi's dome follows the quinto acuto ('pointed fifth') curve — an arc whose center is located 4/5 of the way up from the base. This creates a steeper profile than a hemisphere. Steeper means less outward thrust, which means the dome can support itself during construction without centering. The math: radius of curvature = 4/5 × diameter. Geometry made the impossible possible.",
+                lessonText: "And now — the most beautiful piece of mathematics in the entire Renaissance. Listen carefully. The shape of Brunelleschi's dome is not a hemisphere. It is steeper. Pointier. We call this shape the quinto acuto. The pointed fifth. The arc that defines the dome's profile is part of a circle whose center is located four-fifths of the way up from the base. Four-fifths. Why does this matter? Because a steeper dome exerts LESS outward thrust at its base than a hemisphere does. Less outward thrust means less risk of splaying — and means the dome can SUPPORT ITSELF during construction. Without centering. The mathematics of the quinto acuto — geometry made the impossible possible. Brunelleschi's secret was not in a chemistry. Not in a material. It was in a number. Four. Over. Five.",
                 keywords: [
                     KeywordPair(keyword: "Quinto acuto", definition: "Pointed fifth — dome curve with center at 4/5 height"),
                     KeywordPair(keyword: "Steeper profile", definition: "Less outward thrust than a hemisphere"),
@@ -274,7 +275,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Self-supporting", definition: "Steep curve enables construction without centering"),
                 ],
                 activity: .hangman(word: "QUINTO", hint: "The 'pointed fifth' curve that makes Brunelleschi's dome self-supporting"),
-                notebookSummary: "Quinto acuto: dome curve centered at 4/5 height. Steeper than hemisphere → less outward thrust → no centering needed.",
+                notebookSummary: "Quinto acuto ('pointed fifth') — the mathematical secret of Brunelleschi's dome. Dome profile = arc of a circle whose center sits 4/5 of the way up from the base. Steeper than a hemisphere → less outward thrust at the base → dome can support itself during construction (no centering). Brunelleschi's secret was a number: 4 over 5.",
                 visual: CardVisual(type: .crossSection, title: "Step 6: Quinto Acuto", values: [:], labels: [], steps: 3, caption: "")
             ),
 
@@ -286,7 +287,7 @@ extension KnowledgeCardContent {
                 title: "Step 8: Lead Cames",
                 italianTitle: "Piombi per Vetrate",
                 icon: "rectangle.grid.1x2.fill",
-                lessonText: "Stained glass panels are assembled with cames — H-shaped strips of lead that grip glass pieces on both sides. Each came is cast in a long mold, then bent by hand to follow the design. The glass is cut with a hot iron tip, fitted into the came channels, and sealed with linseed oil putty. A rose window contains 500+ lead cames. The art is in the cutting. The structure is in the lead.",
+                lessonText: "Now — the final lesson of our journey. The cames. The H-shaped strips of lead that hold every piece of stained glass in place. You remember lead. The Roman aqueduct's fistulae pipes. The harbor ship armor. The observatory's telescope tubes. Now — for the last time — lead. Each came is cast in a long mold. Then bent by hand to follow the design of the window. The glass itself is cut with a hot iron tip — the heat cracks the glass along precise lines. Each piece is fitted into the channels of the came. Sealed with linseed oil putty. A single rose window contains five hundred lead cames. Five hundred. The art is in the cutting of the glass. The structure — is in the lead. And so, my apprentice — we have come to the end. We began at the aqueduct, two thousand years ago, watching water travel through a city. We have walked from Rome, through the Middle Ages, into the rebirth — la rinascita. We have met emperors and engineers, glassmakers and printers, the man who looked at the stars and the man who designed wings. We have seen how every great building rises on the shoulders of every building before it. Look up, now, one more time, at the Duomo. Brunelleschi's dome stands above Florence. It has stood for five hundred years. It will stand for another five hundred. And when you build whatever you will build — remember. The materials are old. The mathematics is old. But every new mind that learns them — adds something. Even a small thing. Even a single careful brick. The Renaissance, my apprentice — it never ended. It only waits, for the next person who will pick up the work. That is you. Go. Build.",
                 keywords: [
                     KeywordPair(keyword: "Came", definition: "H-shaped lead strip holding stained glass pieces"),
                     KeywordPair(keyword: "Linseed putty", definition: "Oil-based sealant in came channels"),
@@ -294,7 +295,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "500+ cames", definition: "Lead strips in a single rose window"),
                 ],
                 activity: .trueFalse(statement: "Stained glass is held together by H-shaped lead strips called cames", isTrue: true),
-                notebookSummary: "Cames: H-shaped lead strips gripping glass on both sides. 500+ per window. Sealed with linseed putty. Structure = lead.",
+                notebookSummary: "Stained glass cames: H-shaped lead strips gripping each piece of glass on both sides (callback to all prior lead uses — aqueduct fistulae, harbor ship armor, observatory telescope tubes). Cast in long molds, bent by hand to follow the design. Glass cut with a hot iron tip; pieces fitted into channels, sealed with linseed oil putty. 500+ cames per rose window. (And so — the journey ends. Go. Build.)",
                 visual: CardVisual(type: .crossSection, title: "Step 8: Lead Cames", values: [:], labels: [], steps: 3, caption: "")
             ),
         ]
