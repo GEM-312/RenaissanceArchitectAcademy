@@ -1,26 +1,6 @@
 import SwiftUI
 // Audio via SoundManager
 
-// MARK: - Falling Florin Model
-
-struct FallingFlorin: Identifiable {
-    let id = UUID()
-    let burstX: CGFloat       // horizontal burst offset from center
-    let burstY: CGFloat       // vertical burst offset (upward)
-    let finalX: CGFloat       // where it lands horizontally
-    let size: CGFloat         // coin size
-    let spinSpeed: Double     // rotation per phase
-    var phase: FlorinPhase = .atCard   // animation state
-
-    enum FlorinPhase {
-        case atCard     // at card center
-        case burst      // flew outward from card
-        case falling    // gravity pulling down
-        case landed     // on the ground
-        case collected  // shrunk into counter
-    }
-}
-
 // MARK: - Fishing Bubble Model
 
 struct ScrambleTile: Identifiable {
@@ -131,13 +111,6 @@ struct KnowledgeCardsOverlay: View {
     @State private var crackingCardID: String? = nil
     @State private var cardCrackPhase: Int = 0          // 0=none, 1=shake, 2=crack, 3=burst
     @State private var shakeOffset: CGFloat = 0
-    @State private var fallingFlorins: [FallingFlorin] = []
-    @State private var showFlorinTotal = false
-
-    // Guidance bubble (replaces bird chat auto-popup)
-    @State private var showGuidanceBubble = false
-    @State private var guidanceBubbleCard: KnowledgeCard? = nil
-
     // Bird chat (manual "Ask the Bird" only)
     @State private var chatViewModel = BirdChatViewModel()
     @State private var showBirdChat = false
@@ -1770,19 +1743,8 @@ struct KnowledgeCardsOverlay: View {
             let progress = viewModel.cardProgress(for: buildingId)
             guard progress.completed < progress.total else { return }
 
-            // Check if all cards for THIS environment are now done
-            let buildingName = viewModel.buildingPlots.first(where: { $0.id == buildingId })?.building.name ?? ""
-            let envCards = KnowledgeCardContent.cards(for: buildingName, in: card.environment)
-            let buildingProgress = viewModel.buildingProgressMap[buildingId] ?? BuildingProgress()
-            let allEnvDone = envCards.allSatisfy { buildingProgress.completedCardIDs.contains($0.id) }
-
-            if allEnvDone {
-                // Environment complete — show guidance to next phase
-                guidanceBubbleCard = card
-                withAnimation(.spring(response: 0.4)) {
-                    showGuidanceBubble = true
-                }
-            }
+            // Environment-complete guidance bubble was removed. The block stays
+            // empty until/unless we add a replacement.
         }
 
         // Check if all cards in this set complete
@@ -1796,173 +1758,7 @@ struct KnowledgeCardsOverlay: View {
     }
 
     /// Create florin coins with pre-computed positions for each phase
-    private func spawnFlorins() {
-        fallingFlorins = (0..<10).map { _ in
-            FallingFlorin(
-                burstX: CGFloat.random(in: -140...140),
-                burstY: CGFloat.random(in: -160 ... -60),    // burst UPWARD
-                finalX: CGFloat.random(in: -100...100),
-                size: CGFloat.random(in: 20...32),
-                spinSpeed: Double.random(in: 120...360)
-            )
-        }
-    }
-
-    // MARK: - Florin Burst Layer
-
-    private func florinBurstLayer(screenSize: CGSize) -> some View {
-        ZStack {
-            ForEach(fallingFlorins) { florin in
-                let pos = florinPosition(florin, screenHeight: screenSize.height)
-
-                florinCoinView(size: florin.size)
-                    .offset(x: pos.x, y: pos.y)
-                    .rotationEffect(.degrees(florinRotation(florin)))
-                    .scaleEffect(florin.phase == .collected ? 0.1 : 1.0)
-                    .opacity(florin.phase == .collected ? 0 : 1)
-            }
-
-            // "+X florins" counter when coins land
-            if showFlorinTotal {
-                VStack(spacing: 4) {
-                    if let florins = earnedFlorinsFloat {
-                        Text("+\(florins)")
-                            .font(RenaissanceFont.largeTitle)
-                            .foregroundStyle(RenaissanceColors.goldSuccess)
-                            .shadow(color: RenaissanceColors.goldSuccess.opacity(0.6), radius: 10)
-                    }
-                    Text("florins")
-                        .font(RenaissanceFont.button)
-                        .foregroundStyle(RenaissanceColors.goldSuccess.opacity(0.8))
-                }
-                .offset(y: screenSize.height * 0.28)
-                .transition(.scale.combined(with: .opacity))
-            }
-        }
-    }
-
-    /// Compute position for each florin based on its current phase
-    private func florinPosition(_ florin: FallingFlorin, screenHeight: CGFloat) -> CGPoint {
-        switch florin.phase {
-        case .atCard:
-            return .zero  // at screen center (where card was)
-        case .burst:
-            return CGPoint(x: florin.burstX, y: florin.burstY)  // burst upward + outward
-        case .falling:
-            return CGPoint(x: florin.finalX, y: screenHeight * 0.3)  // fall to lower area
-        case .landed:
-            return CGPoint(x: florin.finalX, y: screenHeight * 0.25)  // slight bounce up
-        case .collected:
-            return CGPoint(x: 0, y: screenHeight * 0.25)  // converge to center
-        }
-    }
-
-    private func florinRotation(_ florin: FallingFlorin) -> Double {
-        switch florin.phase {
-        case .atCard: return 0
-        case .burst: return florin.spinSpeed * 0.5
-        case .falling: return florin.spinSpeed
-        case .landed: return florin.spinSpeed + 15
-        case .collected: return florin.spinSpeed + 30
-        }
-    }
-
-    /// Single gold florin coin with Florentine fleur-de-lis
-    private func florinCoinView(size: CGFloat) -> some View {
-        ZStack {
-            Circle()
-                .fill(
-                    RadialGradient(
-                        colors: [
-                            RenaissanceColors.ochre,
-                            RenaissanceColors.goldSuccess,
-                            RenaissanceColors.warmBrown
-                        ],
-                        center: .topLeading,
-                        startRadius: 0,
-                        endRadius: size
-                    )
-                )
-                .frame(width: size, height: size)
-            Circle()
-                .stroke(RenaissanceColors.warmBrown, lineWidth: 1.5)
-                .frame(width: size, height: size)
-            Text("⚜")
-                .font(.system(size: size * 0.45))
-                .foregroundStyle(RenaissanceColors.warmBrown.opacity(0.7))
-        }
-        .shadow(color: RenaissanceColors.goldSuccess.opacity(0.5), radius: 4, y: 2)
-    }
-
-    /// Build a contextual guidance message following the full game loop:
     /// card → tools → minigame → materials → crafting → next environment → build
-    private func buildGuidanceMessage(card: KnowledgeCard, progress: (completed: Int, total: Int), nextEnv: CardEnvironment?) -> String {
-        let buildingName = card.buildingName
-
-        // All cards done → guide to building
-        if progress.completed >= progress.total {
-            return "Magnifico! All \(progress.total) cards collected for the \(buildingName)! Head to the City Map — you're ready to build!"
-        }
-
-        // GAME LOOP GUIDANCE — prioritize action over cards
-        // If we're at a workshop station, guide through: tools → minigame → materials → next
-        if let ws = workshopState, let station = currentStation, card.environment == .workshop {
-            // Step 1: Does the player need a tool for this station?
-            if let tool = Tool.requiredFor(station: station), !ws.hasTool(for: station) {
-                return "Well done! Now you need a \(tool.displayName) to collect materials here. Head to the Market to buy one!"
-            }
-            // Step 2: Player has tool → minigame is next (will auto-show after dismissal)
-            return "Well done! Now it's time to collect materials! Close this card and play the \(station.label) mini-game."
-        }
-
-        // For other environments, suggest the next game-loop step
-        let envHint: String
-        if let ws = workshopState {
-            // Check if player needs tools first
-            let stationsNeedingTools: [ResourceStationType] = [.quarry, .volcano, .river, .clayPit, .mine, .forest, .farm]
-            let missingTools = stationsNeedingTools.filter { !ws.hasTool(for: $0) }
-
-            if !missingTools.isEmpty && card.environment == .cityMap {
-                // Player is on city map, needs tools → send to workshop/market
-                envHint = "Head to the Workshop and visit the Market to get tools — you'll need them to collect building materials!"
-            } else if let env = nextEnv {
-                envHint = gameLoopHintForEnvironment(env, buildingName: buildingName)
-            } else {
-                envHint = "Keep exploring to find more cards!"
-            }
-        } else if let env = nextEnv {
-            envHint = gameLoopHintForEnvironment(env, buildingName: buildingName)
-        } else {
-            envHint = "Keep exploring to find more cards!"
-        }
-
-        return "Well done! That's \(progress.completed) of \(progress.total) cards for the \(buildingName). \(envHint)"
-    }
-
-    private func gameLoopHintForEnvironment(_ env: CardEnvironment, buildingName: String) -> String {
-        switch env {
-        case .workshop:
-            return "Head to the Workshop — learn about materials, buy tools at the Market, and collect resources!"
-        case .forest:
-            return "Try the Forest next — discover the timber used in the \(buildingName) and collect wood!"
-        case .craftingRoom:
-            return "Visit the Crafting Room — mix your collected materials into building components!"
-        case .cityMap:
-            return "Go back to the City Map — tap the \(buildingName) to continue learning!"
-        }
-    }
-
-    /// Hint about which specific station has the next card
-    private func nextStationHint(for buildingId: Int, in environment: CardEnvironment) -> String {
-        let buildingName = viewModel.buildingPlots.first(where: { $0.id == buildingId })?.building.name ?? ""
-        let envCards = KnowledgeCardContent.cards(for: buildingName, in: environment)
-        let progress = viewModel.buildingProgressMap[buildingId] ?? BuildingProgress()
-        if let nextCard = envCards.first(where: { !progress.completedCardIDs.contains($0.id) }) {
-            let stationName = nextCard.stationKey
-            return " (\(stationName) station)"
-        }
-        return ""
-    }
 
     private func awardFlorins(_ amount: Int) {
         viewModel.earnFlorins(amount)
@@ -1987,30 +1783,6 @@ struct KnowledgeCardsOverlay: View {
 
     // MARK: - Bird Encouragement
 
-    private var birdEncouragement: some View {
-        HStack(spacing: 10) {
-            BirdCharacter(isSitting: true)
-                .frame(width: 36, height: 36)
-
-            let done = completedCardIDs.count
-            let total = cards.count
-            let overallProgress = viewModel.cardProgress(for: buildingId)
-            Text(done == 0 ? (total == 1 ? "Tap the card to discover something new!" : "Tap a card to start learning!")
-                 : done < total ? "\(total - done) card\(total - done == 1 ? "" : "s") left — keep going!"
-                 : overallProgress.completed < overallProgress.total ? "Card complete! Explore other environments for more."
-                 : "All cards collected! You've mastered this building.")
-                .font(RenaissanceFont.caption)
-                .foregroundStyle(settings.cardTextColor.opacity(0.7))
-        }
-        .padding(.horizontal, Spacing.sm)
-        .padding(.vertical, Spacing.xs)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(RenaissanceColors.ochre.opacity(0.06))
-        )
-    }
-
-    // MARK: - Card Progress Bar
 
     private var cardProgressBar: some View {
         let total = KnowledgeCardContent.cards(for: viewModel.buildingPlots.first(where: { $0.id == buildingId })?.building.name ?? "").count
@@ -2042,146 +1814,6 @@ struct KnowledgeCardsOverlay: View {
 
     // MARK: - Guidance Bubble (after card completion)
 
-    private func guidanceBubbleView(card: KnowledgeCard) -> some View {
-        let progress = viewModel.cardProgress(for: buildingId)
-        let buildingProgress = viewModel.buildingProgressMap[buildingId] ?? BuildingProgress()
-        let buildingName = viewModel.buildingPlots.first(where: { $0.id == buildingId })?.building.name ?? ""
-        let phase = buildingProgress.currentPhase(for: buildingName, workshopState: workshopState ?? WorkshopState(), craftedMaterials: workshopState?.craftedMaterials ?? [:])
-        let nextEnv = phase.environment  // nil means .build phase → city map
-        let message = buildGuidanceMessage(card: card, progress: progress, nextEnv: nextEnv)
-
-        // Determine the primary action button based on game loop state
-        let actionInfo = guidanceAction(card: card, nextEnv: nextEnv)
-
-        return VStack(spacing: 12) {
-            HStack(alignment: .top, spacing: 10) {
-                BirdCharacter(isSitting: true)
-                    .frame(width: 44, height: 44)
-
-                Text(message)
-                    .font(RenaissanceFont.dialogSubtitle)
-                    .foregroundStyle(settings.cardTextColor)
-                    .multilineTextAlignment(.leading)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-
-            HStack(spacing: 14) {
-                Button {
-                    switch actionInfo.type {
-                    case .dismiss:
-                        // Dismiss overlay → proceed to minigame/tool check
-                        onDismiss()
-                    case .navigate(let env):
-                        navigateToEnvironment(env)
-                    }
-                } label: {
-                    HStack(spacing: 6) {
-                        Image(systemName: actionInfo.icon)
-                            .font(.system(size: 14))
-                        Text(actionInfo.label)
-                            .font(RenaissanceFont.buttonSmall)
-                    }
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 18)
-                    .padding(.vertical, 9)
-                    .parchmentCapsule(color: RenaissanceColors.renaissanceBlue)
-                }
-                .buttonStyle(.plain)
-
-                Button {
-                    withAnimation(.easeOut(duration: 0.3)) {
-                        showGuidanceBubble = false
-                        guidanceBubbleCard = nil
-                    }
-                } label: {
-                    Text("Later")
-                        .font(RenaissanceFont.caption)
-                        .foregroundStyle(settings.cardTextColor.opacity(0.5))
-                        .underline()
-                }
-                .buttonStyle(.plain)
-            }
-        }
-        .padding(Spacing.md)
-        .adaptiveWidth(420)
-        .background(
-            RoundedRectangle(cornerRadius: CornerRadius.md)
-                .fill(settings.dialogBackground)
-                .shadow(color: .black.opacity(0.08), radius: 4, y: 2)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: CornerRadius.md)
-                .stroke(RenaissanceColors.renaissanceBlue.opacity(0.2), lineWidth: 1)
-        )
-    }
-
-    private func navigateToEnvironment(_ env: CardEnvironment) {
-        let destination: SidebarDestination = {
-            switch env {
-            case .workshop: return .workshop
-            case .forest: return .forest
-            case .craftingRoom: return .workshop  // crafting room is inside workshop
-            case .cityMap: return .cityMap
-            }
-        }()
-        withAnimation(.easeOut(duration: 0.2)) {
-            showGuidanceBubble = false
-            guidanceBubbleCard = nil
-        }
-        onNavigate?(destination)
-    }
-
-    // MARK: - Game Loop Guidance Action
-
-    private enum GuidanceActionType {
-        case dismiss  // close overlay → proceed to minigame/tool check at current station
-        case navigate(CardEnvironment)  // go to another environment
-    }
-
-    private struct GuidanceAction {
-        let type: GuidanceActionType
-        let label: String
-        let icon: String
-    }
-
-    /// Determine the primary button action based on full game loop state
-    private func guidanceAction(card: KnowledgeCard, nextEnv: CardEnvironment?) -> GuidanceAction {
-        // At a workshop station → guide through tools/minigame flow
-        if let ws = workshopState, let station = currentStation, card.environment == .workshop {
-            if let tool = Tool.requiredFor(station: station), !ws.hasTool(for: station) {
-                // Needs tool → dismiss overlay, which triggers pendingStationAfterCard → tool dialog → market
-                return GuidanceAction(type: .dismiss, label: "Get \(tool.displayName)!", icon: "cart.fill")
-            }
-            // Has tool → dismiss overlay, which triggers minigame
-            return GuidanceAction(type: .dismiss, label: "Collect Materials!", icon: "pickaxe")
-        }
-
-        // Check if player needs tools (from city map)
-        if let ws = workshopState, card.environment == .cityMap {
-            let stationsNeedingTools: [ResourceStationType] = [.quarry, .volcano, .river, .clayPit, .mine, .forest, .farm]
-            let missingTools = stationsNeedingTools.filter { !ws.hasTool(for: $0) }
-            if !missingTools.isEmpty {
-                return GuidanceAction(type: .navigate(.workshop), label: "Go to Workshop!", icon: "hammer.fill")
-            }
-        }
-
-        // Navigate to suggested environment
-        if let env = nextEnv {
-            switch env {
-            case .workshop:
-                return GuidanceAction(type: .navigate(.workshop), label: "Go to Workshop!", icon: "hammer.fill")
-            case .forest:
-                return GuidanceAction(type: .navigate(.forest), label: "Go to Forest!", icon: "tree.fill")
-            case .craftingRoom:
-                return GuidanceAction(type: .navigate(.craftingRoom), label: "Go to Crafting Room!", icon: "wrench.and.screwdriver.fill")
-            case .cityMap:
-                return GuidanceAction(type: .navigate(.cityMap), label: "Back to City Map!", icon: "building.columns.fill")
-            }
-        }
-
-        // Fallback: dismiss
-        return GuidanceAction(type: .dismiss, label: "Continue!", icon: "arrow.right")
-    }
 }
 
 // MARK: - CardPhase (shared with ForestMapView)

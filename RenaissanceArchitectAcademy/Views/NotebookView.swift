@@ -688,7 +688,7 @@ struct NotebookView: View {
         return parts.reduce(Text("")) { result, part in
             if part.isBold {
                 return result + Text(part.text)
-                    .font(.custom("Delius-Regular", size: 15))
+                    .font(.custom("EBGaramond-SemiBold", size: 15))
                     .foregroundColor(RenaissanceColors.sepiaInk)
             } else {
                 return result + Text(part.text)

@@ -1605,6 +1605,7 @@ private struct CalcinationSliderVisual: View {
                 bubblePhase = false
             }
         }
+        .onDisappear { bubblePhase = false }
     }
 }
 

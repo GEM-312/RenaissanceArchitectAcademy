@@ -183,6 +183,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
         setupRiverFlowAnimation()
         setupChickenAnimation()
         setupFishermanAnimation()
+        setupWoodcutterAnimation()
         setupSwayingTrees()
         setupPlayer()
 
@@ -340,6 +341,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
     private var riverFlowAnimation: SKSpriteNode?
     private var chickenAnimation: SKSpriteNode?
     private var fishermanAnimation: SKSpriteNode?
+    private var woodcutterAnimation: SKSpriteNode?
     private var volcanoGlow: SKSpriteNode?
     private var quarryAnimation: SKSpriteNode?
 
@@ -570,6 +572,34 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
         let cycle = SKAction.animate(with: textures, timePerFrame: 0.18, resize: false, restore: false)
         sprite.run(SKAction.repeatForever(cycle), withKey: "fishermanFrameLoop")
+    }
+
+    // MARK: - Woodcutter Animation
+    //
+    // 15-frame chopping loop near the .forest station. Same pattern as Fisherman —
+    // loaded from Woodcutter.atlasc (TexturePacker, tight-trimmed with anchor
+    // offsets baked into the .plist). Re-tune position via editor mode.
+
+    private func setupWoodcutterAnimation() {
+        let atlas = SKTextureAtlas(named: "Woodcutter")
+        var textures: [SKTexture] = []
+        for i in 1...15 {
+            let name = String(format: "Woodcutter_%02d copy.png", i)
+            guard atlas.textureNames.contains(name) else { break }
+            textures.append(atlas.textureNamed(name))
+        }
+        guard !textures.isEmpty else { return }
+
+        let sprite = SKSpriteNode(texture: textures[0])
+        sprite.size = CGSize(width: 540, height: 670)   // 1.5× smaller than first pass (was 800×1000)
+        sprite.position = CGPoint(x: 258, y: 610)       // tuned via editor mode
+        sprite.zPosition = 13
+        sprite.name = "woodcutterAnimation"
+        addChild(sprite)
+        woodcutterAnimation = sprite
+
+        let cycle = SKAction.animate(with: textures, timePerFrame: 0.18, resize: false, restore: false)
+        sprite.run(SKAction.repeatForever(cycle), withKey: "woodcutterFrameLoop")
     }
 
     private func setupChickenAnimation() {
@@ -1755,6 +1785,9 @@ class WorkshopScene: SKScene, ScrollZoomable {
         }
         if let fisherman = fishermanAnimation {
             editorMode.registerNode(fisherman, name: "anim_fisherman")
+        }
+        if let woodcutter = woodcutterAnimation {
+            editorMode.registerNode(woodcutter, name: "anim_woodcutter")
         }
         for entry in swayingTrees {
             editorMode.registerNode(entry.node, name: entry.node.name ?? "tree")

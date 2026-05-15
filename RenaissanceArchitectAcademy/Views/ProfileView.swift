@@ -312,6 +312,7 @@ struct ProfileHeaderRow: View {
     private var isLargeScreen: Bool { sizeClass == .regular }
 
     @State private var currentFrame: Int = 0
+    @State private var animTimer: Timer?
     private let frameCount = 15
     private let fps: Double = 10
 
@@ -390,13 +391,18 @@ struct ProfileHeaderRow: View {
         )
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .onAppear {
-            Timer.scheduledTimer(withTimeInterval: 1.0 / fps, repeats: true) { timer in
+            animTimer?.invalidate()
+            animTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / fps, repeats: true) { timer in
                 if currentFrame < frameCount - 1 {
                     currentFrame += 1
                 } else {
                     timer.invalidate()
                 }
             }
+        }
+        .onDisappear {
+            animTimer?.invalidate()
+            animTimer = nil
         }
         .background(
             RoundedRectangle(cornerRadius: 16)

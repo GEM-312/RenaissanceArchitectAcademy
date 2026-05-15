@@ -210,6 +210,8 @@
 		5466B5BF2FB4CCBA0073BD90 /* crafting_ambient.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5BE2FB4CCBA0073BD90 /* crafting_ambient.wav */; };
 		5466B5C12FB4CE2A0073BD90 /* quarry_ambient.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5C02FB4CE2A0073BD90 /* quarry_ambient.mp3 */; };
 		5466B5C32FB4D4120073BD90 /* market_chatter_ambient.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5C22FB4D4120073BD90 /* market_chatter_ambient.mp3 */; };
+		5466B5D12FB4FE000073BD90 /* mine_ambient.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5D02FB4FE000073BD90 /* mine_ambient.mp3 */; };
+		5466B5D32FB4FE000073BD90 /* farm_ambient.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5D22FB4FE000073BD90 /* farm_ambient.mp3 */; };
 		5466B5C52FB4D9740073BD90 /* volcano_rumble_ambient.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5C42FB4D9740073BD90 /* volcano_rumble_ambient.mp3 */; };
 		5475D2EF2F3146CC003AA131 /* building_complete.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2EE2F3146CB003AA131 /* building_complete.mp3 */; };
 		5475D2F82F319000003AA131 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2F92F319000003AA131 /* Assets.xcassets */; };
@@ -246,6 +248,7 @@
 		ACE /* SketchEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE /* SketchEditorView.swift */; };
 		ATC1 /* RiverHouse.atlasc in Resources */ = {isa = PBXBuildFile; fileRef = ATC2 /* RiverHouse.atlasc */; };
 		ATC3 /* Fisherman.atlasc in Resources */ = {isa = PBXBuildFile; fileRef = ATC4 /* Fisherman.atlasc */; };
+		ATC5 /* Woodcutter.atlasc in Resources */ = {isa = PBXBuildFile; fileRef = ATC6 /* Woodcutter.atlasc */; };
 		ECE /* FoldableInventoryBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCE /* FoldableInventoryBar.swift */; };
 		F001 /* Cinzel-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B022F313B22007D8C64 /* Cinzel-Black.ttf */; };
 		F002 /* Cinzel-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B032F313B22007D8C64 /* Cinzel-Bold.ttf */; };
@@ -521,6 +524,8 @@
 		5466B5BE2FB4CCBA0073BD90 /* crafting_ambient.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = crafting_ambient.wav; sourceTree = "<group>"; };
 		5466B5C02FB4CE2A0073BD90 /* quarry_ambient.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = quarry_ambient.mp3; sourceTree = "<group>"; };
 		5466B5C22FB4D4120073BD90 /* market_chatter_ambient.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = market_chatter_ambient.mp3; sourceTree = "<group>"; };
+		5466B5D02FB4FE000073BD90 /* mine_ambient.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = mine_ambient.mp3; sourceTree = "<group>"; };
+		5466B5D22FB4FE000073BD90 /* farm_ambient.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = farm_ambient.mp3; sourceTree = "<group>"; };
 		5466B5C42FB4D9740073BD90 /* volcano_rumble_ambient.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = volcano_rumble_ambient.mp3; sourceTree = "<group>"; };
 		5475D2EE2F3146CB003AA131 /* building_complete.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = building_complete.mp3; sourceTree = "<group>"; };
 		5475D2F92F319000003AA131 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -529,6 +534,7 @@
 		9CE /* ShapeSnap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeSnap.swift; sourceTree = "<group>"; };
 		ATC2 /* RiverHouse.atlasc */ = {isa = PBXFileReference; lastKnownFileType = folder; path = RiverHouse.atlasc; sourceTree = "<group>"; };
 		ATC4 /* Fisherman.atlasc */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Fisherman.atlasc; sourceTree = "<group>"; };
+		ATC6 /* Woodcutter.atlasc */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Woodcutter.atlasc; sourceTree = "<group>"; };
 		BA1 /* anvil_strike.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = anvil_strike.wav; sourceTree = "<group>"; };
 		BA2 /* clay_dig.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = clay_dig.wav; sourceTree = "<group>"; };
 		BA3 /* crafting_complete.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = crafting_complete.wav; sourceTree = "<group>"; };
@@ -612,6 +618,7 @@
 				5475D2F92F319000003AA131 /* Assets.xcassets */,
 				ATC2 /* RiverHouse.atlasc */,
 				ATC4 /* Fisherman.atlasc */,
+				ATC6 /* Woodcutter.atlasc */,
 				54477B172F313D06007D8C64 /* Info.plist */,
 				54477B162F313B22007D8C64 /* Fonts */,
 				101 /* RenaissanceArchitectAcademyApp.swift */,
@@ -663,6 +670,8 @@
 				BC1 /* bird_chirp.wav */,
 				BC2 /* bird_fly_in.wav */,
 				5466B5C22FB4D4120073BD90 /* market_chatter_ambient.mp3 */,
+				5466B5D02FB4FE000073BD90 /* mine_ambient.mp3 */,
+				5466B5D22FB4FE000073BD90 /* farm_ambient.mp3 */,
 				BC3 /* bird_happy_trill.wav */,
 				BC4 /* bird_squawk.wav */,
 				BC5 /* forest_ambient.wav */,
@@ -1023,8 +1032,11 @@
 			files = (
 				5475D2F82F319000003AA131 /* Assets.xcassets in Resources */,
 				5466B5C32FB4D4120073BD90 /* market_chatter_ambient.mp3 in Resources */,
+				5466B5D12FB4FE000073BD90 /* mine_ambient.mp3 in Resources */,
+				5466B5D32FB4FE000073BD90 /* farm_ambient.mp3 in Resources */,
 				ATC1 /* RiverHouse.atlasc in Resources */,
 				ATC3 /* Fisherman.atlasc in Resources */,
+				ATC5 /* Woodcutter.atlasc in Resources */,
 				F001 /* Cinzel-Black.ttf in Resources */,
 				F002 /* Cinzel-Bold.ttf in Resources */,
 				F003 /* Cinzel-ExtraBold.ttf in Resources */,

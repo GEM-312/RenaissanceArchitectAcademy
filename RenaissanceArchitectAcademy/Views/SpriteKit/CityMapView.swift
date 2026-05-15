@@ -707,6 +707,36 @@ struct CityMapView: View {
                 onNudge: { dx, dy in sceneHolder.scene?.editorNudge(dx: dx, dy: dy) }
             )
 
+            // DEBUG: trigger the Duomo's completion bloom (sepia → full color reveal)
+            // so we can verify the watercolor transition without playing through.
+            VStack {
+                HStack {
+                    Spacer()
+                    Button {
+                        if let duomo = sceneHolder.scene?.buildingNodes["duomo"] {
+                            duomo.updateState(.available)  // reset to sepia ghost
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                                duomo.playCompletionBloom()
+                            }
+                        }
+                    } label: {
+                        Text("Test Bloom")
+                            .font(RenaissanceFont.buttonSmall)
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, Spacing.md)
+                            .padding(.vertical, Spacing.xs)
+                            .background(
+                                RoundedRectangle(cornerRadius: CornerRadius.sm)
+                                    .fill(RenaissanceColors.terracotta.opacity(0.9))
+                            )
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.trailing, Spacing.md)
+                    .padding(.top, Spacing.xxl + Spacing.xl)  // sits below the Editor button
+                }
+                Spacer()
+            }
+
             // DEBUG: skip straight into a building's sketch — bypasses mascot, cards,
             // checklist, everything. One button per building with a blueprint asset.
             // Only visible while editor mode is active (press E to toggle) so they

@@ -20,7 +20,6 @@ struct CraftingRoomMapView: View {
     @State private var sceneHolder = SceneHolder<CraftingRoomScene>()
 
     // Player tracking
-    @State private var playerPosition: CGPoint = CGPoint(x: 0.5, y: 0.5)
     @State private var playerIsWalking = false
 
     // Active station overlay
@@ -290,7 +289,6 @@ struct CraftingRoomMapView: View {
         newScene.apprenticeIsBoy = onboardingState?.apprenticeGender == .boy || onboardingState == nil
 
         newScene.onPlayerPositionChanged = { position, isWalking in
-            self.playerPosition = position
             self.playerIsWalking = isWalking
         }
 

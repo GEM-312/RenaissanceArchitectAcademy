@@ -34,5 +34,41 @@
     "prompt": "Wet clay pit ambience. Soft squelching of damp earth, occasional water drips, faint mud sucking sounds, very light breeze. Earthy, organic, no music, no voices. Suitable for seamless looping.",
     "duration_seconds": 15,
     "prompt_influence": 0.6
+  },
+  {
+    "filename": "mine_ambient.mp3",
+    "prompt": "Active iron mine deep underground. FOREGROUND pickaxe strikes on rock — sharp, hard, metallic ringing, recurring every couple seconds, dominant in the mix. Heavy stone chamber acoustic with reverb, water drips echoing, occasional rock skitter, low rumble. Loud, present, rhythmic working sounds. No music, no voices. Seamless looping.",
+    "duration_seconds": 15,
+    "prompt_influence": 0.8
+  },
+  {
+    "filename": "mine_call_forza.mp3",
+    "prompt": "Single male Italian Renaissance miner's command shout: 'Forza!'. Gruff, urgent, brief. Quick echo bouncing off stone walls. Recorded in a cave with reverb. No music, no other sound, no ambience.",
+    "duration_seconds": 3,
+    "prompt_influence": 0.7
+  },
+  {
+    "filename": "mine_call_pronti.mp3",
+    "prompt": "Single male Italian Renaissance miner's command shout: 'Pronti!'. Gruff, urgent, brief. Quick echo bouncing off stone walls. Recorded in a cave with reverb. No music, no other sound, no ambience.",
+    "duration_seconds": 3,
+    "prompt_influence": 0.7
+  },
+  {
+    "filename": "mine_call_attenti.mp3",
+    "prompt": "Single male Italian Renaissance miner's command shout: 'Attenti!'. Gruff, urgent, brief. Quick echo bouncing off stone walls. Recorded in a cave with reverb. No music, no other sound, no ambience.",
+    "duration_seconds": 3,
+    "prompt_influence": 0.7
+  },
+  {
+    "filename": "mine_call_issa.mp3",
+    "prompt": "Single male Italian Renaissance miner's command shout: 'Issa!'. Gruff, urgent, brief. Quick echo bouncing off stone walls. Recorded in a cave with reverb. No music, no other sound, no ambience.",
+    "duration_seconds": 3,
+    "prompt_influence": 0.7
+  },
+  {
+    "filename": "farm_ambient.mp3",
+    "prompt": "Renaissance Italian countryside farm. Clucking chickens, gentle hen scratches in dry hay, soft hoof shuffles, light breeze through wheat, occasional distant rooster, faint cowbell. Earthy, alive, present. No music, no voices, no melody. Suitable for seamless looping.",
+    "duration_seconds": 15,
+    "prompt_influence": 0.7
   }
 ]

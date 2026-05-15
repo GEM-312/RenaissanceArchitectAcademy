@@ -656,6 +656,7 @@ private struct DrainFlowVisual: View {
                 }
             }
         }
+        .onDisappear { waterProgress = 0 }
     }
 }
 

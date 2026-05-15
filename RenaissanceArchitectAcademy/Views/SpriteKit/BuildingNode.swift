@@ -257,6 +257,87 @@ class BuildingNode: SKNode {
         visualContainer.addChild(brace)
     }
 
+    // MARK: - Completion Bloom (sepia → full color reveal with sparkles + glow)
+    //
+    // SpriteKit-native mirror of BloomEffectView (SwiftUI). Locks to the
+    // building's world position so it tracks camera scroll/zoom correctly.
+    //
+    // Flow:
+    // 1. If a ghost sprite is currently visible, animate its colorBlendFactor
+    //    0.75 → 0 and alpha 0.5 → 1.0 over 1.5s (sepia melts off).
+    // 2. Burst 12 ochre/blue sparkles outward, fading + shrinking.
+    // 3. Radial ochre glow node expands then fades.
+    // 4. Play buildingComplete sound.
+    // 5. After animation, swap to the proper completed visual.
+
+    func playCompletionBloom() {
+        // Capture the current sprite (if any) and animate it to full color in place.
+        let ghostSprite = visualContainer.children.compactMap { $0 as? SKSpriteNode }.first
+        ghostSprite?.run(SKAction.group([
+            SKAction.customAction(withDuration: 1.5) { node, t in
+                guard let s = node as? SKSpriteNode else { return }
+                let progress = CGFloat(t / 1.5)
+                s.colorBlendFactor = 0.75 * (1 - progress)
+                s.alpha = 0.5 + 0.5 * progress
+            }
+        ]))
+
+        // Radial glow node
+        let glow = SKShapeNode(circleOfRadius: 40)
+        glow.fillColor = PlatformColor(RenaissanceColors.ochre.opacity(0.6))
+        glow.strokeColor = .clear
+        glow.alpha = 0
+        glow.zPosition = 6
+        glow.blendMode = .add
+        visualContainer.addChild(glow)
+        glow.run(SKAction.sequence([
+            SKAction.group([
+                SKAction.scale(to: 3.5, duration: 1.5),
+                SKAction.sequence([
+                    SKAction.fadeAlpha(to: 0.8, duration: 0.3),
+                    SKAction.fadeAlpha(to: 0, duration: 1.2)
+                ])
+            ]),
+            SKAction.removeFromParent()
+        ]))
+
+        // 12 sparkles bursting outward
+        for i in 0..<12 {
+            let angle = CGFloat(i) * .pi / 6.0
+            let sparkle = SKShapeNode(circleOfRadius: 4)
+            sparkle.fillColor = i % 2 == 0
+                ? PlatformColor(RenaissanceColors.ochre)
+                : PlatformColor(RenaissanceColors.renaissanceBlue)
+            sparkle.strokeColor = .clear
+            sparkle.position = .zero
+            sparkle.zPosition = 7
+            sparkle.blendMode = .add
+            visualContainer.addChild(sparkle)
+
+            let distance: CGFloat = 100
+            let target = CGPoint(x: cos(angle) * distance, y: sin(angle) * distance)
+            sparkle.run(SKAction.sequence([
+                SKAction.group([
+                    SKAction.move(to: target, duration: 1.4),
+                    SKAction.fadeOut(withDuration: 1.4),
+                    SKAction.scale(to: 0.2, duration: 1.4)
+                ]),
+                SKAction.removeFromParent()
+            ]))
+        }
+
+        // Sound
+        SoundManager.shared.play(.buildingComplete)
+
+        // Snap to the proper completed visual after the animation finishes
+        run(SKAction.sequence([
+            SKAction.wait(forDuration: 1.6),
+            SKAction.run { [weak self] in
+                self?.updateState(.complete)
+            }
+        ]))
+    }
+
     // MARK: - Ghost Building (grayscale + transparent — available/sketched/construction states)
 
     private func setupGhostBuilding() {

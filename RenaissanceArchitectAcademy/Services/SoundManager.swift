@@ -271,6 +271,8 @@ class SoundManager: ObservableObject {
         case volcanoRumble = "volcano_rumble_ambient"
         case riverAmbient = "river_ambient"
         case marketChatter = "market_chatter_ambient"
+        case mineAmbient = "mine_ambient"
+        case farmAmbient = "farm_ambient"
 
         /// Shipped so far as wav; older mp3 fallback for anything not converted yet.
         var ext: String {
@@ -299,7 +301,7 @@ class SoundManager: ObservableObject {
         }
 
         if let current = ambientPlayer, current.isPlaying {
-            fadeOut(player: current, duration: fadeDuration)
+            fadeOut(player: current, duration: fadeDuration, channel: .ambient)
         }
 
         do {
@@ -309,7 +311,7 @@ class SoundManager: ObservableObject {
             player.play()
             currentAmbient = ambient
 
-            fadeIn(player: player, targetVolume: ambientVol, duration: fadeDuration)
+            fadeIn(player: player, targetVolume: ambientVol, duration: fadeDuration, channel: .ambient)
             ambientPlayer = player
         } catch {
             print("SoundManager: failed to play ambient \(ambient.rawValue): \(error)")
@@ -322,7 +324,7 @@ class SoundManager: ObservableObject {
     func stopAmbient(_ ambient: AmbientSound? = nil, fadeDuration: TimeInterval = 0.5) {
         guard let player = ambientPlayer, player.isPlaying else { return }
         if let ambient, currentAmbient != ambient { return }
-        fadeOut(player: player, duration: fadeDuration)
+        fadeOut(player: player, duration: fadeDuration, channel: .ambient)
         currentAmbient = nil
     }
 
@@ -379,34 +381,62 @@ class SoundManager: ObservableObject {
 
     // MARK: - Fade Helpers
 
+    // Tracked so rapid scene transitions (City → Workshop → City) can't stack
+    // two competing fades on the same channel and cause volume oscillation.
+    // Per-channel because music and ambient have independent players.
+    private var musicFadeTask: Task<Void, Never>?
+    private var ambientFadeTask: Task<Void, Never>?
+
+    private enum FadeChannel { case music, ambient }
+
     /// Fade volume from 0 to target using async Task — replaces the prior
-    /// Timer.scheduledTimer approach, which silently failed (timer was being
-    /// deallocated before firing, leaving every ambient/music track at volume 0).
-    private func fadeIn(player: AVAudioPlayer, targetVolume: Float, duration: TimeInterval) {
+    /// Timer.scheduledTimer approach (which silently failed). Cancels any
+    /// in-flight fade on the same channel before starting.
+    private func fadeIn(player: AVAudioPlayer, targetVolume: Float, duration: TimeInterval, channel: FadeChannel = .music) {
+        cancelFade(on: channel)
         let steps = 20
         let interval = duration / Double(steps)
         let increment = targetVolume / Float(steps)
-        Task { @MainActor [weak player] in
+        let task = Task { @MainActor [weak player] in
             for step in 1...steps {
+                if Task.isCancelled { return }
                 guard let player else { return }
                 player.volume = min(targetVolume, increment * Float(step))
                 try? await Task.sleep(for: .seconds(interval))
             }
         }
+        store(task: task, on: channel)
     }
 
-    private func fadeOut(player: AVAudioPlayer, duration: TimeInterval) {
+    private func fadeOut(player: AVAudioPlayer, duration: TimeInterval, channel: FadeChannel = .music) {
+        cancelFade(on: channel)
         let steps = 20
         let interval = duration / Double(steps)
         let startVolume = player.volume
         let decrement = startVolume / Float(steps)
-        Task { @MainActor [weak player] in
+        let task = Task { @MainActor [weak player] in
             for step in 1...steps {
+                if Task.isCancelled { return }
                 guard let player else { return }
                 player.volume = max(0, startVolume - decrement * Float(step))
                 try? await Task.sleep(for: .seconds(interval))
             }
             player?.stop()
+        }
+        store(task: task, on: channel)
+    }
+
+    private func cancelFade(on channel: FadeChannel) {
+        switch channel {
+        case .music:   musicFadeTask?.cancel(); musicFadeTask = nil
+        case .ambient: ambientFadeTask?.cancel(); ambientFadeTask = nil
+        }
+    }
+
+    private func store(task: Task<Void, Never>, on channel: FadeChannel) {
+        switch channel {
+        case .music:   musicFadeTask = task
+        case .ambient: ambientFadeTask = task
         }
     }
 }

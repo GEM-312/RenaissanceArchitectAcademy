@@ -263,4 +263,41 @@ enum ActivitySizing {
     static func progressDotSize(_ sizeClass: UserInterfaceSizeClass?) -> CGFloat {
         sizeClass == .regular ? 14 : 10
     }
+
+    // MARK: - Study Overlay (Met sketch, sketch-teaching, lesson reader)
+    //
+    // These surfaces are full-screen modals, not small cards — they read at a
+    // smaller scale than the card-back activity titles (~1.5× smaller).
+
+    /// Headline for the question/answer in a study overlay.
+    static func studyTitleFont(_ sizeClass: UserInterfaceSizeClass?) -> Font {
+        sizeClass == .regular
+            ? .custom("Cinzel-Bold", size: 22, relativeTo: .title2)
+            : .custom("Cinzel-Bold", size: 16, relativeTo: .body)
+    }
+
+    /// Body text in a study overlay (option text, explanation, instructions).
+    static func studyBodyFont(_ sizeClass: UserInterfaceSizeClass?) -> Font {
+        sizeClass == .regular
+            ? .custom("EBGaramond-Regular", size: 18, relativeTo: .body)
+            : .custom("EBGaramond-Regular", size: 14, relativeTo: .footnote)
+    }
+
+    /// Header bar title in a study overlay ("Study the Masters", etc.).
+    static func studyHeaderFont(_ sizeClass: UserInterfaceSizeClass?) -> Font {
+        sizeClass == .regular
+            ? .custom("Cinzel-Bold", size: 20, relativeTo: .title3)
+            : .custom("Cinzel-Bold", size: 15, relativeTo: .body)
+    }
+
+    /// Italic subtitle in a study overlay (artist/date, caption, hint).
+    static func studySubtitleFont(_ sizeClass: UserInterfaceSizeClass?) -> Font {
+        sizeClass == .regular
+            ? .custom("EBGaramond-Italic", size: 16, relativeTo: .body)
+            : .custom("EBGaramond-Italic", size: 13, relativeTo: .footnote)
+    }
+
+    static func studyIconSize(_ sizeClass: UserInterfaceSizeClass?) -> CGFloat {
+        sizeClass == .regular ? 20 : 16
+    }
 }

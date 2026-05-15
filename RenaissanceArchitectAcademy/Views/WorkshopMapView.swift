@@ -26,7 +26,6 @@ struct WorkshopMapView: View {
     @State private var sceneHolder = SceneHolder<WorkshopScene>()
 
     // Player tracking
-    @State private var playerPosition: CGPoint = CGPoint(x: 0.5, y: 0.5)
     @State private var playerIsWalking = false
 
     // Station lesson overlay
@@ -724,7 +723,6 @@ struct WorkshopMapView: View {
 
         // Player position updates
         newScene.onPlayerPositionChanged = { position, isWalking in
-            self.playerPosition = position
             self.playerIsWalking = isWalking
         }
 
@@ -1245,6 +1243,8 @@ struct WorkshopMapView: View {
         case .volcano: return .volcanoRumble
         case .river:   return .riverAmbient
         case .market:  return .marketChatter
+        case .mine:    return .mineAmbient
+        case .farm:    return .farmAmbient
         default:       return nil
         }
     }
@@ -1253,7 +1253,8 @@ struct WorkshopMapView: View {
     /// A no-track stopAmbient would kill the successor view's ambient if
     /// SwiftUI fires .onAppear before .onDisappear during a scene transition.
     static let workshopStationAmbients: Set<SoundManager.AmbientSound> =
-        [.quarryAmbient, .clayPitAmbient, .volcanoRumble, .riverAmbient, .marketChatter]
+        [.quarryAmbient, .clayPitAmbient, .volcanoRumble, .riverAmbient,
+         .marketChatter, .mineAmbient, .farmAmbient]
 
     /// Show a single overlay based on tool ownership:
     /// - No tool → tool requirement dialog (collectionOverlay)
@@ -2315,127 +2316,6 @@ struct WorkshopMapView: View {
 
     // MARK: - Earn Florins Overlay
 
-    private var earnFlorinsOverlay: some View {
-        ZStack {
-            RenaissanceColors.overlayDimming
-                .ignoresSafeArea()
-                .onTapGesture {
-                    workshop.showEarnFlorinsOverlay = false
-                }
-
-            VStack(spacing: 20) {
-                HStack(spacing: 12) {
-                    BirdCharacter()
-                        .frame(width: 70, height: 70)
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Earn Florins")
-                            .font(RenaissanceFont.title2Bold)
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
-                        Text("You need more florins! Here's how:")
-                            .font(RenaissanceFont.dialogSubtitle)
-                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
-                    }
-                }
-
-                VStack(spacing: 10) {
-                    earnOptionCard(
-                        icon: "book.fill",
-                        title: "Read a Lesson",
-                        reward: "+\(GameRewards.lessonReadFlorins) florins"
-                    ) {
-                        workshop.showEarnFlorinsOverlay = false
-                        dismissAllOverlays()
-                        onNavigate?(.cityMap)
-                    }
-
-                    earnOptionCard(
-                        icon: "leaf.fill",
-                        title: "Explore the Forest",
-                        reward: "+\(GameRewards.timberCollectFlorins)/timber"
-                    ) {
-                        workshop.showEarnFlorinsOverlay = false
-                        dismissAllOverlays()
-                        onNavigate?(.forest)
-                    }
-
-                    earnOptionCard(
-                        icon: "flame.fill",
-                        title: "Craft an Item",
-                        reward: "+\(GameRewards.craftCompleteFlorins) florins"
-                    ) {
-                        workshop.showEarnFlorinsOverlay = false
-                        dismissAllOverlays()
-                        if let onEnterInterior = onEnterInterior {
-                            onEnterInterior()
-                        }
-                    }
-
-                    if let assignment = workshop.currentAssignment {
-                        earnOptionCard(
-                            icon: "scroll.fill",
-                            title: "Master's Task: \(assignment.targetItem.rawValue)",
-                            reward: "+\(assignment.rewardFlorins) bonus"
-                        ) {
-                            workshop.showEarnFlorinsOverlay = false
-                            dismissAllOverlays()
-                            if let onEnterInterior = onEnterInterior {
-                                onEnterInterior()
-                            }
-                        }
-                    }
-                }
-
-                Button("Maybe Later") {
-                    workshop.showEarnFlorinsOverlay = false
-                }
-                .font(RenaissanceFont.bodySmall)
-                .foregroundStyle(RenaissanceColors.sepiaInk)
-            }
-            .padding(Spacing.xl)
-            .adaptiveWidth(400)
-            .background(
-                RoundedRectangle(cornerRadius: CornerRadius.lg)
-                    .fill(RenaissanceColors.parchment)
-            )
-            .borderWorkshop()
-        }
-    }
-
-    private func earnOptionCard(icon: String, title: String, reward: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack(spacing: 12) {
-                Image(systemName: icon)
-                    .font(.body)
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
-                    .frame(width: 32, height: 32)
-                    .background(
-                        RoundedRectangle(cornerRadius: CornerRadius.sm)
-                            .fill(RenaissanceColors.warmBrown.opacity(0.1))
-                    )
-
-                Text(title)
-                    .font(RenaissanceFont.bodyMedium)
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
-
-                Spacer()
-
-                Text(reward)
-                    .font(.custom("EBGaramond-SemiBold", size: 13))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
-
-                Image(systemName: "chevron.right")
-                    .font(.caption)
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
-            }
-            .padding(Spacing.sm)
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(RenaissanceColors.parchment.opacity(0.6))
-                    .borderWorkshop(radius: 10)
-            )
-        }
-    }
 
     // MARK: - Master Task Card
 

@@ -46,6 +46,8 @@ struct BuildingLessonView: View {
     var onNavigate: ((SidebarDestination) -> Void)?
     let onDismiss: () -> Void
 
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
     // MARK: - State
 
     @State private var currentIndex = 0
@@ -478,9 +480,11 @@ struct BuildingLessonView: View {
 
             // Question text
             Text(question.question)
-                .font(.custom("EBGaramond-SemiBold", size: 20))
+                .font(ActivitySizing.studyTitleFont(horizontalSizeClass))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
                 .lineSpacing(LineHeight.tight)
+                .minimumScaleFactor(ActivitySizing.titleMinScale)
+                .fixedSize(horizontal: false, vertical: true)
 
             // Scratch Pad (only for math questions with hints)
             if question.hints != nil {
@@ -515,9 +519,10 @@ struct BuildingLessonView: View {
                     }
 
                     Text(question.explanation)
-                        .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
-                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.8))
+                        .font(ActivitySizing.studyBodyFont(horizontalSizeClass))
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
                         .lineSpacing(LineHeight.normal)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding(14)
                 .background(
@@ -669,12 +674,13 @@ struct BuildingLessonView: View {
                 showExplanation = true
             }
         } label: {
-            HStack(spacing: 12) {
+            HStack(spacing: Spacing.md) {
                 // Letter label
+                let letterCircleSize = ActivitySizing.tileFrame(horizontalSizeClass) * 0.7
                 Text(String(UnicodeScalar(65 + index)!))
-                    .font(RenaissanceFont.bodyMedium)
+                    .font(ActivitySizing.tileFont(horizontalSizeClass))
                     .foregroundStyle(isRevealed && isCorrect ? .white : RenaissanceColors.sepiaInk)
-                    .frame(width: 28, height: 28)
+                    .frame(width: letterCircleSize, height: letterCircleSize)
                     .background(
                         Circle()
                             .fill(isRevealed && isCorrect
@@ -685,9 +691,10 @@ struct BuildingLessonView: View {
                     )
 
                 Text(text)
-                    .font(.custom("EBGaramond-Regular", size: 16, relativeTo: .subheadline))
+                    .font(ActivitySizing.studyBodyFont(horizontalSizeClass))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
                     .multilineTextAlignment(.leading)
+                    .minimumScaleFactor(ActivitySizing.buttonTextMinScale)
 
                 Spacer()
 
