@@ -138,6 +138,10 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
     /// When true, camera smoothly tracks the player while walking
     private var isFollowingPlayer = false
+    /// True while a camera SKAction (zoomCameraToStation/nudge/out) is in flight.
+    /// Skip clampCamera() while this is true so the action can reach edge stations
+    /// without being yanked inward each frame (fixes Volcano/edge-station snap-back).
+    private var isCameraActionInFlight = false
     /// The station position the player is walking toward (for gradual zoom)
     private var walkTargetPosition: CGPoint?
 
@@ -1184,8 +1188,12 @@ class WorkshopScene: SKScene, ScrollZoomable {
             }
         }
 
-        // Clamp camera every frame — prevents SKActions from bypassing bounds
-        clampCamera()
+        // Clamp camera every frame — prevents SKActions from bypassing bounds.
+        // Skipped while an explicit camera SKAction is running so edge-station
+        // zoom-ins can reach their target (otherwise clamp fights the move).
+        if !isCameraActionInFlight {
+            clampCamera()
+        }
 
         // Terrain blur — zoomed in = blurred, zoomed out = sharp
         if let cam = cameraNode {
@@ -1561,9 +1569,14 @@ class WorkshopScene: SKScene, ScrollZoomable {
     /// Stage 2: Settle camera on the station after player arrives — pan only, no zoom change.
     private func zoomCameraToStation(_ stationPos: CGPoint) {
         guard let cameraNode = cameraNode else { return }
+        isCameraActionInFlight = true
         let moveAction = SKAction.move(to: stationPos, duration: 0.5)
         moveAction.timingMode = .easeInEaseOut
-        cameraNode.run(moveAction, withKey: "cameraZoom")
+        let finalize = SKAction.run { [weak self] in
+            self?.isCameraActionInFlight = false
+            self?.clampCamera()  // one final clamp once the move lands
+        }
+        cameraNode.run(SKAction.sequence([moveAction, finalize]), withKey: "cameraZoom")
     }
 
     /// Nudge camera upward so the station appears in the top third of the screen.

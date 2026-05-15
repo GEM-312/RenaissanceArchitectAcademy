@@ -709,9 +709,9 @@ struct CityMapView: View {
 
             // DEBUG: trigger the Duomo's completion bloom (sepia → full color reveal)
             // so we can verify the watercolor transition without playing through.
+            // Top-LEFT under the City of Learning dropdown so it doesn't collide with EDITOR.
             VStack {
                 HStack {
-                    Spacer()
                     Button {
                         if let duomo = sceneHolder.scene?.buildingNodes["duomo"] {
                             duomo.updateState(.available)  // reset to sepia ghost
@@ -731,8 +731,9 @@ struct CityMapView: View {
                             )
                     }
                     .buttonStyle(.plain)
-                    .padding(.trailing, Spacing.md)
-                    .padding(.top, Spacing.xxl + Spacing.xl)  // sits below the Editor button
+                    .padding(.leading, Spacing.md)
+                    .padding(.top, Spacing.xxl + Spacing.lg)
+                    Spacer()
                 }
                 Spacer()
             }
