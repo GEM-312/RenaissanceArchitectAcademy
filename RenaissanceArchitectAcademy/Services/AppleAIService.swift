@@ -38,7 +38,6 @@ import FoundationModels
 
     private var session: LanguageModelSession?
     private var currentContext: BirdContext?
-    private var currentTask: Task<Void, Never>?
 
     /// This service supports autonomous tool calling on iOS 26+
     var supportsTools: Bool { true }
@@ -203,7 +202,6 @@ import FoundationModels
     }
 
     func endSession() {
-        currentTask?.cancel()
         session = nil
         currentContext = nil
         messages = []

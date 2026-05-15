@@ -50,7 +50,6 @@ class NPCEncounterManager: ObservableObject {
 
     @Published var currentNPC: NPCDisplayData?
     @Published var currentPortrait: CGImage?
-    @Published var isGenerating = false
 
     // MARK: - Session Tracking
 
@@ -115,8 +114,6 @@ class NPCEncounterManager: ObservableObject {
 
         // Try AI generation with real historical figure context
         if GenerationService.isAvailable {
-            isGenerating = true
-            defer { isGenerating = false }
 
             do {
                 let generated = try await GenerationService.shared.generateNPC(

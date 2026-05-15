@@ -743,11 +743,11 @@ struct KnowledgeCardsOverlay: View {
             if isKeyword {
                 result = result + Text(text)
                     .font(RenaissanceFont.cardReadingBold)
-                    .foregroundColor(color)
+                    .foregroundStyle(color)
             } else {
                 result = result + Text(text)
                     .font(RenaissanceFont.cardReading)
-                    .foregroundColor(settings.cardTextColor)
+                    .foregroundStyle(settings.cardTextColor)
             }
         }
         return result

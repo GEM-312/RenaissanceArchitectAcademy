@@ -529,7 +529,6 @@ struct SketchStudyOverlay: View {
         }
     }
     
-    /// <#Description#>
     private func checkFindAnswer() {
         guard let pos = tapPosition else { return }
 
