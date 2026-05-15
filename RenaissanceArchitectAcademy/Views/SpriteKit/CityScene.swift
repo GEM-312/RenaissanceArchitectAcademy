@@ -21,6 +21,15 @@ class CityScene: SKScene, ScrollZoomable {
     /// Maximum zoom-out scale = full map visible (computed in fitCameraToMap)
     private var maxZoomOutScale: CGFloat = 3.5
     private(set) var buildingNodes: [String: BuildingNode] = [:]
+
+    /// Swaying-tree decoration — same wind-warp animation as WorkshopScene.
+    /// Each tree pulses gently in continuous sway; the apprentice's footfalls
+    /// trigger a stronger one-shot lean when she walks within 150pt.
+    private struct SwayingTree {
+        let node: SKSpriteNode
+        var lastDisturbed: TimeInterval = 0
+    }
+    private var swayingTrees: [SwayingTree] = []
     private var playerNode: PlayerNode!
 
     /// Player gender — set from SwiftUI before scene appears
@@ -236,6 +245,7 @@ class CityScene: SKScene, ScrollZoomable {
         setupTerrain()
         setupBuildings()
         setupDecorations()
+        setupSwayingTrees()
         setupPlayer()
 
         // Dark tint node — toggled by theme
@@ -366,6 +376,9 @@ class CityScene: SKScene, ScrollZoomable {
 
         // Clamp camera every frame — prevents SKActions from bypassing bounds
         clampCamera()
+
+        // Trees sway when the apprentice walks near them
+        disturbTreesNearPlayer()
 
         // Terrain clarity — crossfade sharpened overlay based on zoom level
         if let cam = cameraNode {
@@ -504,7 +517,7 @@ class CityScene: SKScene, ScrollZoomable {
             // ========================================
 
             // Florence
-            ("duomo", "Il Duomo", CGPoint(x: 1750, y: 936), "florence", 0),
+            ("duomo", "Il Duomo", CGPoint(x: 1945, y: 1143), "florence", 0),
             ("botanicalGarden", "Botanical Garden", CGPoint(x: 2497, y: 151), "florence", 0),
 
             // Venice
@@ -1130,6 +1143,129 @@ class CityScene: SKScene, ScrollZoomable {
         buildingNodes[buildingId]?.updateState(state)
     }
 
+    // MARK: - Swaying Trees
+    //
+    // Mirrors WorkshopScene.setupSwayingTrees — same warp-grid two-layer wind
+    // animation, registered with editor mode for drag-positioning.
+    // Asset names CityTree02..CityTree21 sit in Assets.xcassets and bypass
+    // the workshop's Tree1..Tree9 namespace so there's no collision.
+
+    private func setupSwayingTrees() {
+        // Default scatter across the 3500×2500 map, avoiding building footprints.
+        // Marina drags via editor mode (E to toggle) and pastes final coords here.
+        let defaults: [(name: String, position: CGPoint)] = [
+            ("CityTree02", CGPoint(x:  220, y: 1900)),
+            ("CityTree03", CGPoint(x:  680, y: 2100)),
+            ("CityTree04", CGPoint(x: 1180, y: 1750)),
+            ("CityTree05", CGPoint(x: 1500, y: 2150)),
+            ("CityTree06", CGPoint(x: 2050, y: 1820)),
+            ("CityTree07", CGPoint(x: 2480, y: 2050)),
+            ("CityTree08", CGPoint(x: 2950, y: 1850)),
+            ("CityTree09", CGPoint(x: 3280, y: 2080)),
+            ("CityTree10", CGPoint(x:  300, y:  720)),
+            ("CityTree11", CGPoint(x:  820, y: 1080)),
+            ("CityTree12", CGPoint(x: 1300, y:  650)),
+            ("CityTree13", CGPoint(x: 1880, y:  280)),
+            ("CityTree14", CGPoint(x: 2150, y: 1100)),
+            ("CityTree15", CGPoint(x: 2680, y:  420)),
+            ("CityTree16", CGPoint(x: 3080, y: 1100)),
+            ("CityTree17", CGPoint(x: 3300, y:  680)),
+            ("CityTree18", CGPoint(x:  500, y: 1500)),
+            ("CityTree19", CGPoint(x: 1620, y: 1400)),
+            ("CityTree20", CGPoint(x: 2280, y: 1480)),
+            ("CityTree21", CGPoint(x: 2860, y: 1320)),
+        ]
+        for entry in defaults {
+            addSwayingTree(image: entry.name, position: entry.position)
+        }
+    }
+
+    private func addSwayingTree(image: String, position: CGPoint, scale: CGFloat = 1.0) {
+        // Skip silently if the imageset isn't present — keeps this idempotent.
+        #if os(iOS)
+        guard UIImage(named: image) != nil else { return }
+        #else
+        guard NSImage(named: image) != nil else { return }
+        #endif
+
+        let tree = SKSpriteNode(imageNamed: image)
+        tree.anchorPoint = CGPoint(x: 0.5, y: 0.0)  // pivot at trunk base
+        tree.position = position
+        tree.setScale(scale)
+        tree.zPosition = 8        // below buildings (10), above terrain (-100)
+        tree.name = image
+        addChild(tree)
+
+        // Top-only wind sway via per-vertex warp. Bottom row stays anchored
+        // (trunk doesn't move), higher rows lean proportionally more — y² weight
+        // accentuates the canopy tip while the mid-trunk barely shifts.
+        let cols = 1
+        let rows = 3
+        let src: [SIMD2<Float>] = [
+            SIMD2(0, 0),    SIMD2(1, 0),
+            SIMD2(0, 0.33), SIMD2(1, 0.33),
+            SIMD2(0, 0.66), SIMD2(1, 0.66),
+            SIMD2(0, 1),    SIMD2(1, 1)
+        ]
+        func lean(_ amp: Float) -> [SIMD2<Float>] {
+            return src.map { p in
+                let yWeight = p.y * p.y
+                return SIMD2(p.x + amp * yWeight, p.y)
+            }
+        }
+        let amp: Float = 0.10
+        let baseGrid  = SKWarpGeometryGrid(columns: cols, rows: rows,
+                                           sourcePositions: src,
+                                           destinationPositions: src)
+        let leftGrid  = SKWarpGeometryGrid(columns: cols, rows: rows,
+                                           sourcePositions: src,
+                                           destinationPositions: lean(-amp))
+        let rightGrid = SKWarpGeometryGrid(columns: cols, rows: rows,
+                                           sourcePositions: src,
+                                           destinationPositions: lean(amp))
+
+        tree.warpGeometry = baseGrid
+
+        let duration = Double.random(in: 1.6...2.4)
+        let phase = Double.random(in: 0...duration)
+
+        guard let toRight = SKAction.warp(to: rightGrid, duration: duration),
+              let toLeft  = SKAction.warp(to: leftGrid,  duration: duration)
+        else { return }
+        toRight.timingMode = .easeInEaseOut
+        toLeft.timingMode  = .easeInEaseOut
+
+        let cycle = SKAction.sequence([toRight, toLeft])
+        tree.run(SKAction.sequence([
+            SKAction.wait(forDuration: phase),
+            SKAction.repeatForever(cycle)
+        ]), withKey: "windWarp")
+
+        swayingTrees.append(SwayingTree(node: tree))
+    }
+
+    /// Called from update(_:). O(n) — n = 20 trees.
+    private func disturbTreesNearPlayer() {
+        guard !swayingTrees.isEmpty, playerNode != nil else { return }
+        let triggerRadius: CGFloat = 150
+        let now = CACurrentMediaTime()
+        for i in swayingTrees.indices {
+            let dx = swayingTrees[i].node.position.x - playerNode.position.x
+            let dy = swayingTrees[i].node.position.y - playerNode.position.y
+            let dist = hypot(dx, dy)
+            if dist < triggerRadius && now - swayingTrees[i].lastDisturbed > 2.0 {
+                let strong = SKAction.sequence([
+                    SKAction.rotate(byAngle:  .pi / 30, duration: 0.4),
+                    SKAction.rotate(byAngle: -.pi / 15, duration: 0.6),
+                    SKAction.rotate(byAngle:  .pi / 30, duration: 0.4)
+                ])
+                strong.timingMode = .easeInEaseOut
+                swayingTrees[i].node.run(strong, withKey: "treeDisturbance")
+                swayingTrees[i].lastDisturbed = now
+            }
+        }
+    }
+
     // MARK: - Editor Mode (DEBUG only)
 
     #if DEBUG
@@ -1137,6 +1273,11 @@ class CityScene: SKScene, ScrollZoomable {
         // Buildings
         for (id, node) in buildingNodes {
             editorMode.registerNode(node, name: "building_\(id)")
+        }
+
+        // Swaying trees (named CityTree02..CityTree21)
+        for entry in swayingTrees {
+            editorMode.registerNode(entry.node, name: entry.node.name ?? "citytree")
         }
 
         // Trees (named tree_0, tree_1, etc. in setupDecorations)

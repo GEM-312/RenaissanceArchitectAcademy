@@ -527,12 +527,13 @@ struct KnowledgeCardsOverlay: View {
 
         return VStack(spacing: 0) {
             // Header
-            HStack(spacing: 8) {
+            HStack(spacing: Spacing.sm) {
                 Image(systemName: card.icon)
-                    .font(.system(size: 16))
+                    .font(.system(size: ActivitySizing.cardHeaderIconSize(sizeClass)))
                 Text(card.title)
-                    .font(RenaissanceFont.visualTitle)
+                    .font(ActivitySizing.cardHeaderTitleFont(sizeClass))
                     .lineLimit(1)
+                    .minimumScaleFactor(ActivitySizing.titleMinScale)
                 Spacer()
                 if isActivity {
                     Button {
@@ -540,28 +541,29 @@ struct KnowledgeCardsOverlay: View {
                             cardPhases[card.id] = .reading
                         }
                     } label: {
-                        HStack(spacing: 4) {
-                            Image(systemName: "arrow.left").font(.system(size: 12))
-                            Text("Lesson").font(RenaissanceFont.caption)
+                        HStack(spacing: 6) {
+                            Image(systemName: "arrow.left")
+                                .font(.system(size: ActivitySizing.cardHeaderIconSize(sizeClass) * 0.7))
+                            Text("Lesson")
+                                .font(ActivitySizing.cardHeaderBackFont(sizeClass))
                         }
                         .foregroundStyle(color.opacity(0.6))
-                        .padding(.horizontal, Spacing.xs)
-                        .padding(.vertical, 6)
+                        .padding(.horizontal, Spacing.sm)
+                        .padding(.vertical, Spacing.xs)
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                 }
                 if isCompleted {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 16))
+                        .font(.system(size: ActivitySizing.cardHeaderIconSize(sizeClass)))
                         .foregroundStyle(RenaissanceColors.sageGreen)
                 }
             }
             .foregroundStyle(color)
-            .padding(.top, Spacing.xs)
-            .padding(.bottom, Spacing.xxs)
-            .padding(.horizontal, Spacing.xxs)
-            .editable("card-header", fontSize: 16)
+            .padding(.top, Spacing.sm)
+            .padding(.bottom, Spacing.xs)
+            .padding(.horizontal, Spacing.xs)
 
             Rectangle()
                 .fill(color.opacity(0.2))
@@ -805,13 +807,16 @@ struct KnowledgeCardsOverlay: View {
     // MARK: - Keyword Match Activity
 
     private func keywordMatchView(card: KnowledgeCard) -> some View {
-        VStack(spacing: 10) {
+        VStack(spacing: ActivitySizing.sectionSpacing) {
             Text("Match each term to its meaning")
-                .font(.custom("EBGaramond-Medium", size: 12))
-                .foregroundStyle(settings.cardTextColor.opacity(0.6))
+                .font(ActivitySizing.titleFont(sizeClass))
+                .foregroundStyle(settings.cardTextColor.opacity(0.85))
+                .multilineTextAlignment(.center)
+                .minimumScaleFactor(ActivitySizing.titleMinScale)
+                .lineLimit(2)
 
             // Keywords
-            VStack(spacing: 6) {
+            VStack(spacing: ActivitySizing.buttonStackSpacing) {
                 ForEach(card.keywords) { pair in
                     let isMatched = matchedPairIDs.contains(pair.id)
                     let isSelected = selectedKeywordID == pair.id
@@ -821,19 +826,20 @@ struct KnowledgeCardsOverlay: View {
                     } label: {
                         HStack {
                             Image(systemName: isMatched ? "checkmark.circle.fill" : "circle")
-                                .font(.system(size: 16))
+                                .font(.system(size: ActivitySizing.cardHeaderIconSize(sizeClass) * 0.85))
                                 .foregroundStyle(isMatched ? RenaissanceColors.sageGreen : card.color.opacity(0.4))
                             Text(pair.keyword)
-                                .font(RenaissanceFont.buttonSmall)
+                                .font(ActivitySizing.buttonTextFont(sizeClass))
                                 .foregroundStyle(
                                     isMatched ? RenaissanceColors.sageGreen
                                     : isSelected ? card.color
                                     : settings.cardTextColor
                                 )
+                                .minimumScaleFactor(ActivitySizing.buttonTextMinScale)
                             Spacer()
                         }
-                        .padding(.horizontal, Spacing.sm)
-                        .padding(.vertical, Spacing.sm)
+                        .padding(.horizontal, ActivitySizing.buttonHPadding(sizeClass))
+                        .padding(.vertical, ActivitySizing.buttonVPadding(sizeClass))
                         .background(
                             RoundedRectangle(cornerRadius: CornerRadius.sm)
                                 .fill(
@@ -857,13 +863,13 @@ struct KnowledgeCardsOverlay: View {
             HStack {
                 Rectangle().fill(settings.cardTextColor.opacity(0.1)).frame(height: 1)
                 Image(systemName: "arrow.down")
-                    .font(.system(size: 11))
-                    .foregroundStyle(settings.cardTextColor.opacity(0.25))
+                    .font(.system(size: ActivitySizing.cardHeaderIconSize(sizeClass) * 0.55))
+                    .foregroundStyle(settings.cardTextColor.opacity(0.3))
                 Rectangle().fill(settings.cardTextColor.opacity(0.1)).frame(height: 1)
             }
 
             // Definitions (shuffled)
-            VStack(spacing: 6) {
+            VStack(spacing: ActivitySizing.buttonStackSpacing) {
                 ForEach(shuffledDefinitions) { pair in
                     let isMatched = matchedPairIDs.contains(pair.id)
                     let isSelected = selectedDefinitionID == pair.id
@@ -874,23 +880,24 @@ struct KnowledgeCardsOverlay: View {
                     } label: {
                         HStack {
                             Text(pair.definition)
-                                .font(RenaissanceFont.dialogSubtitle)
+                                .font(ActivitySizing.buttonTextFont(sizeClass))
                                 .foregroundStyle(
                                     isWrong ? RenaissanceColors.errorRed
                                     : isMatched ? RenaissanceColors.sageGreen
                                     : isSelected ? card.color
-                                    : settings.cardTextColor.opacity(0.8)
+                                    : settings.cardTextColor.opacity(0.85)
                                 )
                                 .multilineTextAlignment(.leading)
+                                .minimumScaleFactor(ActivitySizing.buttonTextMinScale)
                             Spacer()
                             if isMatched {
                                 Image(systemName: "checkmark")
-                                    .font(.system(size: 13, weight: .bold))
+                                    .font(.system(size: ActivitySizing.cardHeaderIconSize(sizeClass) * 0.65, weight: .bold))
                                     .foregroundStyle(RenaissanceColors.sageGreen)
                             }
                         }
-                        .padding(.horizontal, Spacing.sm)
-                        .padding(.vertical, Spacing.sm)
+                        .padding(.horizontal, ActivitySizing.buttonHPadding(sizeClass))
+                        .padding(.vertical, ActivitySizing.buttonVPadding(sizeClass))
                         .background(
                             RoundedRectangle(cornerRadius: CornerRadius.sm)
                                 .fill(
@@ -919,75 +926,84 @@ struct KnowledgeCardsOverlay: View {
             // Progress dots
             progressDots(total: card.keywords.count, matched: matchedPairIDs.count)
         }
+        .padding(ActivitySizing.outerPadding)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     // MARK: - Multiple Choice Activity
 
     private func multipleChoiceView(card: KnowledgeCard, question: String, options: [String], correctIndex: Int) -> some View {
-        VStack(spacing: 12) {
+        VStack(spacing: ActivitySizing.sectionSpacing) {
             Text(question)
-                .font(RenaissanceFont.buttonSmall)
+                .font(ActivitySizing.titleFont(sizeClass))
                 .foregroundStyle(settings.cardTextColor)
                 .multilineTextAlignment(.center)
-                .padding(.top, Spacing.xs)
+                .minimumScaleFactor(ActivitySizing.titleMinScale)
+                .lineLimit(3)
 
-            ForEach(Array(options.enumerated()), id: \.offset) { index, option in
-                let isCorrect = index == correctIndex
-                let isSelected = selectedMCIndex == index
-                let showResult = mcAnswered
+            VStack(spacing: ActivitySizing.buttonStackSpacing) {
+                ForEach(Array(options.enumerated()), id: \.offset) { index, option in
+                    let isCorrect = index == correctIndex
+                    let isSelected = selectedMCIndex == index
+                    let showResult = mcAnswered
 
-                Button {
-                    guard !mcAnswered else { return }
-                    selectedMCIndex = index
-                    mcAnswered = true
-                    if isCorrect {
-                        SoundManager.shared.play(.correctChime)
-                        awardFlorins(GameRewards.scienceCardMatchFlorins * 2)
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                            completeCard(card)
+                    Button {
+                        guard !mcAnswered else { return }
+                        selectedMCIndex = index
+                        mcAnswered = true
+                        if isCorrect {
+                            SoundManager.shared.play(.correctChime)
+                            awardFlorins(GameRewards.scienceCardMatchFlorins * 2)
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                completeCard(card)
+                            }
+                        } else {
+                            SoundManager.shared.play(.wrongBuzz)
                         }
-                    } else {
-                        SoundManager.shared.play(.wrongBuzz)
-                    }
-                } label: {
-                    HStack {
-                        Text(option)
-                            .font(RenaissanceFont.bodySmall)
-                            .foregroundStyle(
-                                showResult && isCorrect ? RenaissanceColors.sageGreen
-                                : showResult && isSelected && !isCorrect ? RenaissanceColors.errorRed
-                                : settings.cardTextColor
-                            )
-                        Spacer()
-                        if showResult && isCorrect {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundStyle(RenaissanceColors.sageGreen)
-                        } else if showResult && isSelected && !isCorrect {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundStyle(RenaissanceColors.errorRed)
+                    } label: {
+                        HStack {
+                            Text(option)
+                                .font(ActivitySizing.buttonTextFont(sizeClass))
+                                .foregroundStyle(
+                                    showResult && isCorrect ? RenaissanceColors.sageGreen
+                                    : showResult && isSelected && !isCorrect ? RenaissanceColors.errorRed
+                                    : settings.cardTextColor
+                                )
+                                .multilineTextAlignment(.leading)
+                                .minimumScaleFactor(ActivitySizing.buttonTextMinScale)
+                            Spacer()
+                            if showResult && isCorrect {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .font(.system(size: ActivitySizing.cardHeaderIconSize(sizeClass) * 0.8))
+                                    .foregroundStyle(RenaissanceColors.sageGreen)
+                            } else if showResult && isSelected && !isCorrect {
+                                Image(systemName: "xmark.circle.fill")
+                                    .font(.system(size: ActivitySizing.cardHeaderIconSize(sizeClass) * 0.8))
+                                    .foregroundStyle(RenaissanceColors.errorRed)
+                            }
                         }
+                        .padding(.horizontal, ActivitySizing.buttonHPadding(sizeClass))
+                        .padding(.vertical, ActivitySizing.buttonVPadding(sizeClass))
+                        .background(
+                            RoundedRectangle(cornerRadius: CornerRadius.sm)
+                                .fill(
+                                    showResult && isCorrect ? RenaissanceColors.sageGreen.opacity(0.1)
+                                    : showResult && isSelected && !isCorrect ? RenaissanceColors.errorRed.opacity(0.1)
+                                    : RenaissanceColors.ochre.opacity(0.04)
+                                )
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: CornerRadius.sm)
+                                .stroke(
+                                    showResult && isCorrect ? RenaissanceColors.sageGreen.opacity(0.5)
+                                    : showResult && isSelected && !isCorrect ? RenaissanceColors.errorRed.opacity(0.5)
+                                    : Color.clear,
+                                    lineWidth: 1.5
+                                )
+                        )
                     }
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 14)
-                    .background(
-                        RoundedRectangle(cornerRadius: CornerRadius.sm)
-                            .fill(
-                                showResult && isCorrect ? RenaissanceColors.sageGreen.opacity(0.1)
-                                : showResult && isSelected && !isCorrect ? RenaissanceColors.errorRed.opacity(0.1)
-                                : RenaissanceColors.ochre.opacity(0.04)
-                            )
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: CornerRadius.sm)
-                            .stroke(
-                                showResult && isCorrect ? RenaissanceColors.sageGreen.opacity(0.5)
-                                : showResult && isSelected && !isCorrect ? RenaissanceColors.errorRed.opacity(0.5)
-                                : Color.clear,
-                                lineWidth: 1.5
-                            )
-                    )
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
             }
 
             // Retry if wrong
@@ -997,10 +1013,10 @@ struct KnowledgeCardsOverlay: View {
                     selectedMCIndex = nil
                 } label: {
                     Text("Try Again")
-                        .font(RenaissanceFont.buttonSmall)
+                        .font(ActivitySizing.buttonTextFont(sizeClass))
                         .foregroundStyle(card.color)
-                        .padding(.horizontal, Spacing.xl)
-                        .padding(.vertical, Spacing.sm)
+                        .padding(.horizontal, ActivitySizing.buttonHPadding(sizeClass))
+                        .padding(.vertical, ActivitySizing.buttonVPadding(sizeClass))
                         .background(
                             RoundedRectangle(cornerRadius: CornerRadius.sm)
                                 .fill(card.color.opacity(0.08))
@@ -1011,22 +1027,24 @@ struct KnowledgeCardsOverlay: View {
                         )
                 }
                 .buttonStyle(.plain)
-                .padding(.top, 6)
             }
         }
+        .padding(ActivitySizing.outerPadding)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     // MARK: - True/False Activity
 
     private func trueFalseView(card: KnowledgeCard, statement: String, isTrue: Bool) -> some View {
-        VStack(spacing: 16) {
+        VStack(spacing: ActivitySizing.sectionSpacing) {
             Text(statement)
-                .font(RenaissanceFont.bodySmall)
+                .font(ActivitySizing.titleFont(sizeClass))
                 .foregroundStyle(settings.cardTextColor)
                 .multilineTextAlignment(.center)
-                .padding(.top, Spacing.xs)
+                .minimumScaleFactor(ActivitySizing.titleMinScale)
+                .lineLimit(4)
 
-            HStack(spacing: 16) {
+            HStack(spacing: ActivitySizing.buttonStackSpacing) {
                 ForEach([true, false], id: \.self) { value in
                     let label = value ? "True" : "False"
                     let isCorrect = value == isTrue
@@ -1048,16 +1066,16 @@ struct KnowledgeCardsOverlay: View {
                         }
                     } label: {
                         Text(label)
-                            .font(.custom("EBGaramond-SemiBold", size: 16))
+                            .font(ActivitySizing.toggleButtonFont(sizeClass))
                             .foregroundStyle(
                                 showResult && isCorrect ? RenaissanceColors.sageGreen
                                 : showResult && isSelected && !isCorrect ? RenaissanceColors.errorRed
                                 : card.color
                             )
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
+                            .padding(.vertical, ActivitySizing.toggleButtonVPadding(sizeClass))
                             .background(
-                                RoundedRectangle(cornerRadius: 10)
+                                RoundedRectangle(cornerRadius: CornerRadius.md)
                                     .fill(
                                         showResult && isCorrect ? RenaissanceColors.sageGreen.opacity(0.1)
                                         : showResult && isSelected && !isCorrect ? RenaissanceColors.errorRed.opacity(0.1)
@@ -1065,7 +1083,7 @@ struct KnowledgeCardsOverlay: View {
                                     )
                             )
                             .overlay(
-                                RoundedRectangle(cornerRadius: 10)
+                                RoundedRectangle(cornerRadius: CornerRadius.md)
                                     .stroke(
                                         showResult && isCorrect ? RenaissanceColors.sageGreen.opacity(0.5)
                                         : showResult && isSelected && !isCorrect ? RenaissanceColors.errorRed.opacity(0.5)
@@ -1085,10 +1103,10 @@ struct KnowledgeCardsOverlay: View {
                     tfSelected = nil
                 } label: {
                     Text("Try Again")
-                        .font(RenaissanceFont.buttonSmall)
+                        .font(ActivitySizing.buttonTextFont(sizeClass))
                         .foregroundStyle(card.color)
-                        .padding(.horizontal, Spacing.xl)
-                        .padding(.vertical, Spacing.sm)
+                        .padding(.horizontal, ActivitySizing.buttonHPadding(sizeClass))
+                        .padding(.vertical, ActivitySizing.buttonVPadding(sizeClass))
                         .background(
                             RoundedRectangle(cornerRadius: CornerRadius.sm)
                                 .fill(card.color.opacity(0.08))
@@ -1101,6 +1119,8 @@ struct KnowledgeCardsOverlay: View {
                 .buttonStyle(.plain)
             }
         }
+        .padding(ActivitySizing.outerPadding)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     // MARK: - Word Scramble Activity
@@ -1108,44 +1128,51 @@ struct KnowledgeCardsOverlay: View {
     private func wordScrambleView(card: KnowledgeCard, word: String, hint: String) -> some View {
         let upperWord = word.uppercased()
         let color = card.color
+        let slotCount = upperWord.count
+        let tileCount = scramblePool.count
+        let slotFrame = ActivitySizing.slotFrameFor(sizeClass, slotCount: slotCount)
+        let tileFrame = ActivitySizing.tileFrameFor(sizeClass, tileCount: tileCount)
+        let scrambleCols = ActivitySizing.scrambleColumns(sizeClass, tileCount: tileCount)
 
-        return VStack(spacing: 14) {
-            // Hint
+        return VStack(spacing: ActivitySizing.sectionSpacing) {
+            // Hint (activity title)
             Text(hint)
-                .font(RenaissanceFont.dialogSubtitle)
-                .foregroundStyle(settings.cardTextColor.opacity(0.7))
+                .font(ActivitySizing.titleFont(sizeClass))
+                .foregroundStyle(settings.cardTextColor.opacity(0.85))
                 .multilineTextAlignment(.center)
-                .padding(.top, Spacing.xxs)
+                .minimumScaleFactor(ActivitySizing.titleMinScale)
+                .lineLimit(3)
 
-            // Dashes showing progress
-            HStack(spacing: 6) {
+            // Dashes showing progress — sized so the whole word fits on one row
+            HStack(spacing: ActivitySizing.slotSpacing) {
                 ForEach(Array(upperWord.enumerated()), id: \.offset) { index, _ in
                     let filled = index < spelledTiles.count
                     Text(filled ? String(spelledTiles[index].character) : "_")
-                        .font(RenaissanceFont.title2Bold)
+                        .font(ActivitySizing.slotFontFor(sizeClass, slotCount: slotCount))
                         .foregroundStyle(filled ? color : settings.cardTextColor.opacity(0.3))
-                        .frame(width: 28, height: 36)
+                        .frame(width: slotFrame.width, height: slotFrame.height)
                         .background(
-                            RoundedRectangle(cornerRadius: 4)
+                            RoundedRectangle(cornerRadius: CornerRadius.sm)
                                 .fill(filled ? color.opacity(0.08) : RenaissanceColors.ochre.opacity(0.04))
                         )
                 }
             }
 
-            // Scrambled letter tiles (responsive grid)
-            let scrambleColMax = isLargeScreen ? 6 : 5
-            let scrambleTileSize: CGFloat = isLargeScreen ? 52 : 44
-            let colCount = max(min(scramblePool.count, scrambleColMax), 1)
-            let columns = Array(repeating: GridItem(.fixed(scrambleTileSize), spacing: 8), count: colCount)
-            LazyVGrid(columns: columns, spacing: 8) {
+            // Scrambled letter tiles — column count scales with pool size so
+            // short pools render on one row, long pools wrap gracefully.
+            let columns = Array(
+                repeating: GridItem(.fixed(tileFrame), spacing: ActivitySizing.tileGridSpacing),
+                count: scrambleCols
+            )
+            LazyVGrid(columns: columns, spacing: ActivitySizing.tileGridSpacing) {
                 ForEach(scramblePool) { tile in
                     Button {
                         tapScrambleTile(tile, word: upperWord, card: card)
                     } label: {
                         Text(String(tile.character))
-                            .font(.custom("Cinzel-Bold", size: 18))
+                            .font(ActivitySizing.tileFontFor(sizeClass, tileCount: tileCount))
                             .foregroundStyle(color)
-                            .frame(width: scrambleTileSize - 4, height: scrambleTileSize - 4)
+                            .frame(width: tileFrame, height: tileFrame)
                             .contentShape(Rectangle())
                             .background(
                                 RoundedRectangle(cornerRadius: CornerRadius.sm)
@@ -1167,15 +1194,15 @@ struct KnowledgeCardsOverlay: View {
                         scramblePool.append(last)
                     }
                 } label: {
-                    HStack(spacing: 4) {
+                    HStack(spacing: 6) {
                         Image(systemName: "arrow.uturn.backward")
-                            .font(.system(size: 13))
+                            .font(.system(size: ActivitySizing.cardHeaderIconSize(sizeClass) * 0.7))
                         Text("Undo")
-                            .font(RenaissanceFont.footnoteBold)
+                            .font(ActivitySizing.buttonTextFont(sizeClass))
                     }
-                    .foregroundStyle(color.opacity(0.6))
-                    .padding(.horizontal, Spacing.md)
-                    .padding(.vertical, Spacing.xs)
+                    .foregroundStyle(color.opacity(0.7))
+                    .padding(.horizontal, ActivitySizing.buttonHPadding(sizeClass))
+                    .padding(.vertical, ActivitySizing.buttonVPadding(sizeClass))
                     .contentShape(Rectangle())
                     .background(
                         RoundedRectangle(cornerRadius: CornerRadius.sm)
@@ -1185,6 +1212,8 @@ struct KnowledgeCardsOverlay: View {
                 .buttonStyle(.plain)
             }
         }
+        .padding(ActivitySizing.outerPadding)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private func tapScrambleTile(_ tile: ScrambleTile, word: String, card: KnowledgeCard) {
@@ -1221,28 +1250,31 @@ struct KnowledgeCardsOverlay: View {
 
     private func numberFishingView(card: KnowledgeCard, question: String, correctAnswer: Int, decoys: [Int]) -> some View {
         let color = card.color
+        let bubbleFrame = ActivitySizing.bubbleFrame(sizeClass)
+        let pondHeight = ActivitySizing.pondHeight(sizeClass)
 
-        return VStack(spacing: 12) {
+        return VStack(spacing: ActivitySizing.sectionSpacing) {
             // Question
             Text(question)
-                .font(RenaissanceFont.buttonSmall)
+                .font(ActivitySizing.titleFont(sizeClass))
                 .foregroundStyle(settings.cardTextColor)
                 .multilineTextAlignment(.center)
-                .padding(.top, Spacing.xxs)
+                .minimumScaleFactor(ActivitySizing.titleMinScale)
+                .lineLimit(3)
 
             // Answer blank
-            HStack(spacing: 4) {
+            HStack(spacing: ActivitySizing.slotSpacing) {
                 Text("Answer:")
-                    .font(RenaissanceFont.dialogSubtitle)
-                    .foregroundStyle(settings.cardTextColor.opacity(0.5))
+                    .font(ActivitySizing.buttonTextFont(sizeClass))
+                    .foregroundStyle(settings.cardTextColor.opacity(0.6))
                 if fishingAnswered {
                     Text("\(correctAnswer)")
-                        .font(RenaissanceFont.title2Bold)
+                        .font(ActivitySizing.slotFont(sizeClass))
                         .foregroundStyle(RenaissanceColors.goldSuccess)
                         .transition(.scale.combined(with: .opacity))
                 } else {
                     Text("?")
-                        .font(RenaissanceFont.title2Bold)
+                        .font(ActivitySizing.slotFont(sizeClass))
                         .foregroundStyle(color.opacity(0.4))
                 }
             }
@@ -1250,18 +1282,19 @@ struct KnowledgeCardsOverlay: View {
             // Pond area with floating bubbles
             ZStack {
                 // Pond background
-                RoundedRectangle(cornerRadius: 14)
+                RoundedRectangle(cornerRadius: CornerRadius.md)
                     .fill(RenaissanceColors.renaissanceBlue.opacity(0.06))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 14)
+                        RoundedRectangle(cornerRadius: CornerRadius.md)
                             .stroke(RenaissanceColors.renaissanceBlue.opacity(0.15), lineWidth: 1)
                     )
 
-                // Ripple decoration
+                // Ripple decoration — scales with pond size
                 ForEach(0..<3, id: \.self) { i in
                     Circle()
                         .stroke(RenaissanceColors.renaissanceBlue.opacity(0.06), lineWidth: 1)
-                        .frame(width: CGFloat(60 + i * 40), height: CGFloat(60 + i * 40))
+                        .frame(width: pondHeight * 0.4 + CGFloat(i) * pondHeight * 0.18,
+                               height: pondHeight * 0.4 + CGFloat(i) * pondHeight * 0.18)
                         .offset(x: CGFloat([-50, 60, -20][i]), y: CGFloat([20, -30, 40][i]))
                 }
 
@@ -1273,11 +1306,11 @@ struct KnowledgeCardsOverlay: View {
                             tapFishingBubble(bubble, correct: correctAnswer, card: card)
                         } label: {
                             Text("\(bubble.number)")
-                                .font(.custom("Cinzel-Bold", size: 18))
+                                .font(ActivitySizing.bubbleFont(sizeClass))
                                 .foregroundStyle(
                                     fishingAnswered && bubble.isCorrect ? RenaissanceColors.goldSuccess : color
                                 )
-                                .frame(width: 56, height: 56)
+                                .frame(width: bubbleFrame, height: bubbleFrame)
                                 .background(
                                     Circle()
                                         .fill(
@@ -1305,9 +1338,11 @@ struct KnowledgeCardsOverlay: View {
                     }
                 }
             }
-            .frame(height: 240)
-            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .frame(height: pondHeight)
+            .clipShape(RoundedRectangle(cornerRadius: CornerRadius.md))
         }
+        .padding(ActivitySizing.outerPadding)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private func tapFishingBubble(_ bubble: FishingBubble, correct: Int, card: KnowledgeCard) {
@@ -1339,56 +1374,63 @@ struct KnowledgeCardsOverlay: View {
     private func hangmanView(card: KnowledgeCard, word: String, hint: String) -> some View {
         let upperWord = word.uppercased()
         let uniqueLetters = Set(upperWord)
-        let wrongGuesses = hangmanGuessed.subtracting(uniqueLetters)
         let maxWrong = 6
         let color = card.color
+        let slotFrame = ActivitySizing.slotFrame(sizeClass)
+        let tileFrame = ActivitySizing.tileFrame(sizeClass)
+        let scaffoldFrame = ActivitySizing.scaffoldSize(sizeClass)
+        let indicatorDot = ActivitySizing.indicatorDotSize(sizeClass)
+        let colCount = ActivitySizing.hangmanColumns(sizeClass)
 
-        return VStack(spacing: 10) {
+        return VStack(spacing: ActivitySizing.sectionSpacing) {
             // Hint
             Text(hint)
-                .font(RenaissanceFont.caption)
-                .foregroundStyle(settings.cardTextColor.opacity(0.7))
+                .font(ActivitySizing.titleFont(sizeClass))
+                .foregroundStyle(settings.cardTextColor.opacity(0.85))
                 .multilineTextAlignment(.center)
+                .minimumScaleFactor(ActivitySizing.titleMinScale)
+                .lineLimit(3)
 
             // Scaffold + figure
             hangmanFigure(wrongCount: hangmanWrongCount, color: color)
-                .frame(height: 130)
+                .frame(width: scaffoldFrame.width, height: scaffoldFrame.height)
 
             // Word dashes
-            HStack(spacing: 5) {
+            HStack(spacing: ActivitySizing.slotSpacing) {
                 ForEach(Array(upperWord.enumerated()), id: \.offset) { _, char in
                     let revealed = hangmanGuessed.contains(char) || hangmanRevealed
                     Text(revealed ? String(char) : "_")
-                        .font(.custom("Cinzel-Bold", size: 20))
+                        .font(ActivitySizing.slotFont(sizeClass))
                         .foregroundStyle(
                             hangmanRevealed && !hangmanGuessed.contains(char)
                             ? RenaissanceColors.errorRed
                             : revealed ? color : settings.cardTextColor.opacity(0.3)
                         )
-                        .frame(width: 24, height: 30)
+                        .frame(width: slotFrame.width, height: slotFrame.height)
                 }
             }
-            .padding(.vertical, 4)
 
             // Wrong count
-            HStack(spacing: 4) {
+            HStack(spacing: 6) {
                 ForEach(0..<maxWrong, id: \.self) { i in
                     Circle()
                         .fill(i < hangmanWrongCount ? RenaissanceColors.errorRed : settings.cardTextColor.opacity(0.12))
-                        .frame(width: 10, height: 10)
+                        .frame(width: indicatorDot, height: indicatorDot)
                 }
                 Text("\(hangmanWrongCount)/\(maxWrong)")
-                    .font(RenaissanceFont.footnoteSmall)
-                    .foregroundStyle(settings.cardTextColor.opacity(0.4))
+                    .font(RenaissanceFont.caption)
+                    .foregroundStyle(settings.cardTextColor.opacity(0.5))
+                    .padding(.leading, 4)
             }
 
-            // Alphabet grid (responsive: 13 cols on iPad, 9 cols on iPhone)
+            // Alphabet grid (size-class driven via ActivitySizing tokens)
             let alphabet: [Character] = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-            let hangmanColCount = isLargeScreen ? 13 : 9
-            let hangmanCellSize: CGFloat = isLargeScreen ? 36 : 32
-            let columns = Array(repeating: GridItem(.fixed(hangmanCellSize), spacing: 3), count: hangmanColCount)
+            let columns = Array(
+                repeating: GridItem(.fixed(tileFrame), spacing: ActivitySizing.tileGridSpacing),
+                count: colCount
+            )
 
-            LazyVGrid(columns: columns, spacing: 3) {
+            LazyVGrid(columns: columns, spacing: ActivitySizing.tileGridSpacing) {
                 ForEach(alphabet, id: \.self) { letter in
                     let isGuessed = hangmanGuessed.contains(letter)
                     let isCorrectLetter = uniqueLetters.contains(letter) && isGuessed
@@ -1398,16 +1440,16 @@ struct KnowledgeCardsOverlay: View {
                         guessHangmanLetter(letter, word: upperWord, card: card)
                     } label: {
                         Text(String(letter))
-                            .font(RenaissanceFont.footnoteBold)
+                            .font(ActivitySizing.tileFont(sizeClass))
                             .foregroundStyle(
                                 isCorrectLetter ? RenaissanceColors.sageGreen
                                 : isWrongLetter ? RenaissanceColors.errorRed.opacity(0.5)
                                 : color
                             )
-                            .frame(width: hangmanCellSize - 2, height: hangmanCellSize - 2)
+                            .frame(width: tileFrame, height: tileFrame)
                             .contentShape(Rectangle())
                             .background(
-                                RoundedRectangle(cornerRadius: 6)
+                                RoundedRectangle(cornerRadius: CornerRadius.sm)
                                     .fill(
                                         isCorrectLetter ? RenaissanceColors.sageGreen.opacity(0.1)
                                         : isWrongLetter ? RenaissanceColors.errorRed.opacity(0.06)
@@ -1415,7 +1457,7 @@ struct KnowledgeCardsOverlay: View {
                                     )
                             )
                             .overlay(
-                                RoundedRectangle(cornerRadius: 6)
+                                RoundedRectangle(cornerRadius: CornerRadius.sm)
                                     .stroke(
                                         isCorrectLetter ? RenaissanceColors.sageGreen.opacity(0.4)
                                         : isWrongLetter ? RenaissanceColors.errorRed.opacity(0.2)
@@ -1433,17 +1475,16 @@ struct KnowledgeCardsOverlay: View {
             // Game over / retry
             if hangmanRevealed && !hangmanWon {
                 Button {
-                    // Retry
                     hangmanGuessed = []
                     hangmanWrongCount = 0
                     hangmanRevealed = false
                     hangmanWon = false
                 } label: {
                     Text("Try Again")
-                        .font(RenaissanceFont.buttonSmall)
+                        .font(ActivitySizing.buttonTextFont(sizeClass))
                         .foregroundStyle(color)
-                        .padding(.horizontal, Spacing.xl)
-                        .padding(.vertical, 10)
+                        .padding(.horizontal, ActivitySizing.buttonHPadding(sizeClass))
+                        .padding(.vertical, ActivitySizing.buttonVPadding(sizeClass))
                         .background(
                             RoundedRectangle(cornerRadius: CornerRadius.sm)
                                 .fill(color.opacity(0.08))
@@ -1456,6 +1497,8 @@ struct KnowledgeCardsOverlay: View {
                 .buttonStyle(.plain)
             }
         }
+        .padding(ActivitySizing.outerPadding)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private func guessHangmanLetter(_ letter: Character, word: String, card: KnowledgeCard) {
@@ -1932,11 +1975,12 @@ struct KnowledgeCardsOverlay: View {
     // MARK: - Progress Dots
 
     private func progressDots(total: Int, matched: Int) -> some View {
-        HStack(spacing: 4) {
+        let size = ActivitySizing.progressDotSize(sizeClass)
+        return HStack(spacing: size * 0.5) {
             ForEach(0..<total, id: \.self) { i in
                 Circle()
                     .fill(i < matched ? RenaissanceColors.sageGreen : settings.cardTextColor.opacity(0.15))
-                    .frame(width: 8, height: 8)
+                    .frame(width: size, height: size)
             }
         }
     }

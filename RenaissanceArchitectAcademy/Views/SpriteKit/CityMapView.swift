@@ -97,6 +97,10 @@ struct CityMapView: View {
     @State private var guidanceMessage: String = ""
     @State private var guidanceDestination: SidebarDestination? = nil
 
+    /// Apple Intelligence: when the bird's current guidance pulse is carrying
+    /// a calendar-aware suggestion, this is the building id its CTA opens.
+    @State private var guidanceSuggestionBuildingId: Int? = nil
+
     /// Sketch Study overlay state (activity between knowledge cards)
     @State private var showSketchStudy = false
     @State private var activeSketch: MuseumSketch? = nil
@@ -457,9 +461,27 @@ struct CityMapView: View {
                             let p = viewModel.cardProgress(for: bid)
                             return "\(p.completed)/\(p.total) cards collected"
                         }(),
-                        onDismiss: { withAnimation { showGuidance = false } },
+                        onDismiss: {
+                            withAnimation { showGuidance = false }
+                            // If we just dismissed a contextual suggestion bubble, drop it from the store.
+                            if guidanceSuggestionBuildingId != nil {
+                                ContextualSuggestionStore.shared.dismiss()
+                                guidanceSuggestionBuildingId = nil
+                            }
+                        },
                         destination: guidanceDestination,
-                        onNavigate: onNavigate
+                        onNavigate: onNavigate,
+                        primaryActionLabel: guidanceSuggestionBuildingId != nil ? "Open Lesson" : nil,
+                        primaryActionIcon: guidanceSuggestionBuildingId != nil ? "book.fill" : nil,
+                        onPrimaryAction: guidanceSuggestionBuildingId == nil ? nil : {
+                            let id = guidanceSuggestionBuildingId
+                            ContextualSuggestionStore.shared.dismiss()
+                            guidanceSuggestionBuildingId = nil
+                            if let id, let plot = viewModel.buildingPlots.first(where: { $0.id == id }) {
+                                selectedPlot = plot
+                                showBuildingLesson = true
+                            }
+                        }
                     )
                 }
                 .zIndex(50)
@@ -731,6 +753,16 @@ struct CityMapView: View {
             // Prefetch bird animations and workshop scene (next likely destination)
             AssetManager.shared.prefetchAssets(tag: AssetManager.birdAnimations)
             AssetManager.shared.prefetchAssets(tag: AssetManager.workshopScene)
+            // Apple Intelligence + EventKit: warm the contextual suggestion cache.
+            // showCityGuidance() picks it up below — the suggestion rides on the
+            // same bird-dialog bubble that already handles phase hints.
+            await ContextualSuggestionStore.shared.refreshIfNeeded()
+        }
+        .onChange(of: ContextualSuggestionStore.shared.current?.buildingId) { _, newId in
+            // If the store populates after the initial 1s guidance pulse already
+            // fired, re-run the guidance pass so the suggestion still surfaces.
+            guard newId != nil, !ContextualSuggestionStore.shared.hasShownInGuidance else { return }
+            showCityGuidance()
         }
         .onAppear {
             // Sync completion states when view appears (e.g., after completing in Era view)
@@ -1018,6 +1050,23 @@ struct CityMapView: View {
                 && !showBuildingChecklist && !showConstructionSequence
                 && !showEnvironmentPicker && !showSketchStudy
                 && !showBuildingPrompt else { return }
+
+        // Apple Intelligence: if the bird has a calendar-aware suggestion for
+        // the player and we haven't shown it this session, the bird's guidance
+        // bubble carries that message + an "Open Lesson" CTA instead of the
+        // standard phase hint. Same bubble, same bird — different words.
+        let store = ContextualSuggestionStore.shared
+        if let suggestion = store.current, !store.hasShownInGuidance {
+            store.markShownInGuidance()
+            guidanceMessage = suggestion.reason
+            guidanceDestination = nil
+            guidanceSuggestionBuildingId = suggestion.buildingId
+            withAnimation(.spring(response: 0.4)) { showGuidance = true }
+            return
+        }
+        // No suggestion this fire — clear the suggestion handle so the bubble
+        // doesn't carry an Open-Lesson CTA into normal phase guidance.
+        guidanceSuggestionBuildingId = nil
 
         // No active building yet — brand new player
         guard let bid = viewModel.activeBuildingId else {

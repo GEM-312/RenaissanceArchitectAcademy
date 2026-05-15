@@ -141,10 +141,40 @@ class BuildingNode: SKNode {
         addChild(lock)
     }
 
-    /// Map buildingId to sprite asset name
-    /// Buildings are now baked into the terrain map — always use vector diamond shapes
+    /// Map buildingId to sprite asset name in Assets.xcassets.
+    /// Buildings with art set here render as a sepia-tinted ghost when locked/
+    /// available/sketched/construction, and full-color when complete.
+    /// Buildings not listed fall back to the vector blueprint diamond.
     private func buildingSpriteImageName() -> String? {
-        return nil
+        switch buildingId {
+        case "duomo":    return "Duomo"
+        default:         return nil
+        }
+    }
+
+    /// Per-building size multiplier on the nominal 420×420 sprite box.
+    /// Use this to make individual buildings render larger relative to the map.
+    private var spriteSizeMultiplier: CGFloat {
+        switch buildingId {
+        case "duomo": return 1.5
+        default:      return 1.0
+        }
+    }
+
+    /// Scale `spriteSize` to match a texture's aspect ratio, fitting inside the
+    /// nominal 420×420 box (times per-building multiplier). Prevents stretch on
+    /// non-square art (e.g. the Duomo, which is taller than wide).
+    private func aspectFittedSpriteSize(for texture: SKTexture) -> CGSize {
+        let tex = texture.size()
+        guard tex.width > 0, tex.height > 0 else { return spriteSize }
+        let target = CGSize(
+            width: spriteSize.width * spriteSizeMultiplier,
+            height: spriteSize.height * spriteSizeMultiplier
+        )
+        let widthRatio = target.width / tex.width
+        let heightRatio = target.height / tex.height
+        let scale = min(widthRatio, heightRatio)
+        return CGSize(width: tex.width * scale, height: tex.height * scale)
     }
 
     /// Check if a sprite image exists in the asset catalog
@@ -237,7 +267,7 @@ class BuildingNode: SKNode {
 
         let texture = SKTexture(imageNamed: imageName)
         let sprite = SKSpriteNode(texture: texture)
-        sprite.size = spriteSize
+        sprite.size = aspectFittedSpriteSize(for: texture)
 
         // Ghost effect: sepia-tinted desaturation (like a faded architectural sketch)
         sprite.colorBlendFactor = 0.75
@@ -254,7 +284,7 @@ class BuildingNode: SKNode {
         if let imageName = buildingSpriteImageName(), spriteImageExists(imageName) {
             let texture = SKTexture(imageNamed: imageName)
             let sprite = SKSpriteNode(texture: texture)
-            sprite.size = spriteSize
+            sprite.size = aspectFittedSpriteSize(for: texture)
             visualContainer.addChild(sprite)
             return
         }

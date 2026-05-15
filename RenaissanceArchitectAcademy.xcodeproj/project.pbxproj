@@ -279,6 +279,12 @@
 		F030 /* LibreFranklin-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B232F313B22007D8C64 /* LibreFranklin-SemiBold.ttf */; };
 		F031 /* LibreFranklin-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B242F313B22007D8C64 /* LibreFranklin-Italic.ttf */; };
 		F032 /* Delius-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B252F313B22007D8C64 /* Delius-Regular.ttf */; };
+		CD0 /* BuildingTopicMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0 /* BuildingTopicMap.swift */; };
+		CD1 /* ContextualSuggestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1 /* ContextualSuggestion.swift */; };
+		CD2 /* ContextualSuggestionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD2 /* ContextualSuggestionService.swift */; };
+		CD3 /* BirdContextualSuggestionOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD3 /* BirdContextualSuggestionOverlay.swift */; };
+		CD4 /* ContextualSuggestionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4 /* ContextualSuggestionStore.swift */; };
+		CD5 /* ActivitySizing.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD5 /* ActivitySizing.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -553,6 +559,12 @@
 		BC8 /* music_lesson.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = music_lesson.wav; sourceTree = "<group>"; };
 		BCE /* SketchEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchEditorView.swift; sourceTree = "<group>"; };
 		FCE /* FoldableInventoryBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldableInventoryBar.swift; sourceTree = "<group>"; };
+		BD0 /* BuildingTopicMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingTopicMap.swift; sourceTree = "<group>"; };
+		BD1 /* ContextualSuggestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextualSuggestion.swift; sourceTree = "<group>"; };
+		BD2 /* ContextualSuggestionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextualSuggestionService.swift; sourceTree = "<group>"; };
+		BD3 /* BirdContextualSuggestionOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdContextualSuggestionOverlay.swift; sourceTree = "<group>"; };
+		BD4 /* ContextualSuggestionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextualSuggestionStore.swift; sourceTree = "<group>"; };
+		BD5 /* ActivitySizing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivitySizing.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -697,6 +709,7 @@
 				159 /* NotebookView.swift */,
 				3D3 /* NotebookPickerView.swift */,
 				3D4 /* BirdModalOverlay.swift */,
+				BD3 /* BirdContextualSuggestionOverlay.swift */,
 				3D6 /* SpeakerButton.swift */,
 				160 /* NotebookCanvasView.swift */,
 				168 /* MathVisualView.swift */,
@@ -778,6 +791,8 @@
 				178 /* ConstructionPhase.swift */,
 				2C5 /* HistoricalNPCContent.swift */,
 				180 /* KnowledgeCard.swift */,
+				BD0 /* BuildingTopicMap.swift */,
+				BD1 /* ContextualSuggestion.swift */,
 				196 /* Tool.swift */,
 				197 /* ToolRecipe.swift */,
 				198 /* PigmentRecipe.swift */,
@@ -801,6 +816,7 @@
 				109 /* RenaissanceColors.swift */,
 				110 /* RenaissanceButton.swift */,
 				199 /* RenaissanceTheme.swift */,
+				BD5 /* ActivitySizing.swift */,
 				181 /* GameSpriteView.swift */,
 				193 /* GameSceneKitView.swift */,
 			);
@@ -826,6 +842,8 @@
 				1D5 /* WolframGeometryHelper.swift */,
 				1F9 /* GenerationService.swift */,
 				1FB /* GameTools.swift */,
+				BD2 /* ContextualSuggestionService.swift */,
+				BD4 /* ContextualSuggestionStore.swift */,
 				1FE /* NPCEncounterManager.swift */,
 				3A0 /* VisualEditorState.swift */,
 				3D0 /* GameCenterManager.swift */,
@@ -1147,6 +1165,12 @@
 				0F8 /* GeneratedContent.swift in Sources */,
 				0F9 /* GenerationService.swift in Sources */,
 				0FB /* GameTools.swift in Sources */,
+				CD0 /* BuildingTopicMap.swift in Sources */,
+				CD1 /* ContextualSuggestion.swift in Sources */,
+				CD2 /* ContextualSuggestionService.swift in Sources */,
+				CD3 /* BirdContextualSuggestionOverlay.swift in Sources */,
+				CD4 /* ContextualSuggestionStore.swift in Sources */,
+				CD5 /* ActivitySizing.swift in Sources */,
 				0FD /* NPCDialogueView.swift in Sources */,
 				0FE /* NPCEncounterManager.swift in Sources */,
 				3C0 /* BottomDialogPanel.swift in Sources */,

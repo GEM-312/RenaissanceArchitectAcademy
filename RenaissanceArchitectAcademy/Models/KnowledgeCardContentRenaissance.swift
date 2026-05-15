@@ -469,7 +469,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Infrared trapping", definition: "Glass lets light in but traps heat"),
                     KeywordPair(keyword: "Greenhouse effect", definition: "Light enters, heat stays — glass trap"),
                 ],
-                activity: .trueFalse(statement: "Greenhouse glass works by transmitting UV light for photosynthesis while trapping infrared heat", isTrue: true),
+                activity: .trueFalse(statement: "Greenhouse glass lets in UV light for photosynthesis while trapping infrared heat inside", isTrue: true),
                 notebookSummary: "Padua greenhouses used Murano glass — clearest in Europe, 80% light transmission. Greenhouse glass passes UV (for photosynthesis) but traps infrared (heat). Lead came frames = same as stained glass windows. Callback to bath glass; the craft of stained glass became the science of controlled sunlight. Glassworks comes next.",
                 visual: CardVisual(type: .crossSection, title: "Step 6: Cold House Glass", values: [:], labels: [], steps: 3, caption: "")
             ),
@@ -957,7 +957,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Lateen sail", definition: "Triangular — sails closer to the wind"),
                     KeywordPair(keyword: "Airfoil", definition: "Curved shape generating lift — same as airplane wing"),
                 ],
-                activity: .trueFalse(statement: "A sail generates forward pull through low pressure on its curved surface, like an airplane wing", isTrue: true),
+                activity: .trueFalse(statement: "Curved sails generate pull through low pressure, the same physics that lifts airplane wings", isTrue: true),
                 notebookSummary: "A sail PULLS the ship, not pushes. Curved surface = wind travels further across the front than the back = faster air, lower pressure on front. Higher pressure behind drives the ship forward. Same physics that lifts airplanes (lift, airfoil). Lateen (triangular) sails point closer to the wind. Forward callback to Leonardo's flying machine — bird wings, same principle.",
                 visual: CardVisual(type: .crossSection, title: "Step 7: Sail Canvas", values: [:], labels: [], steps: 3, caption: "")
             ),
@@ -1112,7 +1112,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Winter only", definition: "Cold preserved the cadaver for 3 days"),
                     KeywordPair(keyword: "Ring light", definition: "Modern version of the same all-around principle"),
                 ],
-                activity: .trueFalse(statement: "Students held candles at 45° angles, creating shadowless illumination from all directions", isTrue: true),
+                activity: .trueFalse(statement: "Students holding candles at 45° angles created shadowless illumination around the table", isTrue: true),
                 notebookSummary: "Winter dissections only (cold preserved cadavers), lasted 3 days. No windows — each student held a candle at 45° toward the table. 300 candles from every direction = shadowless illumination. Same principle as modern operating-room ring lights. The students weren't just watching — they were the lighting system.",
                 visual: CardVisual(type: .crossSection, title: "Step 5: Candlelight", values: [:], labels: [], steps: 3, caption: "")
             ),
@@ -1605,7 +1605,7 @@ extension KnowledgeCardContent {
                     KeywordPair(keyword: "Pressure difference", definition: "Fast air above = low pressure = lift"),
                     KeywordPair(keyword: "Wing twist", definition: "Downstroke for thrust, upstroke reduces drag"),
                 ],
-                activity: .trueFalse(statement: "Leonardo discovered that a wing's curved upper surface creates lower pressure than the flat underside, producing lift", isTrue: true),
+                activity: .trueFalse(statement: "A wing's curved upper surface creates lower pressure, producing lift — the same physics that lifts airplanes", isTrue: true),
                 notebookSummary: "Leonardo dissected 30+ birds. Discovered wing's upper surface is curved (cambered), lower is flatter. Same lift physics as the Arsenal's sail (callback) — fast air over the curve creates low pressure, higher pressure below pushes up. Wings twist: down for thrust, up to reduce drag. Every flight feather is an engineering solution.",
                 visual: CardVisual(type: .crossSection, title: "Step 1: Bird Anatomy", values: [:], labels: [], steps: 3, caption: "")
             ),

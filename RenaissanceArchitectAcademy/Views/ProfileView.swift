@@ -11,6 +11,7 @@ struct ProfileView: View {
     var onBackToMenu: (() -> Void)? = nil
     var onResetOnboarding: (() -> Void)? = nil
     var onDeleteAllData: (() -> Void)? = nil
+    var onTestContextualSuggestion: (() -> Void)? = nil
 
     @Environment(\.horizontalSizeClass) private var sizeClass
     private var isLargeScreen: Bool { sizeClass == .regular }
@@ -212,6 +213,24 @@ struct ProfileView: View {
                     .overlay(
                         RoundedRectangle(cornerRadius: CornerRadius.sm)
                             .stroke(RenaissanceColors.errorRed.opacity(0.4),
+                                    style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                    )
+                }
+
+                if let onTestContextualSuggestion {
+                    Button {
+                        onTestContextualSuggestion()
+                    } label: {
+                        Text("Test Calendar Suggestion (DEBUG)")
+                            .font(RenaissanceFont.buttonSmall)
+                            .foregroundStyle(RenaissanceColors.ochre)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, Spacing.xs)
+                    }
+                    .buttonStyle(.plain)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: CornerRadius.sm)
+                            .stroke(RenaissanceColors.ochre.opacity(0.5),
                                     style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
                     )
                 }

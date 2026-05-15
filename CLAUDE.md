@@ -55,7 +55,7 @@ Educational city-building game where students solve architectural challenges acr
 - **Onboarding**: character select (boy/girl) + name → 5 cinematic narrative pages → bird companion intro. State persisted in UserDefaults via `OnboardingState` @Observable.
 - **Workshop**: 3 interiors via `WorkshopView` — `.outdoor` (10 stations), `.craftingRoom` (4 furniture), `.goldsmith` (4 furniture). All Dijkstra pathfinding on 3500×2500 maps. See `master-level-system.md` in memory.
 - **Forest** (`ForestScene` + `ForestMapView`): 5 tree POIs, truffle discovery system, 4 science cards per tree (Architecture/Furniture/Modern Use/Biology) gating timber collection.
-- **Knowledge Cards** (`KnowledgeCardsOverlay`): per-building cards across 4 environments. Pantheon has 14; 16 buildings still need content authored. Morgan Housel style, ~60-80 words/card.
+- **Knowledge Cards** (`KnowledgeCardsOverlay`): per-building cards across 4 environments. All 17 buildings have storyteller-voice content authored (~204 cards total, completed May 12 2026). Morgan Housel style, ~60-80 words/card.
 - **Construction Sequence**: drag-to-reorder puzzle, 8 steps per building, +20 florins. Lookup `ConstructionSequenceContent.sequence(for:)`.
 - **Tools System**: 9 tools, buy at Market (10 florins) or craft via `ToolRecipe`. Required at stations except Market.
 - **GameTopBarView**: shared nav bar (City/Workshop/Crafting/Forest). Building progress strip (green=complete, ochre=sketched, gray=locked).
