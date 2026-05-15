@@ -18,8 +18,10 @@ Style/theme files read in full:
 | Severity | Count |
 |----------|-------|
 | CRITICAL | 1 |
-| WARNING  | 26 |
+| WARNING  | 36 |
 | INFO     | 5 |
+
+*(W-01–W-23 from initial scan; W-24–W-36 added in late-arriving agent batches — see §4b below)*
 
 ---
 
@@ -274,6 +276,114 @@ Two calls use the deprecated `.foregroundColor(color)` modifier; should be `.for
 /// <#Description#>
 ```
 Unfilled template documentation placeholder. Remove or fill in.
+
+---
+
+## 4b. WARNING (Late-Arriving Agent Findings)
+
+*These findings arrived after the initial commit. Batches: Views H–Z + Subdirectories, and SpriteKit/StationMiniGames.*
+
+---
+
+### Dead Code — SpriteKit
+
+#### W-24 — Empty no-op override methods in 4 SpriteKit scenes
+Four method stubs declared in SpriteKit scenes have no body and are never called:
+
+| Scene | Method |
+|-------|--------|
+| `CityScene.swift` | `startWalkingTerrainEffects()` |
+| `CityScene.swift` | `stopWalkingTerrainEffects()` |
+| `WorkshopScene.swift` | `showPlayer()` |
+| `WorkshopScene.swift` | `hidePlayer()` |
+
+**Fix:** Remove all four stubs. If blur/player visibility is ever needed, implement at the call site.
+
+#### W-25 — Dead `earnFlorinsOverlay` computed var in two map wrappers
+**Files:** `Views/SpriteKit/WorkshopMapView.swift`, `Views/SpriteKit/CraftingRoomMapView.swift`  
+`earnFlorinsOverlay` is declared as a computed `var` (returning a florin-burst animation view) in both files but is never referenced in any `body` or parent view. The florin animation never fires.
+
+**Fix:** Remove the computed var from both files.
+
+#### W-26 — Dead `@State var playerPosition: CGPoint` in three map wrappers
+**Files:** `Views/SpriteKit/WorkshopMapView.swift`, `Views/SpriteKit/CraftingRoomMapView.swift`, `Views/SpriteKit/GoldsmithMapView.swift`  
+Each file declares `@State private var playerPosition: CGPoint` and passes a write callback into the SpriteKit scene, but the state value is never consumed by any overlay, animation, or logic in the SwiftUI layer. The position is tracked but never read.
+
+**Fix:** Remove the `@State` property and the position-update callback from each scene/wrapper pair.
+
+#### W-27 — `ResourceNode.hideSprites = true` guard makes sprite-lookup dead code
+**File:** `Views/SpriteKit/ResourceNode.swift`  
+`hideSprites` is set to `true` via a guard path that is always hit when the property is read. All code branches that dereference `self.stationSprite` (and similar sprite lookups) are inside `guard !hideSprites else { return }` blocks that always return early, making those branches unreachable.
+
+**Fix:** Audit whether `hideSprites` is intentional (a launch-day toggle) or a leftover stub. If intentional, document with a comment; if a stub, remove the guard and dead branches.
+
+#### W-28 — `TerrainBlurHelper` computes sharpened texture but never displays it
+**File:** `Views/SpriteKit/TerrainBlurHelper.swift`  
+`sharpenedTexture(from:)` runs a CIFilter pipeline and returns a `SKTexture`, but no call site ever assigns the result to a node or uses it. The CPU/GPU work happens and the result is discarded.
+
+**Fix:** Either wire the result to the terrain node it was intended for, or remove the helper method.
+
+#### W-29 — `CraftingRoomScene.pendingStationWalk` always `nil`
+**File:** `Views/SpriteKit/CraftingRoomScene.swift`  
+`pendingStationWalk: CraftingStation?` is declared at line 110 but is never assigned. The `if let pending = pendingStationWalk` completion-check block can never fire.
+
+**Fix:** Remove the property and its guarded completion block, or implement the deferred-walk feature it was scaffolded for.
+
+---
+
+### Dead Code — StationMiniGames
+
+#### W-30 — `VolcanoMiniGameView` timer properties declared but never started
+**File:** `Views/StationMiniGames/VolcanoMiniGameView.swift`  
+`@State private var sulfurTimer: Timer?` and `@State private var gasTimer: Timer?` are both declared and passed to `invalidate()` in cleanup paths, but `sulfurTimer = Timer.scheduledTimer(…)` and `gasTimer = Timer.scheduledTimer(…)` never appear in the file. The timers are never started; sulfur-gas gameplay is unimplemented.
+
+**Fix:** Either add the missing `Timer.scheduledTimer(…)` assignments to implement the feature, or remove both `@State` properties.
+
+#### W-31 — `FarmMiniGameView` 62 Hz timer keeps firing after phase transitions
+**File:** `Views/StationMiniGames/FarmMiniGameView.swift:658`  
+`gameTimer = Timer.scheduledTimer(withTimeInterval: 0.016, repeats: true)` fires at ~62 Hz but guards only on `phase == .playing`. After the player wins or loses, `phase` changes to `.success`/`.failed` and the timer continues firing — doing nothing useful — until the view is deallocated. On a slow device, this wastes ~60 empty callback invocations per second during the end-game animation.
+
+**Fix:** Call `gameTimer?.invalidate(); gameTimer = nil` when setting `phase = .success` and `phase = .failed`.
+
+---
+
+### Dead Code — Views
+
+#### W-32 — `CardVisualView` redeclares `sepiaInk` as a local constant 18 times
+**File:** `Views/CardVisualView.swift`  
+`let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)` is copy-pasted as a local `let` inside 18 separate draw functions (lines ~212, 275, 344, 416, 528, 605, 708, 795, 879, 1027, 1103, 1212, 1353, 1494, 1604, 1684, 1733, 1792). The RGB values are identical to `RenaissanceColors.sepiaInk`.
+
+**Fix:** Add one file-level `private let sepiaInk = RenaissanceColors.sepiaInk` at the top of the file and delete all 18 local declarations.
+
+#### W-33 — `QuarryMiniGameView.spawnTimer` @State declared but never started
+**File:** `Views/StationMiniGames/QuarryMiniGameView.swift:56`  
+`@State private var spawnTimer: Timer?` is passed to `spawnTimer?.invalidate()` inside `resetState()` but `spawnTimer = Timer.scheduledTimer(…)` never appears. The spawn mechanic was either cut or forgotten.
+
+**Fix:** Remove the `@State` property and the `spawnTimer?.invalidate()` call, or implement the spawn timer.
+
+---
+
+### Hardcoded Values — Late Findings
+
+#### W-34 — `SettingsView` hardcodes dark-mode background color
+**File:** `Views/SettingsView.swift:50`  
+```swift
+Color(red: 0.18, green: 0.16, blue: 0.13)
+```
+This is the identical value to `RenaissanceColors.darkCardBg` (already in `RenaissanceColors.swift`).
+
+**Fix:** Replace with `RenaissanceColors.darkCardBg`.
+
+#### W-35 — `CardVisualView` duplicates `IVMaterialColors.waterBlue` inline
+**File:** `Views/CardVisualView.swift:669,673,681`  
+`Color(red: 0.35, green: 0.55, blue: 0.75)` appears three times for water-channel drawing. The identical value is already `IVMaterialColors.waterBlue` in `InteractiveVisualHelpers.swift`.
+
+**Fix:** Replace all three with `IVMaterialColors.waterBlue`.
+
+#### W-36 — Pervasive `.foregroundStyle(.white)` on button labels (~30 files)
+`.foregroundStyle(.white)` appears on button/label text over colored backgrounds in approximately 30 files across Views, Onboarding, Sketching, and SpriteKit wrappers. These are not currently broken, but will silently fail to adapt if a dark-mode or high-contrast theme pass ever runs.
+
+**Fix:** Add `RenaissanceColors.buttonLabel = Color.white` alias to `RenaissanceColors.swift` and replace all 30 occurrences. No visual change today; future-proofs the theme system.
 
 ---
 
