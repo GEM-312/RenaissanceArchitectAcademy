@@ -72,20 +72,6 @@ final class SubscriptionManager: ObservableObject {
         }
     }
 
-    // MARK: - Product ID lookup
-
-    func productID(for tier: SubscriptionTier, plan: SubscriptionPlan) -> String {
-        switch (tier, plan) {
-        case (.apprentice, _):       return SubscriptionProductID.apprentice
-        case (.plus, .monthly):      return SubscriptionProductID.plusMonthly
-        case (.plus, .annual):       return SubscriptionProductID.plusAnnual
-        case (.plus, .oneTime):      return SubscriptionProductID.plusMonthly
-        case (.premium, .monthly):   return SubscriptionProductID.premiumMonthly
-        case (.premium, .annual):    return SubscriptionProductID.premiumAnnual
-        case (.premium, .oneTime):   return SubscriptionProductID.premiumMonthly
-        }
-    }
-
     // MARK: - Persistence
 
     private func save() {

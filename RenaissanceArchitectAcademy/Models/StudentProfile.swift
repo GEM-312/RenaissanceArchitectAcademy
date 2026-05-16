@@ -68,62 +68,10 @@ struct ScienceMastery: Identifiable, Codable {
     }
 }
 
-/// Resources the student has collected
-struct Resources: Codable {
-    var goldFlorins: Int
-    var stoneBlocks: Int
-    var woodPlanks: Int
-    var pigmentJars: Int
-
-    static let initial = Resources(
-        goldFlorins: 100,
-        stoneBlocks: 10,
-        woodPlanks: 20,
-        pigmentJars: 5
-    )
-}
-
-/// Complete student profile
-struct StudentProfile: Identifiable, Codable {
-    let id: UUID
-    var name: String
-    var avatarName: String // SF Symbol or custom image name
-    var masteryLevel: MasteryLevel
-    var resources: Resources
-    var achievements: [Achievement]
-    var scienceMasteries: [ScienceMastery]
-    var buildingsCompleted: Int
-    var totalPlayTime: TimeInterval
-    var dateJoined: Date
-    var lastActive: Date
-
-    // Computed properties
-    var totalAchievements: Int {
-        achievements.filter { $0.isUnlocked }.count
-    }
-
-    var overallProgress: Double {
-        guard !scienceMasteries.isEmpty else { return 0 }
-        let total = scienceMasteries.reduce(0.0) { $0 + $1.progressPercentage }
-        return total / Double(scienceMasteries.count)
-    }
-
-    // Default profile for new students
-    static func newStudent(name: String) -> StudentProfile {
-        StudentProfile(
-            id: UUID(),
-            name: name,
-            avatarName: "person.crop.circle.fill",
-            masteryLevel: .apprentice,
-            resources: .initial,
-            achievements: Self.defaultAchievements,
-            scienceMasteries: Self.defaultScienceMasteries,
-            buildingsCompleted: 0,
-            totalPlayTime: 0,
-            dateJoined: Date(),
-            lastActive: Date()
-        )
-    }
+/// Container for the achievements catalog. The instance properties were never
+/// instantiated; only `StudentProfile.defaultAchievements` is referenced (by
+/// ProfileView). Kept as an enum-style namespace.
+enum StudentProfile {
 
     // Default achievements (all locked initially)
     static let defaultAchievements: [Achievement] = [
@@ -144,15 +92,4 @@ struct StudentProfile: Identifiable, Codable {
         Achievement(id: "first_palazzo", name: "First Palazzo", description: "Complete your first building", iconName: "house.fill", category: .general, isUnlocked: false),
         Achievement(id: "renaissance_master", name: "Renaissance Master", description: "Reach Master level", iconName: "star.fill", category: .general, isUnlocked: false),
     ]
-
-    // Default science masteries
-    static let defaultScienceMasteries: [ScienceMastery] = Science.allCases.map { science in
-        ScienceMastery(
-            id: science.rawValue,
-            science: science,
-            level: 0,
-            challengesCompleted: 0,
-            totalChallenges: 10
-        )
-    }
 }
