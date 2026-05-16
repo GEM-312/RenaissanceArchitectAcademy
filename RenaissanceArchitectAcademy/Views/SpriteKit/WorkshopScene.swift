@@ -1188,10 +1188,15 @@ class WorkshopScene: SKScene, ScrollZoomable {
             }
         }
 
-        // Clamp camera every frame — prevents SKActions from bypassing bounds.
-        // Skipped while an explicit camera SKAction is running so edge-station
-        // zoom-ins can reach their target (otherwise clamp fights the move).
-        if !isCameraActionInFlight {
+        // Clamp camera every frame — prevents user pan/zoom from bypassing bounds.
+        // Skipped while:
+        //   1. A camera SKAction is running (zoomCameraToStation arrival move)
+        //   2. The camera is following the player during a walk
+        // Both phases need to lerp toward edge-station targets like Volcano without
+        // being yanked inward by the shrinking visible-area clamp. clampCamera()
+        // is re-invoked once at the end of the arrival SKAction, so the final
+        // camera position is always inside bounds.
+        if !isCameraActionInFlight && !isFollowingPlayer {
             clampCamera()
         }
 
