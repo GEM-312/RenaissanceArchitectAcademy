@@ -681,7 +681,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
             ("Tree3", CGPoint(x: 1100, y: 1000)),
             ("Tree4", CGPoint(x: 1400, y: 1100)),
             ("Tree5", CGPoint(x: 1700, y: 1000)),
-            ("Tree6", CGPoint(x: 2000, y: 1100)),
+            ("Tree6", CGPoint(x: 2230, y: 1124)),
             ("Tree7", CGPoint(x: 2300, y: 1000)),
             ("Tree8", CGPoint(x: 2600, y: 1100)),
             ("Tree9", CGPoint(x: 2900, y: 1000)),
