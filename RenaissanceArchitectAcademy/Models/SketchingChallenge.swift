@@ -26,19 +26,6 @@ struct WallSegment: Identifiable, Equatable, Hashable {
     let id = UUID()
     let start: GridCoord
     let end: GridCoord
-
-    /// Whether this wall is horizontal
-    var isHorizontal: Bool { start.row == end.row }
-
-    /// Whether this wall is vertical
-    var isVertical: Bool { start.col == end.col }
-
-    /// Length in grid cells
-    var length: Int {
-        if isHorizontal { return abs(end.col - start.col) }
-        if isVertical { return abs(end.row - start.row) }
-        return 0
-    }
 }
 
 /// A column placed at a grid intersection
