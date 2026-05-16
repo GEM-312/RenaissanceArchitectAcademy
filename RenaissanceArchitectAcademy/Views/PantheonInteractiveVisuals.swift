@@ -1460,15 +1460,6 @@ private struct MixRecipeVisual: View {
     }
 }
 
-private struct BowlShape: Shape {
-    func path(in rect: CGRect) -> Path {
-        Path { p in
-            p.move(to: CGPoint(x: 0, y: rect.minY + rect.height * 0.2))
-            p.addQuadCurve(to: CGPoint(x: rect.width, y: rect.minY + rect.height * 0.2),
-                           control: CGPoint(x: rect.width / 2, y: rect.maxY + rect.height * 0.1))
-        }
-    }
-}
 
 // MARK: - 13. Calcination — CaCO₃ → CaO + CO₂ (slider-driven formula fade-in)
 

@@ -213,10 +213,6 @@ struct SketchingProgress: Codable, Equatable {
     var isSketchingComplete: Bool {
         !completedPhases.isEmpty
     }
-
-    var completedCount: Int {
-        completedPhases.count
-    }
 }
 
 // MARK: - Sketching Tool
