@@ -100,11 +100,28 @@ class GenerationService: ObservableObject {
         return newSession
     }
 
+    /// Register an externally-created session (e.g., one with tools configured).
+    /// Use this when you need tool support — create the session at the call site
+    /// with specific tool instances, then register it here for lifecycle management.
+    func registerSession(_ session: LanguageModelSession, for contextId: String) {
+        sessions[contextId] = session
+    }
+
     /// Prewarm a session — call when player starts walking toward a POI.
     /// This loads the model into memory in the background, reducing first-response latency.
     func prewarm(for contextId: String, instructions: String) {
         let s = session(for: contextId, instructions: instructions)
         s.prewarm()
+    }
+
+    /// Release a session (e.g., when leaving a scene)
+    func releaseSession(for contextId: String) {
+        sessions.removeValue(forKey: contextId)
+    }
+
+    /// Release all sessions (e.g., on scene transition)
+    func releaseAllSessions() {
+        sessions.removeAll()
     }
 
     // MARK: - Structured Generation
