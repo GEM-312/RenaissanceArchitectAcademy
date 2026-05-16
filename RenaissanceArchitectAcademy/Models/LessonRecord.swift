@@ -7,16 +7,11 @@ final class LessonRecord {
     @Attribute(.unique) var buildingName: String
     var title: String
     var sectionsJSON: Data
-    var lastModified: Date
-    var version: Int
 
-    init(buildingName: String, title: String, sectionsJSON: Data,
-         lastModified: Date = .now, version: Int = 1) {
+    init(buildingName: String, title: String, sectionsJSON: Data) {
         self.buildingName = buildingName
         self.title = title
         self.sectionsJSON = sectionsJSON
-        self.lastModified = lastModified
-        self.version = version
     }
 
     /// Decode sections from stored JSON

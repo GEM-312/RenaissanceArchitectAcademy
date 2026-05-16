@@ -39,6 +39,7 @@ struct OnboardingView: View {
                     StoryNarrativeView(
                         page: pages[index],
                         apprenticeName: onboardingState.apprenticeName,
+                        apprenticeGender: onboardingState.apprenticeGender,
                     ) {
                         let nextIndex = index + 1
                         if nextIndex < pages.count {
@@ -67,10 +68,13 @@ struct OnboardingView: View {
         .overlay(alignment: .topTrailing) {
             // Skip button — available during avatar intro and story pages only.
             // The tier picker has no skip — players must choose a tier to enter the game.
+            // Skip jumps to the tier picker phase, NOT past it. Without this,
+            // players could bypass the paywall by tapping Skip during the story.
             if showsSkipButton {
                 Button {
-                    onboardingState.completeOnboarding()
-                    onComplete()
+                    withAnimation(.easeInOut(duration: 0.5)) {
+                        phase = .tierPicker
+                    }
                 } label: {
                     Text("Skip")
                         .font(RenaissanceFont.bodySmall)
@@ -78,10 +82,15 @@ struct OnboardingView: View {
                         .padding(.horizontal, 14)
                         .padding(.vertical, 6)
                         .background(Capsule().fill(.black.opacity(0.3)))
+                        // 44pt minimum tap target — Apple HIG. Capsule
+                        // visually stays at its compact size; the frame
+                        // expands the hit region only.
+                        .frame(minWidth: 44, minHeight: 44)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .padding(.top, 16)
-                .padding(.trailing, 20)
+                .padding(.top, Spacing.md)
+                .padding(.trailing, Spacing.lg)
                 .transition(.opacity)
             }
         }

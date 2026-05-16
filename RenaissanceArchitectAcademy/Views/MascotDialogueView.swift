@@ -346,58 +346,6 @@ struct MascotDialogueView: View {
     }
 }
 
-/// Splash - the main watercolor ink mascot
-struct SplashCharacter: View {
-    @State private var wiggle = false
-
-    var body: some View {
-        ZStack {
-            // Body - watercolor splash shape
-            WatercolorSplash()
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            RenaissanceColors.ochre,
-                            RenaissanceColors.warmBrown,
-                            RenaissanceColors.terracotta.opacity(0.8)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .frame(width: 120, height: 140)
-                .rotationEffect(.degrees(wiggle ? 2 : -2))
-
-            // Face
-            VStack(spacing: 8) {
-                // Eyes
-                HStack(spacing: 24) {
-                    Eye()
-                    Eye()
-                }
-
-                // Friendly smile
-                Smile()
-                    .stroke(RenaissanceColors.sepiaInk, lineWidth: 3)
-                    .frame(width: 30, height: 15)
-            }
-            .offset(y: -10)
-
-            // Ink drips at bottom
-            HStack(spacing: 15) {
-                InkDrip(height: 20)
-                InkDrip(height: 35)
-                InkDrip(height: 25)
-            }
-            .offset(y: 60)
-        }
-        .onAppear {
-            withAnimation(.easeInOut(duration: 2).repeatForever(autoreverses: true)) {
-                wiggle = true
-            }
-        }
-    }
-}
 
 /// Animated bird companion — flies in from off-screen, lands, and sits still.
 ///
@@ -490,22 +438,6 @@ struct BirdCharacter: View {
             } else {
                 // Final frame — bird has landed
                 currentFrameName = String(format: "BirdFlySitFrame%02d", Self.flySitFrameCount - 1)
-                t.invalidate()
-            }
-        }
-    }
-
-    /// Play fly-to-sit sprite animation ONCE without position movement (used by onChange)
-    private func playFlyToSit() {
-        timer?.invalidate()
-        var frame = 0
-        currentFrameName = "BirdFlySitFrame00"
-
-        timer = Timer.scheduledTimer(withTimeInterval: Self.flyFPS, repeats: true) { t in
-            if frame < Self.flySitFrameCount - 1 {
-                frame += 1
-                currentFrameName = String(format: "BirdFlySitFrame%02d", frame)
-            } else {
                 t.invalidate()
             }
         }

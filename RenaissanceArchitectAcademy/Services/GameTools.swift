@@ -237,10 +237,26 @@ struct CalendarTool: FoundationModels.Tool {
                 return "The student has no upcoming events in the next \(daysToCheck) days. A great time to explore the workshop!"
             }
 
-            // Filter for education-related keywords
-            let educationKeywords = ["test", "exam", "quiz", "class", "school", "homework",
-                                     "study", "museum", "field trip", "science", "history",
-                                     "math", "art", "architecture", "project", "presentation"]
+            // Filter for events that could connect to game content — school work,
+            // museum/gallery visits, Italy travel, Renaissance/Roman themes.
+            let educationKeywords = [
+                // school
+                "test", "exam", "quiz", "class", "school", "homework", "study",
+                "project", "presentation", "field trip",
+                // museum / gallery / cultural
+                "museum", "gallery", "exhibit", "exhibition", "tour",
+                // subject areas
+                "science", "history", "math", "art", "architecture",
+                "painting", "sculpture", "drawing",
+                // themes the game maps to
+                "renaissance", "roman", "ancient rome", "da vinci", "leonardo",
+                "brunelleschi", "michelangelo", "galileo", "vesalius", "medici",
+                // travel that overlaps with game cities
+                "italy", "italia", "italian",
+                "rome", "roma", "florence", "firenze", "venice", "venezia",
+                "milan", "milano", "padua", "padova", "tuscany",
+                "flight", "hotel", "reservation", "vacation", "trip", "travel"
+            ]
 
             var relevant: [String] = []
             var other: [String] = []

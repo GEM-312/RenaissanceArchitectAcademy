@@ -202,9 +202,6 @@ struct Building: Identifiable {
         return "A \(era.rawValue) building involving \(sciences.map(\.rawValue).joined(separator: ", "))"
     }
 
-    var locationName: String {
-        city?.rawValue ?? "Rome"
-    }
 }
 
 /// A plot in the city where a building can be placed

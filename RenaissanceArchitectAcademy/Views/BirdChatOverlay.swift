@@ -129,6 +129,14 @@ struct BirdChatOverlay: View {
                         id: "welcome"
                     )
 
+                    // Apple Intelligence contextual suggestion (if one is cached this session)
+                    if let suggestion = ContextualSuggestionStore.shared.current {
+                        birdBubble(
+                            text: "By the way — \(suggestion.reason)",
+                            id: "contextual-suggestion"
+                        )
+                    }
+
                     // Chat messages
                     ForEach(chatViewModel.messages) { message in
                         switch message.role {

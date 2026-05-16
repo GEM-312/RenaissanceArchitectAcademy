@@ -7,6 +7,12 @@ struct StoryNarrativeView: View {
     /// Apprentice's name from onboarding. Pages with `{name}` tokens substitute
     /// this in at render time. Falls back to "apprentice" if empty.
     var apprenticeName: String = ""
+    /// Apprentice's gender from onboarding. Pages with `{gender}` tokens in
+    /// any string field (backgroundFramePrefix, audioName, backgroundImage)
+    /// substitute "Boy" or "Girl" at render time. Lets a single page support
+    /// gender-specific assets — e.g. `"{gender}CatchingLetterFrame"` resolves
+    /// to `BoyCatchingLetterFrame` or `GirlCatchingLetterFrame`.
+    var apprenticeGender: ApprenticeGender = .boy
     var onContinue: () -> Void
 
     /// Apprentice name with fallback for substitution.
@@ -14,29 +20,58 @@ struct StoryNarrativeView: View {
         apprenticeName.isEmpty ? "apprentice" : apprenticeName
     }
 
+    /// Capitalized gender token used in asset name substitutions.
+    private var genderToken: String {
+        apprenticeGender == .girl ? "Girl" : "Boy"
+    }
+
     /// Substitutes `{name}` tokens in the given source string.
     private func substitute(_ source: String) -> String {
         source.replacingOccurrences(of: "{name}", with: nameValue)
     }
 
+    /// Substitutes `{gender}` tokens in asset-name strings. Used for
+    /// gender-specific lookups in backgroundFramePrefix, audioName, etc.
+    private func substituteGender(_ source: String) -> String {
+        source.replacingOccurrences(of: "{gender}", with: genderToken)
+    }
+
     /// The full attributed text for this page, with per-section font runs:
     /// intro (default body) → letter (PetitFormalScript) → outro (default body).
-    /// Pages without `letterText` collapse to a single body run.
+    /// Empty sections are skipped — pages with `text: ""` (e.g. Invitation,
+    /// where the avatars already broke the seal in the prior animation)
+    /// drop straight into the letter without leading blank lines.
     private var fullAttributedText: AttributedString {
         var result = AttributedString()
 
-        var intro = AttributedString(substitute(page.text))
-        intro.font = RenaissanceFont.bodyLarge
-        result += intro
+        let introText = substitute(page.text)
+        if !introText.isEmpty {
+            var intro = AttributedString(introText)
+            intro.font = RenaissanceFont.bodyLarge
+            result += intro
+        }
 
         if let letter = page.letterText {
-            var letterAttr = AttributedString("\n\n" + substitute(letter))
-            letterAttr.font = .custom("PetitFormalScript-Regular", size: 22)
+            let prefix = result.characters.isEmpty ? "" : "\n\n"
+            var letterAttr = AttributedString(prefix + substitute(letter))
+            letterAttr.font = RenaissanceFont.letter
+
+            // Emphasize destination words so the player's eye lands on
+            // where they are going + who is hosting them. Same font, larger
+            // size — keeps the handwritten feel.
+            let emphasisFont = Font.custom("PetitFormalScript-Regular", size: 30, relativeTo: .title)
+            for keyword in ["Duomo", "Medici", "Florence", "Giardino di San Marco"] {
+                if let range = letterAttr.range(of: keyword) {
+                    letterAttr[range].font = emphasisFont
+                }
+            }
+
             result += letterAttr
         }
 
         if let outro = page.outroText {
-            var outroAttr = AttributedString("\n\n" + substitute(outro))
+            let prefix = result.characters.isEmpty ? "" : "\n\n"
+            var outroAttr = AttributedString(prefix + substitute(outro))
             outroAttr.font = RenaissanceFont.bodyLarge
             result += outroAttr
         }
@@ -47,6 +82,30 @@ struct StoryNarrativeView: View {
     /// Total character count across all sections — drives the typewriter timer.
     private var totalCharCount: Int {
         fullAttributedText.characters.count
+    }
+
+    /// Page asset names with `{gender}` resolved to the apprentice's choice.
+    /// Returns nil if the page doesn't define that asset.
+    private var resolvedFramePrefix: String? {
+        page.backgroundFramePrefix.map(substituteGender)
+    }
+
+    private var resolvedBackgroundImage: String? {
+        page.backgroundImage.map(substituteGender)
+    }
+
+    private var resolvedAudioName: String? {
+        page.audioName.map(substituteGender)
+    }
+
+    /// Frame count for the animation, honoring per-gender variants when set.
+    private var resolvedFrameCount: Int {
+        page.backgroundFrameVariants[apprenticeGender]?.count ?? page.backgroundFrameCount
+    }
+
+    /// Frame animation duration in seconds, honoring per-gender variants when set.
+    private var resolvedFrameDuration: Double {
+        page.backgroundFrameVariants[apprenticeGender]?.duration ?? page.backgroundFrameDuration
     }
 
     /// Typewriter-truncated attributed text. Preserves font runs across the slice.
@@ -65,95 +124,133 @@ struct StoryNarrativeView: View {
     @State private var typewriterTimer: Timer?
     @State private var audioPlayer: AVAudioPlayer?
 
-    // Animated background frames
+    // Animated background frames — count + duration come from the page
     @State private var bgFrame: Int = 0
     @State private var bgTimer: Timer?
-    private let bgFrameCount = 15
-    private let bgFPS: Double = 10
+
+    // The Continue button only appears once typewriter, audio narration, and
+    // frame animation are all done — otherwise the player can advance past a
+    // cinematic that is still mid-flight.
+    @State private var typewriterDone = false
+    @State private var audioDone = true
+    @State private var animationDone = true
 
     private let charsPerTick = 2
     private let tickInterval: TimeInterval = 0.03
 
     @Environment(\.horizontalSizeClass) private var sizeClass
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
     private var isLargeScreen: Bool { sizeClass == .regular }
+    /// BirdCharacter size — shrinks on compact vertical (iPhone landscape) so
+    /// it doesn't crowd Page 4's body text. Audit 2026-05-07.
+    private var birdSize: CGFloat {
+        verticalSizeClass == .compact ? 120 : 180
+    }
 
     var body: some View {
-        ZStack {
-            if let prefix = page.backgroundFramePrefix {
-                // Animated background frames (looping)
-                Image(String(format: "%@%02d", prefix, bgFrame))
-                    .resizable()
-                    .scaledToFill()
-                    .ignoresSafeArea()
-                    .opacity(0.45)
+        // Top-level VStack — title at top, body in scrollable middle,
+        // Continue at bottom via safeAreaInset. Background goes into
+        // `.background` so it can ignoreSafeArea independently of the
+        // foreground content. ZStack-as-root caused inconsistent sizing
+        // when sibling backgrounds with `.ignoresSafeArea()` interacted
+        // with the foreground VStack — title would render above the
+        // visible safe area in iPad landscape on short-body pages.
+        VStack(spacing: Spacing.xl) {
+            Text(page.title)
+                .font(.custom("Cinzel-Regular", size: isLargeScreen ? 36 : 26))
+                .foregroundStyle(RenaissanceColors.sepiaInk)
+                .multilineTextAlignment(.center)
+                .opacity(showTitle ? 1 : 0)
 
-                // Darkened overlay so text stays readable
-                RenaissanceColors.parchment
-                    .opacity(0.55)
-                    .ignoresSafeArea()
-            } else if let bgImage = page.backgroundImage {
-                // Static background image (e.g. parchment letter for The Invitation)
-                Image(bgImage)
-                    .resizable()
-                    .scaledToFill()
-                    .ignoresSafeArea()
-            } else {
-                RenaissanceColors.parchment
-                    .ignoresSafeArea()
+            DividerOrnament()
+                .frame(width: 180)
+                .opacity(showTitle ? 1 : 0)
+
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: Spacing.xl) {
+                    Text(revealedAttributedText)
+                        .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(6)
+                        .adaptiveWidth(520)
+
+                    if page.showBird && showBird {
+                        BirdCharacter(isSitting: false)
+                            .frame(width: birdSize, height: birdSize)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, Spacing.sm)
             }
-
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .padding(.top, Spacing.xxl)
+        .padding(.horizontal, Spacing.xxl)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background {
+            // Background fills entire screen including safe area. Lives
+            // in `.background` so it cannot push or shift the foreground.
+            Group {
+                if let prefix = resolvedFramePrefix, assetExists(named: "\(prefix)00") {
+                    // Two layouts depending on `page.backgroundFillsScreen`:
+                    //   • full-screen: scaledToFill anchored bottom — image
+                    //     overflows past the screen edges so no hard image
+                    //     edge ever appears mid-view (Lorenzo letter folding)
+                    //   • figure-style: 680pt scaledToFit anchored bottom —
+                    //     character "tucks" under the typewriter text, edges
+                    //     are intentionally visible on parchment
+                    if page.backgroundFillsScreen {
+                        ZStack(alignment: .bottom) {
+                            RenaissanceColors.parchment
+                            Image(String(format: "%@%02d", prefix, bgFrame))
+                                .resizable()
+                                .scaledToFill()
+                                .opacity(0.7)
+                        }
+                    } else {
+                        ZStack(alignment: .bottom) {
+                            RenaissanceColors.parchment
+                            Image(String(format: "%@%02d", prefix, bgFrame))
+                                .resizable()
+                                .scaledToFit()
+                                .frame(maxWidth: 680, maxHeight: 680)
+                                .opacity(0.7)
+                        }
+                    }
+                } else if let bgImage = resolvedBackgroundImage, assetExists(named: bgImage) {
+                    Image(bgImage)
+                        .resizable()
+                        .scaledToFill()
+                } else {
+                    RenaissanceColors.parchment
+                }
+            }
+            .ignoresSafeArea()
+        }
+        .overlay {
             DecorativeCorners()
-
-            VStack(spacing: 24) {
-                Spacer()
-
-                // Title
-                Text(page.title)
-                    .font(.custom("Cinzel-Regular", size: isLargeScreen ? 36 : 26))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
-                    .opacity(showTitle ? 1 : 0)
-                    .offset(y: showTitle ? 0 : -15)
-
-                DividerOrnament()
-                    .frame(width: 180)
-                    .opacity(showTitle ? 1 : 0)
-
-                // Typewriter text — uses AttributedString so different sections
-                // can render in different fonts (narrator body vs. handwritten letter).
-                Text(revealedAttributedText)
-                    .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(6)
-                    .adaptiveWidth(520)
-
-                // Bird companion (only on final story page)
-                if page.showBird && showBird {
-                    BirdCharacter(isSitting: false)
-                        .frame(width: 180, height: 180)
-                }
-
-                Spacer()
-
-                // Continue button
-                Button {
-                    stopTypewriter()
-                    onContinue()
-                } label: {
-                    Text("Continue")
-                        .font(.custom("EBGaramond-SemiBold", size: 20))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 40)
-                        .padding(.vertical, 14)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(RenaissanceColors.renaissanceBlue)
-                        )
-                }
-                .opacity(showButton ? 1 : 0)
-                .offset(y: showButton ? 0 : 15)
-                .padding(.bottom, 40)
+                .allowsHitTesting(false)
+        }
+        .safeAreaInset(edge: .bottom) {
+            Button {
+                stopTypewriter()
+                audioPlayer?.stop()
+                bgTimer?.invalidate()
+                onContinue()
+            } label: {
+                Text("Continue")
+                    .font(.custom("EBGaramond-SemiBold", size: 20))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, Spacing.xxxl)
+                    .padding(.vertical, 14)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(RenaissanceColors.renaissanceBlue)
+                    )
             }
-            .padding(.horizontal, 32)
+            .opacity(showButton ? 1 : 0)
+            .padding(.bottom, Spacing.xl)
+            .allowsHitTesting(showButton)
         }
         .onAppear {
             startReveal()
@@ -167,14 +264,28 @@ struct StoryNarrativeView: View {
             audioPlayer?.stop()
             audioPlayer = nil
         }
-        // Tap to skip typewriter and reveal all text
+        // Tap to skip — fast-forwards typewriter, audio, and frame animation,
+        // then shows the Continue button immediately.
         .onTapGesture {
-            if revealedCharCount < totalCharCount {
-                stopTypewriter()
-                revealedCharCount = totalCharCount
-                finishReveal()
-            }
+            skipToEnd()
         }
+    }
+
+    /// Marks all gates done and reveals the Continue button. Stops audio + animation.
+    private func skipToEnd() {
+        if revealedCharCount < totalCharCount {
+            stopTypewriter()
+            revealedCharCount = totalCharCount
+        }
+        audioPlayer?.stop()
+        audioPlayer = nil
+        bgTimer?.invalidate()
+        bgTimer = nil
+        bgFrame = max(page.backgroundFrameCount - 1, 0)
+        typewriterDone = true
+        audioDone = true
+        animationDone = true
+        showContinueIfReady()
     }
 
     // MARK: - Typewriter Logic
@@ -192,13 +303,19 @@ struct StoryNarrativeView: View {
                     revealedCharCount = min(revealedCharCount + charsPerTick, total)
                 } else {
                     timer.invalidate()
-                    finishReveal()
+                    typewriterDone = true
+                    showContinueIfReady()
                 }
             }
         }
     }
 
-    private func finishReveal() {
+    /// Reveals the Continue button (and bird, if applicable) — but only when
+    /// every cinematic gate has finished: typewriter text, audio narration,
+    /// and the bg frame animation. Each of those calls this when it's done.
+    private func showContinueIfReady() {
+        guard typewriterDone, audioDone, animationDone else { return }
+        guard !showButton else { return }
         if page.showBird {
             withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
                 showBird = true
@@ -219,25 +336,55 @@ struct StoryNarrativeView: View {
     }
 
     private func startNarration() {
-        guard let name = page.audioName else { return }
+        guard let name = resolvedAudioName else { return }
         // Look up .mp3 first, then .m4a — supports either format depending on
         // how the narration was exported (ElevenLabs / OpenArt → mp3,
         // GarageBand / iOS recordings → m4a).
         let url = Bundle.main.url(forResource: name, withExtension: "mp3")
             ?? Bundle.main.url(forResource: name, withExtension: "m4a")
         guard let url else { return }
-        audioPlayer = try? AVAudioPlayer(contentsOf: url)
-        audioPlayer?.play()
+        guard let player = try? AVAudioPlayer(contentsOf: url) else { return }
+        audioPlayer = player
+        audioDone = false
+        player.play()
+        // Reveal the Continue button once the audio's duration has elapsed.
+        // The exact moment of `player.isPlaying == false` is harder to observe
+        // without a delegate; the duration-based timer is good enough for
+        // narration files where the runtime is known and fixed.
+        DispatchQueue.main.asyncAfter(deadline: .now() + player.duration) {
+            audioDone = true
+            showContinueIfReady()
+        }
+    }
+
+    /// Returns true if the named asset is present in the bundle. Prevents
+    /// rendering empty placeholder images that can break parent layout.
+    private func assetExists(named name: String) -> Bool {
+        #if os(iOS)
+        return UIImage(named: name) != nil
+        #else
+        return NSImage(named: name) != nil
+        #endif
     }
 
     private func startBackgroundAnimation() {
-        guard page.backgroundFramePrefix != nil else { return }
-        bgTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / bgFPS, repeats: true) { timer in
-            if bgFrame < bgFrameCount - 1 {
+        // Skip if the page doesn't declare an animation OR if the resolved
+        // first frame isn't in the bundle (e.g. girl assets not generated yet
+        // for a `{gender}`-templated page). animationDone stays true so the
+        // Continue gate doesn't wait on an animation that will never play.
+        guard let prefix = resolvedFramePrefix,
+              assetExists(named: "\(prefix)00") else { return }
+        let frameCount = resolvedFrameCount
+        let interval = resolvedFrameDuration / Double(max(frameCount - 1, 1))
+        animationDone = false
+        bgTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { timer in
+            if bgFrame < frameCount - 1 {
                 bgFrame += 1
             } else {
                 timer.invalidate()
                 bgTimer = nil
+                animationDone = true
+                showContinueIfReady()
             }
         }
     }

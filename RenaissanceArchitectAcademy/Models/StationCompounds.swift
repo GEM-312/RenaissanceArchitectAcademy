@@ -169,10 +169,4 @@ struct StationCompound {
         }
     }
 
-    /// Get a compound for this visit number (cycles through available compounds)
-    static func compoundForVisit(station: ResourceStationType, visitNumber: Int) -> StationCompound? {
-        let all = compounds(for: station)
-        guard !all.isEmpty else { return nil }
-        return all[visitNumber % all.count]
-    }
 }

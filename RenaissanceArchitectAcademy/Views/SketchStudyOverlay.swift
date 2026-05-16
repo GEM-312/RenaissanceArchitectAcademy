@@ -110,25 +110,26 @@ struct SketchStudyOverlay: View {
 
     private var headerBar: some View {
         HStack {
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: Spacing.xxs) {
                 Text("Study the Masters")
-                    .font(RenaissanceFont.cardTitle)
+                    .font(ActivitySizing.studyHeaderFont(horizontalSizeClass))
                     .foregroundStyle(RenaissanceColors.sepiaInk)
 
                 Text(sketch.artist + ", " + sketch.date)
-                    .font(RenaissanceFont.italicSmall)
+                    .font(ActivitySizing.studyBodyFont(horizontalSizeClass))
+                    .italic()
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(TextEmphasis.tertiary))
             }
 
             Spacer()
 
-            MediumBadge(medium: sketch.medium)
+            MediumBadge(medium: sketch.medium, sizeClass: horizontalSizeClass)
 
             Button {
                 onDismiss()
             } label: {
                 Image(systemName: "xmark.circle.fill")
-                    .font(.system(size: 22))
+                    .font(.system(size: ActivitySizing.studyIconSize(horizontalSizeClass)))
                     .foregroundStyle(RenaissanceColors.sepiaInk.opacity(TextEmphasis.faint))
             }
             .buttonStyle(.plain)
@@ -272,10 +273,12 @@ struct SketchStudyOverlay: View {
 
             // Title caption
             Text(sketch.title)
-                .font(RenaissanceFont.caption)
+                .font(ActivitySizing.studyBodyFont(horizontalSizeClass))
+                .italic()
                 .foregroundStyle(RenaissanceColors.sepiaInk.opacity(TextEmphasis.tertiary))
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
+                .minimumScaleFactor(ActivitySizing.titleMinScale)
                 .padding(.horizontal, Spacing.lg)
         }
     }
@@ -283,39 +286,44 @@ struct SketchStudyOverlay: View {
     // MARK: - Study Prompt (Bird)
 
     private var studyPromptSection: some View {
-        VStack(spacing: Spacing.xs) {
-            HStack(alignment: .top, spacing: Spacing.xs) {
+        let birdSize = ActivitySizing.studyIconSize(horizontalSizeClass) * 2.2
+        return VStack(spacing: Spacing.xs) {
+            HStack(alignment: .top, spacing: Spacing.sm) {
                 Image("BirdFrame00")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 36, height: 36)
+                    .frame(width: birdSize, height: birdSize)
                     .clipShape(Circle())
                     .overlay(Circle().stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1))
 
-                VStack(alignment: .leading, spacing: Spacing.xs) {
+                VStack(alignment: .leading, spacing: Spacing.sm) {
                     Text(sketch.studyPrompt)
-                        .font(RenaissanceFont.bodySmall)
+                        .font(ActivitySizing.studyTitleFont(horizontalSizeClass))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .minimumScaleFactor(ActivitySizing.titleMinScale)
                         .fixedSize(horizontal: false, vertical: true)
 
                     // Instructions (only before answer found)
                     if !foundFeature && !showWrongFlash {
                         if isReflectMode {
                             Text("Study the sketch, then reveal the answer")
-                                .font(RenaissanceFont.italicSmall)
+                                .font(ActivitySizing.studyBodyFont(horizontalSizeClass))
+                                .italic()
                                 .foregroundStyle(RenaissanceColors.renaissanceBlue.opacity(0.7))
                                 .transition(.opacity)
                         } else if isCountMode {
                             if countInput.isEmpty {
                                 Text("Study the sketch, count carefully, then enter your answer below")
-                                    .font(RenaissanceFont.italicSmall)
+                                    .font(ActivitySizing.studyBodyFont(horizontalSizeClass))
+                                    .italic()
                                     .foregroundStyle(RenaissanceColors.renaissanceBlue.opacity(0.7))
                                     .transition(.opacity)
                             }
                         } else {
                             if tapPosition == nil {
                                 Text("Tap on the sketch to mark where you think it is")
-                                    .font(RenaissanceFont.italicSmall)
+                                    .font(ActivitySizing.studyBodyFont(horizontalSizeClass))
+                                    .italic()
                                     .foregroundStyle(RenaissanceColors.renaissanceBlue.opacity(0.7))
                                     .transition(.opacity)
                             }
@@ -325,7 +333,8 @@ struct SketchStudyOverlay: View {
                     // Wrong attempt feedback
                     if showWrongFlash {
                         Text(isCountMode ? "Not quite — look again and recount!" : "Not quite — try tapping a different spot!")
-                            .font(RenaissanceFont.italicSmall)
+                            .font(ActivitySizing.studyBodyFont(horizontalSizeClass))
+                            .italic()
                             .foregroundStyle(RenaissanceColors.errorRed)
                             .transition(.opacity.combined(with: .move(edge: .top)))
                     }
@@ -333,19 +342,22 @@ struct SketchStudyOverlay: View {
                     // Hint after 3 wrong
                     if showHint && !foundFeature {
                         Text(sketch.featureHint)
-                            .font(RenaissanceFont.italicSmall)
+                            .font(ActivitySizing.studyBodyFont(horizontalSizeClass))
+                            .italic()
                             .foregroundStyle(RenaissanceColors.warmBrown)
                             .transition(.opacity.combined(with: .move(edge: .top)))
                     }
 
                     // Correct answer
                     if foundFeature {
-                        HStack(spacing: Spacing.xxs) {
+                        HStack(spacing: Spacing.sm) {
                             Image(systemName: "checkmark.circle.fill")
+                                .font(.system(size: ActivitySizing.studyIconSize(horizontalSizeClass)))
                                 .foregroundStyle(RenaissanceColors.sageGreen)
                             Text(sketch.featureToFind)
-                                .font(RenaissanceFont.bodySmall)
+                                .font(ActivitySizing.studyTitleFont(horizontalSizeClass))
                                 .foregroundStyle(RenaissanceColors.sageGreen)
+                                .minimumScaleFactor(ActivitySizing.titleMinScale)
                         }
                         .transition(.scale.combined(with: .opacity))
                     }
@@ -359,9 +371,11 @@ struct SketchStudyOverlay: View {
     // MARK: - Count Input (custom number pad — avoids system keyboard issues over SpriteKit)
 
     private var countInputSection: some View {
-        HStack(spacing: Spacing.sm) {
+        let plusMinusSize = ActivitySizing.tileFrame(horizontalSizeClass) * 0.75
+        let plusMinusIcon = ActivitySizing.studyIconSize(horizontalSizeClass)
+        return HStack(spacing: Spacing.md) {
             Text("Your answer:")
-                .font(RenaissanceFont.bodySmall)
+                .font(ActivitySizing.studyBodyFont(horizontalSizeClass))
                 .foregroundStyle(RenaissanceColors.sepiaInk)
 
             // Minus button
@@ -372,9 +386,9 @@ struct SketchStudyOverlay: View {
                     }
                 } label: {
                     Image(systemName: "minus")
-                        .font(.system(size: 16, weight: .bold))
+                        .font(.system(size: plusMinusIcon, weight: .bold))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
-                        .frame(width: 36, height: 36)
+                        .frame(width: plusMinusSize, height: plusMinusSize)
                         .background(
                             Circle().fill(RenaissanceColors.sepiaInk.opacity(0.06))
                         )
@@ -385,11 +399,11 @@ struct SketchStudyOverlay: View {
 
             // Number display
             Text(countInput.isEmpty ? "?" : countInput)
-                .font(.custom("Cinzel-Bold", size: 24))
+                .font(ActivitySizing.slotFont(horizontalSizeClass))
                 .foregroundStyle(countInput.isEmpty
                                 ? RenaissanceColors.sepiaInk.opacity(0.3)
                                 : RenaissanceColors.sepiaInk)
-                .frame(width: 56)
+                .frame(width: ActivitySizing.slotFrame(horizontalSizeClass).width)
                 .padding(.vertical, Spacing.xs)
                 .background(
                     RoundedRectangle(cornerRadius: CornerRadius.sm)
@@ -412,9 +426,9 @@ struct SketchStudyOverlay: View {
                     if n < 99 { countInput = "\(n + 1)" }
                 } label: {
                     Image(systemName: "plus")
-                        .font(.system(size: 16, weight: .bold))
+                        .font(.system(size: plusMinusIcon, weight: .bold))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
-                        .frame(width: 36, height: 36)
+                        .frame(width: plusMinusSize, height: plusMinusSize)
                         .background(
                             Circle().fill(RenaissanceColors.sepiaInk.opacity(0.06))
                         )
@@ -425,7 +439,7 @@ struct SketchStudyOverlay: View {
 
             if foundFeature, correctCount != nil {
                 Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 22))
+                    .font(.system(size: ActivitySizing.studyIconSize(horizontalSizeClass)))
                     .foregroundStyle(RenaissanceColors.sageGreen)
                     .transition(.scale)
             }
@@ -515,7 +529,6 @@ struct SketchStudyOverlay: View {
         }
     }
     
-    /// <#Description#>
     private func checkFindAnswer() {
         guard let pos = tapPosition else { return }
 
@@ -568,6 +581,7 @@ struct SketchStudyOverlay: View {
 
 private struct MediumBadge: View {
     let medium: String
+    let sizeClass: UserInterfaceSizeClass?  // accepted for API symmetry; tag stays small
 
     var body: some View {
         Text(medium)

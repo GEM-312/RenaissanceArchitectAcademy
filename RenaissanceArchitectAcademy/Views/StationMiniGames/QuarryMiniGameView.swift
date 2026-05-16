@@ -53,7 +53,6 @@ struct QuarryMiniGameView: View {
 
     // Timers
     @State private var shrinkTimer: Timer?
-    @State private var spawnTimer: Timer?
 
     private let hitsNeeded = 5
     private let maxMisses = 3
@@ -821,7 +820,6 @@ struct QuarryMiniGameView: View {
         stoneOpacity = 1.0
         scorePopup = nil
         shrinkTimer?.invalidate()
-        spawnTimer?.invalidate()
         moleculeReveal = 0
         showMoleculeInfo = false
         bondPulseTimer?.invalidate()

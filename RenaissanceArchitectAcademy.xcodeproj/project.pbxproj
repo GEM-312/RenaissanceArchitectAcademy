@@ -175,6 +175,9 @@
 		2E6 /* SubscriptionPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E6 /* SubscriptionPickerView.swift */; };
 		2E7 /* DataManagementService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E7 /* DataManagementService.swift */; };
 		2E8 /* LorenzoLetterNarration.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3E8 /* LorenzoLetterNarration.mp3 */; };
+		2E9 /* LetterArrivesNarration.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3E9 /* LetterArrivesNarration.mp3 */; };
+		2EA /* InvitationLetterNarration.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3EA /* InvitationLetterNarration.mp3 */; };
+		2EB /* BirdArrivesNarration.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3EB /* BirdArrivesNarration.mp3 */; };
 		3C0 /* BottomDialogPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0 /* BottomDialogPanel.swift */; };
 		3C1 /* BirdGuidanceContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1 /* BirdGuidanceContent.swift */; };
 		3C2 /* SceneTransitionOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2 /* SceneTransitionOverlay.swift */; };
@@ -198,6 +201,18 @@
 		544299B52F38000100F92073 /* WorkshopScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299B42F38000100F92073 /* WorkshopScene.swift */; };
 		544299B72F38000100F92073 /* WorkshopMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299B62F38000100F92073 /* WorkshopMapView.swift */; };
 		544299C02F3A000100F92073 /* SceneEditorMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299BF2F3A000100F92073 /* SceneEditorMode.swift */; };
+		5466B5B72FB4CC9B0073BD90 /* clay_pit_ambient.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5B22FB4CC9B0073BD90 /* clay_pit_ambient.mp3 */; };
+		5466B5B82FB4CC9B0073BD90 /* crafting_ambient.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5B32FB4CC9B0073BD90 /* crafting_ambient.wav */; };
+		5466B5B92FB4CC9B0073BD90 /* music_city.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5B42FB4CC9B0073BD90 /* music_city.mp3 */; };
+		5466B5BA2FB4CC9B0073BD90 /* music_workshop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5B52FB4CC9B0073BD90 /* music_workshop.mp3 */; };
+		5466B5BB2FB4CC9B0073BD90 /* river_ambient.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5B62FB4CC9B0073BD90 /* river_ambient.mp3 */; };
+		5466B5BD2FB4CCA80073BD90 /* volcano_rumble_ambient.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5BC2FB4CCA80073BD90 /* volcano_rumble_ambient.mp3 */; };
+		5466B5BF2FB4CCBA0073BD90 /* crafting_ambient.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5BE2FB4CCBA0073BD90 /* crafting_ambient.wav */; };
+		5466B5C12FB4CE2A0073BD90 /* quarry_ambient.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5C02FB4CE2A0073BD90 /* quarry_ambient.mp3 */; };
+		5466B5C32FB4D4120073BD90 /* market_chatter_ambient.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5C22FB4D4120073BD90 /* market_chatter_ambient.mp3 */; };
+		5466B5D12FB4FE000073BD90 /* mine_ambient.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5D02FB4FE000073BD90 /* mine_ambient.mp3 */; };
+		5466B5D32FB4FE000073BD90 /* farm_ambient.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5D22FB4FE000073BD90 /* farm_ambient.mp3 */; };
+		5466B5C52FB4D9740073BD90 /* volcano_rumble_ambient.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5C42FB4D9740073BD90 /* volcano_rumble_ambient.mp3 */; };
 		5475D2EF2F3146CC003AA131 /* building_complete.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2EE2F3146CB003AA131 /* building_complete.mp3 */; };
 		5475D2F82F319000003AA131 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2F92F319000003AA131 /* Assets.xcassets */; };
 		6CE /* BlueprintStudyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE /* BlueprintStudyView.swift */; };
@@ -231,6 +246,9 @@
 		AC7 /* crafting_ambient.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC7 /* crafting_ambient.wav */; };
 		AC8 /* music_lesson.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC8 /* music_lesson.wav */; };
 		ACE /* SketchEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE /* SketchEditorView.swift */; };
+		ATC1 /* RiverHouse.atlasc in Resources */ = {isa = PBXBuildFile; fileRef = ATC2 /* RiverHouse.atlasc */; };
+		ATC3 /* Fisherman.atlasc in Resources */ = {isa = PBXBuildFile; fileRef = ATC4 /* Fisherman.atlasc */; };
+		ATC5 /* Woodcutter.atlasc in Resources */ = {isa = PBXBuildFile; fileRef = ATC6 /* Woodcutter.atlasc */; };
 		ECE /* FoldableInventoryBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCE /* FoldableInventoryBar.swift */; };
 		F001 /* Cinzel-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B022F313B22007D8C64 /* Cinzel-Black.ttf */; };
 		F002 /* Cinzel-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B032F313B22007D8C64 /* Cinzel-Bold.ttf */; };
@@ -264,6 +282,12 @@
 		F030 /* LibreFranklin-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B232F313B22007D8C64 /* LibreFranklin-SemiBold.ttf */; };
 		F031 /* LibreFranklin-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B242F313B22007D8C64 /* LibreFranklin-Italic.ttf */; };
 		F032 /* Delius-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B252F313B22007D8C64 /* Delius-Regular.ttf */; };
+		CD0 /* BuildingTopicMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0 /* BuildingTopicMap.swift */; };
+		CD1 /* ContextualSuggestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1 /* ContextualSuggestion.swift */; };
+		CD2 /* ContextualSuggestionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD2 /* ContextualSuggestionService.swift */; };
+		CD3 /* BirdContextualSuggestionOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD3 /* BirdContextualSuggestionOverlay.swift */; };
+		CD4 /* ContextualSuggestionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4 /* ContextualSuggestionStore.swift */; };
+		CD5 /* ActivitySizing.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD5 /* ActivitySizing.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -306,8 +330,6 @@
 		144 /* StationLessonOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationLessonOverlay.swift; sourceTree = "<group>"; };
 		145 /* footstep.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = footstep.wav; sourceTree = "<group>"; };
 		146 /* AvatarTransitionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarTransitionView.swift; sourceTree = "<group>"; };
-		147 /* BoyAvatarTransition.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = BoyAvatarTransition.mp4; sourceTree = "<group>"; };
-		148 /* GirlAvatarTransition.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = GirlAvatarTransition.mp4; sourceTree = "<group>"; };
 		149 /* ForestScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ForestScene.swift; path = Views/SpriteKit/ForestScene.swift; sourceTree = "<group>"; };
 		150 /* ForestMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForestMapView.swift; sourceTree = "<group>"; };
 		151 /* BuildingProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingProgress.swift; sourceTree = "<group>"; };
@@ -445,6 +467,9 @@
 		3E6 /* SubscriptionPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionPickerView.swift; sourceTree = "<group>"; };
 		3E7 /* DataManagementService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManagementService.swift; sourceTree = "<group>"; };
 		3E8 /* LorenzoLetterNarration.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = LorenzoLetterNarration.mp3; sourceTree = "<group>"; };
+		3E9 /* LetterArrivesNarration.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = LetterArrivesNarration.mp3; sourceTree = "<group>"; };
+		3EA /* InvitationLetterNarration.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = InvitationLetterNarration.mp3; sourceTree = "<group>"; };
+		3EB /* BirdArrivesNarration.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = BirdArrivesNarration.mp3; sourceTree = "<group>"; };
 		544299972F3646ED00F92073 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BuildingNode.swift; path = Views/SpriteKit/BuildingNode.swift; sourceTree = "<group>"; };
 		544299982F3646ED00F92073 /* CityMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityMapView.swift; path = Views/SpriteKit/CityMapView.swift; sourceTree = "<group>"; };
 		544299992F3646ED00F92073 /* CityScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityScene.swift; path = Views/SpriteKit/CityScene.swift; sourceTree = "<group>"; };
@@ -490,11 +515,26 @@
 		54477B242F313B22007D8C64 /* LibreFranklin-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LibreFranklin-Italic.ttf"; sourceTree = "<group>"; };
 		54477B252F313B22007D8C64 /* Delius-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Delius-Regular.ttf"; sourceTree = "<group>"; };
 		5448B9A92F9297B30071F5FB /* RenaissanceArchitectAcademy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RenaissanceArchitectAcademy.entitlements; sourceTree = "<group>"; };
+		5466B5B22FB4CC9B0073BD90 /* clay_pit_ambient.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = clay_pit_ambient.mp3; sourceTree = "<group>"; };
+		5466B5B32FB4CC9B0073BD90 /* crafting_ambient.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = crafting_ambient.wav; sourceTree = "<group>"; };
+		5466B5B42FB4CC9B0073BD90 /* music_city.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = music_city.mp3; sourceTree = "<group>"; };
+		5466B5B52FB4CC9B0073BD90 /* music_workshop.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = music_workshop.mp3; sourceTree = "<group>"; };
+		5466B5B62FB4CC9B0073BD90 /* river_ambient.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = river_ambient.mp3; sourceTree = "<group>"; };
+		5466B5BC2FB4CCA80073BD90 /* volcano_rumble_ambient.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = volcano_rumble_ambient.mp3; sourceTree = "<group>"; };
+		5466B5BE2FB4CCBA0073BD90 /* crafting_ambient.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = crafting_ambient.wav; sourceTree = "<group>"; };
+		5466B5C02FB4CE2A0073BD90 /* quarry_ambient.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = quarry_ambient.mp3; sourceTree = "<group>"; };
+		5466B5C22FB4D4120073BD90 /* market_chatter_ambient.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = market_chatter_ambient.mp3; sourceTree = "<group>"; };
+		5466B5D02FB4FE000073BD90 /* mine_ambient.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = mine_ambient.mp3; sourceTree = "<group>"; };
+		5466B5D22FB4FE000073BD90 /* farm_ambient.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = farm_ambient.mp3; sourceTree = "<group>"; };
+		5466B5C42FB4D9740073BD90 /* volcano_rumble_ambient.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = volcano_rumble_ambient.mp3; sourceTree = "<group>"; };
 		5475D2EE2F3146CB003AA131 /* building_complete.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = building_complete.mp3; sourceTree = "<group>"; };
 		5475D2F92F319000003AA131 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5CE /* PencilCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PencilCanvasView.swift; sourceTree = "<group>"; };
 		7CE /* BlueprintStudyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueprintStudyView.swift; sourceTree = "<group>"; };
 		9CE /* ShapeSnap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeSnap.swift; sourceTree = "<group>"; };
+		ATC2 /* RiverHouse.atlasc */ = {isa = PBXFileReference; lastKnownFileType = folder; path = RiverHouse.atlasc; sourceTree = "<group>"; };
+		ATC4 /* Fisherman.atlasc */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Fisherman.atlasc; sourceTree = "<group>"; };
+		ATC6 /* Woodcutter.atlasc */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Woodcutter.atlasc; sourceTree = "<group>"; };
 		BA1 /* anvil_strike.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = anvil_strike.wav; sourceTree = "<group>"; };
 		BA2 /* clay_dig.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = clay_dig.wav; sourceTree = "<group>"; };
 		BA3 /* crafting_complete.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = crafting_complete.wav; sourceTree = "<group>"; };
@@ -525,6 +565,12 @@
 		BC8 /* music_lesson.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = music_lesson.wav; sourceTree = "<group>"; };
 		BCE /* SketchEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchEditorView.swift; sourceTree = "<group>"; };
 		FCE /* FoldableInventoryBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldableInventoryBar.swift; sourceTree = "<group>"; };
+		BD0 /* BuildingTopicMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingTopicMap.swift; sourceTree = "<group>"; };
+		BD1 /* ContextualSuggestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextualSuggestion.swift; sourceTree = "<group>"; };
+		BD2 /* ContextualSuggestionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextualSuggestionService.swift; sourceTree = "<group>"; };
+		BD3 /* BirdContextualSuggestionOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdContextualSuggestionOverlay.swift; sourceTree = "<group>"; };
+		BD4 /* ContextualSuggestionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextualSuggestionStore.swift; sourceTree = "<group>"; };
+		BD5 /* ActivitySizing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivitySizing.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -570,6 +616,9 @@
 				544299BF2F3A000100F92073 /* SceneEditorMode.swift */,
 				1EA /* TerrainBlurHelper.swift */,
 				5475D2F92F319000003AA131 /* Assets.xcassets */,
+				ATC2 /* RiverHouse.atlasc */,
+				ATC4 /* Fisherman.atlasc */,
+				ATC6 /* Woodcutter.atlasc */,
 				54477B172F313D06007D8C64 /* Info.plist */,
 				54477B162F313B22007D8C64 /* Fonts */,
 				101 /* RenaissanceArchitectAcademyApp.swift */,
@@ -577,6 +626,9 @@
 				145 /* footstep.wav */,
 				182 /* GirlIntroAudio.m4a */,
 				3E8 /* LorenzoLetterNarration.mp3 */,
+				3E9 /* LetterArrivesNarration.mp3 */,
+				3EA /* InvitationLetterNarration.mp3 */,
+				3EB /* BirdArrivesNarration.mp3 */,
 				183 /* card_flip.mp3 */,
 				184 /* correct_chime.mp3 */,
 				185 /* wrong_buzz.mp3 */,
@@ -586,6 +638,7 @@
 				189 /* water_plop.mp3 */,
 				190 /* building_tap.mp3 */,
 				191 /* cards_appear.mp3 */,
+				5466B5C02FB4CE2A0073BD90 /* quarry_ambient.mp3 */,
 				BA1 /* anvil_strike.wav */,
 				BA2 /* clay_dig.wav */,
 				BA3 /* crafting_complete.wav */,
@@ -603,19 +656,28 @@
 				BB5 /* pigment_grind.wav */,
 				BB6 /* scene_transition.wav */,
 				BB7 /* seal_stamp.wav */,
+				5466B5BE2FB4CCBA0073BD90 /* crafting_ambient.wav */,
+				5466B5BC2FB4CCA80073BD90 /* volcano_rumble_ambient.mp3 */,
+				5466B5C42FB4D9740073BD90 /* volcano_rumble_ambient.mp3 */,
 				BB8 /* stone_hit.wav */,
 				BB9 /* timber_chop.wav */,
+				5466B5B22FB4CC9B0073BD90 /* clay_pit_ambient.mp3 */,
+				5466B5B32FB4CC9B0073BD90 /* crafting_ambient.wav */,
+				5466B5B42FB4CC9B0073BD90 /* music_city.mp3 */,
+				5466B5B52FB4CC9B0073BD90 /* music_workshop.mp3 */,
+				5466B5B62FB4CC9B0073BD90 /* river_ambient.mp3 */,
 				BC0 /* workbench_mix.wav */,
 				BC1 /* bird_chirp.wav */,
 				BC2 /* bird_fly_in.wav */,
+				5466B5C22FB4D4120073BD90 /* market_chatter_ambient.mp3 */,
+				5466B5D02FB4FE000073BD90 /* mine_ambient.mp3 */,
+				5466B5D22FB4FE000073BD90 /* farm_ambient.mp3 */,
 				BC3 /* bird_happy_trill.wav */,
 				BC4 /* bird_squawk.wav */,
 				BC5 /* forest_ambient.wav */,
 				BC6 /* workshop_ambient.wav */,
 				BC7 /* crafting_ambient.wav */,
 				BC8 /* music_lesson.wav */,
-				147 /* BoyAvatarTransition.mp4 */,
-				148 /* GirlAvatarTransition.mp4 */,
 				303 /* Views */,
 				304 /* ViewModels */,
 				305 /* Models */,
@@ -656,6 +718,7 @@
 				159 /* NotebookView.swift */,
 				3D3 /* NotebookPickerView.swift */,
 				3D4 /* BirdModalOverlay.swift */,
+				BD3 /* BirdContextualSuggestionOverlay.swift */,
 				3D6 /* SpeakerButton.swift */,
 				160 /* NotebookCanvasView.swift */,
 				168 /* MathVisualView.swift */,
@@ -737,6 +800,8 @@
 				178 /* ConstructionPhase.swift */,
 				2C5 /* HistoricalNPCContent.swift */,
 				180 /* KnowledgeCard.swift */,
+				BD0 /* BuildingTopicMap.swift */,
+				BD1 /* ContextualSuggestion.swift */,
 				196 /* Tool.swift */,
 				197 /* ToolRecipe.swift */,
 				198 /* PigmentRecipe.swift */,
@@ -760,6 +825,7 @@
 				109 /* RenaissanceColors.swift */,
 				110 /* RenaissanceButton.swift */,
 				199 /* RenaissanceTheme.swift */,
+				BD5 /* ActivitySizing.swift */,
 				181 /* GameSpriteView.swift */,
 				193 /* GameSceneKitView.swift */,
 			);
@@ -785,6 +851,8 @@
 				1D5 /* WolframGeometryHelper.swift */,
 				1F9 /* GenerationService.swift */,
 				1FB /* GameTools.swift */,
+				BD2 /* ContextualSuggestionService.swift */,
+				BD4 /* ContextualSuggestionStore.swift */,
 				1FE /* NPCEncounterManager.swift */,
 				3A0 /* VisualEditorState.swift */,
 				3D0 /* GameCenterManager.swift */,
@@ -935,7 +1003,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 601 /* Build configuration list for PBXProject " " */;
+			buildConfigurationList = 601 /* Build configuration list for PBXProject "RenaissanceArchitectAcademy" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -963,12 +1031,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				5475D2F82F319000003AA131 /* Assets.xcassets in Resources */,
+				5466B5C32FB4D4120073BD90 /* market_chatter_ambient.mp3 in Resources */,
+				5466B5D12FB4FE000073BD90 /* mine_ambient.mp3 in Resources */,
+				5466B5D32FB4FE000073BD90 /* farm_ambient.mp3 in Resources */,
+				ATC1 /* RiverHouse.atlasc in Resources */,
+				ATC3 /* Fisherman.atlasc in Resources */,
+				ATC5 /* Woodcutter.atlasc in Resources */,
 				F001 /* Cinzel-Black.ttf in Resources */,
 				F002 /* Cinzel-Bold.ttf in Resources */,
 				F003 /* Cinzel-ExtraBold.ttf in Resources */,
 				F004 /* Cinzel-Medium.ttf in Resources */,
 				F005 /* Cinzel-Regular.ttf in Resources */,
 				F006 /* Cinzel-SemiBold.ttf in Resources */,
+				5466B5BF2FB4CCBA0073BD90 /* crafting_ambient.wav in Resources */,
 				F007 /* Cinzel-VariableFont_wght.ttf in Resources */,
 				F008 /* EBGaramond-Bold.ttf in Resources */,
 				F009 /* EBGaramond-BoldItalic.ttf in Resources */,
@@ -977,6 +1052,7 @@
 				045 /* footstep.wav in Resources */,
 				543AD36B2F60C199001895ED /* card_flip.mp3 in Resources */,
 				084 /* correct_chime.mp3 in Resources */,
+				5466B5C12FB4CE2A0073BD90 /* quarry_ambient.mp3 in Resources */,
 				085 /* wrong_buzz.mp3 in Resources */,
 				086 /* card_complete.mp3 in Resources */,
 				087 /* tap_soft.mp3 in Resources */,
@@ -997,9 +1073,11 @@
 				AB1 /* mining_hammer.wav in Resources */,
 				AB2 /* overlay_close.wav in Resources */,
 				AB3 /* overlay_open.wav in Resources */,
+				5466B5C52FB4D9740073BD90 /* volcano_rumble_ambient.mp3 in Resources */,
 				AB4 /* page_turn.wav in Resources */,
 				AB5 /* pigment_grind.wav in Resources */,
 				AB6 /* scene_transition.wav in Resources */,
+				5466B5BD2FB4CCA80073BD90 /* volcano_rumble_ambient.mp3 in Resources */,
 				AB7 /* seal_stamp.wav in Resources */,
 				AB8 /* stone_hit.wav in Resources */,
 				AB9 /* timber_chop.wav in Resources */,
@@ -1014,6 +1092,9 @@
 				AC8 /* music_lesson.wav in Resources */,
 				543AD36C2F60C199001895ED /* GirlIntroAudio.m4a in Resources */,
 				2E8 /* LorenzoLetterNarration.mp3 in Resources */,
+				2E9 /* LetterArrivesNarration.mp3 in Resources */,
+				2EA /* InvitationLetterNarration.mp3 in Resources */,
+				2EB /* BirdArrivesNarration.mp3 in Resources */,
 				F011 /* EBGaramond-ExtraBoldItalic.ttf in Resources */,
 				F012 /* EBGaramond-Italic.ttf in Resources */,
 				F013 /* EBGaramond-Italic-VariableFont_wght.ttf in Resources */,
@@ -1032,6 +1113,11 @@
 				F026 /* LibreBaskerville-SemiBold.ttf in Resources */,
 				F027 /* LibreFranklin-Regular.ttf in Resources */,
 				F032 /* Delius-Regular.ttf in Resources */,
+				5466B5B72FB4CC9B0073BD90 /* clay_pit_ambient.mp3 in Resources */,
+				5466B5B82FB4CC9B0073BD90 /* crafting_ambient.wav in Resources */,
+				5466B5B92FB4CC9B0073BD90 /* music_city.mp3 in Resources */,
+				5466B5BA2FB4CC9B0073BD90 /* music_workshop.mp3 in Resources */,
+				5466B5BB2FB4CC9B0073BD90 /* river_ambient.mp3 in Resources */,
 				F028 /* LibreFranklin-Bold.ttf in Resources */,
 				F029 /* LibreFranklin-Medium.ttf in Resources */,
 				F030 /* LibreFranklin-SemiBold.ttf in Resources */,
@@ -1091,6 +1177,12 @@
 				0F8 /* GeneratedContent.swift in Sources */,
 				0F9 /* GenerationService.swift in Sources */,
 				0FB /* GameTools.swift in Sources */,
+				CD0 /* BuildingTopicMap.swift in Sources */,
+				CD1 /* ContextualSuggestion.swift in Sources */,
+				CD2 /* ContextualSuggestionService.swift in Sources */,
+				CD3 /* BirdContextualSuggestionOverlay.swift in Sources */,
+				CD4 /* ContextualSuggestionStore.swift in Sources */,
+				CD5 /* ActivitySizing.swift in Sources */,
 				0FD /* NPCDialogueView.swift in Sources */,
 				0FE /* NPCEncounterManager.swift in Sources */,
 				3C0 /* BottomDialogPanel.swift in Sources */,
@@ -1360,7 +1452,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = RenaissanceArchitectAcademy/RenaissanceArchitectAcademy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEAD_CODE_STRIPPING = YES;
 				"ENABLE_ON_DEMAND_RESOURCES[sdk=iphoneos*]" = YES;
 				"ENABLE_ON_DEMAND_RESOURCES[sdk=iphonesimulator*]" = YES;
@@ -1400,7 +1492,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = RenaissanceArchitectAcademy/RenaissanceArchitectAcademy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEAD_CODE_STRIPPING = YES;
 				"ENABLE_ON_DEMAND_RESOURCES[sdk=iphoneos*]" = YES;
 				"ENABLE_ON_DEMAND_RESOURCES[sdk=iphonesimulator*]" = YES;
@@ -1445,7 +1537,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		601 /* Build configuration list for PBXProject " " */ = {
+		601 /* Build configuration list for PBXProject "RenaissanceArchitectAcademy" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				700 /* Debug */,

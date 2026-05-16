@@ -20,7 +20,6 @@ struct CraftingRoomMapView: View {
     @State private var sceneHolder = SceneHolder<CraftingRoomScene>()
 
     // Player tracking
-    @State private var playerPosition: CGPoint = CGPoint(x: 0.5, y: 0.5)
     @State private var playerIsWalking = false
 
     // Active station overlay
@@ -231,6 +230,7 @@ struct CraftingRoomMapView: View {
             if workshop.currentAssignment == nil {
                 workshop.generateNewAssignment()
             }
+            SoundManager.shared.stopAmbientExcept([.craftingAmbient])
             SoundManager.shared.playAmbient(.craftingAmbient)
             // Show bird guidance after short delay
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
@@ -238,7 +238,7 @@ struct CraftingRoomMapView: View {
             }
         }
         .onDisappear {
-            SoundManager.shared.stopAmbient()
+            SoundManager.shared.stopAmbient(.craftingAmbient)
             // Nil out callbacks before releasing scene to break closure references
             sceneHolder.scene?.onFurnitureReached = nil
             sceneHolder.scene?.onPlayerPositionChanged = nil
@@ -289,7 +289,6 @@ struct CraftingRoomMapView: View {
         newScene.apprenticeIsBoy = onboardingState?.apprenticeGender == .boy || onboardingState == nil
 
         newScene.onPlayerPositionChanged = { position, isWalking in
-            self.playerPosition = position
             self.playerIsWalking = isWalking
         }
 
