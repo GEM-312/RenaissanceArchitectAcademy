@@ -672,25 +672,28 @@ struct KnowledgeCardsOverlay: View {
                         .opacity(animateFlippedStory ? 1 : 0)
                         .editable("fun-fact", fontSize: 15, cornerRadius: 10)
                     }
-
-                    if !isCompleted {
-                        Button {
-                            openActivity(for: card)
-                        } label: {
-                            Text("Done Reading")
-                                .font(RenaissanceFont.buttonSmall)
-                                .foregroundStyle(.white)
-                                .padding(.vertical, Spacing.sm)
-                                .frame(maxWidth: .infinity)
-                                .parchmentButton(color: card.color, radius: 9)
-                        }
-                        .buttonStyle(.plain)
-                        .opacity(animateFlippedStory ? 1 : 0)
-                        .editable("done-button", cornerRadius: 9)
-                        .padding(.top, Spacing.xs)
-                    }
                 }
                 .frame(maxWidth: .infinity)
+            }
+
+            // "Done Reading" sits OUTSIDE the ScrollView so long lessons can never
+            // push it below the fold. The lesson + visual + funFact scrolls above;
+            // this button stays pinned at the bottom of the card.
+            if !isCompleted {
+                Button {
+                    openActivity(for: card)
+                } label: {
+                    Text("Done Reading")
+                        .font(RenaissanceFont.buttonSmall)
+                        .foregroundStyle(.white)
+                        .padding(.vertical, Spacing.sm)
+                        .frame(maxWidth: .infinity)
+                        .parchmentButton(color: card.color, radius: 9)
+                }
+                .buttonStyle(.plain)
+                .opacity(animateFlippedStory ? 1 : 0)
+                .editable("done-button", cornerRadius: 9)
+                .padding(.top, Spacing.xs)
             }
         }
     }
