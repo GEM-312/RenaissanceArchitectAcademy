@@ -140,6 +140,11 @@ class WorkshopScene: SKScene, ScrollZoomable {
     private var isFollowingPlayer = false
     /// The station position the player is walking toward (for gradual zoom)
     private var walkTargetPosition: CGPoint?
+    /// True while the post-arrival pan SKAction is running (0.5 s).
+    /// Position clamping is suspended so the action can reach edge-station
+    /// coordinates that would otherwise be blocked by the clamp at the walk
+    /// scale. Scale clamping continues unaffected.
+    private var isCameraArrivingAtStation = false
 
     // MARK: - Callbacks to SwiftUI
 
@@ -1028,8 +1033,15 @@ class WorkshopScene: SKScene, ScrollZoomable {
             }
         }
 
-        // Clamp camera every frame — prevents SKActions from bypassing bounds
-        clampCamera()
+        // Scale is always clamped — prevents zoom-out past maxZoomOutScale.
+        // Position is only clamped when the player isn't walking and the
+        // arrival pan action isn't in flight. During those phases the target
+        // may legitimately be near a map edge; clamping position early would
+        // fight the lerp/SKAction and leave the camera short of the station.
+        clampCameraScale()
+        if !isFollowingPlayer && !isCameraArrivingAtStation {
+            clampCameraPosition()
+        }
 
         // Terrain blur — zoomed in = blurred, zoomed out = sharp
         if let cam = cameraNode {
@@ -1293,8 +1305,9 @@ class WorkshopScene: SKScene, ScrollZoomable {
         guard playerNode != nil else { return }
         stationNode.animateTap()
 
-        // Cancel any current walk
+        // Cancel any current walk or in-flight arrival action
         playerNode.removeAction(forKey: "walkTo")
+        isCameraArrivingAtStation = false
 
         // Dismiss any open overlays immediately
         onPlayerStartedWalking?()
@@ -1403,11 +1416,19 @@ class WorkshopScene: SKScene, ScrollZoomable {
     }
 
     /// Stage 2: Settle camera on the station after player arrives — pan only, no zoom change.
+    /// Position clamping is suspended for the 0.5 s duration so the action
+    /// can reach edge-station coordinates without being fought by the clamp.
+    /// One final full clamp fires in the completion block.
     private func zoomCameraToStation(_ stationPos: CGPoint) {
         guard let cameraNode = cameraNode else { return }
+        isCameraArrivingAtStation = true
         let moveAction = SKAction.move(to: stationPos, duration: 0.5)
         moveAction.timingMode = .easeInEaseOut
-        cameraNode.run(moveAction, withKey: "cameraZoom")
+        let finalize = SKAction.run { [weak self] in
+            self?.isCameraArrivingAtStation = false
+            self?.clampCamera()
+        }
+        cameraNode.run(SKAction.sequence([moveAction, finalize]), withKey: "cameraZoom")
     }
 
     /// Nudge camera upward so the station appears in the top third of the screen.
@@ -1458,14 +1479,28 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
     // MARK: - Camera Clamping
 
+    /// Full clamp: scale then position. Used by pan/pinch/scroll handlers and
+    /// the post-arrival finalize block. NOT called every frame during walk
+    /// (use clampCameraScale() + conditional clampCameraPosition() in update()).
     private func clampCamera() {
-        // Clamp SCALE first — prevents SKActions from overshooting maxZoomOutScale
-        // which causes terrain edges to flash visible for 1-2 frames during zoom-out
+        clampCameraScale()
+        clampCameraPosition()
+    }
+
+    /// Clamp only the camera scale. Safe to call every frame during walk —
+    /// prevents SKActions from overshooting maxZoomOutScale which would let
+    /// terrain edges flash visible for 1-2 frames.
+    private func clampCameraScale() {
         let clampedScale = max(0.3, min(maxZoomOutScale, cameraNode.xScale))
         if cameraNode.xScale != clampedScale {
             cameraNode.setScale(clampedScale)
         }
+    }
 
+    /// Clamp only the camera position within map bounds at the current scale.
+    /// Skipped during walk and arrival-pan so the lerp/SKAction can reach
+    /// edge-station positions without being fought by a tight boundary.
+    private func clampCameraPosition() {
         let scale = cameraNode.xScale
         let viewSize = view?.bounds.size ?? CGSize(width: 1024, height: 768)
 
@@ -1483,14 +1518,12 @@ class WorkshopScene: SKScene, ScrollZoomable {
         if maxX > minX {
             cameraNode.position.x = max(minX, min(maxX, cameraNode.position.x))
         } else {
-            // Map fits in view, center it
             cameraNode.position.x = mapSize.width / 2
         }
 
         if maxY > minY {
             cameraNode.position.y = max(minY, min(maxY, cameraNode.position.y))
         } else {
-            // Map fits in view, center it
             cameraNode.position.y = mapSize.height / 2
         }
     }
