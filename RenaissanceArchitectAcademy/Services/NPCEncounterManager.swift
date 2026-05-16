@@ -160,18 +160,6 @@ class NPCEncounterManager: ObservableObject {
         return GenerationService.isAvailable
     }
 
-    /// Clear the current NPC (when overlay dismissed)
-    func clearCurrentNPC() {
-        currentNPC = nil
-        currentPortrait = nil
-    }
-
-    /// Reset session tracking (on new app launch)
-    func resetSession() {
-        npcSeenThisSession.removeAll()
-        clearCurrentNPC()
-    }
-
     // MARK: - Disk Cache (Codable JSON)
 
     private func saveToCache(npc: NPCDisplayData, key: String) {
@@ -187,9 +175,4 @@ class NPCEncounterManager: ObservableObject {
         return try? JSONDecoder().decode(NPCDisplayData.self, from: data)
     }
 
-    /// Clear all cached NPCs
-    func clearCache() {
-        try? FileManager.default.removeItem(at: cacheDirectory)
-        try? FileManager.default.createDirectory(at: cacheDirectory, withIntermediateDirectories: true)
-    }
 }

@@ -16,11 +16,6 @@ struct WolframResult {
         pods.flatMap { $0.subpods.compactMap { $0.plaintext } }.joined(separator: "\n")
     }
 
-    /// Get the first image URL from a specific pod
-    func imageURL(for podTitle: String) -> URL? {
-        guard let src = pods.first(where: { $0.title.localizedCaseInsensitiveContains(podTitle) })?.subpods.first?.imageSrc else { return nil }
-        return URL(string: src)
-    }
 }
 
 struct WolframPod {
@@ -133,54 +128,6 @@ actor WolframService {
         return result
     }
 
-    /// Short answer — returns a single text string (faster, simpler)
-    func shortAnswer(_ input: String) async throws -> String {
-        guard let url = WorkerClient.wolframResultURL(input: input) else {
-            throw WolframError.invalidQuery
-        }
-
-        var request = URLRequest(url: url)
-        request.setValue(WorkerClient.proxyToken, forHTTPHeaderField: "X-Proxy-Token")
-
-        let (data, response) = try await URLSession.shared.data(for: request)
-        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
-            throw WolframError.requestFailed
-        }
-
-        guard let text = String(data: data, encoding: .utf8), !text.isEmpty else {
-            throw WolframError.noResults(input)
-        }
-        return text
-    }
-
-    /// Get chemical properties for a compound
-    func chemicalProperties(of compound: String) async throws -> ChemicalInfo {
-        let result = try await query("chemical properties of \(compound)")
-
-        return ChemicalInfo(
-            name: compound,
-            formula: result.text(for: "Formula") ?? result.text(for: "Chemical formula"),
-            molecularWeight: result.text(for: "Molecular weight") ?? result.text(for: "Molar mass"),
-            meltingPoint: result.text(for: "Melting point"),
-            boilingPoint: result.text(for: "Boiling point"),
-            density: result.text(for: "Density"),
-            structure: result.text(for: "Structure") ?? result.text(for: "Chemical names"),
-            allPods: result.pods
-        )
-    }
-
-    /// Get a balanced chemical reaction
-    func reaction(_ equation: String) async throws -> ReactionInfo {
-        let result = try await query("balance \(equation)")
-
-        return ReactionInfo(
-            balanced: result.text(for: "Balanced equation") ?? result.text(for: "Result"),
-            reactants: result.text(for: "Reactants"),
-            products: result.text(for: "Products"),
-            reactionType: result.text(for: "Reaction type"),
-            allPods: result.pods
-        )
-    }
 }
 
 // MARK: - Result Types

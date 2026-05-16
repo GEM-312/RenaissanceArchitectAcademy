@@ -151,37 +151,6 @@ class GameCenterManager: NSObject {
         #endif
     }
 
-    func showAchievements() {
-        guard isAuthenticated else { return }
-        #if os(iOS)
-        let gcVC = GKGameCenterViewController(state: .achievements)
-        gcVC.gameCenterDelegate = self
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let rootVC = windowScene.windows.first?.rootViewController {
-            var topVC = rootVC
-            while let presented = topVC.presentedViewController {
-                topVC = presented
-            }
-            topVC.present(gcVC, animated: true)
-        }
-        #endif
-    }
-
-    func showLeaderboards() {
-        guard isAuthenticated else { return }
-        #if os(iOS)
-        let gcVC = GKGameCenterViewController(state: .leaderboards)
-        gcVC.gameCenterDelegate = self
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let rootVC = windowScene.windows.first?.rootViewController {
-            var topVC = rootVC
-            while let presented = topVC.presentedViewController {
-                topVC = presented
-            }
-            topVC.present(gcVC, animated: true)
-        }
-        #endif
-    }
 
     // MARK: - Activity IDs (must match App Store Connect)
 
@@ -290,18 +259,6 @@ class GameCenterManager: NSObject {
 
     // MARK: - Access Point
 
-    func showAccessPoint() {
-        #if os(iOS)
-        GKAccessPoint.shared.location = .topTrailing
-        GKAccessPoint.shared.isActive = true
-        #endif
-    }
-
-    func hideAccessPoint() {
-        #if os(iOS)
-        GKAccessPoint.shared.isActive = false
-        #endif
-    }
 }
 
 // MARK: - GKGameCenterControllerDelegate
