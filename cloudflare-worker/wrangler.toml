@@ -1,6 +1,7 @@
 name = "raa-api"
 main = "src/index.ts"
 compatibility_date = "2026-04-29"
+compatibility_flags = ["nodejs_compat"]
 
 # Observability: enables the Workers logs tab in the Cloudflare dashboard
 # so you can see request logs, errors, and console.log output live.
@@ -13,3 +14,16 @@ enabled = true
 [[kv_namespaces]]
 binding = "CACHE"
 id = "408ebab40cab4250b88e8268cd15d36f"
+
+# Stores App Attest registered keys: keyId → { publicKeyJwk, counter }
+# Populated by POST /attest after Apple cert chain verification succeeds.
+# Read by every API request to verify the per-request assertion.
+[[kv_namespaces]]
+binding = "ATTESTED_KEYS"
+id = "REPLACE_AFTER_WRANGLER_KV_CREATE"
+
+# Short-lived nonces issued by /nonce, consumed by /attest or any API
+# request. 60-second TTL, single-use to prevent replay.
+[[kv_namespaces]]
+binding = "NONCES"
+id = "REPLACE_AFTER_WRANGLER_KV_CREATE"

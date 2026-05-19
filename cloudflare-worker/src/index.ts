@@ -6,6 +6,8 @@
 //
 // Endpoints:
 //   GET  /health          → smoke test, no auth
+//   GET  /nonce           → returns a single-use nonce for App Attest (no auth)
+//   POST /attest          → registers a device's App Attest key (no auth, verifies Apple cert chain)
 //   POST /chat            → proxies to Anthropic Messages API (bird chat + sketch validation)
 //   GET  /wolfram/query   → proxies to Wolfram Alpha Full Results API (XML)
 //   GET  /wolfram/result  → proxies to Wolfram Alpha Short Answer API (plaintext)
@@ -13,9 +15,13 @@
 //   POST /sfx             → proxies to ElevenLabs Sound Generation (returns audio/mpeg)
 //   POST /music           → proxies to ElevenLabs Music Compose (returns audio/mpeg)
 //
-// Auth: all non-/health routes require X-Proxy-Token header. This is a
-// shared-secret speed bump. Phase 3 of the migration replaces it with
-// Apple App Attest for cryptographic proof the request came from our app.
+// Auth: protected routes accept EITHER:
+//   - X-Proxy-Token header matching PROXY_TOKEN secret (debug/dev fallback only —
+//     production iOS builds ship without this token)
+//   - App Attest assertion headers (X-Attest-KeyId, X-Attest-Nonce, X-Attest-Assertion) —
+//     cryptographically proves the request came from our app on real Apple hardware
+
+import { verifyAttestation, verifyAssertion, type StoredKey } from "./appattest";
 
 export interface Env {
   PROXY_TOKEN: string;
@@ -25,6 +31,10 @@ export interface Env {
   /// Server-side cache for deterministic upstream responses (currently
   /// Wolfram Alpha results). 24h TTL. Bound in wrangler.toml.
   CACHE: KVNamespace;
+  /// keyId (base64url) → { publicKeyJwk, counter } for registered devices.
+  ATTESTED_KEYS: KVNamespace;
+  /// nonce (base64url) → "1" with 60s TTL for single-use challenge tokens.
+  NONCES: KVNamespace;
 }
 
 export default {
@@ -39,7 +49,18 @@ export default {
       });
     }
 
-    const authError = checkProxyToken(request, env);
+    // Anonymous routes — App Attest enrollment + nonce issuance.
+    // These cannot require auth, since the device needs them to bootstrap auth.
+    if (url.pathname === "/nonce" && request.method === "GET") {
+      return handleNonce(env);
+    }
+
+    if (url.pathname === "/attest" && request.method === "POST") {
+      return handleAttest(request, env);
+    }
+
+    // Protected routes — accept either proxy token OR a valid assertion.
+    const authError = await verifyAuth(request, env);
     if (authError) return authError;
 
     if (url.pathname === "/chat" && request.method === "POST") {
@@ -73,12 +94,132 @@ export default {
 
 // MARK: - Auth
 
-function checkProxyToken(request: Request, env: Env): Response | null {
-  const token = request.headers.get("X-Proxy-Token");
-  if (!token || token !== env.PROXY_TOKEN) {
-    return json({ error: "unauthorized" }, 401);
+/// Accept either a valid App Attest assertion OR the shared proxy token.
+/// Production iOS builds use App Attest exclusively. DEBUG builds may use the
+/// token as a fallback during development on Simulator (where App Attest
+/// returns DCError.invalidInput). Returns null on success, 401 Response on failure.
+async function verifyAuth(request: Request, env: Env): Promise<Response | null> {
+  // Path A — App Attest assertion. If any of the X-Attest-* headers is present,
+  // we require ALL of them and verify cryptographically.
+  const keyId = request.headers.get("X-Attest-KeyId");
+  const nonceHeader = request.headers.get("X-Attest-Nonce");
+  const assertionHeader = request.headers.get("X-Attest-Assertion");
+
+  if (keyId || nonceHeader || assertionHeader) {
+    if (!keyId || !nonceHeader || !assertionHeader) {
+      return json({ error: "attest_headers_incomplete" }, 401);
+    }
+    try {
+      // Consume the nonce — single-use replay protection.
+      const nonceKey = `nonce:${nonceHeader}`;
+      const existed = await env.NONCES.get(nonceKey);
+      if (existed === null) {
+        return json({ error: "attest_nonce_unknown_or_expired" }, 401);
+      }
+      await env.NONCES.delete(nonceKey);
+
+      const stored = await env.ATTESTED_KEYS.get(`key:${keyId}`, { type: "json" }) as StoredKey | null;
+      if (!stored) {
+        return json({ error: "attest_key_unknown" }, 401);
+      }
+
+      const { newCounter } = await verifyAssertion({
+        assertionCBOR: base64ToBytes(assertionHeader),
+        nonce: base64ToBytes(nonceHeader),
+        storedKey: stored,
+      });
+
+      // Persist the incremented counter so replay attempts with stale counters fail.
+      await env.ATTESTED_KEYS.put(
+        `key:${keyId}`,
+        JSON.stringify({ publicKeyJwk: stored.publicKeyJwk, counter: newCounter }),
+      );
+      return null;
+    } catch (e: any) {
+      return json({ error: "attest_verification_failed", detail: e?.message ?? "unknown" }, 401);
+    }
   }
-  return null;
+
+  // Path B — legacy shared-secret. Dev/debug fallback only.
+  const token = request.headers.get("X-Proxy-Token");
+  if (token && token === env.PROXY_TOKEN) return null;
+
+  return json({ error: "unauthorized" }, 401);
+}
+
+// MARK: - /nonce → issue a single-use 32-byte challenge nonce
+
+async function handleNonce(env: Env): Promise<Response> {
+  const bytes = crypto.getRandomValues(new Uint8Array(32));
+  const b64 = bytesToBase64Url(bytes);
+  // 60s TTL: long enough for iOS to round-trip an API call, short enough that
+  // a leaked nonce can't be replayed against a fresh request later.
+  await env.NONCES.put(`nonce:${b64}`, "1", { expirationTtl: 60 });
+  return json({ nonce: b64 });
+}
+
+// MARK: - /attest → register a device's App Attest key
+
+async function handleAttest(request: Request, env: Env): Promise<Response> {
+  let body: { keyId?: string; nonce?: string; attestation?: string };
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: "invalid_json" }, 400);
+  }
+
+  if (!body.keyId || !body.nonce || !body.attestation) {
+    return json({ error: "missing_fields" }, 400);
+  }
+
+  // The nonce must have been issued by /nonce (single-use). Consume it.
+  const nonceKey = `nonce:${body.nonce}`;
+  const existed = await env.NONCES.get(nonceKey);
+  if (existed === null) {
+    return json({ error: "nonce_unknown_or_expired" }, 401);
+  }
+  await env.NONCES.delete(nonceKey);
+
+  let stored: StoredKey;
+  try {
+    stored = await verifyAttestation({
+      attestationCBOR: base64ToBytes(body.attestation),
+      expectedNonce: base64ToBytes(body.nonce),
+      keyId: base64ToBytes(body.keyId),
+    });
+  } catch (e: any) {
+    return json({ error: "attestation_failed", detail: e?.message ?? "unknown" }, 401);
+  }
+
+  // Reject re-attestation of an existing keyId — would let an attacker
+  // overwrite a legitimate key. Apps that need re-enrollment should generate
+  // a fresh keyId via DCAppAttest first.
+  const existing = await env.ATTESTED_KEYS.get(`key:${body.keyId}`);
+  if (existing !== null) {
+    return json({ error: "key_already_registered" }, 409);
+  }
+
+  await env.ATTESTED_KEYS.put(`key:${body.keyId}`, JSON.stringify(stored));
+  return json({ status: "attested" });
+}
+
+// MARK: - Base64 helpers (URL-safe, no padding — what iOS sends)
+
+function base64ToBytes(b64: string): Uint8Array {
+  // Accept both URL-safe and standard base64
+  const normalized = b64.replace(/-/g, "+").replace(/_/g, "/");
+  const padded = normalized + "=".repeat((4 - (normalized.length % 4)) % 4);
+  const bin = atob(padded);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+
+function bytesToBase64Url(bytes: Uint8Array): string {
+  let bin = "";
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  const b64 = btoa(bin);
+  return b64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
 // MARK: - /chat → Anthropic
