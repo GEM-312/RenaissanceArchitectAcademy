@@ -249,8 +249,30 @@ export async function verifyAssertion(args: {
       results.push({ name: v.name, ok: false, err: String(e?.message ?? e) });
     }
   }
+  // Sanity-check: can Workers WebCrypto verify ANY ECDSA-P-256-SHA256
+  // signature at all? Use a known-good RFC 6979 test vector.
+  // Public key (x963 uncompressed):
+  //   X = 60FED4BA255A9D31C961EB74C6356D68C049B8923B61FA6CE669622E60F29FB6
+  //   Y = 7903FE1008B8BC99A41AE9E95628BC64F2F1B20C2D7E9F5177A3C294D4462299
+  // Signature for message "sample" SHA-256:
+  //   R = EFD48B2AACB6A8FD1140DD9CD45E81D69D2C877B56AAF991C34D0EA84EAF3716
+  //   S = F7CB1C942D657C41D436C7A1B6E29F65F3E900DBB9AFF4064DC4AB2F843ACDA8
+  let webCryptoSane = false;
+  let webCryptoSaneErr: string | undefined;
+  try {
+    const tvPubX = hexToBytes("60FED4BA255A9D31C961EB74C6356D68C049B8923B61FA6CE669622E60F29FB6");
+    const tvPubY = hexToBytes("7903FE1008B8BC99A41AE9E95628BC64F2F1B20C2D7E9F5177A3C294D4462299");
+    const tvPoint = new Uint8Array(65);
+    tvPoint[0] = 0x04; tvPoint.set(tvPubX, 1); tvPoint.set(tvPubY, 33);
+    const tvSig = hexToBytes("EFD48B2AACB6A8FD1140DD9CD45E81D69D2C877B56AAF991C34D0EA84EAF3716F7CB1C942D657C41D436C7A1B6E29F65F3E900DBB9AFF4064DC4AB2F843ACDA8");
+    const tvKey = await crypto.subtle.importKey("raw", tvPoint, { name: "ECDSA", namedCurve: "P-256" }, false, ["verify"]);
+    webCryptoSane = await crypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, tvKey, tvSig, new TextEncoder().encode("sample"));
+  } catch (e: any) { webCryptoSaneErr = String(e?.message ?? e); }
+
   console.log(JSON.stringify({
     debug: "verifyAssertion_v2",
+    webCryptoSane,
+    webCryptoSaneErr,
     sigDerLen: ass.signature.length,
     sigDerHex: bytesToHex(new Uint8Array(ass.signature)),
     sigRawHex: bytesToHex(rawSig),
@@ -295,6 +317,13 @@ function base64UrlToBytesLocal(s: string): Uint8Array {
   const bin = atob(padded);
   const out = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+
+function hexToBytes(hex: string): Uint8Array {
+  const clean = hex.replace(/\s/g, "");
+  const out = new Uint8Array(clean.length / 2);
+  for (let i = 0; i < out.length; i++) out[i] = parseInt(clean.substr(i * 2, 2), 16);
   return out;
 }
 
