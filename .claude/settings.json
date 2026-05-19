@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sed:*)",
+      "Bash(cp:*)",
+      "Bash(mkdir:*)",
+      "Bash(git fetch:*)",
+      "Bash(git checkout:*)",
+      "Bash(afplay:*)",
+      "Bash(node scripts/generate-sfx.mjs:*)",
+      "Bash(uv:*)",
+      "Bash(graphify:*)"
+    ]
+  }
+}
