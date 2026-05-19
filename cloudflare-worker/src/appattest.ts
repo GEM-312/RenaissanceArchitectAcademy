@@ -196,7 +196,18 @@ export async function verifyAssertion(args: {
   // 3. Reconstruct signed message: authenticatorData || clientDataHash
   const signedBytes = concatBytes(ass.authenticatorData, clientDataHash);
 
-  // 4. Verify ECDSA P-256 signature against stored public key
+  // 4. Verify ECDSA P-256 signature against stored public key.
+  //
+  // Apple's App Attest framework signs SHA256(authData || clientDataHash) using
+  // CryptoKit's `isValidSignature(_:for:)` overload that takes DataProtocol —
+  // which hashes its input AGAIN internally. So the actual signed digest is
+  // SHA256(SHA256(authData || clientDataHash)) — a double-hash NOT mentioned in
+  // Apple's prose docs (only visible from their sample code's API choice).
+  //
+  // To match, we pre-hash signedBytes ourselves and pass the digest to
+  // WebCrypto verify(ECDSA-SHA256, ...), which then hashes one more time.
+  // Net: SHA256(SHA256(authData || cdh)) = Apple's signed digest.
+  const prehashed = await sha256(signedBytes);
   const pubKey = await crypto.subtle.importKey(
     "jwk",
     storedKey.publicKeyJwk,
@@ -206,95 +217,13 @@ export async function verifyAssertion(args: {
   );
   // App Attest signatures are DER-encoded — WebCrypto expects raw r||s.
   const rawSig = derSignatureToRaw(ass.signature);
-
-  // Diagnostic round 2: try the same verification with the pubkey imported
-  // from a freshly-built raw EC point (uncompressed: 0x04 || X || Y) instead
-  // of from JWK. If pubKeyRaw verifies but pubKey (JWK) doesn't, JWK round-trip
-  // is the bug. Also try DER sig directly in case Workers WebCrypto accepts it.
-  const xBytes = base64UrlToBytesLocal(storedKey.publicKeyJwk.x as string);
-  const yBytes = base64UrlToBytesLocal(storedKey.publicKeyJwk.y as string);
-  const rawEcPoint = new Uint8Array(65);
-  rawEcPoint[0] = 0x04;
-  rawEcPoint.set(xBytes, 1);
-  rawEcPoint.set(yBytes, 33);
-  const pubKeyFromRaw = await crypto.subtle.importKey(
-    "raw",
-    rawEcPoint,
-    { name: "ECDSA", namedCurve: "P-256" },
-    false,
-    ["verify"],
+  const ok = await crypto.subtle.verify(
+    { name: "ECDSA", hash: "SHA-256" },
+    pubKey,
+    rawSig,
+    prehashed,
   );
-
-  const sigSwapped = new Uint8Array(64);
-  sigSwapped.set(rawSig.slice(32, 64), 0);
-  sigSwapped.set(rawSig.slice(0, 32), 32);
-  const sigFresh = new Uint8Array(ass.signature);  // defensive copy
-  const authDataFresh = new Uint8Array(ass.authenticatorData);
-  const signedFresh = concatBytes(authDataFresh, clientDataHash);
-
-  // v7 hypothesis: Apple double-hashes. Their sample passes SHA256(authData||cdh)
-  // as Data to isValidSignature(for: DataProtocol), which hashes AGAIN internally.
-  // If that's their convention, signed digest = SHA256(SHA256(authData||cdh)).
-  // WebCrypto verify(SHA-256, sig, prehash) would match this.
-  const prehashed = await sha256(signedBytes);
-
-  const variants = [
-    { name: "v1_jwk_authData||cdh_rs",  key: pubKey,        sig: rawSig,    bytes: signedBytes },
-    { name: "v2_raw_authData||cdh_rs",  key: pubKeyFromRaw, sig: rawSig,    bytes: signedBytes },
-    { name: "v3_raw_authData||cdh_sr",  key: pubKeyFromRaw, sig: sigSwapped, bytes: signedBytes },
-    { name: "v4_raw_cdh||authData_rs",  key: pubKeyFromRaw, sig: rawSig,    bytes: concatBytes(clientDataHash, authDataFresh) },
-    { name: "v5_raw_freshcopy",         key: pubKeyFromRaw, sig: new Uint8Array(rawSig), bytes: signedFresh },
-    { name: "v6_raw_DERsig",            key: pubKeyFromRaw, sig: sigFresh,  bytes: signedBytes },
-    { name: "v7_raw_prehashed_rs",      key: pubKeyFromRaw, sig: rawSig,    bytes: prehashed },
-    { name: "v8_raw_prehashed_sr",      key: pubKeyFromRaw, sig: sigSwapped, bytes: prehashed },
-    { name: "v9_jwk_prehashed_rs",      key: pubKey,        sig: rawSig,    bytes: prehashed },
-  ];
-  const results: { name: string; ok: boolean; err?: string }[] = [];
-  for (const v of variants) {
-    try {
-      const r = await crypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, v.key, v.sig, v.bytes);
-      results.push({ name: v.name, ok: r });
-    } catch (e: any) {
-      results.push({ name: v.name, ok: false, err: String(e?.message ?? e) });
-    }
-  }
-  // Sanity-check: can Workers WebCrypto verify ANY ECDSA-P-256-SHA256
-  // signature at all? Use a known-good RFC 6979 test vector.
-  // Public key (x963 uncompressed):
-  //   X = 60FED4BA255A9D31C961EB74C6356D68C049B8923B61FA6CE669622E60F29FB6
-  //   Y = 7903FE1008B8BC99A41AE9E95628BC64F2F1B20C2D7E9F5177A3C294D4462299
-  // Signature for message "sample" SHA-256:
-  //   R = EFD48B2AACB6A8FD1140DD9CD45E81D69D2C877B56AAF991C34D0EA84EAF3716
-  //   S = F7CB1C942D657C41D436C7A1B6E29F65F3E900DBB9AFF4064DC4AB2F843ACDA8
-  let webCryptoSane = false;
-  let webCryptoSaneErr: string | undefined;
-  try {
-    const tvPubX = hexToBytes("60FED4BA255A9D31C961EB74C6356D68C049B8923B61FA6CE669622E60F29FB6");
-    const tvPubY = hexToBytes("7903FE1008B8BC99A41AE9E95628BC64F2F1B20C2D7E9F5177A3C294D4462299");
-    const tvPoint = new Uint8Array(65);
-    tvPoint[0] = 0x04; tvPoint.set(tvPubX, 1); tvPoint.set(tvPubY, 33);
-    const tvSig = hexToBytes("EFD48B2AACB6A8FD1140DD9CD45E81D69D2C877B56AAF991C34D0EA84EAF3716F7CB1C942D657C41D436C7A1B6E29F65F3E900DBB9AFF4064DC4AB2F843ACDA8");
-    const tvKey = await crypto.subtle.importKey("raw", tvPoint, { name: "ECDSA", namedCurve: "P-256" }, false, ["verify"]);
-    webCryptoSane = await crypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, tvKey, tvSig, new TextEncoder().encode("sample"));
-  } catch (e: any) { webCryptoSaneErr = String(e?.message ?? e); }
-
-  console.log(JSON.stringify({
-    debug: "verifyAssertion_v2",
-    webCryptoSane,
-    webCryptoSaneErr,
-    sigDerLen: ass.signature.length,
-    sigDerHex: bytesToHex(new Uint8Array(ass.signature)),
-    sigRawHex: bytesToHex(rawSig),
-    authDataHex: bytesToHex(authDataFresh),
-    clientDataHashHex: bytesToHex(clientDataHash),
-    xBytesLen: xBytes.length,
-    yBytesLen: yBytes.length,
-    rawEcPointHex: bytesToHex(rawEcPoint),
-    variants: results,
-  }));
-
-  const winner = results.find((r) => r.ok);
-  if (!winner) throw new Error("assertion_signature_invalid");
+  if (!ok) throw new Error("assertion_signature_invalid");
 
   // 5. Verify authData rpIdHash + counter strictly increasing.
   const parsed = parseAuthData(ass.authenticatorData);
@@ -314,26 +243,6 @@ export async function verifyAssertion(args: {
 async function sha256(data: Uint8Array): Promise<Uint8Array> {
   const buf = await crypto.subtle.digest("SHA-256", data);
   return new Uint8Array(buf);
-}
-
-function bytesToHex(b: Uint8Array): string {
-  return Array.from(b).map((n) => n.toString(16).padStart(2, "0")).join("");
-}
-
-function base64UrlToBytesLocal(s: string): Uint8Array {
-  const norm = s.replace(/-/g, "+").replace(/_/g, "/");
-  const padded = norm + "=".repeat((4 - (norm.length % 4)) % 4);
-  const bin = atob(padded);
-  const out = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
-  return out;
-}
-
-function hexToBytes(hex: string): Uint8Array {
-  const clean = hex.replace(/\s/g, "");
-  const out = new Uint8Array(clean.length / 2);
-  for (let i = 0; i < out.length; i++) out[i] = parseInt(clean.substr(i * 2, 2), 16);
-  return out;
 }
 
 function concatBytes(...arrays: Uint8Array[]): Uint8Array {
