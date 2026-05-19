@@ -59,6 +59,14 @@ actor AppAttestService {
         return keyId
     }
 
+    /// Wipe local enrollment state. Next ensureAttested() call will generate
+    /// a new key and re-enroll. Use when the Worker reports `attest_key_unknown`
+    /// (server-side KV wipe, encoding mismatch, etc.) or in a debug menu.
+    func resetLocalEnrollment() {
+        UserDefaults.standard.removeObject(forKey: Defaults.keyId)
+        UserDefaults.standard.removeObject(forKey: Defaults.attested)
+    }
+
     /// Generate the X-Attest-* headers to attach to an outgoing API request.
     /// Returns (keyId, nonce, assertion) all base64url-encoded.
     /// Caller is responsible for setting them on the URLRequest.
@@ -87,8 +95,11 @@ actor AppAttestService {
         let clientDataHash = Data(SHA256.hash(data: nonceBytes))
         let attestation = try await service.attestKey(keyId, clientDataHash: clientDataHash)
 
+        // Send Apple's keyId VERBATIM in both /attest body and X-Attest-KeyId
+        // header. Re-encoding to base64url here would create a different string
+        // than the header sends later → Worker's KV lookup misses → 401.
         let body: [String: String] = [
-            "keyId": Data(base64URLEncoded: keyId).map { $0.base64URLEncodedString() } ?? keyId,
+            "keyId": keyId,
             "nonce": nonce,
             "attestation": attestation.base64URLEncodedString(),
         ]
