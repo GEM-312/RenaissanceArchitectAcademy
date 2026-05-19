@@ -1,0 +1,65 @@
+# Graphify scan filter — mirrors the manual filter from the May 19 first build.
+# Goal: index Swift code + root-level docs + scripts + cloudflare-worker ts.
+# Skip Xcode/build noise, asset originals, audio, video, vendored deps.
+
+# Build artifacts
+node_modules/
+Pods/
+.build/
+DerivedData/
+build/
+.swiftpm/
+
+# Xcode bundles (their inner Contents.json is metadata; the .png/.gif are originals)
+*.xcassets/
+*.atlasc/
+*.xcodeproj/
+*.xcworkspace/
+
+# Asset originals — defensive in case anything sits outside an xcassets bundle
+*.png
+*.jpg
+*.jpeg
+*.JPG
+*.gif
+*.webp
+*.heic
+*.pdf
+
+# Audio / video
+*.mp4
+*.mov
+*.mp3
+*.wav
+*.m4a
+*.aiff
+*.flac
+
+# Fonts
+*.ttf
+*.otf
+
+# Lockfiles & manifests (noise nodes, no useful symbols)
+package-lock.json
+*.lock
+cloudflare-worker/package.json
+cloudflare-worker/tsconfig.json
+scripts/sfx-manifest.json
+scripts/music-manifest.json
+
+# Graphify's own outputs (don't self-index)
+graphify-out/
+
+# Per-machine Claude Code config + skill docs (loaded directly by session-start, not via graph)
+.claude/
+
+# Loose extraction dir tracked by .gitignore too
+feedback/
+
+# Raw frame dumps under Styles/
+RenaissanceArchitectAcademy/Styles/bird_frames/
+RenaissanceArchitectAcademy/Styles/volcano_frames/
+RenaissanceArchitectAcademy/Styles/apprentice_frames/
+RenaissanceArchitectAcademy/Styles/bird_turn_frames/
+RenaissanceArchitectAcademy/Styles/girl_intro_frames/
+RenaissanceArchitectAcademy/Styles/avatar_frames/
