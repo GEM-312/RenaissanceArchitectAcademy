@@ -232,6 +232,12 @@ export async function verifyAssertion(args: {
   const authDataFresh = new Uint8Array(ass.authenticatorData);
   const signedFresh = concatBytes(authDataFresh, clientDataHash);
 
+  // v7 hypothesis: Apple double-hashes. Their sample passes SHA256(authData||cdh)
+  // as Data to isValidSignature(for: DataProtocol), which hashes AGAIN internally.
+  // If that's their convention, signed digest = SHA256(SHA256(authData||cdh)).
+  // WebCrypto verify(SHA-256, sig, prehash) would match this.
+  const prehashed = await sha256(signedBytes);
+
   const variants = [
     { name: "v1_jwk_authData||cdh_rs",  key: pubKey,        sig: rawSig,    bytes: signedBytes },
     { name: "v2_raw_authData||cdh_rs",  key: pubKeyFromRaw, sig: rawSig,    bytes: signedBytes },
@@ -239,6 +245,9 @@ export async function verifyAssertion(args: {
     { name: "v4_raw_cdh||authData_rs",  key: pubKeyFromRaw, sig: rawSig,    bytes: concatBytes(clientDataHash, authDataFresh) },
     { name: "v5_raw_freshcopy",         key: pubKeyFromRaw, sig: new Uint8Array(rawSig), bytes: signedFresh },
     { name: "v6_raw_DERsig",            key: pubKeyFromRaw, sig: sigFresh,  bytes: signedBytes },
+    { name: "v7_raw_prehashed_rs",      key: pubKeyFromRaw, sig: rawSig,    bytes: prehashed },
+    { name: "v8_raw_prehashed_sr",      key: pubKeyFromRaw, sig: sigSwapped, bytes: prehashed },
+    { name: "v9_jwk_prehashed_rs",      key: pubKey,        sig: rawSig,    bytes: prehashed },
   ];
   const results: { name: string; ok: boolean; err?: string }[] = [];
   for (const v of variants) {
