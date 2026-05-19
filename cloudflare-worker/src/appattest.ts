@@ -287,16 +287,15 @@ function findCertExtension(cert: X509Certificate, oid: string): Uint8Array | nul
   return new Uint8Array(ext.value);
 }
 
-/// Apple wraps the nonce hash in: SEQUENCE { [1] SEQUENCE { OCTET STRING value } }
-/// Parse the innermost OCTET STRING bytes.
+/// Apple wraps the nonce hash in: SEQUENCE { [1] OCTET STRING value }
+/// Parse the OCTET STRING bytes. (Note: earlier draft expected an extra
+/// SEQUENCE level — that was wrong per Apple's actual encoding.)
 function extractNonceFromExtension(extValue: Uint8Array): Uint8Array {
-  // Walk DER: 0x30 (SEQUENCE) -> 0xA1 (context [1]) -> 0x30 (SEQUENCE) -> 0x04 (OCTET STRING)
+  // Walk DER: 0x30 (SEQUENCE) -> 0xA1 (context [1]) -> 0x04 (OCTET STRING)
   let p = 0;
   if (extValue[p++] !== 0x30) throw new Error("ext_not_sequence");
   p += derLengthSkip(extValue, p - 1);
   if (extValue[p++] !== 0xa1) throw new Error("ext_not_context1");
-  p += derLengthSkip(extValue, p - 1);
-  if (extValue[p++] !== 0x30) throw new Error("ext_inner_not_sequence");
   p += derLengthSkip(extValue, p - 1);
   if (extValue[p++] !== 0x04) throw new Error("ext_not_octet_string");
   const { length, headerLen } = derLength(extValue, p - 1);
