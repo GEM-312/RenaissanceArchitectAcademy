@@ -206,6 +206,25 @@ export async function verifyAssertion(args: {
   );
   // App Attest signatures are DER-encoded — WebCrypto expects raw r||s.
   const rawSig = derSignatureToRaw(ass.signature);
+
+  // TEMP DEBUG — remove once verification works
+  console.log(JSON.stringify({
+    debug: "verifyAssertion",
+    nonceLen: nonce.length,
+    nonceHex: bytesToHex(nonce).slice(0, 64),
+    cborLen: assertionCBOR.length,
+    sigDerLen: ass.signature.length,
+    sigRawLen: rawSig.length,
+    sigRawHex: bytesToHex(rawSig),
+    authDataLen: ass.authenticatorData.length,
+    authDataHex: bytesToHex(ass.authenticatorData),
+    clientDataHashHex: bytesToHex(clientDataHash),
+    signedBytesLen: signedBytes.length,
+    signedBytesHex: bytesToHex(signedBytes),
+    storedJwk: storedKey.publicKeyJwk,
+    storedCounter: storedKey.counter,
+  }));
+
   const ok = await crypto.subtle.verify(
     { name: "ECDSA", hash: "SHA-256" },
     pubKey,
@@ -232,6 +251,10 @@ export async function verifyAssertion(args: {
 async function sha256(data: Uint8Array): Promise<Uint8Array> {
   const buf = await crypto.subtle.digest("SHA-256", data);
   return new Uint8Array(buf);
+}
+
+function bytesToHex(b: Uint8Array): string {
+  return Array.from(b).map((n) => n.toString(16).padStart(2, "0")).join("");
 }
 
 function concatBytes(...arrays: Uint8Array[]): Uint8Array {
