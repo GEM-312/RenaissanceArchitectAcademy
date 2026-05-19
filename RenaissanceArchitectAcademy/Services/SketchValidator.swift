@@ -92,9 +92,9 @@ typealias PlatformImage = NSImage
 
         var request = URLRequest(url: WorkerClient.chatURL)
         request.httpMethod = "POST"
-        request.setValue(WorkerClient.proxyToken, forHTTPHeaderField: "X-Proxy-Token")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
+        try await WorkerClient.authenticate(&request)
 
         let (data, response) = try await URLSession.shared.data(for: request)
         let code = (response as? HTTPURLResponse)?.statusCode ?? -1

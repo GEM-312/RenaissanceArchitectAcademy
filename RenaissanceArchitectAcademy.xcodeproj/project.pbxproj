@@ -165,6 +165,7 @@
 		2D0 /* GameCenterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0 /* GameCenterManager.swift */; };
 		2D1 /* GameCenterDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1 /* GameCenterDashboardView.swift */; };
 		2D2 /* WorkerClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2 /* WorkerClient.swift */; };
+		2EC /* AppAttestService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EC /* AppAttestService.swift */; };
 		2D3 /* NotebookPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3 /* NotebookPickerView.swift */; };
 		2D4 /* BirdModalOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D4 /* BirdModalOverlay.swift */; };
 		2D5 /* TTSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5 /* TTSService.swift */; };
@@ -457,6 +458,7 @@
 		3D0 /* GameCenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterManager.swift; sourceTree = "<group>"; };
 		3D1 /* GameCenterDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterDashboardView.swift; sourceTree = "<group>"; };
 		3D2 /* WorkerClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkerClient.swift; sourceTree = "<group>"; };
+		3EC /* AppAttestService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAttestService.swift; sourceTree = "<group>"; };
 		3D3 /* NotebookPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookPickerView.swift; sourceTree = "<group>"; };
 		3D4 /* BirdModalOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdModalOverlay.swift; sourceTree = "<group>"; };
 		3D5 /* TTSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TTSService.swift; sourceTree = "<group>"; };
@@ -845,6 +847,7 @@
 				1D0 /* PubChemService.swift */,
 				1D3 /* APIKeys.swift */,
 				3D2 /* WorkerClient.swift */,
+				3EC /* AppAttestService.swift */,
 				3D5 /* TTSService.swift */,
 				1D4 /* WolframService.swift */,
 				3CD /* SketchValidator.swift */,
@@ -1287,6 +1290,7 @@
 				0D2 /* StationCompounds.swift in Sources */,
 				0D3 /* APIKeys.swift in Sources */,
 				2D2 /* WorkerClient.swift in Sources */,
+				2EC /* AppAttestService.swift in Sources */,
 				2D5 /* TTSService.swift in Sources */,
 				0D4 /* WolframService.swift in Sources */,
 				2CD /* SketchValidator.swift in Sources */,

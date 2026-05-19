@@ -110,7 +110,7 @@ actor WolframService {
         }
 
         var request = URLRequest(url: url)
-        request.setValue(WorkerClient.proxyToken, forHTTPHeaderField: "X-Proxy-Token")
+        try await WorkerClient.authenticate(&request)
 
         let (data, response) = try await URLSession.shared.data(for: request)
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {

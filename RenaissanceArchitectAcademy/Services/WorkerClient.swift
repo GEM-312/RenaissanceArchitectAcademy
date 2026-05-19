@@ -19,6 +19,12 @@ enum WorkerClient {
     /// Cloudflare Worker base URL — not secret, safe to hardcode.
     static let baseURL = URL(string: "https://raa-api.pollak.workers.dev")!
 
+    /// GET — issues a 32-byte single-use nonce for App Attest challenges.
+    static var nonceURL: URL { baseURL.appendingPathComponent("nonce") }
+
+    /// POST — registers a device's App Attest key with the Worker (one-time per install).
+    static var attestURL: URL { baseURL.appendingPathComponent("attest") }
+
     /// POST — Anthropic Messages API (bird chat + sketch validation).
     static var chatURL: URL { baseURL.appendingPathComponent("chat") }
 
@@ -46,11 +52,26 @@ enum WorkerClient {
 
     /// Shared-secret header that the Worker checks. Stored in APIKeys.swift
     /// (gitignored) so it doesn't end up in screenshots or commits.
+    /// Used as a fallback on Simulator (App Attest doesn't work there).
     static var proxyToken: String { APIKeys.proxyToken }
 
     /// True once the proxy token has been pasted into APIKeys.swift.
     /// Use this to short-circuit network calls before they hit the wire.
     static var isConfigured: Bool {
         !proxyToken.isEmpty && proxyToken != "PASTE_YOUR_HEX_TOKEN_HERE"
+    }
+
+    /// Attach auth to an outgoing request: App Attest assertion when the device
+    /// supports it, X-Proxy-Token fallback on Simulator + unsupported hardware.
+    /// Call this on every protected request — replaces direct X-Proxy-Token header sets.
+    static func authenticate(_ request: inout URLRequest) async throws {
+        if AppAttestService.shared.isSupported {
+            let headers = try await AppAttestService.shared.attestationHeaders()
+            request.setValue(headers.keyId, forHTTPHeaderField: "X-Attest-KeyId")
+            request.setValue(headers.nonce, forHTTPHeaderField: "X-Attest-Nonce")
+            request.setValue(headers.assertion, forHTTPHeaderField: "X-Attest-Assertion")
+        } else {
+            request.setValue(proxyToken, forHTTPHeaderField: "X-Proxy-Token")
+        }
     }
 }
