@@ -152,6 +152,7 @@ final class TTSService: NSObject, ObservableObject {
                 "similarity_boost": 0.75
             ]
         ])
+        try await WorkerClient.authenticate(&request)
 
         let (data, response) = try await URLSession.shared.data(for: request)
 

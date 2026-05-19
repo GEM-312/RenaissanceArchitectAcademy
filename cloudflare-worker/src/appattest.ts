@@ -93,8 +93,11 @@ export async function verifyAttestation(args: {
   });
   const builtChain = await chain.build(credCert);
   // Must end with the Apple root we pinned (not just any cert named the same).
+  // Compare SHA256 hashes of the raw DER bytes — library-independent.
   const rootInBuiltChain = builtChain[builtChain.length - 1];
-  if (rootInBuiltChain.thumbprint("SHA-256").toString() !== appleRoot.thumbprint("SHA-256").toString()) {
+  const rootBuiltHash = await sha256(new Uint8Array(rootInBuiltChain.rawData));
+  const appleRootHash = await sha256(new Uint8Array(appleRoot.rawData));
+  if (!bytesEqual(rootBuiltHash, appleRootHash)) {
     throw new Error("attestation_chain_not_apple_root");
   }
   // Validate each link's signature.
