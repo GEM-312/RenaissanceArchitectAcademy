@@ -110,3 +110,6 @@ cloudflare-worker/node_modules/
 
 # Raw video files
 RenaissanceArchitectAcademy/*.mp4
+
+# Graphify knowledge graph (regenerated locally via /graphify)
+graphify-out/
