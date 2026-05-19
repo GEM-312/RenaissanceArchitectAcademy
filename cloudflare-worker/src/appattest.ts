@@ -207,31 +207,42 @@ export async function verifyAssertion(args: {
   // App Attest signatures are DER-encoded — WebCrypto expects raw r||s.
   const rawSig = derSignatureToRaw(ass.signature);
 
-  // TEMP DEBUG — remove once verification works
+  // Brute-force diagnostic: try 4 variants of byte ordering / sig format
+  const sigSwapped = new Uint8Array(64);
+  sigSwapped.set(rawSig.slice(32, 64), 0);  // s
+  sigSwapped.set(rawSig.slice(0, 32), 32);  // r
+  const signedReverse = concatBytes(clientDataHash, ass.authenticatorData);
+
+  const variants = [
+    { name: "v1_authData||cdh + rs",    sig: rawSig,    bytes: signedBytes },
+    { name: "v2_cdh||authData + rs",    sig: rawSig,    bytes: signedReverse },
+    { name: "v3_authData||cdh + sr",    sig: sigSwapped, bytes: signedBytes },
+    { name: "v4_authData||rawNonce + rs", sig: rawSig,  bytes: concatBytes(ass.authenticatorData, nonce) },
+  ];
+  const results: { name: string; ok: boolean }[] = [];
+  for (const v of variants) {
+    try {
+      const r = await crypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, pubKey, v.sig, v.bytes);
+      results.push({ name: v.name, ok: r });
+    } catch (e: any) {
+      results.push({ name: v.name, ok: false });
+    }
+  }
   console.log(JSON.stringify({
     debug: "verifyAssertion",
     nonceLen: nonce.length,
-    nonceHex: bytesToHex(nonce).slice(0, 64),
     cborLen: assertionCBOR.length,
     sigDerLen: ass.signature.length,
-    sigRawLen: rawSig.length,
     sigRawHex: bytesToHex(rawSig),
     authDataLen: ass.authenticatorData.length,
     authDataHex: bytesToHex(ass.authenticatorData),
     clientDataHashHex: bytesToHex(clientDataHash),
-    signedBytesLen: signedBytes.length,
-    signedBytesHex: bytesToHex(signedBytes),
     storedJwk: storedKey.publicKeyJwk,
-    storedCounter: storedKey.counter,
+    variants: results,
   }));
 
-  const ok = await crypto.subtle.verify(
-    { name: "ECDSA", hash: "SHA-256" },
-    pubKey,
-    rawSig,
-    signedBytes,
-  );
-  if (!ok) throw new Error("assertion_signature_invalid");
+  const winner = results.find((r) => r.ok);
+  if (!winner) throw new Error("assertion_signature_invalid");
 
   // 5. Verify authData rpIdHash + counter strictly increasing.
   const parsed = parseAuthData(ass.authenticatorData);
@@ -293,9 +304,10 @@ function parseAuthData(authData: Uint8Array): ParsedAuthData {
     (authData[35] << 8) |
     authData[36];
   const out: ParsedAuthData = { rpIdHash, flags, counter, aaguid: null, credentialId: null };
-  // AT flag (attested credential data present) = bit 6 (0x40)
-  if (flags & 0x40) {
-    if (authData.length < 55) throw new Error("authdata_attested_short");
+  // AT flag (attested credential data present) = bit 6 (0x40). Some App Attest
+  // assertions set this bit even when no AT data follows (authData is exactly
+  // 37 bytes), so we only parse AT data when there's actually room for it.
+  if ((flags & 0x40) && authData.length >= 55) {
     out.aaguid = authData.slice(37, 53);
     const credIdLen = (authData[53] << 8) | authData[54];
     if (authData.length < 55 + credIdLen) throw new Error("authdata_credid_short");
