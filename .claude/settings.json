@@ -9,7 +9,11 @@
       "Bash(afplay:*)",
       "Bash(node scripts/generate-sfx.mjs:*)",
       "Bash(uv:*)",
-      "Bash(graphify:*)"
+      "Bash(graphify:*)",
+      "Bash(xcodebuild:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push)"
     ]
   }
 }
