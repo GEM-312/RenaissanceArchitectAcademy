@@ -207,37 +207,58 @@ export async function verifyAssertion(args: {
   // App Attest signatures are DER-encoded — WebCrypto expects raw r||s.
   const rawSig = derSignatureToRaw(ass.signature);
 
-  // Brute-force diagnostic: try 4 variants of byte ordering / sig format
+  // Diagnostic round 2: try the same verification with the pubkey imported
+  // from a freshly-built raw EC point (uncompressed: 0x04 || X || Y) instead
+  // of from JWK. If pubKeyRaw verifies but pubKey (JWK) doesn't, JWK round-trip
+  // is the bug. Also try DER sig directly in case Workers WebCrypto accepts it.
+  const xBytes = base64UrlToBytesLocal(storedKey.publicKeyJwk.x as string);
+  const yBytes = base64UrlToBytesLocal(storedKey.publicKeyJwk.y as string);
+  const rawEcPoint = new Uint8Array(65);
+  rawEcPoint[0] = 0x04;
+  rawEcPoint.set(xBytes, 1);
+  rawEcPoint.set(yBytes, 33);
+  const pubKeyFromRaw = await crypto.subtle.importKey(
+    "raw",
+    rawEcPoint,
+    { name: "ECDSA", namedCurve: "P-256" },
+    false,
+    ["verify"],
+  );
+
   const sigSwapped = new Uint8Array(64);
-  sigSwapped.set(rawSig.slice(32, 64), 0);  // s
-  sigSwapped.set(rawSig.slice(0, 32), 32);  // r
-  const signedReverse = concatBytes(clientDataHash, ass.authenticatorData);
+  sigSwapped.set(rawSig.slice(32, 64), 0);
+  sigSwapped.set(rawSig.slice(0, 32), 32);
+  const sigFresh = new Uint8Array(ass.signature);  // defensive copy
+  const authDataFresh = new Uint8Array(ass.authenticatorData);
+  const signedFresh = concatBytes(authDataFresh, clientDataHash);
 
   const variants = [
-    { name: "v1_authData||cdh + rs",    sig: rawSig,    bytes: signedBytes },
-    { name: "v2_cdh||authData + rs",    sig: rawSig,    bytes: signedReverse },
-    { name: "v3_authData||cdh + sr",    sig: sigSwapped, bytes: signedBytes },
-    { name: "v4_authData||rawNonce + rs", sig: rawSig,  bytes: concatBytes(ass.authenticatorData, nonce) },
+    { name: "v1_jwk_authData||cdh_rs",  key: pubKey,        sig: rawSig,    bytes: signedBytes },
+    { name: "v2_raw_authData||cdh_rs",  key: pubKeyFromRaw, sig: rawSig,    bytes: signedBytes },
+    { name: "v3_raw_authData||cdh_sr",  key: pubKeyFromRaw, sig: sigSwapped, bytes: signedBytes },
+    { name: "v4_raw_cdh||authData_rs",  key: pubKeyFromRaw, sig: rawSig,    bytes: concatBytes(clientDataHash, authDataFresh) },
+    { name: "v5_raw_freshcopy",         key: pubKeyFromRaw, sig: new Uint8Array(rawSig), bytes: signedFresh },
+    { name: "v6_raw_DERsig",            key: pubKeyFromRaw, sig: sigFresh,  bytes: signedBytes },
   ];
-  const results: { name: string; ok: boolean }[] = [];
+  const results: { name: string; ok: boolean; err?: string }[] = [];
   for (const v of variants) {
     try {
-      const r = await crypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, pubKey, v.sig, v.bytes);
+      const r = await crypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, v.key, v.sig, v.bytes);
       results.push({ name: v.name, ok: r });
     } catch (e: any) {
-      results.push({ name: v.name, ok: false });
+      results.push({ name: v.name, ok: false, err: String(e?.message ?? e) });
     }
   }
   console.log(JSON.stringify({
-    debug: "verifyAssertion",
-    nonceLen: nonce.length,
-    cborLen: assertionCBOR.length,
+    debug: "verifyAssertion_v2",
     sigDerLen: ass.signature.length,
+    sigDerHex: bytesToHex(new Uint8Array(ass.signature)),
     sigRawHex: bytesToHex(rawSig),
-    authDataLen: ass.authenticatorData.length,
-    authDataHex: bytesToHex(ass.authenticatorData),
+    authDataHex: bytesToHex(authDataFresh),
     clientDataHashHex: bytesToHex(clientDataHash),
-    storedJwk: storedKey.publicKeyJwk,
+    xBytesLen: xBytes.length,
+    yBytesLen: yBytes.length,
+    rawEcPointHex: bytesToHex(rawEcPoint),
     variants: results,
   }));
 
@@ -266,6 +287,15 @@ async function sha256(data: Uint8Array): Promise<Uint8Array> {
 
 function bytesToHex(b: Uint8Array): string {
   return Array.from(b).map((n) => n.toString(16).padStart(2, "0")).join("");
+}
+
+function base64UrlToBytesLocal(s: string): Uint8Array {
+  const norm = s.replace(/-/g, "+").replace(/_/g, "/");
+  const padded = norm + "=".repeat((4 - (norm.length % 4)) % 4);
+  const bin = atob(padded);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
 }
 
 function concatBytes(...arrays: Uint8Array[]): Uint8Array {
