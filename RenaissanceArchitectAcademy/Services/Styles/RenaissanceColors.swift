@@ -74,6 +74,41 @@ enum RenaissanceColors {
     /// amber than `candleGlow` (which has more red/green and less blue).
     static let notebookYellow = Color(red: 1.0, green: 0.85, blue: 0.3)
 
+    // MARK: - Material Palette (cross-file shared tokens)
+
+    /// Roman volcanic ash / pozzolana red. Used in Pantheon, Aqueduct, Roman Baths, Harbor.
+    static let pozzolanaRed = Color(red: 0.65, green: 0.40, blue: 0.30)
+
+    /// Leaf / completion-check green. Used in Botanical Garden, Anatomy, Printing Press, Arsenal.
+    static let leafGreen = Color(red: 0.30, green: 0.58, blue: 0.32)
+
+    /// Paper / silk cream. Used in Botanical Garden, Duomo, Printing Press, Flying Machine.
+    static let paperCream = Color(red: 0.95, green: 0.92, blue: 0.85)
+
+    /// Marble white — slightly cooler than paperCream. Used in Quarry, Interactive Visual Helpers.
+    static let marbleWhite = Color(red: 0.92, green: 0.90, blue: 0.88)
+
+    /// Lime mortar — slightly warmer than marbleWhite. Used in Insula, Pantheon.
+    static let limeMortar = Color(red: 0.92, green: 0.90, blue: 0.85)
+
+    /// Warm orange — sunset / fire glow. Used in Insula, Roman Baths.
+    static let warmOrange = Color(red: 0.90, green: 0.65, blue: 0.35)
+
+    /// Forge orange — hot metal / molten. Used in Printing Press, Leonardo Workshop.
+    static let forgeOrange = Color(red: 0.90, green: 0.50, blue: 0.15)
+
+    /// Lead gray — pipes, lead roofing. Used in Duomo, Printing Press, Vatican Observatory.
+    static let leadGray = Color(red: 0.55, green: 0.55, blue: 0.52)
+
+    /// Travertine / sand beige. Used in Roman Roads, Colosseum.
+    static let travertineBeige = Color(red: 0.82, green: 0.76, blue: 0.66)
+
+    /// Mortar tan. Used in Colosseum, Aqueduct.
+    static let mortarTan = Color(red: 0.80, green: 0.75, blue: 0.65)
+
+    /// Water channel blue — aqueduct flow, baths, level indicators. Used in Card Visuals, Helpers.
+    static let waterBlue = Color(red: 0.35, green: 0.55, blue: 0.75)
+
     // MARK: - Gradients
 
     /// Parchment gradient for backgrounds
