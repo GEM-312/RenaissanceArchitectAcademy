@@ -269,7 +269,7 @@ private struct HeightLimitVisual: View {
     }
 }
 
-private let warmOrange = Color(red: 0.90, green: 0.65, blue: 0.35)
+private let warmOrange = RenaissanceColors.warmOrange
 
 // MARK: - 3. Taberna Shop — Tap to Reveal
 

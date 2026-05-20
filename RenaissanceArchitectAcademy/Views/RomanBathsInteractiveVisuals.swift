@@ -58,7 +58,7 @@ struct RomanBathsInteractiveVisuals {
 
 // MARK: - Local Colors (unique to Roman Baths)
 
-private let warmOrange = Color(red: 0.90, green: 0.65, blue: 0.35)
+private let warmOrange = RenaissanceColors.warmOrange
 private let coolBlue = Color(red: 0.45, green: 0.60, blue: 0.80)
 
 private typealias TeachingContainer = IVTeachingContainer
