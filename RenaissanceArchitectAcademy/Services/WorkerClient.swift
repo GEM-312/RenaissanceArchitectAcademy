@@ -62,16 +62,32 @@ enum WorkerClient {
     }
 
     /// Attach auth to an outgoing request: App Attest assertion when the device
-    /// supports it, X-Proxy-Token fallback on Simulator + unsupported hardware.
-    /// Call this on every protected request — replaces direct X-Proxy-Token header sets.
+    /// supports it, X-Proxy-Token fallback on Simulator + unsupported hardware
+    /// (DEBUG builds only). Release builds have no token compiled in, so the
+    /// fallback path is unavailable — they MUST use App Attest.
+    /// Throws if neither path is available (e.g. release build running on
+    /// Simulator, which is a degenerate configuration).
     static func authenticate(_ request: inout URLRequest) async throws {
         if AppAttestService.shared.isSupported {
             let headers = try await AppAttestService.shared.attestationHeaders()
             request.setValue(headers.keyId, forHTTPHeaderField: "X-Attest-KeyId")
             request.setValue(headers.nonce, forHTTPHeaderField: "X-Attest-Nonce")
             request.setValue(headers.assertion, forHTTPHeaderField: "X-Attest-Assertion")
-        } else {
+        } else if !proxyToken.isEmpty {
             request.setValue(proxyToken, forHTTPHeaderField: "X-Proxy-Token")
+        } else {
+            throw WorkerAuthError.noAuthPathAvailable
+        }
+    }
+}
+
+enum WorkerAuthError: Error, LocalizedError {
+    case noAuthPathAvailable
+
+    var errorDescription: String? {
+        switch self {
+        case .noAuthPathAvailable:
+            return "Cannot authenticate to Worker: App Attest unavailable and no DEBUG-only fallback token. This usually means a release build running on Simulator — not a supported configuration."
         }
     }
 }
