@@ -666,11 +666,11 @@ struct CardVisualView: View {
         var channel = Path()
         channel.move(to: CGPoint(x: centerX - beamW / 2 + channelInset, y: beamY + 3))
         channel.addLine(to: CGPoint(x: centerX + beamW / 2 - channelInset, y: beamY + 3))
-        context.stroke(channel, with: .color(Color(red: 0.35, green: 0.55, blue: 0.75)), lineWidth: 3)
+        context.stroke(channel, with: .color(RenaissanceColors.waterBlue), lineWidth: 3)
 
         // Water surface label
         context.draw(
-            Text("water channel").font(RenaissanceFont.italicSmall).foregroundColor(Color(red: 0.35, green: 0.55, blue: 0.75)),
+            Text("water channel").font(RenaissanceFont.italicSmall).foregroundColor(RenaissanceColors.waterBlue),
             at: CGPoint(x: centerX, y: beamY - 24)
         )
 
@@ -678,7 +678,7 @@ struct CardVisualView: View {
         for xOff in [centerX - beamW / 2 + channelInset + 8, centerX + beamW / 2 - channelInset - 8] {
             var droplet = Path()
             droplet.addEllipse(in: CGRect(x: xOff - 3, y: beamY, width: 6, height: 6))
-            context.fill(droplet, with: .color(Color(red: 0.35, green: 0.55, blue: 0.75).opacity(0.5)))
+            context.fill(droplet, with: .color(RenaissanceColors.waterBlue.opacity(0.5)))
         }
 
         guard currentStep >= 3 else { return }

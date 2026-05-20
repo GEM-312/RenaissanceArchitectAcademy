@@ -8,7 +8,7 @@ enum IVMaterialColors {
     // Base drawing colors (used by helpers)
     static let gridColor  = RenaissanceColors.warmBrown.opacity(0.06)
     static let sepiaInk   = RenaissanceColors.sepiaInk
-    static let waterBlue  = Color(red: 0.35, green: 0.55, blue: 0.75)
+    static let waterBlue  = RenaissanceColors.waterBlue
     static let dimColor   = Color(red: 0.7, green: 0.35, blue: 0.25)
 
     // Shared building materials — deduplicated from 17 files.
