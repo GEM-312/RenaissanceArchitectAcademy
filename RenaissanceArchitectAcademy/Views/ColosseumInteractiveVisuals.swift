@@ -56,7 +56,7 @@ struct ColosseumInteractiveVisuals {
 
 // MARK: - Local Colors (unique to Colosseum)
 
-private let travertineBeige = Color(red: 0.82, green: 0.76, blue: 0.66)
+private let travertineBeige = RenaissanceColors.travertineBeige
 private let leadSilver = Color(red: 0.72, green: 0.72, blue: 0.70)
 
 private typealias TeachingContainer = IVTeachingContainer
