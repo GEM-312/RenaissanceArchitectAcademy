@@ -391,23 +391,96 @@ async function handleTTS(voiceId: string, request: Request, env: Env): Promise<R
 
   const bodyText = await request.text();
 
-  const upstream = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "xi-api-key": env.ELEVENLABS_API_KEY,
-      "accept": "audio/mpeg",
-    },
-    body: bodyText,
+  return cachedTTS(env, voiceId, bodyText, async () => {
+    const upstream = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "xi-api-key": env.ELEVENLABS_API_KEY,
+        "accept": "audio/mpeg",
+      },
+      body: bodyText,
+    });
+    return {
+      status: upstream.status,
+      body: await upstream.arrayBuffer(),
+      contentType:
+        upstream.headers.get("content-type") ?? "application/octet-stream",
+    };
   });
+}
 
-  // Forward audio bytes (or JSON error) with upstream's content-type so
-  // the iOS client sees the same response shape as a direct ElevenLabs call.
-  const contentType = upstream.headers.get("content-type") ?? "application/octet-stream";
+// MARK: - TTS cache helper
+
+/// TTS responses are deterministic per (voiceId, text, voice_settings, model_id).
+/// Lesson narration in particular plays the SAME text on every render, so any
+/// repeat listen by any user collapses to one upstream ElevenLabs call.
+///
+/// Cache key folds the request body into a SHA-256 hash so different
+/// model_id / stability / similarity_boost / etc. settings get distinct entries
+/// automatically. 30-day TTL is a safety cap against future format changes —
+/// audio itself never expires.
+///
+/// Only successful audio responses are cached. Error JSON (rate limits, bad
+/// keys) passes through uncached so the iOS client sees fresh failures.
+async function cachedTTS(
+  env: Env,
+  voiceId: string,
+  bodyText: string,
+  fetchUpstream: () => Promise<{ status: number; body: ArrayBuffer; contentType: string }>,
+): Promise<Response> {
+  const bodyHash = await sha256Hex(bodyText);
+  const cacheKey = `tts:${voiceId}:${bodyHash}`;
+
+  const cached = await env.CACHE.getWithMetadata<{ contentType: string }>(
+    cacheKey,
+    { type: "arrayBuffer" },
+  );
+
+  if (cached.value && cached.metadata?.contentType) {
+    return new Response(cached.value, {
+      status: 200,
+      headers: {
+        "content-type": cached.metadata.contentType,
+        "x-cache": "HIT",
+      },
+    });
+  }
+
+  const upstream = await fetchUpstream();
+
+  // Only cache successful audio responses. Don't cache error JSON or other
+  // non-audio bodies — those represent transient upstream failures or auth
+  // problems we want the iOS client to retry on.
+  if (upstream.status === 200 && upstream.contentType.startsWith("audio/")) {
+    try {
+      await env.CACHE.put(cacheKey, upstream.body, {
+        expirationTtl: 2592000, // 30 days
+        metadata: { contentType: upstream.contentType },
+      });
+    } catch {
+      // Cache write failure shouldn't block the user response.
+    }
+  }
+
   return new Response(upstream.body, {
     status: upstream.status,
-    headers: { "content-type": contentType },
+    headers: {
+      "content-type": upstream.contentType,
+      "x-cache": "MISS",
+    },
   });
+}
+
+async function sha256Hex(input: string): Promise<string> {
+  const data = new TextEncoder().encode(input);
+  const digest = await crypto.subtle.digest("SHA-256", data);
+  const bytes = new Uint8Array(digest);
+  let hex = "";
+  for (let i = 0; i < bytes.length; i++) {
+    hex += bytes[i].toString(16).padStart(2, "0");
+  }
+  return hex;
 }
 
 // MARK: - /sfx → ElevenLabs Sound Generation
