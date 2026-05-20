@@ -501,7 +501,7 @@ private struct CastTypeVisual: View {
         TeachingContainer(title: visual.title, color: color, totalSteps: 3, step: $step,
                           stepLabel: labels[step - 1], height: height) {
             VStack(spacing: 8) {
-                if step >= 1 { Text("240°C").font(.custom("EBGaramond-Bold", size: 16)).foregroundStyle(Color(red: 0.90, green: 0.50, blue: 0.15)) }
+                if step >= 1 { Text("240°C").font(.custom("EBGaramond-Bold", size: 16)).foregroundStyle(RenaissanceColors.forgeOrange) }
                 if step >= 2 { Text("Cool 10 sec → perfect letter").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.dimColor) }
                 if step >= 3 {
                     HStack(spacing: 2) {

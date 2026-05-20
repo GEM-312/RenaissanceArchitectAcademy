@@ -54,7 +54,7 @@ struct LeonardoWorkshopInteractiveVisuals {
 
 // MARK: - Local Colors
 
-private let forgeOrange = Color(red: 0.90, green: 0.50, blue: 0.15)
+private let forgeOrange = RenaissanceColors.forgeOrange
 private let ultraBlue = Color(red: 0.22, green: 0.28, blue: 0.65)
 private let ochreYellow = Color(red: 0.78, green: 0.62, blue: 0.28)
 private let limeWhite = Color(red: 0.94, green: 0.92, blue: 0.88)
