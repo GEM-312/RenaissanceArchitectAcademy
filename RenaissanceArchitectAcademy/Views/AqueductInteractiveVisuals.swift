@@ -53,7 +53,7 @@ struct AqueductInteractiveVisuals {
 
 // MARK: - Local Colors (unique to Aqueduct)
 
-private let mortarTan = Color(red: 0.80, green: 0.75, blue: 0.65)
+private let mortarTan = RenaissanceColors.mortarTan
 private let pozzolanaRed = RenaissanceColors.pozzolanaRed
 
 private typealias VisualTitle = IVVisualTitle

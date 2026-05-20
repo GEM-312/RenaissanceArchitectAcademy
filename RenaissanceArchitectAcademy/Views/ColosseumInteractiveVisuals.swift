@@ -305,7 +305,7 @@ private struct ColumnOrdersVisual: View {
     private let orderColors: [Color] = [
         Color(red: 0.70, green: 0.60, blue: 0.50), // Doric — sturdy brown
         Color(red: 0.75, green: 0.68, blue: 0.58), // Ionic — warm
-        Color(red: 0.80, green: 0.75, blue: 0.65), // Corinthian — lighter
+        RenaissanceColors.mortarTan, // Corinthian — lighter
         Color(red: 0.85, green: 0.82, blue: 0.75), // Composite — lightest
     ]
 
