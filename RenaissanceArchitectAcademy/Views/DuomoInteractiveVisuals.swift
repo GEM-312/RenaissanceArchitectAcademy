@@ -63,7 +63,7 @@ private let pinkMaremma = Color(red: 0.82, green: 0.60, blue: 0.58)
 private let cobaltBlue = Color(red: 0.22, green: 0.35, blue: 0.72)
 private let goldAccent = Color(red: 0.85, green: 0.66, blue: 0.37)
 private let sinopiaRed = Color(red: 0.72, green: 0.30, blue: 0.18)
-private let leadGray = Color(red: 0.55, green: 0.55, blue: 0.52)
+private let leadGray = RenaissanceColors.leadGray
 
 private typealias TeachingContainer = IVTeachingContainer
 private typealias DimLabel = IVDimLabel

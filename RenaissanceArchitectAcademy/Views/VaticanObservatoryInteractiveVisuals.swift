@@ -56,7 +56,7 @@ struct VaticanObservatoryInteractiveVisuals {
 
 private let nightBlue = Color(red: 0.12, green: 0.15, blue: 0.35)
 private let starGold = Color(red: 0.92, green: 0.82, blue: 0.45)
-private let leadGray = Color(red: 0.55, green: 0.55, blue: 0.52)
+private let leadGray = RenaissanceColors.leadGray
 private let ultraBlue = Color(red: 0.22, green: 0.30, blue: 0.68)
 private let lensGlass = Color(red: 0.78, green: 0.85, blue: 0.90)
 private let brassGold = Color(red: 0.80, green: 0.68, blue: 0.35)
