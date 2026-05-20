@@ -869,7 +869,7 @@ private struct MarineMortarVisual: View {
                     }.buttonStyle(.plain).opacity(scoops >= 1 ? 0.4 : 1).foregroundStyle(IVMaterialColors.sepiaInk)
                     Button { guard scoops >= 1 && scoops < 4 else { return }; withAnimation(.spring(response: 0.3)) { scoops += 1 }; SoundManager.shared.play(.tapSoft) } label: {
                         Text("+ Ash").font(RenaissanceFont.ivLabel).padding(.horizontal, 12).padding(.vertical, 6)
-                            .background(scoops >= 4 ? RenaissanceColors.stoneGray.opacity(0.1) : Color(red: 0.65, green: 0.40, blue: 0.30).opacity(0.15)).cornerRadius(6)
+                            .background(scoops >= 4 ? RenaissanceColors.stoneGray.opacity(0.1) : RenaissanceColors.pozzolanaRed.opacity(0.15)).cornerRadius(6)
                             .overlay(RoundedRectangle(cornerRadius: 6).stroke((scoops >= 1 && scoops < 4) ? color : RenaissanceColors.stoneGray.opacity(0.2), lineWidth: (scoops >= 1 && scoops < 4) ? 2 : 0.5))
                     }.buttonStyle(.plain).opacity(scoops >= 4 ? 0.4 : 1).foregroundStyle(IVMaterialColors.sepiaInk)
                 }

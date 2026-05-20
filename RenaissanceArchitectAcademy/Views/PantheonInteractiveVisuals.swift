@@ -1303,7 +1303,7 @@ private struct MixRecipeVisual: View {
     let visual: CardVisual; let color: Color; var height: CGFloat = 275
     @State private var scoopsAdded: Int = 0
     private let limeC = Color(red: 0.92, green: 0.90, blue: 0.85)
-    private let pozzC = Color(red: 0.65, green: 0.40, blue: 0.30)
+    private let pozzC = RenaissanceColors.pozzolanaRed
 
     private var isLimeTurn: Bool { scoopsAdded == 0 }
     private var isPozzTurn: Bool { scoopsAdded >= 1 && scoopsAdded < 4 }
