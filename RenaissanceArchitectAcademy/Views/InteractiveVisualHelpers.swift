@@ -15,7 +15,7 @@ enum IVMaterialColors {
     // (stoneGray was removed — it had drifted ~0.01 per channel from
     // RenaissanceColors.stoneGray; call sites now reference the canonical
     // token directly.)
-    static let marbleWhite = Color(red: 0.92, green: 0.90, blue: 0.88)
+    static let marbleWhite = RenaissanceColors.marbleWhite
     static let leadGray    = Color(red: 0.50, green: 0.52, blue: 0.55)
     static let ironDark    = Color(red: 0.35, green: 0.33, blue: 0.32)
     static let oakBrown    = Color(red: 0.55, green: 0.42, blue: 0.28)
