@@ -27,3 +27,12 @@ id = "8287bef2e02d4e46a7e759d361a3d1d8"
 [[kv_namespaces]]
 binding = "NONCES"
 id = "8bb034522127496cbd21c7294827682a"
+
+# Edge-enforced per-IP rate limit. 60 requests per 60 seconds per
+# CF-Connecting-IP. Covers all routes except /health. Returns 429 on
+# overflow. namespace_id is an arbitrary unique integer within this Worker.
+[[unsafe.bindings]]
+name = "RATE_LIMITER"
+type = "ratelimit"
+namespace_id = "1001"
+simple = { limit = 60, period = 60 }

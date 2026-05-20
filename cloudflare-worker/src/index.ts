@@ -35,6 +35,8 @@ export interface Env {
   ATTESTED_KEYS: KVNamespace;
   /// nonce (base64url) → "1" with 60s TTL for single-use challenge tokens.
   NONCES: KVNamespace;
+  /// Edge-enforced per-IP rate limiter. 60 req / 60 sec — see wrangler.toml.
+  RATE_LIMITER: { limit: (opts: { key: string }) => Promise<{ success: boolean }> };
 }
 
 export default {
@@ -48,6 +50,12 @@ export default {
         time: new Date().toISOString(),
       });
     }
+
+    // Edge-enforced per-IP rate limit on every non-health route. Even
+    // unauthenticated routes (/nonce, /attest) count — otherwise an
+    // attacker could flood enrollment attempts and burn KV writes.
+    const rateLimitError = await enforceRateLimit(request, env);
+    if (rateLimitError) return rateLimitError;
 
     // Anonymous routes — App Attest enrollment + nonce issuance.
     // These cannot require auth, since the device needs them to bootstrap auth.
@@ -91,6 +99,27 @@ export default {
     return json({ error: "not_found", path: url.pathname }, 404);
   },
 };
+
+// MARK: - Rate limiting
+
+/// Per-IP rate limit using Cloudflare's Workers Rate Limiting API.
+/// 60 req / 60 sec per CF-Connecting-IP (configured in wrangler.toml).
+/// Returns 429 on overflow with a hint header so the iOS client can back off.
+async function enforceRateLimit(request: Request, env: Env): Promise<Response | null> {
+  const ip = request.headers.get("CF-Connecting-IP") ?? "unknown";
+  const { success } = await env.RATE_LIMITER.limit({ key: ip });
+  if (success) return null;
+  return new Response(
+    JSON.stringify({ error: "rate_limited", detail: "Too many requests, slow down." }),
+    {
+      status: 429,
+      headers: {
+        "content-type": "application/json",
+        "retry-after": "60",
+      },
+    },
+  );
+}
 
 // MARK: - Auth
 
