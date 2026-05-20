@@ -68,7 +68,7 @@ private struct VesaliusVisual: View {
 
     private let dogmaBlue = Color(red: 0.28, green: 0.35, blue: 0.52)
     private let observationRed = Color(red: 0.65, green: 0.22, blue: 0.18)
-    private let sageGreen = Color(red: 0.30, green: 0.58, blue: 0.32)
+    private let sageGreen = RenaissanceColors.leafGreen
 
     private let labels = ["1543 — Vesalius publishes De Humani Corporis Fabrica",
                           "Galen dissected pigs and monkeys — wrong about humans for 1,300 years",
@@ -711,7 +711,7 @@ private struct TimberPrepVisual: View {
                     VStack(spacing: 4) {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 22))
-                            .foregroundStyle(Color(red: 0.30, green: 0.58, blue: 0.32).opacity(0.6))
+                            .foregroundStyle(RenaissanceColors.leafGreen.opacity(0.6))
                         Text("18 mo")
                             .font(RenaissanceFont.ivFormula)
                             .foregroundStyle(color)

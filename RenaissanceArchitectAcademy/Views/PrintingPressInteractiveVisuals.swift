@@ -220,7 +220,7 @@ private struct OilInkVisual: View {
                     // Oil-based (works)
                     VStack(spacing: 4) {
                         Circle().fill(inkBlack.opacity(0.6)).frame(width: 35, height: 35)
-                            .overlay { if step >= 3 { Image(systemName: "checkmark").font(.system(size: 13)).foregroundStyle(Color(red: 0.30, green: 0.58, blue: 0.32)) } }
+                            .overlay { if step >= 3 { Image(systemName: "checkmark").font(.system(size: 13)).foregroundStyle(RenaissanceColors.leafGreen) } }
                         Text("Oil").font(RenaissanceFont.visualTitle).foregroundStyle(color)
                         Text("Clings").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.dimColor)
                     }

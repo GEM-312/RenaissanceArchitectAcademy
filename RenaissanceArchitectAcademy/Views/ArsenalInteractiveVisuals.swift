@@ -416,7 +416,7 @@ private struct WetDockVisual: View {
                     check.move(to: CGPoint(x: hx - 8, y: checkY))
                     check.addLine(to: CGPoint(x: hx - 2, y: checkY + 6))
                     check.addLine(to: CGPoint(x: hx + 10, y: checkY - 6))
-                    ctx.stroke(check, with: .color(Color(red: 0.30, green: 0.58, blue: 0.32)), lineWidth: 2)
+                    ctx.stroke(check, with: .color(RenaissanceColors.leafGreen), lineWidth: 2)
                 }
             }
         }
