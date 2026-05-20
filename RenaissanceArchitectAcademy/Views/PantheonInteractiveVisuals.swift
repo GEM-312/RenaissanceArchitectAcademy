@@ -1302,7 +1302,7 @@ private struct ScaffoldClimbVisual: View {
 private struct MixRecipeVisual: View {
     let visual: CardVisual; let color: Color; var height: CGFloat = 275
     @State private var scoopsAdded: Int = 0
-    private let limeC = Color(red: 0.92, green: 0.90, blue: 0.85)
+    private let limeC = RenaissanceColors.limeMortar
     private let pozzC = RenaissanceColors.pozzolanaRed
 
     private var isLimeTurn: Bool { scoopsAdded == 0 }
