@@ -288,7 +288,7 @@ private struct TaxonomyTreeVisual: View {
                     let pressY = size.height * 0.68
                     // Paper rectangle
                     let paper = CGRect(x: cx - 40, y: pressY, width: 80, height: 30)
-                    ctx.fill(Path(roundedRect: paper, cornerRadius: 3), with: .color(Color(red: 0.95, green: 0.92, blue: 0.85)))
+                    ctx.fill(Path(roundedRect: paper, cornerRadius: 3), with: .color(RenaissanceColors.paperCream))
                     ctx.stroke(Path(roundedRect: paper, cornerRadius: 3), with: .color(IVMaterialColors.sepiaInk.opacity(0.2)), lineWidth: 0.5)
 
                     // Pressed leaf

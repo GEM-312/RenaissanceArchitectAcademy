@@ -775,7 +775,7 @@ private struct MortarSetVisual: View {
                 // Gypsum mortar
                 VStack(spacing: 6) {
                     RoundedRectangle(cornerRadius: 6)
-                        .fill(Color(red: 0.95, green: 0.92, blue: 0.85).opacity(step >= 2 ? 0.8 : 0.3))
+                        .fill(RenaissanceColors.paperCream.opacity(step >= 2 ? 0.8 : 0.3))
                         .frame(height: 60)
                         .overlay {
                             Text("⚡ 15 min")

@@ -55,7 +55,7 @@ private let inkBlack = Color(red: 0.12, green: 0.10, blue: 0.08)
 private let leadGray = Color(red: 0.55, green: 0.55, blue: 0.52)
 private let ironDark = Color(red: 0.38, green: 0.36, blue: 0.34)
 private let copperRose = Color(red: 0.72, green: 0.48, blue: 0.35)
-private let paperCream = Color(red: 0.95, green: 0.92, blue: 0.85)
+private let paperCream = RenaissanceColors.paperCream
 private let walnutDark = Color(red: 0.45, green: 0.32, blue: 0.20)
 
 private typealias TeachingContainer = IVTeachingContainer
