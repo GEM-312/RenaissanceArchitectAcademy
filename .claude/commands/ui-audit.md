@@ -1,5 +1,6 @@
 ---
 description: Scan all View files for UI/UX design rule violations (spacing, fonts, sizing, colors, anti-patterns)
+disable-model-invocation: true
 ---
 
 # UI/UX Audit Agent
