@@ -48,7 +48,7 @@ struct RomanRoadsInteractiveVisuals {
 // MARK: - Local Colors (unique to Roman Roads)
 
 private let basaltDark = Color(red: 0.38, green: 0.36, blue: 0.34)
-private let sandBeige = Color(red: 0.82, green: 0.76, blue: 0.66)
+private let sandBeige = RenaissanceColors.travertineBeige
 private let gravelBrown = Color(red: 0.65, green: 0.55, blue: 0.42)
 
 private typealias TeachingContainer = IVTeachingContainer

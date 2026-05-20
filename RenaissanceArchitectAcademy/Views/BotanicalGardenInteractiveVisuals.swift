@@ -46,7 +46,7 @@ struct BotanicalGardenInteractiveVisuals {
 
 // MARK: - Local Colors
 
-private let leafGreen = Color(red: 0.30, green: 0.58, blue: 0.32)
+private let leafGreen = RenaissanceColors.leafGreen
 private let soilBrown = Color(red: 0.52, green: 0.38, blue: 0.26)
 private let stoneGray = Color(red: 0.68, green: 0.65, blue: 0.60)
 private let warmSun = Color(red: 0.90, green: 0.72, blue: 0.30)
@@ -288,7 +288,7 @@ private struct TaxonomyTreeVisual: View {
                     let pressY = size.height * 0.68
                     // Paper rectangle
                     let paper = CGRect(x: cx - 40, y: pressY, width: 80, height: 30)
-                    ctx.fill(Path(roundedRect: paper, cornerRadius: 3), with: .color(Color(red: 0.95, green: 0.92, blue: 0.85)))
+                    ctx.fill(Path(roundedRect: paper, cornerRadius: 3), with: .color(RenaissanceColors.paperCream))
                     ctx.stroke(Path(roundedRect: paper, cornerRadius: 3), with: .color(IVMaterialColors.sepiaInk.opacity(0.2)), lineWidth: 0.5)
 
                     // Pressed leaf

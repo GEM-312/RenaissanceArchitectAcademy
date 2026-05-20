@@ -49,7 +49,7 @@ struct FlyingMachineInteractiveVisuals {
 
 // MARK: - Local Colors
 
-private let silkCream = Color(red: 0.95, green: 0.92, blue: 0.85)
+private let silkCream = RenaissanceColors.paperCream
 private let skyBlue = Color(red: 0.55, green: 0.72, blue: 0.88)
 private let ironWire = Color(red: 0.48, green: 0.48, blue: 0.50)
 

@@ -269,7 +269,7 @@ private struct HeightLimitVisual: View {
     }
 }
 
-private let warmOrange = Color(red: 0.90, green: 0.65, blue: 0.35)
+private let warmOrange = RenaissanceColors.warmOrange
 
 // MARK: - 3. Taberna Shop — Tap to Reveal
 
@@ -1140,7 +1140,7 @@ private struct AgedLimeVisual: View {
 
                     // Putty (color/texture changes with aging)
                     let puttyColor = isReady ?
-                        Color(red: 0.92, green: 0.90, blue: 0.85) :
+                        RenaissanceColors.limeMortar :
                         Color(red: 0.85, green: 0.82, blue: 0.72).opacity(0.5 + agingProgress * 0.4)
 
                     Ellipse()

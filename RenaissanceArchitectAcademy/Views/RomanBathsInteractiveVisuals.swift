@@ -58,7 +58,7 @@ struct RomanBathsInteractiveVisuals {
 
 // MARK: - Local Colors (unique to Roman Baths)
 
-private let warmOrange = Color(red: 0.90, green: 0.65, blue: 0.35)
+private let warmOrange = RenaissanceColors.warmOrange
 private let coolBlue = Color(red: 0.45, green: 0.60, blue: 0.80)
 
 private typealias TeachingContainer = IVTeachingContainer
@@ -794,7 +794,7 @@ private struct BathConcreteVisual: View {
                             .fill(scoops >= 1 ? Color.white.opacity(0.6) : RenaissanceColors.stoneGray.opacity(0.15))
                             .frame(width: barW * 0.2)
                         RoundedRectangle(cornerRadius: 3)
-                            .fill(scoops >= 2 ? Color(red: 0.65, green: 0.40, blue: 0.30).opacity(CGFloat(min(scoops - 1, 4)) * 0.2) : RenaissanceColors.stoneGray.opacity(0.15))
+                            .fill(scoops >= 2 ? RenaissanceColors.pozzolanaRed.opacity(CGFloat(min(scoops - 1, 4)) * 0.2) : RenaissanceColors.stoneGray.opacity(0.15))
                             .frame(width: barW * 0.8)
                     }
                     .frame(height: 24)
@@ -834,7 +834,7 @@ private struct BathConcreteVisual: View {
                         } label: {
                             Text("+ Pozzolana").font(RenaissanceFont.ivLabel)
                                 .padding(.horizontal, 12).padding(.vertical, 6)
-                                .background(Color(red: 0.65, green: 0.40, blue: 0.30).opacity(0.15))
+                                .background(RenaissanceColors.pozzolanaRed.opacity(0.15))
                                 .cornerRadius(6)
                                 .overlay(RoundedRectangle(cornerRadius: 6).stroke(scoops >= 1 && scoops < 5 ? color : RenaissanceColors.stoneGray.opacity(0.2), lineWidth: scoops >= 1 && scoops < 5 ? 2 : 0.5))
                         }

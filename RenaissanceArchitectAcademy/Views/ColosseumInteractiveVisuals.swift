@@ -56,7 +56,7 @@ struct ColosseumInteractiveVisuals {
 
 // MARK: - Local Colors (unique to Colosseum)
 
-private let travertineBeige = Color(red: 0.82, green: 0.76, blue: 0.66)
+private let travertineBeige = RenaissanceColors.travertineBeige
 private let leadSilver = Color(red: 0.72, green: 0.72, blue: 0.70)
 
 private typealias TeachingContainer = IVTeachingContainer
@@ -305,7 +305,7 @@ private struct ColumnOrdersVisual: View {
     private let orderColors: [Color] = [
         Color(red: 0.70, green: 0.60, blue: 0.50), // Doric — sturdy brown
         Color(red: 0.75, green: 0.68, blue: 0.58), // Ionic — warm
-        Color(red: 0.80, green: 0.75, blue: 0.65), // Corinthian — lighter
+        RenaissanceColors.mortarTan, // Corinthian — lighter
         Color(red: 0.85, green: 0.82, blue: 0.75), // Composite — lightest
     ]
 

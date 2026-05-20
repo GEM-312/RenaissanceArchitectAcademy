@@ -236,7 +236,7 @@ struct PiantaCanvasView: View {
 
     private func resultOverlay(_ result: SketchValidator.Result) -> some View {
         ZStack {
-            Color.black.opacity(0.45).ignoresSafeArea()
+            RenaissanceColors.overlayDimming.ignoresSafeArea()
             SketchResultView(
                 result: result,
                 buildingName: buildingName,

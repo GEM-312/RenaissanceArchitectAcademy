@@ -52,10 +52,10 @@ struct PrintingPressInteractiveVisuals {
 // MARK: - Local Colors
 
 private let inkBlack = Color(red: 0.12, green: 0.10, blue: 0.08)
-private let leadGray = Color(red: 0.55, green: 0.55, blue: 0.52)
+private let leadGray = RenaissanceColors.leadGray
 private let ironDark = Color(red: 0.38, green: 0.36, blue: 0.34)
 private let copperRose = Color(red: 0.72, green: 0.48, blue: 0.35)
-private let paperCream = Color(red: 0.95, green: 0.92, blue: 0.85)
+private let paperCream = RenaissanceColors.paperCream
 private let walnutDark = Color(red: 0.45, green: 0.32, blue: 0.20)
 
 private typealias TeachingContainer = IVTeachingContainer
@@ -220,7 +220,7 @@ private struct OilInkVisual: View {
                     // Oil-based (works)
                     VStack(spacing: 4) {
                         Circle().fill(inkBlack.opacity(0.6)).frame(width: 35, height: 35)
-                            .overlay { if step >= 3 { Image(systemName: "checkmark").font(.system(size: 13)).foregroundStyle(Color(red: 0.30, green: 0.58, blue: 0.32)) } }
+                            .overlay { if step >= 3 { Image(systemName: "checkmark").font(.system(size: 13)).foregroundStyle(RenaissanceColors.leafGreen) } }
                         Text("Oil").font(RenaissanceFont.visualTitle).foregroundStyle(color)
                         Text("Clings").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.dimColor)
                     }
@@ -501,7 +501,7 @@ private struct CastTypeVisual: View {
         TeachingContainer(title: visual.title, color: color, totalSteps: 3, step: $step,
                           stepLabel: labels[step - 1], height: height) {
             VStack(spacing: 8) {
-                if step >= 1 { Text("240°C").font(.custom("EBGaramond-Bold", size: 16)).foregroundStyle(Color(red: 0.90, green: 0.50, blue: 0.15)) }
+                if step >= 1 { Text("240°C").font(.custom("EBGaramond-Bold", size: 16)).foregroundStyle(RenaissanceColors.forgeOrange) }
                 if step >= 2 { Text("Cool 10 sec → perfect letter").font(RenaissanceFont.ivBody).foregroundStyle(IVMaterialColors.dimColor) }
                 if step >= 3 {
                     HStack(spacing: 2) {

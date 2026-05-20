@@ -428,7 +428,7 @@ struct QuarryMiniGameView: View {
     private func stoneBlockHalf(size: CGSize) -> some View {
         let stoneColor: Color = {
             switch selectedMaterial {
-            case .marble: return Color(red: 0.92, green: 0.90, blue: 0.88)
+            case .marble: return RenaissanceColors.marbleWhite
             case .marbleDust: return Color(red: 0.82, green: 0.78, blue: 0.74)
             default: return Color(red: 0.72, green: 0.68, blue: 0.62)
             }
