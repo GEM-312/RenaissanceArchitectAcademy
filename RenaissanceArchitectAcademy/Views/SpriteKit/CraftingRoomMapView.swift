@@ -850,7 +850,7 @@ struct CraftingRoomMapView: View {
     private var barovierOverlay: some View {
         let npc = HistoricalNPCContent.workbenchMaster
         return ZStack {
-            Color.black.opacity(0.45)
+            RenaissanceColors.overlayDimming
                 .ignoresSafeArea()
                 .onTapGesture {
                     withAnimation(.spring(response: 0.3)) { showBarovierOverlay = false }

@@ -2978,7 +2978,7 @@ struct WorkshopMapView: View {
     @ViewBuilder
     private func masterHelpOverlay(npc: NPCDisplayData, station: ResourceStationType) -> some View {
         ZStack {
-            Color.black.opacity(0.45)
+            RenaissanceColors.overlayDimming
                 .ignoresSafeArea()
                 .onTapGesture { declineMasterHelp() }
 
