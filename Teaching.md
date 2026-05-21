@@ -330,3 +330,23 @@ Task { @MainActor in
 **IN OUR CODE:** `MascotDialogueView.swift` — `Eye` struct's blink timer was anonymous. Now stored as `@State private var blinkTimer: Timer?` and invalidated in `.onDisappear`.
 
 **KEY TAKEAWAY:** Every repeating `Timer` needs a stored reference and a corresponding `.invalidate()` on cleanup.
+
+---
+
+## .claude/settings.json — Pre-approving safe commands (2026-05-20)
+
+**THE CONCEPT**
+`.claude/settings.json` lives at the project root and tells Claude Code which tool calls to auto-allow (so it doesn't ask permission for routine stuff), plus a few other things (hooks, env vars, MCP config). Without it, every Bash command, file read in unusual paths, etc. can trigger a permission prompt that interrupts flow.
+
+**STEP BY STEP**
+1. Claude Code reads `.claude/settings.json` when a session starts in a project directory
+2. The most-used field is `permissions.allow` — an array of patterns matching tool calls to auto-approve
+3. Patterns look like `Bash(xcodebuild *)` (any xcodebuild command) or `Read(/path/to/file)` (specific reads)
+4. There's also `permissions.deny`, `permissions.ask`, `hooks`, and `env`
+5. **Hierarchy:** user-level (`~/.claude/settings.json`) applies everywhere; project-level (`.claude/settings.json`) overrides for that project; `.claude/settings.local.json` is for personal-not-committed preferences
+
+**IN OUR CODE**
+Neither RAA nor ChefAcademy has one (as of May 20 2026). Adding `"Bash(xcodebuild *)"` to `permissions.allow` stops the per-build approval prompts that interrupt iterative development.
+
+**KEY TAKEAWAY**
+settings.json = pre-approving safe routine commands so deep work isn't interrupted. Start minimal (only what you trust), expand as you spot recurring prompts.
