@@ -155,11 +155,51 @@ enum ContextualSuggestionService {
         let prompt = buildPrompt(events: events, candidates: candidates)
         let instructions = Instructions("""
             You are a warm, playful bird companion in an educational game about \
-            Renaissance and Roman architecture. Maestro Leonardo da Vinci sent you. \
-            Connect the player's real-world calendar event to ONE specific game \
-            building they can learn about. Speak in the bird's voice — warm, curious, \
-            occasionally referencing Leonardo. Keep the 'reason' under 200 characters. \
-            Only choose a buildingId from the candidates given to you.
+            Renaissance and Roman architecture. Maestro Leonardo da Vinci sent you.
+
+            CRITICAL FRAMING: The player has a REAL-WORLD calendar event coming up \
+            (a museum, a trip, a class). They are going THERE — to the real venue. \
+            They are NOT going to the game building. The game building is the LEARNING \
+            CONNECTION between their real-world visit and our game lessons.
+
+            The 'reason' field MUST follow this structure (under 220 characters):
+            "At [calendar event venue, verbatim], [something specific to look for, see, \
+            or notice — from your stable training knowledge]. [Brief tie-in to the chosen \
+            game building]."
+
+            GOOD example (player has 'Visit Art Institute of Chicago' tomorrow):
+            "At the Art Institute, find the Italian Renaissance galleries — Botticelli's \
+            drawings show the line work Leonardo uses on our Duomo dome! Want to preview?"
+
+            BAD example — DO NOT WRITE THIS:
+            "Tomorrow you'll explore the Vatican Observatory!" — WRONG. The player isn't \
+            going to the game's Vatican Observatory. They're going to a real venue in \
+            their calendar. The game building is just the lesson tie-in.
+
+            For named venues you recognize (Art Institute of Chicago, the Met, Uffizi, \
+            Louvre, MoMA, Vatican Museums, etc.): use your stable training knowledge to \
+            name ONE specific permanent-collection work, gallery, or section to look for. \
+            Examples: "Botticelli drawings", "Italian Renaissance galleries", "Renaissance \
+            bronzes section", "Caravaggio rooms".
+
+            For travel events to a city: suggest ONE well-known historic site or artwork \
+            in that real city tied to the game building. Example: "While in Florence, \
+            walk past Piazza del Duomo — Brunelleschi's dome looms exactly as in our game."
+
+            DO NOT fabricate current exhibitions, room numbers, prices, hours, or anything \
+            you can't verify. Only mention permanent-collection works and historic sites \
+            you're confident about from training knowledge.
+
+            Use the relative timing label on each event line for TONE:
+            - Today / Tomorrow → excited urgency
+            - In 1-2 weeks → friendly preparation
+            - In 3+ weeks → gentle, "save this for later"
+
+            Set urgencyScore (1-10): 7-10 if today/tomorrow, 4-6 if 1-2 weeks, 1-3 if \
+            more than two weeks away.
+
+            Only choose a buildingId from the candidates list. Speak in the bird's voice \
+            — warm, curious, occasionally referencing Maestro Leonardo.
             """)
 
         do {
@@ -173,8 +213,10 @@ enum ContextualSuggestionService {
             let validIds = Set(candidates.map { $0.buildingId })
             guard validIds.contains(response.content.buildingId) else {
                 // Model picked something off-menu — fall back to hand-built suggestion.
+                print("[ContextualSuggestionService] FM picked invalid buildingId=\(response.content.buildingId), falling back to deterministic")
                 return nil
             }
+            print("[ContextualSuggestionService] FM picked buildingId=\(response.content.buildingId) action=\(response.content.suggestedAction) urgency=\(response.content.urgencyScore)")
             return response.content.toPayload()
         } catch {
             print("[ContextualSuggestionService] FM pick failed: \(error)")
@@ -186,27 +228,46 @@ enum ContextualSuggestionService {
         events: [CalendarEvent],
         candidates: [BuildingTopic]
     ) -> String {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+
         let eventLines = events.prefix(10).map { e -> String in
             let dayFmt = e.startDate.formatted(date: .abbreviated, time: .omitted)
-            return "• \(dayFmt): \(e.combinedSearchText)"
+            let eventDay = calendar.startOfDay(for: e.startDate)
+            let daysAway = calendar.dateComponents([.day], from: today, to: eventDay).day ?? 0
+            let relative: String
+            switch daysAway {
+            case ..<0:    relative = "Past"
+            case 0:       relative = "Today"
+            case 1:       relative = "Tomorrow"
+            case 2:       relative = "Day after tomorrow"
+            case 3...6:   relative = "In \(daysAway) days"
+            case 7...13:  relative = "Next week"
+            case 14...20: relative = "In ~2 weeks"
+            case 21...27: relative = "In ~3 weeks"
+            case 28...60: relative = "In about a month"
+            default:      relative = "More than a month away"
+            }
+            return "• \(relative) (\(dayFmt)): \(e.combinedSearchText)"
         }.joined(separator: "\n")
 
-        let candidateLines = candidates.prefix(5).map { c -> String in
+        let candidateLines = candidates.prefix(10).map { c -> String in
             "• id=\(c.buildingId) name=\(c.buildingName) city=\(c.city) keywords=[\(c.keywords.prefix(5).joined(separator: ", "))]"
         }.joined(separator: "\n")
 
         return """
-            The player's upcoming calendar events:
+            The player's upcoming calendar events (with relative timing):
             \(eventLines)
 
             Candidate buildings from the game whose topics overlap with these events:
             \(candidateLines)
 
-            Pick the single most relevant building. Write a short reason (under 200 \
+            Pick the single most relevant building. Write a short 'reason' (under 220 \
             characters, the bird's voice) explaining why this building connects to \
-            what the player has coming up. Choose suggestedAction based on what would \
-            be most useful: openLesson for deeper reading, openCards for quick facts, \
-            openSketching if a hands-on drawing activity fits.
+            what the player has coming up. Use the relative timing in your tone and \
+            urgencyScore. Choose suggestedAction based on what would be most useful: \
+            openLesson for deeper reading, openCards for quick facts, openSketching if \
+            a hands-on drawing activity fits.
             """
     }
 
