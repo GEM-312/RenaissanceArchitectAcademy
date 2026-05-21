@@ -26,7 +26,6 @@ struct WorkshopMapView: View {
     @State private var sceneHolder = SceneHolder<WorkshopScene>()
 
     // Player tracking
-    @State private var playerPosition: CGPoint = CGPoint(x: 0.5, y: 0.5)
     @State private var playerIsWalking = false
 
     // Station lesson overlay
@@ -654,7 +653,12 @@ struct WorkshopMapView: View {
             if workshop.currentAssignment == nil {
                 workshop.generateNewAssignment()
             }
-            SoundManager.shared.playAmbient(.workshopAmbient)
+            // Workshop plays music only — ambient is per-station and crossfades
+            // in when the player arrives at a station, fades out on leaving.
+            // Stop any ambient — workshop owns none on arrival. Station ambients
+            // start when the player reaches a station.
+            SoundManager.shared.stopAmbientExcept(Self.workshopStationAmbients)
+            SoundManager.shared.playMusic(.workshop)
             // Show bird guidance if player has an active building with workshop cards
             checkArrivalGuidance()
             // Show material-need badges on stations
@@ -663,7 +667,11 @@ struct WorkshopMapView: View {
             }
         }
         .onDisappear {
-            SoundManager.shared.stopAmbient()
+            // Stop only if a workshop station ambient is still playing —
+            // matching set prevents killing a successor view's ambient that
+            // .onAppear may have started before this .onDisappear fired.
+            SoundManager.shared.stopAmbient(matching: Self.workshopStationAmbients)
+            SoundManager.shared.stopMusic(.workshop)
             // Nil out callbacks before releasing scene to break closure references
             sceneHolder.scene?.onPlayerPositionChanged = nil
             sceneHolder.scene?.onStationReached = nil
@@ -715,11 +723,14 @@ struct WorkshopMapView: View {
 
         // Player position updates
         newScene.onPlayerPositionChanged = { position, isWalking in
-            self.playerPosition = position
             self.playerIsWalking = isWalking
         }
 
-        // Dismiss all overlays when player starts walking to a new station
+        // Dismiss all overlays when player starts walking to a new station.
+        // Note: this callback ALSO fires on any map interaction (drag, pan,
+        // zoom) — not just walking — so do NOT touch ambient audio here.
+        // The station ambient crossfades automatically when arriving at the
+        // next station via playAmbient's built-in fade-out of the prior layer.
         newScene.onPlayerStartedWalking = {
             withAnimation(.easeOut(duration: 0.2)) {
                 dismissAllOverlays()
@@ -736,6 +747,12 @@ struct WorkshopMapView: View {
             self.activeStation = stationType
             self.lastVisitedStation = stationType
             dismissAllOverlays()
+
+            // Crossfade to the station's ambient layer (silently no-ops if the mp3
+            // hasn't been bundled yet, so it's safe to ship before all files land).
+            if let stationAmbient = Self.stationAmbient(for: stationType) {
+                SoundManager.shared.playAmbient(stationAmbient)
+            }
 
             // Start Game Center activity for this station
             if let actID = GameCenterManager.ActivityID.forStation(stationType) {
@@ -1215,6 +1232,29 @@ struct WorkshopMapView: View {
 
     /// The 5 stations that have mini-games
     private static let miniGameStations: Set<ResourceStationType> = [.quarry, .volcano, .river, .clayPit, .farm]
+
+    /// Per-station ambient layer — returns the dedicated loop for a station,
+    /// or nil to keep the base workshop ambient. Files silently no-op if not
+    /// yet bundled, so callers don't need to gate on availability.
+    static func stationAmbient(for station: ResourceStationType) -> SoundManager.AmbientSound? {
+        switch station {
+        case .quarry:  return .quarryAmbient
+        case .clayPit: return .clayPitAmbient
+        case .volcano: return .volcanoRumble
+        case .river:   return .riverAmbient
+        case .market:  return .marketChatter
+        case .mine:    return .mineAmbient
+        case .farm:    return .farmAmbient
+        default:       return nil
+        }
+    }
+
+    /// Ambients this view is responsible for cleaning up on disappear.
+    /// A no-track stopAmbient would kill the successor view's ambient if
+    /// SwiftUI fires .onAppear before .onDisappear during a scene transition.
+    static let workshopStationAmbients: Set<SoundManager.AmbientSound> =
+        [.quarryAmbient, .clayPitAmbient, .volcanoRumble, .riverAmbient,
+         .marketChatter, .mineAmbient, .farmAmbient]
 
     /// Show a single overlay based on tool ownership:
     /// - No tool → tool requirement dialog (collectionOverlay)
@@ -2276,127 +2316,6 @@ struct WorkshopMapView: View {
 
     // MARK: - Earn Florins Overlay
 
-    private var earnFlorinsOverlay: some View {
-        ZStack {
-            RenaissanceColors.overlayDimming
-                .ignoresSafeArea()
-                .onTapGesture {
-                    workshop.showEarnFlorinsOverlay = false
-                }
-
-            VStack(spacing: 20) {
-                HStack(spacing: 12) {
-                    BirdCharacter()
-                        .frame(width: 70, height: 70)
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Earn Florins")
-                            .font(RenaissanceFont.title2Bold)
-                            .foregroundStyle(RenaissanceColors.sepiaInk)
-                        Text("You need more florins! Here's how:")
-                            .font(RenaissanceFont.dialogSubtitle)
-                            .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.7))
-                    }
-                }
-
-                VStack(spacing: 10) {
-                    earnOptionCard(
-                        icon: "book.fill",
-                        title: "Read a Lesson",
-                        reward: "+\(GameRewards.lessonReadFlorins) florins"
-                    ) {
-                        workshop.showEarnFlorinsOverlay = false
-                        dismissAllOverlays()
-                        onNavigate?(.cityMap)
-                    }
-
-                    earnOptionCard(
-                        icon: "leaf.fill",
-                        title: "Explore the Forest",
-                        reward: "+\(GameRewards.timberCollectFlorins)/timber"
-                    ) {
-                        workshop.showEarnFlorinsOverlay = false
-                        dismissAllOverlays()
-                        onNavigate?(.forest)
-                    }
-
-                    earnOptionCard(
-                        icon: "flame.fill",
-                        title: "Craft an Item",
-                        reward: "+\(GameRewards.craftCompleteFlorins) florins"
-                    ) {
-                        workshop.showEarnFlorinsOverlay = false
-                        dismissAllOverlays()
-                        if let onEnterInterior = onEnterInterior {
-                            onEnterInterior()
-                        }
-                    }
-
-                    if let assignment = workshop.currentAssignment {
-                        earnOptionCard(
-                            icon: "scroll.fill",
-                            title: "Master's Task: \(assignment.targetItem.rawValue)",
-                            reward: "+\(assignment.rewardFlorins) bonus"
-                        ) {
-                            workshop.showEarnFlorinsOverlay = false
-                            dismissAllOverlays()
-                            if let onEnterInterior = onEnterInterior {
-                                onEnterInterior()
-                            }
-                        }
-                    }
-                }
-
-                Button("Maybe Later") {
-                    workshop.showEarnFlorinsOverlay = false
-                }
-                .font(RenaissanceFont.bodySmall)
-                .foregroundStyle(RenaissanceColors.sepiaInk)
-            }
-            .padding(Spacing.xl)
-            .adaptiveWidth(400)
-            .background(
-                RoundedRectangle(cornerRadius: CornerRadius.lg)
-                    .fill(RenaissanceColors.parchment)
-            )
-            .borderWorkshop()
-        }
-    }
-
-    private func earnOptionCard(icon: String, title: String, reward: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack(spacing: 12) {
-                Image(systemName: icon)
-                    .font(.body)
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
-                    .frame(width: 32, height: 32)
-                    .background(
-                        RoundedRectangle(cornerRadius: CornerRadius.sm)
-                            .fill(RenaissanceColors.warmBrown.opacity(0.1))
-                    )
-
-                Text(title)
-                    .font(RenaissanceFont.bodyMedium)
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
-
-                Spacer()
-
-                Text(reward)
-                    .font(.custom("EBGaramond-SemiBold", size: 13))
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
-
-                Image(systemName: "chevron.right")
-                    .font(.caption)
-                    .foregroundStyle(RenaissanceColors.sepiaInk)
-            }
-            .padding(Spacing.sm)
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(RenaissanceColors.parchment.opacity(0.6))
-                    .borderWorkshop(radius: 10)
-            )
-        }
-    }
 
     // MARK: - Master Task Card
 

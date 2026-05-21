@@ -206,6 +206,18 @@ struct ContentView: View {
         }
     }
 
+    /// DEBUG: refresh the shared suggestion store with force=true (bypasses
+    /// 24h throttle + session gate), then route to the city map so the
+    /// bird's guidance pass can surface the suggestion.
+    private func testContextualSuggestion() {
+        ContextualSuggestionService.clearThrottle()
+        ContextualSuggestionStore.shared.reset()
+        navigateTo(.cityMap)
+        Task {
+            await ContextualSuggestionStore.shared.refreshIfNeeded(force: true)
+        }
+    }
+
     /// Save accumulated play time since session start
     private func flushPlayTime() {
         guard let start = sessionStartDate else { return }
@@ -261,7 +273,8 @@ struct ContentView: View {
                 onNavigate: navigateTo,
                 onBackToMenu: backToMenu,
                 onResetOnboarding: resetOnboarding,
-                onDeleteAllData: deleteAllData
+                onDeleteAllData: deleteAllData,
+                onTestContextualSuggestion: testContextualSuggestion
             )
         case .workshop:
             WorkshopView(workshop: workshopState, viewModel: cityViewModel, notebookState: notebookState, onNavigate: navigateTo, onBackToMenu: backToMenu, onboardingState: onboardingState, returnToLessonPlotId: $returnToLessonPlotId)

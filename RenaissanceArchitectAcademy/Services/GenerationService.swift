@@ -34,7 +34,6 @@ class GenerationService: ObservableObject {
 
     // MARK: - State
 
-    @Published var isGenerating = false
 
     /// Active sessions keyed by context ID (e.g., "npc_quarry_1", "bird_chat", "medici_intro")
     private var sessions: [String: LanguageModelSession] = [:]
@@ -134,8 +133,6 @@ class GenerationService: ObservableObject {
         contextId: String,
         instructions: String
     ) async throws -> T {
-        isGenerating = true
-        defer { isGenerating = false }
 
         let s = session(for: contextId, instructions: instructions)
 
@@ -166,8 +163,6 @@ class GenerationService: ObservableObject {
         contextId: String,
         instructions: String
     ) async throws -> String {
-        isGenerating = true
-        defer { isGenerating = false }
 
         let s = session(for: contextId, instructions: instructions)
 

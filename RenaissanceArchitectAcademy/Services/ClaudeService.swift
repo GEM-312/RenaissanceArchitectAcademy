@@ -114,8 +114,8 @@ import Foundation
         var request = URLRequest(url: WorkerClient.chatURL)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "content-type")
-        request.setValue(WorkerClient.proxyToken, forHTTPHeaderField: "X-Proxy-Token")
         request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
+        try await WorkerClient.authenticate(&request)
         request.timeoutInterval = 15
 
         let (data, httpResponse) = try await URLSession.shared.data(for: request)

@@ -14,7 +14,6 @@ struct ConstructionSequenceView: View {
     @State private var showIntro = true
     @State private var showCompletion = false
     @State private var checkedOnce = false                 // Has player checked at least once
-    @State private var auroraPhase = false
 
     @Environment(\.horizontalSizeClass) private var sizeClass
     private var isLargeScreen: Bool { sizeClass == .regular }
@@ -37,7 +36,6 @@ struct ConstructionSequenceView: View {
         }
         .onAppear {
             steps = sequence.steps.shuffled()
-            auroraPhase = true
             GameCenterManager.shared.startActivity(GameCenterManager.ActivityID.construction)
         }
         .onDisappear {

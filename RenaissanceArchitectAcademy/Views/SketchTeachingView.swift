@@ -319,32 +319,36 @@ struct SketchTeachingView: View {
                     .clipShape(Circle())
                     .overlay(Circle().stroke(RenaissanceColors.ochre.opacity(0.3), lineWidth: 1))
 
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: Spacing.sm) {
                     Text(teachingData.observeQuestion)
-                        .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 17 : 15))
+                        .font(ActivitySizing.studyTitleFont(horizontalSizeClass))
                         .foregroundStyle(RenaissanceColors.sepiaInk)
+                        .minimumScaleFactor(ActivitySizing.titleMinScale)
                         .fixedSize(horizontal: false, vertical: true)
 
                     if showHint && !foundFeature {
                         Text(teachingData.observeHint)
-                            .font(.custom("EBGaramond-Italic", size: isLargeScreen ? 15 : 14))
+                            .font(ActivitySizing.studyBodyFont(horizontalSizeClass))
+                            .italic()
                             .foregroundStyle(RenaissanceColors.warmBrown)
                             .transition(.opacity.combined(with: .move(edge: .top)))
                     }
 
                     if foundFeature {
-                        HStack(spacing: 6) {
+                        HStack(spacing: Spacing.sm) {
                             Image(systemName: "checkmark.circle.fill")
+                                .font(.system(size: ActivitySizing.studyIconSize(horizontalSizeClass)))
                                 .foregroundStyle(RenaissanceColors.sageGreen)
                             Text("Correct!")
-                                .font(.custom("Cinzel-Bold", size: 13))
+                                .font(ActivitySizing.studyBodyFont(horizontalSizeClass))
                                 .foregroundStyle(RenaissanceColors.sageGreen)
                         }
                         .transition(.scale.combined(with: .opacity))
 
                         Text(teachingData.observeAnswer)
-                            .font(.custom("EBGaramond-Regular", size: isLargeScreen ? 15 : 14))
+                            .font(ActivitySizing.studyTitleFont(horizontalSizeClass))
                             .foregroundStyle(RenaissanceColors.sepiaInk.opacity(0.85))
+                            .minimumScaleFactor(ActivitySizing.titleMinScale)
                             .fixedSize(horizontal: false, vertical: true)
                             .transition(.opacity)
                     }
@@ -353,7 +357,8 @@ struct SketchTeachingView: View {
 
             if !foundFeature && incorrectTaps == 0 {
                 Text("Tap on the sketch to identify the feature")
-                    .font(.custom("EBGaramond-Italic", size: 13))
+                    .font(ActivitySizing.studyBodyFont(horizontalSizeClass))
+                    .italic()
                     .foregroundStyle(RenaissanceColors.renaissanceBlue.opacity(0.7))
             }
         }

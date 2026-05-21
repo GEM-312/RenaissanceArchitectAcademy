@@ -837,6 +837,7 @@ private struct CamberDrainageVisual: View {
                 }
             }
         }
+        .onDisappear { rainOffset = 0 }
     }
 
     private func animateRain() {

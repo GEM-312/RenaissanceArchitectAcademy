@@ -1,5 +1,11 @@
 import SwiftUI
 
+/// Shared sepia ink color used across every draw function in this file.
+/// Identical to `RenaissanceColors.sepiaInk` — kept here as a local Color
+/// (not a token alias) because most call sites are inside SwiftUI `Canvas`
+/// closures that need a concrete Color value at draw time.
+private let sepiaInk = Color(red: 0.29, green: 0.25, blue: 0.21)
+
 /// Compact interactive science visual for knowledge card backs.
 /// Sits between lesson text and "Done Reading" — ~180pt tall.
 /// Each visual directly illustrates the specific concept taught in that card.

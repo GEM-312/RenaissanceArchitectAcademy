@@ -228,9 +228,13 @@ struct ForestMapView: View {
     // MARK: - Bird Guidance
 
     private func showForestGuidance() {
-        print("[FOREST GUIDANCE] Called. selectedPOI=\(selectedPOIIndex as Any), truffle=\(discoveredTruffle != nil)")
+        // Anchor forest ambient playback here — SwiftUI's .task and .onAppear
+        // both run but in this navigation context the audio doesn't reliably
+        // start from them, while this function does fire. playAmbient's guard
+        // prevents restart if the ambient is already playing.
+        SoundManager.shared.stopAmbientExcept([.forestAmbient])
+        SoundManager.shared.playAmbient(.forestAmbient)
         guard selectedPOIIndex == nil && discoveredTruffle == nil else {
-            print("[FOREST GUIDANCE] Blocked by POI/truffle guard")
             return
         }
 
@@ -603,6 +607,7 @@ struct ForestMapView: View {
         }
         .task {
             await AssetManager.shared.requestAssets(tag: AssetManager.forestScene)
+            SoundManager.shared.playAmbient(.forestAmbient)
         }
         .onAppear {
             withAnimation(.easeInOut(duration: 2.5).repeatForever(autoreverses: true)) {
@@ -616,7 +621,7 @@ struct ForestMapView: View {
             }
         }
         .onDisappear {
-            SoundManager.shared.stopAmbient()
+            SoundManager.shared.stopAmbient(.forestAmbient)
             // Nil out callbacks before releasing scene to break closure references
             sceneHolder.scene?.onPlayerPositionChanged = nil
             sceneHolder.scene?.onBackRequested = nil

@@ -62,31 +62,6 @@ final class PersistenceManager {
         }
     }
 
-    private func migrateFromUserDefaults(into save: PlayerSave) {
-        let defaults = UserDefaults.standard
-        save.hasCompletedOnboarding = defaults.bool(forKey: "hasCompletedOnboarding")
-        save.apprenticeGender = defaults.string(forKey: "apprenticeGender") ?? "boy"
-        save.apprenticeName = defaults.string(forKey: "apprenticeName") ?? ""
-
-        // Migrate lesson bookmarks into BuildingProgressRecords
-        for buildingId in 1...17 {
-            let key = "lessonBookmark_\(buildingId)"
-            let sectionIndex = defaults.integer(forKey: key)
-            if sectionIndex > 0 {
-                let record = getOrCreateBuildingProgress(for: buildingId)
-                record.lessonSectionIndex = sectionIndex
-            }
-        }
-
-        // Clean up old UserDefaults keys
-        defaults.removeObject(forKey: "hasCompletedOnboarding")
-        defaults.removeObject(forKey: "apprenticeGender")
-        defaults.removeObject(forKey: "apprenticeName")
-        for buildingId in 1...17 {
-            defaults.removeObject(forKey: "lessonBookmark_\(buildingId)")
-        }
-    }
-
     // MARK: - Building Progress (scoped by currentPlayerName)
 
     func loadAllBuildingProgress() -> [Int: BuildingProgressRecord] {

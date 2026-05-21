@@ -1,0 +1,14 @@
+[
+  {
+    "filename": "music_city.mp3",
+    "prompt": "A peaceful Renaissance Italian instrumental piece for a city map menu. Solo lute carrying a gentle melody, soft recorder weaving in and out, occasional sustained chord on harpsichord. Calm, contemplative, painterly — evokes a quiet morning in 15th century Florence. No percussion. Loopable.",
+    "music_length_ms": 180000,
+    "force_instrumental": true
+  },
+  {
+    "filename": "music_workshop.mp3",
+    "prompt": "A lively Renaissance Italian instrumental piece for a craftsman's workshop scene. Lute carrying a working, slightly faster melody, recorder accents, light tambourine or hand-drum tap on offbeats — never busy, always rhythmic. Evokes apprentices at work in a 15th century Florentine bottega. Loopable.",
+    "music_length_ms": 180000,
+    "force_instrumental": true
+  }
+]

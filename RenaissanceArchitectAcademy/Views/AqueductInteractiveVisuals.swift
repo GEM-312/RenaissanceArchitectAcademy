@@ -610,6 +610,7 @@ private struct UndergroundRevealVisual: View {
             }
         }
         .onAppear { animateWater() }
+        .onDisappear { waterOffset = 0 }
     }
 
     // MARK: - Bézier Terrain
@@ -977,6 +978,7 @@ private struct GradientSliderVisual: View {
         .onAppear {
             animateWater()
         }
+        .onDisappear { waterOffset = 0 }
     }
 
     private func animateWater() {

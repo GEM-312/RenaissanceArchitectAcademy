@@ -105,7 +105,6 @@ class CraftingRoomScene: SKScene, ScrollZoomable {
     var onPlayerStartedWalking: (() -> Void)?
 
     /// Pending station walk — stored when player taps while still in the avatar box
-    private var pendingStationWalk: CraftingStation?
 
     // MARK: - Scene Setup
 

@@ -144,7 +144,6 @@ final class TTSService: NSObject, ObservableObject {
         var request = URLRequest(url: WorkerClient.ttsURL(voiceID: voiceID))
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue(WorkerClient.proxyToken, forHTTPHeaderField: "X-Proxy-Token")
         request.httpBody = try JSONSerialization.data(withJSONObject: [
             "text": text,
             "model_id": "eleven_flash_v2_5",
@@ -153,6 +152,7 @@ final class TTSService: NSObject, ObservableObject {
                 "similarity_boost": 0.75
             ]
         ])
+        try await WorkerClient.authenticate(&request)
 
         let (data, response) = try await URLSession.shared.data(for: request)
 

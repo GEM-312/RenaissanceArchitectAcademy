@@ -17,7 +17,6 @@ struct GoldsmithMapView: View {
     @State private var sceneHolder = SceneHolder<GoldsmithScene>()
 
     // Player tracking
-    @State private var playerPosition: CGPoint = CGPoint(x: 0.5, y: 0.5)
     @State private var playerIsWalking = false
 
     // Active station overlay
@@ -101,7 +100,6 @@ struct GoldsmithMapView: View {
         scene.apprenticeIsBoy = onboardingState?.apprenticeGender == .boy
 
         scene.onPlayerPositionChanged = { pos, walking in
-            self.playerPosition = pos
             self.playerIsWalking = walking
         }
 

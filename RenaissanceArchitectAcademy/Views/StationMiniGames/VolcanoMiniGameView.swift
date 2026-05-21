@@ -59,8 +59,6 @@ struct VolcanoMiniGameView: View {
     @State private var sulfurMissed: Int = 0
     @State private var gasCloudOpacity: Double = 0.0
     @State private var isGasClear: Bool = true
-    @State private var sulfurTimer: Timer?
-    @State private var gasTimer: Timer?
     @State private var sulfurFeedback: String?
     @State private var sulfurFeedbackColor: Color = .white
 
@@ -988,8 +986,6 @@ struct VolcanoMiniGameView: View {
         isGasClear = true
         perfectCount = 0
         sulfurCrystals = []
-        sulfurTimer?.invalidate()
-        gasTimer?.invalidate()
 
         withAnimation { phase = .playingSulfur }
 
@@ -1078,8 +1074,6 @@ struct VolcanoMiniGameView: View {
         sulfurMissed += 1
 
         if sulfurMissed >= sulfurMaxMissed {
-            sulfurTimer?.invalidate()
-            gasTimer?.invalidate()
             onNudgeCamera?()
             withAnimation { phase = .failed }
         }
@@ -1115,8 +1109,6 @@ struct VolcanoMiniGameView: View {
 
         if sulfurCollected >= sulfurNeeded {
             perfectCount = sulfurMissed == 0 ? 3 : (sulfurMissed <= 1 ? 1 : 0)
-            sulfurTimer?.invalidate()
-            gasTimer?.invalidate()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 onNudgeCamera?()
                 withAnimation { phase = .success }
@@ -1291,8 +1283,6 @@ struct VolcanoMiniGameView: View {
                 }
 
                 Button {
-                    sulfurTimer?.invalidate()
-                    gasTimer?.invalidate()
                     onDismiss()
                 } label: {
                     failedOptionRow(icon: "xmark", text: "Leave Volcano")

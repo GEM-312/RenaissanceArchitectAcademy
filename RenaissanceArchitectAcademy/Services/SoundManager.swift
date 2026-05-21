@@ -242,25 +242,42 @@ class SoundManager: ObservableObject {
         }
     }
 
-    /// Stop background music with fade
-    func stopMusic(fadeDuration: TimeInterval = 1.0) {
+    /// Stop background music with fade. If `track` is provided, only stops
+    /// when the currently-playing track matches — prevents a leaving view
+    /// from killing its successor's music when SwiftUI fires .onAppear before
+    /// .onDisappear during a scene transition. Pass nil to force-stop anything.
+    func stopMusic(_ track: MusicTrack? = nil, fadeDuration: TimeInterval = 1.0) {
         guard let player = musicPlayer, player.isPlaying else { return }
+        if let track, currentMusic != track { return }
         fadeOut(player: player, duration: fadeDuration)
         currentMusic = nil
     }
 
     // MARK: - Ambient Sounds
 
-    enum AmbientSound: String {
+    enum AmbientSound: String, CaseIterable {
         case cityAmbient = "city_ambient"
-        case workshopAmbient = "workshop_ambient"
-        case forestAmbient = "forest_ambient"
+        // Forest plays the old workshop_ambient.wav (which was always more
+        // forest-y than workshop-y). forest_ambient.wav is orphaned in the
+        // bundle until cleanup. The workshop has no base ambient — only
+        // music + per-station ambients that crossfade on arrival.
+        case forestAmbient = "workshop_ambient"
         case craftingAmbient = "crafting_ambient"
+
+        // Per-station ambient layer — crossfades over the base workshop ambient
+        // when the player arrives at one of these stations, fades back on leaving.
+        case quarryAmbient = "quarry_ambient"
+        case clayPitAmbient = "clay_pit_ambient"
+        case volcanoRumble = "volcano_rumble_ambient"
+        case riverAmbient = "river_ambient"
+        case marketChatter = "market_chatter_ambient"
+        case mineAmbient = "mine_ambient"
+        case farmAmbient = "farm_ambient"
 
         /// Shipped so far as wav; older mp3 fallback for anything not converted yet.
         var ext: String {
             switch self {
-            case .workshopAmbient, .forestAmbient, .craftingAmbient: return "wav"
+            case .forestAmbient, .craftingAmbient: return "wav"
             default: return "mp3"
             }
         }
@@ -273,14 +290,18 @@ class SoundManager: ObservableObject {
         guard !isMuted else { return }
         guard ambient != currentAmbient else { return }
 
-        let ambientVol = Float(GameSettings.shared.sfxVolume) * 0.6  // Ambient is quieter than SFX
+        // Ambient is quieter than SFX. Per-track multiplier compensates for
+        // files that were AI-generated quiet (volcano rumble was designed
+        // "never peaks" — needs a 2x boost to be audible under music).
+        let perTrackBoost: Float = ambient == .volcanoRumble ? 2.0 : 1.0
+        let ambientVol = min(1.0, Float(GameSettings.shared.sfxVolume) * 0.6 * perTrackBoost)
 
         guard let url = Bundle.main.url(forResource: ambient.rawValue, withExtension: ambient.ext) else {
             return
         }
 
         if let current = ambientPlayer, current.isPlaying {
-            fadeOut(player: current, duration: fadeDuration)
+            fadeOut(player: current, duration: fadeDuration, channel: .ambient)
         }
 
         do {
@@ -290,17 +311,39 @@ class SoundManager: ObservableObject {
             player.play()
             currentAmbient = ambient
 
-            fadeIn(player: player, targetVolume: ambientVol, duration: fadeDuration)
+            fadeIn(player: player, targetVolume: ambientVol, duration: fadeDuration, channel: .ambient)
             ambientPlayer = player
         } catch {
             print("SoundManager: failed to play ambient \(ambient.rawValue): \(error)")
         }
     }
 
-    func stopAmbient(fadeDuration: TimeInterval = 0.5) {
+    /// Stop the ambient track with fade. Same track-guard pattern as `stopMusic` —
+    /// pass the ambient you started to ensure you only stop your own, or pass nil
+    /// to clear whatever's playing (used by per-station crossfade on walk-away).
+    func stopAmbient(_ ambient: AmbientSound? = nil, fadeDuration: TimeInterval = 0.5) {
         guard let player = ambientPlayer, player.isPlaying else { return }
-        fadeOut(player: player, duration: fadeDuration)
+        if let ambient, currentAmbient != ambient { return }
+        fadeOut(player: player, duration: fadeDuration, channel: .ambient)
         currentAmbient = nil
+    }
+
+    /// Stop the ambient only if the currently-playing one is in `allowed`.
+    /// Used by views that own multiple possible ambients (e.g. workshop has
+    /// quarry/volcano/etc. station ambients) to clean up on disappear without
+    /// killing a successor view's just-started ambient.
+    func stopAmbient(matching allowed: Set<AmbientSound>, fadeDuration: TimeInterval = 0.5) {
+        guard let current = currentAmbient, allowed.contains(current) else { return }
+        stopAmbient(current, fadeDuration: fadeDuration)
+    }
+
+    /// Defensive cleanup: stop any ambient that ISN'T one of `keep`. Used at
+    /// each scene's appear to clear lingering audio from views whose
+    /// .onDisappear didn't fire (SwiftUI lifecycle is unreliable in this
+    /// navigation context — verified during the May 13 audio debug).
+    func stopAmbientExcept(_ keep: Set<AmbientSound>, fadeDuration: TimeInterval = 0.5) {
+        let toClear = Set(AmbientSound.allCases).subtracting(keep)
+        stopAmbient(matching: toClear, fadeDuration: fadeDuration)
     }
 
     // MARK: - Volume Control
@@ -338,35 +381,62 @@ class SoundManager: ObservableObject {
 
     // MARK: - Fade Helpers
 
-    private func fadeIn(player: AVAudioPlayer, targetVolume: Float, duration: TimeInterval) {
+    // Tracked so rapid scene transitions (City → Workshop → City) can't stack
+    // two competing fades on the same channel and cause volume oscillation.
+    // Per-channel because music and ambient have independent players.
+    private var musicFadeTask: Task<Void, Never>?
+    private var ambientFadeTask: Task<Void, Never>?
+
+    private enum FadeChannel { case music, ambient }
+
+    /// Fade volume from 0 to target using async Task — replaces the prior
+    /// Timer.scheduledTimer approach (which silently failed). Cancels any
+    /// in-flight fade on the same channel before starting.
+    private func fadeIn(player: AVAudioPlayer, targetVolume: Float, duration: TimeInterval, channel: FadeChannel = .music) {
+        cancelFade(on: channel)
         let steps = 20
         let interval = duration / Double(steps)
         let increment = targetVolume / Float(steps)
-        var step = 0
-
-        Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { timer in
-            step += 1
-            player.volume = min(targetVolume, increment * Float(step))
-            if step >= steps {
-                timer.invalidate()
+        let task = Task { @MainActor [weak player] in
+            for step in 1...steps {
+                if Task.isCancelled { return }
+                guard let player else { return }
+                player.volume = min(targetVolume, increment * Float(step))
+                try? await Task.sleep(for: .seconds(interval))
             }
         }
+        store(task: task, on: channel)
     }
 
-    private func fadeOut(player: AVAudioPlayer, duration: TimeInterval) {
+    private func fadeOut(player: AVAudioPlayer, duration: TimeInterval, channel: FadeChannel = .music) {
+        cancelFade(on: channel)
         let steps = 20
         let interval = duration / Double(steps)
         let startVolume = player.volume
         let decrement = startVolume / Float(steps)
-        var step = 0
-
-        Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { timer in
-            step += 1
-            player.volume = max(0, startVolume - decrement * Float(step))
-            if step >= steps {
-                player.stop()
-                timer.invalidate()
+        let task = Task { @MainActor [weak player] in
+            for step in 1...steps {
+                if Task.isCancelled { return }
+                guard let player else { return }
+                player.volume = max(0, startVolume - decrement * Float(step))
+                try? await Task.sleep(for: .seconds(interval))
             }
+            player?.stop()
+        }
+        store(task: task, on: channel)
+    }
+
+    private func cancelFade(on channel: FadeChannel) {
+        switch channel {
+        case .music:   musicFadeTask?.cancel(); musicFadeTask = nil
+        case .ambient: ambientFadeTask?.cancel(); ambientFadeTask = nil
+        }
+    }
+
+    private func store(task: Task<Void, Never>, on channel: FadeChannel) {
+        switch channel {
+        case .music:   musicFadeTask = task
+        case .ambient: ambientFadeTask = task
         }
     }
 }

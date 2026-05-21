@@ -6,14 +6,22 @@
 //
 // Endpoints:
 //   GET  /health          → smoke test, no auth
+//   GET  /nonce           → returns a single-use nonce for App Attest (no auth)
+//   POST /attest          → registers a device's App Attest key (no auth, verifies Apple cert chain)
 //   POST /chat            → proxies to Anthropic Messages API (bird chat + sketch validation)
 //   GET  /wolfram/query   → proxies to Wolfram Alpha Full Results API (XML)
 //   GET  /wolfram/result  → proxies to Wolfram Alpha Short Answer API (plaintext)
 //   POST /tts/:voiceId    → proxies to ElevenLabs Text-to-Speech (returns audio/mpeg)
+//   POST /sfx             → proxies to ElevenLabs Sound Generation (returns audio/mpeg)
+//   POST /music           → proxies to ElevenLabs Music Compose (returns audio/mpeg)
 //
-// Auth: all non-/health routes require X-Proxy-Token header. This is a
-// shared-secret speed bump. Phase 3 of the migration replaces it with
-// Apple App Attest for cryptographic proof the request came from our app.
+// Auth: protected routes accept EITHER:
+//   - X-Proxy-Token header matching PROXY_TOKEN secret (debug/dev fallback only —
+//     production iOS builds ship without this token)
+//   - App Attest assertion headers (X-Attest-KeyId, X-Attest-Nonce, X-Attest-Assertion) —
+//     cryptographically proves the request came from our app on real Apple hardware
+
+import { verifyAttestation, verifyAssertion, type StoredKey } from "./appattest";
 
 export interface Env {
   PROXY_TOKEN: string;
@@ -23,6 +31,12 @@ export interface Env {
   /// Server-side cache for deterministic upstream responses (currently
   /// Wolfram Alpha results). 24h TTL. Bound in wrangler.toml.
   CACHE: KVNamespace;
+  /// keyId (base64url) → { publicKeyJwk, counter } for registered devices.
+  ATTESTED_KEYS: KVNamespace;
+  /// nonce (base64url) → "1" with 60s TTL for single-use challenge tokens.
+  NONCES: KVNamespace;
+  /// Edge-enforced per-IP rate limiter. 60 req / 60 sec — see wrangler.toml.
+  RATE_LIMITER: { limit: (opts: { key: string }) => Promise<{ success: boolean }> };
 }
 
 export default {
@@ -37,7 +51,24 @@ export default {
       });
     }
 
-    const authError = checkProxyToken(request, env);
+    // Edge-enforced per-IP rate limit on every non-health route. Even
+    // unauthenticated routes (/nonce, /attest) count — otherwise an
+    // attacker could flood enrollment attempts and burn KV writes.
+    const rateLimitError = await enforceRateLimit(request, env);
+    if (rateLimitError) return rateLimitError;
+
+    // Anonymous routes — App Attest enrollment + nonce issuance.
+    // These cannot require auth, since the device needs them to bootstrap auth.
+    if (url.pathname === "/nonce" && request.method === "GET") {
+      return handleNonce(env);
+    }
+
+    if (url.pathname === "/attest" && request.method === "POST") {
+      return handleAttest(request, env);
+    }
+
+    // Protected routes — accept either proxy token OR a valid assertion.
+    const authError = await verifyAuth(request, env);
     if (authError) return authError;
 
     if (url.pathname === "/chat" && request.method === "POST") {
@@ -57,18 +88,167 @@ export default {
       return handleTTS(voiceId, request, env);
     }
 
+    if (url.pathname === "/sfx" && request.method === "POST") {
+      return handleSFX(request, env);
+    }
+
+    if (url.pathname === "/music" && request.method === "POST") {
+      return handleMusic(url, request, env);
+    }
+
     return json({ error: "not_found", path: url.pathname }, 404);
   },
 };
 
+// MARK: - Rate limiting
+
+/// Per-IP rate limit using Cloudflare's Workers Rate Limiting API.
+/// 60 req / 60 sec per CF-Connecting-IP (configured in wrangler.toml).
+/// Returns 429 on overflow with a hint header so the iOS client can back off.
+async function enforceRateLimit(request: Request, env: Env): Promise<Response | null> {
+  const ip = request.headers.get("CF-Connecting-IP") ?? "unknown";
+  const { success } = await env.RATE_LIMITER.limit({ key: ip });
+  if (success) return null;
+  return new Response(
+    JSON.stringify({ error: "rate_limited", detail: "Too many requests, slow down." }),
+    {
+      status: 429,
+      headers: {
+        "content-type": "application/json",
+        "retry-after": "60",
+      },
+    },
+  );
+}
+
 // MARK: - Auth
 
-function checkProxyToken(request: Request, env: Env): Response | null {
-  const token = request.headers.get("X-Proxy-Token");
-  if (!token || token !== env.PROXY_TOKEN) {
-    return json({ error: "unauthorized" }, 401);
+/// Accept either a valid App Attest assertion OR the shared proxy token.
+/// Production iOS builds use App Attest exclusively. DEBUG builds may use the
+/// token as a fallback during development on Simulator (where App Attest
+/// returns DCError.invalidInput). Returns null on success, 401 Response on failure.
+async function verifyAuth(request: Request, env: Env): Promise<Response | null> {
+  // Path A — App Attest assertion. If any of the X-Attest-* headers is present,
+  // we require ALL of them and verify cryptographically.
+  const keyId = request.headers.get("X-Attest-KeyId");
+  const nonceHeader = request.headers.get("X-Attest-Nonce");
+  const assertionHeader = request.headers.get("X-Attest-Assertion");
+
+  if (keyId || nonceHeader || assertionHeader) {
+    if (!keyId || !nonceHeader || !assertionHeader) {
+      return json({ error: "attest_headers_incomplete" }, 401);
+    }
+    try {
+      // Consume the nonce — single-use replay protection.
+      const nonceKey = `nonce:${nonceHeader}`;
+      const existed = await env.NONCES.get(nonceKey);
+      if (existed === null) {
+        return json({ error: "attest_nonce_unknown_or_expired" }, 401);
+      }
+      await env.NONCES.delete(nonceKey);
+
+      const stored = await env.ATTESTED_KEYS.get(`key:${keyId}`, { type: "json" }) as StoredKey | null;
+      if (!stored) {
+        return json({ error: "attest_key_unknown" }, 401);
+      }
+
+      const { newCounter } = await verifyAssertion({
+        assertionCBOR: base64ToBytes(assertionHeader),
+        nonce: base64ToBytes(nonceHeader),
+        storedKey: stored,
+      });
+
+      // Persist the incremented counter so replay attempts with stale counters fail.
+      await env.ATTESTED_KEYS.put(
+        `key:${keyId}`,
+        JSON.stringify({ publicKeyJwk: stored.publicKeyJwk, counter: newCounter }),
+      );
+      return null;
+    } catch (e: any) {
+      return json({ error: "attest_verification_failed", detail: e?.message ?? "unknown" }, 401);
+    }
   }
-  return null;
+
+  // Path B — legacy shared-secret. Dev/debug fallback only.
+  const token = request.headers.get("X-Proxy-Token");
+  if (token && token === env.PROXY_TOKEN) return null;
+
+  return json({ error: "unauthorized" }, 401);
+}
+
+// MARK: - /nonce → issue a single-use 32-byte challenge nonce
+
+async function handleNonce(env: Env): Promise<Response> {
+  const bytes = crypto.getRandomValues(new Uint8Array(32));
+  const b64 = bytesToBase64Url(bytes);
+  // 60s TTL: long enough for iOS to round-trip an API call, short enough that
+  // a leaked nonce can't be replayed against a fresh request later.
+  await env.NONCES.put(`nonce:${b64}`, "1", { expirationTtl: 60 });
+  return json({ nonce: b64 });
+}
+
+// MARK: - /attest → register a device's App Attest key
+
+async function handleAttest(request: Request, env: Env): Promise<Response> {
+  let body: { keyId?: string; nonce?: string; attestation?: string };
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: "invalid_json" }, 400);
+  }
+
+  if (!body.keyId || !body.nonce || !body.attestation) {
+    return json({ error: "missing_fields" }, 400);
+  }
+
+  // The nonce must have been issued by /nonce (single-use). Consume it.
+  const nonceKey = `nonce:${body.nonce}`;
+  const existed = await env.NONCES.get(nonceKey);
+  if (existed === null) {
+    return json({ error: "nonce_unknown_or_expired" }, 401);
+  }
+  await env.NONCES.delete(nonceKey);
+
+  let stored: StoredKey;
+  try {
+    stored = await verifyAttestation({
+      attestationCBOR: base64ToBytes(body.attestation),
+      expectedNonce: base64ToBytes(body.nonce),
+      keyId: base64ToBytes(body.keyId),
+    });
+  } catch (e: any) {
+    return json({ error: "attestation_failed", detail: e?.message ?? "unknown" }, 401);
+  }
+
+  // Reject re-attestation of an existing keyId — would let an attacker
+  // overwrite a legitimate key. Apps that need re-enrollment should generate
+  // a fresh keyId via DCAppAttest first.
+  const existing = await env.ATTESTED_KEYS.get(`key:${body.keyId}`);
+  if (existing !== null) {
+    return json({ error: "key_already_registered" }, 409);
+  }
+
+  await env.ATTESTED_KEYS.put(`key:${body.keyId}`, JSON.stringify(stored));
+  return json({ status: "attested" });
+}
+
+// MARK: - Base64 helpers (URL-safe, no padding — what iOS sends)
+
+function base64ToBytes(b64: string): Uint8Array {
+  // Accept both URL-safe and standard base64
+  const normalized = b64.replace(/-/g, "+").replace(/_/g, "/");
+  const padded = normalized + "=".repeat((4 - (normalized.length % 4)) % 4);
+  const bin = atob(padded);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+
+function bytesToBase64Url(bytes: Uint8Array): string {
+  let bin = "";
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  const b64 = btoa(bin);
+  return b64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
 // MARK: - /chat → Anthropic
@@ -240,18 +420,207 @@ async function handleTTS(voiceId: string, request: Request, env: Env): Promise<R
 
   const bodyText = await request.text();
 
-  const upstream = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+  return cachedTTS(env, voiceId, bodyText, async () => {
+    const upstream = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "xi-api-key": env.ELEVENLABS_API_KEY,
+        "accept": "audio/mpeg",
+      },
+      body: bodyText,
+    });
+    return {
+      status: upstream.status,
+      body: await upstream.arrayBuffer(),
+      contentType:
+        upstream.headers.get("content-type") ?? "application/octet-stream",
+    };
+  });
+}
+
+// MARK: - TTS cache helper
+
+/// TTS responses are deterministic per (voiceId, text, voice_settings, model_id).
+/// Lesson narration in particular plays the SAME text on every render, so any
+/// repeat listen by any user collapses to one upstream ElevenLabs call.
+///
+/// Cache key folds the request body into a SHA-256 hash so different
+/// model_id / stability / similarity_boost / etc. settings get distinct entries
+/// automatically. 30-day TTL is a safety cap against future format changes —
+/// audio itself never expires.
+///
+/// Only successful audio responses are cached. Error JSON (rate limits, bad
+/// keys) passes through uncached so the iOS client sees fresh failures.
+async function cachedTTS(
+  env: Env,
+  voiceId: string,
+  bodyText: string,
+  fetchUpstream: () => Promise<{ status: number; body: ArrayBuffer; contentType: string }>,
+): Promise<Response> {
+  const bodyHash = await sha256Hex(bodyText);
+  const cacheKey = `tts:${voiceId}:${bodyHash}`;
+
+  const cached = await env.CACHE.getWithMetadata<{ contentType: string }>(
+    cacheKey,
+    { type: "arrayBuffer" },
+  );
+
+  if (cached.value && cached.metadata?.contentType) {
+    return new Response(cached.value, {
+      status: 200,
+      headers: {
+        "content-type": cached.metadata.contentType,
+        "x-cache": "HIT",
+      },
+    });
+  }
+
+  const upstream = await fetchUpstream();
+
+  // Only cache successful audio responses. Don't cache error JSON or other
+  // non-audio bodies — those represent transient upstream failures or auth
+  // problems we want the iOS client to retry on.
+  if (upstream.status === 200 && upstream.contentType.startsWith("audio/")) {
+    try {
+      await env.CACHE.put(cacheKey, upstream.body, {
+        expirationTtl: 2592000, // 30 days
+        metadata: { contentType: upstream.contentType },
+      });
+    } catch {
+      // Cache write failure shouldn't block the user response.
+    }
+  }
+
+  return new Response(upstream.body, {
+    status: upstream.status,
+    headers: {
+      "content-type": upstream.contentType,
+      "x-cache": "MISS",
+    },
+  });
+}
+
+async function sha256Hex(input: string): Promise<string> {
+  const data = new TextEncoder().encode(input);
+  const digest = await crypto.subtle.digest("SHA-256", data);
+  const bytes = new Uint8Array(digest);
+  let hex = "";
+  for (let i = 0; i < bytes.length; i++) {
+    hex += bytes[i].toString(16).padStart(2, "0");
+  }
+  return hex;
+}
+
+// MARK: - /sfx → ElevenLabs Sound Generation
+
+/// Used during dev only — Marina runs `scripts/generate-sfx.mjs` to batch-generate
+/// ambient SFX (city, volcano rumble, river, etc.) and bundles the resulting mp3s
+/// into the app. The game never hits this route at runtime; once a sound is shipped
+/// in the bundle, AVAudioPlayer reads it from disk and the worker is irrelevant.
+async function handleSFX(request: Request, env: Env): Promise<Response> {
+  if (!env.ELEVENLABS_API_KEY) {
+    return json({ error: "elevenlabs_key_not_configured" }, 500);
+  }
+
+  let body: { text?: string; duration_seconds?: number; prompt_influence?: number };
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: "invalid_json" }, 400);
+  }
+
+  if (!body.text || typeof body.text !== "string") {
+    return json({ error: "missing_text" }, 400);
+  }
+
+  // ElevenLabs sound-generation accepts duration_seconds in [0.5, 22] and
+  // prompt_influence in [0, 1]. Pass through only the fields we trust so we
+  // can't be tricked into forwarding arbitrary upstream params.
+  const upstreamBody: Record<string, unknown> = { text: body.text };
+  if (typeof body.duration_seconds === "number") {
+    upstreamBody.duration_seconds = body.duration_seconds;
+  }
+  if (typeof body.prompt_influence === "number") {
+    upstreamBody.prompt_influence = body.prompt_influence;
+  }
+
+  const upstream = await fetch("https://api.elevenlabs.io/v1/sound-generation", {
     method: "POST",
     headers: {
       "content-type": "application/json",
       "xi-api-key": env.ELEVENLABS_API_KEY,
       "accept": "audio/mpeg",
     },
-    body: bodyText,
+    body: JSON.stringify(upstreamBody),
   });
 
-  // Forward audio bytes (or JSON error) with upstream's content-type so
-  // the iOS client sees the same response shape as a direct ElevenLabs call.
+  const contentType = upstream.headers.get("content-type") ?? "application/octet-stream";
+  return new Response(upstream.body, {
+    status: upstream.status,
+    headers: { "content-type": contentType },
+  });
+}
+
+// MARK: - /music → ElevenLabs Music Compose
+
+/// Dev-time only, same model as /sfx: Marina runs `scripts/generate-music.mjs`
+/// to batch-generate the 5 missing music tracks (city map, workshop, forest,
+/// crafting room, main menu) and bundles the mp3s into the app. The game
+/// plays them from disk at runtime — the worker is irrelevant once bundled.
+///
+/// Music endpoint differs from /sfx: prompt + music_length_ms (3s–600s),
+/// output_format is a query param, response is audio bytes.
+async function handleMusic(url: URL, request: Request, env: Env): Promise<Response> {
+  if (!env.ELEVENLABS_API_KEY) {
+    return json({ error: "elevenlabs_key_not_configured" }, 500);
+  }
+
+  let body: {
+    prompt?: string;
+    music_length_ms?: number;
+    force_instrumental?: boolean;
+    model_id?: string;
+  };
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: "invalid_json" }, 400);
+  }
+
+  if (!body.prompt || typeof body.prompt !== "string") {
+    return json({ error: "missing_prompt" }, 400);
+  }
+
+  // Whitelist the body fields we forward so we can't be tricked into
+  // sending unexpected params (e.g. `store_for_inpainting`, `seed`).
+  const upstreamBody: Record<string, unknown> = { prompt: body.prompt };
+  if (typeof body.music_length_ms === "number") {
+    upstreamBody.music_length_ms = body.music_length_ms;
+  }
+  if (typeof body.force_instrumental === "boolean") {
+    upstreamBody.force_instrumental = body.force_instrumental;
+  }
+  if (typeof body.model_id === "string") {
+    upstreamBody.model_id = body.model_id;
+  }
+
+  // output_format is a query parameter on the upstream API. Forward it
+  // through if the caller specified one.
+  const outputFormat = url.searchParams.get("output_format");
+  const upstreamURL = outputFormat
+    ? `https://api.elevenlabs.io/v1/music?output_format=${encodeURIComponent(outputFormat)}`
+    : "https://api.elevenlabs.io/v1/music";
+
+  const upstream = await fetch(upstreamURL, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "xi-api-key": env.ELEVENLABS_API_KEY,
+    },
+    body: JSON.stringify(upstreamBody),
+  });
+
   const contentType = upstream.headers.get("content-type") ?? "application/octet-stream";
   return new Response(upstream.body, {
     status: upstream.status,

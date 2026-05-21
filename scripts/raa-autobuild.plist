@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  launchd job for the RAA auto-builder.
+  Loads automatically at login, stays alive in the background, restarts
+  if it crashes. Reads/writes log to /tmp/raa-autobuild.log.
+
+  Install:
+    cp scripts/raa-autobuild.plist ~/Library/LaunchAgents/com.marinapollak.raa.autobuild.plist
+    launchctl load ~/Library/LaunchAgents/com.marinapollak.raa.autobuild.plist
+
+  Stop:
+    launchctl unload ~/Library/LaunchAgents/com.marinapollak.raa.autobuild.plist
+
+  Restart (after editing the script):
+    launchctl unload ~/Library/LaunchAgents/com.marinapollak.raa.autobuild.plist
+    launchctl load ~/Library/LaunchAgents/com.marinapollak.raa.autobuild.plist
+
+  Check status:
+    launchctl list | grep raa
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.marinapollak.raa.autobuild</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/pollakmarina/RenaissanceArchitectAcademy/scripts/raa-autobuild.sh</string>
+    </array>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/raa-autobuild.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/tmp/raa-autobuild.err</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+    </dict>
+</dict>
+</plist>

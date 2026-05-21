@@ -164,20 +164,6 @@ class GameSettings {
             : RenaissanceColors.parchment.opacity(0.8)
     }
 
-    // MARK: - Theme Colors (SpriteKit — platform colors)
-
-    /// SpriteKit pill label background
-    var spritePillFillRGBA: (r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) {
-        isDarkMode
-            ? (0.18, 0.16, 0.13, 0.65)
-            : (0.961, 0.902, 0.827, 0.65)   // parchment
-    }
-
-    /// SpriteKit pill label text color
-    var spriteTextColor: Color {
-        pillTextColor
-    }
-
     // MARK: - Persistence
 
     private static let themeKey = "gameSettings_theme"

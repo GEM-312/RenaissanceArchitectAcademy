@@ -48,6 +48,11 @@ struct ToolRecipe: Identifiable {
             ingredients: [.marble: 1, .ironOre: 1],
             educationalText: "Marble mortars were preferred because the smooth stone didn't contaminate pigments. A heavy iron pestle ground lapis lazuli into the finest powder."
         ),
+        ToolRecipe(
+            output: .pitchfork,
+            ingredients: [.timber: 2, .ironOre: 1],
+            educationalText: "Tuscan farmers forged pitchforks with three or four iron tines on a chestnut-wood shaft — light enough to lift hay all day, sturdy enough to last a generation."
+        ),
     ]
 
     /// Detect a matching tool recipe from the given ingredient counts

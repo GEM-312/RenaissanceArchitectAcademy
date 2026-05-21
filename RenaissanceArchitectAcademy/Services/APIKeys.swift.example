@@ -1,0 +1,14 @@
+// APIKeys.swift template — copy this file to APIKeys.swift (gitignored) and
+// paste the proxy token below. Real API keys (Anthropic, ElevenLabs, Wolfram)
+// live as secrets on the Cloudflare Worker, NOT here — this token only
+// authenticates the iOS app against the worker.
+//
+// Get the token by running:
+//   wrangler secret list
+// against the cloudflare-worker/ project. Or ask Marina.
+
+import Foundation
+
+enum APIKeys {
+    static let proxyToken = "PASTE_HEX_PROXY_TOKEN_HERE"
+}

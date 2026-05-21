@@ -1,6 +1,7 @@
 name = "raa-api"
 main = "src/index.ts"
 compatibility_date = "2026-04-29"
+compatibility_flags = ["nodejs_compat"]
 
 # Observability: enables the Workers logs tab in the Cloudflare dashboard
 # so you can see request logs, errors, and console.log output live.
@@ -13,3 +14,25 @@ enabled = true
 [[kv_namespaces]]
 binding = "CACHE"
 id = "408ebab40cab4250b88e8268cd15d36f"
+
+# Stores App Attest registered keys: keyId → { publicKeyJwk, counter }
+# Populated by POST /attest after Apple cert chain verification succeeds.
+# Read by every API request to verify the per-request assertion.
+[[kv_namespaces]]
+binding = "ATTESTED_KEYS"
+id = "8287bef2e02d4e46a7e759d361a3d1d8"
+
+# Short-lived nonces issued by /nonce, consumed by /attest or any API
+# request. 60-second TTL, single-use to prevent replay.
+[[kv_namespaces]]
+binding = "NONCES"
+id = "8bb034522127496cbd21c7294827682a"
+
+# Edge-enforced per-IP rate limit. 60 requests per 60 seconds per
+# CF-Connecting-IP. Covers all routes except /health. Returns 429 on
+# overflow. namespace_id is an arbitrary unique integer within this Worker.
+[[unsafe.bindings]]
+name = "RATE_LIMITER"
+type = "ratelimit"
+namespace_id = "1001"
+simple = { limit = 60, period = 60 }

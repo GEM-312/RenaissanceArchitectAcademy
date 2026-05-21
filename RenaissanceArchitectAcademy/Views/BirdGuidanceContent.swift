@@ -19,6 +19,11 @@ struct BirdGuidanceContent: View {
     var destination: SidebarDestination? = nil
     var onNavigate: ((SidebarDestination) -> Void)? = nil
 
+    // Optional: primary CTA in-dialog (e.g. "Open Lesson" for contextual suggestions)
+    var primaryActionLabel: String? = nil
+    var primaryActionIcon: String? = nil
+    var onPrimaryAction: (() -> Void)? = nil
+
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
             BirdCharacter(isSitting: true)
@@ -53,6 +58,28 @@ struct BirdGuidanceContent: View {
                             .padding(.horizontal, 14)
                             .padding(.vertical, 6)
                             .parchmentCapsule(color: RenaissanceColors.warmBrown)
+                        }
+                        .buttonStyle(.plain)
+                    }
+
+                    // Primary action (e.g. "Open Lesson" for contextual calendar suggestions)
+                    if let label = primaryActionLabel, let primaryAction = onPrimaryAction {
+                        Button {
+                            withAnimation(.easeOut(duration: 0.2)) { onDismiss() }
+                            primaryAction()
+                        } label: {
+                            HStack(spacing: 5) {
+                                if let icon = primaryActionIcon {
+                                    Image(systemName: icon)
+                                        .font(.system(size: 12))
+                                }
+                                Text(label)
+                                    .font(RenaissanceFont.footnoteBold)
+                            }
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 6)
+                            .parchmentCapsule(color: RenaissanceColors.ochre)
                         }
                         .buttonStyle(.plain)
                     }

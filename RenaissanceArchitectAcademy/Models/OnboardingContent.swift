@@ -1,5 +1,13 @@
 import Foundation
 
+/// Per-gender override for animated background frames. Set on a `StoryPage`
+/// when boy and girl variants have different frame counts or video durations
+/// (e.g. Page 2 — the Boy catch animation runs ~4s, Girl runs ~1.8s).
+struct FrameVariant {
+    let count: Int
+    let duration: Double
+}
+
 /// A single page in the onboarding story sequence
 struct StoryPage: Identifiable {
     let id = UUID()
@@ -14,8 +22,28 @@ struct StoryPage: Identifiable {
     var outroText: String? = nil
     /// Whether the bird companion should appear on this page
     let showBird: Bool
-    /// Optional animated background frames prefix (e.g. "WorkshopWelcomeFrame"), 15 frames 00-14
+    /// Optional animated background frames prefix (e.g. "LorenzoLetterFrame").
+    /// Frames are looked up as `{prefix}00`, `{prefix}01`, etc., up to `backgroundFrameCount - 1`.
+    /// Supports `{gender}` token substitution at render time.
     var backgroundFramePrefix: String? = nil
+    /// Number of frames in the background animation. Default 15 matches the
+    /// historical WorkshopWelcomeFrame pattern. Set explicitly for longer sequences.
+    var backgroundFrameCount: Int = 15
+    /// Total duration the animation should play over (seconds). Each frame
+    /// holds for `duration / (frameCount - 1)`. Default 1.5s matches the
+    /// historical 10fps pattern for 15 frames.
+    var backgroundFrameDuration: Double = 1.5
+    /// Optional per-gender overrides for the animation timing. When a gender
+    /// has an entry here, its `count` and `duration` are used instead of the
+    /// page-level defaults — letting boy and girl frames play at their own
+    /// native pace and freeze on the last frame while narration finishes.
+    var backgroundFrameVariants: [ApprenticeGender: FrameVariant] = [:]
+    /// When true, animated frames render full-screen (scaledToFill, anchored
+    /// to bottom) instead of the smaller 680pt figure-style. Use for cinematic
+    /// frames where the composition extends to the screen edges and a visible
+    /// image edge mid-screen would look broken (e.g. Lorenzo's letter folding
+    /// where the hands extend beyond the figure box).
+    var backgroundFillsScreen: Bool = false
     /// Optional static background image filename in Assets.xcassets (e.g. "InvitationParchment").
     /// Takes precedence over the solid parchment color. Renders behind the text.
     var backgroundImage: String? = nil
@@ -36,7 +64,7 @@ struct StationLesson: Identifiable {
 /// All static narrative content for the onboarding system
 enum OnboardingContent {
 
-    // MARK: - Story Pages (5 cinematic pages)
+    // MARK: - Story Pages (4 cinematic pages)
     //
     // Use the `{name}` token for the apprentice's name — StoryNarrativeView
     // substitutes it at render time using onboardingState.apprenticeName.
@@ -57,6 +85,10 @@ enum OnboardingContent {
             Across mountains, across rivers, all the way to you.
             """,
             showBird: false,
+            backgroundFramePrefix: "LorenzoLetterFrame",
+            backgroundFrameCount: 56,
+            backgroundFrameDuration: 17.98,
+            backgroundFillsScreen: true, // letter-folding extends past the 680 figure box
             audioName: "LorenzoLetterNarration"
         ),
         StoryPage(
@@ -70,21 +102,36 @@ enum OnboardingContent {
             The seal is warm. It glows faintly in your hand. Whoever sent this wanted you, \
             {name}, and only you, to read what is inside.
             """,
-            showBird: false
+            showBird: false,
+            backgroundFramePrefix: "{gender}CatchingLetterFrame",
+            backgroundFrameCount: 30,
+            backgroundFrameDuration: 4.01,
+            backgroundFrameVariants: [
+                .boy:  FrameVariant(count: 30, duration: 4.01),
+                .girl: FrameVariant(count: 30, duration: 1.78),
+            ],
+            audioName: "LetterArrivesNarration"
         ),
         StoryPage(
             title: "The Invitation",
-            text: "You break the seal. The handwriting is bold and sure:",
+            text: "",
             letterText: """
             We have heard of your gifts, {name}. Your drawings. Your curiosity for how things work.
 
-            Lorenzo de' Medici will sponsor your apprenticeship under the finest architects of the age — \
-            but you must come to Florence. The road is long. Days and nights across Italy. Find us by \
-            the Duomo when you arrive.
+            I, Lorenzo de' Medici, will sponsor your apprenticeship under the finest architects of \
+            the age. Before you stretches the ancient world — Rome's mighty aqueducts, its towering \
+            Colosseum, the perfect dome of the Pantheon. You will study them all.
+
+            And when you have mastered the apprentice's craft and earned the Architect's Seal, a \
+            greater journey awaits: the Giardino di San Marco — my school here in Florence, where \
+            Michelangelo once studied and the spirit of Brunelleschi lives in every stone.
+
+            Find us by the Duomo when you arrive. There is much to learn, {name}.
             """,
             outroText: "Below the signature: a promise of florins — Florence's gold — for every step of your apprenticeship.",
             showBird: false,
-            backgroundImage: "InvitationParchment"
+            backgroundImage: "InvitationParchment",
+            audioName: "InvitationLetterNarration"
         ),
         StoryPage(
             title: "The Bird Arrives",
@@ -99,22 +146,15 @@ enum OnboardingContent {
             "I will travel with you to Florence, {name}. I will teach you the thirteen sciences \
             behind the greatest structures ever built. Are you ready?"
             """,
-            showBird: true
-        ),
-        StoryPage(
-            title: "The Road Ahead",
-            text: """
-            Before you stretches the ancient world — Rome's mighty aqueducts, its towering \
-            Colosseum, the perfect dome of the Pantheon. You will study them all.
-
-            And when you have mastered the apprentice's craft and earned the Architect's Seal, \
-            a greater journey awaits: the Giardino di San Marco in Florence — Lorenzo de' Medici's \
-            legendary school, where Michelangelo once studied and the spirit of Brunelleschi lives \
-            in every stone.
-
-            But first, the journey calls. There is much to learn, {name}.
-            """,
-            showBird: false
+            showBird: false, // replaced by gender-specific bird arrival video
+            backgroundFramePrefix: "BirdArrival{gender}Frame",
+            backgroundFrameCount: 30,
+            backgroundFrameDuration: 4.08, // girl native duration
+            backgroundFrameVariants: [
+                .boy:  FrameVariant(count: 30, duration: 4.34), // boy assets pending
+                .girl: FrameVariant(count: 30, duration: 4.08),
+            ],
+            audioName: "BirdArrivesNarration"
         ),
     ]
 

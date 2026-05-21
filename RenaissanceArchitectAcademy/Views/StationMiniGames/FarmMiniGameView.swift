@@ -702,12 +702,16 @@ struct FarmMiniGameView: View {
         // Check win/lose
         if catches >= totalCatches {
             onNudgeCamera?()
+            gameTimer?.invalidate()
+            gameTimer = nil
             withAnimation { phase = .success }
             return
         }
 
         if drops >= maxDrops {
             onNudgeCamera?()
+            gameTimer?.invalidate()
+            gameTimer = nil
             withAnimation { phase = .failed }
             return
         }
