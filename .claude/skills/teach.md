@@ -1,7 +1,7 @@
 ---
 name: teach
 description: Proactively teach coding concepts during development, MIT-style. Saves all lessons to Teaching.md.
-user_invocable: true
+user-invocable: true
 ---
 
 # Teaching Skill - MIT-Style Coding Education
