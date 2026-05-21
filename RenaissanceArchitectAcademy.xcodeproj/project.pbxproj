@@ -1466,7 +1466,7 @@
 				INFOPLIST_FILE = RenaissanceArchitectAcademy/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.educational-games";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "Your bird companion can reference upcoming events to personalize architecture lessons.";
-				INFOPLIST_KEY_NSGKFriendListUsageDescription = "";
+				INFOPLIST_KEY_NSGKFriendListUsageDescription = "See which of your Game Center friends are also exploring Renaissance buildings, so you can compare progress and invite them to learn together.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1506,7 +1506,7 @@
 				INFOPLIST_FILE = RenaissanceArchitectAcademy/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.educational-games";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "Your bird companion can reference upcoming events to personalize architecture lessons.";
-				INFOPLIST_KEY_NSGKFriendListUsageDescription = "";
+				INFOPLIST_KEY_NSGKFriendListUsageDescription = "See which of your Game Center friends are also exploring Renaissance buildings, so you can compare progress and invite them to learn together.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
