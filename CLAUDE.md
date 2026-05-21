@@ -348,6 +348,7 @@ Styles/[name]_frames/clean/    # Photoshop exports (no bg)
 3. Press Cmd+R to build and run
 
 ## MANDATORY Rules
+- **BE 100% HONEST about every status, estimate, and outcome.** No softening, no aspirational claims dressed as facts, no hidden mistakes. If a build failed, say it failed. If a commit's message claimed something the edit didn't include, surface it and fix it (don't paper over). If an estimate is wrong, correct it openly the moment you realize. End-of-task summaries describe what actually shipped, not what was attempted. Push back on weak approaches with reasoning rather than acquiescing to keep things smooth. Trust depends on accurate signal; polite lies cost real hours of misallocation later.
 - **NEVER change design, colors, sizes, layout, or visual appearance unless Marina specifically asks for it.** Fix only what is requested. If you think a design change would help, ASK FIRST — do not just do it.
 - **ALWAYS read the FULL file before editing it.** Never edit a file based on memory, summaries, or assumptions. Use the Read tool on every file you are about to modify, every single time, no exceptions. If the file is large, read it in chunks until you have seen all relevant sections. Failure to do this causes wrong edits, missed context, and broken code.
 - **ALWAYS read related files before making cross-file changes.** If a change touches callbacks, state, or UI across multiple files (e.g. a Scene + its MapView wrapper), read ALL of them first.
