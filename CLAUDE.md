@@ -347,6 +347,18 @@ Styles/[name]_frames/clean/    # Photoshop exports (no bg)
 2. Select iPad simulator or "My Mac"
 3. Press Cmd+R to build and run
 
+## Available Agent Skills (Auto-Activate)
+
+Five user-level SwiftUI/Apple-platform skills are installed at `~/.claude/skills/` and auto-activate when relevant. Use them as the primary reference for generic Swift/SwiftUI/SwiftData/concurrency/security questions — this CLAUDE.md is for project-specific rules ONLY (decisions, file refs, past bugs, counter-defaults).
+
+- **`swiftui-pro`** (Paul Hudson) — SwiftUI code review: modern API, views, data flow, navigation, accessibility, performance, hygiene
+- **`swiftdata-pro`** (Paul Hudson) — SwiftData core rules, predicate safety, CloudKit constraints, indexing, class inheritance
+- **`swift-concurrency`** (Antoine van der Lee) — `@MainActor` judgment, Task isolation, Sendable, Swift 6 strict concurrency, data races
+- **`app-intents`** (Anton Novoselov) — `AppIntent` / `AppEntity` / Apple Intelligence (`AssistantEntity`/`AssistantIntent`), Spotlight, Snippets
+- **`swift-security-expert`** (Ivan Magda) — Keychain, biometrics, CryptoKit, Secure Enclave, certificate pinning, OWASP MASTG
+
+When a skill's generic guidance conflicts with CLAUDE.md project rules, **CLAUDE.md wins** (project decisions, history, and file refs are non-negotiable).
+
 ## MANDATORY Rules
 - **BE 100% HONEST about every status, estimate, and outcome.** No softening, no aspirational claims dressed as facts, no hidden mistakes. If a build failed, say it failed. If a commit's message claimed something the edit didn't include, surface it and fix it (don't paper over). If an estimate is wrong, correct it openly the moment you realize. End-of-task summaries describe what actually shipped, not what was attempted. Push back on weak approaches with reasoning rather than acquiescing to keep things smooth. Trust depends on accurate signal; polite lies cost real hours of misallocation later.
 - **NEVER read, edit, write, or otherwise access `RenaissanceArchitectAcademy/Services/APIKeys.swift`** — by Read, Edit, Write, Bash (`cat`, `grep`, `head`, `tail`, `less`, `xxd`, `od`, or any other reader), or any indirect means. The file holds secrets. Read/Edit/Write are denied at the harness level in `.claude/settings.json`; this rule covers every other channel. If you need to know whether the proxy is configured, infer it from `WorkerClient.isConfigured` callers — not from the file. For token rotations: Marina runs them manually outside Claude Code.
