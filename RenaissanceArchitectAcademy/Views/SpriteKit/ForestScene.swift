@@ -376,6 +376,30 @@ class ForestScene: SKScene, ScrollZoomable {
 
     // MARK: - Camera Clamping
 
+    /// Where the camera *can* be while looking at `target`, given the current
+    /// scale and view bounds. Used by the walk-follow lerp + arrival pan so
+    /// we lerp / move toward a reachable position instead of toward the raw
+    /// player or POI position (which for edge POIs is outside the allowed
+    /// range — clamp would slam the camera back to bounds, creating the
+    /// visible "shift" / parchment leak at the map edge).
+    private func clampedPosition(for target: CGPoint) -> CGPoint {
+        let scale = cameraNode.xScale
+        let viewSize = view?.bounds.size ?? CGSize(width: 1024, height: 768)
+        let renderScale = max(viewSize.width / self.size.width,
+                              viewSize.height / self.size.height)
+        let visibleWidth = (viewSize.width / renderScale) * scale
+        let visibleHeight = (viewSize.height / renderScale) * scale
+
+        let minX = visibleWidth / 2
+        let maxX = mapSize.width - (visibleWidth / 2)
+        let minY = visibleHeight / 2
+        let maxY = mapSize.height - (visibleHeight / 2)
+
+        let clampedX = maxX > minX ? max(minX, min(maxX, target.x)) : mapSize.width / 2
+        let clampedY = maxY > minY ? max(minY, min(maxY, target.y)) : mapSize.height / 2
+        return CGPoint(x: clampedX, y: clampedY)
+    }
+
     private func clampCamera() {
         // Clamp SCALE first — prevents SKActions from overshooting maxZoomOutScale
         // which causes terrain edges to flash visible for 1-2 frames during zoom-out
@@ -412,15 +436,16 @@ class ForestScene: SKScene, ScrollZoomable {
 
     // MARK: - Camera Follow & Zoom
 
-    /// Stage 1: Start following player — gentle initial zoom into walking range.
-    /// Gradual zoom toward closeZoom continues in update() as the player approaches.
+    /// Stage 1: Start following player — front-load the zoom to close-zoom
+    /// in 0.5s so clamp can't pull the camera off edge POIs during the walk.
+    /// Matches CityScene + WorkshopScene for consistency.
     private func startFollowingPlayer(toward target: CGPoint) {
         guard let cameraNode = cameraNode else { return }
         isFollowingPlayer = true
         isPlayerWalking = true
         walkTargetPosition = target
 
-        let zoomAction = SKAction.scale(to: 0.65, duration: 0.5)
+        let zoomAction = SKAction.scale(to: 0.6, duration: 0.5)
         zoomAction.timingMode = .easeInEaseOut
         cameraNode.run(zoomAction, withKey: "cameraZoom")
 
@@ -429,9 +454,13 @@ class ForestScene: SKScene, ScrollZoomable {
     }
 
     /// Stage 2: Settle camera on the POI after player arrives — pan only, no zoom change.
+    /// The move target is clamped to the camera's allowed range so edge POIs
+    /// don't pan the camera past map bounds, which would expose the parchment
+    /// background around the terrain (was the visible "shift" bug).
     private func zoomCameraToPOI(_ poiPos: CGPoint) {
         guard let cameraNode = cameraNode else { return }
-        let moveAction = SKAction.move(to: poiPos, duration: 0.5)
+        let clampedTarget = clampedPosition(for: poiPos)
+        let moveAction = SKAction.move(to: clampedTarget, duration: 0.5)
         moveAction.timingMode = .easeInEaseOut
         cameraNode.run(moveAction, withKey: "cameraZoom")
 
@@ -798,33 +827,21 @@ class ForestScene: SKScene, ScrollZoomable {
 
         updatePlayerScreenPosition()
 
-        // Smoothly follow the player while walking to a POI + gradually zoom
-        // in during the approach. The on-arrival snap-zoom is removed
-        // (zoomCameraToPOI only pans), so the camera stays wherever the
-        // gradual zoom landed when the player gets there.
+        // Smoothly follow the player while walking to a POI. Lerp toward
+        // the clamp-respecting position for the player — for edge POIs the
+        // raw player position is outside the allowed camera range, and
+        // lerping toward it would have clamp slam the camera back to bounds
+        // every frame (visible "shift"). Lerping toward the clamped target
+        // means lerp and clamp agree, so the camera glides smoothly and the
+        // player walks into frame at the edge.
         if isFollowingPlayer {
-            let target = playerNode.position
+            let target = clampedPosition(for: playerNode.position)
             let current = cameraNode.position
             let lerpFactor: CGFloat = 0.08
             cameraNode.position = CGPoint(
                 x: current.x + (target.x - current.x) * lerpFactor,
                 y: current.y + (target.y - current.y) * lerpFactor
             )
-
-            // Gradual zoom: ease from overview → close-up during the last 30% of walk
-            if let dest = walkTargetPosition {
-                let totalDist = hypot(dest.x - cameraNode.position.x, dest.y - cameraNode.position.y)
-                let closeZoom: CGFloat = 0.45
-                let farZoom: CGFloat = 0.65
-                let zoomStartDist: CGFloat = 700
-
-                if totalDist < zoomStartDist {
-                    let progress = 1.0 - (totalDist / zoomStartDist)
-                    let targetScale = farZoom - (farZoom - closeZoom) * progress
-                    let currentScale = cameraNode.xScale
-                    cameraNode.setScale(currentScale + (targetScale - currentScale) * 0.06)
-                }
-            }
         }
 
         // Clamp camera every frame — prevents SKActions from bypassing bounds
