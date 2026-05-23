@@ -1159,33 +1159,22 @@ class WorkshopScene: SKScene, ScrollZoomable {
         updatePlayerScreenPosition()
         disturbTreesNearPlayer()
 
-        // Smoothly follow the player while walking to a station + gradually
-        // zoom in during the approach. The on-arrival snap-zoom is removed
-        // (zoomCameraToStation only pans), so the camera stays wherever the
-        // gradual zoom landed when the player gets there.
+        // Smoothly follow the player while walking to a station. Lerp toward
+        // the clamp-respecting position for the player — for edge stations
+        // (Volcano / Market / Quarry / Crafting Room) the raw player position
+        // is outside the allowed camera range, and lerping toward it would
+        // have clamp slam the camera back to bounds every frame (visible
+        // "shift"). Lerping toward the clamped target means lerp and clamp
+        // agree, so the camera glides smoothly and the player walks into
+        // frame at the edge.
         if isFollowingPlayer {
-            let target = playerNode.position
+            let target = clampedPosition(for: playerNode.position)
             let current = cameraNode.position
             let lerpFactor: CGFloat = 0.08
             cameraNode.position = CGPoint(
                 x: current.x + (target.x - current.x) * lerpFactor,
                 y: current.y + (target.y - current.y) * lerpFactor
             )
-
-            // Gradual zoom: ease from overview → close-up during approach
-            if let dest = walkTargetPosition {
-                let totalDist = hypot(dest.x - cameraNode.position.x, dest.y - cameraNode.position.y)
-                let closeZoom: CGFloat = 0.60
-                let farZoom: CGFloat = 0.80
-                let zoomStartDist: CGFloat = 700
-
-                if totalDist < zoomStartDist {
-                    let progress = 1.0 - (totalDist / zoomStartDist)
-                    let targetScale = farZoom - (farZoom - closeZoom) * progress
-                    let currentScale = cameraNode.xScale
-                    cameraNode.setScale(currentScale + (targetScale - currentScale) * 0.06)
-                }
-            }
         }
 
         // Clamp camera every frame — prevents SKActions from bypassing bounds.
@@ -1554,29 +1543,35 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
     // MARK: - Station Camera Zoom
 
-    /// Stage 1: Start following player — gentle initial zoom into walking range.
-    /// Gradual zoom toward closeZoom continues in update() as the player approaches.
+    /// Stage 1: Start following player — front-load the zoom to close-zoom
+    /// in 0.5s so clamp can't pull the camera off edge stations during the
+    /// walk. The previous approach (gentle 0.80 zoom + gradual 0.80→0.60 in
+    /// update()) kept visible area too large during the walk, causing visible
+    /// "shifts" at Volcano / Quarry / Crafting Room when clamp engaged.
     private func startFollowingPlayer(toward target: CGPoint) {
         guard let cameraNode = cameraNode else { return }
         isFollowingPlayer = true
         walkTargetPosition = target
 
-        let zoomAction = SKAction.scale(to: 0.80, duration: 0.5)
+        let zoomAction = SKAction.scale(to: 0.6, duration: 0.5)
         zoomAction.timingMode = .easeInEaseOut
         cameraNode.run(zoomAction, withKey: "cameraZoom")
     }
 
     /// Stage 2: Settle camera on the station after player arrives — pan only, no zoom change.
+    /// The move target is clamped to the camera's allowed range so edge stations
+    /// (Volcano / Market / Forest / Goldsmith / Clay Pit) don't pan the camera
+    /// past map bounds. Previously the SKAction.move targeted the raw station
+    /// position and intentionally bypassed clamp via `isCameraActionInFlight`,
+    /// which let the camera escape the map for 0.5s, exposing the parchment
+    /// background around the terrain — then the finalize clamp slammed it
+    /// back. That snap-back was the visible "shift" bug.
     private func zoomCameraToStation(_ stationPos: CGPoint) {
         guard let cameraNode = cameraNode else { return }
-        isCameraActionInFlight = true
-        let moveAction = SKAction.move(to: stationPos, duration: 0.5)
+        let clampedTarget = clampedPosition(for: stationPos)
+        let moveAction = SKAction.move(to: clampedTarget, duration: 0.5)
         moveAction.timingMode = .easeInEaseOut
-        let finalize = SKAction.run { [weak self] in
-            self?.isCameraActionInFlight = false
-            self?.clampCamera()  // one final clamp once the move lands
-        }
-        cameraNode.run(SKAction.sequence([moveAction, finalize]), withKey: "cameraZoom")
+        cameraNode.run(moveAction, withKey: "cameraZoom")
     }
 
     /// Nudge camera upward so the station appears in the top third of the screen.
@@ -1626,6 +1621,30 @@ class WorkshopScene: SKScene, ScrollZoomable {
     }
 
     // MARK: - Camera Clamping
+
+    /// Where the camera *can* be while looking at `target`, given the current
+    /// scale and view bounds. Used by the walk-follow lerp so we lerp toward
+    /// a reachable position instead of toward `playerNode.position` (which
+    /// for edge stations like Volcano / Market is outside the allowed range —
+    /// clamp would slam the camera back to bounds every frame, creating the
+    /// visible "shift").
+    private func clampedPosition(for target: CGPoint) -> CGPoint {
+        let scale = cameraNode.xScale
+        let viewSize = view?.bounds.size ?? CGSize(width: 1024, height: 768)
+        let renderScale = max(viewSize.width / self.size.width,
+                              viewSize.height / self.size.height)
+        let visibleWidth = (viewSize.width / renderScale) * scale
+        let visibleHeight = (viewSize.height / renderScale) * scale
+
+        let minX = visibleWidth / 2
+        let maxX = mapSize.width - (visibleWidth / 2)
+        let minY = visibleHeight / 2
+        let maxY = mapSize.height - (visibleHeight / 2)
+
+        let clampedX = maxX > minX ? max(minX, min(maxX, target.x)) : mapSize.width / 2
+        let clampedY = maxY > minY ? max(minY, min(maxY, target.y)) : mapSize.height / 2
+        return CGPoint(x: clampedX, y: clampedY)
+    }
 
     private func clampCamera() {
         // Clamp SCALE first — prevents SKActions from overshooting maxZoomOutScale

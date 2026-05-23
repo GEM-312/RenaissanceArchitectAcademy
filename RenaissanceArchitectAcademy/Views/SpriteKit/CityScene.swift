@@ -338,33 +338,21 @@ class CityScene: SKScene, ScrollZoomable {
             applyTheme()
         }
 
-        // Smoothly follow the player while walking to a building + gradually
-        // zoom in during the approach. The on-arrival snap-zoom is removed
-        // (zoomCameraToBuilding only pans), so the camera stays wherever the
-        // gradual zoom landed when the player gets there.
+        // Smoothly follow the player while walking to a building. Lerp toward
+        // the clamp-respecting position for the player — for edge buildings
+        // the raw player position is outside the allowed camera range, and
+        // lerping toward it would have clamp slam the camera back to bounds
+        // every frame (visible "shift"). Lerping toward the clamped target
+        // means lerp and clamp agree, so the camera glides smoothly and the
+        // player walks into frame at the edge.
         if isFollowingPlayer {
-            let target = playerNode.position
+            let target = clampedPosition(for: playerNode.position)
             let current = cameraNode.position
             let lerpFactor: CGFloat = 0.08
             cameraNode.position = CGPoint(
                 x: current.x + (target.x - current.x) * lerpFactor,
                 y: current.y + (target.y - current.y) * lerpFactor
             )
-
-            // Gradual zoom: ease from overview → close-up during approach
-            if let dest = walkTargetPosition {
-                let totalDist = hypot(dest.x - cameraNode.position.x, dest.y - cameraNode.position.y)
-                let closeZoom: CGFloat = 0.55
-                let farZoom: CGFloat = 0.8
-                let zoomStartDist: CGFloat = 800  // city map is bigger, start zooming earlier
-
-                if totalDist < zoomStartDist {
-                    let progress = 1.0 - (totalDist / zoomStartDist)
-                    let targetScale = farZoom - (farZoom - closeZoom) * progress
-                    let currentScale = cameraNode.xScale
-                    cameraNode.setScale(currentScale + (targetScale - currentScale) * 0.06)
-                }
-            }
         }
 
         // Spotlight follows player, fades in/out with walking
@@ -955,22 +943,29 @@ class CityScene: SKScene, ScrollZoomable {
 
     // MARK: - Camera Follow & Zoom
 
-    /// Start following player — gentle initial zoom into walking range.
-    /// Gradual zoom toward closeZoom continues in update() as the player approaches.
+    /// Start following player — front-load the zoom to close-zoom in 0.5s so
+    /// clamp can't pull the camera off edge stations during the walk. The
+    /// previous approach (gentle 0.8 zoom + gradual 0.8→0.55 in update())
+    /// kept visible area too large during the walk, causing visible "shifts"
+    /// at edge stations when clamp engaged.
     private func startFollowingPlayer(toward target: CGPoint) {
         guard let cameraNode = cameraNode else { return }
         isFollowingPlayer = true
         walkTargetPosition = target
 
-        let zoomAction = SKAction.scale(to: 0.8, duration: 0.5)
+        let zoomAction = SKAction.scale(to: 0.6, duration: 0.5)
         zoomAction.timingMode = .easeInEaseOut
         cameraNode.run(zoomAction, withKey: "cameraZoom")
     }
 
     /// Settle camera on the building after player arrives — pan only, no zoom change.
+    /// The move target is clamped to the camera's allowed range so edge buildings
+    /// (Glassworks, Pantheon, Printing Press, Harbor) don't pan the camera past
+    /// map bounds, which would expose the parchment background around the terrain.
     private func zoomCameraToBuilding(_ buildingPos: CGPoint) {
         guard let cameraNode = cameraNode else { return }
-        let moveAction = SKAction.move(to: buildingPos, duration: 0.5)
+        let clampedTarget = clampedPosition(for: buildingPos)
+        let moveAction = SKAction.move(to: clampedTarget, duration: 0.5)
         moveAction.timingMode = .easeInEaseOut
         cameraNode.run(moveAction, withKey: "cameraZoom")
     }
@@ -1027,6 +1022,29 @@ class CityScene: SKScene, ScrollZoomable {
     }
 
     // MARK: - Camera Control
+
+    /// Where the camera *can* be while looking at `target`, given the current
+    /// scale and view bounds. Used by the walk-follow lerp so we lerp toward
+    /// a reachable position instead of toward `playerNode.position` (which
+    /// for edge stations is outside the allowed range — clamp would slam the
+    /// camera back to bounds every frame, creating the visible "shift").
+    private func clampedPosition(for target: CGPoint) -> CGPoint {
+        let scale = cameraNode.xScale
+        let viewSize = view?.bounds.size ?? CGSize(width: 1024, height: 768)
+        let renderScale = max(viewSize.width / self.size.width,
+                              viewSize.height / self.size.height)
+        let visibleWidth = (viewSize.width / renderScale) * scale
+        let visibleHeight = (viewSize.height / renderScale) * scale
+
+        let minX = visibleWidth / 2
+        let maxX = mapSize.width - (visibleWidth / 2)
+        let minY = visibleHeight / 2
+        let maxY = mapSize.height - (visibleHeight / 2)
+
+        let clampedX = maxX > minX ? max(minX, min(maxX, target.x)) : mapSize.width / 2
+        let clampedY = maxY > minY ? max(minY, min(maxY, target.y)) : mapSize.height / 2
+        return CGPoint(x: clampedX, y: clampedY)
+    }
 
     private func clampCamera() {
         // Keep maxZoomOutScale in sync with the current view size so the
