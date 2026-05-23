@@ -37,6 +37,11 @@ typealias PlatformImage = NSImage
         case invalidKey
         case networkFailed(String)
         case unparseableResponse(String)
+        /// Claude hit max_tokens before finishing the JSON — the response is cut off.
+        /// Retrying the same request will truncate again; raise `maxTokens` instead.
+        case truncated
+        /// Claude declined to grade the sketch (stop_reason == "refusal").
+        case refused
 
         var errorDescription: String? {
             switch self {
@@ -44,6 +49,8 @@ typealias PlatformImage = NSImage
             case .invalidKey:            return "Proxy token missing. Paste your hex token into APIKeys.swift."
             case .networkFailed(let m):  return "Network error: \(m)"
             case .unparseableResponse(let m): return "Couldn't parse Claude response: \(m)"
+            case .truncated:             return "The grade was cut short. Try sketching again."
+            case .refused:               return "Couldn't grade that sketch. Try again."
             }
         }
     }
@@ -180,8 +187,28 @@ typealias PlatformImage = NSImage
     // MARK: - Response parsing
 
     private func parseResult(from data: Data) throws -> Result {
-        guard let top = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let content = top["content"] as? [[String: Any]],
+        guard let top = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            throw ValidationError.unparseableResponse("response wasn't a JSON object")
+        }
+
+        // Inspect why Claude stopped BEFORE trying to decode the JSON body.
+        // "max_tokens" guarantees the grade JSON is cut off; "refusal" means
+        // Claude declined and there's no usable grade. Surfacing these as
+        // distinct errors stops us from blindly retrying a request that will
+        // truncate/refuse again (and re-billing for the same dead result).
+        let stopReason = top["stop_reason"] as? String
+        switch stopReason {
+        case "max_tokens":
+            print("[SketchValidator] ⚠️ stop_reason=max_tokens — grade JSON truncated (maxTokens=\(Self.maxTokens))")
+            throw ValidationError.truncated
+        case "refusal":
+            print("[SketchValidator] ⚠️ stop_reason=refusal — Claude declined to grade")
+            throw ValidationError.refused
+        default:
+            break
+        }
+
+        guard let content = top["content"] as? [[String: Any]],
               let textBlock = content.first(where: { ($0["type"] as? String) == "text" }),
               let text = textBlock["text"] as? String else {
             throw ValidationError.unparseableResponse("no text block in response")

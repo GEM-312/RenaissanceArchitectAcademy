@@ -131,11 +131,29 @@ import Foundation
         }
 
         // Parse Claude API response format
-        guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let content = json["content"] as? [[String: Any]],
+        guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            throw ClaudeError.parseError
+        }
+
+        // Why did Claude stop? "refusal" means the content array has no text
+        // block — bail to a friendly fallback instead of a confusing parse
+        // error. "max_tokens" means the reply was clipped at our 300-token cap;
+        // we still show the partial text (better than nothing) but log it so a
+        // recurring clip is a signal to raise the limit, not silently lose words.
+        let stopReason = json["stop_reason"] as? String
+        if stopReason == "refusal" {
+            print("[ClaudeService] ⚠️ stop_reason=refusal — bird declined")
+            return "Hmm, let's explore a different question about this card! 🐦"
+        }
+
+        guard let content = json["content"] as? [[String: Any]],
               let firstBlock = content.first,
               let text = firstBlock["text"] as? String else {
             throw ClaudeError.parseError
+        }
+
+        if stopReason == "max_tokens" {
+            print("[ClaudeService] ⚠️ stop_reason=max_tokens — bird reply clipped at \(300) tokens")
         }
 
         return text
