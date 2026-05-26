@@ -1,0 +1,13 @@
+{
+  "name": "raa-bird-chat-evals",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Prompt eval harness for the Renaissance Architect Academy bird companion (code-based + Sonnet-judge grading).",
+  "scripts": {
+    "eval": "node run-evals.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

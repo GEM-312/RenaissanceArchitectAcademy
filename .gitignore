@@ -113,3 +113,6 @@ RenaissanceArchitectAcademy/*.mp4
 
 # Graphify knowledge graph (regenerated locally via /graphify)
 graphify-out/
+
+# Eval run outputs (timestamped reports — keep testset + script, not results)
+evals/results/
