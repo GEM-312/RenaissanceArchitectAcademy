@@ -19,6 +19,11 @@ import Foundation
     /// Model to use (Haiku for speed + cost)
     static let model = "claude-haiku-4-5-20251001"
 
+    /// Sampling randomness (0.0 = deterministic, 1.0 = default). Set ONLY
+    /// temperature OR top_p, never both (Claude 4+ returns 400). Allowed on
+    /// Haiku/Sonnet 4.x — note it is removed on Opus 4.7.
+    private let temperature = 0.7
+
     // MARK: - State
 
     var messages: [ChatMessage] = []
@@ -107,6 +112,7 @@ import Foundation
         let requestBody: [String: Any] = [
             "model": Self.model,
             "max_tokens": 300,
+            "temperature": temperature,
             "system": context.systemPrompt,
             "messages": apiMessages
         ]
