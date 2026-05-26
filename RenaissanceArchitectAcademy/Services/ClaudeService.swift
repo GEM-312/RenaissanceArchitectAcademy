@@ -30,6 +30,11 @@ import Foundation
     var isLoading = false
     var error: String?
 
+    /// The reply currently forming, character-by-character, while streaming.
+    /// Non-nil only during an active stream; the UI shows it as a live bubble,
+    /// then clears once the finished message is appended to `messages`.
+    var streamingText: String?
+
     /// Current context for the bird companion
     private var currentContext: BirdContext?
 
@@ -85,6 +90,7 @@ import Foundation
         currentContext = nil
         error = nil
         isLoading = false
+        streamingText = nil
     }
 
     // MARK: - Claude API Call (via Cloudflare Worker proxy)
@@ -113,6 +119,7 @@ import Foundation
             "model": Self.model,
             "max_tokens": 300,
             "temperature": temperature,
+            "stream": true,
             "system": context.systemPrompt,
             "messages": apiMessages
         ]
@@ -122,47 +129,80 @@ import Foundation
         request.setValue("application/json", forHTTPHeaderField: "content-type")
         request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
         try await WorkerClient.authenticate(&request)
-        request.timeoutInterval = 15
+        request.timeoutInterval = 30  // streaming connection stays open longer than the old one-shot
 
-        let (data, httpResponse) = try await URLSession.shared.data(for: request)
+        // Stream the reply as Server-Sent Events. Each `data:` line carries one
+        // Anthropic stream event; we append text deltas to `assembled` and mirror
+        // them live to `streamingText` so the UI shows the reply forming word by
+        // word instead of waiting for the whole round-trip. `defer` guarantees the
+        // live buffer is cleared on every exit path (success, refusal, or throw).
+        streamingText = ""
+        defer { streamingText = nil }
+
+        let (bytes, httpResponse) = try await URLSession.shared.bytes(for: request)
 
         guard let response = httpResponse as? HTTPURLResponse else {
             throw ClaudeError.apiError
         }
 
         guard (200...299).contains(response.statusCode) else {
-            let body = String(data: data, encoding: .utf8) ?? "unknown"
+            // Drain the (non-streamed) error body for logging, then bail.
+            var body = ""
+            for try await line in bytes.lines { body += line }
             print("[ClaudeService] API error \(response.statusCode): \(body)")
             throw ClaudeError.apiError
         }
 
-        // Parse Claude API response format
-        guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-            throw ClaudeError.parseError
+        var assembled = ""
+        var stopReason: String?
+
+        for try await line in bytes.lines {
+            guard line.hasPrefix("data:") else { continue }
+            let payload = line.dropFirst(5).trimmingCharacters(in: .whitespaces)
+            guard let data = payload.data(using: .utf8),
+                  let event = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let type = event["type"] as? String else { continue }
+
+            switch type {
+            case "content_block_delta":
+                if let delta = event["delta"] as? [String: Any],
+                   let text = delta["text"] as? String {
+                    assembled += text
+                    streamingText = assembled  // live update — class is @MainActor, resumes on main
+                }
+            case "message_delta":
+                // Carries the terminal stop_reason once the model finishes.
+                if let delta = event["delta"] as? [String: Any] {
+                    stopReason = delta["stop_reason"] as? String
+                }
+            case "error":
+                let message = (event["error"] as? [String: Any])?["message"] as? String ?? "unknown"
+                print("[ClaudeService] Stream error: \(message)")
+                throw ClaudeError.apiError
+            default:
+                break  // message_start, content_block_start/stop, ping, message_stop
+            }
         }
 
-        // Why did Claude stop? "refusal" means the content array has no text
-        // block — bail to a friendly fallback instead of a confusing parse
-        // error. "max_tokens" means the reply was clipped at our 300-token cap;
-        // we still show the partial text (better than nothing) but log it so a
-        // recurring clip is a signal to raise the limit, not silently lose words.
-        let stopReason = json["stop_reason"] as? String
+        // Why did Claude stop? "refusal" means no text was produced — bail to a
+        // friendly fallback instead of a confusing parse error. "max_tokens"
+        // means the reply was clipped at our 300-token cap; we still show the
+        // partial text (better than nothing) but log it so a recurring clip is a
+        // signal to raise the limit, not silently lose words.
         if stopReason == "refusal" {
             print("[ClaudeService] ⚠️ stop_reason=refusal — bird declined")
             return "Hmm, let's explore a different question about this card! 🐦"
         }
 
-        guard let content = json["content"] as? [[String: Any]],
-              let firstBlock = content.first,
-              let text = firstBlock["text"] as? String else {
+        guard !assembled.isEmpty else {
             throw ClaudeError.parseError
         }
 
         if stopReason == "max_tokens" {
-            print("[ClaudeService] ⚠️ stop_reason=max_tokens — bird reply clipped at \(300) tokens")
+            print("[ClaudeService] ⚠️ stop_reason=max_tokens — bird reply clipped at 300 tokens")
         }
 
-        return text
+        return assembled
     }
 
     // MARK: - Mock Responses (Development)

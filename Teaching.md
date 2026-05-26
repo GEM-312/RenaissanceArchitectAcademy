@@ -350,3 +350,16 @@ Neither RAA nor ChefAcademy has one (as of May 20 2026). Adding `"Bash(xcodebuil
 
 **KEY TAKEAWAY**
 settings.json = pre-approving safe routine commands so deep work isn't interrupted. Start minimal (only what you trust), expand as you spot recurring prompts.
+
+## Streaming with Server-Sent Events (SSE) — May 26 2026
+**Concept:** A normal HTTP request waits for the entire response before you see anything. SSE keeps the connection open and the server pushes the answer in chunks as it's generated, so the reply "types itself."
+
+**Steps:**
+1. Add `"stream": true` to the request → Anthropic responds with `data:` event lines instead of one JSON blob.
+2. Swap `URLSession.data(for:)` → `URLSession.bytes(for:)` (async byte sequence).
+3. `for try await line in bytes.lines` — each iteration is one event line; parse the JSON after `data:`.
+4. `content_block_delta` = a text fragment (append to buffer + mirror to `streamingText` for live UI); `message_delta` = final `stop_reason`.
+
+**In our code:** `ClaudeService.callClaudeAPI`. Class is `@MainActor`, so each `streamingText = assembled` write resumes on main automatically — no `MainActor.run` needed. `defer { streamingText = nil }` clears the live buffer on every exit path.
+
+**Takeaway:** Streaming doesn't make the model faster; it makes the wait *feel* shorter by showing progress instead of a spinner.

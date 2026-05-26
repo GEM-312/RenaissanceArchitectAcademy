@@ -11,6 +11,10 @@ import SwiftUI
     var isLoading = false
     var error: String?
 
+    /// Live partial reply forwarded from a streaming service (Claude). Nil when
+    /// not streaming or when the active service doesn't stream.
+    var streamingText: String?
+
     /// Whether the user needs to pick an AI provider (first time)
     var showProviderPicker = false
 
@@ -91,12 +95,14 @@ import SwiftUI
             _ = service.messages
             _ = service.isLoading
             _ = service.error
+            _ = service.streamingText
         } onChange: {
             Task { @MainActor [weak self] in
                 guard let self, self.activeService != nil else { return }
                 self.messages = service.messages
                 self.isLoading = service.isLoading
                 self.error = service.error
+                self.streamingText = service.streamingText
                 self.observeService(service)  // re-register for next change
             }
         }
@@ -125,6 +131,7 @@ import SwiftUI
         messages = []
         error = nil
         isLoading = false
+        streamingText = nil
         currentContext = nil
     }
 

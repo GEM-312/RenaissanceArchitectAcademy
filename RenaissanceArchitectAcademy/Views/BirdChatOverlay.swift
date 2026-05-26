@@ -149,8 +149,15 @@ struct BirdChatOverlay: View {
                         }
                     }
 
-                    // Loading indicator
-                    if chatViewModel.isLoading {
+                    // Live streaming reply (Claude) — reuses the bird bubble so
+                    // the answer appears to form word by word as it arrives.
+                    if let streaming = chatViewModel.streamingText, !streaming.isEmpty {
+                        birdBubble(text: streaming, id: "streaming")
+                    }
+
+                    // Loading indicator — only while we're waiting with nothing yet
+                    // to show. Once streaming text starts, the live bubble takes over.
+                    if chatViewModel.isLoading && (chatViewModel.streamingText?.isEmpty ?? true) {
                         HStack(spacing: 6) {
                             TypingIndicator()
                             Text("Thinking...")
@@ -187,6 +194,12 @@ struct BirdChatOverlay: View {
                     } else if let last = chatViewModel.messages.last {
                         proxy.scrollTo(last.id.uuidString, anchor: .bottom)
                     }
+                }
+            }
+            .onChange(of: chatViewModel.streamingText) { _, newValue in
+                // Keep the forming reply pinned to the bottom as it grows.
+                if let text = newValue, !text.isEmpty {
+                    proxy.scrollTo("streaming", anchor: .bottom)
                 }
             }
         }

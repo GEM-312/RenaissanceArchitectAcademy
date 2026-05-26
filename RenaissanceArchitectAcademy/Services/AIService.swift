@@ -83,6 +83,10 @@ protocol AIService: AnyObject {
     var isLoading: Bool { get }
     var error: String? { get }
 
+    /// The reply currently forming while streaming, or nil if this service
+    /// doesn't stream (Mock, Apple Intelligence). Lets the UI show a live bubble.
+    var streamingText: String? { get }
+
     /// Whether this service supports autonomous tool calling (calendar, progress, inventory)
     var supportsTools: Bool { get }
 
@@ -96,6 +100,9 @@ protocol AIService: AnyObject {
 // Default implementations so MockAIService and ClaudeService don't need changes
 extension AIService {
     var supportsTools: Bool { false }
+
+    /// Non-streaming services (Mock, Apple Intelligence) have no live buffer.
+    var streamingText: String? { nil }
 
     func startSession(context: BirdContext, toolContext: GameToolContext) {
         // Default: ignore tool context, start plain session
