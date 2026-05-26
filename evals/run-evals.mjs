@@ -24,7 +24,7 @@ import { dirname, join } from "node:path";
 const HERE = dirname(fileURLToPath(import.meta.url));
 const CHAT_URL = "https://raa-api.pollak.workers.dev/chat";
 const CANDIDATE_MODEL = "claude-haiku-4-5-20251001"; // must match ClaudeService.model
-const CANDIDATE_TEMPERATURE = 0.7;                    // must match ClaudeService.temperature
+const CANDIDATE_TEMPERATURE = 0.0;                    // must match ClaudeService.temperature
 const JUDGE_MODEL = "claude-sonnet-4-6";
 const REQUEST_GAP_MS = 400; // stay well under the Worker's 60 req/60s per-IP cap
 

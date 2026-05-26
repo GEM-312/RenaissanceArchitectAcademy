@@ -19,10 +19,12 @@ import Foundation
     /// Model to use (Haiku for speed + cost)
     static let model = "claude-haiku-4-5-20251001"
 
-    /// Sampling randomness (0.0 = deterministic, 1.0 = default). Set ONLY
-    /// temperature OR top_p, never both (Claude 4+ returns 400). Allowed on
-    /// Haiku/Sonnet 4.x — note it is removed on Opus 4.7.
-    private let temperature = 0.7
+    /// Sampling randomness (0.0 = deterministic, 1.0 = default). We use 0.0 so
+    /// the bird's answers are consistent and stay tightly on the facts/lesson —
+    /// the same question gives the same reliable reply, which also makes the
+    /// prompt evals reproducible. Set ONLY temperature OR top_p, never both
+    /// (Claude 4+ returns 400). Allowed on Haiku/Sonnet 4.x — removed on Opus 4.7.
+    private let temperature = 0.0
 
     // MARK: - State
 

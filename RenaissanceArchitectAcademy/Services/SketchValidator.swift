@@ -59,6 +59,9 @@ typealias PlatformImage = NSImage
 
     private static let model = "claude-haiku-4-5-20251001"
     private static let maxTokens = 512
+    /// 0.0 = deterministic. Grading MUST be reproducible — the same sketch
+    /// should always get the same score, so we pin temperature to zero.
+    private static let temperature = 0.0
 
     // MARK: - State
 
@@ -121,6 +124,7 @@ typealias PlatformImage = NSImage
         [
             "model": Self.model,
             "max_tokens": Self.maxTokens,
+            "temperature": Self.temperature,
             "system": """
                 You are an architecture tutor grading a student's floor-plan sketch for \
                 \(buildingName). You will receive two images:
