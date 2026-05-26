@@ -1,5 +1,30 @@
 # Bird-chat prompt evals
 
+Two complementary harnesses, both routing through the **real Cloudflare Worker
+`/chat`** (so they test the prod path) and both authenticating with the shared
+proxy token via `RAA_PROXY_TOKEN` — never inline it on the command line.
+
+| Harness | Dataset | Grading | Output |
+|---|---|---|---|
+| `run-evals.mjs` (Node) | fixed `testset.json` (18 hand-written cases) | code-based checks **+** Sonnet judge (5 axes) | `results/<ts>.{json,md}` |
+| `bird_eval.py` (Python) | **auto-generated** by Sonnet from a task spec | Sonnet judge 1–10 + mandatory criteria → auto-fail | `results/<ts>.{json,html}` + `dataset-<ts>.json` |
+
+`bird_eval.py` is the Anthropic-course `PromptEvaluator` framework
+(`AnthropicCourse/002_prompting_completed.ipynb`) adapted to this project: it
+auto-builds a diverse dataset, runs the bird's real system prompt (Haiku, temp
+0.0), and grades each reply with a strict Sonnet judge that forces a score ≤ 3 on
+any safety/hallucination/off-topic violation. Zero pip dependencies (stdlib only).
+
+```bash
+export RAA_PROXY_TOKEN=$(cat /path/to/your/token-file)
+python3 evals/bird_eval.py        # auto-dataset + model-graded HTML report
+node    evals/run-evals.mjs        # fixed cases + code checks + judge
+```
+
+---
+
+## run-evals.mjs
+
 Evaluates the bird companion's system prompt against a fixed test set, two ways:
 
 1. **Code-based graders** (deterministic, free) — non-empty, length budget, no
