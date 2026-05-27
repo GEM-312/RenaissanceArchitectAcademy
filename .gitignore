@@ -116,3 +116,6 @@ graphify-out/
 
 # Eval run outputs (timestamped reports — keep testset + script, not results)
 evals/results/
+
+# Eval API key (local only — never commit)
+evals/apikey.env
