@@ -4,14 +4,12 @@
 Educational city-building game where students solve architectural challenges across 13+ sciences. Leonardo da Vinci notebook aesthetic with watercolor + blueprint style.
 
 **Developer:** Marina Pollak
-**School:** Columbia College Chicago - Final Semester
-**Timeline:** Jan 30 - May 15, 2025
 
 ## Tech Stack
 - **SwiftUI + SpriteKit** (migrated from Unity Feb 2025)
-- Midjourney AI art (style ref: `--sref 3186415970`)
+- Art: OpenArt (mixed models, incl. a Midjourney mix)
 - GitHub: https://github.com/GEM-312/RenaissanceArchitectAcademy
-- Target: iOS 17+, macOS 14+
+- Target: iOS 26+, macOS 14+
 
 ## Project Structure
 ```
@@ -197,7 +195,7 @@ RenaissanceArchitectAcademy/
   - Tap furniture → apprentice walks there → SwiftUI overlay appears
   - Player spawns at door position (bottom-center), walks to furniture via waypoint graph
 - Crafting flow: Collect outdoors → enter Crafting Room → Mix at workbench → Fire in furnace → Educational popup
-- 6 resource stations have Midjourney sprites; volcano has 15-frame animation
+- 6 resource stations have OpenArt sprites; volcano has 15-frame animation
 - Crafting room station pulses like resource stations on outdoor map
 - Footstep sound (footstep.wav) plays during apprentice walking (0.55s interval)
 - Master assignments: `MasterAssignment` model, random crafting tasks with bonus florins
@@ -237,101 +235,29 @@ Mathematics, Physics, Chemistry, Geometry, Engineering, Astronomy, Biology, Geol
 - **Mulish** (7 weights available, previously used for body — replaced by EBGaramond Feb 2026)
 - **PetitFormalScript-Regular** (tagline), **Delius-Regular** (handwritten accent)
 
-### Resizing New Midjourney Assets
+## Art Asset Pipeline (OpenArt)
+Art is generated in OpenArt (mixed models incl. Midjourney). Always resize before adding — assets are huge:
 ```bash
-sips -Z 180 "filename.png"   # Science icons
-sips -Z 120 "filename.png"   # Navigation icons
-sips -Z 512 "filename.png"   # City/station icons
+sips -Z 180 f.png   # science icons    sips -Z 120 f.png   # nav icons    sips -Z 512 f.png   # city/station icons
 ```
+Animated GIF → sprite frames: extract all at 512x512 (Claude, PIL seek/resize) → pick 15 evenly-spaced → remove bg (Marina, Photoshop) → build `Assets.xcassets/[Name]Frame00-14.imageset/`. Folders: `Styles/[name]_frames/` (raw, gitignored) → `/selected` → `/clean`.
 
-## GIF Frame Extraction Workflow
-For turning Midjourney/Pika animated GIFs into sprite frames:
+## Roadmap (high-level — active priorities live in session memory)
+Done: lessons + vocab for all 17 buildings (Feb 2026); KnowledgeCardsOverlay + card integration; station sprites.
 
-1. **Extract** all frames at 512x512 (Claude): `PIL Image.open → seek → resize → save`
-2. **Select** 15 key frames evenly spaced → `selected/` subfolder
-3. **Remove backgrounds** (Marina in Photoshop) → `clean/` subfolder
-4. **Create imagesets** (Claude): `Assets.xcassets/[Name]Frame00-14.imageset/`
+Remaining (high-level):
+- Knowledge cards for the remaining 16 buildings (only Pantheon authored, 14 cards)
+- Challenges for the remaining 11 buildings; building images on the city map
+- Sketching Phases 2–4 (Alzato / Sezione / Prospettiva) + content for more buildings
+- Audio pass: music, ambience, UI/crafting/collection/challenge SFX, volume sliders (see audio inventory in memory)
+- Foundation Models on-device: bird tool calling, NPC text, Medici onboarding text
+- Award/badge system; bird nudge to explore after workshop; quiz triggers on milestones
+- Persist progress (UserDefaults/SwiftData); construction + bloom animations; expansion terrain tiles
+- iPhone layout testing (all mini-games + flows); terrain/camera polish (LOD, micro-environments)
 
-```
-Styles/[name]_frames/          # All extracted (gitignored)
-Styles/[name]_frames/selected/ # 15 key frames
-Styles/[name]_frames/clean/    # Photoshop exports (no bg)
-```
-
-## Next Steps
-
-### PRIORITY 1: Knowledge Cards — Remaining Buildings
-- [x] ~~KnowledgeCardsOverlay reusable component~~ (DONE)
-- [x] ~~Card integration across all 4 environments~~ (DONE)
-- [ ] Author cards for remaining 16 buildings (Pantheon has 14 cards, others need content)
-- [ ] Card aurora glow uses per-science color at subtle opacity (0.4/0.3) — consistent design
-
-### PRIORITY 2: Audio & Sound Design
-- [ ] Background music — ambient Renaissance lute/harpsichord loop for main menu, city map, workshop
-- [ ] Forest ambience — birds, wind, rustling leaves (looping)
-- [ ] Crafting room ambience — crackling fire, workshop sounds
-- [ ] UI sounds — button tap, overlay open/close, page turn (lessons)
-- [ ] Crafting sounds — workbench mixing, furnace fire whoosh, crafting complete chime
-- [ ] Collection sounds — resource pickup, timber chop, stone quarry hit
-- [ ] Challenge sounds — correct answer ding, wrong answer buzz, quiz complete fanfare
-- [ ] Walking sounds — footstep.wav already exists (0.55s interval), add surface variants (stone, grass, wood)
-- [ ] Transition sounds — scene enter/exit swoosh, crafting room door creak
-- [ ] Bird companion — chirp on hint, squawk on wrong answer, happy trill on success
-- [ ] Sketch sounds — pencil scratch on canvas, stamp for column placement
-- [ ] Consider AVAudioPlayer for music loops, SKAction.playSoundFileNamed for SFX
-- [ ] Volume controls — separate sliders for music vs SFX in settings/profile
-
-### PRIORITY 3: Foundation Models — On-Device AI (Mar 27 2026)
-- [ ] Test dynamic Medici commission text in onboarding
-- [ ] Test bird tool calling (calendar, progress, inventory) — ask "what should I work on?"
-- [ ] Test NPC text generation at workshop stations
-- [ ] Generate Medici character art in Midjourney for onboarding animation
-- [ ] Generate NPC character art in Midjourney for workshop stations
-- [ ] Image Playground: NO people/names/non-English — only objects, scenes, animals (see memory)
-
-### Game Flow & Progression
-- [ ] Prompt user to explore cities/buildings after workshop play (bird nudge system)
-- [ ] Trigger quizzes after certain gameplay milestones (time played, materials collected, buildings visited)
-- [ ] Award system — badges, achievements for completing challenges, crafting, sketching
-- [ ] Re-enable onboarding skip (uncomment check in ContentView after onboarding is finalized)
-
-### Content
-- [x] ~~Create lessons for all 17 buildings~~ (DONE — Feb 2026)
-- [x] ~~Create vocabulary for all 17 buildings~~ (DONE — Feb 2026)
-- [ ] Create challenges for remaining 11 buildings
-- [ ] Add building images to city map
-- [ ] Sketching Phase 2 (Alzato elevation) — drag-drop facade elements
-- [ ] Sketching Phase 3 (Sezione cross-section) — structural + light rays
-- [ ] Sketching Phase 4 (Prospettiva perspective) — vanishing points
-- [ ] Add sketching content for remaining buildings
-
-### Art & Assets
-- [ ] Remove backgrounds from volcano frames (Marina in Photoshop)
-- [x] ~~Add station sprites for remaining stations (market, crafting room)~~ (DONE — Feb 22 2026)
-
-### New Scenes
-- [ ] Building-specific scenes for each of the 17 buildings
-
-### Technical
-- [ ] Adjust 64 waypoints to match new terrain in editor mode
-- [ ] Persist progress with UserDefaults/SwiftData
-- [ ] Building construction animation
-- [ ] Full bloom animation (gray sketch → watercolor)
-- [ ] Generate expansion terrain tiles for map growth
-
-### Responsive Layout Polish (moved down — core layout done Mar 18)
-- [ ] iPhone layout testing — all mini-games (quarry, river, volcano, clay, farm) on iPhone SE
-- [ ] Test Workshop outdoor/indoor layouts on iPhone
-- [ ] Test Forest map overlays on iPhone
-- [ ] Test onboarding flow end-to-end on iPhone
-- [ ] Test lesson reader (BuildingLessonView) on iPhone — pages don't overflow
-- [ ] Test sketching challenge on iPhone — canvas sizing
-
-### Terrain & Camera Polish (moved down)
-- [ ] Improve terrain art for City Map, Workshop, Forest (higher quality Midjourney terrains)
-- [ ] Station micro-environments — detail sprites when zoomed in
-- [ ] LOD system — detail sprites fade based on camera distance + zoom
-- [ ] Terrain blur is implemented (CityScene + WorkshopScene) — see terrain-blur-system.md in memory
+Durable constraints (not just TODOs):
+- **Re-enable onboarding skip** — uncomment the check in `ContentView` once onboarding is finalized.
+- **Image Playground**: NO people/names/non-English — only objects, scenes, animals (see memory).
 
 ## Key Architecture Patterns
 - **MVVM**: Views observe ViewModels via `@ObservedObject` (shared) or `@StateObject`
@@ -379,5 +305,43 @@ When a skill's generic guidance conflicts with CLAUDE.md project rules, **CLAUDE
 - Marina prefers direct fixes over long explanations
 - Teach concepts as you go when making changes — use the Teaching System above
 - Always push to GitHub after significant changes
-- New Midjourney assets are usually huge — always resize before adding
-- Challenge.swift contains all quiz questions
+
+## Karpathy Coding Guidelines (added 2026-05-27)
+Behavioral guidelines to reduce common LLM coding mistakes, from Andrej Karpathy's observations on where LLMs go wrong (wrong assumptions, overcomplication, changing code they don't fully understand). Source: github.com/multica-ai/andrej-karpathy-skills (MIT). These COMPLEMENT the MANDATORY Rules above — where they overlap, the MANDATORY Rules and project decisions still win.
+
+**Tradeoff:** these bias toward caution over speed. For trivial tasks, use judgment.
+
+### 1. Think Before Coding
+**Don't assume. Don't hide confusion. Surface tradeoffs.** Before implementing:
+- State your assumptions explicitly. If uncertain, ask.
+- If multiple interpretations exist, present them — don't pick silently.
+- If a simpler approach exists, say so. Push back when warranted.
+- If something is unclear, stop. Name what's confusing. Ask.
+
+### 2. Simplicity First
+**Minimum code that solves the problem. Nothing speculative.**
+- No features beyond what was asked.
+- No abstractions for single-use code.
+- No "flexibility" or "configurability" that wasn't requested.
+- No error handling for impossible scenarios.
+- If you write 200 lines and it could be 50, rewrite it.
+- Ask: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
+
+### 3. Surgical Changes
+**Touch only what you must. Clean up only your own mess.** When editing existing code:
+- Don't "improve" adjacent code, comments, or formatting.
+- Don't refactor things that aren't broken.
+- Match existing style, even if you'd do it differently.
+- If you notice unrelated dead code, mention it — don't delete it.
+- Remove imports/variables/functions that YOUR changes made unused; don't remove pre-existing dead code unless asked.
+- The test: every changed line should trace directly to the user's request.
+- (Reinforces the existing MANDATORY rule: never change design/colors/sizes/layout unless asked.)
+
+### 4. Goal-Driven Execution
+**Define success criteria. Loop until verified.** Transform tasks into verifiable goals:
+- "Add validation" → "test invalid inputs, then make them pass"
+- "Fix the bug" → "reproduce it with a check, then make it pass"
+- "Refactor X" → "ensure it verifies before and after"
+- For multi-step tasks, state a brief plan with a verify step each: `1. [step] → verify: [check]`
+- Strong success criteria let you loop independently; weak ones ("make it work") force constant clarification.
+- **RAA fit:** this project has no XCTest suite — the standard "verify" here is `xcodebuild ... > /tmp/log 2>&1` (one build at a time) + an iPad/sim smoke test for UI/behavior, not unit tests. Apply the principle (define the check, loop until it passes) using build + run as the verification loop.
