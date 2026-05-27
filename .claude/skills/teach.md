@@ -42,7 +42,7 @@ Keep each teaching moment focused. 4-8 sentences total. No fluff. Think MIT lect
 
 ## How to Save to Teaching.md
 
-After EVERY teaching moment, append it to `/Users/pollakmarina/RenaissanceArchitectAcademy/Teaching.md` under the appropriate section heading using the Edit tool. Format:
+After EVERY teaching moment, append it to `Teaching.md` (at the project root) under the appropriate section heading using the Edit tool. Format:
 
 ```markdown
 ### [Title] — [Date]
