@@ -10,9 +10,12 @@
       "Bash(gh pr list:*)"
     ],
     "deny": [
-      "Read(//Users/pollakmarina/RenaissanceArchitectAcademy/RenaissanceArchitectAcademy/Services/APIKeys.swift)",
-      "Edit(//Users/pollakmarina/RenaissanceArchitectAcademy/RenaissanceArchitectAcademy/Services/APIKeys.swift)",
-      "Write(//Users/pollakmarina/RenaissanceArchitectAcademy/RenaissanceArchitectAcademy/Services/APIKeys.swift)"
+      "Read(/Users/pollakmarina/RenaissanceArchitectAcademy/RenaissanceArchitectAcademy/Services/APIKeys.swift)",
+      "Edit(/Users/pollakmarina/RenaissanceArchitectAcademy/RenaissanceArchitectAcademy/Services/APIKeys.swift)",
+      "Write(/Users/pollakmarina/RenaissanceArchitectAcademy/RenaissanceArchitectAcademy/Services/APIKeys.swift)",
+      "Read(**/Services/APIKeys.swift)",
+      "Edit(**/Services/APIKeys.swift)",
+      "Write(**/Services/APIKeys.swift)"
     ]
   }
 }
