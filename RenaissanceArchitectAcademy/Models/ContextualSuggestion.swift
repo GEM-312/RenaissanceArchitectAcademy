@@ -33,6 +33,9 @@ struct ContextualSuggestion: Equatable {
 
     @Guide(description: "Which game action to suggest. Must be exactly one of: openLesson, openCards, openSketching")
     var suggestedAction: String
+
+    @Guide(description: "True only if a game building GENUINELY connects to one of the events. False if any tie-in would be a stretch (e.g. a software/coding exam, a dentist visit, sports practice) — when false the bird stays quiet.")
+    var isRelevant: Bool
 }
 
 /// Non-Generable mirror used at API boundaries / older-OS fallback path.

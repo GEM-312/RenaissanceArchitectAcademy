@@ -129,6 +129,29 @@ enum BuildingTopicMap {
         ),
     ]
 
+    /// Sciences each building teaches — an authoritative copy of the building
+    /// definitions in CityViewModel. Used by the subject-search tool to map a
+    /// school/class/museum subject to relevant buildings via the 13 Sciences.
+    static let sciencesByBuilding: [Int: [Science]] = [
+        1:  [.engineering, .hydraulics, .mathematics],
+        2:  [.architecture, .engineering, .acoustics],
+        3:  [.hydraulics, .chemistry, .materials],
+        4:  [.geometry, .architecture, .materials],
+        5:  [.engineering, .geology, .materials],
+        6:  [.engineering, .physics, .hydraulics],
+        7:  [.physics, .engineering, .mathematics],
+        8:  [.architecture, .materials, .mathematics],
+        9:  [.geometry, .architecture, .physics],
+        10: [.biology, .chemistry, .geology],
+        11: [.chemistry, .optics, .materials],
+        12: [.engineering, .physics, .materials],
+        13: [.biology, .optics, .chemistry],
+        14: [.engineering, .physics, .materials],
+        15: [.physics, .engineering, .mathematics],
+        16: [.astronomy, .optics, .mathematics],
+        17: [.engineering, .chemistry, .physics],
+    ]
+
     /// Italian travel keywords that hint at any Italy trip — used to widen the
     /// candidate pool when a calendar event mentions Italy without naming a city.
     static let italyTravelKeywords: [String] = [

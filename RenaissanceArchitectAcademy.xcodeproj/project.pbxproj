@@ -285,6 +285,7 @@
 		F031 /* LibreFranklin-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B242F313B22007D8C64 /* LibreFranklin-Italic.ttf */; };
 		F032 /* Delius-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B252F313B22007D8C64 /* Delius-Regular.ttf */; };
 		CD0 /* BuildingTopicMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0 /* BuildingTopicMap.swift */; };
+		0VG /* VenueGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1VG /* VenueGuide.swift */; };
 		CD1 /* ContextualSuggestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1 /* ContextualSuggestion.swift */; };
 		CD2 /* ContextualSuggestionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD2 /* ContextualSuggestionService.swift */; };
 		CD3 /* BirdContextualSuggestionOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD3 /* BirdContextualSuggestionOverlay.swift */; };
@@ -570,6 +571,7 @@
 		BCE /* SketchEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchEditorView.swift; sourceTree = "<group>"; };
 		FCE /* FoldableInventoryBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldableInventoryBar.swift; sourceTree = "<group>"; };
 		BD0 /* BuildingTopicMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingTopicMap.swift; sourceTree = "<group>"; };
+		1VG /* VenueGuide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VenueGuide.swift; sourceTree = "<group>"; };
 		BD1 /* ContextualSuggestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextualSuggestion.swift; sourceTree = "<group>"; };
 		BD2 /* ContextualSuggestionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextualSuggestionService.swift; sourceTree = "<group>"; };
 		BD3 /* BirdContextualSuggestionOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdContextualSuggestionOverlay.swift; sourceTree = "<group>"; };
@@ -805,6 +807,7 @@
 				2C5 /* HistoricalNPCContent.swift */,
 				180 /* KnowledgeCard.swift */,
 				BD0 /* BuildingTopicMap.swift */,
+				1VG /* VenueGuide.swift */,
 				BD1 /* ContextualSuggestion.swift */,
 				196 /* Tool.swift */,
 				197 /* ToolRecipe.swift */,
@@ -1185,6 +1188,7 @@
 				0FB /* GameTools.swift in Sources */,
 				0CS /* CalendarSnapshot.swift in Sources */,
 				CD0 /* BuildingTopicMap.swift in Sources */,
+				0VG /* VenueGuide.swift in Sources */,
 				CD1 /* ContextualSuggestion.swift in Sources */,
 				CD2 /* ContextualSuggestionService.swift in Sources */,
 				CD3 /* BirdContextualSuggestionOverlay.swift in Sources */,

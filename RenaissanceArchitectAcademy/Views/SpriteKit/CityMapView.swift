@@ -784,10 +784,20 @@ struct CityMapView: View {
             // Prefetch bird animations and workshop scene (next likely destination)
             AssetManager.shared.prefetchAssets(tag: AssetManager.birdAnimations)
             AssetManager.shared.prefetchAssets(tag: AssetManager.workshopScene)
-            // Apple Intelligence + EventKit: warm the contextual suggestion cache.
-            // showCityGuidance() picks it up below — the suggestion rides on the
-            // same bird-dialog bubble that already handles phase hints.
-            await ContextualSuggestionStore.shared.refreshIfNeeded()
+            // Apple Intelligence + EventKit: re-check the calendar on EVERY city
+            // entry (force bypasses the 24h throttle + once-per-session gate, and
+            // resets hasShownInGuidance so the suggestion can surface again).
+            await ContextualSuggestionStore.shared.refreshIfNeeded(force: true)
+            // The suggestion arrives async — after the initial guidance pulse has
+            // already fired. Surface it directly here. We can't rely on the
+            // .onChange(of: store.current) below: this view's body never reads the
+            // store, so that observer never fires in normal play (only the debug
+            // button's re-navigation re-ran guidance — which is why it "only
+            // worked in debug").
+            if ContextualSuggestionStore.shared.current != nil,
+               !ContextualSuggestionStore.shared.hasShownInGuidance {
+                showCityGuidance()
+            }
         }
         .onChange(of: ContextualSuggestionStore.shared.current?.buildingId) { _, newId in
             // If the store populates after the initial 1s guidance pulse already
