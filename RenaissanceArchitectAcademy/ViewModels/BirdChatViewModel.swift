@@ -26,39 +26,24 @@ import SwiftUI
     /// Game state for tool calling — set before starting a session
     var gameToolContext: GameToolContext?
 
-    /// Current provider
-    var currentProvider: AIProvider {
-        GameSettings.shared.preferredAIProvider
-    }
+    /// Chat is Claude-only. Apple Intelligence was removed as a chat brain — the
+    /// on-device model is too weak for free-form chat (it still powers the
+    /// contextual-suggestion nudges elsewhere). Hardcoded so the message-cap
+    /// display and service creation don't depend on a stored setting.
+    var currentProvider: AIProvider { .claudePremium }
 
     // MARK: - Service Creation
 
-    /// Create the appropriate AI service based on user preference
+    /// The bird chat always uses Claude (via the Worker proxy).
     private func createService(for provider: AIProvider) -> any AIService {
-        switch provider {
-        case .appleOnDevice:
-            if #available(iOS 26.0, macOS 26.0, *), AppleAIService.isAvailable {
-                return AppleAIService()
-            } else {
-                return MockAIService()
-            }
-        case .claudePremium:
-            return ClaudeService()
-        }
+        ClaudeService()
     }
 
     // MARK: - Session Management
 
-    /// Start a chat session — shows picker first time, then activates service
+    /// Start a chat session — Claude-only, activates immediately (no picker).
     func startSession(context: BirdContext) {
         currentContext = context
-
-        // First time? Show picker instead of chat
-        if !GameSettings.shared.hasChosenAIProvider {
-            showProviderPicker = true
-            return
-        }
-
         activateService(provider: currentProvider, context: context)
     }
 

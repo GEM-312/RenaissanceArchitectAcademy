@@ -431,23 +431,19 @@ struct KnowledgeCardsOverlay: View {
                     // "Ask the Bird" button on completed cards
                     Button {
                         birdChatCard = card
-                        // First time? Show AI picker at parent level. Otherwise open chat.
-                        if !GameSettings.shared.hasChosenAIProvider {
-                            onShowAIPicker?()
-                        } else {
-                            let context = BirdContext(
-                                buildingName: card.buildingName,
-                                buildingId: card.buildingId,
-                                sciences: [card.science.rawValue],
-                                cardTitle: card.title,
-                                cardLesson: card.lessonText,
-                                playerName: playerName,
-                                masteryLevel: "Apprentice"
-                            )
-                            chatViewModel.startSession(context: context)
-                            withAnimation(.spring(response: 0.3)) {
-                                showBirdChat = true
-                            }
+                        // Chat is Claude-only now — open it directly (no provider picker).
+                        let context = BirdContext(
+                            buildingName: card.buildingName,
+                            buildingId: card.buildingId,
+                            sciences: [card.science.rawValue],
+                            cardTitle: card.title,
+                            cardLesson: card.lessonText,
+                            playerName: playerName,
+                            masteryLevel: "Apprentice"
+                        )
+                        chatViewModel.startSession(context: context)
+                        withAnimation(.spring(response: 0.3)) {
+                            showBirdChat = true
                         }
                     } label: {
                         HStack(spacing: 4) {

@@ -6,6 +6,11 @@ import Foundation
 /// app only carries `APIKeys.proxyToken`, the shared-secret that authenticates
 /// the request to the Worker.
 ///
+/// The bird uses real Anthropic tool-use: it can call `checkProgress`,
+/// `checkInventory`, and `checkCalendar` on demand, and our app executes those
+/// tools client-side (the calendar one reads EventKit). Claude decides *when* to
+/// call them — we just run the loop.
+///
 /// Cost: ~$0.05 per 100 bird questions using Haiku 4.5
 @MainActor
 @Observable class ClaudeService: AIService {
@@ -26,19 +31,26 @@ import Foundation
     /// (Claude 4+ returns 400). Allowed on Haiku/Sonnet 4.x — removed on Opus 4.7.
     private let temperature = 0.0
 
+    /// Hard cap on tool-use rounds per question, so a misbehaving model that
+    /// keeps asking for tools can never spin forever (each round is a network call).
+    private let maxToolRounds = 4
+
+    /// This service uses real tool-calling — `BirdChatViewModel` hands us the
+    /// `GameToolContext` so the tools have live progress/inventory data to return.
+    var supportsTools: Bool { true }
+
     // MARK: - State
 
     var messages: [ChatMessage] = []
     var isLoading = false
     var error: String?
 
-    /// The reply currently forming, character-by-character, while streaming.
-    /// Non-nil only during an active stream; the UI shows it as a live bubble,
-    /// then clears once the finished message is appended to `messages`.
-    var streamingText: String?
-
     /// Current context for the bird companion
     private var currentContext: BirdContext?
+
+    /// Live game state the tools read from. Captured at session start; the
+    /// calendar tool reads EventKit directly when called.
+    private var toolContext: GameToolContext?
 
     // BirdContext is defined in AIService.swift (shared across all AI providers)
 
@@ -47,6 +59,16 @@ import Foundation
     /// Start a new chat session with context from a knowledge card
     func startSession(context: BirdContext) {
         currentContext = context
+        toolContext = nil
+        messages = []
+        error = nil
+    }
+
+    /// Start a session WITH game tools. The bird can call checkProgress /
+    /// checkInventory / checkCalendar on demand; these read from `toolContext`.
+    func startSession(context: BirdContext, toolContext: GameToolContext) {
+        currentContext = context
+        self.toolContext = toolContext
         messages = []
         error = nil
     }
@@ -90,121 +112,180 @@ import Foundation
     func endSession() {
         messages = []
         currentContext = nil
+        toolContext = nil
         error = nil
         isLoading = false
-        streamingText = nil
+    }
+
+    // MARK: - Tool Definitions (Anthropic schema)
+
+    /// The tools the bird may call. Descriptions are what Claude reads to decide
+    /// *when* to call each — keep them action-oriented. `input_schema` follows
+    /// JSON Schema; no-argument tools use an empty `properties` object.
+    private static let toolDefinitions: [[String: Any]] = [
+        [
+            "name": "checkProgress",
+            "description": "Check the player's building progress across the 17 buildings — which are complete, in progress, or locked, and which they're working on now. Call when the student asks what to do next or about their progress.",
+            "input_schema": ["type": "object", "properties": [String: Any]()]
+        ],
+        [
+            "name": "checkInventory",
+            "description": "Check the player's raw materials, crafted items, tools, and gold florins. Call to suggest what they can craft or still need to collect.",
+            "input_schema": ["type": "object", "properties": [String: Any]()]
+        ],
+        [
+            "name": "checkCalendar",
+            "description": "Check the student's upcoming real-world calendar events (tests, field trips, museum visits, trips to Italy) so you can connect a lesson to their actual schedule. Call when timing or what's-coming-up is relevant.",
+            "input_schema": [
+                "type": "object",
+                "properties": [
+                    "daysAhead": [
+                        "type": "integer",
+                        "description": "How many days ahead to look, between 1 and 14."
+                    ]
+                ]
+            ]
+        ]
+    ]
+
+    /// Execute a tool the model asked for, returning a string the model reads.
+    private func runTool(name: String, input: [String: Any]) async -> String {
+        guard let ctx = toolContext else {
+            return "No game data is available right now."
+        }
+        switch name {
+        case "checkProgress":
+            return GameSnapshots.buildingProgress(
+                buildingPlots: ctx.buildingPlots,
+                activeBuildingName: ctx.activeBuildingName,
+                totalComplete: ctx.totalComplete
+            )
+        case "checkInventory":
+            return GameSnapshots.inventory(
+                rawMaterials: ctx.rawMaterials,
+                craftedItems: ctx.craftedItems,
+                tools: ctx.tools,
+                florins: ctx.florins
+            )
+        case "checkCalendar":
+            let days = (input["daysAhead"] as? Int) ?? 14
+            return await CalendarSnapshot.upcoming(days: days)
+                ?? "No calendar access, or no upcoming events in that window."
+        default:
+            return "Unknown tool: \(name)"
+        }
     }
 
     // MARK: - Claude API Call (via Cloudflare Worker proxy)
 
-    /// Call Claude through our Cloudflare Worker (`POST /chat`).
-    /// The Worker injects the real Anthropic API key server-side.
+    /// Call Claude through our Cloudflare Worker (`POST /chat`), driving the
+    /// tool-use loop. The Worker injects the real Anthropic key and forwards the
+    /// `tools` array unchanged. Non-streaming: combining live streaming with
+    /// tool-use parsing is fragile, so we take the whole JSON response per turn.
     private func callClaudeAPI(context: BirdContext) async throws -> String {
         guard WorkerClient.isConfigured else {
             throw ClaudeError.noAPIKey
         }
 
-        // Build message history for Claude
-        var apiMessages: [[String: String]] = []
-        for msg in messages {
+        // Seed the API message history from the visible chat (plain text turns).
+        // Content uses [Any] so we can append tool_use / tool_result block arrays
+        // as the loop progresses.
+        var apiMessages: [[String: Any]] = messages.compactMap { msg in
             switch msg.role {
-            case .user:
-                apiMessages.append(["role": "user", "content": msg.content])
-            case .assistant:
-                apiMessages.append(["role": "assistant", "content": msg.content])
-            case .system:
-                break
+            case .user: return ["role": "user", "content": msg.content]
+            case .assistant: return ["role": "assistant", "content": msg.content]
+            case .system: return nil
             }
         }
 
-        let requestBody: [String: Any] = [
-            "model": Self.model,
-            "max_tokens": 300,
-            "temperature": temperature,
-            "stream": true,
-            "system": context.systemPrompt,
-            "messages": apiMessages
-        ]
-
-        var request = URLRequest(url: WorkerClient.chatURL)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "content-type")
-        request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
-        try await WorkerClient.authenticate(&request)
-        request.timeoutInterval = 30  // streaming connection stays open longer than the old one-shot
-
-        // Stream the reply as Server-Sent Events. Each `data:` line carries one
-        // Anthropic stream event; we append text deltas to `assembled` and mirror
-        // them live to `streamingText` so the UI shows the reply forming word by
-        // word instead of waiting for the whole round-trip. `defer` guarantees the
-        // live buffer is cleared on every exit path (success, refusal, or throw).
-        streamingText = ""
-        defer { streamingText = nil }
-
-        let (bytes, httpResponse) = try await URLSession.shared.bytes(for: request)
-
-        guard let response = httpResponse as? HTTPURLResponse else {
-            throw ClaudeError.apiError
-        }
-
-        guard (200...299).contains(response.statusCode) else {
-            // Drain the (non-streamed) error body for logging, then bail.
-            var body = ""
-            for try await line in bytes.lines { body += line }
-            print("[ClaudeService] API error \(response.statusCode): \(body)")
-            throw ClaudeError.apiError
-        }
-
-        var assembled = ""
-        var stopReason: String?
-
-        for try await line in bytes.lines {
-            guard line.hasPrefix("data:") else { continue }
-            let payload = line.dropFirst(5).trimmingCharacters(in: .whitespaces)
-            guard let data = payload.data(using: .utf8),
-                  let event = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                  let type = event["type"] as? String else { continue }
-
-            switch type {
-            case "content_block_delta":
-                if let delta = event["delta"] as? [String: Any],
-                   let text = delta["text"] as? String {
-                    assembled += text
-                    streamingText = assembled  // live update — class is @MainActor, resumes on main
-                }
-            case "message_delta":
-                // Carries the terminal stop_reason once the model finishes.
-                if let delta = event["delta"] as? [String: Any] {
-                    stopReason = delta["stop_reason"] as? String
-                }
-            case "error":
-                let message = (event["error"] as? [String: Any])?["message"] as? String ?? "unknown"
-                print("[ClaudeService] Stream error: \(message)")
+        var round = 0
+        while true {
+            round += 1
+            guard round <= maxToolRounds else {
+                print("[ClaudeService] ⚠️ tool loop hit \(maxToolRounds) rounds — bailing")
                 throw ClaudeError.apiError
-            default:
-                break  // message_start, content_block_start/stop, ping, message_stop
             }
-        }
 
-        // Why did Claude stop? "refusal" means no text was produced — bail to a
-        // friendly fallback instead of a confusing parse error. "max_tokens"
-        // means the reply was clipped at our 300-token cap; we still show the
-        // partial text (better than nothing) but log it so a recurring clip is a
-        // signal to raise the limit, not silently lose words.
-        if stopReason == "refusal" {
-            print("[ClaudeService] ⚠️ stop_reason=refusal — bird declined")
-            return "Hmm, let's explore a different question about this card! 🐦"
-        }
+            let requestBody: [String: Any] = [
+                "model": Self.model,
+                "max_tokens": 300,
+                "temperature": temperature,
+                "system": context.systemPrompt,
+                "tools": Self.toolDefinitions,
+                "messages": apiMessages
+            ]
 
-        guard !assembled.isEmpty else {
-            throw ClaudeError.parseError
-        }
+            var request = URLRequest(url: WorkerClient.chatURL)
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "content-type")
+            request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
+            try await WorkerClient.authenticate(&request)
+            request.timeoutInterval = 30
 
-        if stopReason == "max_tokens" {
-            print("[ClaudeService] ⚠️ stop_reason=max_tokens — bird reply clipped at 300 tokens")
-        }
+            let (data, httpResponse) = try await URLSession.shared.data(for: request)
 
-        return assembled
+            guard let response = httpResponse as? HTTPURLResponse else {
+                throw ClaudeError.apiError
+            }
+            guard (200...299).contains(response.statusCode) else {
+                print("[ClaudeService] API error \(response.statusCode): \(String(data: data, encoding: .utf8) ?? "")")
+                throw ClaudeError.apiError
+            }
+
+            guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let content = json["content"] as? [[String: Any]] else {
+                throw ClaudeError.parseError
+            }
+            let stopReason = json["stop_reason"] as? String
+
+            // Split the response content into text + any tool calls.
+            var assembledText = ""
+            var toolUses: [(id: String, name: String, input: [String: Any])] = []
+            for block in content {
+                switch block["type"] as? String {
+                case "text":
+                    if let t = block["text"] as? String { assembledText += t }
+                case "tool_use":
+                    if let id = block["id"] as? String, let name = block["name"] as? String {
+                        toolUses.append((id, name, block["input"] as? [String: Any] ?? [:]))
+                    }
+                default:
+                    break
+                }
+            }
+
+            // The model asked for tools — run them, feed results back, loop.
+            if stopReason == "tool_use", !toolUses.isEmpty {
+                print("[ClaudeService] 🔧 round \(round): \(toolUses.map(\.name).joined(separator: ", "))")
+                // Echo the assistant's turn verbatim (required before tool_result).
+                apiMessages.append(["role": "assistant", "content": content])
+
+                var resultBlocks: [[String: Any]] = []
+                for use in toolUses {
+                    let result = await runTool(name: use.name, input: use.input)
+                    resultBlocks.append([
+                        "type": "tool_result",
+                        "tool_use_id": use.id,
+                        "content": result
+                    ])
+                }
+                apiMessages.append(["role": "user", "content": resultBlocks])
+                continue
+            }
+
+            // Terminal turn — produce the answer.
+            if stopReason == "refusal" {
+                print("[ClaudeService] ⚠️ stop_reason=refusal — bird declined")
+                return "Hmm, let's explore a different question about this card! 🐦"
+            }
+            guard !assembledText.isEmpty else {
+                throw ClaudeError.parseError
+            }
+            if stopReason == "max_tokens" {
+                print("[ClaudeService] ⚠️ stop_reason=max_tokens — bird reply clipped at 300 tokens")
+            }
+            return assembledText
+        }
     }
 
     // MARK: - Mock Responses (Development)

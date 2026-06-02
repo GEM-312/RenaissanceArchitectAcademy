@@ -138,6 +138,7 @@
 		0F9 /* GenerationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F9 /* GenerationService.swift */; };
 		0FA /* InteractiveVisualHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA /* InteractiveVisualHelpers.swift */; };
 		0FB /* GameTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB /* GameTools.swift */; };
+		0CS /* CalendarSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CS /* CalendarSnapshot.swift */; };
 		0FC /* AqueductInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FC /* AqueductInteractiveVisuals.swift */; };
 		0FD /* NPCDialogueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD /* NPCDialogueView.swift */; };
 		0FE /* NPCEncounterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE /* NPCEncounterManager.swift */; };
@@ -424,6 +425,7 @@
 		1F9 /* GenerationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerationService.swift; sourceTree = "<group>"; };
 		1FA /* InteractiveVisualHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InteractiveVisualHelpers.swift; path = RenaissanceArchitectAcademy/Views/InteractiveVisualHelpers.swift; sourceTree = SOURCE_ROOT; };
 		1FB /* GameTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameTools.swift; sourceTree = "<group>"; };
+		1CS /* CalendarSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarSnapshot.swift; sourceTree = "<group>"; };
 		1FC /* AqueductInteractiveVisuals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AqueductInteractiveVisuals.swift; path = RenaissanceArchitectAcademy/Views/AqueductInteractiveVisuals.swift; sourceTree = SOURCE_ROOT; };
 		1FD /* NPCDialogueView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NPCDialogueView.swift; sourceTree = "<group>"; };
 		1FE /* NPCEncounterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NPCEncounterManager.swift; sourceTree = "<group>"; };
@@ -854,6 +856,7 @@
 				1D5 /* WolframGeometryHelper.swift */,
 				1F9 /* GenerationService.swift */,
 				1FB /* GameTools.swift */,
+				1CS /* CalendarSnapshot.swift */,
 				BD2 /* ContextualSuggestionService.swift */,
 				BD4 /* ContextualSuggestionStore.swift */,
 				1FE /* NPCEncounterManager.swift */,
@@ -1180,6 +1183,7 @@
 				0F8 /* GeneratedContent.swift in Sources */,
 				0F9 /* GenerationService.swift in Sources */,
 				0FB /* GameTools.swift in Sources */,
+				0CS /* CalendarSnapshot.swift in Sources */,
 				CD0 /* BuildingTopicMap.swift in Sources */,
 				CD1 /* ContextualSuggestion.swift in Sources */,
 				CD2 /* ContextualSuggestionService.swift in Sources */,
@@ -1465,6 +1469,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = RenaissanceArchitectAcademy/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.educational-games";
+				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "Your bird companion can reference upcoming events to personalize architecture lessons.";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "Your bird companion can reference upcoming events to personalize architecture lessons.";
 				INFOPLIST_KEY_NSGKFriendListUsageDescription = "See which of your Game Center friends are also exploring Renaissance buildings, so you can compare progress and invite them to learn together.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -1505,6 +1510,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = RenaissanceArchitectAcademy/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.educational-games";
+				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "Your bird companion can reference upcoming events to personalize architecture lessons.";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "Your bird companion can reference upcoming events to personalize architecture lessons.";
 				INFOPLIST_KEY_NSGKFriendListUsageDescription = "See which of your Game Center friends are also exploring Renaissance buildings, so you can compare progress and invite them to learn together.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

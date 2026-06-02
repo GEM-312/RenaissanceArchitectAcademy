@@ -22,6 +22,88 @@ import EventKit
 // KEY TAKEAWAY: Tools make AI personal. The bird doesn't just know architecture —
 // it knows YOUR progress, YOUR materials, YOUR calendar. All on-device, private.
 
+// MARK: - Snapshot Builders (non-gated)
+
+/// Formats game state into human-readable summary strings.
+///
+/// Lives outside the `@available(iOS 26)` tool structs so the cloud
+/// `ClaudeService` (which runs on every OS, since it's the fallback when Apple
+/// Intelligence is unavailable) can build the same snapshots and inject them
+/// into its system prompt. The on-device tools delegate here too — one source
+/// of truth for the wording.
+enum GameSnapshots {
+
+    static func buildingProgress(
+        buildingPlots: [(name: String, state: String, phase: String)],
+        activeBuildingName: String?,
+        totalComplete: Int
+    ) -> String {
+        var lines: [String] = []
+        lines.append("Buildings completed: \(totalComplete) of 17")
+
+        if let active = activeBuildingName {
+            lines.append("Currently working on: \(active)")
+        }
+
+        lines.append("")
+        for plot in buildingPlots {
+            let marker: String
+            switch plot.state {
+            case "complete": marker = "✅"
+            case "construction", "sketched": marker = "🔨"
+            case "available": marker = "📖"
+            default: marker = "🔒"
+            }
+            lines.append("\(marker) \(plot.name) — \(plot.phase)")
+        }
+
+        return lines.joined(separator: "\n")
+    }
+
+    static func inventory(
+        rawMaterials: [String: Int],
+        craftedItems: [String: Int],
+        tools: [String],
+        florins: Int
+    ) -> String {
+        var lines: [String] = []
+
+        lines.append("💰 Florins: \(florins)")
+        lines.append("")
+
+        lines.append("--- Raw Materials ---")
+        if rawMaterials.isEmpty {
+            lines.append("  (none collected yet)")
+        } else {
+            for (name, count) in rawMaterials.sorted(by: { $0.key < $1.key }) {
+                lines.append("  \(name): \(count)")
+            }
+        }
+
+        lines.append("")
+        lines.append("--- Crafted Items ---")
+        if craftedItems.isEmpty {
+            lines.append("  (none crafted yet)")
+        } else {
+            for (name, count) in craftedItems.sorted(by: { $0.key < $1.key }) {
+                lines.append("  \(name): \(count)")
+            }
+        }
+
+        lines.append("")
+        lines.append("--- Tools ---")
+        if tools.isEmpty {
+            lines.append("  (no tools yet — visit the Market to buy your first!)")
+        } else {
+            for tool in tools.sorted() {
+                lines.append("  🔧 \(tool)")
+            }
+        }
+
+        return lines.joined(separator: "\n")
+    }
+}
+
 // MARK: - Building Progress Tool
 
 /// Lets the AI check which buildings the player has completed, started, or needs.
@@ -57,26 +139,11 @@ struct BuildingProgressTool: FoundationModels.Tool {
         activeBuildingName: String?,
         totalComplete: Int
     ) -> String {
-        var lines: [String] = []
-        lines.append("Buildings completed: \(totalComplete) of 17")
-
-        if let active = activeBuildingName {
-            lines.append("Currently working on: \(active)")
-        }
-
-        lines.append("")
-        for plot in buildingPlots {
-            let marker: String
-            switch plot.state {
-            case "complete": marker = "✅"
-            case "construction", "sketched": marker = "🔨"
-            case "available": marker = "📖"
-            default: marker = "🔒"
-            }
-            lines.append("\(marker) \(plot.name) — \(plot.phase)")
-        }
-
-        return lines.joined(separator: "\n")
+        GameSnapshots.buildingProgress(
+            buildingPlots: buildingPlots,
+            activeBuildingName: activeBuildingName,
+            totalComplete: totalComplete
+        )
     }
 }
 
@@ -144,41 +211,12 @@ struct InventoryTool: FoundationModels.Tool {
         tools: [String],
         florins: Int
     ) -> String {
-        var lines: [String] = []
-
-        lines.append("💰 Florins: \(florins)")
-        lines.append("")
-
-        lines.append("--- Raw Materials ---")
-        if rawMaterials.isEmpty {
-            lines.append("  (none collected yet)")
-        } else {
-            for (name, count) in rawMaterials.sorted(by: { $0.key < $1.key }) {
-                lines.append("  \(name): \(count)")
-            }
-        }
-
-        lines.append("")
-        lines.append("--- Crafted Items ---")
-        if craftedItems.isEmpty {
-            lines.append("  (none crafted yet)")
-        } else {
-            for (name, count) in craftedItems.sorted(by: { $0.key < $1.key }) {
-                lines.append("  \(name): \(count)")
-            }
-        }
-
-        lines.append("")
-        lines.append("--- Tools ---")
-        if tools.isEmpty {
-            lines.append("  (no tools yet — visit the Market to buy your first!)")
-        } else {
-            for tool in tools.sorted() {
-                lines.append("  🔧 \(tool)")
-            }
-        }
-
-        return lines.joined(separator: "\n")
+        GameSnapshots.inventory(
+            rawMaterials: rawMaterials,
+            craftedItems: craftedItems,
+            tools: tools,
+            florins: florins
+        )
     }
 }
 
@@ -237,55 +275,8 @@ struct CalendarTool: FoundationModels.Tool {
                 return "The student has no upcoming events in the next \(daysToCheck) days. A great time to explore the workshop!"
             }
 
-            // Filter for events that could connect to game content — school work,
-            // museum/gallery visits, Italy travel, Renaissance/Roman themes.
-            let educationKeywords = [
-                // school
-                "test", "exam", "quiz", "class", "school", "homework", "study",
-                "project", "presentation", "field trip",
-                // museum / gallery / cultural
-                "museum", "gallery", "exhibit", "exhibition", "tour",
-                // subject areas
-                "science", "history", "math", "art", "architecture",
-                "painting", "sculpture", "drawing",
-                // themes the game maps to
-                "renaissance", "roman", "ancient rome", "da vinci", "leonardo",
-                "brunelleschi", "michelangelo", "galileo", "vesalius", "medici",
-                // travel that overlaps with game cities
-                "italy", "italia", "italian",
-                "rome", "roma", "florence", "firenze", "venice", "venezia",
-                "milan", "milano", "padua", "padova", "tuscany",
-                "flight", "hotel", "reservation", "vacation", "trip", "travel"
-            ]
-
-            var relevant: [String] = []
-            var other: [String] = []
-
-            for event in events {
-                let title = event.title ?? "Untitled"
-                let dateStr = event.startDate.formatted(date: .abbreviated, time: .shortened)
-                let entry = "\(dateStr): \(title)"
-
-                let isEducational = educationKeywords.contains { keyword in
-                    title.lowercased().contains(keyword)
-                }
-
-                if isEducational {
-                    relevant.append("📚 \(entry)")
-                } else {
-                    other.append("📅 \(entry)")
-                }
-            }
-
-            var result = "Upcoming events (next \(daysToCheck) days):\n"
-            if !relevant.isEmpty {
-                result += "School-related:\n" + relevant.joined(separator: "\n") + "\n"
-            }
-            if !other.isEmpty {
-                result += "Other:\n" + other.prefix(3).joined(separator: "\n")
-            }
-
-            return result
+            // Shared keyword filter + formatter (see CalendarSnapshot).
+            return CalendarSnapshot.classify(events: events, days: daysToCheck)
 
         } catch {
             // Calendar access denied or error — graceful fallback
