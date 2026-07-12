@@ -1,7 +1,7 @@
 ---
 name: start-new-session
 description: Run the mandatory session-start protocol — read full memory + CLAUDE.md, ask Marina what to work on before assuming. ALWAYS run this at the start of a new session.
-user_invocable: true
+user-invocable: true
 ---
 
 # Start New Session — Mandatory Protocol

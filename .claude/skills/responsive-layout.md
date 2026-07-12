@@ -1,6 +1,6 @@
 ---
 name: responsive-layout
-description: Audit and fix layout sizing across all Apple device sizes (iPhone SE to iPad Pro)
+description: Audit and fix layout sizing across all Apple device sizes (iPhone SE to iPad Pro). Use when Marina says "looks wrong on iPhone", "fix the iPad layout", "text is truncated/cut off", "it's cramped on small screens", "audit the sizing", or a view breaks on a specific device.
 ---
 
 Audit and fix responsive layout issues in the specified view(s). If the user doesn't specify a view, ask which one.

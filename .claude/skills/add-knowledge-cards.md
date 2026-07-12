@@ -1,6 +1,6 @@
 ---
 name: add-knowledge-cards
-description: Author knowledge cards for a building across all environments
+description: Author knowledge cards for a building across cityMap/workshop/forest/craftingRoom environments. Use when Marina says "add cards for X", "write knowledge cards", "author discovery cards", "/add-knowledge-cards", or a building has lessons but no knowledge cards yet.
 ---
 
 Help author knowledge cards for a building. Ask the user which building, then:

@@ -236,11 +236,7 @@ Mathematics, Physics, Chemistry, Geometry, Engineering, Astronomy, Biology, Geol
 - **PetitFormalScript-Regular** (tagline), **Delius-Regular** (handwritten accent)
 
 ## Art Asset Pipeline (OpenArt)
-Art is generated in OpenArt (mixed models incl. Midjourney). Always resize before adding — assets are huge:
-```bash
-sips -Z 180 f.png   # science icons    sips -Z 120 f.png   # nav icons    sips -Z 512 f.png   # city/station icons
-```
-Animated GIF → sprite frames: extract all at 512x512 (Claude, PIL seek/resize) → pick 15 evenly-spaced → remove bg (Marina, Photoshop) → build `Assets.xcassets/[Name]Frame00-14.imageset/`. Folders: `Styles/[name]_frames/` (raw, gitignored) → `/selected` → `/clean`.
+Art is generated in OpenArt (mixed models incl. Midjourney) and exports are huge — **always resize before adding**. Full procedure (sips sizes, imageset + working-folder conventions) lives in the **`/add-art-asset`** skill; animated GIF/video → sprite frames lives in **`/extract-frames`**.
 
 ## Roadmap (high-level — active priorities live in session memory)
 Done: lessons + vocab for all 17 buildings (Feb 2026); KnowledgeCardsOverlay + card integration; station sprites.
@@ -294,12 +290,7 @@ When a skill's generic guidance conflicts with CLAUDE.md project rules, **CLAUDE
 - **ALWAYS read related files before making cross-file changes.** If a change touches callbacks, state, or UI across multiple files (e.g. a Scene + its MapView wrapper), read ALL of them first.
 
 ## Teaching System (PROACTIVE)
-- **ALWAYS teach while coding.** When introducing a new pattern, avoiding a pitfall, fixing a bug, or writing non-trivial logic, deliver a short teaching moment.
-- Print the title in green via Bash: `echo -e "\n\033[1;32m━━━ TEACHING MOMENT: [Title] ━━━\033[0m\n"`
-- Follow with: THE CONCEPT (1-2 sentences) → STEP BY STEP (numbered) → IN OUR CODE (specific reference) → KEY TAKEAWAY (1 sentence)
-- Append every teaching moment to `Teaching.md` under the appropriate section
-- Use `/teach [topic]` to request a specific lesson on demand
-- Teaching style: MIT professor — clear, step-by-step, real-world analogies, no fluff
+- **ALWAYS teach while coding** (proactively — new pattern, avoided pitfall, bug fix, or non-trivial logic triggers a short teaching moment). The full mechanics (green-title format, CONCEPT→STEP→IN OUR CODE→KEY TAKEAWAY structure, `Teaching.md` append format, MIT-professor style) live in the **`/teach`** skill. Use `/teach [topic]` for a lesson on demand.
 
 ## Notes
 - Marina prefers direct fixes over long explanations

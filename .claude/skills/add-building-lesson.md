@@ -1,6 +1,6 @@
 ---
 name: add-building-lesson
-description: Create a new lesson for a building following the established pattern
+description: Create a new Read-to-Earn lesson (readings, fun facts, questions, fill-in-blanks, environment prompts) for a building, following the established LessonContent pattern. Use when Marina says "write a lesson for X", "add a building lesson", "/add-building-lesson", or a building has no lesson content yet.
 ---
 
 Help create a new building lesson. Ask the user which building needs a lesson, then:
