@@ -2,7 +2,7 @@ import SpriteKit
 import CoreImage
 
 /// Reusable terrain blur system — manages sharp/blurred terrain crossfade based on camera zoom.
-/// Used by all outdoor SpriteKit scenes for consistent depth-of-field effect.
+/// Used by CityScene and WorkshopScene (ForestScene uses a plain background sprite).
 ///
 /// Zero ongoing GPU cost: pre-blurred texture is a static sprite, crossfade is just alpha changes.
 ///
@@ -60,45 +60,6 @@ class TerrainBlurHelper {
         blurredTerrainSprite = sharpened  // Reuse the slot — now holds sharpened, not blurred
     }
 
-    // MARK: - Setup with auto-generated blur
-
-    /// Set up terrain pair by generating the blurred version at runtime.
-    /// One-time CIFilter cost at scene load (~50ms for 2912x1632), then zero GPU cost.
-    /// Use this when no pre-blurred asset exists (e.g. ForestScene).
-    /// - Parameter edgeFillColor: Optional solid color placed behind terrain (2x mapSize) to hide faded Midjourney edges.
-    func setup(in scene: SKScene, sharp sharpImage: String, mapSize: CGSize, blurRadius: CGFloat = 12.0, edgeFillColor: PlatformColor? = nil) {
-        let center = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
-
-        // Edge fill — large solid rect behind everything to cover faded terrain borders
-        if let fillColor = edgeFillColor {
-            let fill = SKSpriteNode(color: fillColor, size: CGSize(width: mapSize.width * 2, height: mapSize.height * 2))
-            fill.position = center
-            fill.zPosition = -102
-            scene.addChild(fill)
-            fillSprite = fill
-        }
-
-        let sharpTexture = SKTexture(imageNamed: sharpImage)
-        sharpTexture.filteringMode = .linear
-        let sharp = SKSpriteNode(texture: sharpTexture)
-        sharp.size = mapSize
-        sharp.position = center
-        sharp.zPosition = -100
-        scene.addChild(sharp)
-        terrainSprite = sharp
-
-        // Generate blurred texture from sharp one (one-time cost, not per-frame)
-        let blurredTexture = Self.blurTexture(sharpTexture, radius: blurRadius)
-        blurredTexture.filteringMode = .linear
-        let blurred = SKSpriteNode(texture: blurredTexture)
-        blurred.size = mapSize
-        blurred.position = center
-        blurred.zPosition = -99
-        blurred.alpha = 0
-        scene.addChild(blurred)
-        blurredTerrainSprite = blurred
-    }
-
     // MARK: - Update (call every frame)
 
     /// Zoom-based depth-of-field fade was REMOVED 2026-04-22 per Marina —
@@ -118,26 +79,6 @@ class TerrainBlurHelper {
         terrainSprite = nil
         blurredTerrainSprite = nil
         fillSprite = nil
-    }
-
-    // MARK: - Blur Generation
-
-    /// Generate a blurred version of a texture using CIGaussianBlur (one-time operation).
-    private static func blurTexture(_ texture: SKTexture, radius: CGFloat) -> SKTexture {
-        let cgImage = texture.cgImage()
-        let ciImage = CIImage(cgImage: cgImage)
-
-        guard let filter = CIFilter(name: "CIGaussianBlur") else { return texture }
-        filter.setValue(ciImage, forKey: kCIInputImageKey)
-        filter.setValue(radius, forKey: kCIInputRadiusKey)
-
-        let context = CIContext()
-        guard let outputImage = filter.outputImage,
-              let blurredCGImage = context.createCGImage(outputImage, from: ciImage.extent) else {
-            return texture
-        }
-
-        return SKTexture(cgImage: blurredCGImage)
     }
 
     // MARK: - Sharpen Generation

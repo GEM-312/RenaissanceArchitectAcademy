@@ -27,9 +27,6 @@ class ForestScene: SKScene, ScrollZoomable {
     /// The POI position the player is walking toward (for gradual zoom)
     private var walkTargetPosition: CGPoint?
 
-    /// Reusable terrain blur system (auto-generates blurred texture from Forest1)
-    let terrainBlur = TerrainBlurHelper()
-
     // Map size — standard 3500×2500 coordinate space
     private let mapSize = CGSize(width: 3500, height: 2500)
     private var maxZoomOutScale: CGFloat = 1.0
@@ -448,9 +445,6 @@ class ForestScene: SKScene, ScrollZoomable {
         let zoomAction = SKAction.scale(to: 0.6, duration: 0.5)
         zoomAction.timingMode = .easeInEaseOut
         cameraNode.run(zoomAction, withKey: "cameraZoom")
-
-        // Increase terrain blur while walking
-        startWalkingTerrainEffects()
     }
 
     /// Stage 2: Settle camera on the POI after player arrives — pan only, no zoom change.
@@ -463,9 +457,6 @@ class ForestScene: SKScene, ScrollZoomable {
         let moveAction = SKAction.move(to: clampedTarget, duration: 0.5)
         moveAction.timingMode = .easeInEaseOut
         cameraNode.run(moveAction, withKey: "cameraZoom")
-
-        // Return to base blur when arrived
-        stopWalkingTerrainEffects()
     }
 
     /// Pan back to map center when overlay dismisses — preserves zoom.
@@ -479,24 +470,28 @@ class ForestScene: SKScene, ScrollZoomable {
         let moveAction = SKAction.move(to: mapCenter, duration: 0.6)
         moveAction.timingMode = .easeInEaseOut
         cameraNode.run(moveAction, withKey: "cameraZoom")
-
-        // Return to base blur when player exits a POI
-        stopWalkingTerrainEffects()
     }
-
-    // MARK: - Terrain Effects (walking overlay fade)
-
-    /// Terrain effects are now handled by TerrainBlurHelper in update() — these are kept as no-ops
-    /// for call sites that still reference them during walking start/stop.
-    private func startWalkingTerrainEffects() { }
-    private func stopWalkingTerrainEffects() { }
 
     // MARK: - Background (stretched to mapSize per standard)
 
     private func setupBackground() {
-        // Forest terrain — auto-generates blurred version at setup (one-time CIFilter cost)
-        // Edge fill hides faded Midjourney borders when camera follows player to map edges
-        terrainBlur.setup(in: self, sharp: "Forest1", mapSize: mapSize, blurRadius: 12.0, edgeFillColor: PlatformColor(RenaissanceColors.parchment))
+        let center = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
+
+        // Edge fill hides faded parchment borders when camera follows player to map edges
+        let fill = SKSpriteNode(color: PlatformColor(RenaissanceColors.parchment),
+                                size: CGSize(width: mapSize.width * 2, height: mapSize.height * 2))
+        fill.position = center
+        fill.zPosition = -102
+        addChild(fill)
+
+        // Forest terrain — plain sprite, no blur
+        let texture = SKTexture(imageNamed: "Forest1")
+        texture.filteringMode = .linear
+        let terrain = SKSpriteNode(texture: texture)
+        terrain.size = mapSize
+        terrain.position = center
+        terrain.zPosition = -100
+        addChild(terrain)
     }
 
     // MARK: - Grid Lines (notebook style)
@@ -806,7 +801,6 @@ class ForestScene: SKScene, ScrollZoomable {
     override func willMove(from view: SKView) {
         removeAllActions()
         removeAllChildren()
-        terrainBlur.cleanup()
         playerNode = nil
         hasSetup = false
         // Break retain cycles from closures capturing SwiftUI views
@@ -846,11 +840,6 @@ class ForestScene: SKScene, ScrollZoomable {
 
         // Clamp camera every frame — prevents SKActions from bypassing bounds
         clampCamera()
-
-        // Terrain blur — zoomed in = blurred, zoomed out = sharp
-        if let cam = cameraNode {
-            terrainBlur.updateBlur(cameraScale: cam.xScale)
-        }
     }
 
     // MARK: - Input Handling
