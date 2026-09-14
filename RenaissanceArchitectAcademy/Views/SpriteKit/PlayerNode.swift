@@ -59,7 +59,7 @@ class PlayerNode: SKNode {
     }
 
     /// Load textures only if the first frame exists in the asset catalog
-    private static func loadOptionalTextures(prefix: String, count: Int) -> [SKTexture]? {
+    static func loadOptionalTextures(prefix: String, count: Int) -> [SKTexture]? {
         let testName = String(format: "%@%02d", prefix, 0)
         // SKTexture always creates a texture object — check if the image actually exists
         #if os(iOS)

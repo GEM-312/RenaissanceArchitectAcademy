@@ -125,6 +125,8 @@
 		0E8 /* DiscoveryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E8 /* DiscoveryCard.swift */; };
 		0E9 /* DiscoveryCardOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E9 /* DiscoveryCardOverlay.swift */; };
 		0EA /* TerrainBlurHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EA /* TerrainBlurHelper.swift */; };
+		0P1 /* TrufflePigNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1P1 /* TrufflePigNode.swift */; };
+		0P2 /* ForestAnimalNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1P2 /* ForestAnimalNode.swift */; };
 		0EB /* CardVisualView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EB /* CardVisualView.swift */; };
 		0F0 /* HapticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F0 /* HapticsManager.swift */; };
 		0F1 /* PantheonInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F1 /* PantheonInteractiveVisuals.swift */; };
@@ -413,6 +415,8 @@
 		1E8 /* DiscoveryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoveryCard.swift; sourceTree = "<group>"; };
 		1E9 /* DiscoveryCardOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoveryCardOverlay.swift; sourceTree = "<group>"; };
 		1EA /* TerrainBlurHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TerrainBlurHelper.swift; path = Views/SpriteKit/TerrainBlurHelper.swift; sourceTree = "<group>"; };
+		1P1 /* TrufflePigNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TrufflePigNode.swift; path = Views/SpriteKit/TrufflePigNode.swift; sourceTree = "<group>"; };
+		1P2 /* ForestAnimalNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ForestAnimalNode.swift; path = Views/SpriteKit/ForestAnimalNode.swift; sourceTree = "<group>"; };
 		1EB /* CardVisualView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardVisualView.swift; sourceTree = "<group>"; };
 		1F0 /* HapticsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticsManager.swift; sourceTree = "<group>"; };
 		1F1 /* PantheonInteractiveVisuals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PantheonInteractiveVisuals.swift; path = RenaissanceArchitectAcademy/Views/PantheonInteractiveVisuals.swift; sourceTree = SOURCE_ROOT; };
@@ -621,6 +625,8 @@
 				544299992F3646ED00F92073 /* CityScene.swift */,
 				544299BF2F3A000100F92073 /* SceneEditorMode.swift */,
 				1EA /* TerrainBlurHelper.swift */,
+				1P1 /* TrufflePigNode.swift */,
+				1P2 /* ForestAnimalNode.swift */,
 				5475D2F92F319000003AA131 /* Assets.xcassets */,
 				ATC2 /* RiverHouse.atlasc */,
 				ATC4 /* Fisherman.atlasc */,
@@ -1320,6 +1326,8 @@
 				0E8 /* DiscoveryCard.swift in Sources */,
 				0E9 /* DiscoveryCardOverlay.swift in Sources */,
 				0EA /* TerrainBlurHelper.swift in Sources */,
+				0P1 /* TrufflePigNode.swift in Sources */,
+				0P2 /* ForestAnimalNode.swift in Sources */,
 				0EB /* CardVisualView.swift in Sources */,
 				2A0 /* VisualEditorState.swift in Sources */,
 				2A1 /* EditableModifier.swift in Sources */,

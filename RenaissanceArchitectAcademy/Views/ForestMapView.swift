@@ -196,9 +196,8 @@ struct ForestMapView: View {
                     if let truffle = pendingTruffle {
                         pendingTruffle = nil
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                                discoveredTruffle = truffle
-                            }
+                            // The truffle pig digs it up first — the sell overlay only shows if the player saves it
+                            sceneHolder.scene?.playTruffleHunt(truffle)
                         }
                     }
                     // POI dismissed — player continues exploring freely
@@ -1771,6 +1770,18 @@ struct ForestMapView: View {
 
         newScene.onTruffleFound = { truffle in
             pendingTruffle = truffle
+        }
+
+        newScene.onTruffleSaved = { truffle in
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                discoveredTruffle = truffle
+            }
+        }
+
+        newScene.onTruffleEaten = { _ in
+            guidanceMessage = "Too slow! The pig ate it — that's why truffle hunters switched to dogs!"
+            guidanceDestination = nil
+            withAnimation(.spring(response: 0.4)) { showGuidance = true }
         }
 
         sceneHolder.scene = newScene

@@ -60,7 +60,7 @@ class ForestScene: SKScene, ScrollZoomable {
 
     private let pointsOfInterest: [ForestPOI] = [
         ForestPOI(name: "Oak", italianName: "Quercia",
-                  position: CGPoint(x: 500, y: 1650),
+                  position: CGPoint(x: 1185, y: 1316),
                   woodType: "Hardwood", leafType: "Deciduous", maxHeight: "25-30 m",
                   usedFor: "Roof trusses, load-bearing beams, and heavy doors. Oak spans cathedral naves and supports the massive roof structures of the Colosseum.",
                   furnitureUse: "Dining tables, church pews, carved altarpieces. Oak's tight grain holds intricate carvings for generations.",
@@ -70,7 +70,7 @@ class ForestScene: SKScene, ScrollZoomable {
                   biologyFact: "Oak trees produce acorns only after 20-50 years of growth. A mature oak can transpire 150 liters of water per day through its leaves, cooling the surrounding forest.",
                   timberYield: 3),
         ForestPOI(name: "Chestnut", italianName: "Castagno",
-                  position: CGPoint(x: 2900, y: 1700),
+                  position: CGPoint(x: 2574, y: 1477),
                   woodType: "Hardwood", leafType: "Deciduous", maxHeight: "20-35 m",
                   usedFor: "Window frames, exterior cladding, and water-resistant joinery. Rich in natural tannins that repel insects and moisture.",
                   furnitureUse: "Storage chests, bed frames, and rustic tables. Called 'the bread tree' — its flour fed mountain villages.",
@@ -80,7 +80,7 @@ class ForestScene: SKScene, ScrollZoomable {
                   biologyFact: "Chestnut trees contain 8-13% tannin in their bark — a natural chemical defense. Medieval builders discovered wood soaked in tannin resists both rot and insects without any treatment.",
                   timberYield: 2),
         ForestPOI(name: "Cypress", italianName: "Cipresso",
-                  position: CGPoint(x: 1750, y: 1900),
+                  position: CGPoint(x: 2464, y: 1231),
                   woodType: "Softwood", leafType: "Evergreen", maxHeight: "25-40 m",
                   usedFor: "Church doors, chapel interiors, and ceiling panels. Its aromatic oils repel moths and preserve sacred spaces.",
                   furnitureUse: "Carved chests, wardrobes, and hope chests. The scent protects stored linens and vestments from insects.",
@@ -90,7 +90,7 @@ class ForestScene: SKScene, ScrollZoomable {
                   biologyFact: "Cypress wood contains natural fungicides and insecticides in its resin. The doors of St. Peter's Basilica in Rome, made of cypress, lasted over 1,100 years before replacement.",
                   timberYield: 2),
         ForestPOI(name: "Walnut", italianName: "Noce",
-                  position: CGPoint(x: 600, y: 750),
+                  position: CGPoint(x: 1783, y: 1241),
                   woodType: "Hardwood", leafType: "Deciduous", maxHeight: "15-25 m",
                   usedFor: "Inlaid palazzo ceilings, ornamental door frames, and decorative wall panels in the finest Renaissance interiors.",
                   furnitureUse: "Writing desks, portrait frames, and marquetry inlay. The most prized wood for master carvers and cabinet makers.",
@@ -100,7 +100,7 @@ class ForestScene: SKScene, ScrollZoomable {
                   biologyFact: "Walnut roots release juglone, a natural herbicide that inhibits competing plants from growing nearby. This is called allelopathy — chemical warfare between plants.",
                   timberYield: 1),
         ForestPOI(name: "Poplar", italianName: "Pioppo",
-                  position: CGPoint(x: 2800, y: 700),
+                  position: CGPoint(x: 1742, y: 968),
                   woodType: "Softwood", leafType: "Deciduous", maxHeight: "20-30 m",
                   usedFor: "Scaffolding, temporary centering for arches, and formwork. Every Renaissance construction site depended on poplar.",
                   furnitureUse: "Painting panels for tempera art, simple shelving, and crates. Botticelli's 'Birth of Venus' was painted on poplar.",
@@ -112,6 +112,21 @@ class ForestScene: SKScene, ScrollZoomable {
     ]
 
     private var poiNodes: [SKNode] = []
+
+    // MARK: - Ambient Animals
+
+    /// Decorative animals — starting spots are placeholders, move them with editor mode (E)
+    private let animalSpots: [(kind: ForestAnimalNode.Kind, position: CGPoint, facingRight: Bool)] = [
+        (.frog, CGPoint(x: 2180, y: 930), false),      // by the upper stream bridge
+        (.frog, CGPoint(x: 1990, y: 600), true),       // by the lower stream bridge
+        (.goldfinch, CGPoint(x: 1000, y: 760), true),  // start clearing
+        (.goldfinch, CGPoint(x: 1120, y: 800), false), // start clearing
+        (.woodpecker, CGPoint(x: 514, y: 750), false), // on the lone painted tree trunk, lower left
+        (.squirrel, CGPoint(x: 1880, y: 1170), false), // by the walnut
+        (.hedgehog, CGPoint(x: 700, y: 1120), true),   // waddles between the stumps
+    ]
+
+    private var animalNodes: [ForestAnimalNode] = []
 
     // MARK: - Waypoint Graph (forest trail network for pathfinding)
 
@@ -183,13 +198,13 @@ class ForestScene: SKScene, ScrollZoomable {
         [24, 22], [24, 9], [24, 17],
     ]
 
-    /// Which waypoints each POI connects to (nearest trail junctions)
+    /// Which waypoints each POI connects to (nearest trail junctions to where the apprentice stands)
     private let poiWaypoints: [[Int]] = [
-        /* Oak (0)      */ [3, 4, 14],
-        /* Chestnut (1) */ [8, 7, 19],
-        /* Cypress (2)  */ [6, 5, 16],
-        /* Walnut (3)   */ [9, 18, 10],
-        /* Poplar (4)   */ [13, 12, 23],
+        /* Oak (0)      */ [1, 4, 10],
+        /* Chestnut (1) */ [7, 2, 21],
+        /* Cypress (2)  */ [2, 12, 7],
+        /* Walnut (3)   */ [0, 11, 1],
+        /* Poplar (4)   */ [11, 0, 10],
     ]
 
     // MARK: - Truffle Discovery
@@ -254,6 +269,26 @@ class ForestScene: SKScene, ScrollZoomable {
     private var trufflesFoundThisSession = 0
     private let maxTrufflesPerSession = 3
 
+    #if DEBUG
+    /// TEMP for testing the truffle pig — every truffle-tree visit finds a truffle. Set false when done.
+    private let debugAlwaysFindTruffle = true
+    #endif
+
+    // MARK: - Truffle Pig Hunt
+
+    private var pigNode: TrufflePigNode?
+    /// Truffle the pig is currently digging up (nil when no hunt is running)
+    private var huntTruffle: TruffleFind?
+    /// Tree where the last truffle was rolled — the pig digs at its roots
+    private var truffleTreePosition: CGPoint?
+    /// Dig spot relative to the tree POI (scene pts) — just in front of the roots, beside the apprentice
+    private let pigDigOffset = CGPoint(x: -40, y: -140)
+    /// The pig trots in from this far left of the dig spot, and leaves the same distance to the right
+    private let pigTrotDistance: CGFloat = 700
+    private let pigTrotSpeed: CGFloat = 240
+    /// Seconds the player has to tap the truffle before the pig eats it
+    private let truffleSaveWindow: TimeInterval = 2.0
+
     // MARK: - Callbacks to SwiftUI
 
     var onPlayerPositionChanged: ((CGPoint, Bool) -> Void)?
@@ -262,6 +297,10 @@ class ForestScene: SKScene, ScrollZoomable {
     var onPOISelected: ((Int) -> Void)?
     /// Called when the player discovers a truffle while exploring
     var onTruffleFound: ((TruffleFind) -> Void)?
+    /// Called when the player taps the truffle before the pig eats it (show the sell overlay)
+    var onTruffleSaved: ((TruffleFind) -> Void)?
+    /// Called when the pig eats the truffle because the player didn't tap in time
+    var onTruffleEaten: ((TruffleFind) -> Void)?
     /// Called when player starts walking (dismiss overlays)
     var onPlayerStartedWalking: (() -> Void)?
 
@@ -283,10 +322,9 @@ class ForestScene: SKScene, ScrollZoomable {
 
         setupCamera()
         setupBackground()
-        setupGridLines()
-        setupTrails()
         setupTitle()
         setupPOIs()
+        setupAnimals()
         setupPlayer()
 
         // Dark tint node — toggled by theme (2x mapSize to cover edge fill area)
@@ -494,76 +532,6 @@ class ForestScene: SKScene, ScrollZoomable {
         addChild(terrain)
     }
 
-    // MARK: - Grid Lines (notebook style)
-
-    private func setupGridLines() {
-        let gridNode = SKNode()
-        gridNode.zPosition = -90
-
-        let lineColor = PlatformColor(RenaissanceColors.sepiaInk.opacity(0.06))
-
-        for x in stride(from: 0, through: mapSize.width, by: 100) {
-            let path = CGMutablePath()
-            path.move(to: CGPoint(x: x, y: 0))
-            path.addLine(to: CGPoint(x: x, y: mapSize.height))
-            let line = SKShapeNode(path: path)
-            line.strokeColor = lineColor
-            line.lineWidth = 0.5
-            gridNode.addChild(line)
-        }
-
-        for y in stride(from: 0, through: mapSize.height, by: 100) {
-            let path = CGMutablePath()
-            path.move(to: CGPoint(x: 0, y: y))
-            path.addLine(to: CGPoint(x: mapSize.width, y: y))
-            let line = SKShapeNode(path: path)
-            line.strokeColor = lineColor
-            line.lineWidth = 0.5
-            gridNode.addChild(line)
-        }
-
-        addChild(gridNode)
-    }
-
-    // MARK: - Forest Trails (dashed paths between waypoints)
-
-    private func setupTrails() {
-        let trailNode = SKNode()
-        trailNode.zPosition = -50
-
-        let trailColor = PlatformColor(RenaissanceColors.warmBrown.opacity(0.2))
-
-        for edge in waypointEdges {
-            let a = waypoints[edge[0]]
-            let b = waypoints[edge[1]]
-
-            let linePath = CGMutablePath()
-            linePath.move(to: a)
-            linePath.addLine(to: b)
-
-            let dottedLine = SKShapeNode(path: linePath.copy(dashingWithPhase: 0, lengths: [10, 8]))
-            dottedLine.strokeColor = trailColor
-            dottedLine.lineWidth = 2
-            trailNode.addChild(dottedLine)
-        }
-
-        // Also draw connector trails from each POI to its nearest waypoints
-        for (i, poi) in pointsOfInterest.enumerated() {
-            for wp in poiWaypoints[i].prefix(1) {  // Only draw to the nearest waypoint
-                let linePath = CGMutablePath()
-                linePath.move(to: poi.position)
-                linePath.addLine(to: waypoints[wp])
-
-                let dottedLine = SKShapeNode(path: linePath.copy(dashingWithPhase: 0, lengths: [10, 8]))
-                dottedLine.strokeColor = PlatformColor(RenaissanceColors.sageGreen.opacity(0.2))
-                dottedLine.lineWidth = 2
-                trailNode.addChild(dottedLine)
-            }
-        }
-
-        addChild(trailNode)
-    }
-
     // MARK: - Title
 
     private func setupTitle() {
@@ -616,6 +584,20 @@ class ForestScene: SKScene, ScrollZoomable {
 
             addChild(container)
             poiNodes.append(container)
+        }
+    }
+
+    // MARK: - Ambient Animals Setup
+
+    private func setupAnimals() {
+        for spot in animalSpots {
+            let animal = ForestAnimalNode(kind: spot.kind)
+            animal.position = spot.position
+            animal.setFacingRight(spot.facingRight)
+            animal.zPosition = 20  // above the terrain + tree markers, below the apprentice
+            addChild(animal)
+            animal.startBehavior()
+            animalNodes.append(animal)
         }
     }
 
@@ -802,12 +784,17 @@ class ForestScene: SKScene, ScrollZoomable {
         removeAllActions()
         removeAllChildren()
         playerNode = nil
+        pigNode = nil
+        huntTruffle = nil
+        animalNodes = []
         hasSetup = false
         // Break retain cycles from closures capturing SwiftUI views
         onPlayerPositionChanged = nil
         onBackRequested = nil
         onPOISelected = nil
         onTruffleFound = nil
+        onTruffleSaved = nil
+        onTruffleEaten = nil
         onPlayerStartedWalking = nil
     }
 
@@ -940,8 +927,15 @@ class ForestScene: SKScene, ScrollZoomable {
     // MARK: - Shared Input Logic
 
     private func handleTapAt(_ location: CGPoint) {
-        // Check if a POI was tapped
         let tappedNodes = nodes(at: location)
+
+        // Saving the truffle from the pig wins over any POI underneath it
+        if huntTruffle != nil, tappedNodes.contains(where: { $0.name == TrufflePigNode.truffleHitName }) {
+            saveTruffleFromPig()
+            return
+        }
+
+        // Check if a POI was tapped
         for node in tappedNodes {
             if let poiNode = findPOIAncestor(node) {
                 onPlayerStartedWalking?()
@@ -1149,7 +1143,7 @@ class ForestScene: SKScene, ScrollZoomable {
                 self?.onPOISelected?(idx)
                 // Roll for truffle discovery near this tree (delayed so POI overlay shows first)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    self?.rollForTruffleDiscovery(nearTree: treeName)
+                    self?.rollForTruffleDiscovery(nearTree: treeName, at: poiPosition)
                 }
             }
         }
@@ -1189,7 +1183,7 @@ class ForestScene: SKScene, ScrollZoomable {
 
     /// Roll for a truffle discovery when arriving at a tree POI
     /// ~25% chance per visit, only near trees that host truffles (Oak, Chestnut, Walnut)
-    private func rollForTruffleDiscovery(nearTree treeName: String) {
+    private func rollForTruffleDiscovery(nearTree treeName: String, at treePosition: CGPoint) {
         guard trufflesFoundThisSession < maxTrufflesPerSession else { return }
 
         // Only certain trees host truffles
@@ -1197,8 +1191,12 @@ class ForestScene: SKScene, ScrollZoomable {
         guard !possibleTruffles.isEmpty else { return }
 
         // 25% base chance — rarer truffles have lower sub-chance
+        var chance = 25
+        #if DEBUG
+        if debugAlwaysFindTruffle { chance = 100 }
+        #endif
         let roll = Int.random(in: 0..<100)
-        guard roll < 25 else { return }
+        guard roll < chance else { return }
 
         // Pick which truffle — common truffles more likely than rare ones
         let truffle: TruffleFind
@@ -1216,63 +1214,71 @@ class ForestScene: SKScene, ScrollZoomable {
 
         trufflesFoundThisSession += 1
 
-        // Spawn a brief truffle sprite animation at the player's feet
-        spawnTruffleSprite(at: playerNode.position)
+        // The pig digs it up at this tree once the tree overlay closes (see playTruffleHunt)
+        truffleTreePosition = treePosition
+        onTruffleFound?(truffle)
+    }
 
-        // Notify SwiftUI after a short delay (let the sprite animation play)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
-            self?.onTruffleFound?(truffle)
+    // MARK: - Truffle Pig Hunt Sequence
+
+    /// The pig trots in, sniffs, digs at the tree roots, and shows the truffle.
+    /// The player has `truffleSaveWindow` seconds to tap it before the pig eats it.
+    func playTruffleHunt(_ truffle: TruffleFind) {
+        guard pigNode == nil, let treePosition = truffleTreePosition else {
+            // No hunt possible — hand the truffle straight to the sell overlay
+            onTruffleSaved?(truffle)
+            return
+        }
+
+        huntTruffle = truffle
+        let digSpot = CGPoint(x: treePosition.x + pigDigOffset.x, y: treePosition.y + pigDigOffset.y)
+
+        let pig = TrufflePigNode()
+        pig.position = CGPoint(x: digSpot.x - pigTrotDistance, y: digSpot.y)
+        pig.zPosition = 55  // in front of the apprentice — the dig spot is lower on the map
+        pig.alpha = 0
+        addChild(pig)
+        pigNode = pig
+
+        pig.run(SKAction.fadeIn(withDuration: 0.3))
+        pig.trot(to: digSpot, speed: pigTrotSpeed) { [weak self, weak pig] in
+            pig?.sniff {
+                pig?.dig {
+                    guard let self, let pig else { return }
+                    pig.showTruffle()
+                    self.run(SKAction.sequence([
+                        SKAction.wait(forDuration: self.truffleSaveWindow),
+                        SKAction.run { [weak self] in self?.pigEatsTruffle() }
+                    ]), withKey: "truffleSaveWindow")
+                }
+            }
         }
     }
 
-    /// Spawn a small truffle shape at the player's feet with a pop-in animation
-    private func spawnTruffleSprite(at position: CGPoint) {
-        let truffleNode = SKNode()
-        truffleNode.position = CGPoint(x: position.x + 30, y: position.y - 20)
-        truffleNode.zPosition = 45
-        truffleNode.setScale(0.01)
+    /// Player tapped the truffle in time — the pig trots off empty-snouted
+    private func saveTruffleFromPig() {
+        guard let pig = pigNode, let truffle = huntTruffle else { return }
+        removeAction(forKey: "truffleSaveWindow")
+        huntTruffle = nil
 
-        // Lumpy truffle shape (irregular circle)
-        let trufflePath = CGMutablePath()
-        trufflePath.addEllipse(in: CGRect(x: -12, y: -10, width: 24, height: 20))
-        let body = SKShapeNode(path: trufflePath)
-        body.fillColor = PlatformColor(RenaissanceColors.warmBrown)
-        body.strokeColor = PlatformColor(RenaissanceColors.sepiaInk.opacity(0.5))
-        body.lineWidth = 1.5
-        truffleNode.addChild(body)
-
-        // Small soil specks
-        for offset in [CGPoint(x: -6, y: -4), CGPoint(x: 5, y: 3), CGPoint(x: -2, y: 6)] {
-            let speck = SKShapeNode(circleOfRadius: 2)
-            speck.fillColor = PlatformColor(RenaissanceColors.warmBrown.opacity(0.6))
-            speck.strokeColor = .clear
-            speck.position = offset
-            truffleNode.addChild(speck)
+        pig.leave(afterEating: false, distance: pigTrotDistance, speed: pigTrotSpeed) { [weak self] in
+            self?.pigNode = nil
         }
+        onTruffleSaved?(truffle)
+    }
 
-        // Sparkle effect
-        let sparkle = SKShapeNode(circleOfRadius: 18)
-        sparkle.fillColor = PlatformColor(RenaissanceColors.goldSuccess.opacity(0.3))
-        sparkle.strokeColor = PlatformColor(RenaissanceColors.goldSuccess.opacity(0.6))
-        sparkle.lineWidth = 1
-        sparkle.setScale(0.5)
-        truffleNode.addChild(sparkle)
+    /// Save window ran out — the pig eats the truffle, then trots off
+    private func pigEatsTruffle() {
+        guard let pig = pigNode, let truffle = huntTruffle else { return }
+        huntTruffle = nil
 
-        addChild(truffleNode)
-
-        // Pop-in + sparkle animation
-        let popIn = SKAction.scale(to: 1.0, duration: 0.3)
-        popIn.timingMode = .easeOut
-        let sparkleUp = SKAction.scale(to: 1.5, duration: 0.4)
-        let sparkleDown = SKAction.scale(to: 1.0, duration: 0.3)
-        let sparkleSeq = SKAction.sequence([sparkleUp, sparkleDown])
-        sparkle.run(sparkleSeq)
-
-        let wait = SKAction.wait(forDuration: 2.0)
-        let fadeOut = SKAction.fadeOut(withDuration: 0.5)
-        let remove = SKAction.removeFromParent()
-
-        truffleNode.run(SKAction.sequence([popIn, wait, fadeOut, remove]))
+        pig.eatTruffle { [weak self, weak pig] in
+            guard let self else { return }
+            pig?.leave(afterEating: true, distance: self.pigTrotDistance, speed: self.pigTrotSpeed) { [weak self] in
+                self?.pigNode = nil
+            }
+            self.onTruffleEaten?(truffle)
+        }
     }
 
     // MARK: - Public Animation Methods
@@ -1299,6 +1305,10 @@ class ForestScene: SKScene, ScrollZoomable {
             editorMode.registerNode(node, name: "poi_\(i)")
         }
         editorMode.registerNode(playerNode, name: "player")
+
+        for (i, animal) in animalNodes.enumerated() {
+            editorMode.registerNode(animal, name: "animal_\(i)")
+        }
 
         // Register waypoints for dragging in editor mode
         for (i, wp) in waypoints.enumerated() {
@@ -1339,6 +1349,11 @@ class ForestScene: SKScene, ScrollZoomable {
             let p = node.position
             let poi = pointsOfInterest[i]
             print("    // \(poi.name): CGPoint(x: \(Int(p.x)), y: \(Int(p.y)))")
+        }
+        print("\n// ========== FOREST ANIMALS ==========")
+        for (i, animal) in animalNodes.enumerated() {
+            let p = animal.position
+            print("    // \(i) \(animal.kind.atlas): CGPoint(x: \(Int(p.x)), y: \(Int(p.y)))")
         }
         print("\n// ========== FOREST WAYPOINTS ==========")
         for (i, wp) in waypoints.enumerated() {
