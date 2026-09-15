@@ -14,6 +14,7 @@ struct SketchingChallengeView: View {
     var buildingId: Int? = nil
 
     @State private var showIntro = true
+    @State private var showTransitionAnimation = false
     @State private var showTeaching = false
     @State private var currentPhaseIndex = 0
     @State private var completedPhases: Set<SketchingPhaseType> = []
@@ -40,6 +41,18 @@ struct SketchingChallengeView: View {
 
             if showIntro {
                 introView
+            } else if showTransitionAnimation, let phase = currentPhase {
+                ViewTransitionAnimationView(
+                    phaseType: phase.phaseType,
+                    buildingName: challenge.buildingName
+                ) {
+                    withAnimation(.spring(response: 0.4)) {
+                        showTransitionAnimation = false
+                        if SketchTeachingContent.teachingData(for: challenge.buildingName) != nil {
+                            showTeaching = true
+                        }
+                    }
+                }
             } else if showTeaching {
                 teachingView
             } else if showCompletion {
@@ -148,12 +161,8 @@ struct SketchingChallengeView: View {
                 VStack(spacing: 12) {
                     RenaissanceButton(title: "Begin Drawing") {
                         withAnimation(.spring(response: 0.4)) {
-                            if SketchTeachingContent.teachingData(for: challenge.buildingName) != nil {
-                                showIntro = false
-                                showTeaching = true
-                            } else {
-                                showIntro = false
-                            }
+                            showIntro = false
+                            showTransitionAnimation = true
                         }
                     }
 
@@ -251,10 +260,20 @@ struct SketchingChallengeView: View {
             .padding(.horizontal)
             .padding(.vertical, 8)
 
-            // Phase content (only Pianta supported — other phases removed Apr 21 2026)
+            // Phase content
             switch phase.phaseData {
             case .pianta(let data):
                 PiantaCanvasView(
+                    phaseData: data,
+                    buildingName: challenge.buildingName,
+                    notebookState: notebookState,
+                    buildingId: buildingId
+                ) { phases in
+                    completedPhases.formUnion(phases)
+                    advanceOrComplete()
+                }
+            case .sezione(let data):
+                SezioneCanvasView(
                     phaseData: data,
                     buildingName: challenge.buildingName,
                     notebookState: notebookState,

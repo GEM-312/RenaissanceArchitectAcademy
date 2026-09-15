@@ -2,15 +2,27 @@ import Foundation
 
 // MARK: - Sketching Phase Types
 
-/// The sketching phase. Only Pianta (floor plan) is supported at the apprentice level.
-/// Additional historical phases (Alzato, Sezione, Prospettiva) were removed Apr 21 2026 —
-/// Architect level will introduce deeper drawing work separately.
+/// Sketching phase types. Pianta (floor plan) is the primary sketching phase;
+/// Sezione (cross-section) adds a second perspective on the building's structure.
 enum SketchingPhaseType: String, CaseIterable, Codable, Hashable {
-    case pianta = "Pianta"  // Floor plan
+    case pianta = "Pianta"      // Floor plan
+    case sezione = "Sezione"    // Cross-section
 
-    var displayName: String { "Floor Plan" }
-    var italianTitle: String { "Pianta" }
-    var iconName: String { "square.grid.3x3" }
+    var displayName: String {
+        switch self {
+        case .pianta: return "Floor Plan"
+        case .sezione: return "Cross-Section"
+        }
+    }
+
+    var italianTitle: String { rawValue }
+
+    var iconName: String {
+        switch self {
+        case .pianta: return "square.grid.3x3"
+        case .sezione: return "scissors"
+        }
+    }
 }
 
 // MARK: - Grid Types
@@ -160,17 +172,32 @@ struct PiantaPhaseData {
     }
 }
 
+// MARK: - Sezione Phase Data
+
+/// Data specific to the Sezione (Cross-Section) phase.
+///
+/// Same approach as `PiantaPhaseData`: the student studies a reference
+/// cross-section blueprint, then free-form sketches it on a PencilKit canvas.
+/// Claude Haiku vision grades the sketch against the blueprint.
+struct SezionePhaseData {
+    let gridSize: Int
+    let hint: String?
+    let educationalText: String
+    let historicalContext: String
+    let referencePlanImageName: String
+}
+
 // MARK: - Phase Content
 
-/// The content for a sketching phase. Single-case enum kept for future expansion
-/// (in case Architect level reintroduces additional phase types).
+/// The content for a sketching phase.
 enum SketchingPhaseContent {
     case pianta(PiantaPhaseData)
+    case sezione(SezionePhaseData)
 }
 
 // MARK: - Sketching Phase
 
-/// One phase within a sketching challenge (currently always Pianta)
+/// One phase within a sketching challenge
 struct SketchingPhase: Identifiable {
     let id = UUID()
     let phaseType: SketchingPhaseType
@@ -187,7 +214,7 @@ struct SketchingChallenge: Identifiable {
     let id = UUID()
     let buildingName: String
     let introduction: String            // Overall intro text
-    let phases: [SketchingPhase]        // Always [.pianta] at apprentice level
+    let phases: [SketchingPhase]        // Pianta, optionally followed by Sezione
     let educationalSummary: String      // Shown after the phase is complete
 }
 

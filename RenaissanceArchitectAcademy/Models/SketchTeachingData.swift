@@ -65,14 +65,26 @@ enum SketchTeachingContent {
 
     static func teachingData(for buildingName: String) -> SketchTeachingData? {
         switch buildingName {
-        case "Pantheon":
-            return pantheonTeaching
-        case "Colosseum":
-            return colosseumTeaching
-        case "Aqueduct":
-            return aqueductTeaching
-        case "Duomo", "Il Duomo":
-            return duomoTeaching
+        // Rome (original 4)
+        case "Pantheon":              return pantheonTeaching
+        case "Colosseum":             return colosseumTeaching
+        case "Aqueduct":              return aqueductTeaching
+        case "Duomo", "Il Duomo":     return duomoTeaching
+        // Rome (5 remaining — SketchTeachingContentRome.swift)
+        case "Roman Baths":           return romanBathsTeaching
+        case "Roman Roads":           return romanRoadsTeaching
+        case "Harbor":                return harborTeaching
+        case "Siege Workshop":        return siegeWorkshopTeaching
+        case "Insula":                return insulaTeaching
+        // Renaissance (9 — SketchTeachingContentRenaissance.swift)
+        case "Botanical Garden":      return botanicalGardenTeaching
+        case "Glassworks":            return glassworksTeaching
+        case "Arsenal":               return arsenalTeaching
+        case "Anatomy Theater":       return anatomyTheaterTeaching
+        case "Leonardo's Workshop":   return leonardoWorkshopTeaching
+        case "Flying Machine":        return flyingMachineTeaching
+        case "Vatican Observatory":   return vaticanObservatoryTeaching
+        case "Printing Press":        return printingPressTeaching
         default:
             return nil
         }

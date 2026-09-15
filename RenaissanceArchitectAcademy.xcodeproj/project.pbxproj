@@ -119,6 +119,11 @@
 		0E2 /* SketchStudyOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E2 /* SketchStudyOverlay.swift */; };
 		0E3 /* PhaseCompleteOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3 /* PhaseCompleteOverlay.swift */; };
 		0E4 /* SketchTeachingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E4 /* SketchTeachingData.swift */; };
+
+		ADE2D17241043C715200E94A /* SezioneCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D32A493E0A4FE273B4A455E /* SezioneCanvasView.swift */; };
+		B3E6F098A1D42C7508F19DE4 /* ViewTransitionAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F1A2E5B34C8D9A016E72390 /* ViewTransitionAnimationView.swift */; };
+		26C4210E5424329952BA0A50 /* SketchTeachingContentRome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CEA7E9C2122D02385CE7EF0 /* SketchTeachingContentRome.swift */; };
+		99AAF720790B2BC0E938C73A /* SketchTeachingContentRenaissance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 481A68842336B6008EAA9EE6 /* SketchTeachingContentRenaissance.swift */; };
 		0E5 /* SketchTeachingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E5 /* SketchTeachingView.swift */; };
 		0E6 /* KnowledgeCardContentRome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E6 /* KnowledgeCardContentRome.swift */; };
 		0E7 /* KnowledgeCardContentRenaissance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E7 /* KnowledgeCardContentRenaissance.swift */; };
@@ -409,6 +414,11 @@
 		1E2 /* SketchStudyOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchStudyOverlay.swift; sourceTree = "<group>"; };
 		1E3 /* PhaseCompleteOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhaseCompleteOverlay.swift; sourceTree = "<group>"; };
 		1E4 /* SketchTeachingData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchTeachingData.swift; sourceTree = "<group>"; };
+
+		6D32A493E0A4FE273B4A455E /* SezioneCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SezioneCanvasView.swift; sourceTree = "<group>"; };
+		7F1A2E5B34C8D9A016E72390 /* ViewTransitionAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewTransitionAnimationView.swift; sourceTree = "<group>"; };
+		1CEA7E9C2122D02385CE7EF0 /* SketchTeachingContentRome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchTeachingContentRome.swift; sourceTree = "<group>"; };
+		481A68842336B6008EAA9EE6 /* SketchTeachingContentRenaissance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchTeachingContentRenaissance.swift; sourceTree = "<group>"; };
 		1E5 /* SketchTeachingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchTeachingView.swift; sourceTree = "<group>"; };
 		1E6 /* KnowledgeCardContentRome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnowledgeCardContentRome.swift; sourceTree = "<group>"; };
 		1E7 /* KnowledgeCardContentRenaissance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnowledgeCardContentRenaissance.swift; sourceTree = "<group>"; };
@@ -823,6 +833,8 @@
 				1D2 /* StationCompounds.swift */,
 				1E0 /* MuseumSketch.swift */,
 				1E4 /* SketchTeachingData.swift */,
+				1CEA7E9C2122D02385CE7EF0 /* SketchTeachingContentRome.swift */,
+				481A68842336B6008EAA9EE6 /* SketchTeachingContentRenaissance.swift */,
 				1E6 /* KnowledgeCardContentRome.swift */,
 				1E7 /* KnowledgeCardContentRenaissance.swift */,
 				1E8 /* DiscoveryCard.swift */,
@@ -882,6 +894,8 @@
 			isa = PBXGroup;
 			children = (
 				136 /* PiantaCanvasView.swift */,
+				6D32A493E0A4FE273B4A455E /* SezioneCanvasView.swift */,
+				7F1A2E5B34C8D9A016E72390 /* ViewTransitionAnimationView.swift */,
 				137 /* SketchingToolbarView.swift */,
 				3CE /* SketchResultView.swift */,
 				5CE /* PencilCanvasView.swift */,
@@ -1320,6 +1334,10 @@
 				0E2 /* SketchStudyOverlay.swift in Sources */,
 				0E3 /* PhaseCompleteOverlay.swift in Sources */,
 				0E4 /* SketchTeachingData.swift in Sources */,
+				ADE2D17241043C715200E94A /* SezioneCanvasView.swift in Sources */,
+				B3E6F098A1D42C7508F19DE4 /* ViewTransitionAnimationView.swift in Sources */,
+				26C4210E5424329952BA0A50 /* SketchTeachingContentRome.swift in Sources */,
+				99AAF720790B2BC0E938C73A /* SketchTeachingContentRenaissance.swift in Sources */,
 				0E5 /* SketchTeachingView.swift in Sources */,
 				0E6 /* KnowledgeCardContentRome.swift in Sources */,
 				0E7 /* KnowledgeCardContentRenaissance.swift in Sources */,
