@@ -24,6 +24,19 @@ Use when verifying:
 - App Attest (Simulator falls back to `#if DEBUG` `proxyToken`)
 - iPad-specific layout (split view, multi-touch)
 
+## Verify the build correctly (discipline)
+
+Run exactly one build at a time and read the exit code — do not eyeball the tail:
+
+```bash
+cd /Users/pollakmarina/RenaissanceArchitectAcademy
+xcodebuild -scheme RenaissanceArchitectAcademy -destination 'platform=macOS' build > /tmp/raa_build.log 2>&1; echo "EXIT=$?"; grep -E "BUILD SUCCEEDED|BUILD FAILED|error:" /tmp/raa_build.log | head -20
+```
+
+- **One `xcodebuild` at a time.** Two concurrent builds produce a false `BUILD FAILED` (`actool: Failed to decode version info`). If one is already running, wait.
+- **Never pipe the build to `tail`** — a pipe masks xcodebuild's exit code, so a failure can read as success. Redirect to a log, capture `$?`, then grep.
+- `EXIT=0` + `BUILD SUCCEEDED` → green. Any `error:` → read `/tmp/raa_build.log` for the full context.
+
 ## Notes
 
 - DEBUG builds ship with the proxyToken fallback baked in (release builds strip it — see APIKeys.swift line 11).
