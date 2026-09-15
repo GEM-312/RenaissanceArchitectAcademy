@@ -193,6 +193,8 @@ struct ForestMapView: View {
                 } else if oldValue != nil {
                     // POI dismissed — player stays where they are
                     showToolDialog = false
+                    // TRY: the tree grows when its overlay closes (real trigger: its science cards done, saved — later)
+                    sceneHolder.scene?.growTree(at: oldValue!)
                     if let truffle = pendingTruffle {
                         pendingTruffle = nil
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {

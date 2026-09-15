@@ -70,7 +70,7 @@ class ForestScene: SKScene, ScrollZoomable {
                   biologyFact: "Oak trees produce acorns only after 20-50 years of growth. A mature oak can transpire 150 liters of water per day through its leaves, cooling the surrounding forest.",
                   timberYield: 3),
         ForestPOI(name: "Chestnut", italianName: "Castagno",
-                  position: CGPoint(x: 2574, y: 1477),
+                  position: CGPoint(x: 2562, y: 1398),
                   woodType: "Hardwood", leafType: "Deciduous", maxHeight: "20-35 m",
                   usedFor: "Window frames, exterior cladding, and water-resistant joinery. Rich in natural tannins that repel insects and moisture.",
                   furnitureUse: "Storage chests, bed frames, and rustic tables. Called 'the bread tree' — its flour fed mountain villages.",
@@ -113,6 +113,27 @@ class ForestScene: SKScene, ScrollZoomable {
 
     private var poiNodes: [SKNode] = []
 
+    // MARK: - Growing Trees
+
+    /// Growth animation art for one tree — atlas "<Name>Grow", frames "<Name>GrowFrame00…"
+    private struct TreeGrowth {
+        let frameCount: Int
+        /// Frame canvas in scene points
+        let displaySize: CGSize
+        /// Trunk base on the canvas (fraction from left / from bottom) — sits on the POI position
+        let anchor: CGPoint
+    }
+
+    /// Trees with growth art — the rest keep their shape silhouette for now
+    private let treeGrowths: [String: TreeGrowth] = [
+        // 534×596 px frames, sized to the Forest1 map's ~1.29 px per point
+        "Chestnut": TreeGrowth(frameCount: 12, displaySize: CGSize(width: 415, height: 463), anchor: CGPoint(x: 0.492, y: 0.02)),
+    ]
+    private let treeGrowFrameTime: TimeInterval = 0.15
+
+    /// Growth sprite + frames per POI index — hidden until the tree grows
+    private var growingTrees: [Int: (sprite: SKSpriteNode, frames: [SKTexture])] = [:]
+
     // MARK: - Ambient Animals
 
     /// Decorative animals — starting spots are placeholders, move them with editor mode (E)
@@ -121,90 +142,98 @@ class ForestScene: SKScene, ScrollZoomable {
         (.frog, CGPoint(x: 1990, y: 600), true),       // by the lower stream bridge
         (.goldfinch, CGPoint(x: 1000, y: 760), true),  // start clearing
         (.goldfinch, CGPoint(x: 1120, y: 800), false), // start clearing
-        (.woodpecker, CGPoint(x: 514, y: 750), false), // on the lone painted tree trunk, lower left
+        (.woodpecker, CGPoint(x: 552, y: 1400), false), // Marina placed
         (.squirrel, CGPoint(x: 1880, y: 1170), false), // by the walnut
-        (.hedgehog, CGPoint(x: 700, y: 1120), true),   // waddles between the stumps
+        (.hedgehog, CGPoint(x: 1909, y: 829), true),   // Marina placed
     ]
 
     private var animalNodes: [ForestAnimalNode] = []
+
+    // MARK: - Swaying Trees
+
+    /// Trees Marina cut out of Forest1 — each starts exactly on its painted spot (bottom-center, scene pts).
+    /// Move them with editor mode (E); new positions print under "FOREST SWAYING TREES".
+    private let swayingTreeSpots: [(name: String, position: CGPoint)] = [
+        ("ForestTree1", CGPoint(x: 812, y: 1318)),   // tall cypress
+        ("ForestTree2", CGPoint(x: 1035, y: 330)),   // bare sapling + mushroom
+        ("ForestTree3", CGPoint(x: 1299, y: 1521)),  // tall cypress
+        ("ForestTree4", CGPoint(x: 1401, y: 775)),   // cypress + bush
+        ("ForestTree5", CGPoint(x: 1754, y: 1423)),  // small cypress
+        ("ForestTree6", CGPoint(x: 2745, y: 753)),   // fern bush
+    ]
+
+    /// Trees that sway in the wind and react when the apprentice walks past (same effect as the Workshop map)
+    private struct SwayingTree {
+        let node: SKSpriteNode
+        var lastDisturbed: TimeInterval = 0
+    }
+    private var swayingTrees: [SwayingTree] = []
+
+    /// Forest1 pixels per scene point — the tree cutouts are in map pixels
+    private var terrainPixelsPerPoint: CGFloat = 1
 
     // MARK: - Waypoint Graph (forest trail network for pathfinding)
 
     /// 24 trail junctions — spread across the 3500×2500 forest
     private var waypoints: [CGPoint] = [
-        // --- Central clearing ---
-        /* 0  */ CGPoint(x: 1750, y: 1250),  // central hub
-        /* 1  */ CGPoint(x: 1200, y: 1250),  // west of center
-        /* 2  */ CGPoint(x: 2300, y: 1250),  // east of center
+        // Marina placed on the painted paths (Sep 14)
+        /* 0  */ CGPoint(x: 1750, y: 1250),
+        /* 1  */ CGPoint(x: 963, y: 1209),
+        /* 2  */ CGPoint(x: 2300, y: 1250),
+        /* 3  */ CGPoint(x: 828, y: 1271),
+        /* 4  */ CGPoint(x: 1441, y: 1102),
+        /* 5  */ CGPoint(x: 1850, y: 1606),
+        /* 6  */ CGPoint(x: 1825, y: 1761),
+        /* 7  */ CGPoint(x: 2480, y: 1355),
+        /* 8  */ CGPoint(x: 2750, y: 1700),
+        /* 9  */ CGPoint(x: 858, y: 538),
+        /* 10 */ CGPoint(x: 1279, y: 560),
+        /* 11 */ CGPoint(x: 1750, y: 850),
+        /* 12 */ CGPoint(x: 2288, y: 923),
+        /* 13 */ CGPoint(x: 2445, y: 1054),
+        /* 14 */ CGPoint(x: 400, y: 1250),
+        /* 15 */ CGPoint(x: 3100, y: 1250),
+        /* 16 */ CGPoint(x: 1750, y: 2100),
+        /* 17 */ CGPoint(x: 1748, y: 791),
+        /* 18 */ CGPoint(x: 550, y: 1200),
+        /* 19 */ CGPoint(x: 3000, y: 1200),
+        /* 20 */ CGPoint(x: 1055, y: 1348),
+        /* 21 */ CGPoint(x: 2359, y: 1521),
+        /* 22 */ CGPoint(x: 1541, y: 660),
+        /* 23 */ CGPoint(x: 1809, y: 987),
 
-        // --- Upper trails (near Oak, Cypress, Chestnut) ---
-        /* 3  */ CGPoint(x: 700,  y: 1650),  // near Oak
-        /* 4  */ CGPoint(x: 1100, y: 1550),  // Oak trail bend
-        /* 5  */ CGPoint(x: 1750, y: 1600),  // near Cypress (below)
-        /* 6  */ CGPoint(x: 1750, y: 1800),  // near Cypress (above)
-        /* 7  */ CGPoint(x: 2400, y: 1550),  // Chestnut trail bend
-        /* 8  */ CGPoint(x: 2750, y: 1700),  // near Chestnut
-
-        // --- Lower trails (near Walnut, Poplar) ---
-        /* 9  */ CGPoint(x: 750,  y: 900),   // near Walnut
-        /* 10 */ CGPoint(x: 1100, y: 900),   // Walnut trail bend
-        /* 11 */ CGPoint(x: 1750, y: 850),   // south center
-        /* 12 */ CGPoint(x: 2400, y: 850),   // Poplar trail bend
-        /* 13 */ CGPoint(x: 2700, y: 750),   // near Poplar
-
-        // --- Edge trails ---
-        /* 14 */ CGPoint(x: 400,  y: 1250),  // far west
-        /* 15 */ CGPoint(x: 3100, y: 1250),  // far east
-        /* 16 */ CGPoint(x: 1750, y: 2100),  // north center (entry from workshop)
-        /* 17 */ CGPoint(x: 1750, y: 500),   // south center
-
-        // --- Diagonal connectors ---
-        /* 18 */ CGPoint(x: 550,  y: 1200),  // SW-NW link
-        /* 19 */ CGPoint(x: 3000, y: 1200),  // SE-NE link
-        /* 20 */ CGPoint(x: 1100, y: 1800),  // NW upper
-        /* 21 */ CGPoint(x: 2400, y: 1800),  // NE upper
-        /* 22 */ CGPoint(x: 1100, y: 650),   // SW lower
-        /* 23 */ CGPoint(x: 2400, y: 650),   // SE lower
-
-        // --- Home: avatar box (bottom-left corner) ---
-        /* 24 */ CGPoint(x: 200,  y: 200),   // avatar box spawn
+        // --- Home: player spawn ---
+        /* 24 */ CGPoint(x: 926, y: 712),
     ]
 
     /// Bidirectional edges: each pair [a, b] means a↔b
+    /// Follows the painted paths on Forest1. Cypress + Chestnut are across the stream — the log bridge (12) is the only crossing.
+    /// Off-path waypoints 8, 14, 15, 16, 19 (in the trees) are left unconnected.
     private let waypointEdges: [[Int]] = [
-        // Central horizontal spine
-        [14, 18], [18, 1], [1, 0], [0, 2], [2, 19], [19, 15],
+        // West: path from the left edge past the Oak clearing
+        [18, 3], [3, 20], [3, 1],
+        [20, 6],                           // long diagonal path up to the top
+        [1, 4],                            // along the bottom of the Oak clearing
 
-        // Upper ring (Oak → Cypress → Chestnut)
-        [3, 4], [4, 20], [20, 5], [5, 6], [6, 16], [5, 0],
-        [6, 21], [21, 7], [7, 8],
+        // Center: Walnut + Poplar
+        [6, 5], [5, 0],                    // 5 sits on the meadow beside the path
+        [0, 23], [4, 23],                  // both sides of the Walnut clearing down to the Poplar clearing
+        [23, 17], [17, 11],                // right edge of the Poplar clearing
 
-        // Lower ring (Walnut → Poplar)
-        [9, 10], [10, 22], [22, 11], [11, 17], [11, 0],
-        [11, 23], [23, 12], [12, 13],
+        // South: spawn clearing + lower path to the bridge
+        [24, 9], [24, 10], [9, 10], [10, 22], [22, 17], [17, 12],
 
-        // Vertical connectors (upper ↔ center ↔ lower)
-        [3, 14], [14, 9], [18, 9],       // west column
-        [4, 1], [10, 1],                   // west-center column
-        [5, 0], [11, 0],                   // center column
-        [7, 2], [12, 2],                   // east-center column
-        [8, 15], [15, 13], [19, 13],      // east column
-
-        // Diagonal shortcuts
-        [20, 4], [21, 8], [22, 10], [23, 13],
-        [1, 4], [1, 10], [2, 7], [2, 12],
-
-        // Avatar box (home) connections
-        [24, 22], [24, 9], [24, 17],
+        // East (across the bridge): loop around Cypress up to Chestnut
+        [12, 13], [13, 2], [2, 7], [7, 21],
     ]
 
     /// Which waypoints each POI connects to (nearest trail junctions to where the apprentice stands)
     private let poiWaypoints: [[Int]] = [
-        /* Oak (0)      */ [1, 4, 10],
-        /* Chestnut (1) */ [7, 2, 21],
-        /* Cypress (2)  */ [2, 12, 7],
-        /* Walnut (3)   */ [0, 11, 1],
-        /* Poplar (4)   */ [11, 0, 10],
+        /* Oak (0)      */ [1, 20, 3],
+        /* Chestnut (1) */ [7, 21],
+        /* Cypress (2)  */ [2, 13],
+        /* Walnut (3)   */ [4, 0, 23],
+        /* Poplar (4)   */ [11, 17, 4],
     ]
 
     // MARK: - Truffle Discovery
@@ -325,6 +354,7 @@ class ForestScene: SKScene, ScrollZoomable {
         setupTitle()
         setupPOIs()
         setupAnimals()
+        setupSwayingTrees()
         setupPlayer()
 
         // Dark tint node — toggled by theme (2x mapSize to cover edge fill area)
@@ -525,6 +555,7 @@ class ForestScene: SKScene, ScrollZoomable {
         // Forest terrain — plain sprite, no blur
         let texture = SKTexture(imageNamed: "Forest1")
         texture.filteringMode = .linear
+        terrainPixelsPerPoint = texture.size().width / mapSize.width
         let terrain = SKSpriteNode(texture: texture)
         terrain.size = mapSize
         terrain.position = center
@@ -553,10 +584,22 @@ class ForestScene: SKScene, ScrollZoomable {
             container.zPosition = 10
             container.name = "poi_\(index)"
 
-            // Hand-drawn tree silhouette (unique per species)
-            let treeShape = createTreeShape(for: poi.name)
-            treeShape.zPosition = 9
-            container.addChild(treeShape)
+            if let growth = treeGrowths[poi.name] {
+                // Painted tree — an empty planting spot until it grows
+                let atlas = SKTextureAtlas(named: "\(poi.name)Grow")
+                let frames = (0..<growth.frameCount).map { atlas.textureNamed(String(format: "%@GrowFrame%02d", poi.name, $0)) }
+                let tree = SKSpriteNode(texture: frames[0], size: growth.displaySize)
+                tree.anchorPoint = growth.anchor
+                tree.zPosition = 9
+                tree.isHidden = true
+                container.addChild(tree)
+                growingTrees[index] = (tree, frames)
+            } else {
+                // Hand-drawn tree silhouette (unique per species)
+                let treeShape = createTreeShape(for: poi.name)
+                treeShape.zPosition = 9
+                container.addChild(treeShape)
+            }
 
             // Glowing circle background — warm ochre/parchment palette
             let glow = SKShapeNode(circleOfRadius: 40)
@@ -598,6 +641,94 @@ class ForestScene: SKScene, ScrollZoomable {
             addChild(animal)
             animal.startBehavior()
             animalNodes.append(animal)
+        }
+    }
+
+    // MARK: - Swaying Trees Setup
+    //
+    // Same two-layer wind as WorkshopScene's Tree1..9:
+    //   1. Continuous top-only warp sway (random phase per tree so they don't pulse in unison)
+    //   2. Stronger one-shot sway when the apprentice walks within 150pt (2s cooldown)
+
+    private func setupSwayingTrees() {
+        for spot in swayingTreeSpots {
+            addSwayingTree(image: spot.name, position: spot.position)
+        }
+    }
+
+    private func addSwayingTree(image: String, position: CGPoint) {
+        // Skip silently if the imageset hasn't been added yet
+        #if os(iOS)
+        guard UIImage(named: image) != nil else { return }
+        #else
+        guard NSImage(named: image) != nil else { return }
+        #endif
+
+        let tree = SKSpriteNode(imageNamed: image)
+        // Cutouts are in Forest1 pixels — shrink to scene points so each covers its painted spot exactly
+        tree.size = CGSize(width: tree.size.width / terrainPixelsPerPoint,
+                           height: tree.size.height / terrainPixelsPerPoint)
+        tree.anchorPoint = CGPoint(x: 0.5, y: 0.0)  // pivot at the trunk base
+        tree.position = position
+        tree.zPosition = 8  // just above the terrain, under the dark tint so it tints with the painting
+        tree.name = image
+        addChild(tree)
+
+        // Top-only wind sway via per-vertex warp (1 column × 3 rows). The bottom row stays
+        // anchored and higher rows lean quadratically more, so the canopy bends, not the trunk.
+        let cols = 1
+        let rows = 3
+        let src: [SIMD2<Float>] = [
+            SIMD2(0, 0),    SIMD2(1, 0),       // bottom (anchored — trunk base)
+            SIMD2(0, 0.33), SIMD2(1, 0.33),    // mid-low
+            SIMD2(0, 0.66), SIMD2(1, 0.66),    // mid-high
+            SIMD2(0, 1),    SIMD2(1, 1)        // top (full lean)
+        ]
+        func lean(_ amp: Float) -> [SIMD2<Float>] {
+            src.map { p in SIMD2(p.x + amp * p.y * p.y, p.y) }
+        }
+        let amp: Float = 0.10
+        let baseGrid  = SKWarpGeometryGrid(columns: cols, rows: rows, sourcePositions: src, destinationPositions: src)
+        let leftGrid  = SKWarpGeometryGrid(columns: cols, rows: rows, sourcePositions: src, destinationPositions: lean(-amp))
+        let rightGrid = SKWarpGeometryGrid(columns: cols, rows: rows, sourcePositions: src, destinationPositions: lean(amp))
+
+        tree.warpGeometry = baseGrid
+
+        let duration = Double.random(in: 1.6...2.4)
+        let phase = Double.random(in: 0...duration)
+
+        guard let toRight = SKAction.warp(to: rightGrid, duration: duration),
+              let toLeft  = SKAction.warp(to: leftGrid, duration: duration)
+        else { return }
+        toRight.timingMode = .easeInEaseOut
+        toLeft.timingMode  = .easeInEaseOut
+
+        tree.run(SKAction.sequence([
+            SKAction.wait(forDuration: phase),
+            SKAction.repeatForever(SKAction.sequence([toRight, toLeft]))
+        ]), withKey: "windWarp")
+
+        swayingTrees.append(SwayingTree(node: tree))
+    }
+
+    /// Called from update(_:) — stronger one-shot sway on trees the apprentice walks past
+    private func disturbTreesNearPlayer() {
+        guard playerNode != nil, !swayingTrees.isEmpty else { return }
+        let triggerRadius: CGFloat = 150
+        let now = CACurrentMediaTime()
+        for i in swayingTrees.indices {
+            let dist = hypot(swayingTrees[i].node.position.x - playerNode.position.x,
+                             swayingTrees[i].node.position.y - playerNode.position.y)
+            if dist < triggerRadius && now - swayingTrees[i].lastDisturbed > 2.0 {
+                let strong = SKAction.sequence([
+                    SKAction.rotate(byAngle:  .pi / 30, duration: 0.4),
+                    SKAction.rotate(byAngle: -.pi / 15, duration: 0.6),
+                    SKAction.rotate(byAngle:  .pi / 30, duration: 0.4)
+                ])
+                strong.timingMode = .easeInEaseOut
+                swayingTrees[i].node.run(strong, withKey: "treeDisturbance")
+                swayingTrees[i].lastDisturbed = now
+            }
         }
     }
 
@@ -742,6 +873,13 @@ class ForestScene: SKScene, ScrollZoomable {
         return pointsOfInterest[index]
     }
 
+    /// Play a tree's growth frames once and leave it grown. No-op for trees without growth art or already grown.
+    func growTree(at index: Int) {
+        guard let tree = growingTrees[index], tree.sprite.isHidden else { return }
+        tree.sprite.isHidden = false
+        tree.sprite.run(SKAction.animate(with: tree.frames, timePerFrame: treeGrowFrameTime, resize: false, restore: false))
+    }
+
     // MARK: - Player
 
     private func setupPlayer() {
@@ -787,6 +925,8 @@ class ForestScene: SKScene, ScrollZoomable {
         pigNode = nil
         huntTruffle = nil
         animalNodes = []
+        swayingTrees = []
+        growingTrees = [:]
         hasSetup = false
         // Break retain cycles from closures capturing SwiftUI views
         onPlayerPositionChanged = nil
@@ -807,6 +947,7 @@ class ForestScene: SKScene, ScrollZoomable {
         }
 
         updatePlayerScreenPosition()
+        disturbTreesNearPlayer()
 
         // Smoothly follow the player while walking to a POI. Lerp toward
         // the clamp-respecting position for the player — for edge POIs the
@@ -1310,6 +1451,10 @@ class ForestScene: SKScene, ScrollZoomable {
             editorMode.registerNode(animal, name: "animal_\(i)")
         }
 
+        for entry in swayingTrees {
+            editorMode.registerNode(entry.node, name: entry.node.name ?? "tree")
+        }
+
         // Register waypoints for dragging in editor mode
         for (i, wp) in waypoints.enumerated() {
             let dot = SKShapeNode(circleOfRadius: 8)
@@ -1354,6 +1499,11 @@ class ForestScene: SKScene, ScrollZoomable {
         for (i, animal) in animalNodes.enumerated() {
             let p = animal.position
             print("    // \(i) \(animal.kind.atlas): CGPoint(x: \(Int(p.x)), y: \(Int(p.y)))")
+        }
+        print("\n// ========== FOREST SWAYING TREES ==========")
+        for entry in swayingTrees {
+            let p = entry.node.position
+            print("        (\"\(entry.node.name ?? "tree")\", CGPoint(x: \(Int(p.x)), y: \(Int(p.y)))),")
         }
         print("\n// ========== FOREST WAYPOINTS ==========")
         for (i, wp) in waypoints.enumerated() {

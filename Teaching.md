@@ -55,6 +55,22 @@
 
 ---
 
+### Play-Once Animations That Stay on the Last Frame — 2026-09-14
+
+**The Concept:** `SKAction.animate(with:timePerFrame:resize:restore:)` flips through textures once. The `restore` flag decides what happens at the end: `true` snaps back to the texture the sprite had before (good for a "collect" gesture that returns to idle), `false` leaves the last frame showing (good for something that permanently changes, like a tree that has grown). Think of a flip-book: `restore: true` closes the book again, `restore: false` leaves it open on the last page.
+
+**Step by Step:**
+1. Load all frames once up front (`SKTextureAtlas.textureNamed`) and keep them next to the sprite, so there's no texture loading the moment the animation starts.
+2. Start the sprite hidden (`isHidden = true`); the planting spot shows only the glow ring and label.
+3. When it's time to grow: un-hide, then run `animate(..., restore: false)`. No `repeatForever`, so it plays exactly once (project rule: frame animations never loop).
+4. Use `isHidden` itself as the "already grown?" check: hidden = not grown yet. One piece of state instead of two (a separate `Set<Int>` of grown trees could drift out of sync with what's actually on screen).
+
+**In Our Code:** `ForestScene.swift:779` `growTree(at:)`: `guard let tree = growingTrees[index], tree.sprite.isHidden else { return }`. Calling it again (closing the chestnut overlay a second time) is a safe no-op. `ForestAnimalNode` uses `restore: true` because animals go back to their rest pose between clips.
+
+**Key Takeaway:** `restore: true` for gestures that return to rest, `restore: false` for changes that should stick. And when a node's visible state already says what you need, check that instead of adding a parallel flag.
+
+---
+
 ## Swift Language
 
 ### Swift Concurrency Fundamentals (Big Picture) — 2026-04-23
