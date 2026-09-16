@@ -41,7 +41,10 @@ class GameSettings {
     // MARK: - Theme
 
     var theme: AppTheme = .dark {
-        didSet { save() }
+        didSet {
+            guard isLoaded else { return }
+            save()
+        }
     }
 
     var isDarkMode: Bool { theme == .dark }
@@ -49,11 +52,17 @@ class GameSettings {
     // MARK: - AI Provider
 
     var preferredAIProvider: AIProvider = .appleOnDevice {
-        didSet { save() }
+        didSet {
+            guard isLoaded else { return }
+            save()
+        }
     }
 
     var hasChosenAIProvider: Bool = false {
-        didSet { save() }
+        didSet {
+            guard isLoaded else { return }
+            save()
+        }
     }
 
     // MARK: - Subscription
@@ -62,7 +71,10 @@ class GameSettings {
     /// wiring lands with SubscriptionManager. Gates premium features like watercolor sketch
     /// rendering (SketchRenderService). Default: false. Toggle via debug UI while testing.
     var isSubscribed: Bool = false {
-        didSet { save() }
+        didSet {
+            guard isLoaded else { return }
+            save()
+        }
     }
 
     // MARK: - Accessibility / Readability
@@ -80,7 +92,10 @@ class GameSettings {
     // MARK: - Language
 
     var preferredLanguage: AppLanguage = .english {
-        didSet { save() }
+        didSet {
+            guard isLoaded else { return }
+            save()
+        }
     }
 
     // MARK: - Audio

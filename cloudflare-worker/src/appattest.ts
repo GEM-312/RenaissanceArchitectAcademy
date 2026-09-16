@@ -226,7 +226,9 @@ export async function verifyAssertion(args: {
   if (!ok) throw new Error("assertion_signature_invalid");
 
   // 5. Verify authData rpIdHash + counter strictly increasing.
-  const parsed = parseAuthData(ass.authenticatorData);
+  // Assertions only need the fixed header — never parse attested credential data here.
+  // iPadOS 27 sends extra bytes after the header that don't parse as credential data.
+  const parsed = parseAuthDataHeader(ass.authenticatorData);
   const expectedRpIdHash = await sha256(new TextEncoder().encode(EXPECTED_APP_ID));
   if (!bytesEqual(parsed.rpIdHash, expectedRpIdHash)) {
     throw new Error("assertion_rpid_mismatch");
@@ -263,15 +265,19 @@ function bytesEqual(a: Uint8Array, b: Uint8Array): boolean {
   return diff === 0;
 }
 
-interface ParsedAuthData {
+interface AuthDataHeader {
   rpIdHash: Uint8Array;          // 32 bytes
   flags: number;                 // 1 byte
   counter: number;               // 4 bytes BE
+}
+
+interface ParsedAuthData extends AuthDataHeader {
   aaguid: Uint8Array | null;     // 16 bytes, only if AT flag set
   credentialId: Uint8Array | null;
 }
 
-function parseAuthData(authData: Uint8Array): ParsedAuthData {
+/// The fixed 37-byte prefix every authData starts with.
+function parseAuthDataHeader(authData: Uint8Array): AuthDataHeader {
   if (authData.length < 37) throw new Error("authdata_too_short");
   const rpIdHash = authData.slice(0, 32);
   const flags = authData[32];
@@ -280,6 +286,11 @@ function parseAuthData(authData: Uint8Array): ParsedAuthData {
     (authData[34] << 16) |
     (authData[35] << 8) |
     authData[36];
+  return { rpIdHash, flags, counter };
+}
+
+function parseAuthData(authData: Uint8Array): ParsedAuthData {
+  const { rpIdHash, flags, counter } = parseAuthDataHeader(authData);
   const out: ParsedAuthData = { rpIdHash, flags, counter, aaguid: null, credentialId: null };
   // AT flag (attested credential data present) = bit 6 (0x40). Some App Attest
   // assertions set this bit even when no AT data follows (authData is exactly
