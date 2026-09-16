@@ -713,7 +713,9 @@ struct CityMapView: View {
             // Top-LEFT under the City of Learning dropdown so it doesn't collide with EDITOR.
             VStack {
                 HStack(spacing: Spacing.xs) {
-                    ForEach([("Test Bloom", "duomo"), ("Test Build", "pantheon")], id: \.1) { label, buildingId in
+                    // Only the Duomo has construction art enabled right now — the other seven
+                    // buildings are painted into the terrain (see BuildingNode).
+                    ForEach([("Test Build", "duomo")], id: \.1) { label, buildingId in
                         Button {
                             if let node = sceneHolder.scene?.buildingNodes[buildingId] {
                                 node.updateState(.available)  // reset to sepia ghost

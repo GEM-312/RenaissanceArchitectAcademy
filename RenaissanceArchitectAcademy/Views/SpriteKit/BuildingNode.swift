@@ -152,15 +152,13 @@ class BuildingNode: SKNode {
     /// fall back to the vector blueprint diamond.
     private func buildingSpriteImageName() -> String? {
         switch buildingId {
-        case "duomo":         return "Duomo"
-        case "pantheon":      return "Pantheon"
-        case "aqueduct":      return "Aqueduct"
-        case "harbor":        return "Harbor"
-        case "insula":        return "Insula"
-        case "romanRoads":    return "RomanRoad"
-        case "siegeWorkshop": return "SiegeWorkshop"
-        case "glassworks":    return "Glassworks"
-        default:              return nil
+        case "duomo": return "Duomo"
+        // Pantheon, Aqueduct, Harbor, Insula, RomanRoad, SiegeWorkshop and Glassworks are
+        // PAINTED INTO Terrain_buildings.png already — drawing a sprite on top of them shows
+        // the building twice. Their art (Pantheon/Aqueduct/… imagesets + *Build atlases) is
+        // still in the catalog; re-add the cases once the painted buildings have been cut out
+        // of the terrain and the holes filled. Only the Duomo's map spot is empty.
+        default:      return nil
         }
     }
 
@@ -169,15 +167,10 @@ class BuildingNode: SKNode {
     /// completed sprite exactly, so the animation lands on the static art.
     private func buildAnimationAtlasName() -> (atlas: String, frameCount: Int)? {
         switch buildingId {
-        case "pantheon":      return ("PantheonBuild", 15)
-        case "aqueduct":      return ("AqueductBuild", 15)
-        case "harbor":        return ("HarborBuild", 15)
-        case "insula":        return ("InsulaBuild", 15)
-        case "romanRoads":    return ("RomanRoadBuild", 15)
-        case "siegeWorkshop": return ("SiegeWorkshopBuild", 15)
-        case "glassworks":    return ("GlassworksBuild", 15)
-        case "duomo":         return ("DuomoBuild", 15)
-        default:              return nil
+        case "duomo": return ("DuomoBuild", 15)
+        // The other seven are disabled for the same reason as their sprites above —
+        // their finished buildings are already painted into the map terrain.
+        default:      return nil
         }
     }
 
