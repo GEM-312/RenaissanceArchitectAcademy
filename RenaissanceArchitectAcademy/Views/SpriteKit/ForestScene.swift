@@ -80,7 +80,7 @@ class ForestScene: SKScene, ScrollZoomable {
                   biologyFact: "Chestnut trees contain 8-13% tannin in their bark — a natural chemical defense. Medieval builders discovered wood soaked in tannin resists both rot and insects without any treatment.",
                   timberYield: 2),
         ForestPOI(name: "Cypress", italianName: "Cipresso",
-                  position: CGPoint(x: 2464, y: 1231),
+                  position: CGPoint(x: 2466, y: 1173),
                   woodType: "Softwood", leafType: "Evergreen", maxHeight: "25-40 m",
                   usedFor: "Church doors, chapel interiors, and ceiling panels. Its aromatic oils repel moths and preserve sacred spaces.",
                   furnitureUse: "Carved chests, wardrobes, and hope chests. The scent protects stored linens and vestments from insects.",
@@ -90,7 +90,7 @@ class ForestScene: SKScene, ScrollZoomable {
                   biologyFact: "Cypress wood contains natural fungicides and insecticides in its resin. The doors of St. Peter's Basilica in Rome, made of cypress, lasted over 1,100 years before replacement.",
                   timberYield: 2),
         ForestPOI(name: "Walnut", italianName: "Noce",
-                  position: CGPoint(x: 1783, y: 1241),
+                  position: CGPoint(x: 1789, y: 1182),
                   woodType: "Hardwood", leafType: "Deciduous", maxHeight: "15-25 m",
                   usedFor: "Inlaid palazzo ceilings, ornamental door frames, and decorative wall panels in the finest Renaissance interiors.",
                   furnitureUse: "Writing desks, portrait frames, and marquetry inlay. The most prized wood for master carvers and cabinet makers.",
@@ -100,7 +100,7 @@ class ForestScene: SKScene, ScrollZoomable {
                   biologyFact: "Walnut roots release juglone, a natural herbicide that inhibits competing plants from growing nearby. This is called allelopathy — chemical warfare between plants.",
                   timberYield: 1),
         ForestPOI(name: "Poplar", italianName: "Pioppo",
-                  position: CGPoint(x: 1742, y: 968),
+                  position: CGPoint(x: 996, y: 1441),
                   woodType: "Softwood", leafType: "Deciduous", maxHeight: "20-30 m",
                   usedFor: "Scaffolding, temporary centering for arches, and formwork. Every Renaissance construction site depended on poplar.",
                   furnitureUse: "Painting panels for tempera art, simple shelving, and crates. Botticelli's 'Birth of Venus' was painted on poplar.",
@@ -128,6 +128,14 @@ class ForestScene: SKScene, ScrollZoomable {
     private let treeGrowths: [String: TreeGrowth] = [
         // 534×596 px frames, sized to the Forest1 map's ~1.29 px per point
         "Chestnut": TreeGrowth(frameCount: 12, displaySize: CGSize(width: 415, height: 463), anchor: CGPoint(x: 0.492, y: 0.02)),
+        // 176×571 px frames — tall and narrow, the same 1.29 px per point
+        "Poplar": TreeGrowth(frameCount: 12, displaySize: CGSize(width: 137, height: 444), anchor: CGPoint(x: 0.534, y: 0.018)),
+        // 115×559 px frames — the narrowest of the three
+        "Cypress": TreeGrowth(frameCount: 13, displaySize: CGSize(width: 89, height: 435), anchor: CGPoint(x: 0.491, y: 0.041)),
+        // 543×584 px frames — broad crown; Marina's recolor with the auto-cutout alpha
+        "Walnut": TreeGrowth(frameCount: 12, displaySize: CGSize(width: 422, height: 454), anchor: CGPoint(x: 0.506, y: 0.015)),
+        // 533×533 px frames — the widest crown, 14 frames from sprout to full oak
+        "Oak": TreeGrowth(frameCount: 14, displaySize: CGSize(width: 414, height: 414), anchor: CGPoint(x: 0.485, y: 0.019)),
     ]
     private let treeGrowFrameTime: TimeInterval = 0.15
 
@@ -145,6 +153,8 @@ class ForestScene: SKScene, ScrollZoomable {
         (.woodpecker, CGPoint(x: 552, y: 1400), false), // Marina placed
         (.squirrel, CGPoint(x: 1880, y: 1170), false), // by the walnut
         (.hedgehog, CGPoint(x: 1909, y: 829), true),   // Marina placed
+        (.deer, CGPoint(x: 1457, y: 483), false),      // Marina placed
+        (.owl, CGPoint(x: 789, y: 1190), true),        // on the painted stump, west of the Oak
     ]
 
     private var animalNodes: [ForestAnimalNode] = []
@@ -154,12 +164,14 @@ class ForestScene: SKScene, ScrollZoomable {
     /// Trees Marina cut out of Forest1 — each starts exactly on its painted spot (bottom-center, scene pts).
     /// Move them with editor mode (E); new positions print under "FOREST SWAYING TREES".
     private let swayingTreeSpots: [(name: String, position: CGPoint)] = [
-        ("ForestTree1", CGPoint(x: 812, y: 1318)),   // tall cypress
-        ("ForestTree2", CGPoint(x: 1035, y: 330)),   // bare sapling + mushroom
-        ("ForestTree3", CGPoint(x: 1299, y: 1521)),  // tall cypress
-        ("ForestTree4", CGPoint(x: 1401, y: 775)),   // cypress + bush
-        ("ForestTree5", CGPoint(x: 1754, y: 1423)),  // small cypress
-        ("ForestTree6", CGPoint(x: 2745, y: 753)),   // fern bush
+        ("ForestTree1", CGPoint(x: 807, y: 1303)),   // tall cypress
+        ("ForestTree2", CGPoint(x: 1034, y: 329)),   // bare sapling + mushroom
+        ("ForestTree3", CGPoint(x: 1283, y: 1530)),  // tall cypress
+        ("ForestTree4", CGPoint(x: 1400, y: 728)),   // cypress + bush
+        ("ForestTree5", CGPoint(x: 1754, y: 1430)),  // small cypress
+        ("ForestTree6", CGPoint(x: 2745, y: 776)),   // bush on a leaning trunk
+        ("ForestTree7", CGPoint(x: 569, y: 549)),    // round-crown tree
+        ("ForestTree8", CGPoint(x: 1563, y: 1063)),  // fern shrub
     ]
 
     /// Trees that sway in the wind and react when the apprentice walks past (same effect as the Workshop map)
@@ -233,7 +245,7 @@ class ForestScene: SKScene, ScrollZoomable {
         /* Chestnut (1) */ [7, 21],
         /* Cypress (2)  */ [2, 13],
         /* Walnut (3)   */ [4, 0, 23],
-        /* Poplar (4)   */ [11, 17, 4],
+        /* Poplar (4)   */ [3, 1, 20],
     ]
 
     // MARK: - Truffle Discovery

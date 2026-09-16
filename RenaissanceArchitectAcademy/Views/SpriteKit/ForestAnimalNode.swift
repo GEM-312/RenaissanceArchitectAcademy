@@ -51,6 +51,22 @@ class ForestAnimalNode: SKNode {
                                    anchor: CGPoint(x: 0.495, y: 0.038),
                                    restRange: 1.5...3.5,
                                    patrol: (distance: 180, speed: 25))
+
+        /// Roe deer grazing — the largest ambient animal, so it rests longest between clips
+        static let deer = Kind(atlas: "DeerGraze", frameCount: 15,
+                               displaySize: CGSize(width: 240, height: 238),
+                               anchor: CGPoint(x: 0.448, y: 0.022),
+                               restRange: 4...10,
+                               frameTime: 0.13)
+
+        /// Little owl turning its head — 9 frames (the generated blink frames had blank white eyes).
+        /// Perches on a stump, so no ground shadow.
+        static let owl = Kind(atlas: "OwlLook", frameCount: 9,
+                              displaySize: CGSize(width: 50, height: 62),
+                              anchor: CGPoint(x: 0.497, y: 0.03),
+                              restRange: 3...8,
+                              frameTime: 0.12,
+                              hasShadow: false)
     }
 
     let kind: Kind
