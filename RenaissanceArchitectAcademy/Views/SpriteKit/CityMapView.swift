@@ -707,34 +707,37 @@ struct CityMapView: View {
                 onNudge: { dx, dy in sceneHolder.scene?.editorNudge(dx: dx, dy: dy) }
             )
 
-            // DEBUG: trigger the Duomo's completion bloom (sepia → full color reveal)
-            // so we can verify the watercolor transition without playing through.
+            // DEBUG: trigger a building's completion without playing through —
+            // the Duomo blooms sepia → full color, the Pantheon first builds itself
+            // stone by stone (PantheonBuild frames) and then blooms.
             // Top-LEFT under the City of Learning dropdown so it doesn't collide with EDITOR.
             VStack {
-                HStack {
-                    Button {
-                        if let duomo = sceneHolder.scene?.buildingNodes["duomo"] {
-                            duomo.updateState(.available)  // reset to sepia ghost
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                                duomo.playCompletionBloom()
+                HStack(spacing: Spacing.xs) {
+                    ForEach([("Test Bloom", "duomo"), ("Test Build", "pantheon")], id: \.1) { label, buildingId in
+                        Button {
+                            if let node = sceneHolder.scene?.buildingNodes[buildingId] {
+                                node.updateState(.available)  // reset to sepia ghost
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                                    node.playCompletionBloom()
+                                }
                             }
+                        } label: {
+                            Text(label)
+                                .font(RenaissanceFont.buttonSmall)
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, Spacing.md)
+                                .padding(.vertical, Spacing.xs)
+                                .background(
+                                    RoundedRectangle(cornerRadius: CornerRadius.sm)
+                                        .fill(RenaissanceColors.terracotta.opacity(0.9))
+                                )
                         }
-                    } label: {
-                        Text("Test Bloom")
-                            .font(RenaissanceFont.buttonSmall)
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, Spacing.md)
-                            .padding(.vertical, Spacing.xs)
-                            .background(
-                                RoundedRectangle(cornerRadius: CornerRadius.sm)
-                                    .fill(RenaissanceColors.terracotta.opacity(0.9))
-                            )
+                        .buttonStyle(.plain)
+                        .padding(.top, Spacing.xxl + Spacing.lg)
                     }
-                    .buttonStyle(.plain)
-                    .padding(.leading, Spacing.md)
-                    .padding(.top, Spacing.xxl + Spacing.lg)
                     Spacer()
                 }
+                .padding(.leading, Spacing.md)
                 Spacer()
             }
 

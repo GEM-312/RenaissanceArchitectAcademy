@@ -21,6 +21,10 @@ class BuildingNode: SKNode {
     private var tierBadge: SKNode?
     private(set) var currentState: BuildingState = .available
 
+    /// True once the stone-by-stone construction frames have played, so the bloom
+    /// that follows doesn't rebuild the building again. Reset by `updateState`.
+    private var hasPlayedConstructionBuild = false
+
     // Building sizes (isometric style — used for blueprint/complete states)
     private let buildingSize = CGSize(width: 120, height: 100)
 
@@ -53,6 +57,7 @@ class BuildingNode: SKNode {
 
     func updateState(_ state: BuildingState) {
         currentState = state
+        hasPlayedConstructionBuild = false
 
         // Clear previous visual + pill label + state icon
         visualContainer.removeAllChildren()
@@ -73,7 +78,7 @@ class BuildingNode: SKNode {
             return
         }
 
-        let hasSprite = buildingSpriteImageName() != nil
+        let hasBuildArt = buildAnimationAtlasName() != nil
 
         switch state {
         case .locked:
@@ -82,21 +87,21 @@ class BuildingNode: SKNode {
             addLockIcon()
 
         case .available:
-            if hasSprite {
-                setupGhostBuilding()
+            if hasBuildArt {
+                setupUnbuiltBuilding()
             }
 
         case .sketched:
-            if hasSprite {
-                setupGhostBuilding()
+            if hasBuildArt {
+                setupUnbuiltBuilding()
             } else {
                 setupBlueprint()
             }
             addStateIcon("StateAvailable")
 
         case .construction:
-            if hasSprite {
-                setupGhostBuilding()
+            if hasBuildArt {
+                setupUnbuiltBuilding()
             } else {
                 setupBlueprint()
                 setupScaffolding()
@@ -141,16 +146,43 @@ class BuildingNode: SKNode {
         addChild(lock)
     }
 
-    /// Map buildingId to sprite asset name in Assets.xcassets.
-    /// Buildings with art set here render as a sepia-tinted ghost when locked/
-    /// available/sketched/construction, and full-color when complete.
-    /// Buildings not listed fall back to the vector blueprint diamond.
+    /// Map buildingId to the COMPLETED sprite asset name in Assets.xcassets —
+    /// the finished building shown once construction is done. Unbuilt states use
+    /// frame 00 of `buildAnimationAtlasName()` instead; buildings in neither list
+    /// fall back to the vector blueprint diamond.
     private func buildingSpriteImageName() -> String? {
         switch buildingId {
-        case "duomo":    return "Duomo"
-        default:         return nil
+        case "duomo":         return "Duomo"
+        case "pantheon":      return "Pantheon"
+        case "aqueduct":      return "Aqueduct"
+        case "harbor":        return "Harbor"
+        case "insula":        return "Insula"
+        case "romanRoads":    return "RomanRoad"
+        case "siegeWorkshop": return "SiegeWorkshop"
+        case "glassworks":    return "Glassworks"
+        default:              return nil
         }
     }
+
+    /// Atlas of construction frames for buildings that build themselves stone by stone
+    /// ("PantheonBuild" → PantheonBuildFrame00…14). The last frame matches the
+    /// completed sprite exactly, so the animation lands on the static art.
+    private func buildAnimationAtlasName() -> (atlas: String, frameCount: Int)? {
+        switch buildingId {
+        case "pantheon":      return ("PantheonBuild", 15)
+        case "aqueduct":      return ("AqueductBuild", 15)
+        case "harbor":        return ("HarborBuild", 15)
+        case "insula":        return ("InsulaBuild", 15)
+        case "romanRoads":    return ("RomanRoadBuild", 15)
+        case "siegeWorkshop": return ("SiegeWorkshopBuild", 15)
+        case "glassworks":    return ("GlassworksBuild", 15)
+        case "duomo":         return ("DuomoBuild", 15)
+        default:              return nil
+        }
+    }
+
+    /// Seconds per construction frame — 15 frames ≈ 2.4s
+    private let buildFrameTime: TimeInterval = 0.16
 
     /// Per-building size multiplier on the nominal 420×420 sprite box.
     /// Use this to make individual buildings render larger relative to the map.
@@ -257,30 +289,48 @@ class BuildingNode: SKNode {
         visualContainer.addChild(brace)
     }
 
-    // MARK: - Completion Bloom (sepia → full color reveal with sparkles + glow)
+    // MARK: - Completion Bloom (sparkles + glow over the finished building)
     //
     // SpriteKit-native mirror of BloomEffectView (SwiftUI). Locks to the
     // building's world position so it tracks camera scroll/zoom correctly.
     //
     // Flow:
-    // 1. If a ghost sprite is currently visible, animate its colorBlendFactor
-    //    0.75 → 0 and alpha 0.5 → 1.0 over 1.5s (sepia melts off).
+    // 1. Buildings with construction art build themselves stone by stone first.
     // 2. Burst 12 ochre/blue sparkles outward, fading + shrinking.
     // 3. Radial ochre glow node expands then fades.
     // 4. Play buildingComplete sound.
     // 5. After animation, swap to the proper completed visual.
 
-    func playCompletionBloom() {
-        // Capture the current sprite (if any) and animate it to full color in place.
-        let ghostSprite = visualContainer.children.compactMap { $0 as? SKSpriteNode }.first
-        ghostSprite?.run(SKAction.group([
-            SKAction.customAction(withDuration: 1.5) { node, t in
-                guard let s = node as? SKSpriteNode else { return }
-                let progress = CGFloat(t / 1.5)
-                s.colorBlendFactor = 0.75 * (1 - progress)
-                s.alpha = 0.5 + 0.5 * progress
-            }
+    /// Build the building stone by stone: plays the construction frames once, from
+    /// foundation to finished, then hands over to `completion`. No-op (calls
+    /// `completion` straight away) for buildings without construction art.
+    func playConstructionBuild(completion: @escaping () -> Void) {
+        guard let build = buildAnimationAtlasName() else { completion(); return }
+
+        let atlas = SKTextureAtlas(named: build.atlas)
+        let frames = (0..<build.frameCount).map {
+            atlas.textureNamed(String(format: "%@Frame%02d", build.atlas, $0))
+        }
+        guard let first = frames.first else { completion(); return }
+
+        visualContainer.removeAllChildren()
+        let sprite = SKSpriteNode(texture: first)
+        sprite.size = aspectFittedSpriteSize(for: first)
+        visualContainer.addChild(sprite)
+
+        sprite.run(SKAction.sequence([
+            SKAction.animate(with: frames, timePerFrame: buildFrameTime, resize: false, restore: false),
+            SKAction.run(completion)
         ]))
+    }
+
+    func playCompletionBloom() {
+        // Buildings with construction art rise stone by stone first, then bloom.
+        if buildAnimationAtlasName() != nil, !hasPlayedConstructionBuild {
+            hasPlayedConstructionBuild = true
+            playConstructionBuild { [weak self] in self?.playCompletionBloom() }
+            return
+        }
 
         // Radial glow node
         let glow = SKShapeNode(circleOfRadius: 40)
@@ -338,23 +388,22 @@ class BuildingNode: SKNode {
         ]))
     }
 
-    // MARK: - Ghost Building (grayscale + transparent — available/sketched/construction states)
+    // MARK: - Unbuilt Building (available/sketched/construction states)
 
-    private func setupGhostBuilding() {
-        guard let imageName = buildingSpriteImageName(), spriteImageExists(imageName) else {
-            // No sprite available — pill label alone marks the location.
+    /// An unfinished building shows the first frame of its construction animation —
+    /// the foundation stones and stacked material, drawn in full colour. It is the
+    /// same artwork the build animation starts from, so construction continues
+    /// seamlessly from what the player was already looking at.
+    private func setupUnbuiltBuilding() {
+        guard let build = buildAnimationAtlasName() else {
+            // No construction art — the blueprint diamond marks the location instead.
             return
         }
 
-        let texture = SKTexture(imageNamed: imageName)
+        let atlas = SKTextureAtlas(named: build.atlas)
+        let texture = atlas.textureNamed(String(format: "%@Frame00", build.atlas))
         let sprite = SKSpriteNode(texture: texture)
         sprite.size = aspectFittedSpriteSize(for: texture)
-
-        // Ghost effect: sepia-tinted desaturation (like a faded architectural sketch)
-        sprite.colorBlendFactor = 0.75
-        sprite.color = PlatformColor(red: 0.85, green: 0.78, blue: 0.68, alpha: 1.0)  // warm parchment sepia
-        sprite.alpha = 0.5
-
         visualContainer.addChild(sprite)
     }
 
