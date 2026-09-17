@@ -60,7 +60,7 @@ class ForestScene: SKScene, ScrollZoomable {
 
     private let pointsOfInterest: [ForestPOI] = [
         ForestPOI(name: "Oak", italianName: "Quercia",
-                  position: CGPoint(x: 1185, y: 1316),
+                  position: CGPoint(x: 1192, y: 1249),
                   woodType: "Hardwood", leafType: "Deciduous", maxHeight: "25-30 m",
                   usedFor: "Roof trusses, load-bearing beams, and heavy doors. Oak spans cathedral naves and supports the massive roof structures of the Colosseum.",
                   furnitureUse: "Dining tables, church pews, carved altarpieces. Oak's tight grain holds intricate carvings for generations.",
@@ -173,6 +173,9 @@ class ForestScene: SKScene, ScrollZoomable {
         ("ForestTree7", CGPoint(x: 569, y: 549)),    // round-crown tree
         ("ForestTree8", CGPoint(x: 1563, y: 1063)),  // fern shrub
     ]
+
+    /// Cutouts that overlap the grown Oak + Walnut from the front — drawn above the growth sprites
+    private let frontSwayingTrees: Set<String> = ["ForestTree4", "ForestTree8"]
 
     /// Trees that sway in the wind and react when the apprentice walks past (same effect as the Workshop map)
     private struct SwayingTree {
@@ -682,7 +685,11 @@ class ForestScene: SKScene, ScrollZoomable {
                            height: tree.size.height / terrainPixelsPerPoint)
         tree.anchorPoint = CGPoint(x: 0.5, y: 0.0)  // pivot at the trunk base
         tree.position = position
-        tree.zPosition = 8  // just above the terrain, under the dark tint so it tints with the painting
+        if frontSwayingTrees.contains(image) {
+            tree.zPosition = 19.5  // above the growth sprites (POI container 10 + sprite 9), below pill labels + animals (20)
+        } else {
+            tree.zPosition = 8  // just above the terrain, under the dark tint so it tints with the painting
+        }
         tree.name = image
         addChild(tree)
 
