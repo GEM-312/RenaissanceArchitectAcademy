@@ -107,6 +107,7 @@
 		0C0 /* ClaudeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0 /* ClaudeService.swift */; };
 		0C1 /* BirdChatOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C1 /* BirdChatOverlay.swift */; };
 		0C2 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C2 /* ChatMessage.swift */; };
+		0CS /* CalendarSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CS /* CalendarSnapshot.swift */; };
 		0D0 /* PubChemService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D0 /* PubChemService.swift */; };
 		0D1 /* PubChemMoleculeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D1 /* PubChemMoleculeView.swift */; };
 		0D2 /* StationCompounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D2 /* StationCompounds.swift */; };
@@ -125,8 +126,6 @@
 		0E8 /* DiscoveryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E8 /* DiscoveryCard.swift */; };
 		0E9 /* DiscoveryCardOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E9 /* DiscoveryCardOverlay.swift */; };
 		0EA /* TerrainBlurHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EA /* TerrainBlurHelper.swift */; };
-		0P1 /* TrufflePigNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1P1 /* TrufflePigNode.swift */; };
-		0P2 /* ForestAnimalNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1P2 /* ForestAnimalNode.swift */; };
 		0EB /* CardVisualView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EB /* CardVisualView.swift */; };
 		0F0 /* HapticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F0 /* HapticsManager.swift */; };
 		0F1 /* PantheonInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F1 /* PantheonInteractiveVisuals.swift */; };
@@ -140,10 +139,12 @@
 		0F9 /* GenerationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F9 /* GenerationService.swift */; };
 		0FA /* InteractiveVisualHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA /* InteractiveVisualHelpers.swift */; };
 		0FB /* GameTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB /* GameTools.swift */; };
-		0CS /* CalendarSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CS /* CalendarSnapshot.swift */; };
 		0FC /* AqueductInteractiveVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FC /* AqueductInteractiveVisuals.swift */; };
 		0FD /* NPCDialogueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FD /* NPCDialogueView.swift */; };
 		0FE /* NPCEncounterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE /* NPCEncounterManager.swift */; };
+		0P1 /* TrufflePigNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1P1 /* TrufflePigNode.swift */; };
+		0P2 /* ForestAnimalNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1P2 /* ForestAnimalNode.swift */; };
+		0VG /* VenueGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1VG /* VenueGuide.swift */; };
 		2A0 /* VisualEditorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0 /* VisualEditorState.swift */; };
 		2A1 /* EditableModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1 /* EditableModifier.swift */; };
 		2A2 /* EditorBottomPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A2 /* EditorBottomPanel.swift */; };
@@ -168,7 +169,6 @@
 		2D0 /* GameCenterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0 /* GameCenterManager.swift */; };
 		2D1 /* GameCenterDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1 /* GameCenterDashboardView.swift */; };
 		2D2 /* WorkerClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2 /* WorkerClient.swift */; };
-		2EC /* AppAttestService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EC /* AppAttestService.swift */; };
 		2D3 /* NotebookPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3 /* NotebookPickerView.swift */; };
 		2D4 /* BirdModalOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D4 /* BirdModalOverlay.swift */; };
 		2D5 /* TTSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5 /* TTSService.swift */; };
@@ -182,6 +182,7 @@
 		2E9 /* LetterArrivesNarration.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3E9 /* LetterArrivesNarration.mp3 */; };
 		2EA /* InvitationLetterNarration.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3EA /* InvitationLetterNarration.mp3 */; };
 		2EB /* BirdArrivesNarration.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3EB /* BirdArrivesNarration.mp3 */; };
+		2EC /* AppAttestService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EC /* AppAttestService.swift */; };
 		3C0 /* BottomDialogPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0 /* BottomDialogPanel.swift */; };
 		3C1 /* BirdGuidanceContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1 /* BirdGuidanceContent.swift */; };
 		3C2 /* SceneTransitionOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2 /* SceneTransitionOverlay.swift */; };
@@ -206,17 +207,15 @@
 		544299B72F38000100F92073 /* WorkshopMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299B62F38000100F92073 /* WorkshopMapView.swift */; };
 		544299C02F3A000100F92073 /* SceneEditorMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 544299BF2F3A000100F92073 /* SceneEditorMode.swift */; };
 		5466B5B72FB4CC9B0073BD90 /* clay_pit_ambient.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5B22FB4CC9B0073BD90 /* clay_pit_ambient.mp3 */; };
-		5466B5B82FB4CC9B0073BD90 /* crafting_ambient.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5B32FB4CC9B0073BD90 /* crafting_ambient.wav */; };
 		5466B5B92FB4CC9B0073BD90 /* music_city.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5B42FB4CC9B0073BD90 /* music_city.mp3 */; };
 		5466B5BA2FB4CC9B0073BD90 /* music_workshop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5B52FB4CC9B0073BD90 /* music_workshop.mp3 */; };
 		5466B5BB2FB4CC9B0073BD90 /* river_ambient.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5B62FB4CC9B0073BD90 /* river_ambient.mp3 */; };
-		5466B5BD2FB4CCA80073BD90 /* volcano_rumble_ambient.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5BC2FB4CCA80073BD90 /* volcano_rumble_ambient.mp3 */; };
 		5466B5BF2FB4CCBA0073BD90 /* crafting_ambient.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5BE2FB4CCBA0073BD90 /* crafting_ambient.wav */; };
 		5466B5C12FB4CE2A0073BD90 /* quarry_ambient.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5C02FB4CE2A0073BD90 /* quarry_ambient.mp3 */; };
 		5466B5C32FB4D4120073BD90 /* market_chatter_ambient.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5C22FB4D4120073BD90 /* market_chatter_ambient.mp3 */; };
+		5466B5C52FB4D9740073BD90 /* volcano_rumble_ambient.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5C42FB4D9740073BD90 /* volcano_rumble_ambient.mp3 */; };
 		5466B5D12FB4FE000073BD90 /* mine_ambient.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5D02FB4FE000073BD90 /* mine_ambient.mp3 */; };
 		5466B5D32FB4FE000073BD90 /* farm_ambient.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5D22FB4FE000073BD90 /* farm_ambient.mp3 */; };
-		5466B5C52FB4D9740073BD90 /* volcano_rumble_ambient.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5466B5C42FB4D9740073BD90 /* volcano_rumble_ambient.mp3 */; };
 		5475D2EF2F3146CC003AA131 /* building_complete.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2EE2F3146CB003AA131 /* building_complete.mp3 */; };
 		5475D2F82F319000003AA131 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5475D2F92F319000003AA131 /* Assets.xcassets */; };
 		6CE /* BlueprintStudyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE /* BlueprintStudyView.swift */; };
@@ -247,12 +246,17 @@
 		AC4 /* bird_squawk.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC4 /* bird_squawk.wav */; };
 		AC5 /* forest_ambient.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC5 /* forest_ambient.wav */; };
 		AC6 /* workshop_ambient.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC6 /* workshop_ambient.wav */; };
-		AC7 /* crafting_ambient.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC7 /* crafting_ambient.wav */; };
 		AC8 /* music_lesson.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC8 /* music_lesson.wav */; };
 		ACE /* SketchEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE /* SketchEditorView.swift */; };
 		ATC1 /* RiverHouse.atlasc in Resources */ = {isa = PBXBuildFile; fileRef = ATC2 /* RiverHouse.atlasc */; };
 		ATC3 /* Fisherman.atlasc in Resources */ = {isa = PBXBuildFile; fileRef = ATC4 /* Fisherman.atlasc */; };
 		ATC5 /* Woodcutter.atlasc in Resources */ = {isa = PBXBuildFile; fileRef = ATC6 /* Woodcutter.atlasc */; };
+		CD0 /* BuildingTopicMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0 /* BuildingTopicMap.swift */; };
+		CD1 /* ContextualSuggestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1 /* ContextualSuggestion.swift */; };
+		CD2 /* ContextualSuggestionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD2 /* ContextualSuggestionService.swift */; };
+		CD3 /* BirdContextualSuggestionOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD3 /* BirdContextualSuggestionOverlay.swift */; };
+		CD4 /* ContextualSuggestionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4 /* ContextualSuggestionStore.swift */; };
+		CD5 /* ActivitySizing.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD5 /* ActivitySizing.swift */; };
 		ECE /* FoldableInventoryBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCE /* FoldableInventoryBar.swift */; };
 		F001 /* Cinzel-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B022F313B22007D8C64 /* Cinzel-Black.ttf */; };
 		F002 /* Cinzel-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B032F313B22007D8C64 /* Cinzel-Bold.ttf */; };
@@ -286,13 +290,6 @@
 		F030 /* LibreFranklin-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B232F313B22007D8C64 /* LibreFranklin-SemiBold.ttf */; };
 		F031 /* LibreFranklin-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B242F313B22007D8C64 /* LibreFranklin-Italic.ttf */; };
 		F032 /* Delius-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54477B252F313B22007D8C64 /* Delius-Regular.ttf */; };
-		CD0 /* BuildingTopicMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0 /* BuildingTopicMap.swift */; };
-		0VG /* VenueGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1VG /* VenueGuide.swift */; };
-		CD1 /* ContextualSuggestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1 /* ContextualSuggestion.swift */; };
-		CD2 /* ContextualSuggestionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD2 /* ContextualSuggestionService.swift */; };
-		CD3 /* BirdContextualSuggestionOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD3 /* BirdContextualSuggestionOverlay.swift */; };
-		CD4 /* ContextualSuggestionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4 /* ContextualSuggestionStore.swift */; };
-		CD5 /* ActivitySizing.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD5 /* ActivitySizing.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -397,6 +394,7 @@
 		1C0 /* ClaudeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeService.swift; sourceTree = "<group>"; };
 		1C1 /* BirdChatOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdChatOverlay.swift; sourceTree = "<group>"; };
 		1C2 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
+		1CS /* CalendarSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarSnapshot.swift; sourceTree = "<group>"; };
 		1D0 /* PubChemService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PubChemService.swift; sourceTree = "<group>"; };
 		1D1 /* PubChemMoleculeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PubChemMoleculeView.swift; sourceTree = "<group>"; };
 		1D2 /* StationCompounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationCompounds.swift; sourceTree = "<group>"; };
@@ -415,8 +413,6 @@
 		1E8 /* DiscoveryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoveryCard.swift; sourceTree = "<group>"; };
 		1E9 /* DiscoveryCardOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoveryCardOverlay.swift; sourceTree = "<group>"; };
 		1EA /* TerrainBlurHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TerrainBlurHelper.swift; path = Views/SpriteKit/TerrainBlurHelper.swift; sourceTree = "<group>"; };
-		1P1 /* TrufflePigNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TrufflePigNode.swift; path = Views/SpriteKit/TrufflePigNode.swift; sourceTree = "<group>"; };
-		1P2 /* ForestAnimalNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ForestAnimalNode.swift; path = Views/SpriteKit/ForestAnimalNode.swift; sourceTree = "<group>"; };
 		1EB /* CardVisualView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardVisualView.swift; sourceTree = "<group>"; };
 		1F0 /* HapticsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticsManager.swift; sourceTree = "<group>"; };
 		1F1 /* PantheonInteractiveVisuals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PantheonInteractiveVisuals.swift; path = RenaissanceArchitectAcademy/Views/PantheonInteractiveVisuals.swift; sourceTree = SOURCE_ROOT; };
@@ -430,10 +426,12 @@
 		1F9 /* GenerationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerationService.swift; sourceTree = "<group>"; };
 		1FA /* InteractiveVisualHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InteractiveVisualHelpers.swift; path = RenaissanceArchitectAcademy/Views/InteractiveVisualHelpers.swift; sourceTree = SOURCE_ROOT; };
 		1FB /* GameTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameTools.swift; sourceTree = "<group>"; };
-		1CS /* CalendarSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarSnapshot.swift; sourceTree = "<group>"; };
 		1FC /* AqueductInteractiveVisuals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AqueductInteractiveVisuals.swift; path = RenaissanceArchitectAcademy/Views/AqueductInteractiveVisuals.swift; sourceTree = SOURCE_ROOT; };
 		1FD /* NPCDialogueView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NPCDialogueView.swift; sourceTree = "<group>"; };
 		1FE /* NPCEncounterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NPCEncounterManager.swift; sourceTree = "<group>"; };
+		1P1 /* TrufflePigNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TrufflePigNode.swift; path = Views/SpriteKit/TrufflePigNode.swift; sourceTree = "<group>"; };
+		1P2 /* ForestAnimalNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ForestAnimalNode.swift; path = Views/SpriteKit/ForestAnimalNode.swift; sourceTree = "<group>"; };
+		1VG /* VenueGuide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VenueGuide.swift; sourceTree = "<group>"; };
 		2C0 /* BottomDialogPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomDialogPanel.swift; sourceTree = "<group>"; };
 		2C1 /* BirdGuidanceContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdGuidanceContent.swift; sourceTree = "<group>"; };
 		2C2 /* SceneTransitionOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneTransitionOverlay.swift; sourceTree = "<group>"; };
@@ -465,7 +463,6 @@
 		3D0 /* GameCenterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterManager.swift; sourceTree = "<group>"; };
 		3D1 /* GameCenterDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterDashboardView.swift; sourceTree = "<group>"; };
 		3D2 /* WorkerClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkerClient.swift; sourceTree = "<group>"; };
-		3EC /* AppAttestService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAttestService.swift; sourceTree = "<group>"; };
 		3D3 /* NotebookPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookPickerView.swift; sourceTree = "<group>"; };
 		3D4 /* BirdModalOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdModalOverlay.swift; sourceTree = "<group>"; };
 		3D5 /* TTSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TTSService.swift; sourceTree = "<group>"; };
@@ -479,6 +476,7 @@
 		3E9 /* LetterArrivesNarration.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = LetterArrivesNarration.mp3; sourceTree = "<group>"; };
 		3EA /* InvitationLetterNarration.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = InvitationLetterNarration.mp3; sourceTree = "<group>"; };
 		3EB /* BirdArrivesNarration.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = BirdArrivesNarration.mp3; sourceTree = "<group>"; };
+		3EC /* AppAttestService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAttestService.swift; sourceTree = "<group>"; };
 		544299972F3646ED00F92073 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BuildingNode.swift; path = Views/SpriteKit/BuildingNode.swift; sourceTree = "<group>"; };
 		544299982F3646ED00F92073 /* CityMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityMapView.swift; path = Views/SpriteKit/CityMapView.swift; sourceTree = "<group>"; };
 		544299992F3646ED00F92073 /* CityScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CityScene.swift; path = Views/SpriteKit/CityScene.swift; sourceTree = "<group>"; };
@@ -533,9 +531,9 @@
 		5466B5BE2FB4CCBA0073BD90 /* crafting_ambient.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = crafting_ambient.wav; sourceTree = "<group>"; };
 		5466B5C02FB4CE2A0073BD90 /* quarry_ambient.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = quarry_ambient.mp3; sourceTree = "<group>"; };
 		5466B5C22FB4D4120073BD90 /* market_chatter_ambient.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = market_chatter_ambient.mp3; sourceTree = "<group>"; };
+		5466B5C42FB4D9740073BD90 /* volcano_rumble_ambient.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = volcano_rumble_ambient.mp3; sourceTree = "<group>"; };
 		5466B5D02FB4FE000073BD90 /* mine_ambient.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = mine_ambient.mp3; sourceTree = "<group>"; };
 		5466B5D22FB4FE000073BD90 /* farm_ambient.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = farm_ambient.mp3; sourceTree = "<group>"; };
-		5466B5C42FB4D9740073BD90 /* volcano_rumble_ambient.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = volcano_rumble_ambient.mp3; sourceTree = "<group>"; };
 		5475D2EE2F3146CB003AA131 /* building_complete.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = building_complete.mp3; sourceTree = "<group>"; };
 		5475D2F92F319000003AA131 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5CE /* PencilCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PencilCanvasView.swift; sourceTree = "<group>"; };
@@ -573,14 +571,13 @@
 		BC7 /* crafting_ambient.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = crafting_ambient.wav; sourceTree = "<group>"; };
 		BC8 /* music_lesson.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = music_lesson.wav; sourceTree = "<group>"; };
 		BCE /* SketchEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchEditorView.swift; sourceTree = "<group>"; };
-		FCE /* FoldableInventoryBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldableInventoryBar.swift; sourceTree = "<group>"; };
 		BD0 /* BuildingTopicMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingTopicMap.swift; sourceTree = "<group>"; };
-		1VG /* VenueGuide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VenueGuide.swift; sourceTree = "<group>"; };
 		BD1 /* ContextualSuggestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextualSuggestion.swift; sourceTree = "<group>"; };
 		BD2 /* ContextualSuggestionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextualSuggestionService.swift; sourceTree = "<group>"; };
 		BD3 /* BirdContextualSuggestionOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdContextualSuggestionOverlay.swift; sourceTree = "<group>"; };
 		BD4 /* ContextualSuggestionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextualSuggestionStore.swift; sourceTree = "<group>"; };
 		BD5 /* ActivitySizing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivitySizing.swift; sourceTree = "<group>"; };
+		FCE /* FoldableInventoryBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldableInventoryBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1011,7 +1008,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1520;
-				LastUpgradeCheck = 2640;
+				LastUpgradeCheck = 2700;
 				TargetAttributes = {
 					400 = {
 						CreatedOnToolsVersion = 15.2;
@@ -1092,7 +1089,6 @@
 				AB4 /* page_turn.wav in Resources */,
 				AB5 /* pigment_grind.wav in Resources */,
 				AB6 /* scene_transition.wav in Resources */,
-				5466B5BD2FB4CCA80073BD90 /* volcano_rumble_ambient.mp3 in Resources */,
 				AB7 /* seal_stamp.wav in Resources */,
 				AB8 /* stone_hit.wav in Resources */,
 				AB9 /* timber_chop.wav in Resources */,
@@ -1103,7 +1099,6 @@
 				AC4 /* bird_squawk.wav in Resources */,
 				AC5 /* forest_ambient.wav in Resources */,
 				AC6 /* workshop_ambient.wav in Resources */,
-				AC7 /* crafting_ambient.wav in Resources */,
 				AC8 /* music_lesson.wav in Resources */,
 				543AD36C2F60C199001895ED /* GirlIntroAudio.m4a in Resources */,
 				2E8 /* LorenzoLetterNarration.mp3 in Resources */,
@@ -1129,7 +1124,6 @@
 				F027 /* LibreFranklin-Regular.ttf in Resources */,
 				F032 /* Delius-Regular.ttf in Resources */,
 				5466B5B72FB4CC9B0073BD90 /* clay_pit_ambient.mp3 in Resources */,
-				5466B5B82FB4CC9B0073BD90 /* crafting_ambient.wav in Resources */,
 				5466B5B92FB4CC9B0073BD90 /* music_city.mp3 in Resources */,
 				5466B5BA2FB4CC9B0073BD90 /* music_workshop.mp3 in Resources */,
 				5466B5BB2FB4CC9B0073BD90 /* river_ambient.mp3 in Resources */,
