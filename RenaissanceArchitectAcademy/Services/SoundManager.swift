@@ -11,6 +11,12 @@ class SoundManager: ObservableObject {
 
     // MARK: - Players
 
+    /// Every AVAudioPlayer call runs here. `play()` re-activates the audio session
+    /// each time, which blocks its caller — on the main thread that's a dropped frame
+    /// (and the iOS 27 "UI unresponsiveness" warning). Serial, so one sound can't
+    /// start while another is being set up.
+    private static let audioQueue = DispatchQueue(label: "com.marinapollak.raa.audio", qos: .userInitiated)
+
     /// Cached SFX players (keyed by filename)
     private var sfxPlayers: [String: AVAudioPlayer] = [:]
 
@@ -26,11 +32,61 @@ class SoundManager: ObservableObject {
         #if os(iOS)
         do {
             try AVAudioSession.sharedInstance().setCategory(.ambient, options: .mixWithOthers)
-            try AVAudioSession.sharedInstance().setActive(true)
         } catch {
             print("Failed to configure audio session: \(error)")
         }
+        activateSession()
         #endif
+        preloadCommonSounds()
+    }
+
+    #if os(iOS)
+    /// Activating the session blocks the caller while CoreAudio sets up the route —
+    /// on the main thread that's a visible hitch (iOS 27 logs a warning for it).
+    /// iOS 27 added a non-blocking activate; older systems get the sync call, just
+    /// off the main thread.
+    private func activateSession() {
+        Task.detached(priority: .userInitiated) {
+            if #available(iOS 27.0, *) {
+                _ = try? await AVAudioSession.sharedInstance().activate()
+            } else {
+                try? AVAudioSession.sharedInstance().setActive(true)
+            }
+        }
+    }
+    #endif
+
+    /// Sounds that fire while the UI animates — taps, cards, the bird. The first
+    /// `play()` on a fresh AVAudioPlayer allocates an audio queue and activates the
+    /// audio session; on the main thread mid-animation that's what made the card and
+    /// building overlays stutter. Preparing them off the main thread pays that cost
+    /// once, at launch. The rest still load lazily in `play(_:)`.
+    private static let commonSounds: [Sound] = [
+        .tapSoft, .buildingTap, .overlayOpen, .overlayClose, .pageTurn, .pageFlip,
+        .cardsAppear, .cardFlip, .cardComplete,
+        .correctChime, .wrongBuzz, .florinsEarned,
+        .birdChirp, .birdHappyTrill, .birdSquawk, .birdFlyIn,
+    ]
+
+    private func preloadCommonSounds() {
+        let sounds = Self.commonSounds
+        // Strong self: `shared` is a static singleton that lives for the whole app,
+        // and a weak capture here reads as a mutable var inside the task (a Swift 6 error).
+        Task.detached(priority: .utility) {
+            for sound in sounds {
+                guard let url = Bundle.main.url(forResource: sound.rawValue, withExtension: sound.ext),
+                      let player = try? AVAudioPlayer(contentsOf: url) else { continue }
+                player.prepareToPlay()
+                await MainActor.run { self.adopt(player, for: sound) }
+            }
+        }
+    }
+
+    /// Keep a player prepared in the background, unless `play(_:)` already cached one.
+    private func adopt(_ player: AVAudioPlayer, for sound: Sound) {
+        guard sfxPlayers[sound.rawValue] == nil else { return }
+        player.volume = Float(GameSettings.shared.sfxVolume)
+        sfxPlayers[sound.rawValue] = player
     }
 
     // MARK: - Sound Effects
@@ -138,9 +194,11 @@ class SoundManager: ObservableObject {
 
         // Reuse cached player
         if let player = sfxPlayers[sound.rawValue] {
-            player.currentTime = 0
-            player.volume = sfxVol
-            player.play()
+            Self.audioQueue.async {
+                player.currentTime = 0
+                player.volume = sfxVol
+                player.play()
+            }
             return
         }
 
@@ -149,13 +207,15 @@ class SoundManager: ObservableObject {
             return
         }
 
-        do {
-            let player = try AVAudioPlayer(contentsOf: url)
-            player.volume = sfxVol
-            player.play()
-            sfxPlayers[sound.rawValue] = player
-        } catch {
-            print("SoundManager: failed to play \(sound.rawValue): \(error)")
+        Self.audioQueue.async {
+            do {
+                let player = try AVAudioPlayer(contentsOf: url)
+                player.volume = sfxVol
+                player.play()
+                Task { @MainActor in self.adopt(player, for: sound) }
+            } catch {
+                print("SoundManager: failed to play \(sound.rawValue): \(error)")
+            }
         }
     }
 
@@ -163,18 +223,20 @@ class SoundManager: ObservableObject {
     private func playBirdReaction(_ bird: Sound) {
         let sfxVol = Float(GameSettings.shared.sfxVolume) * 0.7
         if let player = sfxPlayers[bird.rawValue] {
-            player.currentTime = 0
-            player.volume = sfxVol
-            player.play()
+            Self.audioQueue.async {
+                player.currentTime = 0
+                player.volume = sfxVol
+                player.play()
+            }
             return
         }
         guard let url = Bundle.main.url(forResource: bird.rawValue, withExtension: bird.ext) else { return }
-        do {
-            let player = try AVAudioPlayer(contentsOf: url)
+        Self.audioQueue.async {
+            guard let player = try? AVAudioPlayer(contentsOf: url) else { return }
             player.volume = sfxVol
             player.play()
-            sfxPlayers[bird.rawValue] = player
-        } catch {}
+            Task { @MainActor in self.adopt(player, for: bird) }
+        }
     }
 
     /// Preload a sound for instant playback
@@ -227,18 +289,24 @@ class SoundManager: ObservableObject {
             fadeOut(player: current, duration: fadeDuration)
         }
 
-        do {
-            let player = try AVAudioPlayer(contentsOf: url)
-            player.numberOfLoops = -1  // Loop forever
-            player.volume = 0
-            player.play()
-            currentMusic = track
+        currentMusic = track
 
-            // Fade in
-            fadeIn(player: player, targetVolume: musicVol, duration: fadeDuration)
-            musicPlayer = player
-        } catch {
-            print("SoundManager: failed to play music \(track.rawValue): \(error)")
+        // Loading a music file is slow (the tracks are tens of MB) and `play()`
+        // re-activates the audio session — both off the main thread, then back to
+        // the main actor to own the player and run the fade.
+        Self.audioQueue.async {
+            do {
+                let player = try AVAudioPlayer(contentsOf: url)
+                player.numberOfLoops = -1  // Loop forever
+                player.volume = 0
+                player.play()
+                Task { @MainActor in
+                    self.musicPlayer = player
+                    self.fadeIn(player: player, targetVolume: musicVol, duration: fadeDuration)
+                }
+            } catch {
+                print("SoundManager: failed to play music \(track.rawValue): \(error)")
+            }
         }
     }
 
@@ -304,17 +372,23 @@ class SoundManager: ObservableObject {
             fadeOut(player: current, duration: fadeDuration, channel: .ambient)
         }
 
-        do {
-            let player = try AVAudioPlayer(contentsOf: url)
-            player.numberOfLoops = -1
-            player.volume = 0
-            player.play()
-            currentAmbient = ambient
+        currentAmbient = ambient
 
-            fadeIn(player: player, targetVolume: ambientVol, duration: fadeDuration, channel: .ambient)
-            ambientPlayer = player
-        } catch {
-            print("SoundManager: failed to play ambient \(ambient.rawValue): \(error)")
+        // Same as music: the ambient loops are large files, so load + start them
+        // off the main thread and hand the player back to the main actor.
+        Self.audioQueue.async {
+            do {
+                let player = try AVAudioPlayer(contentsOf: url)
+                player.numberOfLoops = -1
+                player.volume = 0
+                player.play()
+                Task { @MainActor in
+                    self.ambientPlayer = player
+                    self.fadeIn(player: player, targetVolume: ambientVol, duration: fadeDuration, channel: .ambient)
+                }
+            } catch {
+                print("SoundManager: failed to play ambient \(ambient.rawValue): \(error)")
+            }
         }
     }
 
