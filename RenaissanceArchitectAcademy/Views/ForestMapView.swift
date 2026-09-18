@@ -3,7 +3,7 @@ import SpriteKit
 // Audio via SoundManager
 
 /// SwiftUI wrapper for the ForestScene SpriteKit experience
-/// Layers: SpriteKit scene → bird companion → nav panel + inventory → science cards overlay → truffle overlay
+/// Layers: SpriteKit scene → nav panel + inventory → science cards overlay → truffle overlay
 struct ForestMapView: View {
 
     private var settings: GameSettings { GameSettings.shared }
@@ -18,7 +18,6 @@ struct ForestMapView: View {
     // Scene reference — stored in a class box so it survives body re-evaluation
     // without triggering re-renders (unlike @State which causes infinite loops)
     @State private var sceneHolder = SceneHolder<ForestScene>()
-    @State private var playerPosition: CGPoint = CGPoint(x: 0.5, y: 0.5)
     @State private var playerIsWalking = false
 
     // POI info overlay state
@@ -75,18 +74,6 @@ struct ForestMapView: View {
                         .ignoresSafeArea()
                 } else {
                     ODRLoadingView(tag: AssetManager.forestScene, message: "Preparing the forest...")
-                }
-
-                // Layer 2: Bird companion overlay — only show when stopped (reduces memory)
-                if !playerIsWalking {
-                    BirdCharacter(isSitting: true)
-                        .frame(width: 80, height: 80)
-                        .position(
-                            x: playerPosition.x * geometry.size.width + 60,
-                            y: playerPosition.y * geometry.size.height - 45
-                        )
-                        .allowsHitTesting(false)
-                        .transition(.opacity)
                 }
 
                 // Layer 3: Nav panel (inventory bar moved to its own layer
@@ -1736,8 +1723,7 @@ struct ForestMapView: View {
         newScene.scaleMode = .aspectFill
         newScene.apprenticeIsBoy = onboardingState?.apprenticeGender == .boy || onboardingState == nil
 
-        newScene.onPlayerPositionChanged = { position, isWalking in
-            playerPosition = position
+        newScene.onPlayerPositionChanged = { _, isWalking in
             playerIsWalking = isWalking
         }
 
