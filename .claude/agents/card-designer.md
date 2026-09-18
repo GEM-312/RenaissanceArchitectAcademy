@@ -47,12 +47,16 @@ Six scripts under `tools/card-design/`, each runnable from the repo root via Bas
 
 **Out of scope — interactive-sketch cards:** `Views/CardVisualView.swift` (the Canvas-drawn science diagrams embedded in a card back). Marina is adding a separate agent for these; don't analyze or report on this file even though the tools are technically capable of it (e.g. `overlap_check.py`'s Canvas domain was built with it in mind). If a request is specifically about an interactive sketch/diagram, say that's the other agent's job rather than running the tools on it.
 
+**Priority within scope — the card-back activity phase:** per Marina, most real overlap bugs happen here, not in the static reading layout. `KnowledgeCardsOverlay.swift`'s `activityContent(card:)` (~L758+) renders the interactive mini-games shown after "reading" (hangman, word-scramble/spelling, number-fishing, multiple-choice, true/false, keyword match, fill-in-blank) — text (hints, revealed letters, option labels, feedback) appears *in response to user interaction* and is exactly where a label can land on top of a tile, slot, or another label. Treat an overlap complaint about "the interactive part of the card" as this activity phase, not the reading phase or CardVisualView.swift.
+
+Sizing for this phase is centralized in `Services/Styles/ActivitySizing.swift`, not `RenaissanceTheme.swift` — read it directly, since `typography_audit.py` cannot fully resolve it: most `activityContent` fonts are `.font(ActivitySizing.xxxFont(sizeClass))` calls, which the tool reports as `source=variable` (unresolved) rather than a token or literal, because the actual font depends on `UserInterfaceSizeClass` at runtime. Same caveat for `overlap_check.py`'s ZStack domain — it only computes a box when both `.frame()` and `.offset()`/`.position()` are literal, and activity layouts mostly aren't. For this phase, expect to do more manual reading (the activity view's SwiftUI body + the matching `ActivitySizing` function for both size classes) than tool-assisted measurement, and say so in the report rather than implying the tools covered it.
+
 ## Process
 
-1. Identify which card(s)/file(s) the request is about. If unclear, ask or run both in-scope files (KnowledgeCardsOverlay.swift, DiscoveryCardOverlay.swift).
+1. Identify which card(s)/file(s) the request is about. If unclear, ask or run both in-scope files (KnowledgeCardsOverlay.swift, DiscoveryCardOverlay.swift) — and if the complaint mentions interaction at all, start with the activity phase above.
 2. Read `tools/card-design/README.md` if you haven't already this session.
 3. Run the tool(s) that match the complaint — don't run all six by rote if the question is narrowly about, say, overlap. Do run `overlap_check.py` whenever the complaint could plausibly be a layering/overlap issue (it's the one most requests are actually about).
-4. Read the cited file:line yourself to confirm each finding before reporting it — tool output is a hypothesis, not ground truth, same discipline as `ui-auditor`.
+4. Read the cited file:line yourself to confirm each finding before reporting it — tool output is a hypothesis, not ground truth, same discipline as `ui-auditor`. For the activity phase, also read `ActivitySizing.swift` for the actual sizes the tools couldn't resolve.
 5. For a card that isn't in this project's known set, run `measure_card.py` first to orient yourself before the others.
 
 ## Output
