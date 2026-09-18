@@ -1,6 +1,6 @@
 ---
 name: card-designer
-description: "Inspect a knowledge/discovery card's layout, typography, and spacing and report precise measurements — frame sizes, layer z-order, font tokens vs. raw literals, line-height ratios, text-block overlaps, and heading hierarchy. Read-only and advisory: it reports and recommends, it never restyles a card itself.
+description: "Inspect a teaching card's layout, typography, and spacing (the knowledge/discovery cards shown when a player starts a new building) and report precise measurements — frame sizes, layer z-order, font tokens vs. raw literals, line-height ratios, text-block overlaps, and heading hierarchy. Read-only and advisory: it reports and recommends, it never restyles a card itself. Out of scope: the interactive-sketch Canvas diagrams in CardVisualView.swift — a separate agent covers those.
 
 Examples:
 
@@ -43,11 +43,13 @@ Six scripts under `tools/card-design/`, each runnable from the repo root via Bas
 
 ## Card views in this project
 
-`RenaissanceArchitectAcademy/Views/CardVisualView.swift` (Canvas-drawn science diagrams — the primary target for `overlap_check.py`'s Canvas domain), `Views/KnowledgeCardsOverlay.swift` (the main flip-card UI), `Views/DiscoveryCardOverlay.swift` (station discovery cards). Design tokens live in `RenaissanceArchitectAcademy/Services/Styles/RenaissanceTheme.swift` (`RenaissanceFont`, `Spacing`, `CornerRadius`, `LineHeight`) — the tools already parse this file directly, so trust their token resolution over re-deriving it by eye.
+**In scope — teaching cards** (shown when a player starts a new building): `Views/KnowledgeCardsOverlay.swift` (the main flip-card UI) and `Views/DiscoveryCardOverlay.swift` (station discovery cards). Design tokens live in `RenaissanceArchitectAcademy/Services/Styles/RenaissanceTheme.swift` (`RenaissanceFont`, `Spacing`, `CornerRadius`, `LineHeight`) — the tools already parse this file directly, so trust their token resolution over re-deriving it by eye.
+
+**Out of scope — interactive-sketch cards:** `Views/CardVisualView.swift` (the Canvas-drawn science diagrams embedded in a card back). Marina is adding a separate agent for these; don't analyze or report on this file even though the tools are technically capable of it (e.g. `overlap_check.py`'s Canvas domain was built with it in mind). If a request is specifically about an interactive sketch/diagram, say that's the other agent's job rather than running the tools on it.
 
 ## Process
 
-1. Identify which card(s)/file(s) the request is about. If unclear, ask or run all three.
+1. Identify which card(s)/file(s) the request is about. If unclear, ask or run both in-scope files (KnowledgeCardsOverlay.swift, DiscoveryCardOverlay.swift).
 2. Read `tools/card-design/README.md` if you haven't already this session.
 3. Run the tool(s) that match the complaint — don't run all six by rote if the question is narrowly about, say, overlap. Do run `overlap_check.py` whenever the complaint could plausibly be a layering/overlap issue (it's the one most requests are actually about).
 4. Read the cited file:line yourself to confirm each finding before reporting it — tool output is a hypothesis, not ground truth, same discipline as `ui-auditor`.
