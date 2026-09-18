@@ -152,13 +152,21 @@ class BuildingNode: SKNode {
     /// fall back to the vector blueprint diamond.
     private func buildingSpriteImageName() -> String? {
         switch buildingId {
-        case "duomo": return "Duomo"
-        // Pantheon, Aqueduct, Harbor, Insula, RomanRoad, SiegeWorkshop and Glassworks are
-        // PAINTED INTO Terrain_buildings.png already — drawing a sprite on top of them shows
-        // the building twice. Their art (Pantheon/Aqueduct/… imagesets + *Build atlases) is
-        // still in the catalog; re-add the cases once the painted buildings have been cut out
-        // of the terrain and the holes filled. Only the Duomo's map spot is empty.
-        default:      return nil
+        case "duomo":         return "Duomo"
+        // The six Ancient Rome buildings on the Sep 2026 terrain. That map is painted with
+        // EMPTY plots, so each of these draws as its own sprite and can animate, be tapped
+        // and change state. Sprites were cut from the in-scene renders, so their light and
+        // shadow match the ground they stand on.
+        case "colosseum":     return "Colosseum"
+        case "pantheon":      return "Pantheon"
+        case "romanBaths":    return "RomanBaths"
+        case "insula":        return "Insula"
+        case "siegeWorkshop": return "SiegeWorkshop"
+        case "aqueduct":      return "Aqueduct"
+        case "romanRoads":    return "RomanRoad"
+        case "harbor":        return "Harbor"
+        // Glassworks has no plot on this terrain yet.
+        default:              return nil
         }
     }
 
@@ -167,10 +175,17 @@ class BuildingNode: SKNode {
     /// completed sprite exactly, so the animation lands on the static art.
     private func buildAnimationAtlasName() -> (atlas: String, frameCount: Int)? {
         switch buildingId {
-        case "duomo": return ("DuomoBuild", 15)
-        // The other seven are disabled for the same reason as their sprites above —
-        // their finished buildings are already painted into the map terrain.
-        default:      return nil
+        case "duomo":         return ("DuomoBuild", 15)
+        case "colosseum":     return ("ColosseumBuild", 15)
+        case "pantheon":      return ("PantheonBuild", 15)
+        case "romanBaths":    return ("RomanBathsBuild", 15)
+        case "insula":        return ("InsulaBuild", 15)
+        case "siegeWorkshop": return ("SiegeWorkshopBuild", 15)
+        case "aqueduct":      return ("AqueductBuild", 15)
+        case "romanRoads":    return ("RomanRoadBuild", 15)
+        case "harbor":        return ("HarborBuild", 15)
+        // Glassworks keeps its older atlas in the catalog but has no plot here.
+        default:              return nil
         }
     }
 
@@ -179,10 +194,22 @@ class BuildingNode: SKNode {
 
     /// Per-building size multiplier on the nominal 420×420 sprite box.
     /// Use this to make individual buildings render larger relative to the map.
+    ///
+    /// The Rome terrain is drawn in perspective, so apparent size has to fall off
+    /// with distance: buildings high on the map (large y) sit further back and want
+    /// a smaller multiplier than ones in the foreground. Scaling here rather than in
+    /// the art means the build-animation frames scale with the finished sprite, since
+    /// both go through `aspectFittedSpriteSize(for:)`.
     private var spriteSizeMultiplier: CGFloat {
         switch buildingId {
-        case "duomo": return 1.5
-        default:      return 1.0
+        case "duomo":      return 1.5
+        case "insula":     return 0.70   // y 1950 — furthest back
+        case "colosseum":  return 1.35   // foreground centrepiece
+        // Both of these are long, low structures rather than tall massing, so they
+        // read much smaller than their footprint at the same multiplier.
+        case "romanRoads": return 1.5
+        case "harbor":     return 1.5
+        default:           return 1.0
         }
     }
 

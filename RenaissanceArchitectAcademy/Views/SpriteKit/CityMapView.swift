@@ -707,15 +707,21 @@ struct CityMapView: View {
                 onNudge: { dx, dy in sceneHolder.scene?.editorNudge(dx: dx, dy: dy) }
             )
 
-            // DEBUG: trigger a building's completion without playing through —
-            // the Duomo blooms sepia → full color, the Pantheon first builds itself
-            // stone by stone (PantheonBuild frames) and then blooms.
+            // DEBUG: trigger a building's completion without playing through — the
+            // building rises stone by stone through its *Build frames, then blooms.
+            // updateState(.available) resets hasPlayedConstructionBuild, so it replays
+            // on every press.
             // Top-LEFT under the City of Learning dropdown so it doesn't collide with EDITOR.
             VStack {
                 HStack(spacing: Spacing.xs) {
-                    // Only the Duomo has construction art enabled right now — the other seven
-                    // buildings are painted into the terrain (see BuildingNode).
-                    ForEach([("Test Build", "duomo")], id: \.1) { label, buildingId in
+                    // All six Ancient Rome buildings on the Sep 2026 terrain have sprites
+                    // and build atlases. The Duomo has no node here (see hiddenBuildingIds
+                    // in CityScene); Harbor, RomanRoad and Glassworks have no plot yet.
+                    ForEach([("Colosseum", "colosseum"), ("Pantheon", "pantheon"),
+                             ("Baths", "romanBaths"), ("Insula", "insula"),
+                             ("Siege", "siegeWorkshop"), ("Aqueduct", "aqueduct"),
+                             ("Road", "romanRoads"), ("Harbor", "harbor")],
+                            id: \.1) { label, buildingId in
                         Button {
                             if let node = sceneHolder.scene?.buildingNodes[buildingId] {
                                 node.updateState(.available)  // reset to sepia ghost

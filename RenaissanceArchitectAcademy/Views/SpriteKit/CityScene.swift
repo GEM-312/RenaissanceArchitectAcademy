@@ -104,6 +104,10 @@ class CityScene: SKScene, ScrollZoomable {
     /// new 1.4:1 terrain horizontally / squashed it vertically.
     private let mapSize = CGSize(width: 3500, height: 2500)
 
+    /// Buildings that get no node on the map at all — no sprite, no blueprint diamond,
+    /// no tap target. The Duomo is Florence's; the terrain is now Ancient Rome only.
+    private let hiddenBuildingIds: Set<String> = ["duomo"]
+
     // MARK: - Waypoint Graph (road network for pathfinding)
 
     /// 40 road junctions connecting the 17 buildings across the 3500×2500 map
@@ -287,8 +291,14 @@ class CityScene: SKScene, ScrollZoomable {
 
     private func setupPlayer() {
         playerNode = PlayerNode(isBoy: apprenticeIsBoy)
-        // Spawn near the center of the map
-        playerNode.position = CGPoint(x: 1400, y: 1300)
+        // Spawn in the lower-left, a short walk from the Roman road at (1004, 861)
+        // so the apprentice starts on the road network rather than mid-field.
+        playerNode.position = CGPoint(x: 620, y: 540)
+        // Scaled on the node, not on PlayerNode's spriteSize, so this stays local to
+        // the city map — the Workshop, Forest and Crafting Room share PlayerNode and
+        // keep their own scale. The breathing/squash animations run on the child
+        // sprite, so they still work relative to this.
+        playerNode.setScale(1.3)
         playerNode.zPosition = 50
         addChild(playerNode)
 
@@ -491,14 +501,14 @@ class CityScene: SKScene, ScrollZoomable {
             // ========================================
             // Positions rescaled for new 3500x1955 map (Y × 0.782 from old 2500 height)
             // Use editor mode (E) to fine-tune positions over baked-in buildings
-            ("aqueduct", "Aqueduct", CGPoint(x: 2771, y: 1558), "rome", 0),
-            ("colosseum", "Colosseum", CGPoint(x: 799, y: 687), "rome", 0),
-            ("romanBaths", "Roman Baths", CGPoint(x: 801, y: 1878), "rome", 0),
-            ("pantheon", "Pantheon", CGPoint(x: 344, y: 2194), "rome", 0),
-            ("romanRoads", "Roman Roads", CGPoint(x: 2607, y: 861), "rome", 0),
-            ("harbor", "Harbor", CGPoint(x: 2877, y: 2269), "rome", 0),
-            ("siegeWorkshop", "Siege Workshop", CGPoint(x: 1667, y: 1891), "rome", 0),
-            ("insula", "Insula", CGPoint(x: 372, y: 966), "rome", 0),
+            ("aqueduct", "Aqueduct", CGPoint(x: 2304, y: 922), "rome", 0),
+            ("colosseum", "Colosseum", CGPoint(x: 1491, y: 1384), "rome", 0),
+            ("romanBaths", "Roman Baths", CGPoint(x: 1012, y: 1523), "rome", 2),
+            ("pantheon", "Pantheon", CGPoint(x: 2192, y: 1677), "rome", 0),
+            ("romanRoads", "Roman Roads", CGPoint(x: 1004, y: 861), "rome", 0),
+            ("harbor", "Harbor", CGPoint(x: 2922, y: 264), "rome", 0),
+            ("siegeWorkshop", "Siege Workshop", CGPoint(x: 3007, y: 1717), "rome", 0),
+            ("insula", "Insula", CGPoint(x: 1250, y: 1903), "rome", 0),
 
             // ========================================
             // RENAISSANCE ITALY
@@ -525,6 +535,8 @@ class CityScene: SKScene, ScrollZoomable {
         ]
 
         for building in buildings {
+            if hiddenBuildingIds.contains(building.id) { continue }
+
             let node = BuildingNode(
                 buildingId: building.id,
                 buildingName: building.name,
@@ -1182,16 +1194,16 @@ class CityScene: SKScene, ScrollZoomable {
             ("CityTree09", CGPoint(x: 3280, y: 2080)),
             ("CityTree10", CGPoint(x:  300, y:  720)),
             ("CityTree11", CGPoint(x:  820, y: 1080)),
-            ("CityTree12", CGPoint(x: 1300, y:  650)),
+            ("CityTree12", CGPoint(x: 2664, y: 1352)),
             ("CityTree13", CGPoint(x: 1880, y:  280)),
-            ("CityTree14", CGPoint(x: 2150, y: 1100)),
-            ("CityTree15", CGPoint(x: 2680, y:  420)),
-            ("CityTree16", CGPoint(x: 3080, y: 1100)),
+            ("CityTree14", CGPoint(x: 2397, y: 1128)),
+            ("CityTree15", CGPoint(x: 2784, y: 1231)),
+            ("CityTree16", CGPoint(x: 2587, y: 1373)),
             ("CityTree17", CGPoint(x: 3300, y:  680)),
             ("CityTree18", CGPoint(x:  500, y: 1500)),
             ("CityTree19", CGPoint(x: 1620, y: 1400)),
-            ("CityTree20", CGPoint(x: 2280, y: 1480)),
-            ("CityTree21", CGPoint(x: 2860, y: 1320)),
+            ("CityTree20", CGPoint(x: 2537, y: 1618)),
+            ("CityTree21", CGPoint(x: 2636, y: 1264)),
         ]
         for entry in defaults {
             addSwayingTree(image: entry.name, position: entry.position)
@@ -1210,7 +1222,14 @@ class CityScene: SKScene, ScrollZoomable {
         tree.anchorPoint = CGPoint(x: 0.5, y: 0.0)  // pivot at trunk base
         tree.position = position
         tree.setScale(scale)
-        tree.zPosition = 8        // below buildings (10), above terrain (-100)
+        // IN FRONT of the building artwork, which lands at effective z 11 — SpriteKit
+        // ACCUMULATES zPosition down the tree, so BuildingNode (10) + its visualContainer
+        // (1) = 11, not 10. A tree at 11 ties with it and `.ignoresSiblingOrder` breaks
+        // the tie arbitrarily, which reads as "still behind".
+        // 11.5 clears the artwork but stays under the dark tint (12) and dark-mode glow
+        // (13), so trees dim with everything else at night, and well under the lock (25),
+        // state badge (30), pill label (35) and apprentice (50).
+        tree.zPosition = 11.5
         tree.name = image
         addChild(tree)
 
