@@ -28,8 +28,10 @@ exact formula and why. **Getting the true, exact resolved numbers requires
 a render pass** (an Xcode preview or simulator run) — these tools narrow
 down where to look, they don't replace looking.
 
-All six were run against the three real card views on 2026-09-18; see the
-PR description for the actual output and what it found.
+All six were run against the three real card views on 2026-09-18, and again
+on 2026-09-19 after `overlap_check.py` gained the domain-3 paragraph/visual
+sweep below; see each PR's description for the actual output and what it
+found.
 
 ---
 
@@ -165,10 +167,14 @@ intersects or sits closer than `--safe-margin`.
 
 ```
 python3 overlap_check.py <file.swift> [--width 320] [--height 180]
-                          [--safe-margin 8] [--assumed-chars 10] [--json]
+                          [--safe-margin 8] [--assumed-chars 10]
+                          [--container-height 700] [--paragraph-width 380]
+                          [--paragraph-chars 500]
+                          [--scale-min M] [--scale-max M] [--scale-step S]
+                          [--json]
 ```
 
-Checks **two overlap domains**, because RAA's cards genuinely mix both:
+Checks **three overlap domains**, because RAA's cards genuinely mix all three:
 
 1. **SwiftUI ZStack siblings** with a literal `.frame(width:height:)` *and*
    an `.offset()`/`.position()`. Most card `Text` has neither — it flows in
@@ -184,6 +190,22 @@ Checks **two overlap domains**, because RAA's cards genuinely mix both:
    earlier draws once passed — it only gates progressive reveal. The
    nearest preceding `guard` is shown per finding so you can see which step
    each text appears at.
+3. **The lesson paragraph vs. `CardVisualView` boundary** in
+   `KnowledgeCardsOverlay.swift` — `highlightedLessonText(card:)` (sized from
+   its own content) immediately followed by `CardVisualView(...)` (sized as
+   `containerHeight × <multiplier> × cardTextScale`, read live from
+   `CardVisualView.swift`, never hardcoded in this tool). Both are
+   auto-laid-out VStack siblings, so — like domain 1 — they cannot literally
+   intersect in x/y; the real risk this domain checks is that their
+   **combined height** (paragraph + the VStack's own inter-item spacing +
+   the visual) outgrows the card's available height, since neither shrinks
+   to make room for the other. `cardTextScale` (the "Card Text Size" slider
+   in Settings, 0.8×-1.3×) scales BOTH sides of this boundary at once — the
+   paragraph's font size *and* the visual's height fraction — so this domain
+   **sweeps the full slider range** and reports the first value where they
+   stop fitting. This sweep is the point: a single-size check would have
+   missed that the collision starts at `cardTextScale=1.0`, the *default*,
+   not just at the accessibility extreme (see the worked example below).
 
 **All box math is an estimate**, stated on every run:
 - `box width = character_count × fontSize × avg_char_width_factor` (a
@@ -208,7 +230,7 @@ Position/font expressions that can't be reduced to plain arithmetic
 (depend on a function argument, `@State`, etc.) are excluded from the
 overlap math and listed separately, never silently skipped.
 
-**Worked example** (`CardVisualView.swift`, real finding):
+**Worked example — domains 1-2** (`CardVisualView.swift`, real finding):
 
 ```
 [OVERLAP] drawChorobatesBeam: L663 "6 meters" × L678 "water channel"
@@ -217,6 +239,40 @@ overlap math and listed separately, never silently skipped.
     overlap: 62.4×14.0pt — needs ≥22.0pt separation to clear (incl. 8pt margin)
     guard context: a←`None`  b←`currentStep >= 2`  (both reachable simultaneously once the later guard passes)
 ```
+
+**Domain 3's own estimates**, on top of domains 1-2's (stated on every run):
+- `containerHeight` (real name `flippedH` in `KnowledgeCardsOverlay.swift` =
+  `screenHeight × 0.80/0.85`) is a `GeometryReader` result — unresolvable
+  statically. `--container-height` (default 700) stands in.
+- The paragraph's wrap width and `card.lessonText.count` are likewise
+  runtime values — `--paragraph-width` (default 380) and `--paragraph-chars`
+  (default 500) stand in for them; real lesson paragraphs vary a lot in
+  length per building.
+- The visual's height-fraction multiplier (`0.55` in `CardVisualView.swift`
+  at the time this was written) and `cardTextScale`'s min/max/step ARE
+  parsed exactly from `CardVisualView.swift` / `GameSettings.swift` /
+  `SettingsView.swift` — never hardcoded — so the sweep stays correct if
+  those numbers move; the tool says so explicitly if a parse fails instead
+  of silently falling back to a stale constant.
+
+**Worked example — domain 3** (`KnowledgeCardsOverlay.swift`, real finding,
+`--container-height 700 --paragraph-width 380 --paragraph-chars 500`):
+
+```
+L637 highlightedLessonText(card:) → L647 CardVisualView(...)
+    paragraph font: EBGaramond-SemiBold base 18pt × cardTextScale
+    lineSpacing: 5pt (L639)
+    scale=0.95: font=17.1pt, 12 line(s) → paragraph≈306.2pt + spacing 12pt + visual≈365.8pt = 684.0pt vs 700pt container → gap 16.0pt
+    scale=1.00: font=18.0pt, 13 line(s) → paragraph≈345.8pt + spacing 12pt + visual≈385.0pt = 742.8pt vs 700pt container → gap -42.8pt  ⚠ OVERFLOW
+
+  ⚠ First collision at scale=1.00 (OVERFLOW) at these assumed dimensions.
+```
+
+At these assumed dimensions the collision starts at `cardTextScale=1.0` —
+the slider's own default, not an accessibility extreme — and gets worse up
+to `1.3`. This is an ESTIMATE (see above); it does not by itself prove the
+real layout overflows, but it says exactly which assumption to check by eye
+or in a render pass next.
 
 ## `hierarchy_check.py`
 
