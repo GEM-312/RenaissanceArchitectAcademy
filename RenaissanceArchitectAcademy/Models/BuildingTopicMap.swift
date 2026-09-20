@@ -80,9 +80,9 @@ enum BuildingTopicMap {
             suggestedBookQuery: "Brunelleschi Duomo Florence"
         ),
         BuildingTopic(
-            buildingId: 10, buildingName: "Botanical Garden", city: "Florence",
-            keywords: ["botanical garden", "Boboli", "Giardino dei Semplici", "Florence garden",
-                       "Renaissance botany", "Medici garden"],
+            buildingId: 10, buildingName: "Botanical Garden", city: "Padua",
+            keywords: ["botanical garden", "Orto Botanico", "University of Padua garden",
+                       "Padua garden", "Renaissance botany", "Index Seminum"],
             suggestedBookQuery: "Renaissance botanical gardens"
         ),
         BuildingTopic(

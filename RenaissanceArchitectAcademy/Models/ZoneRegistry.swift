@@ -2,11 +2,19 @@ import CoreGraphics
 
 /// The `ZoneDefinition` for every zone in the game.
 ///
-/// `ancientRome` below is a byte-for-byte lift of the values that used to be
-/// hardcoded inside `CityScene.swift` — same 40 waypoints, same 56 edges, same
-/// 17-building list, same 9 trees, same labels, same spawn. Step 1 of the zone
-/// plan is a pure data move: if anything here differs from what `CityScene`
-/// drew before, that is a bug, not an improvement.
+/// `ancientRome` below is a lift of the values that used to be hardcoded inside
+/// `CityScene.swift` — same 40 waypoints, same 56 edges, same 17 buildings, same
+/// 9 trees, same spawn. Step 1 of the zone plan was a pure data move.
+///
+/// Two deliberate changes on top of that lift, both 2026-09-20:
+///  - the Botanical Garden's `era` went "florence" → "padua" (its own lesson and
+///    card text always said Padua; only the code said Florence), and
+///  - the six zone numerals were renumbered to the narrative order below.
+/// Everything else differing from what `CityScene` drew before is a bug.
+///
+/// Zone order follows the storyteller's 5-act arc in docs/voice-cast-plan.md:
+///   I Ancient Rome (8) · II Padua (2) · III Venice (2) · IV Renaissance Rome (2)
+///   · V Milan (2) · VI Florence (1 — the Duomo finale, Brunelleschi + Medici)
 enum ZoneRegistry {
 
     /// Ancient Rome's terrain PNG is 4500px wide drawn into a 3500pt scene.
@@ -47,16 +55,21 @@ enum ZoneRegistry {
             // Still listed here because this is a byte-for-byte lift of today's
             // single-map scene. They move to their own zones in the plan's step 5.
 
-            // Florence
+            // Florence — the Duomo alone, and it is the finale (Act V, Brunelleschi
+            // + Cosimo de Medici). See docs/voice-cast-plan.md.
             ZoneBuildingPlacement(buildingId: "duomo", name: "Il Duomo", position: CGPoint(x: 1945, y: 1143), era: "florence", rotation: 0),
-            ZoneBuildingPlacement(buildingId: "botanicalGarden", name: "Botanical Garden", position: CGPoint(x: 2497, y: 151), era: "florence", rotation: 0),
 
             // Venice
             ZoneBuildingPlacement(buildingId: "glassworks", name: "Glassworks", position: CGPoint(x: 1657, y: 548), era: "venice", rotation: 0),
             ZoneBuildingPlacement(buildingId: "arsenal", name: "Arsenal", position: CGPoint(x: 2906, y: 709), era: "venice", rotation: 0),
 
-            // Padua
+            // Padua — both University of Padua institutions. The Botanical Garden
+            // moved here 2026-09-20: every line of its lesson, card and notebook text
+            // already said Padua (Orto Botanico, 1545); only the code said Florence.
+            // `era` is only ever compared against "rome" (BuildingNode.swift:446),
+            // so this does not change how it is drawn.
             ZoneBuildingPlacement(buildingId: "anatomyTheater", name: "Anatomy Theater", position: CGPoint(x: 2393, y: 1934), era: "padua", rotation: 0),
+            ZoneBuildingPlacement(buildingId: "botanicalGarden", name: "Botanical Garden", position: CGPoint(x: 2497, y: 151), era: "padua", rotation: 0),
 
             // Milan
             ZoneBuildingPlacement(buildingId: "leonardoWorkshop", name: "Leonardo's Workshop", position: CGPoint(x: 536, y: 471), era: "milan", rotation: 0),
@@ -204,14 +217,15 @@ enum ZoneRegistry {
         ],
 
         // All six numerals still sit on this one map, because all 17 buildings
-        // still do. They narrow to one per zone in the plan's step 5.
+        // still do. They narrow to one per zone in the plan's step 5. Positions
+        // are unchanged — only the numerals were renumbered to the narrative order.
         labels: [
             ZoneLabel(numeral: "I",   name: "Ancient Rome",     position: CGPoint(x: 1400, y: 1100), nodeName: "zone_ancientRome"),
-            ZoneLabel(numeral: "II",  name: "Florence",         position: CGPoint(x: 2270, y:  500), nodeName: "zone_florence"),
+            ZoneLabel(numeral: "II",  name: "Padua",            position: CGPoint(x: 1100, y: 1400), nodeName: "zone_padua"),
             ZoneLabel(numeral: "III", name: "Venice",           position: CGPoint(x: 1750, y:  200), nodeName: "zone_venice"),
-            ZoneLabel(numeral: "IV",  name: "Padua",            position: CGPoint(x: 1100, y: 1400), nodeName: "zone_padua"),
+            ZoneLabel(numeral: "IV",  name: "Renaissance Rome", position: CGPoint(x: 3200, y:  150), nodeName: "zone_renaissanceRome"),
             ZoneLabel(numeral: "V",   name: "Milan",            position: CGPoint(x:  536, y:  580), nodeName: "zone_milan"),
-            ZoneLabel(numeral: "VI",  name: "Renaissance Rome", position: CGPoint(x: 3200, y:  150), nodeName: "zone_renaissanceRome"),
+            ZoneLabel(numeral: "VI",  name: "Florence",         position: CGPoint(x: 2270, y:  500), nodeName: "zone_florence"),
         ],
 
         // y was `mapSize.height - 100` when these were hardcoded; 2500 - 100 = 2400.

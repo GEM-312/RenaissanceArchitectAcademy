@@ -129,7 +129,7 @@ import SwiftUI
                 building: Building(
                     name: "Botanical Garden",
                     era: .renaissance,
-                    city: .florence,
+                    city: .padua,
                     sciences: [.biology, .chemistry, .geology],
                     iconName: "leaf",
                     difficultyTier: .apprentice
