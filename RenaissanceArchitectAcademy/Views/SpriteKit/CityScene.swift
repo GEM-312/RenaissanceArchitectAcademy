@@ -15,6 +15,24 @@ typealias PlatformFont = NSFont
 /// Based on level_design_sketch.JPG layout
 class CityScene: SKScene, ScrollZoomable {
 
+    // MARK: - Zone
+
+    /// Everything that makes this map *this* map — terrain names, building
+    /// placements, waypoint graph, trees, labels, spawn. All six zones are this
+    /// same class constructed with a different definition; there is no base
+    /// class and no per-zone subclass. See `docs/plans/zone-system-plan.md`.
+    let zone: ZoneDefinition
+
+    init(zone: ZoneDefinition) {
+        self.zone = zone
+        super.init(size: zone.mapSize)
+        maxZoomOutScale = zone.cameraMaxZoomOutScale
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented — use init(zone:)")
+    }
+
     // MARK: - Properties
 
     private var cameraNode: SKCameraNode!
@@ -98,132 +116,24 @@ class CityScene: SKScene, ScrollZoomable {
 
     // MARK: - Map Size
 
-    /// Matches the standard used by every other scene in the project —
-    /// 3500×2500 coordinate space, 2x (7000×5000) terrain PNGs. Was
-    /// 4048×2144 before Apr 23 2026; that aspect (1.888:1) stretched the
-    /// new 1.4:1 terrain horizontally / squashed it vertically.
-    private let mapSize = CGSize(width: 3500, height: 2500)
+    /// The scene's coordinate space, from the zone. Every scene in the project
+    /// uses 3500×2500; the terrain PNG is 1.4:1 to match.
+    private var mapSize: CGSize { zone.mapSize }
 
     /// Buildings that get no node on the map at all — no sprite, no blueprint diamond,
-    /// no tap target. The Duomo is Florence's; the terrain is now Ancient Rome only.
-    private let hiddenBuildingIds: Set<String> = ["duomo"]
+    /// no tap target.
+    private var hiddenBuildingIds: Set<String> { zone.hiddenBuildingIds }
 
     // MARK: - Waypoint Graph (road network for pathfinding)
 
-    /// 40 road junctions connecting the 17 buildings across the 3500×2500 map
-    private var waypoints: [CGPoint] = [
-        // --- Ancient Rome side (left) ---
-        /* 0  */ CGPoint(x: 200,  y: 1800),  // near aqueduct-colosseum
-        /* 1  */ CGPoint(x: 400,  y: 2100),  // near aqueduct
-        /* 2  */ CGPoint(x: 400,  y: 1600),  // W mid
-        /* 3  */ CGPoint(x: 300,  y: 1250),  // near roman baths
-        /* 4  */ CGPoint(x: 550,  y: 1500),  // rome crossroads
-        /* 5  */ CGPoint(x: 500,  y: 1050),  // between baths-pantheon
-        /* 6  */ CGPoint(x: 700,  y: 1200),  // near pantheon
-        /* 7  */ CGPoint(x: 400,  y: 750),   // near roman roads
-        /* 8  */ CGPoint(x: 250,  y: 550),   // near harbor
-        /* 9  */ CGPoint(x: 500,  y: 550),   // S rome
-        /* 10 */ CGPoint(x: 600,  y: 400),   // near siege workshop
-        /* 11 */ CGPoint(x: 750,  y: 650),   // near insula
-        /* 12 */ CGPoint(x: 700,  y: 900),   // rome south junction
-
-        // --- Center spine ---
-        /* 13 */ CGPoint(x: 1000, y: 2000),  // upper center-left
-        /* 14 */ CGPoint(x: 1100, y: 1500),  // center-left mid
-        /* 15 */ CGPoint(x: 1000, y: 1100),  // center-left lower
-        /* 16 */ CGPoint(x: 1100, y: 700),   // center-left south
-        /* 17 */ CGPoint(x: 1400, y: 1800),  // center
-        /* 18 */ CGPoint(x: 1400, y: 1300),  // center mid
-        /* 19 */ CGPoint(x: 1400, y: 900),   // center south
-
-        // --- Milan area ---
-        /* 20 */ CGPoint(x: 1700, y: 2100),  // near leonardo's workshop
-        /* 21 */ CGPoint(x: 1600, y: 1700),  // near flying machine
-        /* 22 */ CGPoint(x: 1800, y: 1500),  // milan junction
-
-        // --- Padua ---
-        /* 23 */ CGPoint(x: 2100, y: 1500),  // near anatomy theater
-        /* 24 */ CGPoint(x: 2000, y: 1200),  // padua south
-
-        // --- Florence area ---
-        /* 25 */ CGPoint(x: 2300, y: 2200),  // near duomo
-        /* 26 */ CGPoint(x: 2500, y: 2000),  // florence junction
-        /* 27 */ CGPoint(x: 2700, y: 1900),  // near botanical garden
-        /* 28 */ CGPoint(x: 2600, y: 1700),  // florence south
-
-        // --- Venice area ---
-        /* 29 */ CGPoint(x: 3000, y: 1800),  // venice north
-        /* 30 */ CGPoint(x: 3100, y: 1500),  // near glassworks
-        /* 31 */ CGPoint(x: 2900, y: 1350),  // near arsenal
-        /* 32 */ CGPoint(x: 2800, y: 1100),  // venice south
-
-        // --- Renaissance Rome area ---
-        /* 33 */ CGPoint(x: 2200, y: 900),   // between padua-renRome
-        /* 34 */ CGPoint(x: 2500, y: 1000),  // near vatican observatory
-        /* 35 */ CGPoint(x: 2100, y: 600),   // near printing press
-        /* 36 */ CGPoint(x: 2500, y: 700),   // ren rome south
-        /* 37 */ CGPoint(x: 1800, y: 800),   // center-south junction
-
-        // --- Extra connectors ---
-        /* 38 */ CGPoint(x: 1800, y: 2000),  // upper center
-        /* 39 */ CGPoint(x: 2200, y: 1800),  // between padua-florence
-    ]
+    /// Road junctions for this zone's map, from the zone definition.
+    private var waypoints: [CGPoint] { zone.waypoints }
 
     /// Bidirectional edges: each pair [a, b] means a↔b
-    private let waypointEdges: [[Int]] = [
-        // Ancient Rome chain
-        [1, 0], [0, 2], [2, 4], [2, 3], [3, 5], [4, 5], [4, 6],
-        [5, 6], [5, 7], [7, 8], [7, 9], [8, 9], [9, 10], [10, 11],
-        [11, 12], [12, 7], [6, 12],
-
-        // Rome to center
-        [0, 13], [4, 14], [6, 15], [12, 16], [14, 15], [15, 16],
-        [13, 17], [14, 18], [16, 19],
-
-        // Center spine
-        [17, 18], [18, 19], [17, 21], [18, 22], [19, 37],
-
-        // Milan
-        [13, 20], [20, 38], [38, 17], [17, 21], [21, 22],
-
-        // Padua
-        [22, 23], [23, 24], [24, 33],
-
-        // Florence
-        [20, 25], [25, 26], [26, 27], [26, 28], [27, 28],
-        [38, 26], [39, 28],
-
-        // Venice
-        [28, 29], [29, 30], [30, 31], [31, 32], [27, 29],
-
-        // Renaissance Rome
-        [24, 34], [33, 34], [33, 35], [34, 36], [35, 36],
-        [19, 35], [37, 35], [32, 34],
-
-        // Cross-links
-        [21, 39], [23, 39], [39, 23], [22, 24], [37, 19],
-    ]
+    private var waypointEdges: [[Int]] { zone.waypointEdges }
 
     /// Which waypoints each building connects to (nearest road junctions)
-    private let buildingWaypoints: [String: [Int]] = [
-        "aqueduct":          [1, 0],
-        "colosseum":         [0, 4],
-        "romanBaths":        [3, 5],
-        "pantheon":          [6, 5],
-        "romanRoads":        [7, 12],
-        "harbor":            [8, 9],
-        "siegeWorkshop":     [10, 9],
-        "insula":            [11, 12],
-        "duomo":             [25, 26],
-        "botanicalGarden":   [27, 28],
-        "glassworks":        [30, 29],
-        "arsenal":           [31, 32],
-        "anatomyTheater":    [23, 24],
-        "leonardoWorkshop":  [20, 38],
-        "flyingMachine":     [21, 17],
-        "vaticanObservatory": [34, 36],
-        "printingPress":     [35, 33],
-    ]
+    private var buildingWaypoints: [String: [Int]] { zone.buildingWaypoints }
 
     // Walk speed and constants (same as Workshop)
     private let walkSpeed: CGFloat = 467
@@ -291,9 +201,7 @@ class CityScene: SKScene, ScrollZoomable {
 
     private func setupPlayer() {
         playerNode = PlayerNode(isBoy: apprenticeIsBoy)
-        // Spawn in the lower-left, a short walk from the Roman road at (1004, 861)
-        // so the apprentice starts on the road network rather than mid-field.
-        playerNode.position = CGPoint(x: 620, y: 540)
+        playerNode.position = zone.playerSpawn
         // Scaled on the node, not on PlayerNode's spriteSize, so this stays local to
         // the city map — the Workshop, Forest and Crafting Room share PlayerNode and
         // keep their own scale. The breathing/squash animations run on the child
@@ -456,7 +364,7 @@ class CityScene: SKScene, ScrollZoomable {
         let centerY = mapSize.height / 2
 
         // Single terrain image handled by TerrainBlurHelper (sharp + blurred crossfade)
-        terrainBlur.setup(in: self, sharp: "Terrain", blurred: "BlurredTerrain", mapSize: mapSize)
+        terrainBlur.setup(in: self, sharp: zone.sharpTerrainImageName, blurred: zone.blurredTerrainImageName, mapSize: mapSize)
         terrainBlur.terrainSprite?.position = CGPoint(x: centerX, y: centerY)
         terrainBlur.blurredTerrainSprite?.position = CGPoint(x: centerX, y: centerY)
 
@@ -491,54 +399,11 @@ class CityScene: SKScene, ScrollZoomable {
     // MARK: - Buildings (positions from sketch)
 
     private func setupBuildings() {
-        // Building data matching the 6 buildings from the game
-        // Positions based on level_design_sketch.JPG layout
-
-        // All 17 buildings organized by region
-        let buildings: [(id: String, name: String, position: CGPoint, era: String, rotation: CGFloat)] = [
-            // ========================================
-            // ANCIENT ROME
-            // ========================================
-            // Positions rescaled for new 3500x1955 map (Y × 0.782 from old 2500 height)
-            // Use editor mode (E) to fine-tune positions over baked-in buildings
-            ("aqueduct", "Aqueduct", CGPoint(x: 2304, y: 922), "rome", 0),
-            ("colosseum", "Colosseum", CGPoint(x: 1491, y: 1384), "rome", 0),
-            ("romanBaths", "Roman Baths", CGPoint(x: 1012, y: 1523), "rome", 2),
-            ("pantheon", "Pantheon", CGPoint(x: 2192, y: 1677), "rome", 0),
-            ("romanRoads", "Roman Roads", CGPoint(x: 1004, y: 861), "rome", 0),
-            ("harbor", "Harbor", CGPoint(x: 2922, y: 264), "rome", 0),
-            ("siegeWorkshop", "Siege Workshop", CGPoint(x: 3007, y: 1717), "rome", 0),
-            ("insula", "Insula", CGPoint(x: 1250, y: 1903), "rome", 0),
-
-            // ========================================
-            // RENAISSANCE ITALY
-            // ========================================
-
-            // Florence
-            ("duomo", "Il Duomo", CGPoint(x: 1945, y: 1143), "florence", 0),
-            ("botanicalGarden", "Botanical Garden", CGPoint(x: 2497, y: 151), "florence", 0),
-
-            // Venice
-            ("glassworks", "Glassworks", CGPoint(x: 1657, y: 548), "venice", 0),
-            ("arsenal", "Arsenal", CGPoint(x: 2906, y: 709), "venice", 0),
-
-            // Padua
-            ("anatomyTheater", "Anatomy Theater", CGPoint(x: 2393, y: 1934), "padua", 0),
-
-            // Milan
-            ("leonardoWorkshop", "Leonardo's Workshop", CGPoint(x: 536, y: 471), "milan", 0),
-            ("flyingMachine", "Flying Machine", CGPoint(x: 922, y: 1321), "milan", 0),
-
-            // Renaissance Rome
-            ("vaticanObservatory", "Vatican Observatory", CGPoint(x: 1028, y: 254), "renaissanceRome", 0),
-            ("printingPress", "Printing Press", CGPoint(x: 3121, y: 262), "renaissanceRome", 0)
-        ]
-
-        for building in buildings {
-            if hiddenBuildingIds.contains(building.id) { continue }
+        for building in zone.buildings {
+            if hiddenBuildingIds.contains(building.buildingId) { continue }
 
             let node = BuildingNode(
-                buildingId: building.id,
+                buildingId: building.buildingId,
                 buildingName: building.name,
                 era: building.era
             )
@@ -546,55 +411,30 @@ class CityScene: SKScene, ScrollZoomable {
             node.zRotation = building.rotation * .pi / 180  // degrees to radians
             node.zPosition = 10
             addChild(node)
-            buildingNodes[building.id] = node
+            buildingNodes[building.buildingId] = node
         }
     }
 
     // MARK: - Decorations (trees, paths)
 
     private func setupDecorations() {
-        // Zone labels — repositioned for 3500×1955 map
-        // Ancient Rome: buildings cluster around (372-2607, 687-1757)
-        addZoneLabel("I", at: CGPoint(x: 1400, y: 1100), for: "Ancient Rome", nodeName: "zone_ancientRome")
-
-        // Florence: Duomo (2040,724), Botanical Garden (2497,151)
-        addZoneLabel("II", at: CGPoint(x: 2270, y: 500), for: "Florence", nodeName: "zone_florence")
-
-        // Venice: Glassworks (2190,280), Arsenal (1300,113)
-        addZoneLabel("III", at: CGPoint(x: 1750, y: 200), for: "Venice", nodeName: "zone_venice")
-
-        // Padua: Anatomy Theater (1236,1285)
-        addZoneLabel("IV", at: CGPoint(x: 1100, y: 1400), for: "Padua", nodeName: "zone_padua")
-
-        // Milan: Leonardo's Workshop (536,471), Flying Machine (3125,687)
-        addZoneLabel("V", at: CGPoint(x: 536, y: 580), for: "Milan", nodeName: "zone_milan")
-
-        // Renaissance Rome: Vatican Observatory (1028,254), Printing Press (3298,36)
-        addZoneLabel("VI", at: CGPoint(x: 3200, y: 150), for: "Renaissance Rome", nodeName: "zone_renaissanceRome")
-
-        // Add a dividing path/road between eras
-        addEraDivider()
+        for label in zone.labels {
+            addZoneLabel(label.numeral, at: label.position, for: label.name, nodeName: label.nodeName)
+        }
+        for banner in zone.banners {
+            addEraBanner(banner)
+        }
     }
 
-    private func addEraDivider() {
-        // Era labels at the top
-        let romeLabel = SKLabelNode(text: "ANCIENT ROME")
-        romeLabel.fontName = "Cinzel-Regular"
-        romeLabel.fontSize = 32
-        romeLabel.fontColor = PlatformColor(RenaissanceColors.sepiaInk)
-        romeLabel.position = CGPoint(x: 500, y: mapSize.height - 100)
-        romeLabel.zPosition = -30
-        romeLabel.name = "label_ancientRome"
-        addChild(romeLabel)
-
-        let renaissanceLabel = SKLabelNode(text: "RENAISSANCE ITALY")
-        renaissanceLabel.fontName = "Cinzel-Regular"
-        renaissanceLabel.fontSize = 32
-        renaissanceLabel.fontColor = PlatformColor(RenaissanceColors.sepiaInk)
-        renaissanceLabel.position = CGPoint(x: 2400, y: mapSize.height - 100)
-        renaissanceLabel.zPosition = -30
-        renaissanceLabel.name = "label_renaissanceItaly"
-        addChild(renaissanceLabel)
+    private func addEraBanner(_ banner: ZoneBanner) {
+        let label = SKLabelNode(text: banner.text)
+        label.fontName = "Cinzel-Regular"
+        label.fontSize = 32
+        label.fontColor = PlatformColor(RenaissanceColors.sepiaInk)
+        label.position = banner.position
+        label.zPosition = -30
+        label.name = banner.nodeName
+        addChild(label)
     }
 
     private func addZoneLabel(_ numeral: String, at position: CGPoint, for name: String, nodeName: String = "") {
@@ -1177,42 +1017,21 @@ class CityScene: SKScene, ScrollZoomable {
     //
     // Mirrors WorkshopScene.setupSwayingTrees — same warp-grid two-layer wind
     // animation, registered with editor mode for drag-positioning.
-    // Asset names CityTree22..CityTree30 sit in Assets.xcassets and bypass
-    // the workshop's Tree1..Tree9 namespace so there's no collision.
-    // CityTree02..CityTree21 were cut from the previous terrain and are no
-    // longer placed — sepia trees on green Rome art, several off the painted
-    // area entirely. Their imagesets are still in Assets.xcassets.
+    // Which trees a map has is zone data (`zone.trees`); the sway animation
+    // below is not. Rome's set is CityTree22..CityTree30, which bypasses the
+    // workshop's Tree1..Tree9 namespace so there's no collision. CityTree02..21
+    // were cut from the previous terrain and are no longer placed; their
+    // imagesets are still in Assets.xcassets.
 
     private func setupSwayingTrees() {
-        // Rome-terrain cut-outs (CityTree22..CityTree30) — Marina lifted these nine
-        // trees straight out of Terrain_buildings.png, so each one goes back exactly
-        // where it came from and covers its own painted original (no ghost edge).
-        // All nine were re-cut without the white matte on 2026-09-20 and their positions
-        // re-derived from the new crops (CityTree30 came in on the full terrain canvas,
-        // so its alpha bounding box gave the position directly — it landed 1px off the old one).
-        // Positions were recovered by template-matching each PNG against the terrain:
-        //   scene.x = (matchX + width / 2) * terrainToScene
-        //   scene.y = mapHeight - (matchY + height) * terrainToScene   (anchor is 0.5, 0)
-        for entry in romeTerrainTrees {
-            addSwayingTree(image: entry.name, position: entry.position, scale: terrainToScene)
+        // Cut-outs lifted from this zone's own terrain art, each placed back on
+        // the hole it came from, at the scale that makes it cover its own
+        // footprint. Positions were recovered by template-matching each PNG
+        // against the terrain.
+        for tree in zone.trees {
+            addSwayingTree(image: tree.imageName, position: tree.position, scale: tree.scale)
         }
     }
-
-    /// The terrain PNG is 4500×3214 px drawn into the 3500×2500 scene, so a cut-out
-    /// taken from it must shrink by this factor to cover its original footprint.
-    private var terrainToScene: CGFloat { mapSize.width / 4500 }
-
-    private let romeTerrainTrees: [(name: String, position: CGPoint)] = [
-        ("CityTree22", CGPoint(x: 1015, y: 1301)),   // broad olive, mid-map ridge
-        ("CityTree23", CGPoint(x: 1333, y:  799)),   // scrub clump, west of the road
-        ("CityTree24", CGPoint(x: 1811, y:  460)),   // big olive south of the bridge
-        ("CityTree25", CGPoint(x: 2575, y:  593)),   // riverbank olive, far south
-        ("CityTree26", CGPoint(x: 2547, y:  708)),   // riverbank olive, upstream
-        ("CityTree27", CGPoint(x: 2288, y: 1144)),   // small tree by the aqueduct wall
-        ("CityTree28", CGPoint(x: 2199, y: 1255)),   // olive above the aqueduct
-        ("CityTree29", CGPoint(x: 2051, y: 1385)),   // cypress on the ridge
-        ("CityTree30", CGPoint(x:  704, y: 1459)),   // cypress, west hills
-    ]
 
     private func addSwayingTree(image: String, position: CGPoint, scale: CGFloat = 1.0) {
         // Skip silently if the imageset isn't present — keeps this idempotent.
@@ -1316,7 +1135,7 @@ class CityScene: SKScene, ScrollZoomable {
             editorMode.registerNode(node, name: "building_\(id)")
         }
 
-        // Swaying trees (named CityTree22..CityTree30)
+        // Swaying trees (zone.trees — CityTree22..CityTree30 on Rome)
         for entry in swayingTrees {
             editorMode.registerNode(entry.node, name: entry.node.name ?? "citytree")
         }

@@ -402,3 +402,31 @@ The cut-outs came out of Photoshop with two defects: 1-bit alpha (every pixel fu
 
 **KEY TAKEAWAY**
 If a sprite was cut from an image you still have, don't hand-place it — the source image *is* the ground truth, and correlation reads the answer straight out of it. And always check the matte: a cut-out's edge pixels should be the colour of the subject, never the colour of the background it was lifted from.
+
+## Parameterizing a working class without touching its method bodies (2026-09-20)
+
+**THE CONCEPT**
+`CityScene` had its whole map baked in as `private let` constants — map size, 40 waypoints, 56 edges, 17 buildings, 9 trees, 6 labels, the spawn point. To make one class serve six zones, all of that has to come from a parameter instead. The naive way is to thread a `zone` argument through every method that used those constants, which touches hundreds of lines and makes the diff impossible to review. There's a much better move.
+
+**THE TRICK — turn each stored constant into a computed property that reads the parameter**
+
+```swift
+// before
+private let mapSize = CGSize(width: 3500, height: 2500)
+private var waypoints: [CGPoint] = [ /* 40 literals */ ]
+
+// after
+private var mapSize: CGSize { zone.mapSize }
+private var waypoints: [CGPoint] { zone.waypoints }
+```
+
+Every method that says `mapSize.width / 2` or `waypoints[i].x` keeps working, **unchanged, byte for byte**. `clampCamera()`, `computeFitScale()`, the whole Dijkstra implementation — none of them were edited at all. The name still resolves; it just resolves to a read instead of a stored value. The diff shrinks to the declarations plus the few places that held literal *lists* (buildings, trees, labels), and those become simple `for x in zone.xs` loops.
+
+**WHY THIS MATTERS FOR REVIEW**
+A refactor's biggest risk isn't the design, it's the silent behavioral change smuggled in while you're in there. When the method bodies are untouched you can *prove* nothing moved. I verified it mechanically too: a script parsed the 40 waypoints, 64 edge pairs, 17 buildings, 9 trees and 6 labels out of both the pre-refactor file and the new `ZoneRegistry`, and compared them element by element. All identical. That check took two minutes and is worth more than re-reading the diff three times.
+
+**THE COST — know it before you reach for this**
+Swift arrays are copy-on-write, so `zone.waypoints` hands back a reference, not a copy. But it *is* a retain/release each access, so a computed property returning an array inside a hot loop is not free. Here `findPath` runs once per tap over 40 nodes, so it's irrelevant. In a per-frame `update()` loop over thousands of elements it would not be — there you'd bind it locally once (`let waypoints = zone.waypoints`) at the top of the function.
+
+**KEY TAKEAWAY**
+When you need to parameterize something that already works, look for the change that keeps the *call sites* identical. A computed property with the same name as the constant it replaces is the cheapest possible seam: the compiler proves every reader still compiles, and an element-by-element data comparison proves every reader still sees the same value.

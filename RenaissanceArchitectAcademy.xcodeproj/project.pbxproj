@@ -58,6 +58,8 @@
 		059 /* NotebookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159 /* NotebookView.swift */; };
 		060 /* NotebookCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160 /* NotebookCanvasView.swift */; };
 		061 /* PlayerSave.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161 /* PlayerSave.swift */; };
+		0Z1 /* ZoneDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1Z1 /* ZoneDefinition.swift */; };
+		0Z2 /* ZoneRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1Z2 /* ZoneRegistry.swift */; };
 		062 /* BuildingProgressRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162 /* BuildingProgressRecord.swift */; };
 		063 /* PersistenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163 /* PersistenceManager.swift */; };
 		064 /* LessonContentRome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164 /* LessonContentRome.swift */; };
@@ -345,6 +347,8 @@
 		159 /* NotebookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookView.swift; sourceTree = "<group>"; };
 		160 /* NotebookCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookCanvasView.swift; sourceTree = "<group>"; };
 		161 /* PlayerSave.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerSave.swift; sourceTree = "<group>"; };
+		1Z1 /* ZoneDefinition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoneDefinition.swift; sourceTree = "<group>"; };
+		1Z2 /* ZoneRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoneRegistry.swift; sourceTree = "<group>"; };
 		162 /* BuildingProgressRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingProgressRecord.swift; sourceTree = "<group>"; };
 		163 /* PersistenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceManager.swift; sourceTree = "<group>"; };
 		164 /* LessonContentRome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonContentRome.swift; sourceTree = "<group>"; };
@@ -797,6 +801,8 @@
 				156 /* NotebookEntry.swift */,
 				157 /* NotebookContent.swift */,
 				161 /* PlayerSave.swift */,
+				1Z1 /* ZoneDefinition.swift */,
+				1Z2 /* ZoneRegistry.swift */,
 				162 /* BuildingProgressRecord.swift */,
 				164 /* LessonContentRome.swift */,
 				165 /* LessonContentRenaissance.swift */,
@@ -1257,6 +1263,8 @@
 				2D6 /* SpeakerButton.swift in Sources */,
 				060 /* NotebookCanvasView.swift in Sources */,
 				061 /* PlayerSave.swift in Sources */,
+				0Z1 /* ZoneDefinition.swift in Sources */,
+				0Z2 /* ZoneRegistry.swift in Sources */,
 				062 /* BuildingProgressRecord.swift in Sources */,
 				063 /* PersistenceManager.swift in Sources */,
 				064 /* LessonContentRome.swift in Sources */,

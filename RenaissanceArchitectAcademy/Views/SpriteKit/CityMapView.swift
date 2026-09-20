@@ -877,11 +877,11 @@ struct CityMapView: View {
             return existingScene
         }
 
-        // Create new scene — match CityScene.mapSize (3500×2500, standard
-        // across all scenes). .aspectFill preserves the terrain aspect
-        // ratio so the new 7000×5000 (@2x) art doesn't squash.
-        let newScene = CityScene()
-        newScene.size = CGSize(width: 3500, height: 2500)
+        // Create new scene for the Ancient Rome zone. `init(zone:)` sets the
+        // scene size from `zone.mapSize` (3500×2500, standard across all
+        // scenes). .aspectFill preserves the terrain aspect ratio so the
+        // 4500×3214 art doesn't squash.
+        let newScene = CityScene(zone: ZoneRegistry.ancientRome)
         newScene.scaleMode = .aspectFill
 
         // Set player gender before scene setup
