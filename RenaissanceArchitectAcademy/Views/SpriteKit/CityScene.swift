@@ -1177,38 +1177,42 @@ class CityScene: SKScene, ScrollZoomable {
     //
     // Mirrors WorkshopScene.setupSwayingTrees — same warp-grid two-layer wind
     // animation, registered with editor mode for drag-positioning.
-    // Asset names CityTree02..CityTree21 sit in Assets.xcassets and bypass
+    // Asset names CityTree22..CityTree30 sit in Assets.xcassets and bypass
     // the workshop's Tree1..Tree9 namespace so there's no collision.
+    // CityTree02..CityTree21 were cut from the previous terrain and are no
+    // longer placed — sepia trees on green Rome art, several off the painted
+    // area entirely. Their imagesets are still in Assets.xcassets.
 
     private func setupSwayingTrees() {
-        // Default scatter across the 3500×2500 map, avoiding building footprints.
-        // Marina drags via editor mode (E to toggle) and pastes final coords here.
-        let defaults: [(name: String, position: CGPoint)] = [
-            ("CityTree02", CGPoint(x:  220, y: 1900)),
-            ("CityTree03", CGPoint(x:  680, y: 2100)),
-            ("CityTree04", CGPoint(x: 1180, y: 1750)),
-            ("CityTree05", CGPoint(x: 1500, y: 2150)),
-            ("CityTree06", CGPoint(x: 2050, y: 1820)),
-            ("CityTree07", CGPoint(x: 2480, y: 2050)),
-            ("CityTree08", CGPoint(x: 2950, y: 1850)),
-            ("CityTree09", CGPoint(x: 3280, y: 2080)),
-            ("CityTree10", CGPoint(x:  300, y:  720)),
-            ("CityTree11", CGPoint(x:  820, y: 1080)),
-            ("CityTree12", CGPoint(x: 2664, y: 1352)),
-            ("CityTree13", CGPoint(x: 1880, y:  280)),
-            ("CityTree14", CGPoint(x: 2397, y: 1128)),
-            ("CityTree15", CGPoint(x: 2784, y: 1231)),
-            ("CityTree16", CGPoint(x: 2587, y: 1373)),
-            ("CityTree17", CGPoint(x: 3300, y:  680)),
-            ("CityTree18", CGPoint(x:  500, y: 1500)),
-            ("CityTree19", CGPoint(x: 1620, y: 1400)),
-            ("CityTree20", CGPoint(x: 2537, y: 1618)),
-            ("CityTree21", CGPoint(x: 2636, y: 1264)),
-        ]
-        for entry in defaults {
-            addSwayingTree(image: entry.name, position: entry.position)
+        // Rome-terrain cut-outs (CityTree22..CityTree30) — Marina lifted these nine
+        // trees straight out of Terrain_buildings.png, so each one goes back exactly
+        // where it came from and covers its own painted original (no ghost edge).
+        // All nine were re-cut without the white matte on 2026-09-20 and their positions
+        // re-derived from the new crops (CityTree30 came in on the full terrain canvas,
+        // so its alpha bounding box gave the position directly — it landed 1px off the old one).
+        // Positions were recovered by template-matching each PNG against the terrain:
+        //   scene.x = (matchX + width / 2) * terrainToScene
+        //   scene.y = mapHeight - (matchY + height) * terrainToScene   (anchor is 0.5, 0)
+        for entry in romeTerrainTrees {
+            addSwayingTree(image: entry.name, position: entry.position, scale: terrainToScene)
         }
     }
+
+    /// The terrain PNG is 4500×3214 px drawn into the 3500×2500 scene, so a cut-out
+    /// taken from it must shrink by this factor to cover its original footprint.
+    private var terrainToScene: CGFloat { mapSize.width / 4500 }
+
+    private let romeTerrainTrees: [(name: String, position: CGPoint)] = [
+        ("CityTree22", CGPoint(x: 1015, y: 1301)),   // broad olive, mid-map ridge
+        ("CityTree23", CGPoint(x: 1333, y:  799)),   // scrub clump, west of the road
+        ("CityTree24", CGPoint(x: 1811, y:  460)),   // big olive south of the bridge
+        ("CityTree25", CGPoint(x: 2575, y:  593)),   // riverbank olive, far south
+        ("CityTree26", CGPoint(x: 2547, y:  708)),   // riverbank olive, upstream
+        ("CityTree27", CGPoint(x: 2288, y: 1144)),   // small tree by the aqueduct wall
+        ("CityTree28", CGPoint(x: 2199, y: 1255)),   // olive above the aqueduct
+        ("CityTree29", CGPoint(x: 2051, y: 1385)),   // cypress on the ridge
+        ("CityTree30", CGPoint(x:  704, y: 1459)),   // cypress, west hills
+    ]
 
     private func addSwayingTree(image: String, position: CGPoint, scale: CGFloat = 1.0) {
         // Skip silently if the imageset isn't present — keeps this idempotent.
@@ -1281,7 +1285,7 @@ class CityScene: SKScene, ScrollZoomable {
         swayingTrees.append(SwayingTree(node: tree))
     }
 
-    /// Called from update(_:). O(n) — n = 20 trees.
+    /// Called from update(_:). O(n) — n = 9 trees.
     private func disturbTreesNearPlayer() {
         guard !swayingTrees.isEmpty, playerNode != nil else { return }
         let triggerRadius: CGFloat = 150
@@ -1312,7 +1316,7 @@ class CityScene: SKScene, ScrollZoomable {
             editorMode.registerNode(node, name: "building_\(id)")
         }
 
-        // Swaying trees (named CityTree02..CityTree21)
+        // Swaying trees (named CityTree22..CityTree30)
         for entry in swayingTrees {
             editorMode.registerNode(entry.node, name: entry.node.name ?? "citytree")
         }

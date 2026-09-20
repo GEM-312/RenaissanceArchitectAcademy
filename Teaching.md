@@ -379,3 +379,26 @@ settings.json = pre-approving safe routine commands so deep work isn't interrupt
 **In our code:** `ClaudeService.callClaudeAPI`. Class is `@MainActor`, so each `streamingText = assembled` write resumes on main automatically — no `MainActor.run` needed. `defer { streamingText = nil }` clears the live buffer on every exit path.
 
 **Takeaway:** Streaming doesn't make the model faster; it makes the wait *feel* shorter by showing progress instead of a spinner.
+
+## Putting a cut-out back exactly where it came from — template matching (2026-09-20)
+
+**THE CONCEPT**
+When you cut a tree out of a painted terrain and re-add it as an animated sprite, it has to land on *exactly* the pixels it came from. One pixel off and you get a ghost edge (the painted original peeking out from under the sprite). Eyeballing coordinates in editor mode is slow and never quite exact. Template matching finds the answer computationally: slide the cut-out over the terrain, and at each offset score how well it correlates with what's underneath. The best score is where it was cut from.
+
+**STEP BY STEP**
+1. Score with **normalized** cross-correlation, not raw. Raw correlation just rewards bright regions; normalized subtracts the local mean and divides by the local standard deviation, so it measures *shape* agreement, not brightness. Scores land in −1…1, and 1.0 is a perfect match.
+2. Use the alpha channel as a **mask** so only the tree pixels are scored, not the transparent box around it. The masked form is:
+   `NCC = (corr(I, T·M) − corr(I, M)·ΣT/n) / sqrt(varI · varT)`, with `n = ΣM`.
+3. Compute the correlations with an FFT (`scipy.signal.fftconvolve`), not nested loops — a 4500×3214 terrain against nine templates is seconds instead of hours. Correlation is convolution with the template flipped, hence `B[::-1, ::-1]`.
+4. Downscale everything by 3–4× first. Accuracy costs you ±3 map units, which is invisible, and it's ~16× faster.
+5. Convert the match to scene coordinates. SpriteKit's Y axis points **up**, image Y points **down**, and our sprite anchor is bottom-centre `(0.5, 0)`:
+   `sceneX = (matchX + w/2) · k`, `sceneY = mapHeight − (matchY + h) · k`, where `k = 3500/4500`.
+
+**IN OUR CODE**
+`CityScene.romeTerrainTrees` — nine positions, NCC 0.56–0.92, all nine verified by drawing the boxes back on the terrain. `terrainToScene` (= `mapSize.width / 4500`) is passed as the sprite scale because the terrain PNG is 4500 px wide but drawn into a 3500-pt scene; without it each tree would render ~29% too big and no longer cover its original.
+
+**THE SECOND BUG — white matte fringe**
+The cut-outs came out of Photoshop with two defects: 1-bit alpha (every pixel fully on or fully off, so no anti-aliasing) and 1–2 px of the white background kept inside the selection. Measured: the outermost ring averaged luminance 240 against a leaf core of ~70 — a white keyline around every tree. Fix is three steps: erode the alpha 2 px to cut the white off, **bleed the interior colour outward** (`distance_transform_edt(..., return_indices=True)` gives each removed pixel its nearest surviving neighbour) so the new edge has leaf colour under it, then blur the alpha 0.8 px to anti-alias. Skipping the colour bleed just moves the halo inward one pixel.
+
+**KEY TAKEAWAY**
+If a sprite was cut from an image you still have, don't hand-place it — the source image *is* the ground truth, and correlation reads the answer straight out of it. And always check the matte: a cut-out's edge pixels should be the colour of the subject, never the colour of the background it was lifted from.
