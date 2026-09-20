@@ -68,6 +68,20 @@ struct ZoneDefinition {
     let buildingWaypoints: [String: [Int]]
     let playerSpawn: CGPoint
     let cameraMaxZoomOutScale: CGFloat   // computed per-zone from mapSize like today's fitCameraToMap, not hand-set
+    let trees: [ZoneTreePlacement]       // cut-outs lifted from THIS zone's terrain — see below
+    let label: ZoneLabel?                // the one numeral/name drawn on this zone's map, nil for none
+}
+
+struct ZoneTreePlacement {
+    let imageName: String    // "CityTree22" — an imageset cut from this zone's own terrain art
+    let position: CGPoint    // sprite anchor is (0.5, 0), so this is the trunk base
+    let scale: CGFloat       // mapSize.width / terrainPixelWidth, so the sprite covers its own footprint
+}
+
+struct ZoneLabel {
+    let numeral: String      // "I" … "VI"
+    let name: String         // "Ancient Rome"
+    let position: CGPoint
 }
 
 struct ZoneBuildingPlacement {
@@ -83,14 +97,19 @@ struct ZoneBuildingPlacement {
 // Views/SpriteKit/ZoneScene.swift — new file
 /// Everything CityScene.swift:16-1336 has that does NOT depend on which
 /// buildings/terrain/waypoints are on the map: camera setup, clamp, pan/pinch/
-/// scroll, theme toggle, Dijkstra pathfinding, tree sway, dark glow, editor mode.
+/// scroll, theme toggle, Dijkstra pathfinding, the wind-warp sway ANIMATION,
+/// dark glow, editor mode. Note the split: `addSwayingTree(image:position:scale:)`
+/// — the warp grid, the phase jitter, the walk-by disturbance — is generic and
+/// moves here; the LIST of which trees a map has is per-zone data (`zone.trees`),
+/// because each cut-out is lifted from its own zone's terrain art.
 class ZoneScene: SKScene, ScrollZoomable {
     let zone: ZoneDefinition
     init(zone: ZoneDefinition) { self.zone = zone; super.init(size: zone.mapSize) }
     // setupCamera(), fitCameraToMap(), computeFitScale(), clampCamera(),
     // findPath(from:to:startWaypoints:endWaypoints:), applyTheme(),
-    // setupSwayingTrees()/disturbTreesNearPlayer(), all read `zone.*`
-    // instead of a hardcoded `mapSize`/`waypoints`/`waypointEdges`.
+    // setupSwayingTrees()/disturbTreesNearPlayer(), addZoneLabel(), all read
+    // `zone.*` instead of a hardcoded `mapSize`/`waypoints`/`waypointEdges`/
+    // `romeTerrainTrees`/the six addZoneLabel() calls.
 }
 ```
 
@@ -117,6 +136,8 @@ final class AncientRomeZoneScene: ZoneScene {
 2. **Per-zone building list** → `ZoneDefinition.buildings: [ZoneBuildingPlacement]`, replacing the hardcoded tuple array at `CityScene.swift:498-535`.
 3. **Per-zone waypoint graph** → `ZoneDefinition.waypoints`/`waypointEdges`/`buildingWaypoints`, replacing `CityScene.swift:114-226`. `Dijkstra`/`findPath` itself is zone-agnostic and moves to `ZoneScene` unchanged.
 4. **Per-zone map size / camera clamp** → `ZoneDefinition.mapSize` drives `computeFitScale()`/`clampCamera()` exactly as `mapSize` does today (`CityScene.swift:433-450`, `:1061-1108`); no formula changes, just reading from `zone.mapSize` instead of the `private let`.
+5. **Per-zone swaying trees** → `ZoneDefinition.trees`, replacing the hardcoded `romeTerrainTrees` array. This one is easy to mis-file as generic, so stating it plainly: **the sway animation is zone-agnostic, the tree list is not.** Each cut-out is lifted out of its own zone's terrain PNG and placed back on the hole it came from, so a tree imageset is only meaningful on the terrain it was cut from. Rome's set (9 cut-outs, `CityTree22`–`CityTree30`, landed on `main` 2026-09-20) also carries a per-zone `scale` of `mapSize.width / 4500` — the terrain PNG is 4500 px wide drawn into a 3500 pt scene, and without that factor each tree renders ~29% too big and stops covering its original. Since a future zone's terrain may not be 4500 px wide, that factor belongs on `ZoneTreePlacement`, not as a shared constant.
+6. **Per-zone map label** → `ZoneDefinition.label`, replacing the six hardcoded `addZoneLabel()` calls (`CityScene.swift:556-573`) and the two `addEraDivider()` labels (`:579-598`). Today one map carries all six numerals I–VI plus "ANCIENT ROME"/"RENAISSANCE ITALY" banners, because all 17 buildings share one canvas. Under Option B each zone map shows **its own** label and nothing else — Florence's map should not be captioned with Venice's numeral, and neither era banner makes sense once the map *is* the era. `addZoneLabel()`'s body (`CityScene.swift:600-623`) is generic and moves to `ZoneScene` unchanged; only the call sites become data.
 
 ---
 
@@ -210,7 +231,19 @@ Per the brief's spec: terrain PNG at **4500×3214** (verified: `Terrain_building
 
 = **5 sharp + 5 blurred = 10 terrain images.**
 
-**Totals still needed:** 7 building sprites, 105 build-animation frames (7×15), 10 terrain images (5 sharp + 5 blurred) = **122 new art assets**, plus **2 buildings' worth of already-drawn art (Duomo, Glassworks) that only needs code wiring, not new art.**
+**Tree cut-outs — 5 zones, not counted in the September brief at all.** Swaying trees are per-zone art (§1 item 5): each one is cut out of that zone's own terrain PNG in Photoshop and placed back on the hole it came from, so none of Rome's transfer. Rome needed **9** (`CityTree22`–`CityTree30`, cut 2026-09-20). At the same density that's **~9 × 5 = ~45 more imagesets**. Padua's smaller canvas (§5) probably needs fewer, so treat 45 as an upper bound.
+
+Two costs here that aren't obvious from the count. First, this is **hand work per zone**, not a batch export — someone cuts each tree, then fills the hole left behind in the terrain so the sprite isn't drawing a double (Rome's first pass shipped with 4 of 9 holes unfilled, and those 4 show a faint ghost edge when the tree sways). Second, watch the matte: Rome's first cut-outs came back with 1-bit alpha and 1–2 px of white background inside the selection, which read as a white keyline around every tree and had to be de-fringed before they were usable. **Budget a fill-the-hole pass and an alpha check per zone**, and export with a soft, premultiplied-correct matte rather than a hard magic-wand selection.
+
+| Zone | Terrain pair | Tree cut-outs (est.) |
+|---|---|---|
+| Florence | 2 | ~9 |
+| Venice | 2 | ~9 |
+| Padua (smaller canvas, §5) | 2 | ~5 |
+| Milan | 2 | ~9 |
+| Renaissance Rome | 2 | ~9 |
+
+**Totals still needed:** 7 building sprites, 105 build-animation frames (7×15), 10 terrain images (5 sharp + 5 blurred), ~41 tree cut-outs = **~163 new art assets**, plus **2 buildings' worth of already-drawn art (Duomo, Glassworks) that only needs code wiring, not new art.** The tree cut-outs are individually small (Rome's nine are 15–68 KB each, ~330 KB total) so they barely move the size numbers in §8.1 — they cost *time*, not megabytes.
 
 **A cost note the brief didn't ask for but §8 needs:** per `docs/research/asset-size-plan.md` (measured on this exact repo, row 1), the *existing* `Terrain`+`BlurredTerrain`+`WorkshopTerrain`+`WorkshopBackground` four-file group is **125.3 MB of source PNG before compression**, and the same doc's row 2 shows the 8 existing build atlases are **89.3 MB before compression**. Naively adding 5 more terrain pairs and 105 more full-depth-RGBA build frames at similar resolutions would roughly **double** the terrain contribution and add **~78 MB more** at current per-frame weight (89.3 MB ÷ 8 buildings × 7 new ≈ 78 MB) to the asset catalog — on top of a catalog that `docs/research/asset-size-plan.md` already measured at ~485 MB on disk / ~315 MB compiled, with an *unexecuted* plan (Phases 0–3, "stop after phase 3") to bring it down to ~65–85 MB. **This is a sequencing risk, not just a size number — see §8.**
 
@@ -220,7 +253,7 @@ Per the brief's spec: terrain PNG at **4500×3214** (verified: `Terrain_building
 
 Each step below is independently shippable and buildable — i.e. `main` builds and the app runs correctly after every step, even if the next step never lands.
 
-1. **Add `ZoneDefinition`/`ZoneBuildingPlacement` (pure data, `Models/ZoneDefinition.swift`) and `ZoneScene` (pure refactor, `Views/SpriteKit/ZoneScene.swift`) — no behavior change.** Extract `CityScene`'s zone-agnostic code (camera, clamp, pathfinding, theme, tree sway, editor mode — §1) into `ZoneScene`. Make `CityScene` itself a thin `ZoneScene` subclass constructed with a `ZoneDefinition` built from today's exact hardcoded values (same 40 waypoints, same 56 edges, same `"Terrain"`/`"BlurredTerrain"`, same 17-building list minus `hiddenBuildingIds`). **This step touches all 40 waypoints and all 17 building placements — it's a pure data move, not a redesign, and should be a mechanical, verifiable-by-diff refactor with zero visual/behavioral change.** Verify: build + smoke-test the city map exactly as it works today (walk to every building, zoom, pan, tap).
+1. **Add `ZoneDefinition`/`ZoneBuildingPlacement` (pure data, `Models/ZoneDefinition.swift`) and `ZoneScene` (pure refactor, `Views/SpriteKit/ZoneScene.swift`) — no behavior change.** Extract `CityScene`'s zone-agnostic code (camera, clamp, pathfinding, theme, tree sway, editor mode — §1) into `ZoneScene`. Make `CityScene` itself a thin `ZoneScene` subclass constructed with a `ZoneDefinition` built from today's exact hardcoded values (same 40 waypoints, same 56 edges, same `"Terrain"`/`"BlurredTerrain"`, same 17-building list minus `hiddenBuildingIds`, same 9 `romeTerrainTrees`). **This step touches all 40 waypoints, all 17 building placements and all 9 tree placements — it's a pure data move, not a redesign, and should be a mechanical, verifiable-by-diff refactor with zero visual/behavioral change.** Verify: build + smoke-test the city map exactly as it works today (walk to every building, zoom, pan, tap), and confirm all 9 trees still sit exactly on their terrain footprints — a wrong `scale` or a dropped decimal shows up as a tree that no longer covers its own hole, which is easy to miss at zoomed-out camera scales. **One deliberate exception to "zero visual change":** `ZoneDefinition.label` is a single label, so the six numerals I–VI and the two era banners cannot all survive this step as-is. Either keep them by giving step 1's Rome definition the full set temporarily (add `labels: [ZoneLabel]`, plural, and narrow to one later), or accept that step 1 drops the five non-Rome numerals and both era banners from the shipped map. **Recommend the second** — those five numerals point at zones that are about to stop existing on this terrain anyway, and the banners describe an era split the zone system replaces. Just don't let it land unannounced as a "no visual change" step.
 2. **Wire the 2 already-drawn-but-unused buildings (Duomo, Glassworks) into their real zones**, as a small, low-risk, high-payoff step that ships visible progress before any new art exists. Requires: (a) a Florence `ZoneDefinition` with just Duomo placed + a minimal waypoint graph + a terrain pair (new art — the first of the 5 terrain pairs from §6, or a placeholder/solid-color terrain if Marina wants to sequence code before art), (b) same for Venice/Glassworks, (c) removing `"duomo"` from `hiddenBuildingIds` (`CityScene.swift:109`) since it now lives in its own zone rather than suppressed on Rome's terrain, (d) adding the `"glassworks"` case to `BuildingNode.swift`'s two switches (`:153-171`, `:176-190`) — one line each, the asset is already there. **Does not touch the 40 Ancient Rome waypoints.**
 3. **Add `SidebarDestination.zone(ZoneID)` and `.travelMap`, and the `TravelMapView` SwiftUI screen** (§2), wired to only the 2 zones that exist after step 2 (Ancient Rome, Florence) plus a "locked" visual state for the other 4. This is the first step a player-facing build can demo end-to-end: leave Rome, arrive in Florence, see the Duomo.
 4. **Add `unlockedZoneIds` to `CityViewModel`/`PlayerSave`/`PersistenceManager`** (§3) and wire the Rome-completion unlock event (§4). Independently testable: complete all 8 Rome buildings in a debug build, confirm the unlock fires and the travel map updates — no new zones need to exist yet for this step to be verifiable (can unlock into the 2 zones from step 2).
@@ -244,4 +277,5 @@ Each step below is independently shippable and buildable — i.e. `main` builds 
 - **Scene architecture:** new `ZoneScene` base class (extracted from `CityScene`'s zone-agnostic ~750 lines) + a `ZoneDefinition` data struct per zone, rather than 6 independent copy-pasted scene files. This deviates from the Workshop/Forest/CraftingRoom/Goldsmith precedent (each fully self-contained) — flagged as a judgment call for Marina to confirm, since the codebase has zero existing precedent for a parameterized scene.
 - **Navigation:** a new `TravelMapView` SwiftUI screen, reached via the top-bar dropdown (replacing the current "Rome"/"Ren." era buttons with one "Travel" entry), with `SidebarDestination` gaining `.travelMap` and `.zone(ZoneID)` cases.
 - **Padua:** keep it as its own small special-location zone (smaller `mapSize`, same `ZoneScene`/terrain-pair convention, possibly no pathfinding graph) rather than merging it into Venice/Milan or inventing new buildings for it.
-- **Art still needed:** 7 building sprites + 105 build-animation frames (7 buildings × 15) + 10 terrain images (5 zones × sharp+blurred) = **122 new assets** — smaller than a naive "9 Renaissance buildings from scratch" count because Duomo and Glassworks already have complete, unwired art sitting in the catalog.
+- **Trees and map labels are per-zone data, not shared scene code.** `ZoneDefinition` carries `trees: [ZoneTreePlacement]` and `label: ZoneLabel?`. The sway animation is generic and moves to `ZoneScene`; the tree *list* cannot, because every cut-out is lifted from its own zone's terrain and only covers the hole it came from. Likewise each zone map shows its own single label, replacing today's six numerals plus two era banners on one canvas.
+- **Art still needed:** 7 building sprites + 105 build-animation frames (7 buildings × 15) + 10 terrain images (5 zones × sharp+blurred) + ~41 tree cut-outs = **~163 new assets** — smaller than a naive "9 Renaissance buildings from scratch" count because Duomo and Glassworks already have complete, unwired art sitting in the catalog, but larger than the September brief implied because tree cut-outs weren't counted at all. The tree work is hand time in Photoshop (cut, then fill the hole behind it), not megabytes.
