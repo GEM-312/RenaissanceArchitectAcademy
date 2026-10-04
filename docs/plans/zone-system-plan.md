@@ -8,6 +8,39 @@ Every claim below is grounded in a file read in this repo at HEAD (`511982e`, br
 
 ---
 
+## Zone order — DECIDED (Marina, 2026-09-20)
+
+Florence is **last**, not second. The Duomo is building 17 in the storyteller's
+5-act arc (`docs/voice-cast-plan.md`): Act V, *"Brunelleschi takes over at Duomo;
+Cosimo returns."* The Duomo card says so in its own text — *"Cosimo de Medici
+(introduced at Botanical Garden, returns here at the finale)."* Reaching Florence
+is the ending, so it cannot be the second stop.
+
+| | zone | buildings | act |
+|---|---|---|---|
+| I | Ancient Rome | 8 | I–II |
+| II | Padua | Botanical Garden, Anatomy Theater | III |
+| III | Venice | Glassworks, Arsenal | III–IV |
+| IV | Renaissance Rome | Vatican Observatory, Printing Press | IV |
+| V | Milan | Leonardo's Workshop, Flying Machine | V |
+| VI | **Florence** | **Il Duomo** | **V — finale** |
+
+**The Botanical Garden moved from Florence to Padua to make this work, and that was
+a bug fix, not a reshuffle.** Every line of its written content already said Padua —
+the lesson (*"In 1545, the University of Padua created something brand new"*, *"the
+Padua garden"*, *"Padua garden — now a UNESCO World Heritage Site"*), the card
+(*"Now we are in Padua. The year is fifteen hundred forty-five."*) and the notebook
+summary (*"Padua 1545: world's first academic botanical garden"*). Only the code said
+Florence, in `CityViewModel`'s `city: .florence` and `BuildingTopicMap.swift:83`.
+Both are now `.padua`. Historically it is the Orto Botanico (1545), and it sits in
+the same university as Fabricius's anatomy theatre (1594), so the two share a campus.
+
+This changes two recommendations made below, which have been updated in place:
+Padua is no longer a one-building special case (§5), and the unlock rule can no
+longer open all five Renaissance zones at once without spoiling the finale (§4).
+
+---
+
 ## 0. What exists today (verified)
 
 - **`CityScene.swift`** (1336 lines) is one `SKScene` holding all 17 buildings on a single `mapSize = CGSize(width: 3500, height: 2500)` canvas (`CityScene.swift:105`). It has:
@@ -184,22 +217,49 @@ Evaluated against the brief's four options:
 
 ## 4. Unlocking
 
-**Recommendation: linear era progression — Ancient Rome unlocked from the start; the 5 Renaissance zones unlock as a group once Ancient Rome's 8 buildings are complete, each with its own Medici-letter narrative beat as the *reveal*, not as a further gate between them.**
+**Recommendation: Ancient Rome unlocked from the start; the four middle Renaissance zones (Padua, Venice, Renaissance Rome, Milan) unlock as a group once Ancient Rome's 8 buildings are complete; Florence unlocks only when those four are done.** Each gets a Medici-letter narrative beat as the *reveal*, not as a further gate between them.
+
+**Two gates, not one or five.** An earlier draft of this section opened all five Renaissance zones together. That can't stand now the zone order is fixed (see the top of this document): Florence holds only the Duomo, and the Duomo is the finale where Cosimo de Medici returns. Handing the player Florence at the same moment as Padua lets them walk straight to the ending and skip the whole middle act. One extra gate — and only one — protects that, while the four middle zones stay unordered among themselves for the reasons below.
 
 Reasoning:
 - `CityViewModel.completeCount(for:)`/`isTierUnlocked(_:)` already encode a global "3 apprentice buildings done → architect tier unlocks" rule (`:298-315`) that's orthogonal to zone — a building's `difficultyTier` (`MasteryLevel`) is independent of which zone it's in. Layering a *second*, zone-based gate on top (e.g. "Venice needs Florence done first") would mean a building can be tier-unlocked but zone-locked or vice versa, which is confusing to explain to an 8-year-old player and to debug. Keep it to one axis: **Ancient Rome first (matching the existing `Era` split and the game's own framing — you learn Roman engineering before Renaissance science), then all 5 Renaissance zones open together.**
 - Gating the 5 Renaissance zones individually behind each other (Florence → Venice → Padua → Milan → Rome, in some order) invites an arbitrary ordering decision with no historical or pedagogical basis — the sciences taught (biology in Padua, optics in Venice, astronomy in Rome) don't have a natural prerequisite chain, unlike Rome-before-Renaissance which the game already frames as "ancient engineering, then Renaissance science built on it."
-- Where this lives in data: `CityViewModel.unlockedZoneIds` (§3) starts as `["ancientRome"]`; the moment `completeChallenge(for:)` (`CityViewModel.swift:347-364`) detects `romeComplete` (already computed at `:360` for the existing Game Center achievement!), also do `unlockedZoneIds.formUnion(["florence", "venice", "padua", "milan", "renaissanceRome"])` and persist. The Medici-letter beats become 5 short `StoryNarrativeView`-style pages (that view and its typewriter-text pattern already exist, `Views/Onboarding/StoryNarrativeView.swift`) shown once, in sequence, right after Rome completes — narrative dressing on a single unlock event, not 5 separate gates.
+- Gating the four middle zones behind *each other* still invites an arbitrary ordering with no historical or pedagogical basis, so don't: they open together and the player picks.
+- Where this lives in data: `CityViewModel.unlockedZoneIds` (§3) starts as `["ancientRome"]`. When `completeChallenge(for:)` (`CityViewModel.swift:347-364`) detects `romeComplete` (already computed at `:360` for the existing Game Center achievement), do `unlockedZoneIds.formUnion(["padua", "venice", "renaissanceRome", "milan"])` and persist. Add a second, equally cheap check in the same place for the four middle zones being complete, which adds `"florence"`. The Medici-letter beats become short `StoryNarrativeView`-style pages (that view and its typewriter-text pattern already exist, `Views/Onboarding/StoryNarrativeView.swift`) shown once at each of the two unlock moments — narrative dressing on two events, not six separate gates.
 
 ---
 
 ## 5. Padua
 
-**Padua has one building (Anatomy Theater, `CityViewModel.swift:167-178`). Recommendation: give it a small special-location terrain rather than merging it into Venice or Milan, or authoring more buildings for it.**
+**Superseded by the zone-order decision at the top of this document.** This section
+used to argue that Padua had one building (Anatomy Theater) and should therefore get
+a small courtyard-scale terrain. That is no longer true: the Botanical Garden is a
+Padua building — its own lesson and card text always said so — and moving it there
+gives Padua two buildings, the same as Venice, Milan and Renaissance Rome.
 
-- **Don't merge it into another zone.** Anatomy Theater's sciences (Biology, Optics, Chemistry — `CityViewModel.swift:173`) don't share a terrain-appropriate visual identity with Venice's canal city or Milan's workshop-district framing; grafting one building onto a terrain painted for a different city's skyline is a bigger art ask (repainting part of that terrain to make room, and explaining historically why a Paduan anatomy theater sits inside Venice) than giving Padua its own small canvas.
-- **Don't add more buildings speculatively.** There's no pedagogical gap being filled — Padua's one science trio is already covered, and CLAUDE.md's roadmap doesn't list "more Padua buildings" as a planned item. Inventing buildings just to fill out a zone is exactly the kind of unrequested scope the Karpathy guidelines warn against.
-- **Do give it a small special location.** A `ZoneDefinition` for Padua with a proportionally smaller `mapSize` than the other zones (e.g. 1500×1200 instead of 3500×2500 — this is exactly why `ZoneDefinition.mapSize` is per-zone data in §1, not a shared constant) works with the same parameterized `CityScene`, the same terrain-pair convention (just a smaller/cheaper terrain image, §6), and the same travel-map entry, at minimal extra art cost — one building, one small courtyard-scale terrain, no waypoint graph complexity (a 1-node "walk straight to the theater" graph, or skip pathfinding entirely and walk direct like `CityScene`'s `directWalkThreshold` short-circuit already does for close targets, `CityScene.swift:891-898`).
+So Padua is now an ordinary zone: **full 3500×2500 `mapSize`, a full-size terrain
+pair, a normal small waypoint graph, two plots.** No special case, no smaller canvas,
+nothing for §1's `ZoneDefinition.mapSize` to prove here.
+
+Two things from the old argument still hold and are worth keeping:
+
+- **Don't merge Padua into Venice or Milan.** The Anatomy Theater's sciences (Biology,
+  Optics, Chemistry — `CityViewModel.swift:173`) and the Botanical Garden's don't share
+  a terrain-appropriate visual identity with Venice's lagoon or Milan's canal district,
+  and the historical explanation gets awkward fast.
+- **Don't add buildings speculatively.** Two is enough; inventing a third to round out
+  the zone is exactly the unrequested scope the Karpathy guidelines warn against.
+
+And one new note: the Orto Botanico (1545) and Fabricius's anatomy theatre (1594) are
+both University of Padua, a few hundred metres apart. Draw them as **one campus** —
+a walled botanical garden beside a college courtyard — not as two unrelated sites.
+The terrain prompt in `docs/zone-terrain-prompts.md` is written that way.
+
+**The zone that is now a one-building special case is Florence**, which holds only the
+Duomo. That is deliberate: it is the finale, and a single-plot map that every street
+converges on is the right shape for it. It needs no smaller canvas either — if
+anything Florence should be the richest map in the game, since arriving there is the
+reward.
 
 ---
 
@@ -219,41 +279,43 @@ Per the brief's spec: terrain PNG at **4500×3214** (verified: `Terrain_building
 
 | Building | Zone | Sprite needed | Build atlas needed |
 |---|---|---|---|
-| Botanical Garden | Florence | ✅ | ✅ (15 frames) |
-| Arsenal | Venice | ✅ | ✅ (15 frames) |
+| Botanical Garden | **Padua** | ✅ | ✅ (15 frames) |
 | Anatomy Theater | Padua | ✅ | ✅ (15 frames) |
-| Leonardo's Workshop | Milan | ✅ | ✅ (15 frames) |
-| Flying Machine | Milan | ✅ | ✅ (15 frames) |
+| Arsenal | Venice | ✅ | ✅ (15 frames) |
 | Vatican Observatory | Renaissance Rome | ✅ | ✅ (15 frames) |
 | Printing Press | Renaissance Rome | ✅ | ✅ (15 frames) |
+| Leonardo's Workshop | Milan | ✅ | ✅ (15 frames) |
+| Flying Machine | Milan | ✅ | ✅ (15 frames) |
 
 = **7 sprites + 7×15 = 105 build-animation frames.**
 
-**Terrain — 5 zones need a full pair** (Ancient Rome's is done; Padua's can be smaller per §5 but still needs its own pair):
+**Terrain — 5 zones need a full pair** (Ancient Rome's is done). All five are now
+full 3500×2500 maps at 4500×3214: Padua's "smaller canvas" special case is gone with
+the two-building correction in §5.
 
 | Zone | Sharp terrain | Blurred companion |
 |---|---|---|
-| Florence | 1 | 1 |
+| Padua | 1 | 1 |
 | Venice | 1 | 1 |
-| Padua (smaller canvas, §5) | 1 | 1 |
-| Milan | 1 | 1 |
 | Renaissance Rome | 1 | 1 |
+| Milan | 1 | 1 |
+| Florence | 1 | 1 |
 
 = **5 sharp + 5 blurred = 10 terrain images.**
 
-**Tree cut-outs — 5 zones, not counted in the September brief at all.** Swaying trees are per-zone art (§1 item 5): each one is cut out of that zone's own terrain PNG in Photoshop and placed back on the hole it came from, so none of Rome's transfer. Rome needed **9** (`CityTree22`–`CityTree30`, cut 2026-09-20). At the same density that's **~9 × 5 = ~45 more imagesets**. Padua's smaller canvas (§5) probably needs fewer, so treat 45 as an upper bound.
+**Tree cut-outs — 5 zones, not counted in the September brief at all.** Swaying trees are per-zone art (§1 item 5): each one is cut out of that zone's own terrain PNG in Photoshop and placed back on the hole it came from, so none of Rome's transfer. Rome needed **9** (`CityTree22`–`CityTree30`, cut 2026-09-20). At the same density across five full-size maps that's **~45 more imagesets**.
 
 Two costs here that aren't obvious from the count. First, this is **hand work per zone**, not a batch export — someone cuts each tree, then fills the hole left behind in the terrain so the sprite isn't drawing a double (Rome's first pass shipped with 4 of 9 holes unfilled, and those 4 show a faint ghost edge when the tree sways). Second, watch the matte: Rome's first cut-outs came back with 1-bit alpha and 1–2 px of white background inside the selection, which read as a white keyline around every tree and had to be de-fringed before they were usable. **Budget a fill-the-hole pass and an alpha check per zone**, and export with a soft, premultiplied-correct matte rather than a hard magic-wand selection.
 
 | Zone | Terrain pair | Tree cut-outs (est.) |
 |---|---|---|
-| Florence | 2 | ~9 |
+| Padua | 2 | ~9 |
 | Venice | 2 | ~9 |
-| Padua (smaller canvas, §5) | 2 | ~5 |
-| Milan | 2 | ~9 |
 | Renaissance Rome | 2 | ~9 |
+| Milan | 2 | ~9 |
+| Florence | 2 | ~9 |
 
-**Totals still needed:** 7 building sprites, 105 build-animation frames (7×15), 10 terrain images (5 sharp + 5 blurred), ~41 tree cut-outs = **~163 new art assets**, plus **2 buildings' worth of already-drawn art (Duomo, Glassworks) that only needs code wiring, not new art.** The tree cut-outs are individually small (Rome's nine are 15–68 KB each, ~330 KB total) so they barely move the size numbers in §8.1 — they cost *time*, not megabytes.
+**Totals still needed:** 7 building sprites, 105 build-animation frames (7×15), 10 terrain images (5 sharp + 5 blurred), ~45 tree cut-outs = **~167 new art assets**, plus **2 buildings' worth of already-drawn art (Duomo, Glassworks) that only needs code wiring, not new art.** The tree cut-outs are individually small (Rome's nine are 15–68 KB each, ~330 KB total) so they barely move the size numbers in §8.1 — they cost *time*, not megabytes.
 
 **A cost note the brief didn't ask for but §8 needs:** per `docs/research/asset-size-plan.md` (measured on this exact repo, row 1), the *existing* `Terrain`+`BlurredTerrain`+`WorkshopTerrain`+`WorkshopBackground` four-file group is **125.3 MB of source PNG before compression**, and the same doc's row 2 shows the 8 existing build atlases are **89.3 MB before compression**. Naively adding 5 more terrain pairs and 105 more full-depth-RGBA build frames at similar resolutions would roughly **double** the terrain contribution and add **~78 MB more** at current per-frame weight (89.3 MB ÷ 8 buildings × 7 new ≈ 78 MB) to the asset catalog — on top of a catalog that `docs/research/asset-size-plan.md` already measured at ~485 MB on disk / ~315 MB compiled, with an *unexecuted* plan (Phases 0–3, "stop after phase 3") to bring it down to ~65–85 MB. **This is a sequencing risk, not just a size number — see §8.**
 
@@ -286,6 +348,7 @@ Each step below is independently shippable and buildable — i.e. `main` builds 
 
 - **Scene architecture — DECIDED (Marina, 2026-09-20):** give the existing `CityScene` a `ZoneDefinition` initializer. One class, one data struct, no base class and no per-zone subclasses; all six zones are `CityScene(zone:)` with different data. A `ZoneScene` base class was drafted and rejected as an extra class for no gain. This still deviates from the Workshop/Forest/CraftingRoom/Goldsmith precedent (each fully self-contained), because 6 copies of the same camera/pathfinding/sway code is a bug-fix trap.
 - **Navigation:** a new `TravelMapView` SwiftUI screen, reached via the top-bar dropdown (replacing the current "Rome"/"Ren." era buttons with one "Travel" entry), with `SidebarDestination` gaining `.travelMap` and `.zone(ZoneID)` cases.
-- **Padua:** keep it as its own small special-location zone (smaller `mapSize`, same `CityScene`/terrain-pair convention, possibly no pathfinding graph) rather than merging it into Venice/Milan or inventing new buildings for it.
+- **Zone order — DECIDED (Marina, 2026-09-20):** I Ancient Rome · II Padua · III Venice · IV Renaissance Rome · V Milan · **VI Florence**. Florence is the finale because the Duomo is building 17 in the 5-act arc, where Brunelleschi takes over and Cosimo de Medici returns. The Botanical Garden moved Florence → Padua to make this work, which was a bug fix: all of its written content already said Padua, only the code said Florence.
+- **Padua:** now an ordinary two-building zone (Botanical Garden + Anatomy Theater, both University of Padua), full-size map, no special case. **Florence** is the single-building zone instead, deliberately — one plot that every street converges on is the right shape for an ending.
 - **Trees and map labels are per-zone data, not shared scene code.** `ZoneDefinition` carries `trees: [ZoneTreePlacement]` and `label: ZoneLabel?`. The sway animation is generic and stays in `CityScene`; the tree *list* cannot, because every cut-out is lifted from its own zone's terrain and only covers the hole it came from. Likewise each zone map shows its own single label, replacing today's six numerals plus two era banners on one canvas.
-- **Art still needed:** 7 building sprites + 105 build-animation frames (7 buildings × 15) + 10 terrain images (5 zones × sharp+blurred) + ~41 tree cut-outs = **~163 new assets** — smaller than a naive "9 Renaissance buildings from scratch" count because Duomo and Glassworks already have complete, unwired art sitting in the catalog, but larger than the September brief implied because tree cut-outs weren't counted at all. The tree work is hand time in Photoshop (cut, then fill the hole behind it), not megabytes.
+- **Art still needed:** 7 building sprites + 105 build-animation frames (7 buildings × 15) + 10 terrain images (5 zones × sharp+blurred) + ~45 tree cut-outs = **~167 new assets** — smaller than a naive "9 Renaissance buildings from scratch" count because Duomo and Glassworks already have complete, unwired art sitting in the catalog, but larger than the September brief implied because tree cut-outs weren't counted at all. The tree work is hand time in Photoshop (cut, then fill the hole behind it), not megabytes.
