@@ -3,7 +3,8 @@
 //
 // Runs Select Subject and adds one Solid Color fill layer per RenaissanceColors token,
 // each masked to the subject and hidden. Toggle the eye icons in the "Brand Colors"
-// group to preview each tint.
+// group to preview each tint. For the whole image with no mask, run
+// BrandColorLayersFullImage.jsx instead (it includes this file — keep the two together).
 //
 //   • A document is open → choose it, or choose a folder instead
 //   • Nothing open       → choose a folder
@@ -15,9 +16,18 @@
 
 var COLORS_FILE = "~/RenaissanceArchitectAcademy/RenaissanceArchitectAcademy/Services/Styles/RenaissanceColors.swift";
 
-// Color keeps the painting's light/shadow and line work, and swaps in the brand hue.
-// Change to BlendMode.NORMAL for flat solid fills.
-var FILL_BLEND_MODE = BlendMode.COLORBLEND;
+// Overlay tints the painting while keeping its light/shadow and line work.
+var FILL_BLEND_MODE = BlendMode.OVERLAY;
+var FILL_LAYER_OPACITY = 100;  // Layers panel "Opacity"
+var FILL_LAYER_FILL = 100;     // Layers panel "Fill"
+
+// Image > Apply Image on every fill layer's mask: Merged / RGB, this blending, 100%.
+// The mask becomes a luminosity map of the painting, so the tint follows its light and dark.
+// "Mltp" = Multiply (keeps a Select Subject mask's shape), "Nrml" = Normal.
+var APPLY_IMAGE_BLENDING = "Mltp";
+
+// BrandColorLayersFullImage.jsx sets this to false before including this file.
+var USE_SUBJECT_MASK = (typeof USE_SUBJECT_MASK == "undefined") ? true : USE_SUBJECT_MASK;
 
 var IMAGE_FILE = /\.(png|jpe?g|psd|tiff?|webp)$/i;
 var OUTPUT_FOLDER_NAME = "Brand Colors";
@@ -100,17 +110,45 @@ function makeSolidColorLayer(name, r, g, b) {
     return app.activeDocument.activeLayer;
 }
 
+/// Targets a channel of the active layer: "Msk " = its layer mask, "RGB " = the composite
+function selectChannel(channelID) {
+    var desc = new ActionDescriptor();
+    var ref = new ActionReference();
+    ref.putEnumerated(charIDToTypeID("Chnl"), charIDToTypeID("Chnl"), charIDToTypeID(channelID));
+    desc.putReference(charIDToTypeID("null"), ref);
+    desc.putBoolean(charIDToTypeID("MkVs"), false);
+    executeAction(charIDToTypeID("slct"), desc, DialogModes.NO);
+}
+
+/// Image > Apply Image onto the active layer's mask — source: Merged layers, RGB channel
+function applyImageToMask() {
+    selectChannel("Msk ");
+    var source = new ActionDescriptor();
+    var ref = new ActionReference();
+    ref.putEnumerated(charIDToTypeID("Chnl"), charIDToTypeID("Chnl"), charIDToTypeID("RGB "));
+    ref.putProperty(charIDToTypeID("Lyr "), charIDToTypeID("Mrgd"));
+    source.putReference(charIDToTypeID("T   "), ref);
+    source.putEnumerated(charIDToTypeID("Clcl"), charIDToTypeID("Clcn"), charIDToTypeID(APPLY_IMAGE_BLENDING));
+    var desc = new ActionDescriptor();
+    desc.putObject(charIDToTypeID("With"), charIDToTypeID("Clcl"), source);
+    executeAction(charIDToTypeID("AppI"), desc, DialogModes.NO);
+    selectChannel("RGB ");
+}
+
 /// Adds the "Brand Colors" group to the active document. Returns false if Select Subject found nothing.
 function addBrandColorLayers(sections) {
     var doc = app.activeDocument;
 
     if (doc.mode != DocumentMode.RGB) doc.changeMode(ChangeMode.RGB);
 
-    selectSubject();
-    if (!hasSelection(doc)) return false;
-    var channelName = "Brand Colors Subject";
-    saveSelection(channelName);
-    var subject = doc.channels.getByName(channelName);
+    var subject = null;
+    if (USE_SUBJECT_MASK) {
+        selectSubject();
+        if (!hasSelection(doc)) return false;
+        var channelName = "Brand Colors Subject";
+        saveSelection(channelName);
+        subject = doc.channels.getByName(channelName);
+    }
 
     var group = doc.layerSets.add();
     group.name = "Brand Colors";
@@ -121,15 +159,22 @@ function addBrandColorLayers(sections) {
         section.name = sections[s].name;
         for (var c = sections[s].colors.length - 1; c >= 0; c--) {
             var color = sections[s].colors[c];
-            doc.selection.load(subject, SelectionType.REPLACE);
+            // No selection → the fill layer covers the whole image
+            if (subject) doc.selection.load(subject, SelectionType.REPLACE);
+            else doc.selection.deselect();
             var fillLayer = makeSolidColorLayer(color.name, color.r, color.g, color.b);
             fillLayer.blendMode = FILL_BLEND_MODE;
+            fillLayer.opacity = FILL_LAYER_OPACITY;
+            fillLayer.fillOpacity = FILL_LAYER_FILL;
+            // Hidden BEFORE Apply Image, so its own colour isn't in the merged source
             fillLayer.visible = false;
+            doc.selection.deselect();  // Apply Image only affects inside an active selection
+            applyImageToMask();
             fillLayer.move(section, ElementPlacement.INSIDE);
         }
     }
 
-    subject.remove();
+    if (subject) subject.remove();
     doc.selection.deselect();
     doc.activeLayer = group;
     return true;
