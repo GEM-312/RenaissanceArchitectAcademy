@@ -5,8 +5,8 @@ import SwiftUI
 enum RenaissanceColors {
     // MARK: - Primary Palette
 
-    /// Parchment background: #F5E6D3 (aged paper texture)
-    static let parchment = Color(red: 0.961, green: 0.902, blue: 0.827)
+    /// Parchment background: #F5E5D3 (aged paper texture)
+    static let parchment = Color(red: 0.961, green: 0.898, blue: 0.827)
 
     /// Sepia ink for text: #4A4035
     static let sepiaInk = Color(red: 0.290, green: 0.251, blue: 0.208)
@@ -14,36 +14,36 @@ enum RenaissanceColors {
     /// Renaissance blue accent: #5B8FA3 (tiles, water)
     static let renaissanceBlue = Color(red: 0.357, green: 0.561, blue: 0.639)
 
-    /// Terracotta for roofs/buildings: #D4876B
-    static let terracotta = Color(red: 0.831, green: 0.529, blue: 0.420)
+    /// Terracotta for roofs/buildings: #D3876B
+    static let terracotta = Color(red: 0.827, green: 0.529, blue: 0.42)
 
-    /// Ochre for stone walls/highlights: #C9A86A
-    static let ochre = Color(red: 0.788, green: 0.659, blue: 0.416)
+    /// Ochre for stone walls/highlights: #C9A76A
+    static let ochre = Color(red: 0.788, green: 0.655, blue: 0.416)
 
     /// Sage green for completion/nature: #7A9B76
     static let sageGreen = Color(red: 0.478, green: 0.608, blue: 0.463)
 
     // MARK: - Accent Palette
 
-    /// Deep teal for astronomy/water: #2B7A8C
-    static let deepTeal = Color(red: 0.169, green: 0.478, blue: 0.549)
+    /// Deep teal for astronomy/water: #2B7A8B
+    static let deepTeal = Color(red: 0.169, green: 0.478, blue: 0.545)
 
     /// Warm brown for wood accents: #8B6F47
     static let warmBrown = Color(red: 0.545, green: 0.435, blue: 0.278)
 
-    /// Stone gray for materials: #A39D93
-    static let stoneGray = Color(red: 0.639, green: 0.616, blue: 0.576)
+    /// Stone gray for materials: #9F9F9B
+    static let stoneGray = Color(red: 0.624, green: 0.624, blue: 0.608)
 
-    /// Icon ochre for nav buttons: #C49B54 — warm golden ochre
-    static let iconOchre = Color(red: 0.769, green: 0.608, blue: 0.329)
+    /// Icon ochre for nav buttons: #B7953E — warm golden ochre
+    static let iconOchre = Color(red: 0.718, green: 0.584, blue: 0.243)
 
-    /// Garden green for nature: #7A9B76 (same as sageGreen)
-    static let gardenGreen = Color(red: 0.478, green: 0.608, blue: 0.463)
+    /// Garden green for nature: #6B8D5A — distinct from sageGreen since 2026-10-07
+    static let gardenGreen = Color(red: 0.42, green: 0.553, blue: 0.353)
 
     // MARK: - Special Effects
 
-    /// Gold success glow: #DAA520
-    static let goldSuccess = Color(red: 0.855, green: 0.647, blue: 0.125)
+    /// Gold success glow: #D9A520
+    static let goldSuccess = Color(red: 0.851, green: 0.647, blue: 0.125)
 
     /// Error red for incorrect: #CD5C5C
     static let errorRed = Color(red: 0.804, green: 0.361, blue: 0.361)
@@ -51,18 +51,18 @@ enum RenaissanceColors {
     /// Blueprint blue for technical overlays: #4169E1
     static let blueprintBlue = Color(red: 0.255, green: 0.412, blue: 0.882)
 
-    /// Highlight amber: #FFBF00
-    static let highlightAmber = Color(red: 1.0, green: 0.749, blue: 0.0)
+    /// Highlight amber: #D3A74B
+    static let highlightAmber = Color(red: 0.827, green: 0.655, blue: 0.294)
 
-    /// Furnace orange for fire/heat actions: #E66619
-    static let furnaceOrange = Color(red: 0.9, green: 0.4, blue: 0.1)
+    /// Furnace orange for fire/heat actions: #D3763A
+    static let furnaceOrange = Color(red: 0.827, green: 0.463, blue: 0.227)
 
     /// Candle glow — pale warm yellow for candlelight, lanterns, lamp wicks.
     /// More cream than `goldSuccess`, less saturated than `highlightAmber`.
     static let candleGlow = Color(red: 0.95, green: 0.85, blue: 0.45)
 
-    /// Light parchment for card fills (slightly warmer): #FDF5E0
-    static let parchmentLight = Color(red: 0.99, green: 0.96, blue: 0.88)
+    /// Light parchment for card fills (slightly warmer): #F9EFE3
+    static let parchmentLight = Color(red: 0.976, green: 0.937, blue: 0.89)
 
     /// Card background fills for dark/light theme modes. Previously declared
     /// as private statics in `GameSettings` — surfacing here so any view can
