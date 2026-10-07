@@ -113,6 +113,11 @@ struct CityMapView: View {
     /// re-evaluation without triggering re-renders (unlike @State which causes infinite loops)
     @State private var sceneHolder = SceneHolder<CityScene>()
 
+    /// Which zone the map shows. Only the DEBUG zone button changes it until the travel
+    /// map exists; `.id(zoneId)` on the sprite view makes SwiftUI present the new scene,
+    /// since GameSpriteView only presents a scene once, when it is created.
+    @State private var zoneId = "ancientRome"
+
     /// Hero animation namespace — building name morphs through prompt → mascot → destination
     @Namespace private var buildingNameHero
 
@@ -157,6 +162,7 @@ struct CityMapView: View {
                 if assetManager.isReady(AssetManager.cityScene) {
                     // The SpriteKit scene (the actual game map — fills full width)
                     GameSpriteView(scene: makeScene(), options: [.ignoresSiblingOrder])
+                        .id(zoneId)
                         .ignoresSafeArea()
                 } else {
                     ODRLoadingView(tag: AssetManager.cityScene, message: "Preparing the city...")
@@ -743,6 +749,31 @@ struct CityMapView: View {
                         .buttonStyle(.plain)
                         .padding(.top, Spacing.xxl + Spacing.lg)
                     }
+
+                    // DEBUG: swap the map between Ancient Rome and Padua. Drops the current
+                    // scene the same way onDisappear does; the zoneId change rebuilds the
+                    // sprite view, and makeScene() builds the other zone.
+                    Button {
+                        sceneHolder.scene?.onMascotReachedBuilding = nil
+                        sceneHolder.scene?.onBuildingScreenPosition = nil
+                        sceneHolder.scene?.onPlayerStartedWalking = nil
+                        sceneHolder.scene?.onMascotExitToPuzzle = nil
+                        sceneHolder.scene?.onBuildingSelected = nil
+                        sceneHolder.scene = nil
+                        zoneId = (zoneId == "padua") ? "ancientRome" : "padua"
+                    } label: {
+                        Text(zoneId == "padua" ? "Rome" : "Padua")
+                            .font(RenaissanceFont.buttonSmall)
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, Spacing.md)
+                            .padding(.vertical, Spacing.xs)
+                            .background(
+                                RoundedRectangle(cornerRadius: CornerRadius.sm)
+                                    .fill(RenaissanceColors.terracotta.opacity(0.9))
+                            )
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.top, Spacing.xxl + Spacing.lg)
                     Spacer()
                 }
                 .padding(.leading, Spacing.md)
@@ -877,11 +908,11 @@ struct CityMapView: View {
             return existingScene
         }
 
-        // Create new scene for the Ancient Rome zone. `init(zone:)` sets the
+        // Create new scene for the current zone. `init(zone:)` sets the
         // scene size from `zone.mapSize` (3500×2500, standard across all
         // scenes). .aspectFill preserves the terrain aspect ratio so the
         // 4500×3214 art doesn't squash.
-        let newScene = CityScene(zone: ZoneRegistry.ancientRome)
+        let newScene = CityScene(zone: zoneId == "padua" ? ZoneRegistry.padua : ZoneRegistry.ancientRome)
         newScene.scaleMode = .aspectFill
 
         // Set player gender before scene setup

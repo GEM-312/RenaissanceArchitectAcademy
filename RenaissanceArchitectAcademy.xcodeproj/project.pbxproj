@@ -58,8 +58,6 @@
 		059 /* NotebookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159 /* NotebookView.swift */; };
 		060 /* NotebookCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160 /* NotebookCanvasView.swift */; };
 		061 /* PlayerSave.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161 /* PlayerSave.swift */; };
-		0Z1 /* ZoneDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1Z1 /* ZoneDefinition.swift */; };
-		0Z2 /* ZoneRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1Z2 /* ZoneRegistry.swift */; };
 		062 /* BuildingProgressRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162 /* BuildingProgressRecord.swift */; };
 		063 /* PersistenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163 /* PersistenceManager.swift */; };
 		064 /* LessonContentRome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164 /* LessonContentRome.swift */; };
@@ -147,6 +145,8 @@
 		0P1 /* TrufflePigNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1P1 /* TrufflePigNode.swift */; };
 		0P2 /* ForestAnimalNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1P2 /* ForestAnimalNode.swift */; };
 		0VG /* VenueGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1VG /* VenueGuide.swift */; };
+		0Z1 /* ZoneDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1Z1 /* ZoneDefinition.swift */; };
+		0Z2 /* ZoneRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1Z2 /* ZoneRegistry.swift */; };
 		2A0 /* VisualEditorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0 /* VisualEditorState.swift */; };
 		2A1 /* EditableModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1 /* EditableModifier.swift */; };
 		2A2 /* EditorBottomPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A2 /* EditorBottomPanel.swift */; };
@@ -347,8 +347,6 @@
 		159 /* NotebookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookView.swift; sourceTree = "<group>"; };
 		160 /* NotebookCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookCanvasView.swift; sourceTree = "<group>"; };
 		161 /* PlayerSave.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerSave.swift; sourceTree = "<group>"; };
-		1Z1 /* ZoneDefinition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoneDefinition.swift; sourceTree = "<group>"; };
-		1Z2 /* ZoneRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoneRegistry.swift; sourceTree = "<group>"; };
 		162 /* BuildingProgressRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingProgressRecord.swift; sourceTree = "<group>"; };
 		163 /* PersistenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceManager.swift; sourceTree = "<group>"; };
 		164 /* LessonContentRome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonContentRome.swift; sourceTree = "<group>"; };
@@ -436,6 +434,8 @@
 		1P1 /* TrufflePigNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TrufflePigNode.swift; path = Views/SpriteKit/TrufflePigNode.swift; sourceTree = "<group>"; };
 		1P2 /* ForestAnimalNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ForestAnimalNode.swift; path = Views/SpriteKit/ForestAnimalNode.swift; sourceTree = "<group>"; };
 		1VG /* VenueGuide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VenueGuide.swift; sourceTree = "<group>"; };
+		1Z1 /* ZoneDefinition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoneDefinition.swift; sourceTree = "<group>"; };
+		1Z2 /* ZoneRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoneRegistry.swift; sourceTree = "<group>"; };
 		2C0 /* BottomDialogPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomDialogPanel.swift; sourceTree = "<group>"; };
 		2C1 /* BirdGuidanceContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdGuidanceContent.swift; sourceTree = "<group>"; };
 		2C2 /* SceneTransitionOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneTransitionOverlay.swift; sourceTree = "<group>"; };

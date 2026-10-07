@@ -234,4 +234,73 @@ enum ZoneRegistry {
             ZoneBanner(text: "RENAISSANCE ITALY", position: CGPoint(x: 2400, y: 2400), nodeName: "label_renaissanceItaly"),
         ]
     )
+
+    // MARK: - II Padua
+
+    /// Padua's terrain is the Oct 4 2026 Midjourney map, upscaled to 4500×3214 like Rome's.
+    private static let paduaTerrainPixelWidth: CGFloat = 4500
+    private static let paduaTreeScale: CGFloat = 3500 / paduaTerrainPixelWidth
+
+    /// Reached only from the DEBUG zone button in CityMapView until the travel map exists.
+    /// Building, waypoint and spawn positions are first-pass placeholders over the painted
+    /// plots and gravel paths — drag them in editor mode (E) and bake the dump in here.
+    static let padua = ZoneDefinition(
+        id: "padua",
+        displayName: "Padua",
+
+        mapSize: CGSize(width: 3500, height: 2500),
+        terrainPixelWidth: paduaTerrainPixelWidth,
+
+        sharpTerrainImageName: "PaduaTerrain",
+        blurredTerrainImageName: "BlurredPaduaTerrain",
+
+        // Both University of Padua institutions, drawn as one campus
+        buildings: [
+            ZoneBuildingPlacement(buildingId: "botanicalGarden", name: "Botanical Garden", position: CGPoint(x: 1250, y: 1250), era: "padua", rotation: 0),   // the round walled garden
+            ZoneBuildingPlacement(buildingId: "anatomyTheater", name: "Anatomy Theater", position: CGPoint(x: 2200, y: 1450), era: "padua", rotation: 0),     // the empty square plot
+        ],
+        hiddenBuildingIds: [],
+
+        // Along the painted gravel paths
+        waypoints: [
+            /* 0 */ CGPoint(x:  300, y:  850),   // east end of the bridge
+            /* 1 */ CGPoint(x:  750, y:  680),   // below the garden wall, south-west
+            /* 2 */ CGPoint(x: 1300, y:  620),   // below the garden wall, south
+            /* 3 */ CGPoint(x: 1800, y:  800),   // south-east corner of the wall
+            /* 4 */ CGPoint(x: 1950, y: 1050),   // by the garden's east gate
+            /* 5 */ CGPoint(x: 1800, y: 1350),   // diagonal path, middle
+            /* 6 */ CGPoint(x: 1650, y: 1680),   // diagonal path, top by the north wall
+            /* 7 */ CGPoint(x: 2100, y: 1250),   // west edge of the square plot
+            /* 8 */ CGPoint(x: 2550, y: 1550),   // path towards the college buildings
+        ],
+        waypointEdges: [
+            [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [4, 7], [5, 7], [7, 8],
+        ],
+        buildingWaypoints: [
+            "botanicalGarden": [4, 5],
+            "anatomyTheater":  [7, 8],
+        ],
+
+        playerSpawn: CGPoint(x: 650, y: 700),
+        cameraMaxZoomOutScale: 3.5,
+
+        // Cut from this terrain with Layer via Copy, exported full-canvas and placed by
+        // scripts/art/place_cutouts.py --split — positions are exact, not hand-tuned.
+        trees: [
+            ZoneTreePlacement(imageName: "PaduaTree01", position: CGPoint(x: 1004, y:  341), scale: paduaTreeScale),
+            ZoneTreePlacement(imageName: "PaduaTree02", position: CGPoint(x: 1038, y: 1594), scale: paduaTreeScale),
+            ZoneTreePlacement(imageName: "PaduaTree03", position: CGPoint(x: 1278, y:  278), scale: paduaTreeScale),
+            ZoneTreePlacement(imageName: "PaduaTree04", position: CGPoint(x: 1319, y: 1660), scale: paduaTreeScale),
+            ZoneTreePlacement(imageName: "PaduaTree05", position: CGPoint(x: 1570, y: 1675), scale: paduaTreeScale),
+            ZoneTreePlacement(imageName: "PaduaTree06", position: CGPoint(x: 1800, y: 1704), scale: paduaTreeScale),
+            ZoneTreePlacement(imageName: "PaduaTree07", position: CGPoint(x: 2067, y: 1721), scale: paduaTreeScale),
+            ZoneTreePlacement(imageName: "PaduaTree08", position: CGPoint(x: 2153, y: 1010), scale: paduaTreeScale),
+            ZoneTreePlacement(imageName: "PaduaTree09", position: CGPoint(x: 2324, y: 1734), scale: paduaTreeScale),
+        ],
+
+        labels: [
+            ZoneLabel(numeral: "II", name: "Padua", position: CGPoint(x: 1750, y: 2350), nodeName: "zone_padua"),
+        ],
+        banners: []
+    )
 }
