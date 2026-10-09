@@ -80,7 +80,21 @@ enum Science: String, CaseIterable, Codable {
 
     /// Custom image name from Assets.xcassets (nil → uses SF Symbol instead)
     var customImageName: String? {
-        return nil
+        switch self {
+        case .mathematics: return "ScienceMath"
+        case .physics: return "SciencePhysics"
+        case .chemistry: return "ScienceChemistry"
+        case .geometry: return "ScienceGeometry"
+        case .engineering: return "ScienceEngineering"
+        case .optics: return "ScienceOptics"
+        case .biology: return "ScienceBiology"
+        case .materials: return "ScienceMaterials"
+        case .astronomy: return "ScienceAstronomy"
+        case .geology: return "ScienceGeology"
+        case .hydraulics: return "ScienceHydraulics"
+        case .acoustics: return "ScienceAcoustics"
+        case .architecture: return "ScienceArchitecture"
+        }
     }
 
     /// Whether this science has a custom image
