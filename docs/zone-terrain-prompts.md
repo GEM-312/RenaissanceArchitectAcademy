@@ -197,6 +197,80 @@ not what it has seen before.
 
 ---
 
+## Workshop areas — Bottega, Countryside, Hills
+
+The outdoor Workshop is being split into three maps the same way the city was split into
+zones — see `docs/plans/workshop-areas-plan.md`. Same house style, same `--sref` pair, same
+shared style block, same 4500×3214. **Two hard requirements are different from the city zones:**
+
+- **Stations are painted IN, not left as empty plots.** On the city maps buildings are separate
+  sprites, so plots must be bare. Workshop stations have no sprite — `ResourceNode.hideSprites`
+  is on, and the game draws only an invisible tap target and a label pill. Whatever the terrain
+  shows *is* the station. Ask for each station by name and count them.
+- **Roads leave the map.** Each signpost to another area sits on a road that runs off one side
+  edge and fades into the parchment. Ask for an empty wooden fingerpost (no lettering — the game
+  draws the label) where the road meets the edge.
+
+Geography, so the three maps agree with each other: the **Countryside is to the west** of the
+Bottega and the **Hills are to the east**. So the Bottega's roads leave by the left and right
+edges, the Countryside's road leaves by the right edge, and the Hills' road leaves by the left.
+
+Animated overlays are drawn on top of some stations — the Crafting Room chimney smoke, the
+volcano smoke and lava, the quarry crane, the river flow, a fisherman, a woodcutter, chickens.
+Paint the place they need (a chimney, a crater, a riverbank) but **not the moving thing itself**,
+or the overlay doubles it. The quarry is the one to watch: leave the crane out.
+
+### Workshop I. Bottega — the home yard, where the player arrives
+
+> Renaissance artisan workshop yard at the edge of a Tuscan town, **three painted stations
+> clearly separated across the scene: a stone workshop building with a tall brick chimney and
+> open double doors, a small goldsmith's shop with a carved wooden shopfront and shutters, and
+> a busy open-air market of striped canvas awnings over empty stalls with crates, barrels and
+> sacks**, a cobbled yard between them with a well, two dirt roads leaving the scene, one off
+> the left edge and one off the right edge, an empty wooden fingerpost beside each road where
+> it fades into the paper, terracotta roofs of the town at the horizon, six separate small
+> trees standing alone on open ground
+
+Stations: **Crafting Room** (the chimney building — the chimney-smoke overlay sits on that
+chimney), **Goldsmith** (Bottega di Lotti), **Market**. Signposts: left → Countryside,
+right → Hills.
+
+### Workshop II. Countryside
+
+> Renaissance Tuscan farmland in a river valley, **three painted stations clearly separated
+> across the scene: a stone farmhouse with a barn, hay stacks, a vegetable plot, beehives and a
+> fenced poultry yard with no animals; a slow winding river with a wide pale sandbank and a
+> grassy bank to stand on; and the dark edge of a dense oak and chestnut forest with a footpath
+> leading into the trees**, wheat and olive fields between them, a dirt road leaving the scene
+> off the right edge with an empty wooden fingerpost where it fades into the paper, rolling
+> green hills at the horizon, seven separate trees standing alone in the fields
+
+Stations: **Farm**, **River** (water + sand, so the sandbank matters; the river-flow,
+fisherman and woodcutter overlays go here), **Forest** (opens the Forest map — so the
+footpath into the trees is the entrance). Signpost: right → Bottega. "No animals" in the
+poultry yard because the chicken overlay supplies them.
+
+### Workshop III. Hills & Quarries
+
+> Renaissance Apennine hills, rocky and dry, **four painted stations clearly separated across
+> the scene: a pale limestone and marble quarry cut in stepped white terraces into a cliff,
+> with no crane; a mine entrance braced with heavy timber framing in a dark hillside; an open
+> clay pit of wet red-ochre earth with puddles; and a smoking volcanic mountain in the far
+> background with a dark crater, sulphur-yellow vents and a cooled lava slope**, gravel tracks
+> linking all four, one track leaving the scene off the left edge with an empty wooden
+> fingerpost where it fades into the paper, scrub, broom and stone pines, warm grey, ochre and
+> sage palette, six separate pines standing alone on open ground
+
+Stations: **Quarry** (the crane overlay is drawn on top — keep it out of the art), **Mine**,
+**Clay Pit**, **Volcano** (the smoke, lava and glow overlays sit on the crater and slope; it
+can stay in the background as long as its slope comes down far enough for a path to reach it).
+Signpost: left → Bottega.
+
+For all three, install as `Workshop<Area>Terrain` + `BlurredWorkshop<Area>Terrain`
+(e.g. `WorkshopBottegaTerrain`).
+
+---
+
 ## After generation
 
 1. Resize/export to 4500×3214.
