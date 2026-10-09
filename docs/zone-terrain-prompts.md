@@ -1,7 +1,13 @@
-# Zone Terrain Prompts — Padua, Venice, Renaissance Rome, Milan, Florence
+# Zone Terrain Prompts — Ancient Rome, Padua, Venice, Renaissance Rome, Milan, Florence
 
-Art prompts for the 5 terrain backgrounds the zone system needs (Ancient Rome is done).
-Written for **Midjourney**, which is what the current Rome terrain came from.
+Art prompts for the 6 terrain backgrounds the zone system needs.
+Written for **Midjourney**. Map art stays in Midjourney: a GPT Image 2.5 redraw of Padua
+(Oct 9 2026) kept the layout but lost the dreamy Midjourney look, and Gemini did the same
+on the Workshop in September.
+
+**House style (decided Oct 9 2026): Forest + Padua.** Green-led, sepia ink lines in the
+foliage, soft watercolour over them, dreamy edges. The current Ancient Rome map (golden,
+smudged, few lines) is the odd one out, so it gets regenerated too.
 
 Zone order follows the storyteller's 5-act arc in `docs/voice-cast-plan.md` — the
 Duomo is building 17, the finale, where Brunelleschi takes over and Cosimo de Medici
@@ -9,7 +15,7 @@ returns. So **Florence is last, and it holds only the Duomo.**
 
 | | zone | plots | act |
 |---|---|---|---|
-| I | Ancient Rome — *done* | 8 | I–II |
+| I | Ancient Rome — *regenerate in the house style* | 8 | I–II |
 | II | Padua | 2 — Botanical Garden, Anatomy Theater | III |
 | III | Venice | 2 — Glassworks, Arsenal | III–IV |
 | IV | Renaissance Rome | 2 — Vatican Observatory, Printing Press | IV |
@@ -50,22 +56,66 @@ These aren't style notes, they're what makes the terrain usable as a game map.
 
 ---
 
+## Style references (every zone)
+
+In Midjourney, put **both** of these in the **style reference** slot (`--sref`):
+
+- `RenaissanceArchitectAcademy/Assets.xcassets/Forest1.imageset/Forest1.png`
+- `RenaissanceArchitectAcademy/Assets.xcassets/PaduaTerrain.imageset/PaduaTerrain.png`
+
+Start at `--sw 250`. Raise it if the result drifts from the house style; lower it if the
+references start dictating the content.
+
+**Camera angle is NOT carried by `--sref`** (it carries style only), and it is the other
+half of what made Rome and Padua look like different games: Padua came out near top-down,
+Rome and the Forest are low three-quarter views. The old style block said "aerial
+bird's-eye view", and Midjourney read that as "look straight down". So:
+
+- Describe the angle in words (the block below) and keep "bird's-eye", "aerial" and
+  "seen from above" out of the prompt.
+- To lock the angle harder, also add **Forest1 as an image prompt** (the image at the very
+  start of the prompt) with `--iw 0.5`. Go up toward 1 if the view is still too high;
+  go down if it starts copying the forest's paths and clearings.
+
 ## Shared style block
 
 Paste this at the end of every prompt below:
 
 ```
-aerial three-quarter bird's-eye view, Leonardo da Vinci notebook study, soft
-watercolor wash over fine brown ink linework, muted earth palette, aged cream
-parchment background showing through, painted area fading softly to bare paper
-at all edges, no text, no labels, no people, no border --ar 7:5 --style raw
+low oblique three-quarter view, wide landscape vista receding to distant trees and a
+hazy horizon, Leonardo da Vinci notebook study, soft dreamy watercolor wash over fine
+sepia ink linework, loose painterly brushwork, muted sage-green and earth palette, aged
+cream parchment showing through, painted area fading softly to bare paper at all edges
+--ar 7:5 --style raw --sw 250 --no text, letters, labels, people, border, compass,
+top-down, plan view
 ```
+
+---
+
+## I. Ancient Rome — regenerate
+
+The finished zone, so keep everything the game already relies on: **eight** plots, a road
+network joining them, a river with a bridge. The 8 building sprites and their build
+animations were made against the old map, so after regenerating, check that they still fit
+before redoing them (Claude can mock them up on the new map, no credits).
+
+> Ancient Roman countryside at the edge of the city, the Tiber curving through with a
+> single arched stone bridge, rolling green hills with cypress rows and olive groves, a
+> distant walled town on the hills at the horizon, a stretch of waterfront along the
+> river, **eight flat empty building plots of bare pale earth, completely vacant, no
+> structures**, all joined by dirt roads, one plot on the hillside, one on the
+> riverbank, the rest spread across the open ground, eight separate cypress and olive
+> trees standing alone on open grass
+
+Plots: **Aqueduct** (on the slope, so it can carry water down), **Harbor** (on the
+riverbank, open water on one side), then Colosseum, Roman Baths, Pantheon, Roman Roads,
+Siege Workshop and Insula on the open ground. The Colosseum needs the largest plot.
 
 ---
 
 ## II. Padua
 
-> Renaissance university quarter seen from above, a walled circular botanical garden
+> Renaissance university quarter, a walled circular botanical garden
 > divided into geometric quadrant planting beds beside a compact brick college
 > courtyard, a narrow canal along one edge with a low arched bridge, gravel walks,
 > ordered rows of medicinal herbs, muted sage-green and warm brick palette,
@@ -83,7 +133,7 @@ one campus, not two separate places.
 
 ## III. Venice
 
-> Renaissance lagoon seen from above, shallow blue-green water threaded with narrow
+> Renaissance lagoon, shallow blue-green water threaded with narrow
 > channels and mudflats, low marshy islands joined by timber walkways and small stone
 > bridges, clusters of wooden mooring piles in the water, salt marsh grass, teal and
 > pale sand palette cooler than the mainland, **two large flat empty rectangular
@@ -98,7 +148,7 @@ with open water on one side for the shipyard).
 
 ## IV. Renaissance Rome
 
-> Renaissance Rome seen from above, the Tiber curving through, weathered ancient ruins
+> Renaissance Rome, the Tiber curving through, weathered ancient ruins
 > and broken columns half-buried in meadow alongside fresh construction, stacked
 > travertine blocks and timber scaffolding, umbrella pines, dusty ochre and warm grey
 > palette, **two large flat empty rectangular building plots of bare levelled earth
@@ -112,7 +162,7 @@ Plots: **Vatican Observatory** (highest ground, for sightlines), **Printing Pres
 
 ## V. Milan
 
-> Renaissance Lombard plain seen from above, flat farmland cut by straight man-made
+> Renaissance Lombard plain, flat farmland cut by straight man-made
 > irrigation canals with brick lock gates, poplar rows along the waterways, a mulberry
 > orchard, low mist, cooler grey-green and straw palette, flatter and more geometric
 > than Tuscan hills, **two large flat empty rectangular building plots of bare swept
@@ -130,7 +180,7 @@ This one carries the ending, so it should look like the reward: the richest, war
 most finished map in the game. It is also the only single-plot zone, so the Duomo's
 empty plot must read as *the* destination — everything points at it.
 
-> Renaissance Florence seen from above, the Arno curving through with the covered
+> Renaissance Florence, the Arno curving through with the covered
 > Ponte Vecchio, dense terracotta rooftops of the old city packed around a wide
 > central cathedral square, the Tuscan hills and cypress rows rising behind, golden
 > late-afternoon light, warm terracotta, ochre and olive-green palette, richer and
