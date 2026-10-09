@@ -147,6 +147,8 @@
 		0VG /* VenueGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1VG /* VenueGuide.swift */; };
 		0Z1 /* ZoneDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1Z1 /* ZoneDefinition.swift */; };
 		0Z2 /* ZoneRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1Z2 /* ZoneRegistry.swift */; };
+		0WA /* WorkshopAreaDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1WA /* WorkshopAreaDefinition.swift */; };
+		0WB /* WorkshopAreaRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1WB /* WorkshopAreaRegistry.swift */; };
 		2A0 /* VisualEditorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0 /* VisualEditorState.swift */; };
 		2A1 /* EditableModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1 /* EditableModifier.swift */; };
 		2A2 /* EditorBottomPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A2 /* EditorBottomPanel.swift */; };
@@ -436,6 +438,8 @@
 		1VG /* VenueGuide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VenueGuide.swift; sourceTree = "<group>"; };
 		1Z1 /* ZoneDefinition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoneDefinition.swift; sourceTree = "<group>"; };
 		1Z2 /* ZoneRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoneRegistry.swift; sourceTree = "<group>"; };
+		1WA /* WorkshopAreaDefinition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopAreaDefinition.swift; sourceTree = "<group>"; };
+		1WB /* WorkshopAreaRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkshopAreaRegistry.swift; sourceTree = "<group>"; };
 		2C0 /* BottomDialogPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomDialogPanel.swift; sourceTree = "<group>"; };
 		2C1 /* BirdGuidanceContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirdGuidanceContent.swift; sourceTree = "<group>"; };
 		2C2 /* SceneTransitionOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneTransitionOverlay.swift; sourceTree = "<group>"; };
@@ -803,6 +807,8 @@
 				161 /* PlayerSave.swift */,
 				1Z1 /* ZoneDefinition.swift */,
 				1Z2 /* ZoneRegistry.swift */,
+				1WA /* WorkshopAreaDefinition.swift */,
+				1WB /* WorkshopAreaRegistry.swift */,
 				162 /* BuildingProgressRecord.swift */,
 				164 /* LessonContentRome.swift */,
 				165 /* LessonContentRenaissance.swift */,
@@ -1265,6 +1271,8 @@
 				061 /* PlayerSave.swift in Sources */,
 				0Z1 /* ZoneDefinition.swift in Sources */,
 				0Z2 /* ZoneRegistry.swift in Sources */,
+				0WA /* WorkshopAreaDefinition.swift in Sources */,
+				0WB /* WorkshopAreaRegistry.swift in Sources */,
 				062 /* BuildingProgressRecord.swift in Sources */,
 				063 /* PersistenceManager.swift in Sources */,
 				064 /* LessonContentRome.swift in Sources */,

@@ -716,7 +716,7 @@ struct WorkshopMapView: View {
     private func makeScene() -> WorkshopScene {
         if let existing = sceneHolder.scene { return existing }
 
-        let newScene = WorkshopScene()
+        let newScene = WorkshopScene(area: WorkshopAreaRegistry.legacy)
         newScene.size = CGSize(width: 3500, height: 2500)
         newScene.scaleMode = .aspectFill
         newScene.apprenticeIsBoy = onboardingState?.apprenticeGender == .boy || onboardingState == nil
