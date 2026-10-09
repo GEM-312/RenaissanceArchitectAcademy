@@ -23,6 +23,7 @@ class SceneHolder<T: SKScene> {
 
 #if os(macOS)
 import AppKit
+import QuartzCore
 
 struct GameSpriteView: NSViewRepresentable {
     let scene: SKScene
@@ -80,6 +81,36 @@ struct GameSpriteView: NSViewRepresentable {
         override func magnify(with event: NSEvent) {
             guard let scene = self.scene as? ScrollZoomable else { return }
             scene.handleMagnify(magnification: event.magnification)
+        }
+
+        // SpriteKit's metal layer ships with colorspace = nil, which tells macOS to skip
+        // colour matching — on a Display P3 Mac the sRGB art shows ~15% oversaturated.
+        // Tagging it sRGB makes macOS convert, like iOS does for every layer.
+        override func viewDidMoveToWindow() {
+            super.viewDidMoveToWindow()
+            guard window != nil else { return }
+            guard let metalLayer = Self.findMetalLayer(in: layer) else {
+                #if DEBUG
+                print("[GameSpriteView] colorspace: no CAMetalLayer found (layer: \(layer.map { String(describing: type(of: $0)) } ?? "nil"))")
+                #endif
+                return
+            }
+            #if DEBUG
+            let before = metalLayer.colorspace?.name as String? ?? "nil"
+            #endif
+            metalLayer.colorspace = CGColorSpace(name: CGColorSpace.sRGB)
+            #if DEBUG
+            print("[GameSpriteView] colorspace: \(type(of: metalLayer)) \(before) → \(metalLayer.colorspace?.name as String? ?? "nil")")
+            #endif
+        }
+
+        private static func findMetalLayer(in layer: CALayer?) -> CAMetalLayer? {
+            guard let layer else { return nil }
+            if let metal = layer as? CAMetalLayer { return metal }
+            for sublayer in layer.sublayers ?? [] {
+                if let metal = findMetalLayer(in: sublayer) { return metal }
+            }
+            return nil
         }
     }
 }

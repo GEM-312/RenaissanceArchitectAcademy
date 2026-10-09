@@ -430,3 +430,25 @@ Swift arrays are copy-on-write, so `zone.waypoints` hands back a reference, not 
 
 **KEY TAKEAWAY**
 When you need to parameterize something that already works, look for the change that keeps the *call sites* identical. A computed property with the same name as the constant it replaces is the cheapest possible seam: the compiler proves every reader still compiles, and an element-by-element data comparison proves every reader still sees the same value.
+
+## Colour spaces — why a P3 Mac oversaturated SpriteKit but not SwiftUI (2026-10-09)
+
+**THE CONCEPT**
+A pixel value like `(201, 168, 106)` is not a colour by itself. It's a colour only once you say *which* colour space it's measured in. Our art is **sRGB**. The 5K iMac's panel is **Display P3**, a wider gamut: P3's "full red" is a redder red than sRGB's. If you send sRGB numbers to a P3 panel without converting them, every value gets stretched out toward P3's more saturated primaries. Lightness stays put, hue barely moves (~2°), and chroma jumps — we measured about **+15%** on the Rome map.
+
+**STEP BY STEP — who does the converting**
+1. Every Core Animation layer can carry a `colorspace` tag that says "my pixels are in this space."
+2. When a layer is tagged, the window server converts it to the display's space (ColorSync) on the way out.
+3. SwiftUI and AppKit tag what they draw, so buttons, cards and parchment convert correctly. That's why the UI looked right on the Mac.
+4. SpriteKit draws through a `CAMetalLayer`, and on macOS that layer's `colorspace` defaults to **nil**. Apple's docs say nil means *no colour matching is performed*: the raw numbers go straight to the panel.
+5. iOS works differently. It colour-manages Metal layers itself, so the iPad was never wrong. That's why the iPad matched Photoshop and the Mac didn't.
+
+**IN OUR CODE**
+`GameSpriteView.GameSKView.viewDidMoveToWindow()` (macOS only) finds SpriteKit's `CAMetalLayer` and sets
+`metalLayer.colorspace = CGColorSpace(name: CGColorSpace.sRGB)`. It's one line, and all five maps get it because they all go through `GameSpriteView`. We wait for `viewDidMoveToWindow` because that's when the view is attached to a real window, with a real layer and display.
+
+**WHY NOT JUST DESATURATE?**
+A −13% saturation filter would *look* close, but it's the wrong correction. The real error is a gamut mapping (a 3×3 matrix between primaries), not a uniform saturation change, so a filter over-corrects some hues and under-corrects others. It would also double-correct if a future macOS ever started managing the layer itself. Fix the tag, not the pixels.
+
+**KEY TAKEAWAY**
+When colours differ between devices, ask "who is responsible for colour conversion here, and did anyone tell them what space my pixels are in?" before touching any pixels. A missing colour-space tag is invisible in code and only shows up on a wide-gamut screen.
