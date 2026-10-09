@@ -314,8 +314,8 @@ class ForestScene: SKScene, ScrollZoomable {
     private let maxTrufflesPerSession = 3
 
     #if DEBUG
-    /// TEMP for testing the truffle pig — every truffle-tree visit finds a truffle. Set false when done.
-    private let debugAlwaysFindTruffle = true
+    /// Set true to test the truffle pig — every truffle-tree visit finds a truffle.
+    private let debugAlwaysFindTruffle = false
     #endif
 
     // MARK: - Truffle Pig Hunt
