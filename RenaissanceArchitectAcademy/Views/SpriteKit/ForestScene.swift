@@ -1342,11 +1342,11 @@ class ForestScene: SKScene, ScrollZoomable {
     // MARK: - Truffle Discovery Logic
 
     /// Roll for a truffle discovery when arriving at a tree POI
-    /// ~25% chance per visit, only near trees that host truffles (Oak, Chestnut, Walnut)
+    /// ~25% chance per visit, only at the Oak (Marina, Oct 9 2026 — the pig belongs to the Oak alone)
     private func rollForTruffleDiscovery(nearTree treeName: String, at treePosition: CGPoint) {
+        guard treeName == "Oak" else { return }
         guard trufflesFoundThisSession < maxTrufflesPerSession else { return }
 
-        // Only certain trees host truffles
         let possibleTruffles = truffleTypes.filter { $0.nearTree == treeName }
         guard !possibleTruffles.isEmpty else { return }
 
@@ -1356,6 +1356,9 @@ class ForestScene: SKScene, ScrollZoomable {
         if debugAlwaysFindTruffle { chance = 100 }
         #endif
         let roll = Int.random(in: 0..<100)
+        #if DEBUG
+        print("[Truffle] \(treeName) roll \(roll) vs \(chance) → \(roll < chance ? "pig" : "no pig")")
+        #endif
         guard roll < chance else { return }
 
         // Pick which truffle — common truffles more likely than rare ones
