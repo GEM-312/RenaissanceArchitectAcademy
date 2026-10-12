@@ -268,10 +268,11 @@ For all three, install as `Workshop<Area>Terrain` + `BlurredWorkshop<Area>Terrai
 
 ## After generation
 
-1. In Photoshop, **File → Scripts → ResizeAndDesaturate** (`scripts/photoshop/ResizeAndDesaturate.jsx`):
+1. In Photoshop, **File → Scripts → ResizeAndCameraRaw** (`scripts/photoshop/ResizeAndCameraRaw.jsx`):
    pick the HD exports, and each opens at 4500×3214 (scaled to fill, centre-cropped, never
-   stretched) with a non-destructive "Desaturate" layer on top. Do the colour pass on layers
-   above it — the Forest map needed one too (greener, stream recoloured, sharpened).
+   stretched) as a Smart Object with the Camera Raw window up — press Auto (⌘U), fix the dark
+   spots (U shows clipped shadows in blue), OK. Then the colour pass — the Forest map needed one
+   too (greener, stream recoloured, sharpened).
 2. Install as `<Zone>Terrain.imageset` + `Blurred<Zone>Terrain.imageset`, set
    `compression-type` at authoring time — the catalog is already ~315 MB compiled
    (see `docs/research/asset-size-plan.md`).
