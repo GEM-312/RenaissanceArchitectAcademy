@@ -205,10 +205,13 @@ class BuildingNode: SKNode {
         case "duomo":      return 1.5
         case "insula":     return 0.70   // y 1950 — furthest back
         case "colosseum":  return 1.35   // foreground centrepiece
-        // Both of these are long, low structures rather than tall massing, so they
-        // read much smaller than their footprint at the same multiplier.
-        case "romanRoads": return 1.5
-        case "harbor":     return 1.5
+        // Painted into the terrain (Oct 14 2026): each sprite is a patch cut from the
+        // map at the map's own resolution, so it must render at exactly
+        // patch pixels ÷ 1.2857 points (4500 px terrain / 3500 pt scene).
+        // RomanRoad: 1198 px wide → 931.8 pt → 931.8 / 420.
+        case "romanRoads": return 2.2185
+        // Harbor: 1197 px wide → 931.0 pt → 931.0 / 420.
+        case "harbor":     return 2.2167
         default:           return 1.0
         }
     }
