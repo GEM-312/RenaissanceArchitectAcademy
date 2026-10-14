@@ -43,7 +43,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
     // Map size — from the area (3500×2500, same as the city)
     private var mapSize: CGSize { area.mapSize }
 
-    /// Reusable terrain blur system
+    /// Reusable terrain setup
     let terrainBlur = TerrainBlurHelper()
 
     /// Whether the player is currently walking
@@ -105,7 +105,6 @@ class WorkshopScene: SKScene, ScrollZoomable {
                 cameraNode.position = playerNode.position
             }
             terrainBlur.terrainSprite?.alpha = 1.0
-            terrainBlur.blurredTerrainSprite?.alpha = 0
             fitCameraToMap()
             return
         }
@@ -117,7 +116,6 @@ class WorkshopScene: SKScene, ScrollZoomable {
         setupBackground()
         // Force terrain sharp on first load (before update() loop starts)
         terrainBlur.terrainSprite?.alpha = 1.0
-        terrainBlur.blurredTerrainSprite?.alpha = 0
         setupGridLines()
         setupTitle()
         setupWalkingPaths()
@@ -208,9 +206,9 @@ class WorkshopScene: SKScene, ScrollZoomable {
     // MARK: - Background
 
     private func setupBackground() {
-        // Workshop terrain — sharp/blurred pair with smooth lerp crossfade
+        // Workshop terrain
         // Edge fill hides faded Midjourney borders when camera follows player to map edges
-        terrainBlur.setup(in: self, sharp: area.sharpTerrainImageName, blurred: area.blurredTerrainImageName, mapSize: mapSize, edgeFillColor: PlatformColor(RenaissanceColors.parchment))
+        terrainBlur.setup(in: self, sharp: area.sharpTerrainImageName, mapSize: mapSize, edgeFillColor: PlatformColor(RenaissanceColors.parchment))
     }
 
     // MARK: - Grid Lines (notebook style)
@@ -1127,11 +1125,6 @@ class WorkshopScene: SKScene, ScrollZoomable {
         // zoom-ins can reach their target (otherwise clamp fights the move).
         if !isCameraActionInFlight {
             clampCamera()
-        }
-
-        // Terrain blur — zoomed in = blurred, zoomed out = sharp
-        if let cam = cameraNode {
-            terrainBlur.updateBlur(cameraScale: cam.xScale)
         }
 
     }

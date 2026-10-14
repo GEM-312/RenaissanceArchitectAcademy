@@ -17,7 +17,6 @@ enum WorkshopAreaRegistry {
         mapSize: CGSize(width: 3500, height: 2500),
 
         sharpTerrainImageName: "WorkshopTerrain",
-        blurredTerrainImageName: "BlurredWorkshopTerrain",
 
         // Station positions — scaled to 3500x2500 coordinate space
         // Workbench, furnace, and pigment table are inside the Crafting Room (interior scene)

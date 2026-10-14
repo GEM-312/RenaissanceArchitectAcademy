@@ -96,7 +96,7 @@ class CityScene: SKScene, ScrollZoomable {
     private var lastPanLocation: CGPoint?
     private var initialCameraScale: CGFloat = 1.0
 
-    /// Reusable terrain blur system
+    /// Reusable terrain setup
     let terrainBlur = TerrainBlurHelper()
 
     #if DEBUG
@@ -286,11 +286,6 @@ class CityScene: SKScene, ScrollZoomable {
         // Trees sway when the apprentice walks near them
         disturbTreesNearPlayer()
 
-        // Terrain clarity — crossfade sharpened overlay based on zoom level
-        if let cam = cameraNode {
-            terrainBlur.updateBlur(cameraScale: cam.xScale)
-        }
-
         // Update dialog position — only fires callback when position changes by >1pt
         // to avoid triggering SwiftUI re-renders every frame (causes flicker on iPhone)
         if let buildingNode = dialogBuildingNode, let view = self.view {
@@ -363,10 +358,9 @@ class CityScene: SKScene, ScrollZoomable {
         let centerX = mapSize.width / 2
         let centerY = mapSize.height / 2
 
-        // Single terrain image handled by TerrainBlurHelper (sharp + blurred crossfade)
-        terrainBlur.setup(in: self, sharp: zone.sharpTerrainImageName, blurred: zone.blurredTerrainImageName, mapSize: mapSize)
+        // Single terrain image handled by TerrainBlurHelper
+        terrainBlur.setup(in: self, sharp: zone.sharpTerrainImageName, mapSize: mapSize)
         terrainBlur.terrainSprite?.position = CGPoint(x: centerX, y: centerY)
-        terrainBlur.blurredTerrainSprite?.position = CGPoint(x: centerX, y: centerY)
 
         // Grid lines (Leonardo's notebook style)
         addGridOverlay()
@@ -1018,10 +1012,10 @@ class CityScene: SKScene, ScrollZoomable {
     // Mirrors WorkshopScene.setupSwayingTrees — same warp-grid two-layer wind
     // animation, registered with editor mode for drag-positioning.
     // Which trees a map has is zone data (`zone.trees`); the sway animation
-    // below is not. Rome's set is CityTree22..CityTree30, which bypasses the
-    // workshop's Tree1..Tree9 namespace so there's no collision. CityTree02..21
-    // were cut from the previous terrain and are no longer placed; their
-    // imagesets are still in Assets.xcassets.
+    // below is not. City tree imagesets must not reuse the workshop's
+    // Tree1..Tree9 names. Every city tree set (CityTree02..30, PaduaTree01..09)
+    // was deleted 2026-10-13 with the terrain change; new ones get cut from
+    // the Oct 13 terrains.
 
     private func setupSwayingTrees() {
         // Cut-outs lifted from this zone's own terrain art, each placed back on
@@ -1135,7 +1129,7 @@ class CityScene: SKScene, ScrollZoomable {
             editorMode.registerNode(node, name: "building_\(id)")
         }
 
-        // Swaying trees (zone.trees — CityTree22..CityTree30 on Rome)
+        // Swaying trees (zone.trees)
         for entry in swayingTrees {
             editorMode.registerNode(entry.node, name: entry.node.name ?? "citytree")
         }

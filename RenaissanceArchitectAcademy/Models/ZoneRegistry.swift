@@ -17,10 +17,16 @@ import CoreGraphics
 ///   · V Milan (2) · VI Florence (1 — the Duomo finale, Brunelleschi + Medici)
 enum ZoneRegistry {
 
+    /// Every zone with a terrain, in story order. The DEBUG zone button cycles through these.
+    static let all: [ZoneDefinition] = [ancientRome, padua, venice, renaissanceRome]
+
+    static func zone(id: String) -> ZoneDefinition {
+        all.first { $0.id == id } ?? ancientRome
+    }
+
     /// Ancient Rome's terrain PNG is 4500px wide drawn into a 3500pt scene.
     /// Cut-outs lifted from it shrink by this to cover their own footprint.
     private static let romeTerrainPixelWidth: CGFloat = 4500
-    private static let romeTreeScale: CGFloat = 3500 / romeTerrainPixelWidth
 
     static let ancientRome = ZoneDefinition(
         id: "ancientRome",
@@ -32,22 +38,29 @@ enum ZoneRegistry {
         mapSize: CGSize(width: 3500, height: 2500),
         terrainPixelWidth: romeTerrainPixelWidth,
 
+        // Oct 13 2026 terrain (Forest Midjourney recipe). The 8 Ancient Rome buildings
+        // are placed on it; waypoints, spawn and the Renaissance buildings are still the
+        // Sep 2026 positions and need editor drags.
         sharpTerrainImageName: "Terrain",
-        blurredTerrainImageName: "BlurredTerrain",
 
         buildings: [
             // ========================================
             // ANCIENT ROME
             // ========================================
-            // Use editor mode (E) to fine-tune positions over baked-in buildings
-            ZoneBuildingPlacement(buildingId: "aqueduct", name: "Aqueduct", position: CGPoint(x: 2304, y: 922), era: "rome", rotation: 0),
-            ZoneBuildingPlacement(buildingId: "colosseum", name: "Colosseum", position: CGPoint(x: 1491, y: 1384), era: "rome", rotation: 0),
-            ZoneBuildingPlacement(buildingId: "romanBaths", name: "Roman Baths", position: CGPoint(x: 1012, y: 1523), era: "rome", rotation: 2),
-            ZoneBuildingPlacement(buildingId: "pantheon", name: "Pantheon", position: CGPoint(x: 2192, y: 1677), era: "rome", rotation: 0),
-            ZoneBuildingPlacement(buildingId: "romanRoads", name: "Roman Roads", position: CGPoint(x: 1004, y: 861), era: "rome", rotation: 0),
-            ZoneBuildingPlacement(buildingId: "harbor", name: "Harbor", position: CGPoint(x: 2922, y: 264), era: "rome", rotation: 0),
-            ZoneBuildingPlacement(buildingId: "siegeWorkshop", name: "Siege Workshop", position: CGPoint(x: 3007, y: 1717), era: "rome", rotation: 0),
-            ZoneBuildingPlacement(buildingId: "insula", name: "Insula", position: CGPoint(x: 1250, y: 1903), era: "rome", rotation: 0),
+            // Oct 13 2026 positions from Marina's editor-mode drags on the new terrain
+            ZoneBuildingPlacement(buildingId: "aqueduct", name: "Aqueduct", position: CGPoint(x: 1079, y: 1938), era: "rome", rotation: 0),
+            ZoneBuildingPlacement(buildingId: "colosseum", name: "Colosseum", position: CGPoint(x: 2869, y: 1014), era: "rome", rotation: 0),
+            ZoneBuildingPlacement(buildingId: "romanBaths", name: "Roman Baths", position: CGPoint(x: 382, y: 1860), era: "rome", rotation: 1),
+            ZoneBuildingPlacement(buildingId: "pantheon", name: "Pantheon", position: CGPoint(x: 2232, y: 2047), era: "rome", rotation: 0),
+            // Painted into the terrain's sketched road below the round field (Oct 14 2026).
+            // The sprite is a patch of the map itself, so this position must stay
+            // pixel-exact — see `spriteSizeMultiplier` in BuildingNode.
+            ZoneBuildingPlacement(buildingId: "romanRoads", name: "Roman Roads", position: CGPoint(x: 3033, y: 467), era: "rome", rotation: 0),
+            // Painted into the west bank of the river (Oct 14 2026), quay facing the open
+            // water. Pixel-exact like the Roman Roads patch above.
+            ZoneBuildingPlacement(buildingId: "harbor", name: "Harbor", position: CGPoint(x: 700, y: 501), era: "rome", rotation: 0),
+            ZoneBuildingPlacement(buildingId: "siegeWorkshop", name: "Siege Workshop", position: CGPoint(x: 2036, y: 1239), era: "rome", rotation: 0),
+            ZoneBuildingPlacement(buildingId: "insula", name: "Insula", position: CGPoint(x: 3264, y: 609), era: "rome", rotation: 0),
 
             // ========================================
             // RENAISSANCE ITALY
@@ -80,8 +93,15 @@ enum ZoneRegistry {
             ZoneBuildingPlacement(buildingId: "printingPress", name: "Printing Press", position: CGPoint(x: 3121, y: 262), era: "renaissanceRome", rotation: 0)
         ],
 
-        // The Duomo is Florence's; this terrain is Ancient Rome only.
-        hiddenBuildingIds: ["duomo"],
+        // The Duomo is Florence's; this terrain is Ancient Rome only. Hidden Oct 14 2026
+        // (Marina): the six buildings that now sit on their own zone maps — Padua, Venice,
+        // Renaissance Rome. Milan's two stay until Milan has a terrain.
+        hiddenBuildingIds: [
+            "duomo",
+            "anatomyTheater", "botanicalGarden",     // Padua
+            "glassworks", "arsenal",                 // Venice
+            "vaticanObservatory", "printingPress",   // Renaissance Rome
+        ],
 
         // 40 road junctions connecting the 17 buildings across the 3500×2500 map
         waypoints: [
@@ -201,29 +221,15 @@ enum ZoneRegistry {
         playerSpawn: CGPoint(x: 620, y: 540),
         cameraMaxZoomOutScale: 3.5,
 
-        // Nine trees Marina cut out of this terrain so they can sway. Each one
-        // goes back exactly where it came from — positions were recovered by
-        // template-matching each cut-out against the terrain art.
-        trees: [
-            ZoneTreePlacement(imageName: "CityTree22", position: CGPoint(x: 1015, y: 1301), scale: romeTreeScale),   // broad olive, mid-map ridge
-            ZoneTreePlacement(imageName: "CityTree23", position: CGPoint(x: 1333, y:  799), scale: romeTreeScale),   // scrub clump, west of the road
-            ZoneTreePlacement(imageName: "CityTree24", position: CGPoint(x: 1811, y:  460), scale: romeTreeScale),   // big olive south of the bridge
-            ZoneTreePlacement(imageName: "CityTree25", position: CGPoint(x: 2575, y:  593), scale: romeTreeScale),   // riverbank olive, far south
-            ZoneTreePlacement(imageName: "CityTree26", position: CGPoint(x: 2547, y:  708), scale: romeTreeScale),   // riverbank olive, upstream
-            ZoneTreePlacement(imageName: "CityTree27", position: CGPoint(x: 2288, y: 1144), scale: romeTreeScale),   // small tree by the aqueduct wall
-            ZoneTreePlacement(imageName: "CityTree28", position: CGPoint(x: 2199, y: 1255), scale: romeTreeScale),   // olive above the aqueduct
-            ZoneTreePlacement(imageName: "CityTree29", position: CGPoint(x: 2051, y: 1385), scale: romeTreeScale),   // cypress on the ridge
-            ZoneTreePlacement(imageName: "CityTree30", position: CGPoint(x:  704, y: 1459), scale: romeTreeScale),   // cypress, west hills
-        ],
+        // None yet — the Sep 2026 cut-outs were deleted with that terrain. Cut new
+        // ones from the Oct 13 terrain.
+        trees: [],
 
-        // All six numerals still sit on this one map, because all 17 buildings
-        // still do. They narrow to one per zone in the plan's step 5. Positions
-        // are unchanged — only the numerals were renumbered to the narrative order.
+        // Numerals for zones without their own terrain yet still sit on this map.
+        // Padua (II), Venice (III) and Renaissance Rome (IV) were removed Oct 14 2026
+        // — each now has its own map with its own numeral. Positions are unchanged.
         labels: [
             ZoneLabel(numeral: "I",   name: "Ancient Rome",     position: CGPoint(x: 1400, y: 1100), nodeName: "zone_ancientRome"),
-            ZoneLabel(numeral: "II",  name: "Padua",            position: CGPoint(x: 1100, y: 1400), nodeName: "zone_padua"),
-            ZoneLabel(numeral: "III", name: "Venice",           position: CGPoint(x: 1750, y:  200), nodeName: "zone_venice"),
-            ZoneLabel(numeral: "IV",  name: "Renaissance Rome", position: CGPoint(x: 3200, y:  150), nodeName: "zone_renaissanceRome"),
             ZoneLabel(numeral: "V",   name: "Milan",            position: CGPoint(x:  536, y:  580), nodeName: "zone_milan"),
             ZoneLabel(numeral: "VI",  name: "Florence",         position: CGPoint(x: 2270, y:  500), nodeName: "zone_florence"),
         ],
@@ -237,13 +243,13 @@ enum ZoneRegistry {
 
     // MARK: - II Padua
 
-    /// Padua's terrain is the Oct 4 2026 Midjourney map, upscaled to 4500×3214 like Rome's.
+    /// Padua's terrain is 4500×3214 like Rome's.
     private static let paduaTerrainPixelWidth: CGFloat = 4500
-    private static let paduaTreeScale: CGFloat = 3500 / paduaTerrainPixelWidth
 
     /// Reached only from the DEBUG zone button in CityMapView until the travel map exists.
-    /// Building, waypoint and spawn positions are first-pass placeholders over the painted
-    /// plots and gravel paths — drag them in editor mode (E) and bake the dump in here.
+    /// Oct 13 2026 terrain. Building positions baked from Marina's editor drag (Oct 14);
+    /// waypoint and spawn positions are still first-pass placeholders read off the
+    /// painting — drag them in editor mode (E) and bake the dump in here.
     static let padua = ZoneDefinition(
         id: "padua",
         displayName: "Padua",
@@ -252,54 +258,136 @@ enum ZoneRegistry {
         terrainPixelWidth: paduaTerrainPixelWidth,
 
         sharpTerrainImageName: "PaduaTerrain",
-        blurredTerrainImageName: "BlurredPaduaTerrain",
 
         // Both University of Padua institutions, drawn as one campus
         buildings: [
-            ZoneBuildingPlacement(buildingId: "botanicalGarden", name: "Botanical Garden", position: CGPoint(x: 1250, y: 1250), era: "padua", rotation: 0),   // the round walled garden
-            ZoneBuildingPlacement(buildingId: "anatomyTheater", name: "Anatomy Theater", position: CGPoint(x: 2200, y: 1450), era: "padua", rotation: 0),     // the empty square plot
+            ZoneBuildingPlacement(buildingId: "botanicalGarden", name: "Botanical Garden", position: CGPoint(x: 1379, y:  696), era: "padua", rotation: 0),   // the round walled lawn
+            ZoneBuildingPlacement(buildingId: "anatomyTheater", name: "Anatomy Theater", position: CGPoint(x: 1400, y: 1523), era: "padua", rotation: 0),     // the square courtyard by the canal
         ],
         hiddenBuildingIds: [],
 
         // Along the painted gravel paths
         waypoints: [
-            /* 0 */ CGPoint(x:  300, y:  850),   // east end of the bridge
-            /* 1 */ CGPoint(x:  750, y:  680),   // below the garden wall, south-west
-            /* 2 */ CGPoint(x: 1300, y:  620),   // below the garden wall, south
-            /* 3 */ CGPoint(x: 1800, y:  800),   // south-east corner of the wall
-            /* 4 */ CGPoint(x: 1950, y: 1050),   // by the garden's east gate
-            /* 5 */ CGPoint(x: 1800, y: 1350),   // diagonal path, middle
-            /* 6 */ CGPoint(x: 1650, y: 1680),   // diagonal path, top by the north wall
-            /* 7 */ CGPoint(x: 2100, y: 1250),   // west edge of the square plot
-            /* 8 */ CGPoint(x: 2550, y: 1550),   // path towards the college buildings
+            /* 0 */ CGPoint(x:  980, y:  854),   // west side of the round garden
+            /* 1 */ CGPoint(x: 1050, y: 1100),   // path north of the garden wall
+            /* 2 */ CGPoint(x: 1155, y: 1344),   // below the square courtyard, west
+            /* 3 */ CGPoint(x: 1855, y:  959),   // east gate of the round garden
+            /* 4 */ CGPoint(x: 2100, y: 1029),   // curved path, lower
+            /* 5 */ CGPoint(x: 2380, y: 1344),   // curved path, upper
+            /* 6 */ CGPoint(x: 1680, y: 1310),   // by the canal bridge
         ],
         waypointEdges: [
-            [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [4, 7], [5, 7], [7, 8],
+            [0, 1], [1, 2], [2, 6], [6, 3], [3, 0], [3, 4], [4, 5],
         ],
         buildingWaypoints: [
-            "botanicalGarden": [4, 5],
-            "anatomyTheater":  [7, 8],
+            "botanicalGarden": [0, 3],
+            "anatomyTheater":  [2, 6],
         ],
 
-        playerSpawn: CGPoint(x: 650, y: 700),
+        playerSpawn: CGPoint(x: 2380, y: 1344),
         cameraMaxZoomOutScale: 3.5,
 
-        // Cut from this terrain with Layer via Copy, exported full-canvas and placed by
-        // scripts/art/place_cutouts.py --split — positions are exact, not hand-tuned.
-        trees: [
-            ZoneTreePlacement(imageName: "PaduaTree01", position: CGPoint(x: 1004, y:  341), scale: paduaTreeScale),
-            ZoneTreePlacement(imageName: "PaduaTree02", position: CGPoint(x: 1038, y: 1594), scale: paduaTreeScale),
-            ZoneTreePlacement(imageName: "PaduaTree03", position: CGPoint(x: 1278, y:  278), scale: paduaTreeScale),
-            ZoneTreePlacement(imageName: "PaduaTree04", position: CGPoint(x: 1319, y: 1660), scale: paduaTreeScale),
-            ZoneTreePlacement(imageName: "PaduaTree05", position: CGPoint(x: 1570, y: 1675), scale: paduaTreeScale),
-            ZoneTreePlacement(imageName: "PaduaTree06", position: CGPoint(x: 1800, y: 1704), scale: paduaTreeScale),
-            ZoneTreePlacement(imageName: "PaduaTree07", position: CGPoint(x: 2067, y: 1721), scale: paduaTreeScale),
-            ZoneTreePlacement(imageName: "PaduaTree08", position: CGPoint(x: 2153, y: 1010), scale: paduaTreeScale),
-            ZoneTreePlacement(imageName: "PaduaTree09", position: CGPoint(x: 2324, y: 1734), scale: paduaTreeScale),
-        ],
+        // None yet — the Oct 7 cut-outs were deleted with that terrain. Cut new ones
+        // from the Oct 13 terrain.
+        trees: [],
 
         labels: [
             ZoneLabel(numeral: "II", name: "Padua", position: CGPoint(x: 1750, y: 2350), nodeName: "zone_padua"),
+        ],
+        banners: []
+    )
+
+    // MARK: - III Venice
+
+    /// Reached only from the DEBUG zone button. Oct 13 2026 terrain; positions are
+    /// first-pass placeholders read off the painting — drag them in editor mode (E).
+    static let venice = ZoneDefinition(
+        id: "venice",
+        displayName: "Venice",
+
+        mapSize: CGSize(width: 3500, height: 2500),
+        terrainPixelWidth: 4500,
+
+        sharpTerrainImageName: "VeniceTerrain",
+
+        buildings: [
+            ZoneBuildingPlacement(buildingId: "glassworks", name: "Glassworks", position: CGPoint(x: 2030, y: 1152), era: "venice", rotation: 0),   // round plot, middle island
+            ZoneBuildingPlacement(buildingId: "arsenal", name: "Arsenal", position: CGPoint(x: 2678, y:  686), era: "venice", rotation: 0),         // round plot by the open lagoon
+        ],
+        hiddenBuildingIds: [],
+
+        // Along the boardwalks and bridges
+        waypoints: [
+            /* 0 */ CGPoint(x: 1120, y:  784),   // south end of the boardwalk
+            /* 1 */ CGPoint(x: 1313, y: 1012),   // boardwalk bend
+            /* 2 */ CGPoint(x: 1558, y: 1064),   // small arched bridge
+            /* 3 */ CGPoint(x: 1820, y: 1117),   // west edge of the middle island
+            /* 4 */ CGPoint(x: 2205, y:  994),   // south-east of the middle island
+            /* 5 */ CGPoint(x: 2310, y:  872),   // bridge to the round island
+            /* 6 */ CGPoint(x: 2485, y:  767),   // west edge of the round island
+        ],
+        waypointEdges: [
+            [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6],
+        ],
+        buildingWaypoints: [
+            "glassworks": [3, 4],
+            "arsenal":    [6, 5],
+        ],
+
+        playerSpawn: CGPoint(x: 1150, y: 800),
+        cameraMaxZoomOutScale: 3.5,
+
+        trees: [],
+
+        labels: [
+            ZoneLabel(numeral: "III", name: "Venice", position: CGPoint(x: 1750, y: 2350), nodeName: "zone_venice"),
+        ],
+        banners: []
+    )
+
+    // MARK: - IV Renaissance Rome
+
+    /// Reached only from the DEBUG zone button. Oct 13 2026 terrain; positions are
+    /// first-pass placeholders read off the painting — drag them in editor mode (E).
+    static let renaissanceRome = ZoneDefinition(
+        id: "renaissanceRome",
+        displayName: "Renaissance Rome",
+
+        mapSize: CGSize(width: 3500, height: 2500),
+        terrainPixelWidth: 4500,
+
+        sharpTerrainImageName: "RenaissanceRomeTerrain",
+
+        buildings: [
+            ZoneBuildingPlacement(buildingId: "vaticanObservatory", name: "Vatican Observatory", position: CGPoint(x: 1505, y: 1099), era: "renaissanceRome", rotation: 0),   // the large central round plot
+            ZoneBuildingPlacement(buildingId: "printingPress", name: "Printing Press", position: CGPoint(x: 1803, y:  637), era: "renaissanceRome", rotation: 0),           // round plot to the south
+        ],
+        hiddenBuildingIds: [],
+
+        // Along the painted footpaths
+        waypoints: [
+            /* 0 */ CGPoint(x:  700, y:  960),   // west footpath
+            /* 1 */ CGPoint(x: 1208, y: 1060),   // junction west of the big plot
+            /* 2 */ CGPoint(x: 1470, y:  907),   // below the big plot
+            /* 3 */ CGPoint(x: 1750, y:  750),   // path down to the south plots
+            /* 4 */ CGPoint(x: 1960, y:  539),   // east of the south plot
+            /* 5 */ CGPoint(x: 1330, y: 1625),   // path north toward the olive grove
+        ],
+        waypointEdges: [
+            [0, 1], [1, 2], [2, 3], [3, 4], [1, 5],
+        ],
+        buildingWaypoints: [
+            "vaticanObservatory": [2, 1],
+            "printingPress":      [3, 4],
+        ],
+
+        playerSpawn: CGPoint(x: 750, y: 950),
+        cameraMaxZoomOutScale: 3.5,
+
+        trees: [],
+
+        labels: [
+            ZoneLabel(numeral: "IV", name: "Renaissance Rome", position: CGPoint(x: 1750, y: 2350), nodeName: "zone_renaissanceRome"),
         ],
         banners: []
     )

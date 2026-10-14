@@ -17,9 +17,8 @@ struct WorkshopAreaDefinition {
     /// The scene's coordinate space — 3500×2500 like every other scene.
     let mapSize: CGSize
 
-    /// Asset-catalog names handed to `TerrainBlurHelper.setup(in:sharp:blurred:mapSize:)`.
+    /// Asset-catalog name handed to `TerrainBlurHelper.setup(in:sharp:mapSize:)`.
     let sharpTerrainImageName: String
-    let blurredTerrainImageName: String
 
     /// Stations on this map and where their tap targets sit. The station art is
     /// painted into the terrain (`ResourceNode.hideSprites`), so these must match it.

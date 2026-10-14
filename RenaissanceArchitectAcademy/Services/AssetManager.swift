@@ -8,8 +8,8 @@ import SwiftUI
 ///   AssetManager.shared.prefetchAssets(tag: "workshop-scene")
 ///
 /// ODR Tags:
-///   "city-scene"       — Terrain, BlurredTerrain, Building sprites
-///   "workshop-scene"   — WorkshopTerrain, BlurredWorkshopTerrain, Station sprites
+///   "city-scene"       — Terrain, Building sprites
+///   "workshop-scene"   — WorkshopTerrain, Station sprites
 ///   "crafting-room"    — WorkshopBackground, Interior sprites
 ///   "forest-scene"     — Forest1
 ///   "onboarding"       — Avatar frames, GirlIntro frames

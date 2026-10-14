@@ -750,9 +750,9 @@ struct CityMapView: View {
                         .padding(.top, Spacing.xxl + Spacing.lg)
                     }
 
-                    // DEBUG: swap the map between Ancient Rome and Padua. Drops the current
-                    // scene the same way onDisappear does; the zoneId change rebuilds the
-                    // sprite view, and makeScene() builds the other zone.
+                    // DEBUG: cycle the map through every zone in ZoneRegistry.all. Drops the
+                    // current scene the same way onDisappear does; the zoneId change rebuilds
+                    // the sprite view, and makeScene() builds the next zone.
                     Button {
                         sceneHolder.scene?.onMascotReachedBuilding = nil
                         sceneHolder.scene?.onBuildingScreenPosition = nil
@@ -760,9 +760,9 @@ struct CityMapView: View {
                         sceneHolder.scene?.onMascotExitToPuzzle = nil
                         sceneHolder.scene?.onBuildingSelected = nil
                         sceneHolder.scene = nil
-                        zoneId = (zoneId == "padua") ? "ancientRome" : "padua"
+                        zoneId = nextZone.id
                     } label: {
-                        Text(zoneId == "padua" ? "Rome" : "Padua")
+                        Text(nextZone.displayName)
                             .font(RenaissanceFont.buttonSmall)
                             .foregroundStyle(.white)
                             .padding(.horizontal, Spacing.md)
@@ -912,7 +912,7 @@ struct CityMapView: View {
         // scene size from `zone.mapSize` (3500×2500, standard across all
         // scenes). .aspectFill preserves the terrain aspect ratio so the
         // 4500×3214 art doesn't squash.
-        let newScene = CityScene(zone: zoneId == "padua" ? ZoneRegistry.padua : ZoneRegistry.ancientRome)
+        let newScene = CityScene(zone: ZoneRegistry.zone(id: zoneId))
         newScene.scaleMode = .aspectFill
 
         // Set player gender before scene setup
@@ -992,6 +992,15 @@ struct CityMapView: View {
 
         return newScene
     }
+
+    #if DEBUG
+    /// The zone the DEBUG zone button switches to — the one after `zoneId`, wrapping.
+    private var nextZone: ZoneDefinition {
+        let zones = ZoneRegistry.all
+        let index = zones.firstIndex { $0.id == zoneId } ?? 0
+        return zones[(index + 1) % zones.count]
+    }
+    #endif
 
     // MARK: - Phase-Based Building Action
 
