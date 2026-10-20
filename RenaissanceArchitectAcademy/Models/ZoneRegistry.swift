@@ -18,7 +18,7 @@ import CoreGraphics
 enum ZoneRegistry {
 
     /// Every zone with a terrain, in story order. The DEBUG zone button cycles through these.
-    static let all: [ZoneDefinition] = [ancientRome, padua, venice, renaissanceRome]
+    static let all: [ZoneDefinition] = [ancientRome, padua, venice, renaissanceRome, milan, florence]
 
     static func zone(id: String) -> ZoneDefinition {
         all.first { $0.id == id } ?? ancientRome
@@ -38,9 +38,10 @@ enum ZoneRegistry {
         mapSize: CGSize(width: 3500, height: 2500),
         terrainPixelWidth: romeTerrainPixelWidth,
 
-        // Oct 13 2026 terrain (Forest Midjourney recipe). The 8 Ancient Rome buildings
-        // are placed on it; waypoints, spawn and the Renaissance buildings are still the
-        // Sep 2026 positions and need editor drags.
+        // Oct 19 2026 terrain (no-hatching prompt). The building positions below were
+        // dragged on the Oct 13 terrain, and waypoints and spawn are Sep 2026 — all need
+        // editor drags on this one. The Roman Roads and Harbor patches were baked from
+        // the Oct 13 terrain and must be re-baked.
         sharpTerrainImageName: "Terrain",
 
         buildings: [
@@ -95,12 +96,13 @@ enum ZoneRegistry {
 
         // The Duomo is Florence's; this terrain is Ancient Rome only. Hidden Oct 14 2026
         // (Marina): the six buildings that now sit on their own zone maps — Padua, Venice,
-        // Renaissance Rome. Milan's two stay until Milan has a terrain.
+        // Renaissance Rome. Milan's two joined them Oct 19 2026 when Milan got a terrain.
         hiddenBuildingIds: [
             "duomo",
             "anatomyTheater", "botanicalGarden",     // Padua
             "glassworks", "arsenal",                 // Venice
             "vaticanObservatory", "printingPress",   // Renaissance Rome
+            "leonardoWorkshop", "flyingMachine",     // Milan
         ],
 
         // 40 road junctions connecting the 17 buildings across the 3500×2500 map
@@ -225,13 +227,11 @@ enum ZoneRegistry {
         // ones from the Oct 13 terrain.
         trees: [],
 
-        // Numerals for zones without their own terrain yet still sit on this map.
-        // Padua (II), Venice (III) and Renaissance Rome (IV) were removed Oct 14 2026
-        // — each now has its own map with its own numeral. Positions are unchanged.
+        // Padua (II), Venice (III) and Renaissance Rome (IV) were removed Oct 14 2026,
+        // Milan (V) and Florence (VI) Oct 19 2026 — each now has its own map with its
+        // own numeral.
         labels: [
             ZoneLabel(numeral: "I",   name: "Ancient Rome",     position: CGPoint(x: 1400, y: 1100), nodeName: "zone_ancientRome"),
-            ZoneLabel(numeral: "V",   name: "Milan",            position: CGPoint(x:  536, y:  580), nodeName: "zone_milan"),
-            ZoneLabel(numeral: "VI",  name: "Florence",         position: CGPoint(x: 2270, y:  500), nodeName: "zone_florence"),
         ],
 
         // y was `mapSize.height - 100` when these were hardcoded; 2500 - 100 = 2400.
@@ -247,9 +247,9 @@ enum ZoneRegistry {
     private static let paduaTerrainPixelWidth: CGFloat = 4500
 
     /// Reached only from the DEBUG zone button in CityMapView until the travel map exists.
-    /// Oct 13 2026 terrain. Building positions baked from Marina's editor drag (Oct 14);
-    /// waypoint and spawn positions are still first-pass placeholders read off the
-    /// painting — drag them in editor mode (E) and bake the dump in here.
+    /// Oct 19 2026 terrain. Building positions were baked from Marina's editor drag on the
+    /// Oct 13 terrain (Oct 14); they and the waypoint and spawn placeholders need redoing
+    /// on this one — drag them in editor mode (E) and bake the dump in here.
     static let padua = ZoneDefinition(
         id: "padua",
         displayName: "Padua",
@@ -388,6 +388,99 @@ enum ZoneRegistry {
 
         labels: [
             ZoneLabel(numeral: "IV", name: "Renaissance Rome", position: CGPoint(x: 1750, y: 2350), nodeName: "zone_renaissanceRome"),
+        ],
+        banners: []
+    )
+
+    // MARK: - V Milan
+
+    /// Reached only from the DEBUG zone button. Oct 19 2026 terrain; positions are
+    /// first-pass placeholders read off the painting — drag them in editor mode (E).
+    static let milan = ZoneDefinition(
+        id: "milan",
+        displayName: "Milan",
+
+        mapSize: CGSize(width: 3500, height: 2500),
+        terrainPixelWidth: 4500,
+
+        sharpTerrainImageName: "MilanTerrain",
+
+        buildings: [
+            ZoneBuildingPlacement(buildingId: "leonardoWorkshop", name: "Leonardo's Workshop", position: CGPoint(x:  775, y:  725), era: "milan", rotation: 0),   // round field west of the canal
+            ZoneBuildingPlacement(buildingId: "flyingMachine", name: "Flying Machine", position: CGPoint(x: 2450, y:  937), era: "milan", rotation: 0),             // round field east of the canal
+        ],
+        hiddenBuildingIds: [],
+
+        // Along the towpaths and over the canal lock
+        waypoints: [
+            /* 0 */ CGPoint(x:  430, y:  900),   // path north-west of the west field
+            /* 1 */ CGPoint(x: 1150, y: 1000),   // path north-east of the west field
+            /* 2 */ CGPoint(x: 1600, y: 1112),   // canal lock
+            /* 3 */ CGPoint(x: 1900, y: 1050),   // path east of the canal
+            /* 4 */ CGPoint(x: 2037, y:  900),   // west edge of the east field
+        ],
+        waypointEdges: [
+            [0, 1], [1, 2], [2, 3], [3, 4],
+        ],
+        buildingWaypoints: [
+            "leonardoWorkshop": [1, 0],
+            "flyingMachine":    [4, 3],
+        ],
+
+        playerSpawn: CGPoint(x: 1900, y: 1050),
+        cameraMaxZoomOutScale: 3.5,
+
+        trees: [],
+
+        labels: [
+            ZoneLabel(numeral: "V", name: "Milan", position: CGPoint(x: 1750, y: 2350), nodeName: "zone_milan"),
+        ],
+        banners: []
+    )
+
+    // MARK: - VI Florence
+
+    /// Reached only from the DEBUG zone button. Oct 19 2026 terrain; positions are
+    /// first-pass placeholders read off the painting — drag them in editor mode (E).
+    static let florence = ZoneDefinition(
+        id: "florence",
+        displayName: "Florence",
+
+        mapSize: CGSize(width: 3500, height: 2500),
+        terrainPixelWidth: 4500,
+
+        sharpTerrainImageName: "FlorenceTerrain",
+
+        // The finale — the Duomo alone, on the octagonal lawn in the central square
+        buildings: [
+            ZoneBuildingPlacement(buildingId: "duomo", name: "Il Duomo", position: CGPoint(x: 1762, y: 1300), era: "florence", rotation: 0),
+        ],
+        hiddenBuildingIds: [],
+
+        // Around the square and down to the river quay
+        waypoints: [
+            /* 0 */ CGPoint(x: 1400, y: 1050),   // south-west corner of the square
+            /* 1 */ CGPoint(x: 2150, y: 1100),   // south-east corner of the square
+            /* 2 */ CGPoint(x: 1762, y: 1050),   // south of the lawn
+            /* 3 */ CGPoint(x: 2050, y: 1650),   // north-east corner of the square
+            /* 4 */ CGPoint(x: 1300, y: 1550),   // north-west corner of the square
+            /* 5 */ CGPoint(x: 2550, y:  550),   // foot of the east bridge
+            /* 6 */ CGPoint(x: 1500, y:  550),   // river quay
+        ],
+        waypointEdges: [
+            [2, 0], [2, 1], [0, 4], [1, 3], [4, 3], [1, 5], [0, 6], [6, 5],
+        ],
+        buildingWaypoints: [
+            "duomo": [2, 0],
+        ],
+
+        playerSpawn: CGPoint(x: 2550, y: 550),
+        cameraMaxZoomOutScale: 3.5,
+
+        trees: [],
+
+        labels: [
+            ZoneLabel(numeral: "VI", name: "Florence", position: CGPoint(x: 1750, y: 2350), nodeName: "zone_florence"),
         ],
         banners: []
     )
