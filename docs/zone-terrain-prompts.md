@@ -11,6 +11,15 @@ Oct 9 "Forest + Padua" plan (two style references, a long shared style block, `-
 which came out grainy and washed out. The style words were not the problem — the Forest prompt
 uses the same ones. The references and parameters were.
 
+**Update Oct 19 2026: no ink, no notebook, no parchment in the prompt.** The Oct 13 maps for
+Rome, Padua and Venice came out over-hatched. The prompt itself asked for it ("fine sepia ink
+linework, loose cross-hatching … faint pencil construction lines"), and fading the lines with a
+script afterwards smeared the drawing. The style reference (the initial terrain) is not the cause:
+it measures about 15% ink-line pixels against 22–26% for the Oct 13 Padua and Rome. So the line
+words, "a page from Leonardo da Vinci's notebook" and "aged cream parchment" are gone, and a
+`--no` list keeps hatching and paper out. The paper texture is applied in Photoshop instead, the
+same one on every map (see "After generation").
+
 Zone order follows the storyteller's 5-act arc in `docs/voice-cast-plan.md` — the
 Duomo is building 17, the finale, where Brunelleschi takes over and Cosimo de Medici
 returns. So **Florence is last, and it holds only the Duomo.**
@@ -41,9 +50,10 @@ These aren't style notes, they're what makes the terrain usable as a game map.
 2. **Aspect ratio 7:5 (= 1.4:1), exported at 4500×3214.** The scene is 3500×2500,
    also 1.4:1. Anything else stretches.
 
-3. **The map floats on parchment.** The painted land should fade out into bare aged
-   paper at the edges — no hard border, no frame. The camera clamps to the map bounds,
-   so a hard edge reads as a cut-off. ("softly faded edges" in the prompt tail does this.)
+3. **The map floats on paper.** The painted land should fade out into a plain background
+   at the edges — no hard border, no frame. The camera clamps to the map bounds, so a hard
+   edge reads as a cut-off. ("the painted land fades out softly into a plain flat off-white
+   background" in the prompt tail does this; the paper texture goes on in Photoshop.)
 
 4. **Trees that can be lifted out.** A handful (6–10) of clearly separated, fully
    visible trees standing on open ground, not overlapping each other or a plot.
@@ -60,16 +70,16 @@ These aren't style notes, they're what makes the terrain usable as a game map.
 
 ## The recipe (every map)
 
-Cloned from the Forest job — a Midjourney V8 Variation,
-<https://www.midjourney.com/jobs/19290ef9-1ead-4e89-b32b-108812fe0f57?index=1>.
-Confirmed working on Padua, Oct 12 2026.
+The parameters came from the Forest job — a Midjourney V8 Variation,
+<https://www.midjourney.com/jobs/19290ef9-1ead-4e89-b32b-108812fe0f57?index=1> — but each
+city map is set up directly, not through that job. Confirmed working on Padua, Oct 12 2026.
 
 | slot | what goes in it |
 |---|---|
-| **Style Reference** | the **old terrain image** (the May map) — the same one the Forest job used. *Not* Forest1. |
+| **Style Reference** | the **initial terrain** (the old May map). *Not* Forest1. |
 | **Image Prompt** | the map's **layout image** from `~/Desktop/AssetTrim/CityLayouts/` (below). The Forest used a beige clay maze here; the layout image does the same job but puts the clearings where the buildings are. |
 | **Prompt** | the map's prompt below — subject first, then the shared tail |
-| **Parameters** | `--chaos 10 --ar 7:5 --raw --v 8.2` — nothing else (no `--sw`, no `--stylize`). `--v 8.2` pins the model: HD and "Run batch as HD" only exist in V8.1+, so a job that ran as V7 (an old `--v 7`, or V7 as the settings default) can't be made HD. Add `--hd` to skip the HD rerun on a prompt you already trust. |
+| **Parameters** | `--no …` (the list in the shared tail) and `--chaos 10 --ar 7:5 --raw --v 8.2` — nothing else (no `--sw`, no `--stylize`). `--v 8.2` pins the model: HD and "Run batch as HD" only exist in V8.1+, so a job that ran as V7 (an old `--v 7`, or V7 as the settings default) can't be made HD. Add `--hd` to skip the HD rerun on a prompt you already trust. |
 | **Personalization** | **off** — it adds your profile's taste on top |
 
 Then: pick the best result → **Vary (Strong)** → **Run batch as HD**. HD is ~2K and can't be
@@ -79,19 +89,21 @@ upscaled further inside Midjourney, so the step to 4500×3214 happens in Photosh
 **If it goes wrong:**
 - Too flat or game-like, copying the layout's blocks literally → add `--iw 0.5`.
 - Ignoring the layout, clearings in the wrong places → add `--iw 1.5`.
-- Grainy or washed out → check Personalization is off and nothing beyond these four
+- Grainy or washed out → check Personalization is off and nothing beyond these
   parameters crept in. Don't rewrite the style words.
+- Hatching or paper still coming through → the style reference carries some of both;
+  try `--sw 50` before changing any words.
 
 ### Shared tail
 
-Every prompt ends with this, exactly as the Forest prompt did:
+Every prompt ends with this:
 
 ```
-fine sepia ink linework, loose cross-hatching, soft transparent watercolor washes, muted sage green, olive, ochre and warm brown, aged cream parchment, faint pencil construction lines, softly faded edges --chaos 10 --ar 7:5 --raw --v 8.2
+soft transparent watercolor washes, muted sage green, olive, ochre and warm brown, the painted land fades out softly into a plain flat off-white background --no cross-hatching, hatching, scribbles, sketch lines, construction lines, parchment, paper texture, stains --chaos 10 --ar 7:5 --raw --v 8.2
 ```
 
-and every prompt starts with `top-down overhead map of …, a page from Leonardo da Vinci's
-notebook`. The prompts below are written out in full so they can be pasted as they are.
+and every prompt starts with `top-down overhead map of …`. The prompts below are written out
+in full so they can be pasted as they are.
 
 ### Layout images
 
@@ -120,7 +132,7 @@ before redoing them (Claude can mock them up on the new map, no credits).
 Image Prompt: `rome_layout.png`
 
 ```
-top-down overhead map of the Ancient Roman countryside, a page from Leonardo da Vinci's notebook, rolling hills framed by dense groves of rounded olive and oak crowns and dark narrow cypress, a winding river with one arched stone bridge, a small walled town on the far hills, winding pale sandy roads that join across the whole page, eight round grassy clearings of different sizes, the largest in the centre, one on the hillside, one beside the river, fine sepia ink linework, loose cross-hatching, soft transparent watercolor washes, muted sage green, olive, ochre and warm brown, aged cream parchment, faint pencil construction lines, softly faded edges --chaos 10 --ar 7:5 --raw --v 8.2
+top-down overhead map of the Ancient Roman countryside, rolling hills framed by dense groves of rounded olive and oak crowns and dark narrow cypress, a winding river with one arched stone bridge, a small walled town on the far hills, winding pale sandy roads that join across the whole page, eight round grassy clearings of different sizes, the largest in the centre, one on the hillside, one beside the river, soft transparent watercolor washes, muted sage green, olive, ochre and warm brown, the painted land fades out softly into a plain flat off-white background --no cross-hatching, hatching, scribbles, sketch lines, construction lines, parchment, paper texture, stains --chaos 10 --ar 7:5 --raw --v 8.2
 ```
 
 Plots: **Aqueduct** (on the slope, so it can carry water down), **Harbor** (on the
@@ -134,7 +146,7 @@ Siege Workshop and Insula on the open ground. The Colosseum needs the largest cl
 Image Prompt: `padua_layout.png`
 
 ```
-top-down overhead map of a Renaissance university garden, a page from Leonardo da Vinci's notebook, a low circular brick wall enclosing a round grassy clearing, a small brick college courtyard with a second square grassy clearing, a thin canal with a low arched stone bridge, rows of rounded trees, dark narrow cypress, winding pale sandy gravel paths, fine sepia ink linework, loose cross-hatching, soft transparent watercolor washes, muted sage green, olive, ochre and warm brown, aged cream parchment, faint pencil construction lines, softly faded edges --chaos 10 --ar 7:5 --raw --v 8.2
+top-down overhead map of a Renaissance university garden, a low circular brick wall enclosing a round grassy clearing, a small brick college courtyard with a second square grassy clearing, a thin canal with a low arched stone bridge, rows of rounded trees, dark narrow cypress, winding pale sandy gravel paths, soft transparent watercolor washes, muted sage green, olive, ochre and warm brown, the painted land fades out softly into a plain flat off-white background --no cross-hatching, hatching, scribbles, sketch lines, construction lines, parchment, paper texture, stains --chaos 10 --ar 7:5 --raw --v 8.2
 ```
 
 Plots: **Botanical Garden** (the round clearing inside the circular wall — this is the
@@ -149,7 +161,7 @@ one campus, not two separate places.
 Image Prompt: `venice_layout.png`
 
 ```
-top-down overhead map of a Renaissance Venetian lagoon, a page from Leonardo da Vinci's notebook, low marshy islands with wind-bent trees and reeds, thin winding water channels, wooden plank boardwalks and small stone bridges, clusters of mooring posts, two round grassy clearings on raised islands, one small island of its own, one large island beside open water, fine sepia ink linework, loose cross-hatching, soft transparent watercolor washes, muted sage green, olive, ochre and warm brown, aged cream parchment, faint pencil construction lines, softly faded edges --chaos 10 --ar 7:5 --raw --v 8.2
+top-down overhead map of a Renaissance Venetian lagoon, low marshy islands with wind-bent trees and reeds, thin winding water channels, wooden plank boardwalks and small stone bridges, clusters of mooring posts, two round grassy clearings on raised islands, one small island of its own, one large island beside open water, soft transparent watercolor washes, muted sage green, olive, ochre and warm brown, the painted land fades out softly into a plain flat off-white background --no cross-hatching, hatching, scribbles, sketch lines, construction lines, parchment, paper texture, stains --chaos 10 --ar 7:5 --raw --v 8.2
 ```
 
 Plots: **Glassworks** (its own small island — Murano), **Arsenal** (the largest island,
@@ -162,7 +174,7 @@ with open water on one side for the shipyard).
 Image Prompt: `renaissance_rome_layout.png`
 
 ```
-top-down overhead map of Renaissance Rome beside a winding river, a page from Leonardo da Vinci's notebook, broken ancient columns and ruins half-hidden among umbrella pines and dark narrow cypress, stacked stone blocks and timber scaffolding, winding pale sandy roads, two round grassy clearings, one on the highest hill, one beside the road, fine sepia ink linework, loose cross-hatching, soft transparent watercolor washes, muted sage green, olive, ochre and warm brown, aged cream parchment, faint pencil construction lines, softly faded edges --chaos 10 --ar 7:5 --raw --v 8.2
+top-down overhead map of Renaissance Rome beside a winding river, broken ancient columns and ruins half-hidden among umbrella pines and dark narrow cypress, stacked stone blocks and timber scaffolding, winding pale sandy roads, two round grassy clearings, one on the highest hill, one beside the road, soft transparent watercolor washes, muted sage green, olive, ochre and warm brown, the painted land fades out softly into a plain flat off-white background --no cross-hatching, hatching, scribbles, sketch lines, construction lines, parchment, paper texture, stains --chaos 10 --ar 7:5 --raw --v 8.2
 ```
 
 Plots: **Vatican Observatory** (the clearing on the highest hill, for sightlines),
@@ -175,7 +187,7 @@ Plots: **Vatican Observatory** (the clearing on the highest hill, for sightlines
 Image Prompt: `milan_layout.png`
 
 ```
-top-down overhead map of the Renaissance Lombard plain, a page from Leonardo da Vinci's notebook, straight thin irrigation canals with small brick lock gates, long rows of slender poplar, a mulberry orchard of rounded crowns, pale sandy roads beside the canals, two round grassy clearings, one beside the main canal, one wide open clearing with space all around, fine sepia ink linework, loose cross-hatching, soft transparent watercolor washes, muted sage green, olive, ochre and warm brown, aged cream parchment, faint pencil construction lines, softly faded edges --chaos 10 --ar 7:5 --raw --v 8.2
+top-down overhead map of the Renaissance Lombard plain, straight thin irrigation canals with small brick lock gates, long rows of slender poplar, a mulberry orchard of rounded crowns, pale sandy roads beside the canals, two round grassy clearings, one beside the main canal, one wide open clearing with space all around, soft transparent watercolor washes, muted sage green, olive, ochre and warm brown, the painted land fades out softly into a plain flat off-white background --no cross-hatching, hatching, scribbles, sketch lines, construction lines, parchment, paper texture, stains --chaos 10 --ar 7:5 --raw --v 8.2
 ```
 
 Plots: **Leonardo's Workshop** (beside the canal), **Flying Machine** (the wide open
@@ -192,7 +204,7 @@ everything points at it.
 Image Prompt: `florence_layout.png`
 
 ```
-top-down overhead map of Renaissance Florence, a page from Leonardo da Vinci's notebook, a winding river with a covered bridge, terracotta rooftops of the old town packed around a wide central square, an empty octagonal grassy clearing in the middle of the square with stacked marble blocks and timber scaffolding at its edge, no dome, no cathedral, Tuscan hills with olive groves and dark narrow cypress behind, every street leading to the square, fine sepia ink linework, loose cross-hatching, soft transparent watercolor washes, muted sage green, olive, ochre and warm brown, aged cream parchment, faint pencil construction lines, softly faded edges --chaos 10 --ar 7:5 --raw --v 8.2
+top-down overhead map of Renaissance Florence, a winding river with a covered bridge, terracotta rooftops of the old town packed around a wide central square, an empty octagonal grassy clearing in the middle of the square with stacked marble blocks and timber scaffolding at its edge, no dome, no cathedral, Tuscan hills with olive groves and dark narrow cypress behind, every street leading to the square, soft transparent watercolor washes, muted sage green, olive, ochre and warm brown, the painted land fades out softly into a plain flat off-white background --no cross-hatching, hatching, scribbles, sketch lines, construction lines, parchment, paper texture, stains --chaos 10 --ar 7:5 --raw --v 8.2
 ```
 
 Plot: **Il Duomo** — octagonal, because Brunelleschi's dome is octagonal and the
@@ -217,7 +229,7 @@ three areas to `make_layouts.py` once the station positions are settled.
   `ResourceNode.hideSprites` is on, and the game draws only an invisible tap target and a label
   pill. Whatever the terrain shows *is* the station. Ask for each station by name and count them.
 - **Roads leave the map.** Each signpost to another area sits on a road that runs off one side
-  edge and fades into the parchment. Ask for an empty wooden signpost (no lettering — the game
+  edge and fades into the background. Ask for an empty wooden signpost (no lettering — the game
   draws the label) where the road meets the edge.
 
 Geography, so the three maps agree with each other: the **Countryside is to the west** of the
@@ -232,7 +244,7 @@ or the overlay doubles it. The quarry is the one to watch: leave the crane out.
 ### Workshop I. Bottega — the home yard, where the player arrives
 
 ```
-top-down overhead map of a Renaissance artisan workshop yard at the edge of a Tuscan town, a page from Leonardo da Vinci's notebook, three places clearly separated across the page, a stone workshop with a tall brick chimney and open double doors, a small goldsmith's shop with a carved wooden shopfront, an open-air market of striped canvas awnings over empty stalls with crates, barrels and sacks, a cobbled yard with a well between them, terracotta rooftops of the town at the top edge, groves of rounded trees and dark narrow cypress, two winding pale sandy roads leaving the page at the left and right edges, an empty wooden signpost beside each road, fine sepia ink linework, loose cross-hatching, soft transparent watercolor washes, muted sage green, olive, ochre and warm brown, aged cream parchment, faint pencil construction lines, softly faded edges --chaos 10 --ar 7:5 --raw --v 8.2
+top-down overhead map of a Renaissance artisan workshop yard at the edge of a Tuscan town, three places clearly separated across the page, a stone workshop with a tall brick chimney and open double doors, a small goldsmith's shop with a carved wooden shopfront, an open-air market of striped canvas awnings over empty stalls with crates, barrels and sacks, a cobbled yard with a well between them, terracotta rooftops of the town at the top edge, groves of rounded trees and dark narrow cypress, two winding pale sandy roads leaving the page at the left and right edges, an empty wooden signpost beside each road, soft transparent watercolor washes, muted sage green, olive, ochre and warm brown, the painted land fades out softly into a plain flat off-white background --no cross-hatching, hatching, scribbles, sketch lines, construction lines, parchment, paper texture, stains --chaos 10 --ar 7:5 --raw --v 8.2
 ```
 
 Stations: **Crafting Room** (the chimney building — the chimney-smoke overlay sits on that
@@ -242,7 +254,7 @@ right → Hills.
 ### Workshop II. Countryside
 
 ```
-top-down overhead map of Renaissance Tuscan farmland in a river valley, a page from Leonardo da Vinci's notebook, three places clearly separated across the page, a stone farmhouse with a barn, hay stacks, a vegetable plot, beehives and an empty fenced poultry yard, a slow winding river with a wide pale sandbank and a grassy bank, the dark edge of a dense oak and chestnut forest with a footpath leading into the trees, wheat fields and olive groves between them, dark narrow cypress, a winding pale sandy road leaving the page at the right edge, an empty wooden signpost beside the road, fine sepia ink linework, loose cross-hatching, soft transparent watercolor washes, muted sage green, olive, ochre and warm brown, aged cream parchment, faint pencil construction lines, softly faded edges --chaos 10 --ar 7:5 --raw --v 8.2
+top-down overhead map of Renaissance Tuscan farmland in a river valley, three places clearly separated across the page, a stone farmhouse with a barn, hay stacks, a vegetable plot, beehives and an empty fenced poultry yard, a slow winding river with a wide pale sandbank and a grassy bank, the dark edge of a dense oak and chestnut forest with a footpath leading into the trees, wheat fields and olive groves between them, dark narrow cypress, a winding pale sandy road leaving the page at the right edge, an empty wooden signpost beside the road, soft transparent watercolor washes, muted sage green, olive, ochre and warm brown, the painted land fades out softly into a plain flat off-white background --no cross-hatching, hatching, scribbles, sketch lines, construction lines, parchment, paper texture, stains --chaos 10 --ar 7:5 --raw --v 8.2
 ```
 
 Stations: **Farm**, **River** (water + sand, so the sandbank matters; the river-flow,
@@ -253,7 +265,7 @@ empty because the chicken overlay supplies the chickens.
 ### Workshop III. Hills & Quarries
 
 ```
-top-down overhead map of the rocky Renaissance Apennine hills, a page from Leonardo da Vinci's notebook, four places clearly separated across the page, a pale limestone and marble quarry cut in stepped white terraces into a cliff, a mine entrance braced with heavy timber beams in a dark hillside, an open clay pit of wet red-ochre earth with puddles, a smoking volcano at the top edge with a dark crater, sulphur-yellow vents and a cooled lava slope reaching down the page, gravel tracks linking all four, scrub, broom and umbrella pines, one track leaving the page at the left edge, an empty wooden signpost beside the track, fine sepia ink linework, loose cross-hatching, soft transparent watercolor washes, muted sage green, olive, ochre and warm brown, aged cream parchment, faint pencil construction lines, softly faded edges --chaos 10 --ar 7:5 --raw --v 8.2
+top-down overhead map of the rocky Renaissance Apennine hills, four places clearly separated across the page, a pale limestone and marble quarry cut in stepped white terraces into a cliff, a mine entrance braced with heavy timber beams in a dark hillside, an open clay pit of wet red-ochre earth with puddles, a smoking volcano at the top edge with a dark crater, sulphur-yellow vents and a cooled lava slope reaching down the page, gravel tracks linking all four, scrub, broom and umbrella pines, one track leaving the page at the left edge, an empty wooden signpost beside the track, soft transparent watercolor washes, muted sage green, olive, ochre and warm brown, the painted land fades out softly into a plain flat off-white background --no cross-hatching, hatching, scribbles, sketch lines, construction lines, parchment, paper texture, stains --chaos 10 --ar 7:5 --raw --v 8.2
 ```
 
 Stations: **Quarry** (the crane overlay is drawn on top — if Midjourney paints a crane, pick
@@ -261,8 +273,8 @@ another result or paint it out), **Mine**, **Clay Pit**, **Volcano** (the smoke,
 overlays sit on the crater and slope; it can sit at the top edge as long as its slope comes
 down far enough for a path to reach it). Signpost: left → Bottega.
 
-For all three, install as `Workshop<Area>Terrain` + `BlurredWorkshop<Area>Terrain`
-(e.g. `WorkshopBottegaTerrain`).
+For all three, install as `Workshop<Area>Terrain` (e.g. `WorkshopBottegaTerrain`). No
+blurred copy — the game has no blur layer.
 
 ---
 
@@ -272,8 +284,9 @@ For all three, install as `Workshop<Area>Terrain` + `BlurredWorkshop<Area>Terrai
    pick the HD exports, and each opens at 4500×3214 (scaled to fill, centre-cropped, never
    stretched) as a Smart Object with the Camera Raw window up — press Auto (⌘U), fix the dark
    spots (U shows clipped shadows in blue), OK. Then the colour pass — the Forest map needed one
-   too (greener, stream recoloured, sharpened).
-2. Install as `<Zone>Terrain.imageset` + `Blurred<Zone>Terrain.imageset`, set
+   too (greener, stream recoloured, sharpened). Then the **paper texture** — the same texture on
+   every map, so all six read as one book.
+2. Install as `<Zone>Terrain.imageset` only (no blurred copy — the game has no blur layer), set
    `compression-type` at authoring time — the catalog is already ~315 MB compiled
    (see `docs/research/asset-size-plan.md`).
 3. Cut the trees out, **fill each hole**, export with a soft anti-aliased matte
