@@ -6,7 +6,7 @@ Moved from the root CLAUDE.md on 2026-10-09 so it loads only when working in thi
 - SpriteKit tile-based terrain (3500x2500 base, expandable via `terrainTiles` array)
 - Rivers: Tiber, Arno, Grand Canal. Zone labels I-VI
 - Player (PlayerNode) walks to tapped buildings, camera follows + zooms in
-- Terrain blur (SKEffectNode + CIGaussianBlur) activates during walking, persists while zoomed in
+- NO terrain blur, sharpen or depth-of-field layer — removed 2026-10-13 by Marina's decision; don't re-add
 - All overlays auto-dismiss on any user interaction (walk, scroll, pinch, drag)
 - Mascot (Bird) rendered as SwiftUI overlay on top of SpriteKit (position tracked via callback)
 - Tap building → player walks there → camera zooms to 0.7 → MascotDialogueView with 3 choices:

@@ -29,7 +29,9 @@ Marina to confirm or overrule.)*
 ## What exists today (verified at `7a1447a`)
 
 - `WorkshopScene.swift` (2067 lines), one map, `mapSize` 3500×2500, terrain pair
-  `WorkshopTerrain` / `BlurredWorkshopTerrain` via `TerrainBlurHelper` (`:273`).
+  `WorkshopTerrain` / `BlurredWorkshopTerrain` via `TerrainBlurHelper` (`:273`). *(Since then:
+  the blur layer and `BlurredWorkshopTerrain` were removed 2026-10-13, and the helper is now
+  `TerrainHelper`, sharp terrain only.)*
 - **10 outdoor stations** in `stationPositions` (`:46-57`). Three of them already leave this map:
   Crafting Room → `CraftingRoomScene`, Goldsmith → `GoldsmithScene` (both via
   `WorkshopView.activeInterior`), Forest → `onNavigate(.forest)` (`WorkshopMapView.swift:771-789`).
@@ -72,7 +74,6 @@ struct WorkshopAreaDefinition {
     let mapSize: CGSize                    // 3500×2500, same as today
     let terrainPixelWidth: CGFloat         // 4500
     let sharpTerrainImageName: String
-    let blurredTerrainImageName: String
     let stations: [ResourceStationType: CGPoint]
     let exits: [WorkshopAreaExit]          // the signposts
     let waypoints: [CGPoint]
@@ -143,7 +144,7 @@ bird's message still names the real station ("Head to the Quarry"); the walk jus
    two areas: Hills → no pickaxe → Market in Bottega → back to Quarry.
 5. **Remaining areas,** one at a time, each verified in isolation.
 6. **Switch players over and delete `legacy`**, plus the old `WorkshopTerrain` /
-   `BlurredWorkshopTerrain` / `WorkshopBackground` assets once nothing references them.
+   `WorkshopBackground` assets once nothing references them.
 
 ## Open questions
 
@@ -155,7 +156,7 @@ bird's message still names the real station ("Head to the Quarry"); the walk jus
 
 ## Risks
 
-- **Asset size:** 3 new terrain pairs replace 1. Set lossy compression at authoring time
+- **Asset size:** 3 new terrains replace 1. Set lossy compression at authoring time
   (`docs/research/asset-size-plan.md`), as the zone plan recommends.
 - **Tutorial and onboarding text** that names a station's position ("the quarry up north") may stop
   being true. Search `OnboardingContent.swift` and the station lessons when the art lands.

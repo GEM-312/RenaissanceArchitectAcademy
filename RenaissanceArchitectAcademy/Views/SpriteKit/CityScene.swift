@@ -97,7 +97,7 @@ class CityScene: SKScene, ScrollZoomable {
     private var initialCameraScale: CGFloat = 1.0
 
     /// Reusable terrain setup
-    let terrainBlur = TerrainBlurHelper()
+    let terrainHelper = TerrainHelper()
 
     #if DEBUG
     private lazy var editorMode = SceneEditorMode(scene: self)
@@ -235,7 +235,7 @@ class CityScene: SKScene, ScrollZoomable {
         // Release all textures and children to free memory when scene is removed
         removeAllActions()
         removeAllChildren()
-        terrainBlur.cleanup()
+        terrainHelper.cleanup()
         playerNode = nil
         hasSetup = false
         // Break retain cycles from closures capturing SwiftUI views
@@ -358,9 +358,9 @@ class CityScene: SKScene, ScrollZoomable {
         let centerX = mapSize.width / 2
         let centerY = mapSize.height / 2
 
-        // Single terrain image handled by TerrainBlurHelper
-        terrainBlur.setup(in: self, sharp: zone.sharpTerrainImageName, mapSize: mapSize)
-        terrainBlur.terrainSprite?.position = CGPoint(x: centerX, y: centerY)
+        // Single terrain image handled by TerrainHelper
+        terrainHelper.setup(in: self, sharp: zone.sharpTerrainImageName, mapSize: mapSize)
+        terrainHelper.terrainSprite?.position = CGPoint(x: centerX, y: centerY)
 
         // Grid lines (Leonardo's notebook style)
         addGridOverlay()
@@ -717,7 +717,6 @@ class CityScene: SKScene, ScrollZoomable {
 
         // Start camera follow — gentle zoom + gradual approach in update()
         startFollowingPlayer(toward: buildingPos)
-        startWalkingTerrainEffects()
 
         let directDistance = hypot(targetPos.x - playerPos.x, targetPos.y - playerPos.y)
 
@@ -761,8 +760,6 @@ class CityScene: SKScene, ScrollZoomable {
         walkTargetPosition = nil
         view?.preferredFramesPerSecond = 30  // Back to idle frame rate
 
-        // Keep blur active while zoomed in near the building
-
         // Face forward (toward camera) now that she's arrived
         playerNode.faceForward()
 
@@ -774,17 +771,6 @@ class CityScene: SKScene, ScrollZoomable {
 
         // Notify SwiftUI — bird dialogue appears
         onMascotReachedBuilding?(buildingNode.buildingId)
-    }
-
-    // MARK: - Terrain Effects
-
-    /// Walking terrain effects — zoom-based swap in update() handles the actual terrain switch
-    private func startWalkingTerrainEffects() {
-        // Handled by update() loop based on camera zoom level
-    }
-
-    private func stopWalkingTerrainEffects() {
-        // Handled by update() loop based on camera zoom level
     }
 
     // MARK: - Camera Follow & Zoom
@@ -823,9 +809,6 @@ class CityScene: SKScene, ScrollZoomable {
         walkTargetPosition = nil
         dialogBuildingNode = nil
 
-        // Remove blur + walking terrain when player exits a building
-        stopWalkingTerrainEffects()
-
         view?.preferredFramesPerSecond = 60  // Smooth pan animation
 
         let mapCenter = CGPoint(x: mapSize.width / 2, y: mapSize.height / 2)
@@ -842,7 +825,6 @@ class CityScene: SKScene, ScrollZoomable {
         isFollowingPlayer = false
         walkTargetPosition = nil
         dialogBuildingNode = nil
-        stopWalkingTerrainEffects()
     }
 
     private var hasFiredDragCallback = false

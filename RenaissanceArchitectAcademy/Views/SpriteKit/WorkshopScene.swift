@@ -44,7 +44,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
     private var mapSize: CGSize { area.mapSize }
 
     /// Reusable terrain setup
-    let terrainBlur = TerrainBlurHelper()
+    let terrainHelper = TerrainHelper()
 
     /// Whether the player is currently walking
     private(set) var isPlayerWalking = false
@@ -100,11 +100,10 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
     override func didMove(to view: SKView) {
         guard !hasSetup else {
-            // Scene reused — reset terrain to sharp, camera to full view
+            // Scene reused — reset camera to full view
             if playerNode != nil {
                 cameraNode.position = playerNode.position
             }
-            terrainBlur.terrainSprite?.alpha = 1.0
             fitCameraToMap()
             return
         }
@@ -114,8 +113,6 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
         setupCamera()
         setupBackground()
-        // Force terrain sharp on first load (before update() loop starts)
-        terrainBlur.terrainSprite?.alpha = 1.0
         setupGridLines()
         setupTitle()
         setupWalkingPaths()
@@ -208,7 +205,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
     private func setupBackground() {
         // Workshop terrain
         // Edge fill hides faded Midjourney borders when camera follows player to map edges
-        terrainBlur.setup(in: self, sharp: area.sharpTerrainImageName, mapSize: mapSize, edgeFillColor: PlatformColor(RenaissanceColors.parchment))
+        terrainHelper.setup(in: self, sharp: area.sharpTerrainImageName, mapSize: mapSize, edgeFillColor: PlatformColor(RenaissanceColors.parchment))
     }
 
     // MARK: - Grid Lines (notebook style)
@@ -1082,7 +1079,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
     override func willMove(from view: SKView) {
         removeAllActions()
         removeAllChildren()
-        terrainBlur.cleanup()
+        terrainHelper.cleanup()
         playerNode = nil
         hasSetup = false
         // Break retain cycles from closures capturing SwiftUI views
@@ -1398,7 +1395,6 @@ class WorkshopScene: SKScene, ScrollZoomable {
 
         // Stage 1: Gentle zoom + follow player — gradual approach in update()
         startFollowingPlayer(toward: stationPos)
-        startWalkingTerrainEffects()
 
         #if DEBUG
         syncWaypointsFromNodes()  // pick up any dragged waypoint positions
@@ -1450,8 +1446,6 @@ class WorkshopScene: SKScene, ScrollZoomable {
         isFollowingPlayer = false
         walkTargetPosition = nil
 
-        // Keep blur while zoomed in at station
-
         // Face toward the station (player is to the left, so face right)
         let faceRight = stationNode.position.x > playerNode.position.x
         playerNode.setFacingDirection(faceRight)
@@ -1467,16 +1461,6 @@ class WorkshopScene: SKScene, ScrollZoomable {
                 self?.onStationReached?(stationNode.stationType)
             }
         }
-    }
-
-    // MARK: - Terrain Effects (walking overlay fade)
-
-    private func startWalkingTerrainEffects() {
-        // Blur handled by crossfade in update()
-    }
-
-    private func stopWalkingTerrainEffects() {
-        // Sharp restore handled by crossfade in update()
     }
 
     // MARK: - Station Camera Zoom
@@ -1955,51 +1939,5 @@ class WorkshopScene: SKScene, ScrollZoomable {
         let texture = SKTexture(cgImage: image)
         let sprite = SKSpriteNode(texture: texture, size: CGSize(width: diameter, height: diameter))
         return sprite
-    }
-
-    /// Creates a mask texture: white everywhere with soft radial fade-to-clear holes at given positions.
-    /// Used with SKCropNode — white = show dark overlay, clear = reveal terrain underneath.
-    /// Creates a mask texture: white everywhere with blurred clear holes at given positions.
-    /// Hard clear circles are punched first, then the entire image is Gaussian-blurred
-    /// so the edges feather naturally. Used with SKCropNode.
-    static func makeCutoutMask(mapSize: CGSize, holePositions: [CGPoint], holeRadius: CGFloat, blurRadius: CGFloat = 40) -> SKTexture {
-        let w = Int(mapSize.width)
-        let h = Int(mapSize.height)
-        let colorSpace = CGColorSpaceCreateDeviceRGB()
-
-        guard let ctx = CGContext(data: nil, width: w, height: h,
-                                   bitsPerComponent: 8, bytesPerRow: 0,
-                                   space: colorSpace,
-                                   bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else {
-            return SKTexture()
-        }
-
-        // Fill entire mask white (opaque = dark overlay visible)
-        ctx.setFillColor(PlatformColor.white.cgColor)
-        ctx.fill(CGRect(x: 0, y: 0, width: w, height: h))
-
-        // Punch hard clear circles at each position
-        ctx.setBlendMode(.copy)
-        ctx.setFillColor(PlatformColor(white: 1.0, alpha: 0.0).cgColor)
-        for pos in holePositions {
-            ctx.fillEllipse(in: CGRect(x: pos.x - holeRadius, y: pos.y - holeRadius,
-                                        width: holeRadius * 2, height: holeRadius * 2))
-        }
-
-        guard let hardImage = ctx.makeImage() else { return SKTexture() }
-
-        // Apply Gaussian blur to the whole mask — softens circle edges
-        let ciImage = CIImage(cgImage: hardImage)
-        let blur = CIFilter(name: "CIGaussianBlur", parameters: [
-            kCIInputImageKey: ciImage,
-            "inputRadius": blurRadius
-        ])
-        let ciContext = CIContext()
-        guard let output = blur?.outputImage,
-              let blurredImage = ciContext.createCGImage(output, from: ciImage.extent) else {
-            return SKTexture(cgImage: hardImage)
-        }
-
-        return SKTexture(cgImage: blurredImage)
     }
 }

@@ -25,7 +25,7 @@ struct ZoneDefinition {
     /// drawn into a 3500pt scene, so its cut-outs shrink by 3500/4500.
     let terrainPixelWidth: CGFloat
 
-    /// Asset-catalog name handed to `TerrainBlurHelper.setup(in:sharp:mapSize:)`.
+    /// Asset-catalog name handed to `TerrainHelper.setup(in:sharp:mapSize:)`.
     let sharpTerrainImageName: String
 
     let buildings: [ZoneBuildingPlacement]

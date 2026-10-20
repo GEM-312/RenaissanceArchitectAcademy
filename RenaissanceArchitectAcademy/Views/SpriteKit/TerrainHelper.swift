@@ -3,14 +3,14 @@ import SpriteKit
 /// Reusable terrain setup — one terrain sprite plus an optional edge fill behind it.
 /// Used by CityScene and WorkshopScene (ForestScene uses a plain background sprite).
 ///
-/// The blurred/sharpened zoom overlay was removed 2026-10-13 per Marina ("we don't
-/// need any blur layer"); it had been hidden at alpha 0 since 2026-04-22 but was
-/// still built (a full-size CISharpenLuminance copy) on every scene load.
+/// No blur, sharpen or depth-of-field layer — the old blurred/sharpened zoom overlay
+/// was removed 2026-10-13 per Marina ("we don't need any blur layer"), and this class
+/// was renamed from `TerrainBlurHelper` on 2026-10-19. Don't re-add one.
 ///
 /// Usage:
-///   1. In `didMove(to:)`:  `terrainBlur.setup(in: self, sharp: "Terrain", mapSize: mapSize)`
-///   2. In `willMove(from:)`: `terrainBlur.cleanup()`
-class TerrainBlurHelper {
+///   1. In `didMove(to:)`:  `terrainHelper.setup(in: self, sharp: "Terrain", mapSize: mapSize)`
+///   2. In `willMove(from:)`: `terrainHelper.cleanup()`
+class TerrainHelper {
 
     /// The terrain sprite
     private(set) var terrainSprite: SKSpriteNode?
