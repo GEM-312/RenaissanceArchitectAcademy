@@ -1,8 +1,11 @@
 # Workshop Areas Plan — split the outdoor Workshop into 3 maps
 
 **Date:** 2026-10-09
-**Status:** Step 1 done (`b129f29`). Step 2 art done Oct 20 — see "Applying the art" at the end;
-resume there next session.
+**Status:** DONE Oct 24 2026. All three areas live with signpost travel (`f4d2a31`), the old single
+map deleted (`legacy`, `WorkshopTerrain`, `Tree1–9`, and the quarry-crane / river-house / fisherman /
+woodcutter / chicken overlays with their art). **Correction to step 6 below:** `WorkshopBackground`
+was NOT deleted — it is the Crafting Room and Goldsmith interior art. Still open: no trees or
+animated overlays on the new maps yet (new animations planned), Countryside has no painted bridge.
 **Why:** the outdoor Workshop terrain (`WorkshopTerrain`, a May 2026 Midjourney map) is out of
 style with the Forest + Padua target look, and with 10 stations on one canvas it is crowded.
 The city map was split into zones for the same reasons (`docs/plans/zone-system-plan.md`); this

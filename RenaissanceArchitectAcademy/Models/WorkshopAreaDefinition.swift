@@ -60,8 +60,10 @@ struct WorkshopAreaExit {
 }
 
 /// The always-on overlays layered over a Workshop terrain. Each one is drawn on
-/// top of a specific painted feature (a crater, a chimney, a riverbank), so its
-/// position belongs to the area, not to the scene.
+/// top of a specific painted feature (a crater, a chimney), so its position belongs
+/// to the area, not to the scene. All are drawn in code (particles, a glow) — the
+/// old map's frame-animation overlays (quarry crane, river house, fisherman,
+/// woodcutter, chicken) were deleted with it Oct 24 2026; new animations come later.
 enum WorkshopAmbientKind: Hashable {
     case volcanoSmoke
     case craftingChimneySmoke
@@ -69,9 +71,4 @@ enum WorkshopAmbientKind: Hashable {
     case smallSmokeAccent2
     case volcanoLava
     case volcanoGlow
-    case quarryCrane
-    case riverFlow
-    case chicken
-    case fisherman
-    case woodcutter
 }

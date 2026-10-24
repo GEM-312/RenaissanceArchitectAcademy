@@ -134,11 +134,6 @@ class WorkshopScene: SKScene, ScrollZoomable {
         setupStations()
         setupExits()
         setupAmbientEffects()
-        setupQuarryAnimation()
-        setupRiverFlowAnimation()
-        setupChickenAnimation()
-        setupFishermanAnimation()
-        setupWoodcutterAnimation()
         setupSwayingTrees()
         setupPlayer()
 
@@ -311,12 +306,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
     private var smallSmokeAccent1: SKEmitterNode?
     private var smallSmokeAccent2: SKEmitterNode?
     private var volcanoLava: SKEmitterNode?
-    private var riverFlowAnimation: SKSpriteNode?
-    private var chickenAnimation: SKSpriteNode?
-    private var fishermanAnimation: SKSpriteNode?
-    private var woodcutterAnimation: SKSpriteNode?
     private var volcanoGlow: SKSpriteNode?
-    private var quarryAnimation: SKSpriteNode?
 
     /// Trees that sway in the wind (continuous) and react to the player walking
     /// past them (one-shot stronger pulse). Pivots are anchored at the trunk
@@ -437,216 +427,10 @@ class WorkshopScene: SKScene, ScrollZoomable {
         }
     }
 
-    // MARK: - Quarry Animation Overlay
-    //
-    // Loads QuarryFrame00..14 from Assets.xcassets and plays them as a
-    // continuous frame loop on top of the painted quarry. The cleaned PNGs
-    // are transparent except for the moving crane + workers, so the static
-    // rocks/cliffs in WorkshopTerrain show through.
-    //
-    // Position is intentionally code-set to a sensible starting value and
-    // exposed via editor mode — tap EDITOR → tap the sprite → drag to align,
-    // then read the new coords from the console and paste them back here.
-
-    private func setupQuarryAnimation() {
-        guard let position = area.ambient[.quarryCrane] else { return }
-        // Load whichever frames exist, stop at the first missing imageset.
-        // This keeps the animation working with 2 frames during pipeline
-        // testing and 15 once the full set is shipped.
-        var textures: [SKTexture] = []
-        for i in 0..<15 {
-            let name = String(format: "QuarryFrame%02d", i)
-            #if os(iOS)
-            guard UIImage(named: name) != nil else { break }
-            #else
-            guard NSImage(named: name) != nil else { break }
-            #endif
-            textures.append(SKTexture(imageNamed: name))
-        }
-        guard !textures.isEmpty else { return }
-
-        let sprite = SKSpriteNode(texture: textures[0])
-        // Native frames are 1928×1072; size below covers the painted quarry
-        // footprint on terrain. Adjust here if the ratio needs to change —
-        // editor mode only nudges position, not size.
-        sprite.size = CGSize(width: 1500, height: 836)
-        // Aligned with the painted crane on WorkshopTerrain via editor mode.
-        // Re-tune by pressing E → drag the sprite → paste the new console coords.
-        sprite.position = position
-        sprite.zPosition = 12   // above terrain (-100), below station label pills (9-10)
-        sprite.name = "quarryAnimation"
-        addChild(sprite)
-        quarryAnimation = sprite
-
-        // Continuous loop. SKAction is the right primitive for ambient world
-        // animation (matches the volcano/chimney emitter pattern); the
-        // CLAUDE.md "play ONCE never loop" rule is for SwiftUI Timer-based
-        // avatar animations, not SpriteKit.
-        let timePerFrame: TimeInterval = textures.count <= 2 ? 0.5 : 0.15
-        let cycle = SKAction.animate(
-            with: textures,
-            timePerFrame: timePerFrame,
-            resize: false,
-            restore: false
-        )
-        sprite.run(SKAction.repeatForever(cycle), withKey: "quarryFrameLoop")
-    }
-
-    // MARK: - River Flow Animation
-    //
-    // 15-frame loop overlaid on the painted river near the .river station.
-    // Cleaned source frames are 1928×1072 px (native, like the quarry crane) —
-    // rendered at 1500×836 pt for crisp display. Re-tune position via editor
-    // mode (press E → drag → console prints coords).
-
-    private func setupRiverFlowAnimation() {
-        guard let position = area.ambient[.riverFlow] else { return }
-        // Loaded from RiverHouse.atlasc (TexturePacker-generated, tightly cropped
-        // with anchor offsets baked in). Frame names retain the original PNG
-        // filenames including the trailing " copy.png" suffix.
-        let atlas = SKTextureAtlas(named: "RiverHouse")
-        var textures: [SKTexture] = []
-        for i in 1...15 {
-            let name = String(format: "RiverFlowFarmAnimation_%02d copy.png", i)
-            guard atlas.textureNames.contains(name) else { break }
-            textures.append(atlas.textureNamed(name))
-        }
-        guard !textures.isEmpty else { return }
-
-        let sprite = SKSpriteNode(texture: textures[0])
-        sprite.size = CGSize(width: 2250, height: 1254)
-        sprite.position = position
-        sprite.zPosition = 12
-        sprite.name = "riverFlowAnimation"
-        addChild(sprite)
-        riverFlowAnimation = sprite
-
-        let cycle = SKAction.animate(with: textures, timePerFrame: 0.15, resize: false, restore: false)
-        sprite.run(SKAction.repeatForever(cycle), withKey: "riverFrameLoop")
-    }
-
-    // MARK: - Chicken Animation
-    //
-    // 15-frame loop dropped near the farm. Re-tune position via editor mode
-    // (press E → drag → console prints coords).
-    // Source frames live in Assets.xcassets/ChickenFrame00-14.
-
-    // MARK: - Fisherman Animation
-    //
-    // 15-frame casting loop near the .river station. Loaded from
-    // Fisherman.atlasc (TexturePacker output, tight-trimmed with anchor
-    // offsets baked in — SpriteKit reads metadata, no jitter at runtime).
-    // Frame names retain the source PNG filenames.
-    // Re-tune position via editor mode (press E → drag → console prints coords).
-
-    private func setupFishermanAnimation() {
-        guard let position = area.ambient[.fisherman] else { return }
-        let atlas = SKTextureAtlas(named: "Fisherman")
-        var textures: [SKTexture] = []
-        for i in 1...15 {
-            let name = String(format: "RiverFlowFarmAnimation_%02d copy.png", i)
-            guard atlas.textureNames.contains(name) else { break }
-            textures.append(atlas.textureNamed(name))
-        }
-        guard !textures.isEmpty else { return }
-
-        let sprite = SKSpriteNode(texture: textures[0])
-        sprite.size = CGSize(width: 1200, height: 1500)
-        sprite.position = position
-        sprite.zPosition = 13
-        sprite.name = "fishermanAnimation"
-        addChild(sprite)
-        fishermanAnimation = sprite
-
-        let cycle = SKAction.animate(with: textures, timePerFrame: 0.18, resize: false, restore: false)
-        sprite.run(SKAction.repeatForever(cycle), withKey: "fishermanFrameLoop")
-    }
-
-    // MARK: - Woodcutter Animation
-    //
-    // 15-frame chopping loop near the .forest station. Same pattern as Fisherman —
-    // loaded from Woodcutter.atlasc (TexturePacker, tight-trimmed with anchor
-    // offsets baked into the .plist). Re-tune position via editor mode.
-
-    private func setupWoodcutterAnimation() {
-        guard let position = area.ambient[.woodcutter] else { return }
-        let atlas = SKTextureAtlas(named: "Woodcutter")
-        var textures: [SKTexture] = []
-        for i in 1...15 {
-            let name = String(format: "Woodcutter_%02d copy.png", i)
-            guard atlas.textureNames.contains(name) else { break }
-            textures.append(atlas.textureNamed(name))
-        }
-        guard !textures.isEmpty else { return }
-
-        let sprite = SKSpriteNode(texture: textures[0])
-        sprite.size = CGSize(width: 540, height: 670)   // 1.5× smaller than first pass (was 800×1000)
-        sprite.position = position       // tuned via editor mode
-        sprite.zPosition = 13
-        sprite.name = "woodcutterAnimation"
-        addChild(sprite)
-        woodcutterAnimation = sprite
-
-        let cycle = SKAction.animate(with: textures, timePerFrame: 0.18, resize: false, restore: false)
-        sprite.run(SKAction.repeatForever(cycle), withKey: "woodcutterFrameLoop")
-    }
-
-    private func setupChickenAnimation() {
-        guard let position = area.ambient[.chicken] else { return }
-        guard let sprite = makeLoopingFrameSprite(
-            prefix: "ChickenFrame",
-            frameCount: 15,
-            size: CGSize(width: 165, height: 56),      // native source size — matches painted reference
-            position: position,
-            nodeName: "chickenAnimation",
-            actionKey: "chickenFrameLoop"
-        ) else { return }
-        chickenAnimation = sprite
-    }
-
-    /// Shared builder for the looping frame sprites used by fisherman + chicken
-    /// (and previously the river flow). Returns nil if no frames are bundled yet.
-    private func makeLoopingFrameSprite(
-        prefix: String,
-        frameCount: Int,
-        size: CGSize,
-        position: CGPoint,
-        nodeName: String,
-        actionKey: String
-    ) -> SKSpriteNode? {
-        var textures: [SKTexture] = []
-        for i in 0..<frameCount {
-            let name = String(format: "%@%02d", prefix, i)
-            #if os(iOS)
-            guard UIImage(named: name) != nil else { break }
-            #else
-            guard NSImage(named: name) != nil else { break }
-            #endif
-            textures.append(SKTexture(imageNamed: name))
-        }
-        guard !textures.isEmpty else { return nil }
-
-        let sprite = SKSpriteNode(texture: textures[0])
-        sprite.size = size
-        sprite.position = position
-        sprite.zPosition = 12   // above terrain (-100), below station label pills (9-10)
-        sprite.name = nodeName
-        addChild(sprite)
-
-        let timePerFrame: TimeInterval = textures.count <= 2 ? 0.5 : 0.15
-        let cycle = SKAction.animate(
-            with: textures,
-            timePerFrame: timePerFrame,
-            resize: false,
-            restore: false
-        )
-        sprite.run(SKAction.repeatForever(cycle), withKey: actionKey)
-        return sprite
-    }
-
     // MARK: - Swaying Trees
     //
-    // Two-layer wind animation on cut-out tree PNGs (Tree1..9):
+    // Two-layer wind animation on cut-out tree PNGs listed in `area.trees`
+    // (none yet — the old map's Tree1..9 were deleted with it Oct 24 2026):
     //   1. Continuous gentle ±2° sway (each tree starts at a random phase so
     //      the workshop doesn't pulse in unison)
     //   2. Player-disturbance pulse — when the apprentice walks within 150pt
@@ -734,7 +518,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
         swayingTrees.append(SwayingTree(node: tree))
     }
 
-    /// Called from update(_:). Cheap O(n) distance check — n = 9 trees.
+    /// Called from update(_:). Cheap O(n) distance check over the area's trees.
     private func disturbTreesNearPlayer() {
         guard !swayingTrees.isEmpty else { return }
         let triggerRadius: CGFloat = 150
@@ -1814,21 +1598,6 @@ class WorkshopScene: SKScene, ScrollZoomable {
         }
         if let glow = volcanoGlow {
             editorMode.registerNode(glow, name: "glow_volcano")
-        }
-        if let quarry = quarryAnimation {
-            editorMode.registerNode(quarry, name: "anim_quarry")
-        }
-        if let river = riverFlowAnimation {
-            editorMode.registerNode(river, name: "anim_river")
-        }
-        if let chicken = chickenAnimation {
-            editorMode.registerNode(chicken, name: "anim_chicken")
-        }
-        if let fisherman = fishermanAnimation {
-            editorMode.registerNode(fisherman, name: "anim_fisherman")
-        }
-        if let woodcutter = woodcutterAnimation {
-            editorMode.registerNode(woodcutter, name: "anim_woodcutter")
         }
         for entry in swayingTrees {
             editorMode.registerNode(entry.node, name: entry.node.name ?? "tree")

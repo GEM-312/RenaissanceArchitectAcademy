@@ -253,9 +253,6 @@
 		AC6 /* workshop_ambient.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC6 /* workshop_ambient.wav */; };
 		AC8 /* music_lesson.wav in Resources */ = {isa = PBXBuildFile; fileRef = BC8 /* music_lesson.wav */; };
 		ACE /* SketchEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE /* SketchEditorView.swift */; };
-		ATC1 /* RiverHouse.atlasc in Resources */ = {isa = PBXBuildFile; fileRef = ATC2 /* RiverHouse.atlasc */; };
-		ATC3 /* Fisherman.atlasc in Resources */ = {isa = PBXBuildFile; fileRef = ATC4 /* Fisherman.atlasc */; };
-		ATC5 /* Woodcutter.atlasc in Resources */ = {isa = PBXBuildFile; fileRef = ATC6 /* Woodcutter.atlasc */; };
 		CD0 /* BuildingTopicMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0 /* BuildingTopicMap.swift */; };
 		CD1 /* ContextualSuggestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1 /* ContextualSuggestion.swift */; };
 		CD2 /* ContextualSuggestionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD2 /* ContextualSuggestionService.swift */; };
@@ -549,9 +546,6 @@
 		5CE /* PencilCanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PencilCanvasView.swift; sourceTree = "<group>"; };
 		7CE /* BlueprintStudyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueprintStudyView.swift; sourceTree = "<group>"; };
 		9CE /* ShapeSnap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeSnap.swift; sourceTree = "<group>"; };
-		ATC2 /* RiverHouse.atlasc */ = {isa = PBXFileReference; lastKnownFileType = folder; path = RiverHouse.atlasc; sourceTree = "<group>"; };
-		ATC4 /* Fisherman.atlasc */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Fisherman.atlasc; sourceTree = "<group>"; };
-		ATC6 /* Woodcutter.atlasc */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Woodcutter.atlasc; sourceTree = "<group>"; };
 		BA1 /* anvil_strike.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = anvil_strike.wav; sourceTree = "<group>"; };
 		BA2 /* clay_dig.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = clay_dig.wav; sourceTree = "<group>"; };
 		BA3 /* crafting_complete.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = crafting_complete.wav; sourceTree = "<group>"; };
@@ -636,9 +630,6 @@
 				1P2 /* ForestAnimalNode.swift */,
 				1AE /* AreaExitNode.swift */,
 				5475D2F92F319000003AA131 /* Assets.xcassets */,
-				ATC2 /* RiverHouse.atlasc */,
-				ATC4 /* Fisherman.atlasc */,
-				ATC6 /* Woodcutter.atlasc */,
 				54477B172F313D06007D8C64 /* Info.plist */,
 				54477B162F313B22007D8C64 /* Fonts */,
 				101 /* RenaissanceArchitectAcademyApp.swift */,
@@ -1061,9 +1052,6 @@
 				5466B5C32FB4D4120073BD90 /* market_chatter_ambient.mp3 in Resources */,
 				5466B5D12FB4FE000073BD90 /* mine_ambient.mp3 in Resources */,
 				5466B5D32FB4FE000073BD90 /* farm_ambient.mp3 in Resources */,
-				ATC1 /* RiverHouse.atlasc in Resources */,
-				ATC3 /* Fisherman.atlasc in Resources */,
-				ATC5 /* Woodcutter.atlasc in Resources */,
 				F001 /* Cinzel-Black.ttf in Resources */,
 				F002 /* Cinzel-Bold.ttf in Resources */,
 				F003 /* Cinzel-ExtraBold.ttf in Resources */,

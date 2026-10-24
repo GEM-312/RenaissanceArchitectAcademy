@@ -9,7 +9,7 @@ import SwiftUI
 ///
 /// ODR Tags:
 ///   "city-scene"       — Terrain, Building sprites
-///   "workshop-scene"   — WorkshopTerrain, Station sprites
+///   "workshop-scene"   — WorkshopBottega/Countryside/HillsTerrain, Station sprites
 ///   "crafting-room"    — WorkshopBackground, Interior sprites
 ///   "forest-scene"     — Forest1
 ///   "onboarding"       — Avatar frames, GirlIntro frames
