@@ -226,6 +226,9 @@ struct ForestMapView: View {
             return
         }
 
+        // Each new message decides afresh which tree's guide animal (if any) lights up
+        sceneHolder.scene?.setGuideTree(nil)
+
         let hasAxe = workshop.hasTool(for: .forest)
         let timberCount = workshop.rawMaterials[.timber] ?? 0
 
@@ -250,9 +253,9 @@ struct ForestMapView: View {
         let buildingName = vm.buildingPlots.first(where: { $0.id == bid })?.building.name ?? ""
         let progress = vm.buildingProgressMap[bid] ?? BuildingProgress()
 
-        // LOCAL WORK FIRST: check forest knowledge cards
+        // LOCAL WORK FIRST: the building's next forest card, if any is left
         let forestCards = KnowledgeCardContent.cards(for: buildingName, in: .forest)
-        let hasUncompletedCards = forestCards.contains { !progress.completedCardIDs.contains($0.id) }
+        let nextCard = forestCards.first { !progress.completedCardIDs.contains($0.id) }
 
         // 1. Need an axe first
         if !hasAxe {
@@ -262,15 +265,27 @@ struct ForestMapView: View {
             return
         }
 
-        // 2. Need timber — guide to the specific tree with the next knowledge card
-        if timberCount < 3 {
-            let forestCards = KnowledgeCardContent.cards(for: buildingName, in: .forest)
-            let nextCard = forestCards.first { !progress.completedCardIDs.contains($0.id) }
+        // 2. Forest cards left, or not enough timber yet — guide to the tree with the next card.
+        //    The timber count only shows while it is still short of 3.
+        if nextCard != nil || timberCount < 3 {
+            let timberNote = timberCount < 3 ? " (\(timberCount)/3 timber)" : ""
             if let card = nextCard {
                 let treeName = card.stationKey.capitalized
-                guidanceMessage = "Visit the \(treeName) tree! Learn about \(card.title) and collect timber for the \(buildingName). (\(timberCount)/3 timber)"
+                if let guide = sceneHolder.scene?.poi(named: treeName)?.guide {
+                    // The tree's animal leads the way. The first time, the bird says why it
+                    // lives there; after that, why this building needs this tree.
+                    if workshop.heardTreeGuideFacts.contains(treeName) {
+                        guidanceMessage = "For the \(buildingName): \(Self.cardSubject(card.title)) — follow the \(guide.name) to the \(treeName) tree!\(timberNote)"
+                    } else {
+                        guidanceMessage = "Follow the \(guide.name) to the \(treeName) tree! \(guide.fact)\(timberNote)"
+                        workshop.heardTreeGuideFacts.insert(treeName)
+                    }
+                    sceneHolder.scene?.setGuideTree(treeName)
+                } else {
+                    guidanceMessage = "Visit the \(treeName) tree! Learn about \(card.title) and collect timber for the \(buildingName).\(timberNote)"
+                }
             } else {
-                guidanceMessage = "Tap any tree to collect timber for the \(buildingName)! (\(timberCount)/3 timber)"
+                guidanceMessage = "Tap any tree to collect timber for the \(buildingName)!\(timberNote)"
             }
             guidanceDestination = nil
             withAnimation(.spring(response: 0.4)) { showGuidance = true }
@@ -314,6 +329,12 @@ struct ForestMapView: View {
         withAnimation(.spring(response: 0.4)) {
             showGuidance = true
         }
+    }
+
+    /// A card title as the subject of the bird's line — "Step 3: Floor Beams" → "Floor Beams",
+    /// "Step 1 Support: Fuel" → "Fuel". Titles without a step prefix pass through unchanged.
+    private static func cardSubject(_ title: String) -> String {
+        title.replacingOccurrences(of: #"^Step \d+( Support)?: "#, with: "", options: .regularExpression)
     }
 
     private func setupScienceCards(for poi: ForestScene.ForestPOI) {
@@ -1556,8 +1577,12 @@ struct ForestMapView: View {
                 let allForestCards = KnowledgeCardContent.cards(for: buildingName, in: .forest)
                 let progress = vm.buildingProgressMap[bid] ?? BuildingProgress()
 
-                // Complete the NEXT uncompleted forest card (any tree visit counts)
-                if let nextCard = allForestCards.first(where: { !progress.completedCardIDs.contains($0.id) }) {
+                // Complete this tree's uncompleted card — only at its own tree, so the
+                // card the bird guided to is the card the player gets (Oct 24 2026)
+                let treeKey = poi.name.lowercased()
+                if let nextCard = allForestCards.first(where: {
+                    $0.stationKey == treeKey && !progress.completedCardIDs.contains($0.id)
+                }) {
                     vm.markCardCompleted(for: bid, cardID: nextCard.id)
                     print("[FOREST] Auto-completed knowledge card '\(nextCard.id)' from \(poi.name) tree — science cards + timber earned it")
                 }
@@ -1727,7 +1752,10 @@ struct ForestMapView: View {
             playerIsWalking = isWalking
         }
 
+        // The Countryside signpost — always reopen the Workshop at the forest gate,
+        // even when the Forest was reached straight from the City Map
         newScene.onBackRequested = {
+            workshop.arriveAtForestGate()
             onBackToWorkshop?()
         }
 

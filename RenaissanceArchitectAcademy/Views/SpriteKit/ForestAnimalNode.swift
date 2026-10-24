@@ -3,7 +3,8 @@ import SwiftUI
 
 /// Ambient forest animal (frog, goldfinch, woodpecker, …) — Kling loop clips cut out on a plain background.
 /// Ambient kinds play their clip once, rest on frame 00 for a random pause, then play again, so animals
-/// never move in lockstep. Patrol kinds (hedgehog) walk back and forth instead. Decorative only for now.
+/// never move in lockstep. Patrol kinds (hedgehog) walk back and forth instead. Five of them are also
+/// tree guides — see `ForestScene.TreeGuide` and `setGuiding(_:)`.
 class ForestAnimalNode: SKNode {
 
     /// One animal kind: its atlas, how its frames sit on their canvas, and how it behaves
@@ -75,6 +76,14 @@ class ForestAnimalNode: SKNode {
     private let textures: [SKTexture]
     private var isFacingRight = true
 
+    /// True while the bird is pointing the player at this animal's tree — it plays more
+    /// often and stands on the same pulsing ochre ring the trees have
+    private(set) var isGuiding = false
+    private var guideRing: SKShapeNode?
+
+    /// Rest between clips / patrol legs — short while guiding, so the animal catches the eye
+    private var restRange: ClosedRange<TimeInterval> { isGuiding ? 0.3...1.0 : kind.restRange }
+
     // MARK: - Initialization
 
     init(kind: Kind) {
@@ -117,11 +126,45 @@ class ForestAnimalNode: SKNode {
         xScale = right ? abs(xScale) : -abs(xScale)
     }
 
+    // MARK: - Tree Guide
+
+    /// Turn the guide cue on or off
+    func setGuiding(_ guiding: Bool) {
+        guard guiding != isGuiding else { return }
+        isGuiding = guiding
+
+        if guiding {
+            // Same look as the tree POI ring — ochre fill + stroke, slow 1.15× pulse.
+            // At least the tree ring's 40pt; wider for the deer so it shows around its feet.
+            let ring = SKShapeNode(circleOfRadius: max(40, kind.displaySize.width * 0.4))
+            ring.fillColor = PlatformColor(RenaissanceColors.ochre.opacity(0.15))
+            ring.strokeColor = PlatformColor(RenaissanceColors.ochre.opacity(0.4))
+            ring.lineWidth = 2
+            ring.zPosition = -2  // under the shadow and the animal
+            let scaleUp = SKAction.scale(to: 1.15, duration: 1.2)
+            scaleUp.timingMode = .easeInEaseOut
+            let scaleDown = SKAction.scale(to: 1.0, duration: 1.2)
+            scaleDown.timingMode = .easeInEaseOut
+            ring.run(SKAction.repeatForever(SKAction.sequence([scaleUp, scaleDown])))
+            addChild(ring)
+            guideRing = ring
+
+            // Cut a long rest short so the animal moves now, not up to 10 s from now
+            if kind.patrol == nil {
+                sprite.removeAction(forKey: "ambient")
+                scheduleNextClip()
+            }
+        } else {
+            guideRing?.removeFromParent()
+            guideRing = nil
+        }
+    }
+
     // MARK: - Ambient Loop
 
     /// Rest a random while on frame 00, play the clip once, repeat
     private func scheduleNextClip() {
-        let rest = SKAction.wait(forDuration: TimeInterval.random(in: kind.restRange))
+        let rest = SKAction.wait(forDuration: TimeInterval.random(in: restRange))
         let clip = SKAction.animate(with: textures, timePerFrame: kind.frameTime, resize: false, restore: true)
         let again = SKAction.run { [weak self] in self?.scheduleNextClip() }
         sprite.run(SKAction.sequence([rest, clip, again]), withKey: "ambient")
@@ -143,7 +186,7 @@ class ForestAnimalNode: SKNode {
             self.sprite.removeAction(forKey: "walk")
             self.sprite.texture = self.textures[0]
         }
-        let rest = SKAction.wait(forDuration: TimeInterval.random(in: kind.restRange))
+        let rest = SKAction.wait(forDuration: TimeInterval.random(in: restRange))
         let turn = SKAction.run { [weak self] in
             guard let self else { return }
             self.setFacingRight(!self.isFacingRight)

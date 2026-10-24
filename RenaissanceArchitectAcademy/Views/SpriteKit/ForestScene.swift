@@ -56,11 +56,23 @@ class ForestScene: SKScene, ScrollZoomable {
         let description: String
         let biologyFact: String        // Growth, ecology, or biology detail
         let timberYield: Int           // How much timber per collection (1-3)
+        let guide: TreeGuide           // The animal that leads the player to this tree
+    }
+
+    /// An animal that lives by a tree and leads the player to it (Marina, Oct 24 2026).
+    /// The bird names the animal and gives the reason they belong together; while the
+    /// bird points at the tree, its animal pulses on an ochre ring and plays more often.
+    struct TreeGuide {
+        let animal: ForestAnimalNode.Kind
+        /// How the bird names it — "Follow the squirrel to the Walnut tree!"
+        let name: String
+        /// Why this animal belongs to this tree — spoken by the bird
+        let fact: String
     }
 
     private let pointsOfInterest: [ForestPOI] = [
         ForestPOI(name: "Oak", italianName: "Quercia",
-                  position: CGPoint(x: 1192, y: 1249),
+                  position: CGPoint(x: 1283, y: 1067),
                   woodType: "Hardwood", leafType: "Deciduous", maxHeight: "25-30 m",
                   usedFor: "Roof trusses, load-bearing beams, and heavy doors. Oak spans cathedral naves and supports the massive roof structures of the Colosseum.",
                   furnitureUse: "Dining tables, church pews, carved altarpieces. Oak's tight grain holds intricate carvings for generations.",
@@ -68,9 +80,11 @@ class ForestScene: SKScene, ScrollZoomable {
                   buildings: "ALL buildings (structural)",
                   description: "The strongest Italian hardwood — oak heartwood resists rot for centuries. A single oak beam can support tons of stone.",
                   biologyFact: "Oak trees produce acorns only after 20-50 years of growth. A mature oak can transpire 150 liters of water per day through its leaves, cooling the surrounding forest.",
-                  timberYield: 3),
+                  timberYield: 3,
+                  guide: TreeGuide(animal: .deer, name: "roe deer",
+                                   fact: "Roe deer come every autumn to eat the oak's acorns.")),
         ForestPOI(name: "Chestnut", italianName: "Castagno",
-                  position: CGPoint(x: 2562, y: 1398),
+                  position: CGPoint(x: 2364, y: 1488),
                   woodType: "Hardwood", leafType: "Deciduous", maxHeight: "20-35 m",
                   usedFor: "Window frames, exterior cladding, and water-resistant joinery. Rich in natural tannins that repel insects and moisture.",
                   furnitureUse: "Storage chests, bed frames, and rustic tables. Called 'the bread tree' — its flour fed mountain villages.",
@@ -78,9 +92,11 @@ class ForestScene: SKScene, ScrollZoomable {
                   buildings: "Palazzo, Villa",
                   description: "Chestnut's natural tannins make it the most weather-resistant Italian wood — perfect for anything exposed to rain.",
                   biologyFact: "Chestnut trees contain 8-13% tannin in their bark — a natural chemical defense. Medieval builders discovered wood soaked in tannin resists both rot and insects without any treatment.",
-                  timberYield: 2),
+                  timberYield: 2,
+                  guide: TreeGuide(animal: .hedgehog, name: "hedgehog",
+                                   fact: "In Italian the spiky chestnut husk is called a riccio — a hedgehog!")),
         ForestPOI(name: "Cypress", italianName: "Cipresso",
-                  position: CGPoint(x: 2466, y: 1173),
+                  position: CGPoint(x: 2163, y: 783),
                   woodType: "Softwood", leafType: "Evergreen", maxHeight: "25-40 m",
                   usedFor: "Church doors, chapel interiors, and ceiling panels. Its aromatic oils repel moths and preserve sacred spaces.",
                   furnitureUse: "Carved chests, wardrobes, and hope chests. The scent protects stored linens and vestments from insects.",
@@ -88,9 +104,11 @@ class ForestScene: SKScene, ScrollZoomable {
                   buildings: "Chapel, Villa",
                   description: "The tall sentinel of Tuscany. Cypress is aromatic and moth-resistant — ancient Romans believed it sacred to the gods.",
                   biologyFact: "Cypress wood contains natural fungicides and insecticides in its resin. The doors of St. Peter's Basilica in Rome, made of cypress, lasted over 1,100 years before replacement.",
-                  timberYield: 2),
+                  timberYield: 2,
+                  guide: TreeGuide(animal: .goldfinch, name: "goldfinch",
+                                   fact: "Goldfinches hide their nests in thick branches, and the cypress stays thick and green all year.")),
         ForestPOI(name: "Walnut", italianName: "Noce",
-                  position: CGPoint(x: 1789, y: 1182),
+                  position: CGPoint(x: 2887, y: 1050),
                   woodType: "Hardwood", leafType: "Deciduous", maxHeight: "15-25 m",
                   usedFor: "Inlaid palazzo ceilings, ornamental door frames, and decorative wall panels in the finest Renaissance interiors.",
                   furnitureUse: "Writing desks, portrait frames, and marquetry inlay. The most prized wood for master carvers and cabinet makers.",
@@ -98,9 +116,11 @@ class ForestScene: SKScene, ScrollZoomable {
                   buildings: "Palazzo (luxury)",
                   description: "The most prized wood in Renaissance Italy. Walnut's deep grain and rich color made it the choice of master artisans.",
                   biologyFact: "Walnut roots release juglone, a natural herbicide that inhibits competing plants from growing nearby. This is called allelopathy — chemical warfare between plants.",
-                  timberYield: 1),
+                  timberYield: 1,
+                  guide: TreeGuide(animal: .squirrel, name: "squirrel",
+                                   fact: "Squirrels bury walnuts and forget some — that's how new walnut trees grow!")),
         ForestPOI(name: "Poplar", italianName: "Pioppo",
-                  position: CGPoint(x: 996, y: 1441),
+                  position: CGPoint(x: 1315, y: 1453),
                   woodType: "Softwood", leafType: "Deciduous", maxHeight: "20-30 m",
                   usedFor: "Scaffolding, temporary centering for arches, and formwork. Every Renaissance construction site depended on poplar.",
                   furnitureUse: "Painting panels for tempera art, simple shelving, and crates. Botticelli's 'Birth of Venus' was painted on poplar.",
@@ -108,10 +128,21 @@ class ForestScene: SKScene, ScrollZoomable {
                   buildings: "Construction phase + Chapel frescoes",
                   description: "Fast-growing and lightweight, poplar was the builder's workhorse and the artist's canvas — scaffolding by day, painting panels by night.",
                   biologyFact: "Poplar is one of the fastest-growing trees in Europe — up to 3 meters per year. Its rapid growth makes it a carbon sink, absorbing CO2 faster than most other species.",
-                  timberYield: 2),
+                  timberYield: 2,
+                  guide: TreeGuide(animal: .woodpecker, name: "woodpecker",
+                                   fact: "Poplar wood is soft, so woodpeckers carve their nest holes in it.")),
     ]
 
     private var poiNodes: [SKNode] = []
+
+    // MARK: - Countryside Signpost
+
+    /// The way back to the Workshop's Countryside, beside the spawn clearing — same idea
+    /// as the workshop maps' signposts. Forest1 has no painted sign yet, so it is the
+    /// name pill only (Marina, Oct 24 2026). Walking to it fires `onBackRequested`.
+    /// Drag it in editor mode — it prints as "exit_countryside".
+    private let countrysideSignPosition = CGPoint(x: 760, y: 820)
+    private var countrysideSign: SKNode?
 
     // MARK: - Growing Trees
 
@@ -144,38 +175,47 @@ class ForestScene: SKScene, ScrollZoomable {
 
     // MARK: - Ambient Animals
 
-    /// Decorative animals — starting spots are placeholders, move them with editor mode (E)
+    /// Decorative animals — starting spots are placeholders, move them with editor mode (E).
+    /// The five tree guides start just right of their tree (Oct 24 2026 placeholders);
+    /// each tree claims the first not-yet-claimed animal of its guide kind, in this order.
     private let animalSpots: [(kind: ForestAnimalNode.Kind, position: CGPoint, facingRight: Bool)] = [
         (.frog, CGPoint(x: 2180, y: 930), false),      // by the upper stream bridge
         (.frog, CGPoint(x: 1990, y: 600), true),       // by the lower stream bridge
-        (.goldfinch, CGPoint(x: 1000, y: 760), true),  // start clearing
+        (.goldfinch, CGPoint(x: 2313, y: 773), false), // Cypress guide
         (.goldfinch, CGPoint(x: 1120, y: 800), false), // start clearing
-        (.woodpecker, CGPoint(x: 552, y: 1400), false), // Marina placed
-        (.squirrel, CGPoint(x: 1880, y: 1170), false), // by the walnut
-        (.hedgehog, CGPoint(x: 1909, y: 829), true),   // Marina placed
-        (.deer, CGPoint(x: 1457, y: 483), false),      // Marina placed
+        (.woodpecker, CGPoint(x: 1465, y: 1443), false), // Poplar guide
+        (.squirrel, CGPoint(x: 3037, y: 1040), false), // Walnut guide
+        (.hedgehog, CGPoint(x: 2464, y: 1458), true),  // Chestnut guide — patrols 180pt right
+        (.deer, CGPoint(x: 1433, y: 1057), false),     // Oak guide
         (.owl, CGPoint(x: 789, y: 1190), true),        // on the painted stump, west of the Oak
     ]
 
     private var animalNodes: [ForestAnimalNode] = []
 
+    /// Each tree's guide animal, by POI index (built in setupAnimals)
+    private var guideNodes: [Int: ForestAnimalNode] = [:]
+    /// The tree the bird is currently pointing at, if any
+    private var guideTreeName: String?
+
+    // MARK: - Tree Labels (fade in near the apprentice)
+
+    /// Tree name pills show only while the apprentice is this close — the guide animals
+    /// are the landmarks from afar (Marina, Oct 24 2026). Scene points.
+    private let treeLabelRadius: CGFloat = 500
+    /// Each tree's name pill, by POI index, and whether it is currently faded in
+    private var treeLabels: [SKNode] = []
+    private var treeLabelShown: [Bool] = []
+
     // MARK: - Swaying Trees
 
     /// Trees Marina cut out of Forest1 — each starts exactly on its painted spot (bottom-center, scene pts).
     /// Move them with editor mode (E); new positions print under "FOREST SWAYING TREES".
-    private let swayingTreeSpots: [(name: String, position: CGPoint)] = [
-        ("ForestTree1", CGPoint(x: 807, y: 1303)),   // tall cypress
-        ("ForestTree2", CGPoint(x: 1034, y: 329)),   // bare sapling + mushroom
-        ("ForestTree3", CGPoint(x: 1283, y: 1530)),  // tall cypress
-        ("ForestTree4", CGPoint(x: 1400, y: 728)),   // cypress + bush
-        ("ForestTree5", CGPoint(x: 1754, y: 1430)),  // small cypress
-        ("ForestTree6", CGPoint(x: 2745, y: 776)),   // bush on a leaning trunk
-        ("ForestTree7", CGPoint(x: 569, y: 549)),    // round-crown tree
-        ("ForestTree8", CGPoint(x: 1563, y: 1063)),  // fern shrub
-    ]
+    /// Empty since Oct 24 2026: the Sep cut-outs (ForestTree1–8) belonged to the old Forest1 and were
+    /// deleted. New cut-outs from the current map go here, one ("Name", position) per tree.
+    private let swayingTreeSpots: [(name: String, position: CGPoint)] = []
 
-    /// Cutouts that overlap the grown Oak + Walnut from the front — drawn above the growth sprites
-    private let frontSwayingTrees: Set<String> = ["ForestTree4", "ForestTree8"]
+    /// Cutouts that overlap a grown tree from the front — drawn above the growth sprites
+    private let frontSwayingTrees: Set<String> = []
 
     /// Trees that sway in the wind and react when the apprentice walks past (same effect as the Workshop map)
     private struct SwayingTree {
@@ -213,7 +253,7 @@ class ForestScene: SKScene, ScrollZoomable {
         /* 18 */ CGPoint(x: 550, y: 1200),
         /* 19 */ CGPoint(x: 3000, y: 1200),
         /* 20 */ CGPoint(x: 1055, y: 1348),
-        /* 21 */ CGPoint(x: 2359, y: 1521),
+        /* 21 */ CGPoint(x: 2327, y: 1482),
         /* 22 */ CGPoint(x: 1541, y: 660),
         /* 23 */ CGPoint(x: 1809, y: 987),
 
@@ -368,6 +408,7 @@ class ForestScene: SKScene, ScrollZoomable {
         setupBackground()
         setupTitle()
         setupPOIs()
+        setupCountrysideSign()
         setupAnimals()
         setupSwayingTrees()
         setupPlayer()
@@ -634,15 +675,77 @@ class ForestScene: SKScene, ScrollZoomable {
             let displayText = "\(poi.name) · \(poi.italianName)"
             let pill = SKNode.makePillLabel(
                 text: displayText,
-                fontSize: 13,
-                position: CGPoint(x: 0, y: -60),
+                fontSize: 28,                         // same size as the station labels on every other map
+                position: CGPoint(x: 0, y: -80),      // clears the 40pt glow at its 1.15× pulse
                 zPosition: 10
             )
+            pill.alpha = 0  // faded in by updateTreeLabels() when the apprentice is near
             container.addChild(pill)
+            treeLabels.append(pill)
+            treeLabelShown.append(false)
 
             addChild(container)
             poiNodes.append(container)
         }
+    }
+
+    // MARK: - Countryside Signpost Setup
+
+    private func setupCountrysideSign() {
+        let sign = SKNode()
+        sign.position = countrysideSignPosition
+        sign.zPosition = 10
+
+        // Invisible hit area, the size of a tree POI's glow
+        let hitArea = SKShapeNode(circleOfRadius: 40)
+        hitArea.fillColor = .clear
+        hitArea.strokeColor = .clear
+        sign.addChild(hitArea)
+
+        // Same pill as the tree labels
+        sign.addChild(SKNode.makePillLabel(
+            text: "Countryside",
+            fontSize: 28,
+            position: CGPoint(x: 0, y: -80),
+            zPosition: 10
+        ))
+
+        addChild(sign)
+        countrysideSign = sign
+    }
+
+    /// Walk to the spawn clearing beside the sign, then head back to the Countryside
+    private func walkPlayerToCountrysideSign() {
+        guard playerNode != nil else { return }
+        onPlayerStartedWalking?()
+
+        // Cancel any current walk
+        playerNode.removeAction(forKey: "walkTo")
+
+        let targetPos = waypoints[24]
+        let playerPos = playerNode.position
+        startFollowingPlayer(toward: targetPos)
+
+        let onArrival: () -> Void = { [weak self] in
+            self?.isPlayerWalking = false
+            self?.isFollowingPlayer = false
+            self?.walkTargetPosition = nil
+            self?.onBackRequested?()
+        }
+
+        // If very close, walk directly
+        let directDistance = hypot(targetPos.x - playerPos.x, targetPos.y - playerPos.y)
+        if directDistance < 350 {
+            playerNode.setFacingDirection(targetPos.x > playerPos.x)
+            playerNode.walkTo(destination: targetPos, duration: max(0.3, TimeInterval(directDistance / 467)), completion: onArrival)
+            return
+        }
+
+        // Dijkstra through the trail waypoints to the spawn waypoint
+        let path = findPath(from: playerPos, to: targetPos,
+                            startWaypoints: nearestWaypoints(to: playerPos), endWaypoints: [24])
+        playerNode.setFacingDirection((path.first ?? targetPos).x > playerPos.x)
+        playerNode.walkPath(path, speed: 467, completion: onArrival)
     }
 
     // MARK: - Ambient Animals Setup
@@ -656,6 +759,46 @@ class ForestScene: SKScene, ScrollZoomable {
             addChild(animal)
             animal.startBehavior()
             animalNodes.append(animal)
+        }
+
+        // Each tree claims the first unclaimed animal of its guide kind
+        for (index, poi) in pointsOfInterest.enumerated() {
+            let claimed = Set(guideNodes.values.map { ObjectIdentifier($0) })
+            if let animal = animalNodes.first(where: {
+                $0.kind.atlas == poi.guide.animal.atlas && !claimed.contains(ObjectIdentifier($0))
+            }) {
+                guideNodes[index] = animal
+            }
+        }
+    }
+
+    // MARK: - Tree Guides
+
+    /// Light up one tree's guide animal (nil = none). Called by SwiftUI when the bird names a tree.
+    func setGuideTree(_ treeName: String?) {
+        guideTreeName = treeName
+        for (index, animal) in guideNodes {
+            animal.setGuiding(pointsOfInterest[index].name == treeName)
+        }
+    }
+
+    /// Tree data by name, for the bird's guide line
+    func poi(named name: String) -> ForestPOI? {
+        pointsOfInterest.first { $0.name == name }
+    }
+
+    /// Called from update(_:) — fade each tree's name pill in or out as the apprentice
+    /// comes within `treeLabelRadius`. Only starts a fade when the state flips.
+    private func updateTreeLabels() {
+        guard playerNode != nil else { return }
+        for index in treeLabels.indices {
+            let poiPosition = pointsOfInterest[index].position
+            let near = hypot(poiPosition.x - playerNode.position.x,
+                             poiPosition.y - playerNode.position.y) < treeLabelRadius
+            guard near != treeLabelShown[index] else { continue }
+            treeLabelShown[index] = near
+            treeLabels[index].removeAction(forKey: "labelFade")
+            treeLabels[index].run(SKAction.fadeAlpha(to: near ? 1 : 0, duration: 0.3), withKey: "labelFade")
         }
     }
 
@@ -944,7 +1087,12 @@ class ForestScene: SKScene, ScrollZoomable {
         pigNode = nil
         huntTruffle = nil
         animalNodes = []
+        guideNodes = [:]
+        guideTreeName = nil
+        treeLabels = []
+        treeLabelShown = []
         swayingTrees = []
+        countrysideSign = nil
         growingTrees = [:]
         hasSetup = false
         // Break retain cycles from closures capturing SwiftUI views
@@ -967,6 +1115,7 @@ class ForestScene: SKScene, ScrollZoomable {
 
         updatePlayerScreenPosition()
         disturbTreesNearPlayer()
+        updateTreeLabels()
 
         // Smoothly follow the player while walking to a POI. Lerp toward
         // the clamp-respecting position for the player — for edge POIs the
@@ -1092,6 +1241,13 @@ class ForestScene: SKScene, ScrollZoomable {
         // Saving the truffle from the pig wins over any POI underneath it
         if huntTruffle != nil, tappedNodes.contains(where: { $0.name == TrufflePigNode.truffleHitName }) {
             saveTruffleFromPig()
+            return
+        }
+
+        // The Countryside signpost (its hit area or pill, or the node itself)
+        if let sign = countrysideSign,
+           tappedNodes.contains(where: { $0 === sign || $0.parent === sign || $0.parent?.parent === sign }) {
+            walkPlayerToCountrysideSign()
             return
         }
 
@@ -1296,6 +1452,11 @@ class ForestScene: SKScene, ScrollZoomable {
             let faceRight = poiPosition.x > (self?.playerNode.position.x ?? 0)
             self?.playerNode.setFacingDirection(faceRight)
 
+            // Found the tree the bird pointed at — its guide can rest
+            if self?.guideTreeName == treeName {
+                self?.setGuideTree(nil)
+            }
+
             // Stage 2: Settle camera on the POI
             self?.zoomCameraToPOI(poiPosition)
 
@@ -1468,6 +1629,10 @@ class ForestScene: SKScene, ScrollZoomable {
             editorMode.registerNode(node, name: "poi_\(i)")
         }
         editorMode.registerNode(playerNode, name: "player")
+
+        if let sign = countrysideSign {
+            editorMode.registerNode(sign, name: "exit_countryside")
+        }
 
         for (i, animal) in animalNodes.enumerated() {
             editorMode.registerNode(animal, name: "animal_\(i)")
