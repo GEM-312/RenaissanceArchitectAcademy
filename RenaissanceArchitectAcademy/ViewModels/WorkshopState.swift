@@ -35,6 +35,30 @@ class WorkshopState {
     /// Stations whose bird lesson has been shown this session (resets each launch)
     var stationsLessonSeen: Set<ResourceStationType> = []
 
+    /// Forest trees whose guide-animal fact the bird has already told this session
+    /// (resets each launch). After the first time, the bird gives the building's
+    /// reason for the visit instead of repeating the animal fact.
+    var heardTreeGuideFacts: Set<String> = []
+
+    // MARK: - Workshop Area (in memory, not saved)
+
+    /// The outdoor area the Workshop map shows. Lives here rather than in
+    /// WorkshopMapView because that view is torn down on every trip into the
+    /// Crafting Room, Goldsmith or Forest, and the area must survive the trip.
+    var currentAreaId: String = WorkshopAreaRegistry.bottega.id
+
+    /// Waypoint the apprentice appears on when the area's map next loads — the
+    /// signpost they came in by, or the forest gate. Nil = the area's own spawn.
+    /// Cleared once the scene has placed the player.
+    var arrivalWaypoint: Int? = nil
+
+    /// Next time the Workshop map loads, open the Forest's area at the forest gate.
+    func arriveAtForestGate() {
+        guard let forestArea = WorkshopAreaRegistry.areaId(containing: .forest) else { return }
+        currentAreaId = forestArea
+        arrivalWaypoint = WorkshopAreaRegistry.area(id: forestArea).stationWaypoints[.forest]?.first
+    }
+
     // MARK: - Bottega Job System
 
     /// Current active job from the workshop master

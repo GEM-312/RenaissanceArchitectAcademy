@@ -36,12 +36,27 @@ struct WorkshopAreaDefinition {
     /// the spawn with it, as it always has.
     let playerSpawnWaypoint: Int
 
+    /// Signposts painted at the map edge. Walking to one loads its destination area.
+    let exits: [WorkshopAreaExit]
+
     /// Swaying trees cut out of this area's own terrain art.
     let trees: [ZoneTreePlacement]
 
     /// Ambient overlays this map has, and where each sits. An overlay that is not
     /// listed is not created — a new area only lists the ones its art has room for.
     let ambient: [WorkshopAmbientKind: CGPoint]
+}
+
+/// One signpost on an area's map. The sign itself is painted into the terrain;
+/// `position` is its tap target and `waypoint` the spot on the road beside it —
+/// where the apprentice walks to before leaving, and where they appear when they
+/// arrive from that destination.
+struct WorkshopAreaExit {
+    /// `WorkshopAreaDefinition.id` of the area this sign leads to. Its
+    /// `displayName` is the sign's label.
+    let destinationAreaId: String
+    let position: CGPoint
+    let waypoint: Int
 }
 
 /// The always-on overlays layered over a Workshop terrain. Each one is drawn on

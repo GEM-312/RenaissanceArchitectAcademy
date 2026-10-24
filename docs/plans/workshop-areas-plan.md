@@ -1,7 +1,8 @@
 # Workshop Areas Plan — split the outdoor Workshop into 3 maps
 
 **Date:** 2026-10-09
-**Status:** Planning only. No Swift, asset or `project.pbxproj` file was touched to write this.
+**Status:** Step 1 done (`b129f29`). Step 2 art done Oct 20 — see "Applying the art" at the end;
+resume there next session.
 **Why:** the outdoor Workshop terrain (`WorkshopTerrain`, a May 2026 Midjourney map) is out of
 style with the Forest + Padua target look, and with 10 stations on one canvas it is crowded.
 The city map was split into zones for the same reasons (`docs/plans/zone-system-plan.md`); this
@@ -162,3 +163,44 @@ bird's message still names the real station ("Head to the Quarry"); the walk jus
   being true. Search `OnboardingContent.swift` and the station lessons when the art lands.
 - **Station lessons and knowledge cards** are keyed by `ResourceStationType`, not position, so they
   carry over untouched.
+
+## Applying the art — plan agreed 2026-10-20, start next session
+
+**Where the art is.** Marina's edited terrains, 4500×3214 PNG, in `~/Downloads` (Dropbox):
+`bottega_market_goldsmith_layout.png`, `countryside_workshop_layout.png`,
+`cuarry_mine_clay_pit_layout.png`. Generated in Midjourney from the Forest style reference only
+(no image prompt), then `scripts/photoshop/ResizeAndCameraRaw.jsx` + her Camera Raw pass. No PSDs
+were saved, so the editable Camera Raw smart filters exist only while those Photoshop tabs stay open.
+
+**What the art shows (checked Oct 20):**
+- **Bottega** — Crafting Room (workshop with tall chimney, open doors), Goldsmith (carved shopfront),
+  Market (striped-awning stalls on paving), a well, a road + signpost leaving left and another leaving right.
+- **Countryside** — farm with garden and paddock, river with a sandbank, wheat field, olive grove,
+  forest at top right with a footpath into it, one road + signpost leaving right (toward the Bottega).
+- **Hills** — quarry terraces, mine entrance with timber frame, red clay pit, volcano with painted
+  smoke and lava, one road + signpost leaving left (toward the Bottega). Ore heaps are not visible.
+- **Already painted, so their animated overlays would show twice:** Bottega chimney smoke,
+  Hills volcano smoke and lava. Decide per overlay in editor mode.
+- **Hills clay pit** is painted bright red and may read as lava next to the volcano; Marina to judge.
+
+**Steps** (each ends with Marina's iPad test; no Mac builds; commit only when she says):
+1. **Assets.** Add `WorkshopBottegaTerrain`, `WorkshopCountrysideTerrain`, `WorkshopHillsTerrain`
+   imagesets, copying `WorkshopTerrain.imageset/Contents.json` (`gpu-optimized-best`). Check:
+   4500×3214, `WorkshopTerrain` untouched, game unchanged. ~20–28 MB each.
+2. **Bottega behind a DEBUG button.** `WorkshopAreaRegistry.bottega` (3 stations, rough waypoints
+   placed from the art, spawn, no trees, ambient empty or chimney only). DEBUG-only button in
+   `WorkshopMapView` toggling legacy ↔ Bottega, copied from the city zone button
+   (`CityMapView.swift:753`: nil the scene callbacks, nil `sceneHolder.scene`, change an `@State`
+   id; add `.id(areaId)` to the `GameSpriteView` at `WorkshopMapView.swift:108`; `makeScene()` at
+   `:719` reads the registry by id). Marina drags positions in editor mode (E), pastes the dump,
+   values baked into the registry. Check: 3 stations walk + open; switching back shows legacy.
+   Note: `WorkshopScene.walkToStation` silently does nothing for a station not on the map
+   (`resourceNodes[stationType]` is nil), so bird guidance to off-map stations is a no-op until step 3.
+3. **Signposts + `WorkshopState.currentArea` + cross-area guidance** (design under Architecture
+   above). Needs Marina's call on signpost names: English or Italian. Check: Hills → no pickaxe →
+   Market in Bottega → back to Quarry.
+4. **Countryside, then Hills,** same routine as step 2.
+5. **Switch players over,** delete `legacy` + `WorkshopTerrain`/`WorkshopBackground`; search
+   onboarding and lesson text for position words ("the quarry up north").
+
+Also after approval: add the final workshop + forest no-hatching prompts to `docs/zone-terrain-prompts.md`.

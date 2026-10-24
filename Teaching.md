@@ -452,3 +452,23 @@ A −13% saturation filter would *look* close, but it's the wrong correction. Th
 
 **KEY TAKEAWAY**
 When colours differ between devices, ask "who is responsible for colour conversion here, and did anyone tell them what space my pixels are in?" before touching any pixels. A missing colour-space tag is invisible in code and only shows up on a wide-gamut screen.
+
+## State lives as long as its owner — why the workshop area moved into WorkshopState (2026-10-24)
+
+**THE CONCEPT**
+In SwiftUI, `@State` belongs to one *instance* of a view in the hierarchy. When that view leaves the hierarchy (a `switch` picks a different branch, a parent navigates away), its `@State` is destroyed. When it comes back, it starts from its initial value. So the question for every piece of state is: *which owner lives at least as long as this value needs to?*
+
+**STEP BY STEP**
+1. `WorkshopView` switches between `WorkshopMapView`, `CraftingRoomMapView` and `GoldsmithMapView`. Entering the Crafting Room removes `WorkshopMapView` entirely.
+2. Earlier today the current area was `@State areaId` in `WorkshopMapView`. Go into the Crafting Room from the Hills and come back, and you're on the default map again.
+3. `WorkshopState` is created once, higher up, and shared by all three views. A value stored there survives every interior trip and every Forest trip.
+4. Not everything moves up. `returnToStationAfterMarket` and `travelTargetStation` only need to survive a *map swap*, and a map swap keeps `WorkshopMapView` alive (only the SpriteKit scene is replaced, via `.id`). So they stay as `@State`, close to the code that uses them.
+
+**IN OUR CODE**
+`WorkshopState.currentAreaId` + `arrivalWaypoint` (`ViewModels/WorkshopState.swift`) decide which map loads and where the apprentice appears. `WorkshopMapView.travel(to:continuingTo:)` changes them. The `.id(workshop.currentAreaId)` modifier then tells SwiftUI that the sprite view is a new view, which presents the new scene.
+
+**A TRAP WE AVOIDED**
+Leaving for the Forest has to set the area to Countryside. If we did that *while* `WorkshopMapView` was still on screen, the `.id` change would build a full Countryside scene for the fraction of a second before the Forest appears, and that scene would consume the forest-gate arrival point. So `navigate(to: .forest)` only sets a flag, and `onDisappear` (when the view is already gone) writes the area.
+
+**KEY TAKEAWAY**
+Put state in the smallest owner that outlives every trip the value has to survive. Too low and it resets; too high and unrelated screens can change it.

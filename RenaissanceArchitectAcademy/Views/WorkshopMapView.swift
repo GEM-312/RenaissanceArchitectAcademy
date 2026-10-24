@@ -25,6 +25,17 @@ struct WorkshopMapView: View {
     // without triggering re-renders (unlike @State which causes infinite loops)
     @State private var sceneHolder = SceneHolder<WorkshopScene>()
 
+    /// Station a signpost trip is heading for — the walk carries on to it once the
+    /// next area's scene is ready. The area itself lives in `workshop.currentAreaId`;
+    /// `.id(workshop.currentAreaId)` on the sprite view makes SwiftUI present the new
+    /// scene, since GameSpriteView only presents a scene once, when it is created.
+    @State private var travelTargetStation: ResourceStationType?
+
+    /// Set when leaving for the Forest, so the Workshop reopens at the forest gate.
+    /// Applied in onDisappear, not on the spot: changing the area while this view is
+    /// still on screen would build a throwaway Countryside scene on the way out.
+    @State private var returnAtForestGate = false
+
     // Player tracking
     @State private var playerIsWalking = false
 
@@ -106,6 +117,7 @@ struct WorkshopMapView: View {
                 if assetManager.isReady(AssetManager.workshopScene) {
                     let hasModalOverlay = showDiscoveryCard || showStationKnowledgeCards || showStationLesson || showQuickCollectChoice
                     GameSpriteView(scene: makeScene(), options: [.allowsTransparency])
+                        .id(workshop.currentAreaId)
                         .ignoresSafeArea()
                         .allowsHitTesting(!hasModalOverlay)
                 } else {
@@ -134,7 +146,7 @@ struct WorkshopMapView: View {
                         if station == .forest {
                             // Navigate directly to the forest
                             activeStation = nil
-                            onNavigate?(.forest)
+                            navigate(to: .forest)
                         } else if station == .craftingRoom {
                             // Enter crafting room after lesson
                             activeStation = nil
@@ -183,6 +195,35 @@ struct WorkshopMapView: View {
                         onRotateRight: { sceneHolder.scene?.editorRotateRight() },
                         onNudge: { dx, dy in sceneHolder.scene?.editorNudge(dx: dx, dy: dy) }
                     )
+
+                    // DEBUG: cycle the map through every area in WorkshopAreaRegistry.all.
+                    // Drops the current scene the same way onDisappear does; the area
+                    // change rebuilds the sprite view, and makeScene() builds the next area.
+                    // Copied from the city zone button (CityMapView).
+                    VStack {
+                        HStack {
+                            Button {
+                                releaseScene()
+                                workshop.arrivalWaypoint = nil
+                                workshop.currentAreaId = nextArea.id
+                            } label: {
+                                Text(nextArea.displayName)
+                                    .font(RenaissanceFont.buttonSmall)
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, Spacing.md)
+                                    .padding(.vertical, Spacing.xs)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: CornerRadius.sm)
+                                            .fill(RenaissanceColors.terracotta.opacity(0.9))
+                                    )
+                            }
+                            .buttonStyle(.plain)
+                            .padding(.top, Spacing.xxl + Spacing.lg)
+                            Spacer()
+                        }
+                        .padding(.leading, Spacing.md)
+                        Spacer()
+                    }
                 }
                 #endif
 
@@ -232,7 +273,7 @@ struct WorkshopMapView: View {
                                     stationType: guidanceStationType,
                                     onWalkToStation: { station in sceneHolder.scene?.walkToStation(station) },
                                     destination: guidanceDestination,
-                                    onNavigate: onNavigate
+                                    onNavigate: { navigate(to: $0) }
                                 )
                                 .transition(.opacity)
                             }
@@ -281,7 +322,7 @@ struct WorkshopMapView: View {
                                 activeStation = nil
                             }
                             pendingStationAfterCard = nil
-                            onNavigate?(destination)
+                            navigate(to: destination)
                         },
                         playerName: onboardingState?.apprenticeName ?? "Apprentice",
                         triggerBirdChat: .constant(false),
@@ -316,7 +357,7 @@ struct WorkshopMapView: View {
                                 activeStation = nil
                             }
                             pendingStationAfterCard = nil
-                            onNavigate?(.cityMap)
+                            navigate(to: .cityMap)
                         },
                         onCompleted: { card in
                             notebookState?.completeDiscoveryCard(card)
@@ -672,12 +713,13 @@ struct WorkshopMapView: View {
             // .onAppear may have started before this .onDisappear fired.
             SoundManager.shared.stopAmbient(matching: Self.workshopStationAmbients)
             SoundManager.shared.stopMusic(.workshop)
-            // Nil out callbacks before releasing scene to break closure references
-            sceneHolder.scene?.onPlayerPositionChanged = nil
-            sceneHolder.scene?.onStationReached = nil
-            sceneHolder.scene?.onPlayerStartedWalking = nil
             // Release scene to free SpriteKit texture memory when navigating away
-            sceneHolder.scene = nil
+            releaseScene()
+            // Coming back from the Forest lands at the forest gate (see returnAtForestGate)
+            if returnAtForestGate {
+                returnAtForestGate = false
+                workshop.arriveAtForestGate()
+            }
         }
         .onChange(of: activeStation) { oldValue, newValue in
             if oldValue != nil && newValue == nil {
@@ -716,10 +758,29 @@ struct WorkshopMapView: View {
     private func makeScene() -> WorkshopScene {
         if let existing = sceneHolder.scene { return existing }
 
-        let newScene = WorkshopScene(area: WorkshopAreaRegistry.legacy)
+        let newScene = WorkshopScene(area: WorkshopAreaRegistry.area(id: workshop.currentAreaId))
         newScene.size = CGSize(width: 3500, height: 2500)
         newScene.scaleMode = .aspectFill
         newScene.apprenticeIsBoy = onboardingState?.apprenticeGender == .boy || onboardingState == nil
+        newScene.arrivalWaypoint = workshop.arrivalWaypoint
+
+        // Walked onto a signpost — load the area it points to
+        newScene.onExitReached = { destinationAreaId, station in
+            self.travel(to: destinationAreaId, continuingTo: station)
+        }
+
+        // Scene is set up and the player placed. didMove runs inside SwiftUI's view
+        // update (the sprite view presents the scene), so defer the state changes.
+        newScene.onReady = {
+            DispatchQueue.main.async {
+                self.workshop.arrivalWaypoint = nil
+                self.refreshStationBadges()
+                if let station = self.travelTargetStation {
+                    self.travelTargetStation = nil
+                    self.sceneHolder.scene?.walkToStation(station)
+                }
+            }
+        }
 
         // Player position updates
         newScene.onPlayerPositionChanged = { position, isWalking in
@@ -786,7 +847,7 @@ struct WorkshopMapView: View {
             case .forest:
                 // Navigate to forest scene
                 activeStation = nil
-                onNavigate?(.forest)
+                navigate(to: .forest)
             default:
                 // Skip card if player was sent to market (skip for market) or sent BACK to collect (returnToStation)
                 let sentToCollect = (returnToStationAfterMarket == stationType && workshop.hasTool(for: stationType))
@@ -813,6 +874,53 @@ struct WorkshopMapView: View {
         sceneHolder.scene = newScene
         return newScene
     }
+
+    /// Nil out callbacks before releasing the scene to break closure references
+    private func releaseScene() {
+        sceneHolder.scene?.onPlayerPositionChanged = nil
+        sceneHolder.scene?.onStationReached = nil
+        sceneHolder.scene?.onPlayerStartedWalking = nil
+        sceneHolder.scene?.onExitReached = nil
+        sceneHolder.scene?.onReady = nil
+        sceneHolder.scene = nil
+    }
+
+    /// Signpost reached: swap to the destination area's map. The apprentice appears at
+    /// that map's signpost leading back here, and walks on to `station` if the trip was
+    /// for one ("Go to Market" from the Quarry → Hills sign → Bottega → Market).
+    private func travel(to destinationAreaId: String, continuingTo station: ResourceStationType?) {
+        let fromAreaId = workshop.currentAreaId
+        dismissAllOverlays()
+        SoundManager.shared.stopAmbient(matching: Self.workshopStationAmbients)
+        lastVisitedStation = nil
+        releaseScene()
+        travelTargetStation = station
+        workshop.arrivalWaypoint = WorkshopAreaRegistry.area(id: destinationAreaId).exits
+            .first { $0.destinationAreaId == fromAreaId }?.waypoint
+        workshop.currentAreaId = destinationAreaId
+        // Tapped the sign itself — let the bird say what to do in the new area
+        if station == nil {
+            checkArrivalGuidance()
+        }
+    }
+
+    /// All navigation out of the Workshop goes through here, so leaving for the
+    /// Forest — by station, bird guidance, card or top bar — returns at the forest gate.
+    private func navigate(to destination: SidebarDestination) {
+        if destination == .forest {
+            returnAtForestGate = true
+        }
+        onNavigate?(destination)
+    }
+
+    #if DEBUG
+    /// The area the DEBUG area button switches to — the one after the current area, wrapping.
+    private var nextArea: WorkshopAreaDefinition {
+        let areas = WorkshopAreaRegistry.all
+        let index = areas.firstIndex { $0.id == workshop.currentAreaId } ?? 0
+        return areas[(index + 1) % areas.count]
+    }
+    #endif
 
 
     /// Show bird guidance following phase-based progression.
@@ -1524,7 +1632,7 @@ struct WorkshopMapView: View {
                     title: "Workshop",
                     viewModel: viewModel,
                     onNavigate: { destination in
-                        onNavigate?(destination)
+                        navigate(to: destination)
                     },
                     showBackButton: true,
                     onBack: { dismiss() },
@@ -1534,7 +1642,7 @@ struct WorkshopMapView: View {
                         viewModel.buildingPlots.first(where: { $0.id == id })?.building.name
                     },
                     onReturnToLesson: returnToLessonPlotId != nil ? {
-                        onNavigate?(.cityMap)
+                        navigate(to: .cityMap)
                     } : nil,
                     currentDestination: .workshop,
                     hideAvatarImage: !avatarInBox,

@@ -93,6 +93,21 @@ class WorkshopScene: SKScene, ScrollZoomable {
     /// Callback when player starts walking (dismiss any open dialogs/overlays)
     var onPlayerStartedWalking: (() -> Void)?
 
+    /// Player reached a signpost — SwiftUI loads the destination area. The station is
+    /// the one the walk was really for (nil when the player tapped the sign itself),
+    /// so the walk can continue on the next map.
+    var onExitReached: ((_ destinationAreaId: String, _ continuingTo: ResourceStationType?) -> Void)?
+
+    /// Scene finished its first setup — the player is placed and walks can start.
+    var onReady: (() -> Void)?
+
+    /// Waypoint to place the player on instead of the area's spawn (the signpost they
+    /// arrived by, or the forest gate). Set before the scene is presented.
+    var arrivalWaypoint: Int?
+
+    /// Signposts on this map, built from `area.exits`.
+    private var exitNodes: [AreaExitNode] = []
+
 
     // MARK: - Scene Setup
 
@@ -117,6 +132,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
         setupTitle()
         setupWalkingPaths()
         setupStations()
+        setupExits()
         setupAmbientEffects()
         setupQuarryAnimation()
         setupRiverFlowAnimation()
@@ -153,6 +169,8 @@ class WorkshopScene: SKScene, ScrollZoomable {
         #if DEBUG
         registerEditorNodes()
         #endif
+
+        onReady?()
     }
 
     // MARK: - Theme
@@ -168,6 +186,9 @@ class WorkshopScene: SKScene, ScrollZoomable {
         for child in children {
             guard let resourceNode = child as? ResourceNode else { continue }
             resourceNode.updateLabelTheme(isDark: dark)
+        }
+        for exitNode in exitNodes {
+            exitNode.updatePillLabelsTheme(isDark: dark)
         }
     }
 
@@ -266,6 +287,19 @@ class WorkshopScene: SKScene, ScrollZoomable {
             node.zPosition = 10
             addChild(node)
             resourceNodes[stationType] = node
+        }
+    }
+
+    // MARK: - Signposts
+
+    private func setupExits() {
+        for exit in area.exits {
+            let label = WorkshopAreaRegistry.area(id: exit.destinationAreaId).displayName
+            let node = AreaExitNode(exit: exit, label: label)
+            node.position = exit.position
+            node.zPosition = 10
+            addChild(node)
+            exitNodes.append(node)
         }
     }
 
@@ -1041,8 +1075,8 @@ class WorkshopScene: SKScene, ScrollZoomable {
         playerNode = PlayerNode(isBoy: apprenticeIsBoy)
         playerNode.zPosition = 50
         addChild(playerNode)
-        // Start at the area's spawn waypoint (the avatar box)
-        playerNode.position = waypoints[area.playerSpawnWaypoint]
+        // Start at the signpost / forest gate we arrived by, else the area's spawn
+        playerNode.position = waypoints[arrivalWaypoint ?? area.playerSpawnWaypoint]
         updatePlayerScreenPosition()
     }
 
@@ -1086,6 +1120,9 @@ class WorkshopScene: SKScene, ScrollZoomable {
         onPlayerPositionChanged = nil
         onStationReached = nil
         onPlayerStartedWalking = nil
+        onExitReached = nil
+        onReady = nil
+        exitNodes = []
     }
 
     override func update(_ currentTime: TimeInterval) {
@@ -1240,6 +1277,13 @@ class WorkshopScene: SKScene, ScrollZoomable {
                 walkPlayerToStation(resourceNode)
                 return
             }
+            let exitNode = (node as? AreaExitNode)
+                ?? (node.parent as? AreaExitNode)
+                ?? (node.parent?.parent as? AreaExitNode)
+            if let exitNode {
+                walkPlayerToExit(exitNode, continuingTo: nil)
+                return
+            }
         }
 
         // Start pan
@@ -1381,20 +1425,55 @@ class WorkshopScene: SKScene, ScrollZoomable {
         guard playerNode != nil else { return }
         stationNode.animateTap()
 
-        // Cancel any current walk
-        playerNode.removeAction(forKey: "walkTo")
-
         // Dismiss any open overlays immediately
         onPlayerStartedWalking?()
 
         let stationPos = stationNode.position
         let targetPos = CGPoint(x: stationPos.x - 200, y: stationPos.y - 65)
+
+        walkPlayer(to: targetPos,
+                   endWaypoints: stationWaypoints[stationNode.stationType],
+                   lookingAt: stationPos) { [weak self] in
+            self?.playerArrivedAtStation(stationNode)
+        }
+    }
+
+    /// Walk to a signpost's road waypoint, then hand over to SwiftUI to load the next
+    /// area. `station` is passed through so the walk can carry on over there.
+    private func walkPlayerToExit(_ exitNode: AreaExitNode, continuingTo station: ResourceStationType?) {
+        guard playerNode != nil else { return }
+
+        // Dismiss any open overlays immediately
+        onPlayerStartedWalking?()
+
+        let exit = exitNode.exit
+        walkPlayer(to: waypoints[exit.waypoint],
+                   endWaypoints: [exit.waypoint],
+                   lookingAt: exitNode.position) { [weak self] in
+            guard let self else { return }
+            self.isPlayerWalking = false
+            self.isFollowingPlayer = false
+            self.walkTargetPosition = nil
+            self.onExitReached?(exit.destinationAreaId, station)
+        }
+    }
+
+    /// Shared walk for stations and signposts: camera follow on, then Dijkstra through
+    /// the waypoint graph (or straight there when close). `endWaypoints` nil = the two
+    /// waypoints nearest the target.
+    private func walkPlayer(to targetPos: CGPoint,
+                            endWaypoints: [Int]?,
+                            lookingAt focus: CGPoint,
+                            completion: @escaping () -> Void) {
+        // Cancel any current walk
+        playerNode.removeAction(forKey: "walkTo")
+
         let playerPos = playerNode.position
 
         isPlayerWalking = true
 
         // Stage 1: Gentle zoom + follow player — gradual approach in update()
-        startFollowingPlayer(toward: stationPos)
+        startFollowingPlayer(toward: focus)
 
         #if DEBUG
         syncWaypointsFromNodes()  // pick up any dragged waypoint positions
@@ -1405,16 +1484,13 @@ class WorkshopScene: SKScene, ScrollZoomable {
         if directDistance < 350 {
             let facingRight = targetPos.x > playerPos.x
             playerNode.setFacingDirection(facingRight)
-
-            playerNode.walkTo(destination: targetPos, duration: max(0.3, TimeInterval(directDistance / 467))) { [weak self] in
-                self?.playerArrivedAtStation(stationNode)
-            }
+            playerNode.walkTo(destination: targetPos, duration: max(0.3, TimeInterval(directDistance / 467)), completion: completion)
             return
         }
 
         // Get waypoints for start and end
         let startWPs = nearestWaypoints(to: playerPos)
-        let endWPs = stationWaypoints[stationNode.stationType] ?? nearestWaypoints(to: targetPos)
+        let endWPs = endWaypoints ?? nearestWaypoints(to: targetPos)
 
         // Find path through waypoint graph
         let path = findPath(from: playerPos, to: targetPos, startWaypoints: startWPs, endWaypoints: endWPs)
@@ -1423,9 +1499,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
             // Fallback: direct walk
             let facingRight = targetPos.x > playerPos.x
             playerNode.setFacingDirection(facingRight)
-            playerNode.walkTo(destination: targetPos, duration: max(0.5, TimeInterval(directDistance / 467))) { [weak self] in
-                self?.playerArrivedAtStation(stationNode)
-            }
+            playerNode.walkTo(destination: targetPos, duration: max(0.5, TimeInterval(directDistance / 467)), completion: completion)
             return
         }
 
@@ -1435,9 +1509,7 @@ class WorkshopScene: SKScene, ScrollZoomable {
         playerNode.setFacingDirection(facingRight)
 
         // Walk along the path
-        playerNode.walkPath(path, speed: 467) { [weak self] in
-            self?.playerArrivedAtStation(stationNode)
-        }
+        playerNode.walkPath(path, speed: 467, completion: completion)
     }
 
     /// Called when player finishes walking to a station — Stage 2: zoom to station, then notify SwiftUI
@@ -1678,10 +1750,20 @@ class WorkshopScene: SKScene, ScrollZoomable {
         playerNode.playCelebrateAnimation(completion: completion)
     }
 
-    /// Walk the player to a station programmatically (called from SwiftUI)
+    /// Walk the player to a station programmatically (called from SwiftUI).
+    /// A station on another area's map walks to the signpost toward that area —
+    /// or toward the Bottega, the hub, when there is no direct road.
     func walkToStation(_ stationType: ResourceStationType) {
-        guard playerNode != nil, let node = resourceNodes[stationType] else { return }
-        walkPlayerToStation(node)
+        guard playerNode != nil else { return }
+        if let node = resourceNodes[stationType] {
+            walkPlayerToStation(node)
+            return
+        }
+        guard let targetArea = WorkshopAreaRegistry.areaId(containing: stationType),
+              let exitNode = exitNodes.first(where: { $0.exit.destinationAreaId == targetArea })
+                ?? exitNodes.first(where: { $0.exit.destinationAreaId == WorkshopAreaRegistry.bottega.id })
+        else { return }
+        walkPlayerToExit(exitNode, continuingTo: stationType)
     }
 
     /// Get current player position
@@ -1704,6 +1786,11 @@ class WorkshopScene: SKScene, ScrollZoomable {
         // Resource stations
         for (stationType, node) in resourceNodes {
             editorMode.registerNode(node, name: "station_\(stationType.rawValue)")
+        }
+
+        // Signposts
+        for node in exitNodes {
+            editorMode.registerNode(node, name: "exit_\(node.exit.destinationAreaId)")
         }
 
         // Player
